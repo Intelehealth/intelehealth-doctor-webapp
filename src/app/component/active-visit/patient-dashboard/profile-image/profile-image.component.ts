@@ -8,7 +8,7 @@ import { ProfileImageService } from './../../../../services/profile-image.servic
   styleUrls: ['./profile-image.component.css']
 })
 export class ProfileImageComponent implements OnInit {
-
+image: string;
   constructor(private route: ActivatedRoute,
     private service: ProfileImageService) { }
 
@@ -16,7 +16,7 @@ export class ProfileImageComponent implements OnInit {
     const uuid = this.route.snapshot.paramMap.get('id');
     this.service.fetchProfileImage(uuid)
     .subscribe(response => {
-      console.log(response);
+    this.image = response.results[0].Image.url;
     });
 
   }
