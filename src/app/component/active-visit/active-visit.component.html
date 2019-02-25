@@ -1,0 +1,22 @@
+<table id="example" class="table table-striped table-bordered" style="width:100%">
+  <thead>
+    <tr>
+        <th>Patient ID</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Location</th>
+        <th>Last Seen</th>
+    </tr>
+</thead>
+<tbody>
+    <tr *ngFor="let data of dataSource">
+        <td>{{data.identifier}}</td>
+        <a [routerLink]="['/patientDashboard', data.uuid]"><td>{{data.name}}</td></a>
+        <td>{{data.gender}}</td>
+        <td>{{data.age}}</td>
+        <td>{{data.location}}</td>
+        <td>{{data.lastSeen}}</td>
+    </tr>
+</tbody>
+</table>
