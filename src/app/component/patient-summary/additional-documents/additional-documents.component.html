@@ -1,0 +1,9 @@
+<h3>ADDITIONAL DOCUMENTS</h3>
+<div *ngIf="additionalDocumentPresent">
+<div *ngFor="let image of images">
+    <img src= {{image}} width="100%" height="100%">
+</div>
+</div>
+<div *ngIf="!additionalDocumentPresent">
+    	No Additional Documents available!
+</div>

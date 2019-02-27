@@ -17,6 +17,13 @@ import {
         MatGridListModule,
         MatCardModule } from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
+import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
+import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
+import { PresentingComplaintsComponent } from './component/patient-summary/presenting-complaints/presenting-complaints.component';
+import { OnExaminationComponent } from './component/patient-summary/on-examination/on-examination.component';
+import { PhysicalExaminationComponent } from './component/patient-summary/physical-examination/physical-examination.component';
+import { AdditionalDocumentsComponent } from './component/patient-summary/additional-documents/additional-documents.component';
+import { VitalComponent } from './component/patient-summary/vital/vital.component';
 
 
 @NgModule({
@@ -28,7 +35,14 @@ import { PatientSummaryComponent } from './component/patient-summary/patient-sum
     ProfileImageComponent,
     RecentVisitsComponent,
     VitalsComponent,
-    PatientSummaryComponent
+    PatientSummaryComponent,
+    FamilyHistoryComponent,
+    PastMedicalHistoryComponent,
+    PresentingComplaintsComponent,
+    OnExaminationComponent,
+    PhysicalExaminationComponent,
+    AdditionalDocumentsComponent,
+    VitalComponent
   ],
   imports: [
     BrowserModule,

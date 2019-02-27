@@ -1,0 +1,9 @@
+<h3>PHYSICAL EXAMINATION</h3>
+<div *ngIf="physicalExamPresent">
+<div *ngFor="let image of images">
+    <img src= {{image}} width="100%" height="100%">
+</div>
+</div>
+<div *ngIf="!physicalExamPresent">
+    	No Physical Exam Images available!
+</div>

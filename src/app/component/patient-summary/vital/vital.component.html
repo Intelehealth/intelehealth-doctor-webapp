@@ -1,0 +1,29 @@
+<table ng-cloak>
+  <tr *ngIf='!vitalsPresent'><td>No Data</td></tr>
+  <div *ngIf='vitalsPresent'>
+   <tr *ngFor='let item of v'>
+    <td>Temp: 
+    <span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F
+    </span>
+  </td>
+    <td>
+        Height: {{item.height}} cm
+    </td>
+    <td>
+        Weight: {{item.weight}} kg
+    </td>
+    <td>
+        BMI: {{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}
+    </td>
+    <td>
+        SP02: {{item.sp02}} %
+    </td>
+    <td>
+        BP: {{item.sbp}}/{{item.dbp}}
+    </td>
+    <td>
+        HR: {{item.pulse}}
+    </td>
+   </tr>
+  </div>
+</table>
