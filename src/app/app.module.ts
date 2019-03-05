@@ -11,6 +11,7 @@ import { RecentVisitsComponent } from './component/active-visit/patient-dashboar
 import { VitalsComponent } from './component/active-visit/patient-dashboard/vitals/vitals.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
@@ -24,6 +25,8 @@ import { OnExaminationComponent } from './component/patient-summary/on-examinati
 import { PhysicalExaminationComponent } from './component/patient-summary/physical-examination/physical-examination.component';
 import { AdditionalDocumentsComponent } from './component/patient-summary/additional-documents/additional-documents.component';
 import { VitalComponent } from './component/patient-summary/vital/vital.component';
+import { FindPatientComponent } from './component/find-patient/find-patient.component';
+import { MyAccountComponent } from './component/my-account/my-account.component';
 
 
 @NgModule({
@@ -42,16 +45,23 @@ import { VitalComponent } from './component/patient-summary/vital/vital.componen
     OnExaminationComponent,
     PhysicalExaminationComponent,
     AdditionalDocumentsComponent,
-    VitalComponent
+    VitalComponent,
+    FindPatientComponent,
+    MyAccountComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MatGridListModule,
     MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      {path: '', component: ActiveVisitComponent},
+      {path: '', component: HomepageComponent},
+      {path: 'findPatient', component: FindPatientComponent},
+      {path: 'myAccount', component: MyAccountComponent},
+      {path: 'activeVisit', component: ActiveVisitComponent},
       {path: 'patientDashboard/:id', component: PatientDashboardComponent},
       {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent}
   ])
