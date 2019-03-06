@@ -1,0 +1,15 @@
+Find Patient : 
+<form [formGroup]='form' (ngSubmit)="onSubmit()">
+<input type="text" formControlName='find'>
+<span> <button type="submit"> Find</button></span>
+</form>
+
+<div *ngFor='let value of result'>
+    <li>{{value.identifiers[0].identifier}}
+        <span>{{ value.person.display}}</span>&nbsp;&nbsp;&nbsp;
+        <span>{{ value.person.gender}}</span>&nbsp;&nbsp;&nbsp;
+        <span>{{ value.person.age}}</span>&nbsp;&nbsp;&nbsp;
+        <button [routerLink]="['/patientDashboard', value.uuid]">View</button>
+    </li>
+
+</div>

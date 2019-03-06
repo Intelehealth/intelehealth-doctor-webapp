@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl } from '@angular/forms';
-import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from 'constants';
-import { initServicesIfNeeded } from '@angular/core/src/view';
-import { NG_PROJECT_AS_ATTR_NAME } from '@angular/core/src/render3/interfaces/projection';
 
 @Component({
   selector: 'app-my-account',
@@ -13,6 +10,7 @@ import { NG_PROJECT_AS_ATTR_NAME } from '@angular/core/src/render3/interfaces/pr
 })
 export class MyAccountComponent implements OnInit {
 status = false;
+name = 'Enter your text';
 
 addSignatureForm = new FormGroup({
   signature: new FormControl(''),
@@ -30,20 +28,19 @@ addSignatureForm = new FormGroup({
     const signatureValue = formValue.signature;
     const signText = formValue.text;
     if (signatureValue === '1') {
-      signature(signText, 'Hi');
+      console.log(signText);
+      signature(signText, 'Arty');
     }
     if (signatureValue === '2') {
-      signature(signText, 'Hiii');
+      signature(signText, 'Asem');
     }
     if (signatureValue === '3') {
-      signature(signText, 'Hello');
+      signature(signText, 'Youthness');
     }
   }
 }
 
    function signature(text: string, font: string) {
-     console.log(text);
-     console.log(font);
     this.service.session()
     .subscribe(response => {
       const userUuid = response.user.uuid;

@@ -1,2 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+
+@font-face {
+    font-family: arty;
+    src: url(assets/fonts/Arty.otf) format("opentype");
+  }
+
+@font-face {
+    font-family: asem;
+    src: url(assets/fonts/Asem.otf) format("opentype");
+  }
+
+@font-face {
+    font-family: youthness;
+    src: url(assets/fonts/Youthness.ttf) format("opentype");
+  }
