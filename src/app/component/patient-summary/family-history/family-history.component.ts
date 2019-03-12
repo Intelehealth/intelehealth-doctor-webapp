@@ -11,6 +11,8 @@ import { EncounterService } from 'src/app/services/encounter.service';
 export class FamilyHistoryComponent implements OnInit {
 encounter: any = [];
 result: any = [];
+familyHistory: any = [];
+
   constructor(private service: EncounterService,
               private route: ActivatedRoute) { }
 
@@ -26,8 +28,7 @@ result: any = [];
         obs.forEach(element => {
           const display = element.display;
           if (display.match('FAMILY HISTORY') != null) {
-             const familyHistory = element.display.split(':');
-             console.log(familyHistory)
+             this.familyHistory = display.substring(16);
           }
         });
       });
