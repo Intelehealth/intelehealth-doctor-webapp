@@ -26,8 +26,25 @@ export class EncounterService {
         return this.http.get(url);
   }
 
+  visitNote(uuid): Observable<any> {
+    let url =  'http://demo.intelehealth.io/openmrs/ws/rest/v1/encounter';
+          url += '?patient=' + uuid;
+          url += '&encounterType=' + 'd7151f82-c1f3-4152-a605-2f9ea7414a79';
+          return this.http.get(url);
+    }
+
   session(): Observable<any> {
     const url = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/session';
     return this.http.get(url);
+  }
+
+  provider(userId): Observable<any> {
+    const url = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/provider?user=' + userId;
+    return this.http.get(url);
+  }
+
+  postEncounter(json): Observable<any> {
+    const url = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/encounter';
+    return this.http.post(url, json);
   }
 }

@@ -11,7 +11,10 @@ export class ActiveVisitComponent implements OnInit {
   constructor(private service: VisitService) { }
 
   ngOnInit() {
-    this.dataSource = this.service.getVisits();
+    this.service.getVisits()
+    .subscribe(response => {
+      this.dataSource = response.results;
+    });
   }
 
 }

@@ -1,6 +1,7 @@
 <table id="example" class="table table-striped table-bordered" style="width:100%">
   <thead>
     <tr>
+        <th>Index</th>
         <th>Patient ID</th>
         <th>Name</th>
         <th>Gender</th>
@@ -10,13 +11,14 @@
     </tr>
 </thead>
 <tbody>
-    <tr *ngFor="let data of dataSource">
-        <td>{{data.identifier}}</td>
-        <a [routerLink]="['/patientDashboard', data.uuid]"><td>{{data.name}}</td></a>
-        <td>{{data.gender}}</td>
-        <td>{{data.age}}</td>
-        <td>{{data.location}}</td>
-        <td>{{data.lastSeen}}</td>
+    <tr *ngFor="let data of dataSource; index as i">
+        <td>{{i + 1}}</td>
+        <td>{{data.patient.identifiers[0].identifier}}</td>
+        <a [routerLink]="['/patientDashboard', data.patient.uuid]"><td>{{data.patient.person.display}}</td></a>
+        <td>{{data.patient.person.gender}}</td>
+        <td>{{data.patient.person.age}}</td>
+        <td>{{data.location.display}}</td>
+        <td *ngIf="data.encounters.length > 0">{{data.encounters[0].display}}</td>
     </tr>
 </tbody>
 </table>
