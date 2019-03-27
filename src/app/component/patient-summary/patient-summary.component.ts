@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-patient-summary',
@@ -37,7 +36,6 @@ export class PatientSummaryComponent implements OnInit {
               visit: visitUuid,
               encounterDatetime: myDate
             };
-            console.log(json);
             this.service.postEncounter(json)
             .subscribe(response => {
               console.log(response);

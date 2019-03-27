@@ -1,0 +1,14 @@
+<h3>PATIENT INTERACTION</h3>
+<div>
+  Have you spoken with the patient directly?
+</div>
+<form [formGroup]='interaction' (ngSubmit)='submit()'>
+<div>
+		<input type="radio" name="interaction" value="Yes" id="1" formControlName="interaction"> Yes
+		<input type="radio" name="interaction" value="No" id="2" formControlName="interaction"> No
+        <button type="submit" style="margin-left: 30px;" [hidden]="msg.length > 0">Select</button>
+</div>
+<div *ngFor="let msg of msg">
+  <div style="margin: 10px 7px;">{{msg}}</div>
+</div>
+</form>
