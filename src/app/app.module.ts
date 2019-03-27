@@ -28,6 +28,12 @@ import { VitalComponent } from './component/patient-summary/vital/vital.componen
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { MyAccountComponent } from './component/my-account/my-account.component';
 import { PatientInteractionComponent } from './component/patient-summary/patient-interaction/patient-interaction.component';
+import { AdditionalCommentComponent } from './component/patient-summary/additional-comment/additional-comment.component';
+import { DiagnosisComponent } from './component/patient-summary/diagnosis/diagnosis.component';
+import { PrescribedTestComponent } from './component/patient-summary/prescribed-test/prescribed-test.component';
+import { AdviceComponent } from './component/patient-summary/advice/advice.component';
+import { FollowUpComponent } from './component/patient-summary/follow-up/follow-up.component';
+import { PrescribedMedicationComponent } from './component/patient-summary/prescribed-medication/prescribed-medication.component';
 
 
 @NgModule({
@@ -49,7 +55,13 @@ import { PatientInteractionComponent } from './component/patient-summary/patient
     VitalComponent,
     FindPatientComponent,
     MyAccountComponent,
-    PatientInteractionComponent
+    PatientInteractionComponent,
+    AdditionalCommentComponent,
+    DiagnosisComponent,
+    PrescribedTestComponent,
+    AdviceComponent,
+    FollowUpComponent,
+    PrescribedMedicationComponent
   ],
   imports: [
     BrowserModule,

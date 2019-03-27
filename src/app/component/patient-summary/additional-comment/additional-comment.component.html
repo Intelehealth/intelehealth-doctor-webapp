@@ -1,0 +1,10 @@
+<h3>Doctor's Note</h3>
+<form [formGroup]='commentForm' (ngSubmit)='Submit()'>
+<div>
+<textarea row="3" cols="50" formControlName='comment'></textarea>
+<button type="submit">Add Note</button>
+</div>
+</form>
+<div *ngFor="let comment of comment">
+    <div style="margin: 10px 7px;">{{comment}}</div>
+</div>
