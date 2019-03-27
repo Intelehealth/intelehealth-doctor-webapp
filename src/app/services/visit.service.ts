@@ -26,4 +26,14 @@ fetchVisitDetails(uuid): Observable<any> {
     const url = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/visit/' + uuid + '?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value)),patient:(uuid))';
     return this.http.get(url);
 }
+
+getAttribute(visitId): Observable<any> {
+  const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/visit/${visitId}/attribute`;
+  return this.http.get(url);
+}
+
+postAttriute(visitId, json): Observable<any> {
+  const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/visit/${visitId}/attribute`;
+  return this.http.post(url, json);
+}
 }

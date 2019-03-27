@@ -27,6 +27,7 @@ import { AdditionalDocumentsComponent } from './component/patient-summary/additi
 import { VitalComponent } from './component/patient-summary/vital/vital.component';
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { MyAccountComponent } from './component/my-account/my-account.component';
+import { PatientInteractionComponent } from './component/patient-summary/patient-interaction/patient-interaction.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { MyAccountComponent } from './component/my-account/my-account.component'
     AdditionalDocumentsComponent,
     VitalComponent,
     FindPatientComponent,
-    MyAccountComponent
+    MyAccountComponent,
+    PatientInteractionComponent
   ],
   imports: [
     BrowserModule,

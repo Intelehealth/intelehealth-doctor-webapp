@@ -28,7 +28,6 @@ addSignatureForm = new FormGroup({
     const signatureValue = formValue.signature;
     const signText = formValue.text;
     if (signatureValue === '1') {
-      console.log(signText);
       signature(signText, 'Arty');
     }
     if (signatureValue === '2') {
@@ -59,13 +58,13 @@ addSignatureForm = new FormGroup({
               const url2 = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/provider/' + providerUuid + '/attribute';
               const json = {
                 'attributetype' : '',
-                'value' : 'text'
+                'value' : text
                };
               this.http.post(url2, json);
               const url3 = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/provider/' + providerUuid + '/attribute';
               const json1 = {
                 'attributetype' : '',
-                'value' : 'font'
+                'value' : font
                };
                this.http.post(url3, json1);
             }
