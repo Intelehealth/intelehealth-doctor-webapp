@@ -47,4 +47,9 @@ export class EncounterService {
     const url = 'http://demo.intelehealth.io/openmrs/ws/rest/v1/encounter';
     return this.http.post(url, json);
   }
+
+  postObs(json): Observable<any> {
+    const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/obs`;
+    return this.http.post(url, json);
+  }
 }

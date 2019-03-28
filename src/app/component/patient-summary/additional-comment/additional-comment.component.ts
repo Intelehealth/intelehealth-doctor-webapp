@@ -10,6 +10,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 })
 export class AdditionalCommentComponent implements OnInit {
 comment: any = [];
+encounterUuid: string;
 
   commentForm = new FormGroup ({
     comment: new FormControl('')
@@ -22,8 +23,8 @@ comment: any = [];
     const patientId = this.route.snapshot.params['patient_id'];
     this.service.visitNote(patientId)
     .subscribe(response => {
-      const encounterUuid = response.results[0].uuid;
-      this.service.vitals(encounterUuid)
+      this.encounterUuid = response.results[0].uuid;
+      this.service.vitals(this.encounterUuid)
       .subscribe(res => {
         const obs = res.obs;
         obs.forEach(observation => {
@@ -34,6 +35,24 @@ comment: any = [];
           }
         });
       });
+    });
+  }
+
+  Submit() {
+    const date = new Date();
+    const patientId = this.route.snapshot.params['patient_id'];
+    const form = this.commentForm.value;
+    const value = form.comment;
+    const json = {
+      concept: '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      person: patientId,
+      obsDatetime: date,
+      value: value,
+      encounter: this.encounterUuid
+    };
+    this.service.postObs(json)
+    .subscribe(res => {
+      this.comment.push(value);
     });
   }
 

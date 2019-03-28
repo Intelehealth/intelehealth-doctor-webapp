@@ -12,6 +12,7 @@ import { VitalsComponent } from './component/active-visit/patient-dashboard/vita
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
@@ -71,6 +72,7 @@ import { PrescribedMedicationComponent } from './component/patient-summary/presc
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgbModule,
     RouterModule.forRoot([
       {path: '', component: HomepageComponent},
       {path: 'findPatient', component: FindPatientComponent},

@@ -1,6 +1,10 @@
 <h3>PRESCRIBED TEST</h3>
 <div>
-
+    <form [formGroup]='testForm' (ngSubmit)='submit()'>
+        <input type="text" [ngbTypeahead]="search" formControlName='test'/>
+        <button type="submit">Add Test</button>
+        {{errorText}}
+      </form>
 </div>
 <div *ngFor='let test of tests'>
   <div style="margin: 10px 7px;">{{test}}</div>

@@ -1,7 +1,12 @@
 <h3>ADVICE</h3>
 <div>
-
+  <form [formGroup]='adviceForm' (ngSubmit)='submit()'>
+  <input type="text" [ngbTypeahead]="search" formControlName='advice'/>
+  <button type="submit">Add Advice</button>
+  {{errorText}}
+</form>
 </div>
 <div *ngFor='let advice of advice'>
   <div style="margin: 10px 7px;">{{advice}}</div>
 </div>
+

@@ -1,7 +1,15 @@
 <h3>FOLLOW UP</h3>
 <div>
-
+<form [formGroup]="followForm" (ngSubmit)='Submit()'>
+<div>
+<input type="date" formControlName='date'>
+<input type="text" formControlName='advice'>
+<button type="submit" [hidden]='followUp.length > 0'>Schedule a Follow UP</button>
 </div>
+{{errorText}}
+</form>
 <div *ngFor='let followUp of followUp'>
   <div style="margin: 10px 7px;">{{followUp}}</div>
 </div>
+</div>
+<p>*please delete current schedule to schedule a new follow up.</p>
