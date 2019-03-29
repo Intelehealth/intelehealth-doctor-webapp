@@ -1,7 +1,34 @@
-<a routerLink='/findPatient'>Find Patient</a>
-<br>
-<a routerLink='/activeVisit'>Active Visit</a>
-<br>
-<a routerLink='/myAccount'>My Account</a>
-<br>
-<a href='http://demo.intelehealth.io/openmrs/reportingui/reportsapp/home.page'>Report</a>
+
+<div class="card-group">
+<div class="card" >
+    <div class="card-body">
+      <h5 class="card-title">Find Patient</h5>
+      <p class="card-text">Search Patient using Name and OpenMRS Id.</p>
+      <a routerLink='/findPatient' class="btn btn-primary">Find</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Active Visit</h5>
+      <p class="card-text">Patient who has active visit.</p>
+      <a routerLink='/activeVisit' class="btn btn-primary">Active Visit</a>
+    </div>
+  </div>
+
+  <div class="card" >
+    <div class="card-body">
+      <h5 class="card-title">My Account</h5>
+      <p class="card-text">Setup your signature here.</p>
+      <a routerLink='/myAccount' class="btn btn-primary">My Account</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Reports</h5>
+      <p class="card-text">.</p>
+      <a href='http://demo.intelehealth.io/openmrs/reportingui/reportsapp/home.page' class="btn btn-primary">Report</a>
+    </div>
+  </div>
+</div>

@@ -23,7 +23,7 @@ adviceForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private adviceService: DiagnosisService,
+              private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
     search = (text$: Observable<string>) =>
@@ -36,7 +36,7 @@ adviceForm = new FormGroup({
 
   ngOnInit() {
     const adviceUuid = '0308000d-77a2-46e0-a6fa-a8c1dcbc3141';
-    this.adviceService.concept(adviceUuid)
+    this.diagnosisService.concept(adviceUuid)
     .subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
@@ -54,7 +54,7 @@ adviceForm = new FormGroup({
           const display = observation.display;
           if (display.match('MEDICAL ADVICE') != null) {
             const msg = display.slice(16, display.length);
-            this.advice.push(msg);
+            this.advice.push({msg: msg, uuid: observation.uuid});
           }
         });
       });
@@ -77,10 +77,18 @@ adviceForm = new FormGroup({
     };
     this.service.postObs(json)
     .subscribe(res => {
-      this.advice.push(value);
+      this.advice.push({msg: value});
       this.errorText = '';
     });
   }
 }
 
+  delete(i) {
+    const uuid = this.advice[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
+    .subscribe(res => {
+      this.advice.splice(i, 1);
+    });
+  }
 }
+

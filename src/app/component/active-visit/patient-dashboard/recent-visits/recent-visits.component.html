@@ -1,8 +1,8 @@
 <div>
-  <h3>RECENT VISITS</h3>
+  <h4>Recent Visits</h4>
 </div>
 <div *ngFor="let data of recent">
   <div> <a [routerLink]="['/patientSummary', data.details.patient.uuid, data.details.uuid]">{{data.details.startDatetime | date:"dd/MMM/yy"}}</a>
     <span> {{data.observation}} </span> 
-    <span class="label success"> {{data.visitStatus}}</span></div>
+    <span class="badge badge-pill badge-success">{{data.visitStatus}}</span></div>
 </div>

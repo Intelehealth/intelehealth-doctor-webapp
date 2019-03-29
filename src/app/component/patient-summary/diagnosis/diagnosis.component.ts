@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
 @Component({
   selector: 'app-diagnosis',
@@ -11,6 +12,7 @@ export class DiagnosisComponent implements OnInit {
 diagnosis: any = [];
 
   constructor(private service: EncounterService,
+              private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -25,11 +27,18 @@ diagnosis: any = [];
           const display = observation.display;
           if (display.match('TELEMEDICINE DIAGNOSIS') != null) {
             const msg = display.slice(24, display.length);
-            this.diagnosis.push(msg);
+            this.diagnosis.push({msg: msg, uuid: observation.uuid});
           }
         });
       });
     });
   }
 
+  delete(i) {
+    const uuid = this.diagnosis[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
+    .subscribe(res => {
+      this.diagnosis.splice(i, 1);
+    });
+  }
 }

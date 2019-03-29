@@ -23,7 +23,7 @@ testForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private testService: DiagnosisService,
+              private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
 
@@ -37,7 +37,7 @@ testForm = new FormGroup({
 
   ngOnInit() {
     const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
-    this.testService.concept(testUuid)
+    this.diagnosisService.concept(testUuid)
     .subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
@@ -55,7 +55,7 @@ testForm = new FormGroup({
           const display = observation.display;
           if (display.match('REQUESTED TESTS') != null) {
             const msg = display.slice(16, display.length);
-            this.tests.push(msg);
+            this.tests.push({msg: msg, uuid: observation.uuid});
           }
         });
       });
@@ -78,10 +78,18 @@ testForm = new FormGroup({
       };
       this.service.postObs(json)
       .subscribe(res => {
-        this.tests.push(value);
+        this.tests.push({msg: value});
         this.errorText = '';
       });
     }
+    }
+
+    delete(i) {
+      const uuid = this.tests[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+      .subscribe(res => {
+        this.tests.splice(i, 1);
+      });
     }
 }
 

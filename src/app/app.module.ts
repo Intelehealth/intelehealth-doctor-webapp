@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
@@ -69,6 +70,7 @@ import { PrescribedMedicationComponent } from './component/patient-summary/presc
     BrowserAnimationsModule,
     MatGridListModule,
     MatCardModule,
+    NgxPaginationModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

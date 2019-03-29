@@ -1,7 +1,7 @@
-<h3>DIAGNOSIS</h3>
+<h4>Diagnosis</h4>
 <div>
 
 </div>
-<div *ngFor='let diagnosis of diagnosis'>
-  <div style="margin: 10px 7px;">{{diagnosis}}</div>
+<div *ngFor='let diagnosis of diagnosis, index as i'>
+  <div class="alert alert-primary" style="margin: 10px 7px;">{{diagnosis.msg}} <i (click)="delete(i)" class="material-icons">delete</i></div>
 </div>

@@ -8,6 +8,7 @@ import { VisitService } from 'src/app/services/visit.service';
 })
 export class ActiveVisitComponent implements OnInit {
   dataSource: any = [];
+  p = 1;
   constructor(private service: VisitService) { }
 
   ngOnInit() {

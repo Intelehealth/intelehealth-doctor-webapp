@@ -1,4 +1,4 @@
-<h3>FOLLOW UP</h3>
+<h4>Follow Up</h4>
 <div>
 <form [formGroup]="followForm" (ngSubmit)='Submit()'>
 <div>
@@ -8,8 +8,8 @@
 </div>
 {{errorText}}
 </form>
-<div *ngFor='let followUp of followUp'>
-  <div style="margin: 10px 7px;">{{followUp}}</div>
+<div *ngFor='let followUp of followUp, index as i '>
+  <div class="alert alert-primary" style="margin: 10px 7px;" >{{followUp.msg}} <a (click)="delete(i)"class="material-icons">delete</a></div>
 </div>
 </div>
 <p>*please delete current schedule to schedule a new follow up.</p>

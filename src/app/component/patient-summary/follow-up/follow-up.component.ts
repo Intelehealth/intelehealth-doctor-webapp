@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
 @Component({
   selector: 'app-follow-up',
@@ -20,6 +21,7 @@ followForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
+              private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -34,7 +36,7 @@ followForm = new FormGroup({
           const display = observation.display;
           if (display.match('Follow up visit') != null) {
             const msg = display.slice(16, display.length);
-            this.followUp.push(msg);
+            this.followUp.push({msg: msg, uuid: observation.uuid});
           }
         });
       });
@@ -58,10 +60,18 @@ followForm = new FormGroup({
       };
       this.service.postObs(json)
       .subscribe(res => {
-        this.followUp.push(json.value);
+        this.followUp.push({msg: json.value});
         this.errorText = '';
       });
     }
+  }
+
+  delete(i) {
+    const uuid = this.followUp[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
+    .subscribe(res => {
+      this.followUp.splice(i, 1);
+    });
   }
 
 }

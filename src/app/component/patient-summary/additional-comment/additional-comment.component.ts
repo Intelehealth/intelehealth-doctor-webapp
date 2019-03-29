@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { DiagnosisService } from './../../../services/diagnosis.service';
 
 @Component({
   selector: 'app-additional-comment',
@@ -17,6 +18,7 @@ encounterUuid: string;
   });
 
   constructor(private service: EncounterService,
+              private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -31,7 +33,7 @@ encounterUuid: string;
           const display = observation.display;
           if (display.match('Additional Comments') != null) {
             const msg = display.slice(21, display.length);
-            this.comment.push(msg);
+            this.comment.push({msg: msg, uuid: observation.uuid});
           }
         });
       });
@@ -52,7 +54,15 @@ encounterUuid: string;
     };
     this.service.postObs(json)
     .subscribe(res => {
-      this.comment.push(value);
+      this.comment.push({msg: value});
+    });
+  }
+
+  delete(i) {
+    const uuid = this.comment[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
+    .subscribe(res => {
+      this.comment.splice(i, 1);
     });
   }
 

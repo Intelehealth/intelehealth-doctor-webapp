@@ -13,4 +13,9 @@ export class DiagnosisService {
     const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/concept/${uuid}`;
     return this.http.get(url);
   }
+
+  deleteObs(uuid): Observable<any> {
+    const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/obs/${uuid}?purge=true`;
+    return this.http.delete(url);
+  }
 }

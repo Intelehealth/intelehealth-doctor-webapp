@@ -38,7 +38,6 @@ export class PatientSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json)
             .subscribe(response => {
-              console.log(response);
             });
           });
         });

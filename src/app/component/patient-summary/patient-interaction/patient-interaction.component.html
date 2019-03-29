@@ -1,4 +1,4 @@
-<h3>PATIENT INTERACTION</h3>
+<h4>Patient Interaction</h4>
 <div>
   Have you spoken with the patient directly?
 </div>
@@ -9,6 +9,6 @@
         <button type="submit" style="margin-left: 30px;" [hidden]="msg.length > 0">Select</button>
 </div>
 <div *ngFor="let msg of msg">
-  <div style="margin: 10px 7px;">{{msg}}</div>
+  <div class="alert alert-primary" style="margin: 10px 7px;">{{msg}}</div>
 </div>
 </form>

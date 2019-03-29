@@ -1,4 +1,4 @@
-<h3>PRESCRIBED TEST</h3>
+<h4>Prescribed Test</h4>
 <div>
     <form [formGroup]='testForm' (ngSubmit)='submit()'>
         <input type="text" [ngbTypeahead]="search" formControlName='test'/>
@@ -6,6 +6,6 @@
         {{errorText}}
       </form>
 </div>
-<div *ngFor='let test of tests'>
-  <div style="margin: 10px 7px;">{{test}}</div>
+<div *ngFor='let test of tests, index as i'>
+  <div class="alert alert-primary" style="margin: 10px 7px;">{{test.msg}} <i (click)="delete(i)" class="material-icons">delete</i></div>
 </div>
