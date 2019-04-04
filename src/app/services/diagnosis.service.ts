@@ -6,16 +6,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DiagnosisService {
-
+  private baseURL = '13.127.240.201:8080';
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {
-    const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/concept/${uuid}`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/concept/${uuid}`;
     return this.http.get(url);
   }
 
   deleteObs(uuid): Observable<any> {
-    const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/obs/${uuid}?purge=true`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}?purge=true`;
     return this.http.delete(url);
   }
 }

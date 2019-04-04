@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProfileImageService } from './../../../../services/profile-image.service';
+import { ImagesService } from 'src/app/services/images.service';
 
 @Component({
   selector: 'app-profile-image',
@@ -11,7 +11,7 @@ export class ProfileImageComponent implements OnInit {
 image: string;
 profileImagePresent = false;
   constructor(private route: ActivatedRoute,
-    private service: ProfileImageService) { }
+    private service: ImagesService) { }
 
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get('id');

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AdditionalDocumentsService } from './../../../services/additional-documents.service';
 import { ActivatedRoute } from '@angular/router';
+import { ImagesService } from 'src/app/services/images.service';
 
 @Component({
   selector: 'app-additional-documents',
@@ -12,7 +12,7 @@ image: any = [];
 images: any = [];
 additionalDocumentPresent = false;
 
-  constructor(private service: AdditionalDocumentsService,
+  constructor(private service: ImagesService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PhysicalExaminationImageService } from 'src/app/services/physical-examination-image.service';
 import { ActivatedRoute } from '@angular/router';
+import { ImagesService } from 'src/app/services/images.service';
 
 @Component({
   selector: 'app-physical-examination',
@@ -11,7 +11,7 @@ export class PhysicalExaminationComponent implements OnInit {
 image: any = [];
 images: any = [];
 physicalExamPresent = false;
-  constructor(private service: PhysicalExaminationImageService,
+  constructor(private service: ImagesService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {

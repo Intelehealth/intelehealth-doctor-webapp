@@ -18,7 +18,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
         MatGridListModule,
-        MatCardModule } from '@angular/material/';
+        MatCardModule,
+        MatSnackBarModule } from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -36,6 +37,7 @@ import { PrescribedTestComponent } from './component/patient-summary/prescribed-
 import { AdviceComponent } from './component/patient-summary/advice/advice.component';
 import { FollowUpComponent } from './component/patient-summary/follow-up/follow-up.component';
 import { PrescribedMedicationComponent } from './component/patient-summary/prescribed-medication/prescribed-medication.component';
+import { PageNotFoundComponent } from './page-not-found.component';
 
 
 @NgModule({
@@ -63,13 +65,15 @@ import { PrescribedMedicationComponent } from './component/patient-summary/presc
     PrescribedTestComponent,
     AdviceComponent,
     FollowUpComponent,
-    PrescribedMedicationComponent
+    PrescribedMedicationComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MatGridListModule,
     MatCardModule,
+    MatSnackBarModule,
     NgxPaginationModule,
     FormsModule,
     ReactiveFormsModule,
@@ -81,7 +85,8 @@ import { PrescribedMedicationComponent } from './component/patient-summary/presc
       {path: 'myAccount', component: MyAccountComponent},
       {path: 'activeVisit', component: ActiveVisitComponent},
       {path: 'patientDashboard/:id', component: PatientDashboardComponent},
-      {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent}
+      {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent},
+      {path: '**', component: PageNotFoundComponent}
   ])
  ],
   providers: [
