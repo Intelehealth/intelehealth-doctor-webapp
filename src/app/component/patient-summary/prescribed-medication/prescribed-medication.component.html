@@ -1,7 +1,45 @@
 <h4>Prescribed Medication</h4>
 <div>
-
+  <form [formGroup]="medForm" (submit)="onSubmit()">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <input type="text" (keypress)="add = true" class="form-control" [ngbTypeahead]="searchPrescription" formControlName="med">
+    </div>
+    <button type="submit" [disabled]='!medForm.valid' class="btn btn-primary">Submit</button>
+  </div>
+  <div *ngIf="add">
+    <div class="form-row">
+      <div class="col-auto">
+        <input type="number" class="form-control" placeholder="Dose" formControlName="dose">
+      </div>
+      <div class="col-auto">
+        <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units" formControlName="unit">
+      </div>
+      <div class="col-auto">
+        <input type="text" class="form-control" [ngbTypeahead]="searchFrequency" placeholder="Frequency" formControlName="frequency">
+      </div>
+      <div class="col-auto">
+        <input type="text" class="form-control" [ngbTypeahead]="searchAdministration" placeholder="Route(optional)" formControlName="route">
+      </div>
+    </div>
+    <br>
+        <div>As needed for</div> 
+        <input type="text" class="form-control" placeholder="reason(optional)" formControlName="reason"> 
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">For</span> 
+              </div>
+              <input type="number" class="form-control" placeholder="Duration" formControlName="duration">
+              <div class="input-group-prepend">
+              <input type="text" class="form-control" [ngbTypeahead]="durationUnit" placeholder="Units" formControlName="durationUnit">
+              </div>
+              <span class="input-group-text" id="basic-addon1">total</span>
+            </div>
+    <br>
+    <textarea class="form-control" placeholder="Additional instruction not covered above" formControlName="additional"></textarea>
+  </div>
+</form>
 </div>
-<div *ngFor='let meds of meds'>
-  <div class="alert alert-primary" style="margin: 10px 7px;">{{meds}}</div>
+<div *ngFor='let meds of meds, index as i'>
+  <div class="alert alert-primary" style="margin: 10px 7px;">{{meds.msg}} <i (click)="delete(i)" class="material-icons">delete</i></div>
 </div>

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DiagnosisService {
-  private baseURL = '13.127.240.201:8080';
+  med: any =  [];
+  private baseURL = 'demo.intelehealth.io';
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {
@@ -18,4 +20,5 @@ export class DiagnosisService {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}?purge=true`;
     return this.http.delete(url);
   }
+
 }

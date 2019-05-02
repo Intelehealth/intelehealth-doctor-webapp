@@ -1,11 +1,13 @@
-<div class="container">
-<div>
-Find Patient : 
 <form [formGroup]='form' (ngSubmit)="onSubmit()">
-<input type="text" placeholder="" formControlName='find'>
-<span> <button type="submit"> Find</button></span>
-</form>
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+<span class="input-group-text">Find Patient :</span> 
 </div>
+<input type="text" class="form-control" placeholder="Search" formControlName='find'>
+<button  class="btn btn-primary" type="submit"> Find</button>
+</div>
+</form>
+
 <div class="list-group">
 <div *ngFor='let value of result'>
     <a class="list-group-item list-group-item-action" [routerLink]="['/patientDashboard', value.uuid]">
@@ -17,6 +19,5 @@ Find Patient :
         <span class="gender">{{ value.person.gender}}</span>
         <span class="age">{{ value.person.age}}</span>
     </a>
-</div>
 </div>
 </div>

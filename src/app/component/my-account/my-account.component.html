@@ -1,11 +1,16 @@
 <form [formGroup]="addSignatureForm" (ngSubmit)="onSubmit()">
-    Enter Your text : <input type="text" [(ngModel)]="name" formControlName="text">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Enter Your Text :</span>
+        </div>
+        <input type="text" [(ngModel)]="name" formControlName="text">
+    </div>
     <br>
-    <input type="radio" value='1' formControlName="signature"><span style="font-family: arty; font-size: 50px">{{name}}</span>
+    <input type="radio" value='1' formControlName="signature"><span style="font-family: arty; font-size: 100px"> {{name}}</span>
     <br>
-    <input type="radio" value='2' formControlName="signature"><span style="font-family: asem; font-size: 50px">{{name}}</span>
+    <input type="radio" value='2' formControlName="signature"><span style="font-family: asem; font-size: 50px"> {{name}}</span>
     <br>
-    <input type="radio" value='3' formControlName="signature"><span style="font-family: youthness; font-size: 50px">{{name}}</span>
+    <input type="radio" value='3' formControlName="signature"><span style="font-family: youthness; font-size: 50px"> {{name}}</span>
     <br>
-    <button>Select</button>
+    <button class="btn btn-primary">Select</button>
 </form>

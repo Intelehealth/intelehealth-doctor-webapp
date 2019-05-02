@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EncounterService {
-  private baseURL = '13.127.240.201:8080';
+  private baseURL = 'demo.intelehealth.io';
   constructor(private http: HttpClient) { }
 
   recentVitals(id): Observable<any> {
