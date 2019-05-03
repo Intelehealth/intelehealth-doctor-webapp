@@ -2,9 +2,9 @@
 <form [formGroup]='commentForm' (ngSubmit)='Submit()'>
 <div>
 <input type="text" formControlName='comment'>
-<button type="submit">Add Note</button>
+<button type="submit" [disabled]='!commentForm.valid'>Add Note</button>
 </div>
 </form>
 <div *ngFor="let comment of comment, index as i">
-    <div class="alert alert-primary" style="margin: 10px 7px;">{{comment.msg}} <i (click)="delete(i)" class="material-icons">delete</i></div>
+    <div class="alert alert-primary" style="margin: 10px 7px;">{{comment.value}} <i (click)="delete(i)" class="material-icons">delete</i></div>
 </div>

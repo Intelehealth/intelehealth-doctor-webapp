@@ -13,7 +13,7 @@ export class ImagesService {
 
   fetchAdditionalDocumentImage(patientUuid, visitUuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = 'http://' + this.base_url + ':1337/parse/classes/AdditionalDocuments?where={\"PatientID\":\"' + patientUuid + '\",\"VisitID\":\"' + visitUuid + '\`}';
+    const url = 'http://' + this.base_url + ':1337/parse/classes/AdditionalDocuments?where={\"PatientID\":\"' + patientUuid + '\",\"VisitID\":\"' + visitUuid + '\"}';
     const headers = new HttpHeaders({
       'X-Parse-Application-Id': 'app2',
       'X-Parse-REST-API-Key': 'undefined'
@@ -23,7 +23,7 @@ export class ImagesService {
 
   fetchphysicalExamImage(patientUuid, visitUuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = 'http://' + this.base_url + '/parse/classes/PhysicalExam?where={\"PatientID\":\"' + patientUuid + '\",\"VisitID\":\"' + visitUuid + '\"}';
+    const url = 'http://' + this.base_url + ':1337/parse/classes/PhysicalExam?where={\"PatientID\":\"' + patientUuid + '\",\"VisitID\":\"' + visitUuid + '\"}';
     const headers = new HttpHeaders({
       'X-Parse-Application-Id': 'app2',
       'X-Parse-REST-API-Key': 'undefined'

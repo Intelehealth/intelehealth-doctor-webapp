@@ -21,4 +21,9 @@ export class DiagnosisService {
     return this.http.delete(url);
   }
 
+  getObs(patientId, conceptId): Observable<any> {
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs?patient=${patientId}&v=custom:(uuid,value)&concept=${conceptId}`;
+    return this.http.get(url);
+  }
+
 }

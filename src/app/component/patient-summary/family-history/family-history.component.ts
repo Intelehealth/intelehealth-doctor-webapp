@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EncounterService } from 'src/app/services/encounter.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
 
 @Component({
@@ -9,29 +9,17 @@ import { EncounterService } from 'src/app/services/encounter.service';
   styleUrls: ['./family-history.component.css']
 })
 export class FamilyHistoryComponent implements OnInit {
-encounter: any = [];
-result: any = [];
 familyHistory: any = [];
+conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
 
-  constructor(private service: EncounterService,
+  constructor(private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.service.adultInitial(uuid)
+    this.diagnosisService.getObs(uuid, this.conceptFamilyHistory)
     .subscribe(response => {
-      this.result = response;
-      const encounterUuid = this.result.results[0].uuid;
-      this.service.vitals(encounterUuid)
-      .subscribe(response1 => {
-        const obs = response1.obs;
-        obs.forEach(element => {
-          const display = element.display;
-          if (display.match('FAMILY HISTORY') != null) {
-             this.familyHistory = display.substring(16);
-          }
-        });
-      });
+      this.familyHistory = response.results[0];
     });
   }
 }

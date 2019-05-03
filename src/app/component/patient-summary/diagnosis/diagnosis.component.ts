@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-diagnosis',
@@ -10,29 +11,42 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 })
 export class DiagnosisComponent implements OnInit {
 diagnosis: any = [];
+conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
+patientId: string;
+encounterUuid: string;
+
+diagnosisForm = new FormGroup({
+  text: new FormControl('', [Validators.required])
+});
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const patientId = this.route.snapshot.params['patient_id'];
-    this.service.visitNote(patientId)
+    this.patientId = this.route.snapshot.params['patient_id'];
+    this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
     .subscribe(response => {
-      const encounterUuid = response.results[0].uuid;
-      this.service.vitals(encounterUuid)
-      .subscribe(res => {
-        const obs = res.obs;
-        obs.forEach(observation => {
-          const display = observation.display;
-          if (display.match('TELEMEDICINE DIAGNOSIS') != null) {
-            const msg = display.slice(24, display.length);
-            this.diagnosis.push({msg: msg, uuid: observation.uuid});
-          }
-        });
-      });
+      this.diagnosis = response.results;
     });
   }
+
+  onSubmit() {
+    const date = new Date();
+    const value = this.diagnosisForm.value;
+    this.service.visitNote(this.patientId)
+    .subscribe(res => {
+    this.encounterUuid = res.results[0].uuid;
+    const json = {
+      concept: this.conceptDiagnosis,
+      person: this.patientId,
+      obsDatetime: date,
+      value: value.text,
+      encounter: this.encounterUuid
+  };
+  console.log(json);
+});
+}
 
   delete(i) {
     const uuid = this.diagnosis[i].uuid;

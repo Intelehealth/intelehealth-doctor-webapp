@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 
@@ -13,13 +13,14 @@ import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 })
 export class AdviceComponent implements OnInit {
 advice: any = [];
-conceptAdvice = [];
+advices: any = [];
+conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
 encounterUuid: string;
 patientId: string;
 errorText: string;
 
 adviceForm = new FormGroup({
-  advice: new FormControl('')
+  advice: new FormControl('', [Validators.required])
 });
 
   constructor(private service: EncounterService,
@@ -31,7 +32,7 @@ adviceForm = new FormGroup({
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptAdvice.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.advices.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
   ngOnInit() {
@@ -40,47 +41,37 @@ adviceForm = new FormGroup({
     .subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.conceptAdvice.push(ans.display);
+        this.advices.push(ans.display);
       });
     });
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.service.visitNote(this.patientId)
+    this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
     .subscribe(response => {
-      this.encounterUuid = response.results[0].uuid;
-      this.service.vitals(this.encounterUuid)
-      .subscribe(res => {
-        const obs = res.obs;
-        obs.forEach(observation => {
-          const display = observation.display;
-          if (display.match('MEDICAL ADVICE') != null) {
-            const msg = display.slice(16, display.length);
-            this.advice.push({msg: msg, uuid: observation.uuid});
-          }
-        });
-      });
+      this.advice = response.results;
     });
   }
 
   submit() {
-    const date = new Date();
-    const form = this.adviceForm.value;
-    const value = form.advice;
-    if (!value) {
-      this.errorText = 'Please enter text.';
-    } else {
-    const json = {
-      concept: '67a050c1-35e5-451c-a4ab-fff9d57b0db1',
+      const date = new Date();
+      const form = this.adviceForm.value;
+      const value = form.advice;
+        this.service.visitNote(this.patientId)
+        .subscribe(res => {
+        this.encounterUuid = res.results[0].uuid;
+        const json = {
+            concept: this.conceptAdvice,
             person: this.patientId,
             obsDatetime: date,
             value: value,
             encounter: this.encounterUuid
-    };
+      };
     this.service.postObs(json)
-    .subscribe(res => {
-      this.advice.push({msg: value});
+    .subscribe(response => {
+      this.advice.push({value: value});
       this.errorText = '';
+      this.adviceForm.reset();
     });
-  }
+  });
 }
 
   delete(i) {

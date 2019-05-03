@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EncounterService } from 'src/app/services/encounter.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
 @Component({
   selector: 'app-on-examination',
@@ -8,32 +8,17 @@ import { EncounterService } from 'src/app/services/encounter.service';
   styleUrls: ['./on-examination.component.css']
 })
 export class OnExaminationComponent implements OnInit {
-encounter: any = [];
-result: any = [];
 onExam: any = [];
-value: {};
+conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
 
-heading: any = [];
-
-  constructor(private service: EncounterService,
+  constructor(private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.service.adultInitial(uuid)
+    this.diagnosisService.getObs(uuid, this.conceptOnExam)
     .subscribe(response => {
-      this.result = response;
-      const encounterUuid = this.result.results[0].uuid;
-      this.service.vitals(encounterUuid)
-      .subscribe(response1 => {
-        const obs = response1.obs;
-        obs.forEach(element => {
-          const display = element.display;
-          if (display.match('PHYSICAL EXAMINATION') != null) {
-            this.onExam = display.substring(22);
-         }
-       });
-     });
-   });
+      this.onExam = response.results[0];
+    });
  }
 }

@@ -13,6 +13,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class PrescribedMedicationComponent implements OnInit {
 meds: any = [];
+add = false;
 encounterUuid: string;
 patientId: string;
 conceptPrescription = [];
@@ -20,6 +21,7 @@ conceptDose = [];
 conceptfrequency = [];
 conceptAdministration = [];
 conceptDurationUnit = [];
+conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
 
 medForm = new FormGroup({
   med: new FormControl('', [Validators.required]),
@@ -119,20 +121,9 @@ medForm = new FormGroup({
       });
     });
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.service.visitNote(this.patientId)
+    this.diagnosisService.getObs(this.patientId, this.conceptMed)
     .subscribe(response => {
-      this.encounterUuid = response.results[0].uuid;
-      this.service.vitals(this.encounterUuid)
-      .subscribe(res => {
-        const obs = res.obs;
-        obs.forEach(observation => {
-          const display = observation.display;
-          if (display.match('JSV MEDICATIONS') != null) {
-            const msg = display.slice(16, display.length);
-            this.meds.push({msg: msg, uuid: observation.uuid});
-          }
-        });
-      });
+      this.meds = response.results;
     });
   }
 
@@ -141,8 +132,11 @@ medForm = new FormGroup({
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
     const insertValue = `${value.med}: ${value.dose}, ${value.unit} ${value.frequency} (${value.route}) ${value.reason} for ${value.duration} ${value.durationUnit} ${value.additional}total.`;
+    this.service.visitNote(this.patientId)
+      .subscribe(res => {
+      this.encounterUuid = res.results[0].uuid;
      const json = {
-        concept: 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca',
+        concept: this.conceptMed,
         person: this.patientId,
         obsDatetime: date,
         value: insertValue,
@@ -150,8 +144,11 @@ medForm = new FormGroup({
       };
      this.service.postObs(json)
      .subscribe(response => {
-      this.meds.push({msg: insertValue});
+      this.meds.push({value: insertValue});
+      this.medForm.reset();
+      this.add = false;
      });
+    });
   }
 
   delete(i) {

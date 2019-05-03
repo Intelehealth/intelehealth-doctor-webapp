@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from './../../../services/diagnosis.service';
@@ -12,9 +12,11 @@ import { DiagnosisService } from './../../../services/diagnosis.service';
 export class AdditionalCommentComponent implements OnInit {
 comment: any = [];
 encounterUuid: string;
+patientId: string;
+conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   commentForm = new FormGroup ({
-    comment: new FormControl('')
+    comment: new FormControl('', [Validators.required])
   });
 
   constructor(private service: EncounterService,
@@ -22,21 +24,10 @@ encounterUuid: string;
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const patientId = this.route.snapshot.params['patient_id'];
-    this.service.visitNote(patientId)
+    this.patientId = this.route.snapshot.params['patient_id'];
+    this.diagnosisService.getObs(this.patientId, this.conceptComment)
     .subscribe(response => {
-      this.encounterUuid = response.results[0].uuid;
-      this.service.vitals(this.encounterUuid)
-      .subscribe(res => {
-        const obs = res.obs;
-        obs.forEach(observation => {
-          const display = observation.display;
-          if (display.match('Additional Comments') != null) {
-            const msg = display.slice(21, display.length);
-            this.comment.push({msg: msg, uuid: observation.uuid});
-          }
-        });
-      });
+      this.comment = response.results;
     });
   }
 
@@ -45,18 +36,23 @@ encounterUuid: string;
     const patientId = this.route.snapshot.params['patient_id'];
     const form = this.commentForm.value;
     const value = form.comment;
+    this.service.visitNote(this.patientId)
+        .subscribe(res => {
+        this.encounterUuid = res.results[0].uuid;
     const json = {
-      concept: '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      concept: this.conceptComment,
       person: patientId,
       obsDatetime: date,
       value: value,
       encounter: this.encounterUuid
     };
     this.service.postObs(json)
-    .subscribe(res => {
-      this.comment.push({msg: value});
+    .subscribe(resp => {
+      this.comment.push({value: value});
+      this.commentForm.reset();
     });
-  }
+  });
+}
 
   delete(i) {
     const uuid = this.comment[i].uuid;

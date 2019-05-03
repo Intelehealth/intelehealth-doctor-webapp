@@ -11,6 +11,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 })
 export class FollowUpComponent implements OnInit {
 followUp: any = [];
+conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 encounterUuid: string;
 patientId: string;
 errorText: string;
@@ -26,20 +27,9 @@ followForm = new FormGroup({
 
   ngOnInit() {
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.service.visitNote(this.patientId)
+    this.diagnosisService.getObs(this.patientId, this.conceptFollow)
     .subscribe(response => {
-      this.encounterUuid = response.results[0].uuid;
-      this.service.vitals(this.encounterUuid)
-      .subscribe(res => {
-        const obs = res.obs;
-        obs.forEach(observation => {
-          const display = observation.display;
-          if (display.match('Follow up visit') != null) {
-            const msg = display.slice(16, display.length);
-            this.followUp.push({msg: msg, uuid: observation.uuid});
-          }
-        });
-      });
+      this.followUp = response.results;
     });
   }
 
@@ -51,18 +41,23 @@ followForm = new FormGroup({
     if (!obsdate || !advice) {
       this.errorText = 'Please enter text.';
     } else {
+    this.service.visitNote(this.patientId)
+      .subscribe(res => {
+      this.encounterUuid = res.results[0].uuid;
     const json = {
-      concept: 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86',
+      concept: this.conceptFollow,
       person: this.patientId,
       obsDatetime: date,
       value: `${obsdate}, Advice: ${advice}`,
       encounter: this.encounterUuid
       };
       this.service.postObs(json)
-      .subscribe(res => {
-        this.followUp.push({msg: json.value});
+      .subscribe(resp => {
+        this.followUp.push({value: json.value});
         this.errorText = '';
+        this.followForm.reset();
       });
+    });
     }
   }
 
