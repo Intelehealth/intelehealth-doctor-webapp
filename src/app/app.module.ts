@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy} from '@angular/common';
+// import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
@@ -19,7 +19,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
         MatGridListModule,
         MatCardModule,
-        MatSnackBarModule } from '@angular/material/';
+        MatSnackBarModule,
+        MatInputModule } from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -38,7 +39,10 @@ import { AdviceComponent } from './component/patient-summary/advice/advice.compo
 import { FollowUpComponent } from './component/patient-summary/follow-up/follow-up.component';
 import { PrescribedMedicationComponent } from './component/patient-summary/prescribed-medication/prescribed-medication.component';
 import { PageNotFoundComponent } from './page-not-found.component';
+import { LoginPageComponent } from './component/login-page/login-page.component';
 
+import { CookieService } from 'ngx-cookie-service';
+import { AuthGuard } from './auth.guard';
 
 @NgModule({
   declarations: [
@@ -65,6 +69,7 @@ import { PageNotFoundComponent } from './page-not-found.component';
     PrescribedTestComponent,
     AdviceComponent,
     FollowUpComponent,
+    LoginPageComponent,
     PrescribedMedicationComponent,
     PageNotFoundComponent
   ],
@@ -74,24 +79,28 @@ import { PageNotFoundComponent } from './page-not-found.component';
     MatGridListModule,
     MatCardModule,
     MatSnackBarModule,
+    MatInputModule,
     NgxPaginationModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
     RouterModule.forRoot([
-      {path: '', component: HomepageComponent},
-      {path: 'findPatient', component: FindPatientComponent},
-      {path: 'myAccount', component: MyAccountComponent},
-      {path: 'activeVisit', component: ActiveVisitComponent},
-      {path: 'patientDashboard/:id', component: PatientDashboardComponent},
-      {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent},
+      {path: '', component: LoginPageComponent},
+      {path: 'home', component: HomepageComponent, canActivate: [AuthGuard]},
+      {path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard]},
+      {path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
+      {path: 'activeVisit', component: ActiveVisitComponent, canActivate: [AuthGuard]},
+      {path: 'patientDashboard/:id', component: PatientDashboardComponent, canActivate: [AuthGuard]},
+      {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard]},
       {path: '**', component: PageNotFoundComponent}
   ])
  ],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    CookieService,
+    AuthGuard,
+    // { provide: APP_BASE_HREF, useValue: '/' },
+    // { provide: LocationStrategy, useClass: HashLocationStrategy }
 ],
   bootstrap: [AppComponent]
 })

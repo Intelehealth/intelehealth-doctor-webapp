@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, ObservableLike } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +32,13 @@ export class EncounterService {
   session(): Observable<any> {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
     return this.http.get(url);
+  }
+
+  loginSession(base64): Observable<any> {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + base64);
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
+    return this.http.get(url, {headers});
   }
 
   provider(userId): Observable<any> {

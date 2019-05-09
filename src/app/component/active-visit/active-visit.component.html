@@ -11,8 +11,8 @@
     </tr>
 </thead>
 <tbody>
-    <tr *ngFor="let data of dataSource | paginate: { itemsPerPage: 10, currentPage: p }; index as i">
-        <td>{{((p - 1)*10) + (i + 1)}}</td>
+    <tr *ngFor="let data of dataSource | paginate: { itemsPerPage: 5, currentPage: q, id: 'q'}; index as i">
+        <td>{{((p - 1)*5) + (i + 1)}}</td>
         <td>{{data.patient.identifiers[0].identifier}}</td>
         <td><a [routerLink]="['/patientDashboard', data.patient.uuid]">{{data.patient.person.display}}</a></td>
         <td>{{data.patient.person.gender}}</td>
@@ -23,5 +23,5 @@
 </tbody>
 </table>
 <div style="text-align:center;">
-<pagination-controls (pageChange)="p = $event"></pagination-controls>
+<pagination-controls (pageChange)="q = $event" id = "q"></pagination-controls>
 </div>

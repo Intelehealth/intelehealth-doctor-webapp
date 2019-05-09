@@ -25,7 +25,7 @@ form = new FormGroup ({
 onSubmit () {
   const find = this.form.value;
   // tslint:disable-next-line:max-line-length
-  const url = `http://13.127.240.201:8080/openmrs/ws/rest/v1/patient?q=${find.find}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+  const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/patient?q=${find.find}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
   this.http.get(url)
   .subscribe(response => {
     this.value = response;

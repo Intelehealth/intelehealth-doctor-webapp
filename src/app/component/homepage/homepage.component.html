@@ -1,34 +1,89 @@
-
-<div class="card-group">
-<div class="card" >
-    <div class="card-body">
-      <h5 class="card-title">Find Patient</h5>
-      <p class="card-text">Search Patient using Name and OpenMRS Id.</p>
-      <a routerLink='/findPatient' class="btn btn-primary">Find</a>
+<div class="jumbotron">
+    <div class="row">
+            <div class="col-md-4">
+                <div class="card border-info mx-sm-2 p-3">
+                    <div class="card border-info shadow text-info p-3 my-card" ><span class="fa fa-users" aria-hidden="true"></span></div>
+                    <div class="text-info text-center mt-3"><h5>Active Visits </h5></div>
+                    <div class="text-info text-center mt-2"><h4>{{activePatient}}</h4></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-danger mx-sm-2 p-3">
+                    <div class="card border-danger shadow text-danger p-3 my-card" ><span class="fas fa-exclamation-triangle" aria-hidden="true"></span></div>
+                    <div class="text-danger text-center mt-3"><h5>Flagged Patient </h5></div>
+                    <div class="text-danger text-center mt-2"><h4>{{flagPatientNo}}</h4></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-warning mx-sm-2 p-3">
+                    <div class="card border-warning shadow text-warning p-3 my-card" ><span class="fa fa-inbox" aria-hidden="true"></span></div>
+                    <div class="text-warning text-center mt-3"><h5>Inbox</h5></div>
+                    <div class="text-warning text-center mt-2"><h4>346</h4></div>
+                </div>
+            </div>
     </div>
-  </div>
+</div>
 
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Active Visit</h5>
-      <p class="card-text">Patient with active visit.</p>
-      <a routerLink='/activeVisit' class="btn btn-primary">Active Visit <span class="badge badge-light">{{activePatient}}</span></a>
+<div class="container">
+  <h4>Flagged Visits</h4>
+  <table id="example" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Patient ID</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Location</th>
+        <th>Last Seen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of flagPatient | paginate: { itemsPerPage: 5, currentPage: p, id: 'p'}; index as i">
+        <td>{{((p - 1)*5) + (i + 1)}}</td>
+          <td>{{data.patient.identifiers[0].identifier}}</td>
+          <td><a [routerLink]="['/patientDashboard', data.patient.uuid]">{{data.patient.person.display}}</a></td>
+          <td>{{data.patient.person.gender}}</td>
+          <td>{{data.patient.person.age}}</td>
+          <td>{{data.location.display}}</td>
+          <td *ngIf="data.encounters.length > 0">{{data.encounters[0].display}}</td>
+        </tr>
+    </tbody>
+  </table>
+    <div style="text-align:center;">
+        <pagination-controls (pageChange)="p = $event" id = "p"></pagination-controls>
     </div>
-  </div>
+</div>
 
-  <div class="card" >
-    <div class="card-body">
-      <h5 class="card-title">My Account</h5>
-      <p class="card-text">Setup your signature here.</p>
-      <a routerLink='/myAccount' class="btn btn-primary">My Account</a>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Reports</h5>
-      <p class="card-text">.</p>
-      <a href='http://13.127.240.201:8080/openmrs/reportingui/reportsapp/home.page' class="btn btn-primary">Report</a>
-    </div>
-  </div>
+
+<div class="container">
+  <h4>Active Visits</h4>
+    <table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+          <tr>
+              <th>Index</th>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Age</th>
+              <th>Location</th>
+              <th>Last Seen</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let data of results | paginate: { itemsPerPage: 5, currentPage: q, id: 'q'}; index as i">
+              <td>{{((p - 1)*5) + (i + 1)}}</td>
+              <td>{{data.patient.identifiers[0].identifier}}</td>
+              <td><a [routerLink]="['/patientDashboard', data.patient.uuid]">{{data.patient.person.display}}</a></td>
+              <td>{{data.patient.person.gender}}</td>
+              <td>{{data.patient.person.age}}</td>
+              <td>{{data.location.display}}</td>
+              <td *ngIf="data.encounters.length > 0">{{data.encounters[0].display}}</td>
+          </tr>
+      </tbody>
+      </table>
+      <div style="text-align:center;">
+      <pagination-controls (pageChange)="q = $event" id = "q"></pagination-controls>
+      </div>
 </div>
