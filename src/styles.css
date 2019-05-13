@@ -16,3 +16,9 @@
     font-family: youthness;
     src: url(assets/fonts/Youthness.ttf) format("opentype");
   }
+
+  body {
+    background-color: #DCDCDC; 
+  }
+
+  /* #eff2f6 */

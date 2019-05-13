@@ -1,3 +1,143 @@
+<div class="container">
+<div class="row">
+    <div class="col-sm-4">
+      <div class="card text-white bg-primary">
+          <div class="card-body">
+          <div class="text-left">Active Visits <span style="float: right">{{activePatient}}</span></div>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-white bg-danger">
+          <div class="card-body">
+              <div class="text-left">Flagged <span style="float: right">{{flagPatientNo}}</span></div>
+          </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-white badge-warning">
+        <div class="card-body">
+
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+<br>
+
+<div class="container">
+<mat-card>
+<form [formGroup]="searchForm" (submit)="search()">
+<div class="container h-100">
+  <div class="d-flex justify-content-center h-100">
+    <div class="searchbar">
+      <input class="search_input" type="text" placeholder="Search Patient Id or Name" formControlName='input'>
+      <a class="search_icon"><i class="fas fa-search"></i></a>
+    </div>
+  </div>
+</div>
+</form>
+</mat-card>
+</div>
+
+<div *ngIf="!show" class="container">
+<br>
+<mat-card>
+  <div *ngIf="values.length > 0">
+    <div class="list-group">
+        <div *ngFor='let value of values'>
+            <a class="list-group-item list-group-item-action" [routerLink]="['/patientDashboard', value.uuid]">
+                <span class="patient-identifier">
+                    <span class="identifier-type">{{value.identifiers[0].identifierType.name}}</span>
+                    <span class="identifier">{{value.identifiers[0].identifier}}</span>
+                </span>
+                <span class="preferred-name">{{ value.person.display}}</span>
+                <span class="gender">{{ value.person.gender}}</span>
+                <span class="age">{{ value.person.age}}</span>
+            </a>
+        </div>
+        </div>
+      </div>
+      <div *ngIf="values.length == 0">
+        <h3> Sorry no Patient Found..</h3>
+      </div>  
+</mat-card>
+</div>
+
+<br>
+<br>
+
+<div *ngIf="show" class="container">
+<mat-card>
+<div class="table-responsive">
+  <h4>Flagged Visits</h4>
+  <table class="table table-bordered" style="width:100%">
+    <thead>
+      <tr>
+        <th class="text-center">Index</th>
+        <th class="text-center">Patient ID</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Location</th>
+        <th class="text-center">Last Seen</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of flagPatient | paginate: { itemsPerPage: 5, currentPage: p, id: 'p'}; index as i">
+        <td class="text-center">{{((p - 1)*5) + (i + 1)}}</td>
+          <td class="text-center">{{data.patient.identifiers[0].identifier}}</td>
+          <td>{{data.patient.person.display}}<div class="span1">{{data.patient.person.gender}}, {{data.patient.person.age}} </div></td>
+          <td class="text-center">{{data.location.display}}</td>
+          <td *ngIf="data.encounters.length > 0" class="text-center"><div class="badge badge-pill badge-danger">{{data.encounters[0].encounterType.display}}</div></td>
+          <td class="text-center"><button  class="btn btn-primary" [routerLink]="['/patientDashboard', data.patient.uuid]">View</button></td>
+        </tr>
+    </tbody>
+  </table>
+    <div style="text-align:center;">
+        <pagination-controls (pageChange)="p = $event" id = "p"></pagination-controls>
+    </div>
+  </div>
+  </mat-card>
+
+
+
+<br>
+
+
+
+<mat-card>
+<div class="table-responsive ">
+  <h4>Active Visits</h4>
+    <table class="table table-bordered" style="width:100%">
+        <thead>
+          <tr>
+              <th class="text-center">Index</th>
+              <th class="text-center">Patient ID</th>
+              <th class="text-center">Name</th>
+              <th class="text-center">Location</th>
+              <th class="text-center">Last Seen</th>
+              <th class="text-center">Action</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let data of results | paginate: { itemsPerPage: 5, currentPage: q, id: 'q'}; index as i">
+              <td class="text-center">{{((p - 1)*5) + (i + 1)}}</td>
+              <td class="text-center">{{data.patient.identifiers[0].identifier}}</td>
+              <td>{{data.patient.person.display}}<div class="span1">{{data.patient.person.gender}}, {{data.patient.person.age}} </div></td>
+              <td class="text-center">{{data.location.display}}</td>
+              <td *ngIf="data.encounters.length > 0" class="text-center"><div [ngClass]="{'badge badge-pill badge-warning': data.encounters[0].encounterType.display === 'ADULTINITIAL', 'badge badge-success': data.encounters[0].encounterType.display === 'Visit Complete', 'badge badge-pill badge-primary': data.encounters[0].encounterType.display === 'Visit Note'}">{{data.encounters[0].encounterType.display}}</div></td>
+              <td class="text-center"><button  class="btn btn-primary" [routerLink]="['/patientDashboard', data.patient.uuid]">View</button></td>
+            </tr>
+      </tbody>
+      </table>
+      <div style="text-align:center;">
+      <pagination-controls (pageChange)="q = $event" id = "q"></pagination-controls>
+      </div>
+</div>
+</mat-card>
+</div>
+
+<!-- 
 <div class="jumbotron">
     <div class="row">
             <div class="col-md-4">
@@ -22,68 +162,5 @@
                 </div>
             </div>
     </div>
-</div>
-
-<div class="container">
-  <h4>Flagged Visits</h4>
-  <table id="example" class="table table-striped table-bordered" style="width:100%">
-    <thead>
-      <tr>
-        <th>Index</th>
-        <th>Patient ID</th>
-        <th>Name</th>
-        <th>Gender</th>
-        <th>Age</th>
-        <th>Location</th>
-        <th>Last Seen</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of flagPatient | paginate: { itemsPerPage: 5, currentPage: p, id: 'p'}; index as i">
-        <td>{{((p - 1)*5) + (i + 1)}}</td>
-          <td>{{data.patient.identifiers[0].identifier}}</td>
-          <td><a [routerLink]="['/patientDashboard', data.patient.uuid]">{{data.patient.person.display}}</a></td>
-          <td>{{data.patient.person.gender}}</td>
-          <td>{{data.patient.person.age}}</td>
-          <td>{{data.location.display}}</td>
-          <td *ngIf="data.encounters.length > 0">{{data.encounters[0].display}}</td>
-        </tr>
-    </tbody>
-  </table>
-    <div style="text-align:center;">
-        <pagination-controls (pageChange)="p = $event" id = "p"></pagination-controls>
-    </div>
-</div>
-
-
-
-<div class="container">
-  <h4>Active Visits</h4>
-    <table id="example" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-          <tr>
-              <th>Index</th>
-              <th>Patient ID</th>
-              <th>Name</th>
-              <th>Gender</th>
-              <th>Age</th>
-              <th>Location</th>
-              <th>Last Seen</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr *ngFor="let data of results | paginate: { itemsPerPage: 5, currentPage: q, id: 'q'}; index as i">
-              <td>{{((p - 1)*5) + (i + 1)}}</td>
-              <td>{{data.patient.identifiers[0].identifier}}</td>
-              <td><a [routerLink]="['/patientDashboard', data.patient.uuid]">{{data.patient.person.display}}</a></td>
-              <td>{{data.patient.person.gender}}</td>
-              <td>{{data.patient.person.age}}</td>
-              <td>{{data.location.display}}</td>
-              <td *ngIf="data.encounters.length > 0">{{data.encounters[0].display}}</td>
-          </tr>
-      </tbody>
-      </table>
-      <div style="text-align:center;">
-      <pagination-controls (pageChange)="q = $event" id = "q"></pagination-controls>
-      </div>
-</div>
+    data.encounters[0].encounterType.display === 'ADULTINITIAL'? 'badge badge-warning' : 'badge badge-success'"
+</div> -->

@@ -12,11 +12,11 @@ import { VitalsComponent } from './component/active-visit/patient-dashboard/vita
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {NgxPaginationModule} from 'ngx-pagination';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
+import {MatDialogModule,
         MatGridListModule,
         MatCardModule,
         MatSnackBarModule,
@@ -29,7 +29,6 @@ import { OnExaminationComponent } from './component/patient-summary/on-examinati
 import { PhysicalExaminationComponent } from './component/patient-summary/physical-examination/physical-examination.component';
 import { AdditionalDocumentsComponent } from './component/patient-summary/additional-documents/additional-documents.component';
 import { VitalComponent } from './component/patient-summary/vital/vital.component';
-import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { MyAccountComponent } from './component/my-account/my-account.component';
 import { PatientInteractionComponent } from './component/patient-summary/patient-interaction/patient-interaction.component';
 import { AdditionalCommentComponent } from './component/patient-summary/additional-comment/additional-comment.component';
@@ -43,6 +42,8 @@ import { LoginPageComponent } from './component/login-page/login-page.component'
 
 import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from './auth.guard';
+import { NavbarComponent } from './component/layout/navbar/navbar.component';
+import { ChangePasswordComponent } from './component/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,6 @@ import { AuthGuard } from './auth.guard';
     PhysicalExaminationComponent,
     AdditionalDocumentsComponent,
     VitalComponent,
-    FindPatientComponent,
     MyAccountComponent,
     PatientInteractionComponent,
     AdditionalCommentComponent,
@@ -71,7 +71,9 @@ import { AuthGuard } from './auth.guard';
     FollowUpComponent,
     LoginPageComponent,
     PrescribedMedicationComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    NavbarComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -80,16 +82,17 @@ import { AuthGuard } from './auth.guard';
     MatCardModule,
     MatSnackBarModule,
     MatInputModule,
+    MatDialogModule,
     NgxPaginationModule,
+    NgbModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgbModule,
     RouterModule.forRoot([
       {path: '', component: LoginPageComponent},
       {path: 'home', component: HomepageComponent, canActivate: [AuthGuard]},
-      {path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard]},
       {path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
+      {path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard]},
       {path: 'activeVisit', component: ActiveVisitComponent, canActivate: [AuthGuard]},
       {path: 'patientDashboard/:id', component: PatientDashboardComponent, canActivate: [AuthGuard]},
       {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard]},
