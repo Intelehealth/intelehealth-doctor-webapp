@@ -9,6 +9,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 })
 export class PresentingComplaintsComponent implements OnInit {
   complaint: any = [];
+  complaintPresent = false;
   conceptComplaint = '3edb0e09-9135-481e-b8f0-07a26fa9a5ce';
 
   constructor(private diagnosisService: DiagnosisService,
@@ -19,6 +20,9 @@ export class PresentingComplaintsComponent implements OnInit {
     this.diagnosisService.getObs(uuid, this.conceptComplaint)
     .subscribe(response => {
       this.complaint = response.results[0];
+      if (this.complaint !== undefined) {
+        this.complaintPresent = true;
+      }
     });
  }
 }

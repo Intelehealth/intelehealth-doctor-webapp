@@ -2,7 +2,7 @@
     margin-bottom: auto;
     margin-top: auto;
     height: 60px;
-    background-color: #353b48;
+    background-color: #8eb8f7;
     border-radius: 30px;
     padding: 10px;
     }
@@ -65,4 +65,19 @@
     
       .age, .gender {
         font-size: 1.2em;
+      }
+
+
+
+      table {
+        width: 100%;
+      }
+      
+      .mat-form-field {
+        font-size: 14px;
+        width: 20%;
+      }
+      
+      td, th {
+        width: 14.30%;
       }

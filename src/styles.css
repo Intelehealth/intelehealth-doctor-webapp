@@ -1,7 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-
 @font-face {
     font-family: arty;
     src: url(assets/fonts/Arty.otf) format("opentype");
@@ -18,7 +17,13 @@
   }
 
   body {
-    background-color: #DCDCDC; 
+    background-color: #f1f4f6;
+    /* font-family: Roboto; */
+    margin: 0;
+  }
+
+  html, body{
+    height: 100%;
   }
 
   /* #eff2f6 */

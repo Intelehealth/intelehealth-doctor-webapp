@@ -1,2 +1,5 @@
-<h4>Family History</h4>
+<h4><i class="fas fa-users"></i> Family History</h4>
+<hr>
+<ng-container *ngIf="familyHistoryPresent">
 <div [innerHTML] ="familyHistory.value"></div>
+</ng-container>

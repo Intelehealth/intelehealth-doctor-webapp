@@ -1,10 +1,17 @@
-<h4>Doctor's Note</h4>
+<h4><i class="fas fa-notes-medical"></i> Doctor's Note</h4>
+<hr>
 <form [formGroup]='commentForm' (ngSubmit)='Submit()'>
 <div>
-<input type="text" formControlName='comment'>
-<button type="submit" [disabled]='!commentForm.valid'>Add Note</button>
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Doctor's Note" formControlName='comment'>
+    </mat-form-field>
+    &nbsp;&nbsp;
+<!-- <input type="text" formControlName='comment'> -->
+<button type="submit" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
 </div>
 </form>
+<ng-container *ngIf="comment.length >= 0">
 <div *ngFor="let comment of comment, index as i">
-    <div class="alert alert-primary" style="margin: 10px 7px;">{{comment.value}} <i (click)="delete(i)" class="material-icons">delete</i></div>
+    <div class="alert alert-primary">{{comment.value}} <i (click)="delete(i)" class="material-icons float-right">delete</i></div>
 </div>
+</ng-container>

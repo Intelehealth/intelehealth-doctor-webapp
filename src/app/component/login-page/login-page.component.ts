@@ -24,6 +24,10 @@ export class LoginPageComponent implements OnInit {
               private authService: AuthService) { }
 
   ngOnInit() {
+    const isLoggedIn: boolean = this.authService.isLoggedIn();
+    if (isLoggedIn) {
+      this.router.navigateByUrl('/home');
+    }
   }
 
 onSubmit() {

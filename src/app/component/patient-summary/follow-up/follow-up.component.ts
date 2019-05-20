@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-follow-up',
@@ -17,13 +18,14 @@ patientId: string;
 errorText: string;
 
 followForm = new FormGroup({
-  date: new FormControl(''),
+  date: new FormControl('', [Validators.required]),
   advice: new FormControl('')
 });
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private datepipe: DatePipe) { }
 
   ngOnInit() {
     this.patientId = this.route.snapshot.params['patient_id'];
@@ -36,7 +38,7 @@ followForm = new FormGroup({
   Submit() {
     const date = new Date();
     const form = this.followForm.value;
-    const obsdate = form.date;
+    const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
     if (!obsdate || !advice) {
       this.errorText = 'Please enter text.';

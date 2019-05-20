@@ -1,3 +1,5 @@
-<h4>Past Medical History</h4>
-<div [innerHTML]=pastMedical.value>
-</div>
+<h4><i class="fas fa-book-medical"></i> Past Medical History</h4>
+<hr>
+<ng-container *ngIf="pastMedicalHistoryPresent">
+<div [innerHTML]=pastMedical.value></div>
+</ng-container>

@@ -8,12 +8,15 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./patient-summary.component.css']
 })
 export class PatientSummaryComponent implements OnInit {
+show = false;
 
-  constructor(private service: EncounterService,
-              private route: ActivatedRoute,
-              ) { }
+constructor(private service: EncounterService,
+              private route: ActivatedRoute) { }
 
   ngOnInit() {
+  }
+
+  onClick() {
     const myDate = new Date();
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -38,11 +41,13 @@ export class PatientSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json)
             .subscribe(response => {
+              console.log(response);
             });
           });
         });
       }
     });
+    this.show = true;
   }
 }
 

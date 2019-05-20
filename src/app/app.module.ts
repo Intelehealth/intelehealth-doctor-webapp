@@ -4,23 +4,27 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
-import { ActiveVisitComponent } from './component/active-visit/active-visit.component';
-import { PatientDashboardComponent } from './component/active-visit/patient-dashboard/patient-dashboard.component';
-import { ProfileImageComponent } from './component/active-visit/patient-dashboard/profile-image/profile-image.component';
-import { RecentVisitsComponent } from './component/active-visit/patient-dashboard/recent-visits/recent-visits.component';
-import { VitalsComponent } from './component/active-visit/patient-dashboard/vitals/vitals.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgxPaginationModule} from 'ngx-pagination';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatDialogModule,
         MatGridListModule,
         MatCardModule,
         MatSnackBarModule,
-        MatInputModule } from '@angular/material/';
+        MatInputModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule,
+        MatIconModule,
+        MatRadioModule,
+        MatTooltipModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule } from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -44,16 +48,15 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from './auth.guard';
 import { NavbarComponent } from './component/layout/navbar/navbar.component';
 import { ChangePasswordComponent } from './component/change-password/change-password.component';
+import { FooterComponent } from './component/layout/footer/footer.component';
+import { PatientinfoComponent } from './component/patient-summary/patientinfo/patientinfo.component';
+import { PastVisitsComponent } from './component/patient-summary/past-visits/past-visits.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomepageComponent,
-    ActiveVisitComponent,
-    PatientDashboardComponent,
-    ProfileImageComponent,
-    RecentVisitsComponent,
-    VitalsComponent,
     PatientSummaryComponent,
     FamilyHistoryComponent,
     PastMedicalHistoryComponent,
@@ -73,14 +76,26 @@ import { ChangePasswordComponent } from './component/change-password/change-pass
     PrescribedMedicationComponent,
     PageNotFoundComponent,
     NavbarComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    FooterComponent,
+    PatientinfoComponent,
+    PastVisitsComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    MatTooltipModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     MatGridListModule,
     MatCardModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatIconModule,
     MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatInputModule,
     MatDialogModule,
     NgxPaginationModule,
@@ -93,15 +108,14 @@ import { ChangePasswordComponent } from './component/change-password/change-pass
       {path: 'home', component: HomepageComponent, canActivate: [AuthGuard]},
       {path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
       {path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard]},
-      {path: 'activeVisit', component: ActiveVisitComponent, canActivate: [AuthGuard]},
-      {path: 'patientDashboard/:id', component: PatientDashboardComponent, canActivate: [AuthGuard]},
       {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard]},
       {path: '**', component: PageNotFoundComponent}
-  ])
+  ]),
  ],
   providers: [
     CookieService,
     AuthGuard,
+    DatePipe
     // { provide: APP_BASE_HREF, useValue: '/' },
     // { provide: LocationStrategy, useClass: HashLocationStrategy }
 ],

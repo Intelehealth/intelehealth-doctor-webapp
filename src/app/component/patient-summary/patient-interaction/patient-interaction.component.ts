@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -12,7 +12,7 @@ export class PatientInteractionComponent implements OnInit {
 msg: any = [];
 
   interaction = new FormGroup ({
-    interaction: new FormControl('')
+    interaction: new FormControl('', [Validators.required])
   });
   constructor(private service: VisitService,
               private route: ActivatedRoute) { }

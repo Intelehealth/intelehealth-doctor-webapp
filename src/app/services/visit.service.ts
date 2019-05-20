@@ -14,7 +14,7 @@ export class VisitService {
 getVisits(): Observable<any> {
     const base_url = window.location.origin;
     // tslint:disable-next-line:max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age)),location:(display),encounters:(display,encounterDatetime,encounterType:(display)))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,encounterType:(display)))`;
     return this.http.get(url);
 }
 
@@ -37,5 +37,11 @@ getAttribute(visitId): Observable<any> {
 postAttriute(visitId, json): Observable<any> {
   const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit/${visitId}/attribute`;
   return this.http.post(url, json);
+}
+
+patientInfo(id): Observable<any> {
+// tslint:disable-next-line: max-line-length
+  const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/patient/${id}?v=custom:(person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+  return this.http.get(url);
 }
 }

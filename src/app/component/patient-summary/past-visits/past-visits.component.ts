@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { VisitService } from 'src/app/services/visit.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-recent-visits',
-  templateUrl: './recent-visits.component.html',
-  styleUrls: ['./recent-visits.component.css']
+  selector: 'app-past-visits',
+  templateUrl: './past-visits.component.html',
+  styleUrls: ['./past-visits.component.css']
 })
-export class RecentVisitsComponent implements OnInit {
+export class PastVisitsComponent implements OnInit {
   recentVisit: any = [ ];
   observation: {};
   visitStatus: String;
@@ -16,7 +16,7 @@ export class RecentVisitsComponent implements OnInit {
     private service: VisitService) { }
 
   ngOnInit() {
-    const patientUuid = this.route.snapshot.paramMap.get('id');
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     this.service.recentVisits(patientUuid)
     .subscribe(response => {
       const visits = response.results;
@@ -52,4 +52,3 @@ export class RecentVisitsComponent implements OnInit {
       });
   }
 }
-

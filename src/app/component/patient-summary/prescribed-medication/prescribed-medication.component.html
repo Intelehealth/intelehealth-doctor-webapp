@@ -1,12 +1,12 @@
-<h4>Prescribed Medication</h4>
+<h4><i class="fas fa-pills"></i> Prescribed Medication</h4>
+<hr>
 <div>
   <form [formGroup]="medForm" (submit)="onSubmit()">
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <input type="text" (keypress)="add = true" class="form-control" [ngbTypeahead]="searchPrescription" formControlName="med">
-    </div>
-    <button type="submit" [disabled]='!medForm.valid' class="btn btn-primary">Submit</button>
-  </div>
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="Medication" (keypress)="add = true"  [ngbTypeahead]="searchPrescription" formControlName="med">
+        </mat-form-field>
+        &nbsp;&nbsp;
+    <button type="submit"  mat-raised-button color="primary" [disabled]='!medForm.valid'>Add Meds</button>
   <div *ngIf="add">
     <div class="form-row">
       <div class="col-auto">
@@ -40,6 +40,8 @@
   </div>
 </form>
 </div>
+<ng-container *ngIf="meds.length >= 0">
 <div *ngFor='let meds of meds, index as i'>
-  <div class="alert alert-primary" style="margin: 10px 7px;">{{meds.value}} <i (click)="delete(i)" class="material-icons">delete</i></div>
+  <div class="alert alert-primary">{{meds.value}} <i (click)="delete(i)" class="material-icons float-right">delete</i></div>
 </div>
+</ng-container>

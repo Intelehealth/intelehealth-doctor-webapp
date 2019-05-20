@@ -10,6 +10,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 })
 export class FamilyHistoryComponent implements OnInit {
 familyHistory: any = [];
+familyHistoryPresent = false;
 conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
 
   constructor(private diagnosisService: DiagnosisService,
@@ -20,6 +21,9 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
     this.diagnosisService.getObs(uuid, this.conceptFamilyHistory)
     .subscribe(response => {
       this.familyHistory = response.results[0];
+      if (this.familyHistory !== undefined) {
+        this.familyHistoryPresent = true;
+      }
     });
   }
 }

@@ -1,44 +1,30 @@
 <div class="container">
 <div class="row">
     <div class="col-sm-4">
-      <div class="card text-white bg-primary">
+        <div class="card text-white" style="background-image: linear-gradient(#F6BFE9, #A18CD1);">
+            <div class="card-body">
+                <div class="text-left">Flagged Visits<span style="float: right">{{flagPatientNo}}</span></div>
+            </div>
+        </div>
+      </div>
+    <div class="col-sm-4">
+      <div class="card text-white" style="background-image: radial-gradient(#17D9E4, #24CFE8, #36BFEF);">
           <div class="card-body">
-          <div class="text-left">Active Visits <span style="float: right">{{activePatient}}</span></div>
+              <div class="text-left">CHW Note<span style="float: right">{{activePatient}}</span></div>
           </div>
       </div>
     </div>
     <div class="col-sm-4">
-      <div class="card text-white bg-danger">
-          <div class="card-body">
-              <div class="text-left">Flagged <span style="float: right">{{flagPatientNo}}</span></div>
-          </div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="card text-white badge-warning">
+      <div class="card text-white" style="background-image: linear-gradient(#07B196, #90C741);">
         <div class="card-body">
-
+            <div class="text-left">Visit Note<span style="float: right">{{visitNoteNo}}</span></div>
         </div>
       </div>
     </div>
 </div>
 </div>
-<br>
 
-<div class="container">
-<mat-card>
-<form [formGroup]="searchForm" (submit)="search()">
-<div class="container h-100">
-  <div class="d-flex justify-content-center h-100">
-    <div class="searchbar">
-      <input class="search_input" type="text" placeholder="Search Patient Id or Name" formControlName='input'>
-      <a class="search_icon"><i class="fas fa-search"></i></a>
-    </div>
-  </div>
-</div>
-</form>
-</mat-card>
-</div>
+
 
 <div *ngIf="!show" class="container">
 <br>
@@ -46,15 +32,16 @@
   <div *ngIf="values.length > 0">
     <div class="list-group">
         <div *ngFor='let value of values'>
-            <a class="list-group-item list-group-item-action" [routerLink]="['/patientDashboard', value.uuid]">
+            <div class="list-group-item ">
                 <span class="patient-identifier">
                     <span class="identifier-type">{{value.identifiers[0].identifierType.name}}</span>
                     <span class="identifier">{{value.identifiers[0].identifier}}</span>
                 </span>
                 <span class="preferred-name">{{ value.person.display}}</span>
-                <span class="gender">{{ value.person.gender}}</span>
+                <span class="gender">{{ value.person.gender}}, </span>
                 <span class="age">{{ value.person.age}}</span>
-            </a>
+                <button style="float: right"class="btn btn-primary" [routerLink]="['/patientSummary', value.uuid]">View</button>
+              </div>
         </div>
         </div>
       </div>
@@ -64,32 +51,36 @@
 </mat-card>
 </div>
 
-<br>
-<br>
 
 <div *ngIf="show" class="container">
+<ng-container *ngIf="flagPatient.length > 0">
+<br>
 <mat-card>
+<h4>Flagged Visits</h4>
 <div class="table-responsive">
-  <h4>Flagged Visits</h4>
-  <table class="table table-bordered" style="width:100%">
+  <table class="table table-striped table-borderless " style="width:100%">
     <thead>
       <tr>
-        <th class="text-center">Index</th>
         <th class="text-center">Patient ID</th>
-        <th class="text-center">Name</th>
+        <th>Name</th>
+        <th class="text-center">Gender</th>
+        <th class="text-center">DOB</th>
         <th class="text-center">Location</th>
+        <th class="text-center">Status</th>
         <th class="text-center">Last Seen</th>
-        <th class="text-center">Action</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of flagPatient | paginate: { itemsPerPage: 5, currentPage: p, id: 'p'}; index as i">
-        <td class="text-center">{{((p - 1)*5) + (i + 1)}}</td>
-          <td class="text-center">{{data.patient.identifiers[0].identifier}}</td>
-          <td>{{data.patient.person.display}}<div class="span1">{{data.patient.person.gender}}, {{data.patient.person.age}} </div></td>
+        <tr *ngFor="let data of flagPatient | paginate: { itemsPerPage: 5, currentPage: p, id: 'p'}; index as i">
+          <td class="text-center"><a [routerLink]="['/patientSummary', data.patient.uuid, data.uuid]">{{data.patient.identifiers[0].identifier}}</a></td>
+          <td>{{data.patient.person.display}}
+            <!-- <div class="span1">{{data.patient.person.gender}}, {{data.patient.person.age}} years </div> -->
+          </td>
+          <td class="text-center">{{data.patient.person.gender}}</td>
+          <td class="text-center">{{data.patient.person.birthdate | date: 'dd-MMM-yy'}}</td>
           <td class="text-center">{{data.location.display}}</td>
           <td *ngIf="data.encounters.length > 0" class="text-center"><div class="badge badge-pill badge-danger">{{data.encounters[0].encounterType.display}}</div></td>
-          <td class="text-center"><button  class="btn btn-primary" [routerLink]="['/patientDashboard', data.patient.uuid]">View</button></td>
+          <td class="text-center">{{data.encounters[0].encounterDatetime | date: 'dd-MMM-yy  h:mm a'}}</td>
         </tr>
     </tbody>
   </table>
@@ -97,70 +88,98 @@
         <pagination-controls (pageChange)="p = $event" id = "p"></pagination-controls>
     </div>
   </div>
-  </mat-card>
-
-
+</mat-card>
+</ng-container>
 
 <br>
 
+<!-- <mat-card *ngIf="results.length > 0"> -->
+    <!-- <h4>VISITS QUEUE</h4> -->
+    <mat-form-field class="float-right">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+    </mat-form-field>
+  
+      
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort>
+      
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
+            <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]"> {{row.id}} </a></td>
+          </ng-container>
+      
+          <!-- Progress Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+          </ng-container>
+      
+          <!-- Name Column -->
+          <ng-container matColumnDef="gender">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+            <td mat-cell *matCellDef="let row"> {{row.gender}} </td>
+          </ng-container>
+      
+          <!-- Color Column -->
+          <ng-container matColumnDef="dob">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> DOB </th>
+            <td mat-cell *matCellDef="let row"> {{row.dob | date: 'dd-MMM-yyyy'}} </td>
+          </ng-container>
 
+          <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
+              <td mat-cell *matCellDef="let row"> {{row.location}} </td>
+          </ng-container>
 
-<mat-card>
-<div class="table-responsive ">
-  <h4>Active Visits</h4>
-    <table class="table table-bordered" style="width:100%">
+          <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+              <td mat-cell *matCellDef="let row"><div class= "badge badge-pill" [ngClass]="{'badge-warning': row.status == 'ADULTINITIAL', 'badge-success': row.status === 'Visit Complete', 'badge-info': row.status === 'Visit Note'}">{{row.status}}</div></td>
+          </ng-container>
+              
+          <ng-container matColumnDef="lastSeen">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
+              <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+          </tr>
+        </table>
+      
+        <mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+      </div>
+      
+
+<!-- <div class="table-responsive ">
+    <table class="table table-striped table-borderless" style="width:100%">
         <thead>
           <tr>
-              <th class="text-center">Index</th>
               <th class="text-center">Patient ID</th>
-              <th class="text-center">Name</th>
+              <th class="text-left">Name</th>
+              <th class="text-center">Gender</th>
+              <th class="text-center">DOB</th>
               <th class="text-center">Location</th>
+              <th class="text-center">Status</th>
               <th class="text-center">Last Seen</th>
-              <th class="text-center">Action</th>
           </tr>
       </thead>
-      <tbody>
+      <tbody >
           <tr *ngFor="let data of results | paginate: { itemsPerPage: 5, currentPage: q, id: 'q'}; index as i">
-              <td class="text-center">{{((p - 1)*5) + (i + 1)}}</td>
-              <td class="text-center">{{data.patient.identifiers[0].identifier}}</td>
-              <td>{{data.patient.person.display}}<div class="span1">{{data.patient.person.gender}}, {{data.patient.person.age}} </div></td>
+              <td class="text-center"><a [routerLink]="['/patientSummary', data.patient.uuid, data.uuid]">{{data.patient.identifiers[0].identifier}}</a></td>
+              <td>{{data.patient.person.display}}</td>
+              <td class="text-center">{{data.patient.person.gender}}</td>
+              <td class="text-center">{{data.patient.person.birthdate | date: 'dd-MMM-yyyy'}}</td>
               <td class="text-center">{{data.location.display}}</td>
-              <td *ngIf="data.encounters.length > 0" class="text-center"><div [ngClass]="{'badge badge-pill badge-warning': data.encounters[0].encounterType.display === 'ADULTINITIAL', 'badge badge-success': data.encounters[0].encounterType.display === 'Visit Complete', 'badge badge-pill badge-primary': data.encounters[0].encounterType.display === 'Visit Note'}">{{data.encounters[0].encounterType.display}}</div></td>
-              <td class="text-center"><button  class="btn btn-primary" [routerLink]="['/patientDashboard', data.patient.uuid]">View</button></td>
+              <td *ngIf="data.encounters.length > 0" class="text-center"><div class= "badge badge-pill" [ngClass]="{'badge-warning': data.encounters[0].encounterType.display == 'ADULTINITIAL', 'badge-success': data.encounters[0].encounterType.display === 'Visit Complete', 'badge-info': data.encounters[0].encounterType.display === 'Visit Note'}">{{data.encounters[0].encounterType.display}}</div></td>
+              <td class="text-center">{{data.encounters[0].encounterDatetime | date: 'dd-MMM-yyyy, h:mm a'}}</td>
             </tr>
       </tbody>
       </table>
       <div style="text-align:center;">
       <pagination-controls (pageChange)="q = $event" id = "q"></pagination-controls>
       </div>
-</div>
-</mat-card>
-</div>
-
-<!-- 
-<div class="jumbotron">
-    <div class="row">
-            <div class="col-md-4">
-                <div class="card border-info mx-sm-2 p-3">
-                    <div class="card border-info shadow text-info p-3 my-card" ><span class="fa fa-users" aria-hidden="true"></span></div>
-                    <div class="text-info text-center mt-3"><h5>Active Visits </h5></div>
-                    <div class="text-info text-center mt-2"><h4>{{activePatient}}</h4></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-danger mx-sm-2 p-3">
-                    <div class="card border-danger shadow text-danger p-3 my-card" ><span class="fas fa-exclamation-triangle" aria-hidden="true"></span></div>
-                    <div class="text-danger text-center mt-3"><h5>Flagged Patient </h5></div>
-                    <div class="text-danger text-center mt-2"><h4>{{flagPatientNo}}</h4></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-warning mx-sm-2 p-3">
-                    <div class="card border-warning shadow text-warning p-3 my-card" ><span class="fa fa-inbox" aria-hidden="true"></span></div>
-                    <div class="text-warning text-center mt-3"><h5>Inbox</h5></div>
-                    <div class="text-warning text-center mt-2"><h4>346</h4></div>
-                </div>
-            </div>
-    </div>
-    data.encounters[0].encounterType.display === 'ADULTINITIAL'? 'badge badge-warning' : 'badge badge-success'"
 </div> -->
+<!-- </mat-card> -->
+</div>
+     

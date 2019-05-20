@@ -1,15 +1,24 @@
-<h4>Follow Up</h4>
+<h4><i class="fas fa-book"></i> Follow Up</h4>
+<hr>
 <div>
 <form [formGroup]="followForm" (ngSubmit)='Submit()'>
 <div>
-<input type="date" formControlName='date'>
-<input type="text" formControlName='advice'>
-<button type="submit" [hidden]='followUp.length > 0'>Schedule a Follow UP</button>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" formControlName='date'>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Leave a comment" formControlName='advice'></textarea>
+      </mat-form-field>
+<button type="submit" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>Schedule a Follow UP</button>
 </div>
 {{errorText}}
 </form>
+<ng-container *ngIf="followUp.length >= 0">
 <div *ngFor='let followUp of followUp, index as i '>
-  <div class="alert alert-primary" style="margin: 10px 7px;" >{{followUp.value}} <a (click)="delete(i)"class="material-icons">delete</a></div>
+  <div class="alert alert-primary">{{followUp.value}} <a (click)="delete(i)"class="material-icons float-right">delete</a></div>
+  <p>*please delete current schedule to schedule a new follow up.</p>
 </div>
+</ng-container>
 </div>
-<p>*please delete current schedule to schedule a new follow up.</p>

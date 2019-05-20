@@ -1,30 +1,28 @@
-<h4>Diagnosis</h4>
+<h4><i class="fas fa-diagnoses"></i> Diagnosis</h4>
+<hr>
 <div>
 <form [formGroup]='diagnosisForm' (submit)='onSubmit()'>
-  <input type="text" formControlName='text'>
-  <div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Primary">
-    <label class="form-check-label" for="inlineRadio1">Primary</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Secondary">
-    <label class="form-check-label" for="inlineRadio2">Secondary</label>
-  </div>
-</div>
-<div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="inlineRadioOptions1" id="inlineRadio1" value="Provisional">
-    <label class="form-check-label" for="inlineRadio1">Provisional</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="inlineRadioOptions1" id="inlineRadio2" value="Confirmed">
-    <label class="form-check-label" for="inlineRadio2">Confirmed</label>
-  </div>
-</div>
-  <button type="submit" [disabled]='!diagnosisForm.valid'>Submit</button>
+    <mat-form-field class="example-full-width">
+        <input matInput placeholder="Diagnosis">
+    </mat-form-field>
+    <div>
+    <mat-radio-group aria-label="Select an option">
+        <mat-radio-button value="Primary">Primary </mat-radio-button>
+        <mat-radio-button value="Secondary">Secondary</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div>
+    <mat-radio-group aria-label="Select an option">
+        <mat-radio-button value="Provisional">Provisional </mat-radio-button>
+        <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
+      </mat-radio-group>
+    </div>
+   <br>
+  <button type="submit" mat-raised-button color="primary" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
 </form>
 </div>
+<ng-container *ngIf="diagnosis.length >= 0">
 <div *ngFor='let diagnosis of diagnosis, index as i'>
-  <div class="alert alert-primary" style="margin: 10px 7px;">{{diagnosis.value}} <i (click)="delete(i)" class="material-icons">delete</i></div>
+  <div class="alert alert-primary">{{diagnosis.value}} <i (click)="delete(i)" class="material-icons float-right">delete</i></div>
 </div>
+</ng-container>

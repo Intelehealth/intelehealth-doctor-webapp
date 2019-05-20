@@ -9,6 +9,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 })
 export class OnExaminationComponent implements OnInit {
 onExam: any = [];
+onExamPresent  = false;
 conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
 
   constructor(private diagnosisService: DiagnosisService,
@@ -19,6 +20,9 @@ conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
     this.diagnosisService.getObs(uuid, this.conceptOnExam)
     .subscribe(response => {
       this.onExam = response.results[0];
+      if ( this.onExam !== undefined) {
+        this.onExamPresent = true;
+      }
     });
  }
 }

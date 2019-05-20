@@ -9,6 +9,7 @@ import { DiagnosisService } from './../../../services/diagnosis.service';
 })
 export class PastMedicalHistoryComponent implements OnInit {
 pastMedical: any = [];
+pastMedicalHistoryPresent = false;
 conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
 
   constructor(private diagnosisService: DiagnosisService,
@@ -19,6 +20,9 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
     this.diagnosisService.getObs(uuid, this.conceptPastMedical)
     .subscribe(response => {
       this.pastMedical = response.results[0];
+      if (this.pastMedical !== undefined) {
+        this.pastMedicalHistoryPresent = true;
+      }
     });
 }
 }
