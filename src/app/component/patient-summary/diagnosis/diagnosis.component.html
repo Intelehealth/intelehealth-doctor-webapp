@@ -3,16 +3,16 @@
 <div>
 <form [formGroup]='diagnosisForm' (submit)='onSubmit()'>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Diagnosis">
+        <input matInput placeholder="Diagnosis" formControlName="text">
     </mat-form-field>
     <div>
-    <mat-radio-group aria-label="Select an option">
+    <mat-radio-group aria-label="Select an option" formControlName="type">
         <mat-radio-button value="Primary">Primary </mat-radio-button>
         <mat-radio-button value="Secondary">Secondary</mat-radio-button>
       </mat-radio-group>
     </div>
     <div>
-    <mat-radio-group aria-label="Select an option">
+    <mat-radio-group aria-label="Select an option" formControlName="confirm">
         <mat-radio-button value="Provisional">Provisional </mat-radio-button>
         <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
       </mat-radio-group>
@@ -22,6 +22,7 @@
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length >= 0">
+  <br>
 <div *ngFor='let diagnosis of diagnosis, index as i'>
   <div class="alert alert-primary">{{diagnosis.value}} <i (click)="delete(i)" class="material-icons float-right">delete</i></div>
 </div>

@@ -16,7 +16,9 @@ patientId: string;
 encounterUuid: string;
 
 diagnosisForm = new FormGroup({
-  text: new FormControl('', [Validators.required])
+  text: new FormControl('', [Validators.required]),
+  type: new FormControl('', [Validators.required]),
+  confirm: new FormControl('', [Validators.required])
 });
 
   constructor(private service: EncounterService,
@@ -41,10 +43,14 @@ diagnosisForm = new FormGroup({
       concept: this.conceptDiagnosis,
       person: this.patientId,
       obsDatetime: date,
-      value: value.text,
+      value: `${value.text}:${value.type} & ${value.confirm}`,
       encounter: this.encounterUuid
   };
-  console.log(json);
+    this.service.postObs(json)
+    .subscribe(resp => {
+      this.diagnosis.push({value: json.value});
+      this.diagnosisForm.reset();
+  });
 });
 }
 

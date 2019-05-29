@@ -20,18 +20,28 @@ export class EncounterService {
   }
 
   adultInitial(uuid): Observable<any> {
-    const url =  `http://${this.baseURL}/openmrs/ws/rest/v1/encounter?patient=${uuid}&encounterType=8d5b27bc-c2cc-11de-8d13-0010c6dffd0f`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/encounter?patient=${uuid}&encounterType=8d5b27bc-c2cc-11de-8d13-0010c6dffd0f`;
     return this.http.get(url);
   }
 
   visitNote(uuid): Observable<any> {
-    const url =  `http://${this.baseURL}/openmrs/ws/rest/v1/encounter?patient=${uuid}&encounterType=d7151f82-c1f3-4152-a605-2f9ea7414a79`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/encounter?patient=${uuid}&encounterType=d7151f82-c1f3-4152-a605-2f9ea7414a79`;
     return this.http.get(url);
-    }
+  }
+
+  visitComplete(uuid): Observable<any> {
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/encounter?patient=${uuid}&encounterType=bd1fbfaa-f5fb-4ebd-b75c-564506fc309e`;
+    return this.http.get(url);
+  }
 
   session(): Observable<any> {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
     return this.http.get(url);
+  }
+
+  deleteSession(): Observable<any> {
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
+    return this.http.delete(url);
   }
 
   loginSession(base64): Observable<any> {
@@ -54,5 +64,10 @@ export class EncounterService {
   postObs(json): Observable<any> {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs`;
     return this.http.post(url, json);
+  }
+
+  signRequest(uuid): Observable<any> {
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${uuid}/attribute`;
+    return this.http.get(url);
   }
 }

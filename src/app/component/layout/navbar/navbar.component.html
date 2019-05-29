@@ -1,8 +1,8 @@
 <div class="container">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
 			<form class="form-inline" [formGroup]="searchForm" (submit)="search()">
-					<input class="form-control mr-sm-2" type="search" placeholder="Search" formControlName="findInput">
-					<button class="btn btn-outline-success my-2 my-sm-0"  matTooltip="Search Patient using ID and Name" matTooltipClass="tooltip-red" type="submit"><i class="fas fa-search"></i> 
+					<input class="form-control mr-sm-2" type="search" placeholder="Find Patient" formControlName="findInput">
+					<button class="btn btn-success my-2 my-sm-0"  matTooltip="Search Patient using ID and Name" matTooltipClass="tooltip-red" type="submit"><i class="fas fa-search"></i> 
 					</button>
 				</form>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,7 +14,7 @@
 									<a class="nav-link" href='http://demo.intelehealth.io/openmrs/reportingui/reportsapp/home.page'>Reports</a>
 							</li>
 							<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href='' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Profile </a>
+									<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Profile </a>
 									<div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
 											<a class="dropdown-item" routerLink='/myAccount'>My account</a>
 											<a *ngIf='systemAccess' class="dropdown-item" href="http://demo.intelehealth.io/openmrs/admin/index.htm">System Setting</a>
@@ -22,9 +22,10 @@
 									</div>
 							</li>
 							<li class="nav-item">
-									<button class="nav-link btn btn-primary" (click)="logout()">Log out</button>
+									<button class=" btn btn-primary" (click)="logout()">Log out</button>
 							</li>
 					</ul>
 			</div>
 	</nav>
 </div>
+<br>

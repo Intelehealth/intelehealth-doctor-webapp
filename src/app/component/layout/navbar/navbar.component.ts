@@ -5,6 +5,7 @@ import { ChangePasswordComponent } from '../../change-password/change-password.c
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { FindPatientComponent } from '../../find-patient/find-patient.component';
 
 @Component({
   selector: 'app-navbar',
@@ -53,7 +54,8 @@ searchForm = new FormGroup({
     this.http.get(url)
     .subscribe(response => {
       this.values = response['results'];
-      console.log(this.values);
+      // console.log(this.values);
+      this.dialog.open(FindPatientComponent, {width: '90%', data: {value: this.values}});
     }, err => {
     if (err.error instanceof Error) {
       this.snackbar.open('Client-side error', null, {duration: 2000});

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { MatSnackBar, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 
@@ -21,24 +21,26 @@ export interface VisitData {
 })
 
 export class HomepageComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'gender', 'dob', 'location', 'status', 'lastSeen'];
+  displayColumns: string[] = ['id', 'name', 'gender', 'dob', 'location', 'status', 'lastSeen'];
   dataSource = new MatTableDataSource<VisitData>();
+  dataSourceFlag = new MatTableDataSource<VisitData>();
 
 value: any = {};
 activePatient: number;
 flagPatientNo: number;
 visitNoteNo: number;
-flagPatient: any = [];
+flagPatient: VisitData[] = [];
 results: VisitData[] = [];
-p = 1; q = 1;
-show = true;
-resultsLength = 0;
+visitLength = 0;
+flagLength = 0;
 
   constructor(private service: VisitService,
               private snackbar: MatSnackBar) { }
 
-@ViewChild(MatPaginator) paginator: MatPaginator;
-@ViewChild(MatSort) sort: MatSort;
+@ViewChild('page1') page1: MatPaginator;
+@ViewChild('page2') page2: MatPaginator;
+@ViewChild('sortCol1') sortCol1: MatSort;
+@ViewChild('sortCol2') sortCol2: MatSort;
 
   ngOnInit() {
     this.service.getVisits()
@@ -54,7 +56,6 @@ resultsLength = 0;
             length += 1;
           }
           if (!value.match('Flagged') && !value.match('Visit Complete')) {
-            // console.log(active);
             this.value.visitId = active.uuid;
             this.value.patientId = active.patient.uuid;
             this.value.id = active.patient.identifiers[0].identifier;
@@ -68,7 +69,17 @@ resultsLength = 0;
             this.value = {};
           }
           if (value.match('Flagged')) {
-            this.flagPatient.push(active);
+            this.value.visitId = active.uuid;
+            this.value.patientId = active.patient.uuid;
+            this.value.id = active.patient.identifiers[0].identifier;
+            this.value.name = active.patient.person.display;
+            this.value.gender = active.patient.person.gender;
+            this.value.dob = active.patient.person.birthdate;
+            this.value.location = active.location.display;
+            this.value.status = active.encounters[0].encounterType.display;
+            this.value.lastSeen = active.encounters[0].encounterDatetime;
+            this.flagPatient.push(this.value);
+            this.value = {};
             flagLength += 1;
           }
           if (value.match('Visit Note')) {
@@ -76,12 +87,18 @@ resultsLength = 0;
           }
         }
       });
+      this.dataSourceFlag = new MatTableDataSource<VisitData>(this.flagPatient);
+      setTimeout(() => {
+        this.dataSourceFlag.paginator = this.page1;
+        this.dataSourceFlag.sort = this.sortCol1;
+      }, 1000);
       this.dataSource = new MatTableDataSource<VisitData>(this.results);
       setTimeout(() => {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.page2;
+        this.dataSource.sort = this.sortCol2;
       }, 1000);
-      this.resultsLength = this.results.length;
+      this.visitLength = this.results.length;
+      this.flagLength = this.flagPatient.length;
       this.activePatient = length;
       this.flagPatientNo = flagLength;
       this.visitNoteNo = visitNoteLength;
@@ -94,11 +111,17 @@ resultsLength = 0;
     });
   }
 
-applyFilter(filterValue: string) {
+applyFilterVisit(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
-
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  applyFilterFlag(filterValue: string) {
+    this.dataSourceFlag.filter = filterValue.trim().toLowerCase();
+    if (this.dataSourceFlag.paginator) {
+      this.dataSourceFlag.paginator.firstPage();
     }
   }
 }

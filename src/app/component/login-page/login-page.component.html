@@ -1,33 +1,89 @@
-<div class="limiter">
-    <div class="container-login100">
-        <div class="wrap-login100">
-            <div class="login100-form-title" style="background-image: url(../../assets/logo.jpeg);">
-                <!-- <span class="login100-form-title-1">
-                    Sign In
-                </span> -->
+<div class="h-100">
+    <div class="row h-100 no-gutters">
+      <div class="d-none d-lg-block col-lg-4">
+          <div class="slider-light">
+              <ngx-slick-carousel class="slick-slider slick-dotted" #slickModal="slick-carousel" [config]="slideConfig2">
+                <div ngxSlickItem>
+                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-dark">
+                    <div class="slide-img-bg"></div>
+                    <div class="slider-content text-light"><h3>Perfect Balance</h3>
+                      <p>
+                        ArchitectUI is like a dream. Some think it's too good to be true! Extensive collection of
+                        unified Vue Bootstrap Components and Elements.
+                      </p></div>
+                  </div>
+                </div>
+                <div ngxSlickItem>
+                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-dark">
+                    <div class="slide-img-bg"></div>
+                    <div class="slider-content text-light"><h3>Scalable, Modular, Consistent</h3>
+                      <p>
+                        Easily exclude the components you don't require. Lightweight, consistent
+                        Bootstrap based styles across all elements and components
+                      </p></div>
+                  </div>
+                </div>
+                <div ngxSlickItem>
+                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-morning">
+                    <div class="slide-img-bg opacity-6"></div>
+                    <div class="slider-content text-light"><h3>Complex, but lightweight</h3>
+                      <p>
+                        We've included a lot of components that cover almost all use cases for
+                        any type of application.
+                      </p></div>
+                  </div>
+                </div>
+              </ngx-slick-carousel>
+            </div>
             </div>
 
-            <form class="login100-form validate-form" [formGroup]='loginForm' (submit)="onSubmit()">
-                <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-                    <span class="label-input100">Username</span>
-                    <input class="input100" type="text" name="username" placeholder="Enter username" formControlName='username'>
-                    <span class="focus-input100"></span>
-                </div>
+          <!-- <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig2">
+            <div ngxSlickItem *ngFor="let slide of slides" class="slide">
+                <div class="h-100 d-flex">
+                          <img class="slide" src="{{ slide.img }}" width="100%">
+                  </div>
+            </div> 
+          </ngx-slick-carousel> -->
 
-                <div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
-                    <span class="label-input100">Password</span>
-                    <input class="input100" type="password" name="pass" placeholder="Enter password" formControlName='password'>
-                    <span class="focus-input100"></span>
+      <div class="h-100 d-flex bg-white justify-content-center align-items-center col-md-12 col-lg-8">
+        <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
+          <div class="app-logo"></div>
+          <h4 class="mb-0">
+            <div>Welcome back,</div>
+            <span>Please sign in to your account.</span></h4>
+            <h6 class="mt-3"></h6>
+          <div class="divider"></div>
+          <div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <div tabindex="-1" role="group">
+                        <label for="exampleEmail">Username</label>
+                        <input placeholder="Username here..." type="text" class="form-control" formControlName="username">
+                      </div>
+                  </fieldset>
                 </div>
-                <br>
-
-
-                <div class="container-login100-form-btn">
-                    <button type="submit" [disabled]='!loginForm.valid' class="login100-form-btn">
-                        Login
-                    </button>
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <div tabindex="-1" role="group">
+                        <label for="examplePassword">Password</label>
+                        <input  type="password" placeholder="Password here..." class="form-control" formControlName="password">
+                    </div>
+                  </fieldset>
                 </div>
+              </div>
+              
+              <div class="divider"></div>
+              <div class="d-flex align-items-center">
+                <div class="ml-auto">
+                  <button type="submit" class="btn btn-primary btn-lg">Login to Dashboard</button>
+                </div>
+              </div>
             </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+  

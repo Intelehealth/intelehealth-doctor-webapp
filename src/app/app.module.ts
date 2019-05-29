@@ -52,6 +52,8 @@ import { FooterComponent } from './component/layout/footer/footer.component';
 import { PatientinfoComponent } from './component/patient-summary/patientinfo/patientinfo.component';
 import { PastVisitsComponent } from './component/patient-summary/past-visits/past-visits.component';
 import { DatePipe } from '@angular/common';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { FindPatientComponent } from './component/find-patient/find-patient.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +82,7 @@ import { DatePipe } from '@angular/common';
     FooterComponent,
     PatientinfoComponent,
     PastVisitsComponent,
+    FindPatientComponent
   ],
   imports: [
     BrowserModule,
@@ -101,11 +104,13 @@ import { DatePipe } from '@angular/common';
     NgxPaginationModule,
     NgbModule,
     FormsModule,
+    SlickCarouselModule,
     ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forRoot([
       {path: '', component: LoginPageComponent},
       {path: 'home', component: HomepageComponent, canActivate: [AuthGuard]},
+      {path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard]},
       {path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
       {path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard]},
       {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard]},

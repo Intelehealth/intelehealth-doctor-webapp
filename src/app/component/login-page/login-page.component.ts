@@ -11,12 +11,27 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./login-page.component.css']
 })
 export class LoginPageComponent implements OnInit {
-
-
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required])
   });
+
+  slideConfig2 = {
+    className: 'center',
+    centerMode: true,
+    infinite: true,
+    centerPadding: '0',
+    slidesToShow: 1,
+    speed: 500,
+    dots: true,
+  };
+
+slides = [
+  {img: '../../assets/sidebar/abstract1.jpg'},
+  {img: '../../assets/sidebar/abstract2.jpg'},
+  {img: '../../assets/sidebar/abstract3.jpg'},
+  {img: '../../assets/sidebar/abstract4.jpg'}
+];
 
   constructor(private service: EncounterService,
               private router: Router,
