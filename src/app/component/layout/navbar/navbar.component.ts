@@ -13,30 +13,31 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-systemAccess = false;
-values: any = [];
+  baseUrl = window.location.host;
+  systemAccess = false;
+  values: any = [];
 
-searchForm = new FormGroup({
-  findInput: new FormControl('', [Validators.required])
-});
+  searchForm = new FormGroup({
+    findInput: new FormControl('', [Validators.required])
+  });
 
 
   constructor(private authService: AuthService,
-              private dialog: MatDialog,
-              private service: EncounterService,
-              private snackbar: MatSnackBar,
-              private http: HttpClient) {}
+    private dialog: MatDialog,
+    private service: EncounterService,
+    private snackbar: MatSnackBar,
+    private http: HttpClient) { }
 
   ngOnInit() {
     this.service.session()
-    .subscribe(response => {
-      const roles = response.user['roles'];
-      roles.forEach(role => {
-        if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8') {
-          this.systemAccess = true;
-        }
+      .subscribe(response => {
+        const roles = response.user['roles'];
+        roles.forEach(role => {
+          if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8') {
+            this.systemAccess = true;
+          }
+        });
       });
-    });
   }
 
   logout() {
@@ -44,26 +45,25 @@ searchForm = new FormGroup({
   }
 
   changePassword() {
-    this.dialog.open(ChangePasswordComponent, {width: '500px'});
+    this.dialog.open(ChangePasswordComponent, { width: '500px' });
   }
 
   search() {
     const search = this.searchForm.value;
     // tslint:disable-next-line: max-line-length
-    const url = `http://demo.intelehealth.io/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+    const url = `http://${this.baseUrl}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
-    .subscribe(response => {
-      this.values = response['results'];
-      // console.log(this.values);
-      this.dialog.open(FindPatientComponent, {width: '90%', data: {value: this.values}});
-    }, err => {
-    if (err.error instanceof Error) {
-      this.snackbar.open('Client-side error', null, {duration: 2000});
-    } else {
-      this.snackbar.open('Server-side error', null, {duration: 2000});
-    }
-  });
-  this.searchForm.reset();
+      .subscribe(response => {
+        this.values = response['results'];
+        this.dialog.open(FindPatientComponent, { width: '90%', data: { value: this.values } });
+      }, err => {
+        if (err.error instanceof Error) {
+          this.snackbar.open('Client-side error', null, { duration: 2000 });
+        } else {
+          this.snackbar.open('Server-side error', null, { duration: 2000 });
+        }
+      });
+    this.searchForm.reset();
   }
 
 }

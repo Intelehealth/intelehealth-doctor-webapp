@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-// import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy} from '@angular/common';
+import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
@@ -11,20 +11,22 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatDialogModule,
-        MatGridListModule,
-        MatCardModule,
-        MatSnackBarModule,
-        MatInputModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatButtonModule,
-        MatIconModule,
-        MatRadioModule,
-        MatTooltipModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule } from '@angular/material/';
+import {
+  MatDialogModule,
+  MatGridListModule,
+  MatCardModule,
+  MatSnackBarModule,
+  MatInputModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatButtonModule,
+  MatIconModule,
+  MatRadioModule,
+  MatTooltipModule,
+  MatTableModule,
+  MatPaginatorModule,
+  MatSortModule,
+  MatListModule } from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -41,7 +43,6 @@ import { PrescribedTestComponent } from './component/patient-summary/prescribed-
 import { AdviceComponent } from './component/patient-summary/advice/advice.component';
 import { FollowUpComponent } from './component/patient-summary/follow-up/follow-up.component';
 import { PrescribedMedicationComponent } from './component/patient-summary/prescribed-medication/prescribed-medication.component';
-import { PageNotFoundComponent } from './page-not-found.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 
 import { CookieService } from 'ngx-cookie-service';
@@ -54,6 +55,7 @@ import { PastVisitsComponent } from './component/patient-summary/past-visits/pas
 import { DatePipe } from '@angular/common';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
+import { Page404Component } from './component/page404/page404.component';
 
 @NgModule({
   declarations: [
@@ -76,13 +78,13 @@ import { FindPatientComponent } from './component/find-patient/find-patient.comp
     FollowUpComponent,
     LoginPageComponent,
     PrescribedMedicationComponent,
-    PageNotFoundComponent,
     NavbarComponent,
     ChangePasswordComponent,
     FooterComponent,
     PatientinfoComponent,
     PastVisitsComponent,
-    FindPatientComponent
+    FindPatientComponent,
+    Page404Component
   ],
   imports: [
     BrowserModule,
@@ -99,6 +101,7 @@ import { FindPatientComponent } from './component/find-patient/find-patient.comp
     MatSnackBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatListModule,
     MatInputModule,
     MatDialogModule,
     NgxPaginationModule,
@@ -108,22 +111,22 @@ import { FindPatientComponent } from './component/find-patient/find-patient.comp
     ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      {path: '', component: LoginPageComponent},
-      {path: 'home', component: HomepageComponent, canActivate: [AuthGuard]},
-      {path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard]},
-      {path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
-      {path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard]},
-      {path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard]},
-      {path: '**', component: PageNotFoundComponent}
-  ]),
- ],
+      { path: '', component: LoginPageComponent },
+      { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+      { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+      { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+      { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+      { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
+      { path: '**', component: Page404Component }
+    ]),
+  ],
   providers: [
     CookieService,
     AuthGuard,
-    DatePipe
-    // { provide: APP_BASE_HREF, useValue: '/' },
-    // { provide: LocationStrategy, useClass: HashLocationStrategy }
-],
+    DatePipe,
+    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

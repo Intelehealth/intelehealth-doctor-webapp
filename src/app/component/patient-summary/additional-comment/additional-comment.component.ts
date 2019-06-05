@@ -3,11 +3,26 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from './../../../services/diagnosis.service';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-additional-comment',
   templateUrl: './additional-comment.component.html',
-  styleUrls: ['./additional-comment.component.css']
+  styleUrls: ['./additional-comment.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class AdditionalCommentComponent implements OnInit {
 comment: any = [];

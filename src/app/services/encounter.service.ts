@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, ObservableLike } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EncounterService {
+  // private baseURL = window.location.host;
   private baseURL = 'demo.intelehealth.io';
   constructor(private http: HttpClient) { }
 
@@ -48,11 +49,11 @@ export class EncounterService {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + base64);
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
-    return this.http.get(url, {headers});
+    return this.http.get(url, { headers });
   }
 
   provider(userId): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/provider?user=${userId}`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/provider?user=${userId}&v=custom:(uuid,person:(display,gender),attributes)`;
     return this.http.get(url);
   }
 

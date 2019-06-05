@@ -5,11 +5,26 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-prescribed-test',
   templateUrl: './prescribed-test.component.html',
-  styleUrls: ['./prescribed-test.component.css']
+  styleUrls: ['./prescribed-test.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class PrescribedTestComponent implements OnInit {
 tests: any = [];

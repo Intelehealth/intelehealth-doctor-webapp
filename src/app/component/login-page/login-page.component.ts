@@ -26,17 +26,13 @@ export class LoginPageComponent implements OnInit {
     dots: true,
   };
 
-slides = [
-  {img: '../../assets/sidebar/abstract1.jpg'},
-  {img: '../../assets/sidebar/abstract2.jpg'},
-  {img: '../../assets/sidebar/abstract3.jpg'},
-  {img: '../../assets/sidebar/abstract4.jpg'}
-];
 
-  constructor(private service: EncounterService,
-              private router: Router,
-              private snackbar: MatSnackBar,
-              private authService: AuthService) { }
+  constructor(
+    private service: EncounterService,
+    private router: Router,
+    private snackbar: MatSnackBar,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     const isLoggedIn: boolean = this.authService.isLoggedIn();
@@ -45,20 +41,22 @@ slides = [
     }
   }
 
-onSubmit() {
-  const value = this.loginForm.value;
-  const string = `${value.username}:${value.password}`;
-  const base64 = btoa(string);
-  this.service.loginSession(base64)
-  .subscribe(response => {
-    if (response.authenticated === true) {
-      this.router.navigate(['/home']);
-      this.authService.sendToken(response.sessionId);
-      this.snackbar.open(`Welcome ${response.user.person.display}`, null, {duration: 4000});
-    } else {
-      this.snackbar.open('Username & Password doesn\'t match', null, {duration: 4000});
-    }
-  });
-}
-
+  onSubmit() {
+    const value = this.loginForm.value;
+    const string = `${value.username}:${value.password}`;
+    const base64 = btoa(string);
+    this.service.loginSession(base64).subscribe(response => {
+      if (response.authenticated === true) {
+        this.router.navigate(['/home']);
+        this.authService.sendToken(response.sessionId);
+        this.snackbar.open(`Welcome ${response.user.person.display}`, null, {
+          duration: 4000
+        });
+      } else {
+        this.snackbar.open('Username & Password doesn\'t match', null, {
+          duration: 4000
+        });
+      }
+    });
+  }
 }

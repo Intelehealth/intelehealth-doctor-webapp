@@ -5,11 +5,27 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+
 
 @Component({
   selector: 'app-advice',
   templateUrl: './advice.component.html',
-  styleUrls: ['./advice.component.css']
+  styleUrls: ['./advice.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class AdviceComponent implements OnInit {
 advice: any = [];

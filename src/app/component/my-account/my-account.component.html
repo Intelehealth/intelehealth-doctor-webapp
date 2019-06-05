@@ -1,5 +1,19 @@
 <div class="container">
+    <ng-container *ngIf="providerDetails">
+    <mat-card >
+        <h4>{{providerDetails.person.display}}</h4>
+        <div>{{providerDetails.person.gender}}</div>
+        <div>{{providerDetails.phone}}</div>
+        <div>{{providerDetails.qualification}}</div>
+        <div>{{providerDetails.specialization}}</div>
+        <div>{{providerDetails.registration}}</div>
+        <div>{{providerDetails.address}}</div>
+        <div>{{providerDetails.addressPersonal}}</div>
+    </mat-card>
+    <br>
+</ng-container>
     <mat-card>
+        <h4>Setup your Signature</h4>
     <form [formGroup]="addSignatureForm" (ngSubmit)="onSubmit()">
     <div class="input-group mb-3">
         <div class="input-group-prepend">

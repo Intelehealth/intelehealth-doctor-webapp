@@ -4,11 +4,27 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+
 
 @Component({
   selector: 'app-follow-up',
   templateUrl: './follow-up.component.html',
-  styleUrls: ['./follow-up.component.css']
+  styleUrls: ['./follow-up.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class FollowUpComponent implements OnInit {
 followUp: any = [];

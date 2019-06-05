@@ -1,16 +1,16 @@
 <h4><i class="fas fa-heartbeat"></i> Vitals</h4>
 <hr>
-  <div *ngIf='!vitalsPresent'>No Data</div>
-  <div *ngIf='vitalsPresent'>
-    <table>
-   <tr *ngFor='let item of v'>
-    <td>Temp: <span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>&nbsp;&nbsp;
-    <td> Height: {{item.height}} cm</td>&nbsp;&nbsp;
-    <td> Weight: {{item.weight}} kg</td>&nbsp;&nbsp;
-    <td>BMI: {{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>&nbsp;&nbsp;
-    <td> SP02: {{item.sp02}} %</td>&nbsp;&nbsp;
-    <td>BP: {{item.sbp}}/{{item.dbp}}</td>&nbsp;&nbsp;
-    <td>HR: {{item.pulse}}</td>&nbsp;&nbsp;
-   </tr>
-</table>
-  </div>
+<div *ngIf='!vitalsPresent'>No Data</div>
+<div *ngIf='vitalsPresent'>
+  <table class="table-responsive">
+    <tr *ngFor='let item of v'>
+      <td>Temp: <span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>&nbsp;&nbsp;
+      <td> Height: {{item.height}} cm</td>&nbsp;&nbsp;
+      <td> Weight: {{item.weight}} kg</td>&nbsp;&nbsp;
+      <td>BMI: {{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>&nbsp;&nbsp;
+      <td> SP02: {{item.sp02}} %</td>&nbsp;&nbsp;
+      <td>BP: {{item.sbp}}/{{item.dbp}}</td>&nbsp;&nbsp;
+      <td>HR: {{item.pulse}}</td>&nbsp;&nbsp;
+    </tr>
+  </table>
+</div>

@@ -16,9 +16,11 @@
 {{errorText}}
 </form>
 <ng-container *ngIf="followUp.length >= 0">
-<div *ngFor='let followUp of followUp, index as i '>
-  <div class="alert alert-primary">{{followUp.value}} <a (click)="delete(i)"class="material-icons float-right">delete</a></div>
-  <p>*please delete current schedule to schedule a new follow up.</p>
-</div>
+    <ul class="list-unstyled">
+    <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">{{followUp.value}} 
+        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30)">delete</i>
+    </mat-list>
+    </ul>
+    <p>*please delete current schedule to schedule a new follow up.</p>
 </ng-container>
 </div>

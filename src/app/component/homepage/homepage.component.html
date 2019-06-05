@@ -1,24 +1,24 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-4">
-        <div class="card text-white" style="background-image: linear-gradient(#F89397, #F71B1D);">
-            <div class="card-body">
-                <div class="text-left">Flagged Visits<span style="float: right">{{flagPatientNo}}</span></div>
-            </div>
+      <div class="card text-white" style="background-image: linear-gradient(#F89397, #F71B1D);">
+        <div class="card-body">
+          <div class="text-left">Flagged Visits<span style="float: right">{{flagPatientNo}}</span></div>
         </div>
       </div>
+    </div>
     <div class="col-sm-4">
-        <div class="card text-white" style="background-image: linear-gradient(#F5DC63,#FFC107);">
-      <!-- <div class="card text-white" style="background-image: radial-gradient(#FBD603, #F7BE49, #F8C501);"> -->
-          <div class="card-body">
-              <div class="text-left">CHW Note<span style="float: right">{{activePatient}}</span></div>
-          </div>
+      <div class="card text-white" style="background-image: linear-gradient(#F5DC63,#FFC107);">
+        <!-- <div class="card text-white" style="background-image: radial-gradient(#FBD603, #F7BE49, #F8C501);"> -->
+        <div class="card-body">
+          <div class="text-left">CHW Note<span style="float: right">{{activePatient}}</span></div>
+        </div>
       </div>
     </div>
     <div class="col-sm-4">
       <div class="card text-white" style="background-image: linear-gradient(#BFE4F5,#17A2B8);">
         <div class="card-body">
-            <div class="text-left">Visit Note<span style="float: right">{{visitNoteNo}}</span></div>
+          <div class="text-left">Visit Note<span style="float: right">{{visitNoteNo}}</span></div>
         </div>
       </div>
     </div>
@@ -26,105 +26,109 @@
 
 
 
-<ng-container *ngIf="flagPatient.length > 0">
-  <br>
-<mat-card>
-  <h4>FLAG VISITS</h4>
-  <hr>
-<!-- Flag Table -->
-  <mat-form-field>
-  <input matInput (keyup)="applyFilterFlag($event.target.value)" placeholder="Search">
-</mat-form-field>
-
-
-<div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSourceFlag" #sortCol1="matSort" matSort>
-
-    <!-- ID Column -->
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
-      <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]"> {{row.id}} </a></td>
-    </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-    </ng-container>
-
-    <!-- Gender Column -->
-    <ng-container matColumnDef="gender">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
-      <td mat-cell *matCellDef="let row"> {{row.gender}} </td>
-    </ng-container>
-
-    <!-- Date OF Birth Column -->
-    <ng-container matColumnDef="dob">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> DOB </th>
-      <td mat-cell *matCellDef="let row"> {{row.dob | date: 'dd-MMM-yyyy'}} </td>
-    </ng-container>
-
-    <!-- Location Column -->
-    <ng-container matColumnDef="location">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
-        <td mat-cell *matCellDef="let row"> {{row.location}} </td>
-    </ng-container>
-
-    <!-- Status Column -->
-    <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-        <td mat-cell *matCellDef="let row"><div class="badge badge-pill badge-danger">{{row.status}}</div></td>
-    </ng-container>
-        
-    <!-- LastSeen Column -->
-    <ng-container matColumnDef="lastSeen">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
-        <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayColumns;">
-    </tr>
-  </table>
-
-
-  <mat-paginator #page1 [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
-</div>
-</mat-card>
-</ng-container>
-
-
-<!-- Queue Visit table -->
-<ng-container *ngIf="results.length > 0">
+  <ng-container *ngIf="flagPatient.length > 0">
     <br>
-    <mat-card><h4>QUEUED VISITS</h4>
+    <mat-card>
+      <h4>FLAG VISITS</h4>
       <hr>
-    <mat-form-field>
-        <input matInput (keyup)="applyFilterVisit($event.target.value)" placeholder="Search">
-    </mat-form-field>
-  
-      
+      <!-- Flag Table -->
+      <mat-form-field>
+        <input matInput (keyup)="applyFilterFlag($event.target.value)" placeholder="Search">
+      </mat-form-field>
+
+
       <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" #sortCol2="matSort" matSort>
-      
+        <table class="table-responsive" mat-table [dataSource]="dataSourceFlag" #sortCol1="matSort" matSort>
+
           <!-- ID Column -->
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
-            <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]"> {{row.id}} </a></td>
+            <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]">
+                {{row.id}} </a></td>
           </ng-container>
-      
+
           <!-- Name Column -->
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
             <td mat-cell *matCellDef="let row"> {{row.name}} </td>
           </ng-container>
-      
+
           <!-- Gender Column -->
           <ng-container matColumnDef="gender">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
             <td mat-cell *matCellDef="let row"> {{row.gender}} </td>
           </ng-container>
-      
+
+          <!-- Date OF Birth Column -->
+          <ng-container matColumnDef="dob">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> DOB </th>
+            <td mat-cell *matCellDef="let row"> {{row.dob | date: 'dd-MMM-yyyy'}} </td>
+          </ng-container>
+
+          <!-- Location Column -->
+          <ng-container matColumnDef="location">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
+            <td mat-cell *matCellDef="let row"> {{row.location}} </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+            <td mat-cell *matCellDef="let row">
+              <div class="badge badge-pill badge-danger">{{row.status}}</div>
+            </td>
+          </ng-container>
+
+          <!-- LastSeen Column -->
+          <ng-container matColumnDef="lastSeen">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
+            <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayColumns;">
+          </tr>
+        </table>
+
+
+        <mat-paginator #page1 [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+      </div>
+    </mat-card>
+  </ng-container>
+
+
+  <!-- Queue Visit table -->
+  <ng-container *ngIf="results.length > 0">
+    <br>
+    <mat-card>
+      <h4>QUEUED VISITS</h4>
+      <hr>
+      <mat-form-field>
+        <input matInput (keyup)="applyFilterVisit($event.target.value)" placeholder="Search">
+      </mat-form-field>
+
+      <div class="mat-elevation-z8">
+        <table class="table-responsive" mat-table [dataSource]="dataSource" #sortCol2="matSort" matSort>
+
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
+            <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]">
+                {{row.id}} </a></td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+          </ng-container>
+
+          <!-- Gender Column -->
+          <ng-container matColumnDef="gender">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+            <td mat-cell *matCellDef="let row"> {{row.gender}} </td>
+          </ng-container>
+
           <!-- Date OF Birth Column -->
           <ng-container matColumnDef="dob">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> DOB </th>
@@ -133,30 +137,34 @@
 
           <!-- Location column -->
           <ng-container matColumnDef="location">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
-              <td mat-cell *matCellDef="let row"> {{row.location}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Location </th>
+            <td mat-cell *matCellDef="let row"> {{row.location}} </td>
           </ng-container>
 
           <!-- Status column -->
           <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-              <td mat-cell *matCellDef="let row"><div class= "badge badge-pill" [ngClass]="{'badge-warning': row.status == 'ADULTINITIAL', 'badge-success': row.status === 'Visit Complete', 'badge-info': row.status === 'Visit Note'}">{{row.status}}</div></td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+            <td mat-cell *matCellDef="let row">
+              <div class="badge badge-pill"
+                [ngClass]="{'badge-warning': row.status == 'ADULTINITIAL', 'badge-success': row.status === 'Visit Complete', 'badge-info': row.status === 'Visit Note'}">
+                {{row.status}}</div>
+            </td>
           </ng-container>
-              
+
           <!-- lastSeen column -->
           <ng-container matColumnDef="lastSeen">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
-              <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
+            <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
           </ng-container>
-      
+
           <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayColumns;">
           </tr>
         </table>
-      
+
         <mat-paginator #page2 [length]="visitLength" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
       </div>
     </mat-card>
   </ng-container>
-  
+
 </div>

@@ -3,11 +3,26 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-diagnosis',
   templateUrl: './diagnosis.component.html',
-  styleUrls: ['./diagnosis.component.css']
+  styleUrls: ['./diagnosis.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class DiagnosisComponent implements OnInit {
 diagnosis: any = [];

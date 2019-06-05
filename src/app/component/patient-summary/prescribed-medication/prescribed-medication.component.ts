@@ -5,11 +5,26 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DiagnosisService } from './../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-prescribed-medication',
   templateUrl: './prescribed-medication.component.html',
-  styleUrls: ['./prescribed-medication.component.css']
+  styleUrls: ['./prescribed-medication.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class PrescribedMedicationComponent implements OnInit {
 meds: any = [];

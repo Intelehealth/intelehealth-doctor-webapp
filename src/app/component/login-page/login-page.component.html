@@ -1,49 +1,44 @@
-<div class="h-100">
+<!-- <div class="h-100">
     <div class="row h-100 no-gutters">
       <div class="d-none d-lg-block col-lg-4">
-          <div class="slider-light">
-              <ngx-slick-carousel class="slick-slider slick-dotted" #slickModal="slick-carousel" [config]="slideConfig2">
-                <div ngxSlickItem>
-                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-dark">
-                    <div class="slide-img-bg"></div>
-                    <div class="slider-content text-light"><h3>Perfect Balance</h3>
-                      <p>
-                        ArchitectUI is like a dream. Some think it's too good to be true! Extensive collection of
-                        unified Vue Bootstrap Components and Elements.
-                      </p></div>
-                  </div>
-                </div>
-                <div ngxSlickItem>
-                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-dark">
-                    <div class="slide-img-bg"></div>
-                    <div class="slider-content text-light"><h3>Scalable, Modular, Consistent</h3>
-                      <p>
-                        Easily exclude the components you don't require. Lightweight, consistent
-                        Bootstrap based styles across all elements and components
-                      </p></div>
-                  </div>
-                </div>
-                <div ngxSlickItem>
-                  <div class="position-relative h-100 d-flex justify-content-center align-items-center bg-morning">
-                    <div class="slide-img-bg opacity-6"></div>
-                    <div class="slider-content text-light"><h3>Complex, but lightweight</h3>
-                      <p>
-                        We've included a lot of components that cover almost all use cases for
-                        any type of application.
-                      </p></div>
-                  </div>
-                </div>
-              </ngx-slick-carousel>
-            </div>
-            </div>
+          <ngx-slick-carousel class="slick-slider slick-dotted" #slickModal="slick-carousel"
+          [config]="slideConfig2">
+<div ngxSlickItem>
+<div class="position-relative h-100 d-flex justify-content-center align-items-center bg-plum-plate">
+<div class="slide-img-bg"></div>
+<div class="slider-content text-light"><h3>Perfect Balance</h3>
+<p>
+ArchitectUI is like a dream. Some think it's too good to be true! Extensive collection of
+unified Vue Bootstrap Components and Elements.
+</p></div>
+</div>
+</div>
+<div ngxSlickItem>
+<div class="position-relative h-100 d-flex justify-content-center align-items-center bg-premium-dark">
+<div class="slide-img-bg"></div>
+<div class="slider-content text-light"><h3>Scalable, Modular, Consistent</h3>
+<p>
+Easily exclude the components you don't require. Lightweight, consistent
+Bootstrap based styles across all elements and components
+</p></div>
+</div>
+</div>
+<div ngxSlickItem>
+<div class="position-relative h-100 d-flex justify-content-center align-items-center bg-sunny-morning">
+<div class="slide-img-bg opacity-6"></div>
+<div class="slider-content text-light"><h3>Complex, but lightweight</h3>
+<p>
+We've included a lot of components that cover almost all use cases for
+any type of application.
+</p></div>
+</div>
+</div>
+</ngx-slick-carousel>
+      </div>
+             
+          
 
-          <!-- <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig2">
-            <div ngxSlickItem *ngFor="let slide of slides" class="slide">
-                <div class="h-100 d-flex">
-                          <img class="slide" src="{{ slide.img }}" width="100%">
-                  </div>
-            </div> 
-          </ngx-slick-carousel> -->
+     
 
       <div class="h-100 d-flex bg-white justify-content-center align-items-center col-md-12 col-lg-8">
         <div class="mx-auto app-login-box col-sm-12 col-md-10 col-lg-9">
@@ -85,5 +80,50 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   
+
+
+  <div class="h-100 bg-plum-plate bg-animation">
+  <div class="d-flex h-100 justify-content-center align-items-center">
+    <div class="mx-auto app-login-box col-md-8">
+      <div class="app-logo-inverse mx-auto mb-3"></div>
+      <div class="modal-dialog w-100 mx-auto">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="h5 modal-title text-center">
+              <h4 class="mt-2">
+                <div>Welcome back,</div>
+                <span>Please sign in to your account below.</span></h4>
+            </div>
+            
+            <div role="group" class="form-group">
+              <div>
+                  <label for="examplePassword">Username :</label>
+                <input type="email" placeholder="Enter Username..." class="form-control" formControlName="username">
+              </div>
+            </div>
+            <div role="group" class="form-group">
+              <div>
+                  <label for="examplePassword">Password :</label>
+                <input type="password" placeholder="Enter password..." class="form-control" formControlName="password">
+              </div>
+            </div>
+           
+          
+            </div>
+          <div class="modal-footer clearfix">
+            <div class="float-right">
+              <button type="submit" class="btn btn-primary">Login to Dashboard</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      </div>
+      <div class="text-center text-white opacity-8 mt-3">
+        Copyright © Intelehealth 2019
+      </div>
+    </div>
+  </div>
+</div>
