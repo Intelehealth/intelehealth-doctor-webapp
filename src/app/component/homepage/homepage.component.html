@@ -1,21 +1,20 @@
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4">
+  <div class="modal-body row">
+    <div class="col-sm-4" style="padding: 3px">
       <div class="card text-white" style="background-image: linear-gradient(#F89397, #F71B1D);">
         <div class="card-body">
           <div class="text-left">Flagged Visits<span style="float: right">{{flagPatientNo}}</span></div>
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4" style="padding: 3px">
       <div class="card text-white" style="background-image: linear-gradient(#F5DC63,#FFC107);">
-        <!-- <div class="card text-white" style="background-image: radial-gradient(#FBD603, #F7BE49, #F8C501);"> -->
         <div class="card-body">
-          <div class="text-left">CHW Note<span style="float: right">{{activePatient}}</span></div>
+          <div class="text-left">ADULTINITIAL<span style="float: right">{{activePatient}}</span></div>
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4" style="padding: 3px">
       <div class="card text-white" style="background-image: linear-gradient(#BFE4F5,#17A2B8);">
         <div class="card-body">
           <div class="text-left">Visit Note<span style="float: right">{{visitNoteNo}}</span></div>
@@ -29,7 +28,7 @@
   <ng-container *ngIf="flagPatient.length > 0">
     <br>
     <mat-card>
-      <h4>FLAG VISITS</h4>
+      <h4>FLAGGED VISITS</h4>
       <hr>
       <!-- Flag Table -->
       <mat-form-field>
@@ -89,8 +88,6 @@
           <tr mat-row *matRowDef="let row; columns: displayColumns;">
           </tr>
         </table>
-
-
         <mat-paginator #page1 [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
       </div>
     </mat-card>

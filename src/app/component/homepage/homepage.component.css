@@ -48,3 +48,9 @@ table {
   /* overflow: hidden; */
   /* vertical-align: middle; */
 }
+
+mat-cell, .mat-cell {
+  /* display:block;  */
+  min-height:auto; 
+  padding: 12px 16px 12px 0;
+}

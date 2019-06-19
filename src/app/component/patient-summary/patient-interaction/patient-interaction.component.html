@@ -12,7 +12,7 @@
           </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">Submit</button>
 </div>
-<div *ngFor="let msg of msg">
-  <div class="alert alert-primary">{{msg}}</div>
+<div *ngFor="let msg of msg">  
+  <div [@moveInLeft] class="alert alert-primary">{{msg}}</div>
 </div>
 </form>

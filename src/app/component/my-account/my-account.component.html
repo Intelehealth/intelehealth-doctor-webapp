@@ -15,13 +15,11 @@
     <mat-card>
         <h4>Setup your Signature</h4>
     <form [formGroup]="addSignatureForm" (ngSubmit)="onSubmit()">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Enter Your Text :</span>
-        </div>
-        <input type="text" [(ngModel)]="name" formControlName="text">
+    <div class="input-group">
+    <mat-form-field class="example-full-width">
+            <input matInput placeholder="Enter Text" [(ngModel)]="name" formControlName="text">
+    </mat-form-field>
     </div>
-    <br>
     <input type="radio" value='1' formControlName="signature"><span style="font-family: arty; font-size: 100px"> {{name}}</span>
     <br>
     <input type="radio" value='2' formControlName="signature"><span style="font-family: asem; font-size: 50px"> {{name}}</span>
@@ -32,3 +30,20 @@
     </form>
 </mat-card>
 </div>
+
+<!-- <div class="container">
+    <mat-card> -->
+        <!-- <div class="limiter">
+            <div class="container-login100">
+                <div class="wrap-login100">
+                    <div class="login100-form-title" style="background-image: url('../../../assets/images/city2.jpg');">
+                        <span class="login100-form-title-1">
+                                <h4>{{providerDetails.person.display}}</h4>
+                        </span>
+                    </div>
+                    <h1>Hi</h1>
+                </div>
+            </div>
+        </div> -->
+    <!-- </mat-card>
+</div> -->

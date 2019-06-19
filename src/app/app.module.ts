@@ -118,7 +118,7 @@ import { Page404Component } from './component/page404/page404.component';
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
       { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
-    ]),
+    ], {scrollPositionRestoration: 'enabled'}),
   ],
   providers: [
     CookieService,

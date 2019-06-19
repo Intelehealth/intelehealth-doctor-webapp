@@ -2,11 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-patient-interaction',
   templateUrl: './patient-interaction.component.html',
-  styleUrls: ['./patient-interaction.component.css']
+  styleUrls: ['./patient-interaction.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+       transition('void=> *', [style({transform: 'translateX(300px)'}),
+         animate(200, keyframes ([
+          style({transform: 'translateX(300px)'}),
+          style({transform: 'translateX(0)'})
+           ]))]),
+    transition('*=>void', [style({transform: 'translateX(0px)'}),
+         animate(100, keyframes([
+          style({transform: 'translateX(0px)'}),
+          style({transform: 'translateX(300px)'})
+        ]))])
+     ])
+ ]
 })
 export class PatientInteractionComponent implements OnInit {
 msg: any = [];

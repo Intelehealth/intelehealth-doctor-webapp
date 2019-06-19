@@ -11,7 +11,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class MyAccountComponent implements OnInit {
   baseUrl = window.location.host;
   status = false;
-  name = 'Enter your text';
+  name = 'Enter text';
   providerDetails = null;
 
   addSignatureForm = new FormGroup({
@@ -20,7 +20,7 @@ export class MyAccountComponent implements OnInit {
   });
 
   constructor(private service: EncounterService,
-    private http: HttpClient) { }
+              private http: HttpClient) { }
 
   ngOnInit() {
     this.service.session()
@@ -30,11 +30,9 @@ export class MyAccountComponent implements OnInit {
           .subscribe(provider => {
             this.providerDetails = provider.results[0];
             const attributes = provider.results[0].attributes;
-            console.log(attributes);
             attributes.forEach(element => {
               this.providerDetails[element.attributeType.display] = element.value;
             });
-            console.log(this.providerDetails)
           });
       });
   }

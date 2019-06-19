@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from './password.validator';
 import { HttpClient } from '@angular/common/http';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-change-password',
@@ -14,7 +15,8 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
-    private http: HttpClient) {
+              private http: HttpClient,
+              private dialogRef: MatDialogRef<ChangePasswordComponent>) {
     this.changePasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
@@ -46,6 +48,10 @@ export class ChangePasswordComponent implements OnInit {
         }
       });
     this.changePasswordForm.reset();
+  }
+
+  onClose() {
+    this.dialogRef.close();
   }
 
 }

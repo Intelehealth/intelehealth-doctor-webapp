@@ -17,19 +17,6 @@
     border-radius: 0.25rem;
 }
 
-.app-logo {
-  height: 23px;
-  width: 97px;
-  background: url('../../../assets/images/logo-inverse.png');
-}
-
-.app-logo-inverse {
-  height: 23px;
-  width: 97px;
-  background: url('../../../assets/images/logo.png');
-}
-
-
 .app-login-box .app-logo {
     margin-bottom: 3rem;
   }
