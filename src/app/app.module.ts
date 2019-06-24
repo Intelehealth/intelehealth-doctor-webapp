@@ -56,6 +56,7 @@ import { DatePipe } from '@angular/common';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { Page404Component } from './component/page404/page404.component';
+import { SignatureComponent } from './component/my-account/signature/signature.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { Page404Component } from './component/page404/page404.component';
     PatientinfoComponent,
     PastVisitsComponent,
     FindPatientComponent,
-    Page404Component
+    Page404Component,
+    SignatureComponent
   ],
   imports: [
     BrowserModule,
@@ -115,7 +117,9 @@ import { Page404Component } from './component/page404/page404.component';
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-      { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+      { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+      { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
+
       { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),

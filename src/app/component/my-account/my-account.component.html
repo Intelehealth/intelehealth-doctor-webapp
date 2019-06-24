@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
     <ng-container *ngIf="providerDetails">
     <mat-card >
         <h4>{{providerDetails.person.display}}</h4>
@@ -29,21 +29,33 @@
     <button class="btn btn-primary">Select</button>
     </form>
 </mat-card>
-</div>
+</div> -->
 
-<!-- <div class="container">
-    <mat-card> -->
-        <!-- <div class="limiter">
+    <div class="container">
+        <mat-card>
+        <div class="limiter">
             <div class="container-login100">
                 <div class="wrap-login100">
                     <div class="login100-form-title" style="background-image: url('../../../assets/images/city2.jpg');">
-                        <span class="login100-form-title-1">
-                                <h4>{{providerDetails.person.display}}</h4>
+                        <span class="login100-form-avatar">
+                            <img src='../../../assets/dummy profile image.jpg' style="width: 100%">   
                         </span>
                     </div>
-                    <h1>Hi</h1>
+                   <div style="text-align: center; padding-top: 20px; padding-bottom: 10px" >
+                    <ng-container *ngIf="providerDetails">
+                    <h4>{{providerDetails.person.display}}</h4>
+                    <div>Gender: <span>{{providerDetails.person.gender}}</span></div>
+                    <div>Phone No: <span>{{providerDetails.phoneNumber}}</span></div>
+                    <div>Email Id: <span>{{providerDetails.emailId}}</span></div>
+                    <div>Qualification: <span>{{providerDetails.qualification}}</span></div>
+                    <div>Specialization: <span>{{providerDetails.specialization}}</span></div>
+                    <div>Registration No: <span>{{providerDetails.registrationNumber}}</span></div>
+                    <div>Address: <span>{{providerDetails.address}}</span></div>
+                    <div><button mat-raised-button color="primary" (click)="signature()">Signature</button></div>
+                    </ng-container>
+                    </div>
                 </div>
             </div>
-        </div> -->
-    <!-- </mat-card>
-</div> -->
+        </div>
+    </mat-card>
+    </div>
