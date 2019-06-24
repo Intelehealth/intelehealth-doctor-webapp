@@ -9,7 +9,7 @@
   
   .container-login100 {
     width: 100%;  
-    min-height: 100vh;
+    /* min-height: 100vh; */
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -18,13 +18,13 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 15px;
-    background: #ebeeef;
+    /* padding: 15px; */
+    /* background: #ebeeef; */
   }
   
   
   .wrap-login100 {
-    width: 870px;
+    width: 100%;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
@@ -50,11 +50,11 @@
     background-size: cover;
     background-position: center;
   
-    padding: 50px 15px 50px 15px;
+    padding: 70px;
   }
   
   .login100-form-title-1 {
-    font-family: Poppins-Bold;
+    /* font-family: Poppins-Bold; */
     font-size: 30px;
     color: #fff;
     text-transform: uppercase;
@@ -74,3 +74,10 @@
     background-color: rgba(54,84,99,0.7);
   }
   
+  .login100-form-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  }
