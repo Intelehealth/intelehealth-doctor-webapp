@@ -53,7 +53,7 @@ export class EncounterService {
   }
 
   provider(userId): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/provider?user=${userId}&v=custom:(uuid,person:(display,gender),attributes)`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender),attributes)`;
     return this.http.get(url);
   }
 

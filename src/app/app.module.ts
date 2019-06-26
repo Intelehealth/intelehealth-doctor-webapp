@@ -57,6 +57,7 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
+import {InlineEditorModule} from '@qontu/ngx-inline-editor';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,7 @@ import { SignatureComponent } from './component/my-account/signature/signature.c
     SlickCarouselModule,
     ReactiveFormsModule,
     HttpClientModule,
+    InlineEditorModule,
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },

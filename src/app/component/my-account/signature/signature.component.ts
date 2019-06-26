@@ -37,13 +37,13 @@ onSubmit() {
   const signatureValue = formValue.signature;
   const signText = formValue.text;
   if (signatureValue === '1') {
-    signature(signText, 'Arty');
+    signature(signText, 'arty');
   }
   if (signatureValue === '2') {
-    signature(signText, 'Asem');
+    signature(signText, 'asem');
   }
   if (signatureValue === '3') {
-    signature(signText, 'Youthness');
+    signature(signText, 'youthness');
   }
 }
 }

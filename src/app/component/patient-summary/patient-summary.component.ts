@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VisitService } from 'src/app/services/visit.service';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
@@ -71,12 +70,10 @@ constructor(private service: EncounterService,
           if (res.results.length) {
             this.signPresent = true;
             res.results.forEach(element => {
-              if (element.attributeType.display === 'Text of sign') {
+              if (element.attributeType.display === 'textOfSign') {
                 this.text = element.value;
-                console.log(this.text);
-              } if (element.attributeType.display === 'Font of sign') {
+              } if (element.attributeType.display === 'fontOfSign') {
                 this.font = element.value;
-                console.log(this.font);
               }
             });
             this.service.visitComplete(patientUuid)

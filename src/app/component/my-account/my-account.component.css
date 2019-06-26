@@ -81,3 +81,22 @@
   overflow: hidden;
   margin: 0 auto;
   }
+
+  table {
+    width: 100%;
+}
+th {
+  width: 50%;
+  padding-left: 10%
+}
+td {
+  width: 50%;
+}
+
+/* @media screen and (max-width: 769px) {
+  table {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+} */
