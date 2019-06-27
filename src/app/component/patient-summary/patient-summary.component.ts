@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-patient-summary',
@@ -9,6 +10,7 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./patient-summary.component.css']
 })
 export class PatientSummaryComponent implements OnInit {
+userSubscription: Subscription;
 show = false;
 signPresent = false;
 text: string;
@@ -17,7 +19,12 @@ font: string;
 constructor(private service: EncounterService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
-            private router: Router) { }
+            private router: Router,
+            ) {
+              this.router.routeReuseStrategy.shouldReuseRoute = function() {
+                return false;
+            };
+            }
 
   ngOnInit() {
   }
