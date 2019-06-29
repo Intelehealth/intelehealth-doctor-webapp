@@ -1,3 +1,4 @@
+import { EncounterService } from 'src/app/services/encounter.service';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   constructor(private myRoute: Router,
+              private service: EncounterService,
               private cookieService: CookieService) { }
 
   sendToken(token) {
@@ -23,7 +25,13 @@ export class AuthService {
   }
 
   logout() {
-    this.cookieService.deleteAll();
-    this.myRoute.navigate(['/']);
+    this.service.session()
+    .subscribe(res => {
+      this.service.deleteSession(res.sessionId)
+      .subscribe(response => {
+        this.cookieService.deleteAll();
+        this.myRoute.navigate(['/']);
+    });
+    });
   }
 }

@@ -13,7 +13,7 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  baseUrl = window.location.host;
+  baseURL = window.location.host;
   systemAccess = false;
   values: any = [];
 
@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
   search() {
     const search = this.searchForm.value;
     // tslint:disable-next-line: max-line-length
-    const url = `http://${this.baseUrl}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
       .subscribe(response => {
         this.values = response['results'];

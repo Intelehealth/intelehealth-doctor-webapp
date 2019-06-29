@@ -40,7 +40,9 @@ export class EncounterService {
     return this.http.get(url);
   }
 
-  deleteSession(): Observable<any> {
+  deleteSession(id): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.set('cookie', `JSESSIONID=${id}`);
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/session`;
     return this.http.delete(url);
   }
