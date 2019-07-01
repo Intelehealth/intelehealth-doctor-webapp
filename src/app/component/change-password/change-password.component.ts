@@ -10,7 +10,7 @@ import { MatDialogRef } from '@angular/material';
   styleUrls: ['./change-password.component.css']
 })
 export class ChangePasswordComponent implements OnInit {
-  baseUrl = window.location.host;
+  baseURL = window.location.host;
   message: string;
   changePasswordForm: FormGroup;
 
@@ -32,7 +32,7 @@ export class ChangePasswordComponent implements OnInit {
 
   onSubmit() {
     const value = this.changePasswordForm.value;
-    const url = `http://${this.baseUrl}/openmrs/ws/rest/v1/password`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/password`;
     const json = {
       'oldPassword': value.currentPassword,
       'newPassword': value.newPassword
