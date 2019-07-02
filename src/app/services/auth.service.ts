@@ -13,7 +13,7 @@ export class AuthService {
               private cookieService: CookieService) { }
 
   sendToken(token) {
-    this.cookieService.set('JSESSIONID', token);
+    this.cookieService.set('JSESSIONID', token, 0.016);
   }
 
   getToken() {
