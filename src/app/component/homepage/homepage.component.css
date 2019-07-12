@@ -39,18 +39,10 @@ table {
 
 .mat-cell,
 .mat-header-cell {
-  /* word-wrap: initial; */
-  /* display: table-cell;
-  padding: 0px 5px;
-  line-break: unset;
-  width: 100%; */
   white-space: nowrap;
-  /* overflow: hidden; */
-  /* vertical-align: middle; */
 }
 
 mat-cell, .mat-cell {
-  /* display:block;  */
   min-height:auto; 
   padding: 12px 16px 12px 0;
 }

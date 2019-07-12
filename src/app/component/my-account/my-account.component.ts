@@ -10,8 +10,8 @@ import { SignatureComponent } from './signature/signature.component';
   styleUrls: ['./my-account.component.css']
 })
 export class MyAccountComponent implements OnInit {
-  // baseURL = window.location.host;
-  baseURL = 'demo.intelehealth.io';
+  baseURL = window.location.host;
+  // baseURL = 'demo.intelehealth.io';
   name = 'Enter text';
   providerDetails = null;
   providerUpdate = null;
@@ -33,7 +33,6 @@ export class MyAccountComponent implements OnInit {
               this.providerDetails[element.attributeType.display] = element.value;
               this.providerUpdate[element.attributeType.display] = element.uuid;
             });
-            console.log(this.providerDetails)
           });
       });
   }

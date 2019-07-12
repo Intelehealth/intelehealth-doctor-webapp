@@ -58,6 +58,7 @@ import { FindPatientComponent } from './component/find-patient/find-patient.comp
 import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import {InlineEditorModule} from '@qontu/ngx-inline-editor';
+import { UserIdleModule } from 'angular-user-idle';
 
 @NgModule({
   declarations: [
@@ -114,6 +115,7 @@ import {InlineEditorModule} from '@qontu/ngx-inline-editor';
     ReactiveFormsModule,
     HttpClientModule,
     InlineEditorModule,
+    UserIdleModule.forRoot({idle: 600, timeout: 30, ping: 12}),
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },

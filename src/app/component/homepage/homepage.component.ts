@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { MatSnackBar, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { UserIdleService } from 'angular-user-idle';
+import { AuthService } from 'src/app/services/auth.service';
 
 export interface VisitData {
   id: string;
@@ -35,7 +37,9 @@ export class HomepageComponent implements OnInit {
   flagLength = 0;
 
   constructor(private service: VisitService,
-    private snackbar: MatSnackBar) { }
+              private snackbar: MatSnackBar,
+              private userIdle: UserIdleService,
+              private authService: AuthService,) { }
 
   @ViewChild('page1') page1: MatPaginator;
   @ViewChild('page2') page2: MatPaginator;
@@ -43,6 +47,16 @@ export class HomepageComponent implements OnInit {
   @ViewChild('sortCol2') sortCol2: MatSort;
 
   ngOnInit() {
+    this.userIdle.startWatching();
+
+    // Start watching when user idle is starting.
+    this.userIdle.onTimerStart().subscribe(count => {
+      if (count === 1) {
+        this.authService.logout();
+        this.userIdle.stopWatching();
+      }
+      });
+
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;

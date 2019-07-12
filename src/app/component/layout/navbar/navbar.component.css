@@ -1,3 +1,7 @@
 .tooltip-red {
     background: #b71c1c;
   }
+
+  .box-radius {
+    border-radius: 0 0 10px 10px;
+  }

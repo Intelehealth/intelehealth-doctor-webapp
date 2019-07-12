@@ -23,6 +23,7 @@
     "@angular/router": "~7.2.0",
     "@ng-bootstrap/ng-bootstrap": "^4.1.2",
     "@qontu/ngx-inline-editor": "^0.2.0-alpha.12",
+    "angular-user-idle": "^2.1.2",
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",

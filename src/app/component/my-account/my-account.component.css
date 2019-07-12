@@ -1,15 +1,10 @@
-
-  /*//////////////////////////////////////////////////////////////////
-  [ login ]*/
-  
-  .limiter {
+/* .limiter {
     width: 100%;
     margin: 0 auto;
-  }
+  } */
   
-  .container-login100 {
+  /* .container-login100 {
     width: 100%;  
-    /* min-height: 100vh; */
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -18,21 +13,19 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    /* padding: 15px; */
-    /* background: #ebeeef; */
-  }
+  } */
   
   
   .wrap-login100 {
     width: 100%;
     background: #fff;
-    border-radius: 10px;
     overflow: hidden;
     position: relative;
+    background: url('../../../assets/images/Doctor-profile-page-background-without-blur.png');
+    background-size: 100% 100%;
+    border-radius: 10px;
   }
   
-  /*==================================================================
-  [ Title form ]*/
   .login100-form-title {
     width: 100%;
     position: relative;
@@ -45,33 +38,23 @@
     flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
-  
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-  
-    padding: 70px;
-  }
-  
-  .login100-form-title-1 {
-    /* font-family: Poppins-Bold; */
-    font-size: 30px;
-    color: #fff;
-    text-transform: uppercase;
-    line-height: 1.2;
-    text-align: center;
+    padding-top: 70px;
   }
   
   .login100-form-title::before {
     content: "";
-    display: block;
+    display: inline-block;
     position: absolute;
     z-index: -1;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(54,84,99,0.7);
+    border-radius: 10px;
+    /* background-color: rgba(54,84,99,0.7); */
   }
   
   .login100-form-avatar {
@@ -79,7 +62,7 @@
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto;
+  margin: 0 auto
   }
 
   table {
@@ -87,16 +70,32 @@
 }
 th {
   width: 50%;
-  padding-left: 10%
 }
 td {
   width: 50%;
 }
 
-/* @media screen and (max-width: 769px) {
-  table {
-    width: auto;
-    margin-left: auto;
-    margin-right: auto;
+
+.overlap{
+  top: -100px;
+  position: relative;
+  left: 27%;
+  width: 45%;
+  border-radius: 10px;
+  padding-top: 140px;
   }
-} */
+
+  @media only screen and (max-width: 768px) { 
+    .overlap{
+      top: -100px;
+      position: relative;
+      left: 8%;
+      width: 85%;
+      border-radius: 10px;
+      padding-top: 140px;
+      }
+
+      .wrap-login100 {
+        background: none
+      }
+   }

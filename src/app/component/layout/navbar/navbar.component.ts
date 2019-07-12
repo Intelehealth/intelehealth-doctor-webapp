@@ -15,6 +15,7 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
 export class NavbarComponent implements OnInit {
   baseURL = window.location.host;
   systemAccess = false;
+  reportAccess = false;
   values: any = [];
 
   searchForm = new FormGroup({
@@ -35,6 +36,8 @@ export class NavbarComponent implements OnInit {
         roles.forEach(role => {
           if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8') {
             this.systemAccess = true;
+          } if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8' || role.uuid === 'a5df6aa5-d6e5-4b56-b0e7-315ee0899f97') {
+            this.reportAccess = true;
           }
         });
       });

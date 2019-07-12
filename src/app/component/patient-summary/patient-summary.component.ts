@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import { Subscription } from 'rxjs';
+import { UserIdleService } from 'angular-user-idle';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-patient-summary',
@@ -20,6 +22,8 @@ constructor(private service: EncounterService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
             private router: Router,
+            private userIdle: UserIdleService,
+            private authService: AuthService,
             ) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
@@ -27,6 +31,15 @@ constructor(private service: EncounterService,
             }
 
   ngOnInit() {
+    this.userIdle.startWatching();
+
+    // Start watching when user idle is starting.
+    this.userIdle.onTimerStart().subscribe(count => {
+      if (count === 1) {
+        this.authService.logout();
+        this.userIdle.stopWatching();
+      }
+      });
   }
 
   onClick() {
@@ -114,5 +127,6 @@ constructor(private service: EncounterService,
       });
     });
   }
+
 }
 
