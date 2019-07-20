@@ -5,6 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ followUp: any = [];
 conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 encounterUuid: string;
 patientId: string;
+visitUuid: string;
 errorText: string;
 
 followForm = new FormGroup({
@@ -39,30 +41,37 @@ followForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
+              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute,
               private datepipe: DatePipe) { }
 
   ngOnInit() {
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
     .subscribe(response => {
-      this.followUp = response.results;
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          this.followUp.push(obs);
+        }
+      });
     });
   }
 
   Submit() {
     const date = new Date();
     const form = this.followForm.value;
-    console.log(form);
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
     if (!obsdate || !advice) {
       this.errorText = 'Please enter text.';
     } else {
-    this.service.visitNote(this.patientId)
-      .subscribe(res => {
-      this.encounterUuid = res.results[0].uuid;
+      this.visitService.fetchVisitDetails(this.visitUuid)
+      .subscribe(visitDetails => {
+        visitDetails.encounters.forEach(encounter => {
+        if (encounter.display.match('Visit Note') !== null) {
+        this.encounterUuid = encounter.uuid;
     const json = {
       concept: this.conceptFollow,
       person: this.patientId,
@@ -79,6 +88,8 @@ followForm = new FormGroup({
           this.followForm.controls[controlName].setErrors(null);
         });
       });
+    }
+  });
     });
     }
   }

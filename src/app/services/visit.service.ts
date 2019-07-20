@@ -13,7 +13,6 @@ export class VisitService {
   constructor(private http: HttpClient) { }
 
   getVisits(): Observable<any> {
-    const base_url = window.location.origin;
     // tslint:disable-next-line:max-line-length
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,encounterType:(display)))`;
     return this.http.get(url);

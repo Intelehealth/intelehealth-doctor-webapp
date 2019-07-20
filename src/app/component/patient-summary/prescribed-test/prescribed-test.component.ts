@@ -6,6 +6,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
   selector: 'app-prescribed-test',
@@ -32,6 +33,7 @@ test =  [];
 conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
 encounterUuid: string;
 patientId: string;
+visitUuid: string;
 errorText: string;
 
 testForm = new FormGroup({
@@ -39,6 +41,7 @@ testForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
+              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
@@ -60,10 +63,15 @@ testForm = new FormGroup({
         this.test.push(ans.display);
       });
     });
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptTest)
     .subscribe(response => {
-      this.tests = response.results;
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          this.tests.push(obs);
+        }
+      });
     });
   }
 
@@ -71,9 +79,11 @@ testForm = new FormGroup({
     const date = new Date();
     const form = this.testForm.value;
     const value = form.test;
-    this.service.visitNote(this.patientId)
-      .subscribe(res => {
-      this.encounterUuid = res.results[0].uuid;
+    this.visitService.fetchVisitDetails(this.visitUuid)
+    .subscribe(visitDetails => {
+      visitDetails.encounters.forEach(encounter => {
+      if (encounter.display.match('Visit Note') !== null) {
+      this.encounterUuid = encounter.uuid;
       const json = {
               concept: this.conceptTest,
               person: this.patientId,
@@ -90,7 +100,9 @@ testForm = new FormGroup({
           this.testForm.controls[controlName].setErrors(null);
         });
       });
-    });
+    }
+  });
+  });
 }
 
     delete(i) {

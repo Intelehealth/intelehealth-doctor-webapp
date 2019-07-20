@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { DiagnosisService } from './../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -31,6 +32,7 @@ meds: any = [];
 add = false;
 encounterUuid: string;
 patientId: string;
+visitUuid: string;
 conceptPrescription = [];
 conceptDose = [];
 conceptfrequency = [];
@@ -51,6 +53,7 @@ medForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
+              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
@@ -135,10 +138,15 @@ medForm = new FormGroup({
         this.conceptDurationUnit.push(ans.display);
       });
     });
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptMed)
     .subscribe(response => {
-      this.meds = response.results;
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          this.meds.push(obs);
+        }
+      });
     });
   }
 
@@ -147,9 +155,11 @@ medForm = new FormGroup({
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
     const insertValue = `${value.med}: ${value.dose}, ${value.unit} ${value.frequency} (${value.route}) ${value.reason} for ${value.duration} ${value.durationUnit} ${value.additional}total.`;
-    this.service.visitNote(this.patientId)
-      .subscribe(res => {
-      this.encounterUuid = res.results[0].uuid;
+    this.visitService.fetchVisitDetails(this.visitUuid)
+    .subscribe(visitDetails => {
+      visitDetails.encounters.forEach(encounter => {
+      if (encounter.display.match('Visit Note') !== null) {
+      this.encounterUuid = encounter.uuid;
      const json = {
         concept: this.conceptMed,
         person: this.patientId,
@@ -166,8 +176,10 @@ medForm = new FormGroup({
       });
       this.add = false;
      });
-    });
-  }
+    }
+  });
+  });
+}
 
   delete(i) {
     const uuid = this.meds[i].uuid;

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from './../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
   selector: 'app-additional-comment',
@@ -28,6 +29,7 @@ export class AdditionalCommentComponent implements OnInit {
 comment: any = [];
 encounterUuid: string;
 patientId: string;
+visitUuid: string;
 conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   commentForm = new FormGroup ({
@@ -35,41 +37,50 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   });
 
   constructor(private service: EncounterService,
+              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptComment)
     .subscribe(response => {
-      this.comment = response.results;
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          this.comment.push(obs);
+        }
+      });
     });
   }
 
   Submit() {
     const date = new Date();
-    const patientId = this.route.snapshot.params['patient_id'];
     const form = this.commentForm.value;
     const value = form.comment;
-    this.service.visitNote(this.patientId)
-        .subscribe(res => {
-        this.encounterUuid = res.results[0].uuid;
-    const json = {
-      concept: this.conceptComment,
-      person: patientId,
-      obsDatetime: date,
-      value: value,
-      encounter: this.encounterUuid
-    };
-    this.service.postObs(json)
-    .subscribe(resp => {
+    this.visitService.fetchVisitDetails(this.visitUuid)
+    .subscribe(visitDetails => {
+      visitDetails.encounters.forEach(encounter => {
+      if (encounter.display.match('Visit Note') !== null) {
+      this.encounterUuid = encounter.uuid;
+      const json = {
+        concept: this.conceptComment,
+        person: this.patientId,
+        obsDatetime: date,
+        value: value,
+        encounter: this.encounterUuid
+      };
+      this.service.postObs(json)
+      .subscribe(resp => {
       this.comment.push({value: value});
       Object.keys(this.commentForm.controls).forEach(controlName => {
         this.commentForm.controls[controlName].reset();
         this.commentForm.controls[controlName].setErrors(null);
       });
     });
+  }
   });
+});
 }
 
   delete(i) {

@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ advice: any = [];
 advices: any = [];
 conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
 encounterUuid: string;
+visitUuid: string;
 patientId: string;
 errorText: string;
 
@@ -40,6 +42,7 @@ adviceForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
+              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute) { }
 
@@ -60,10 +63,15 @@ adviceForm = new FormGroup({
         this.advices.push(ans.display);
       });
     });
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
     .subscribe(response => {
-      this.advice = response.results;
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          this.advice.push(obs);
+        }
+      });
     });
   }
 
@@ -71,9 +79,11 @@ adviceForm = new FormGroup({
       const date = new Date();
       const form = this.adviceForm.value;
       const value = form.advice;
-        this.service.visitNote(this.patientId)
-        .subscribe(res => {
-        this.encounterUuid = res.results[0].uuid;
+      this.visitService.fetchVisitDetails(this.visitUuid)
+      .subscribe(visitDetails => {
+        visitDetails.encounters.forEach(encounter => {
+        if (encounter.display.match('Visit Note') !== null) {
+        this.encounterUuid = encounter.uuid;
         const json = {
             concept: this.conceptAdvice,
             person: this.patientId,
@@ -90,7 +100,9 @@ adviceForm = new FormGroup({
         this.adviceForm.controls[controlName].setErrors(null);
       });
     });
-  });
+  }
+});
+});
 }
 
   delete(i) {
