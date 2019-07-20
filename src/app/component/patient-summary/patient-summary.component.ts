@@ -1,3 +1,4 @@
+import { VisitService } from './../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,8 +18,10 @@ show = false;
 signPresent = false;
 text: string;
 font: string;
+visitNotePresent = false;
 
 constructor(private service: EncounterService,
+            private visitService: VisitService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
             private router: Router,
@@ -42,13 +45,18 @@ constructor(private service: EncounterService,
       });
   }
 
-  onClick() {
+  onStartVisit() {
     const myDate = new Date();
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.service.visitNote(patientUuid)
-    .subscribe(visitNote => {
-      if (visitNote.results.length === 0) {
+    this.visitService.fetchVisitDetails(visitUuid)
+    .subscribe(visitDetails => {
+      visitDetails.encounters.forEach(visit => {
+        if (visit.display.match('Visit Note') !== null) {
+          this.visitNotePresent = true;
+          }
+      });
+      if (!this.visitNotePresent) {
         this.service.session()
         .subscribe(session => {
           const userUuid = session.user.uuid;
@@ -67,7 +75,6 @@ constructor(private service: EncounterService,
             };
             this.service.postEncounter(json)
             .subscribe(response => {
-              console.log(response);
             });
           });
         });

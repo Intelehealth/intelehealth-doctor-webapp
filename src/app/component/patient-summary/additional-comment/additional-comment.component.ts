@@ -64,7 +64,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     this.service.postObs(json)
     .subscribe(resp => {
       this.comment.push({value: value});
-      this.commentForm.reset();
+      Object.keys(this.commentForm.controls).forEach(controlName => {
+        this.commentForm.controls[controlName].reset();
+        this.commentForm.controls[controlName].setErrors(null);
+      });
     });
   });
 }

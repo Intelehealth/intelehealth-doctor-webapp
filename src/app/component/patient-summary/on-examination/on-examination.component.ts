@@ -16,11 +16,16 @@ conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.diagnosisService.getObs(uuid, this.conceptOnExam)
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.diagnosisService.getObs(patientUuid, this.conceptOnExam)
     .subscribe(response => {
-      this.onExam = response.results[0];
-      if ( this.onExam !== undefined) {
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === visitUuid) {
+          this.onExam = obs;
+        }
+      });
+      if (this.onExam !== undefined) {
         this.onExamPresent = true;
       }
     });

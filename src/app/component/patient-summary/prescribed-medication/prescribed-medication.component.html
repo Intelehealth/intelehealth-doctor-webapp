@@ -10,7 +10,7 @@
   <div *ngIf="add">
     <div class="form-row">
       <div class="col-auto">
-        <input type="number" class="form-control" placeholder="Dose" formControlName="dose">
+        <input type="number" min="1" class="form-control" placeholder="Dose" formControlName="dose">
       </div>
       <div class="col-auto">
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units" formControlName="unit">
@@ -29,7 +29,7 @@
           <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">For</span> 
               </div>
-              <input type="number" class="form-control" placeholder="Duration" formControlName="duration">
+              <input type="number" min="1" class="form-control" placeholder="Duration" formControlName="duration">
               <div class="input-group-prepend">
               <input type="text" class="form-control" [ngbTypeahead]="durationUnit" placeholder="Units" formControlName="durationUnit">
               </div>
@@ -44,7 +44,7 @@
     <ul class="list-unstyled">
       <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary">
         {{meds.value}} 
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30)">delete</i>
+        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </mat-list>
     </ul>
 </ng-container>

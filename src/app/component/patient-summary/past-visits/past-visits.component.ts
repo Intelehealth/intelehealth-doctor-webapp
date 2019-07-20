@@ -23,7 +23,9 @@ export class PastVisitsComponent implements OnInit {
       visits.forEach(visit => {
                 this.service.fetchVisitDetails(visit.uuid)
                 .subscribe(visitDetails => {
+                  this.recentVisit = [];
                       this.recentVisit.details = visitDetails;
+                      // console.log(visitDetails);
                       const encounters = visitDetails.encounters;
                       encounters.forEach(encounter => {
                       const display = encounter.display;
@@ -43,7 +45,7 @@ export class PastVisitsComponent implements OnInit {
                 });
             }
           });
-        if (visitDetails.stopDatetime == null || visitDetails.stopDatetime === undefined) {
+        if (visitDetails.stopDatetime === null || visitDetails.stopDatetime === undefined) {
           this.recentVisit.visitStatus = 'Active';
         }
         this.recent.push(this.recentVisit);

@@ -10,6 +10,7 @@ import { VisitService } from 'src/app/services/visit.service';
 })
 
 export class PatientinfoComponent implements OnInit {
+  baseURL = '13.233.50.223:8080';
 image: string;
 patientInfo = [];
 info = {};
@@ -23,10 +24,8 @@ constructor(private route: ActivatedRoute,
       const uuid = this.route.snapshot.paramMap.get('patient_id');
       this.service.fetchProfileImage(uuid)
       .subscribe(response => {
-        if (response.results.length !== 0) {
-          this.profileImagePresent = true;
-          this.image = response.results[0].Image.url;
-         }
+        this.profileImagePresent = true;
+        this.image = `http://${this.baseURL}/openmrs/ws/rest/v1/personimage/${uuid}`;
       });
       this.visitService.patientInfo(uuid)
       .subscribe(info => {

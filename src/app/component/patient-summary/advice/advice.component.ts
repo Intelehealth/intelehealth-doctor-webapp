@@ -85,7 +85,10 @@ adviceForm = new FormGroup({
     .subscribe(response => {
       this.advice.push({value: value});
       this.errorText = '';
-      this.adviceForm.reset();
+      Object.keys(this.adviceForm.controls).forEach(controlName => {
+        this.adviceForm.controls[controlName].reset();
+        this.adviceForm.controls[controlName].setErrors(null);
+      });
     });
   });
 }

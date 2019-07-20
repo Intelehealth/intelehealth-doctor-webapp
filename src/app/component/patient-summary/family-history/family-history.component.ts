@@ -17,10 +17,15 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.diagnosisService.getObs(uuid, this.conceptFamilyHistory)
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    this.diagnosisService.getObs(patientUuid, this.conceptFamilyHistory)
     .subscribe(response => {
-      this.familyHistory = response.results[0];
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === visitUuid) {
+          this.familyHistory = obs;
+        }
+      });
       if (this.familyHistory !== undefined) {
         this.familyHistoryPresent = true;
       }

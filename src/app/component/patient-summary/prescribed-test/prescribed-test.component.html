@@ -15,7 +15,7 @@
     <ul class="list-unstyled">
       <mat-list [@moveInLeft] *ngFor='let test of tests, index as i' class="alert alert-primary">
       {{test.value}}
-      <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30)">delete</i>
+      <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </mat-list>
       </ul>
 </ng-container>

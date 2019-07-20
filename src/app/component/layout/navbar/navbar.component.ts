@@ -13,7 +13,8 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  baseURL = window.location.host;
+  // baseURL = window.location.host;
+  baseURL = '13.233.50.223:8080';
   systemAccess = false;
   reportAccess = false;
   values: any = [];
@@ -53,6 +54,9 @@ export class NavbarComponent implements OnInit {
 
   search() {
     const search = this.searchForm.value;
+    if (search.findInput.length < 3) {
+    this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
+    } else {
     // tslint:disable-next-line: max-line-length
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
@@ -66,6 +70,7 @@ export class NavbarComponent implements OnInit {
           this.snackbar.open('Server-side error', null, { duration: 2000 });
         }
       });
+    }
     this.searchForm.reset();
   }
 

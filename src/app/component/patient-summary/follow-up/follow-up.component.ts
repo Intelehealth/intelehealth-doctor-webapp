@@ -54,6 +54,7 @@ followForm = new FormGroup({
   Submit() {
     const date = new Date();
     const form = this.followForm.value;
+    console.log(form);
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
     if (!obsdate || !advice) {
@@ -73,7 +74,10 @@ followForm = new FormGroup({
       .subscribe(resp => {
         this.followUp.push({value: json.value});
         this.errorText = '';
-        this.followForm.reset();
+        Object.keys(this.followForm.controls).forEach(controlName => {
+          this.followForm.controls[controlName].reset();
+          this.followForm.controls[controlName].setErrors(null);
+        });
       });
     });
     }

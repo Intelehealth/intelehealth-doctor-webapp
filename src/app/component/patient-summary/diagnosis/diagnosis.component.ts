@@ -64,7 +64,10 @@ diagnosisForm = new FormGroup({
     this.service.postObs(json)
     .subscribe(resp => {
       this.diagnosis.push({value: json.value});
-      this.diagnosisForm.reset();
+      Object.keys(this.diagnosisForm.controls).forEach(controlName => {
+        this.diagnosisForm.controls[controlName].reset();
+        this.diagnosisForm.controls[controlName].setErrors(null);
+      });
   });
 });
 }

@@ -16,10 +16,15 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.diagnosisService.getObs(uuid, this.conceptPastMedical)
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.diagnosisService.getObs(patientUuid, this.conceptPastMedical)
     .subscribe(response => {
-      this.pastMedical = response.results[0];
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === visitUuid) {
+          this.pastMedical = obs;
+        }
+      });
       if (this.pastMedical !== undefined) {
         this.pastMedicalHistoryPresent = true;
       }

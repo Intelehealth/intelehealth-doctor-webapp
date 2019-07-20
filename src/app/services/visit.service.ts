@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 
 export class VisitService {
   // private baseURL = window.location.host;
-  private baseURL = 'demo.intelehealth.io';
+  private baseURL = '13.233.50.223:8080';
   constructor(private http: HttpClient) { }
 
   getVisits(): Observable<any> {

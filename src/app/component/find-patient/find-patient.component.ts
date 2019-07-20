@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 })
 
 export class FindPatientComponent implements OnInit {
-  values: any = [];
+  values: any;
+  msg = 'Sorry no Patient Found..';
 
   constructor(public dialog: MatDialogRef<FindPatientComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -19,7 +20,12 @@ export class FindPatientComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.values = this.data.value;
+    if (typeof this.data.value === 'string') {
+      this.values = [];
+      this.msg = this.data.value;
+    } else {
+      this.values = this.data.value;
+    }
   }
 
   find(uuid) {

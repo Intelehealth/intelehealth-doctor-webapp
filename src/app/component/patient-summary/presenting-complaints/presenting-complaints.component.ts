@@ -16,10 +16,15 @@ export class PresentingComplaintsComponent implements OnInit {
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const uuid = this.route.snapshot.paramMap.get('patient_id');
-    this.diagnosisService.getObs(uuid, this.conceptComplaint)
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.diagnosisService.getObs(patientUuid, this.conceptComplaint)
     .subscribe(response => {
-      this.complaint = response.results[0];
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === visitUuid) {
+          this.complaint = obs;
+        }
+      });
       if (this.complaint !== undefined) {
         this.complaintPresent = true;
       }

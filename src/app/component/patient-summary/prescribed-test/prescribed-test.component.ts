@@ -85,7 +85,10 @@ testForm = new FormGroup({
       .subscribe(resp => {
         this.tests.push({value: value});
         this.errorText = '';
-        this.testForm.reset();
+        Object.keys(this.testForm.controls).forEach(controlName => {
+          this.testForm.controls[controlName].reset();
+          this.testForm.controls[controlName].setErrors(null);
+        });
       });
     });
 }

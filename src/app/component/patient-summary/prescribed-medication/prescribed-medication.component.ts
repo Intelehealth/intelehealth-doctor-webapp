@@ -40,12 +40,12 @@ conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
 
 medForm = new FormGroup({
   med: new FormControl('', [Validators.required]),
-  dose: new FormControl('', [Validators.required]),
+  dose: new FormControl('', Validators.min(1)),
   unit: new FormControl('', [Validators.required]),
   frequency: new FormControl('', [Validators.required]),
   route: new FormControl(''),
   reason: new FormControl(''),
-  duration: new FormControl('', [Validators.required]),
+  duration: new FormControl('', Validators.min(1)),
   durationUnit: new FormControl('', [Validators.required]),
   additional: new FormControl('')
 });
@@ -160,7 +160,10 @@ medForm = new FormGroup({
      this.service.postObs(json)
      .subscribe(response => {
       this.meds.push({value: insertValue});
-      this.medForm.reset();
+      Object.keys(this.medForm.controls).forEach(controlName => {
+        this.medForm.controls[controlName].reset();
+        this.medForm.controls[controlName].setErrors(null);
+      });
       this.add = false;
      });
     });

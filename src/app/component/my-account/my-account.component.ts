@@ -10,8 +10,8 @@ import { SignatureComponent } from './signature/signature.component';
   styleUrls: ['./my-account.component.css']
 })
 export class MyAccountComponent implements OnInit {
-  baseURL = window.location.host;
-  // baseURL = 'demo.intelehealth.io';
+  // baseURL = window.location.host;
+  baseURL = '13.233.50.223:8080';
   name = 'Enter text';
   providerDetails = null;
   providerUpdate = null;

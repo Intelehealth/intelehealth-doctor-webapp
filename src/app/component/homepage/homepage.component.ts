@@ -69,7 +69,7 @@ export class HomepageComponent implements OnInit {
             if (value.match('Vitals') || value.match('ADULTINITIAL') || value.match('Flagged')) {
               length += 1;
             }
-            if (!value.match('Flagged') && !value.match('Visit Complete')) {
+            if (!value.match('Flagged') && !value.match('Visit Complete') && !value.match('Patient Exit Survey')) {
               this.value.visitId = active.uuid;
               this.value.patientId = active.patient.uuid;
               this.value.id = active.patient.identifiers[0].identifier;
