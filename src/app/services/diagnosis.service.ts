@@ -6,9 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DiagnosisService {
-  med: any = [];
-  // private baseURL = window.location.host;
-  private baseURL = '13.233.50.223:8080';
+  private baseURL = window.location.host;
+  // private baseURL = '13.233.50.223:8080';
+  // private baseURL = 'demo.intelehealth.io';
+  
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {

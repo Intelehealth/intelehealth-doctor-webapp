@@ -16,17 +16,6 @@ export class LoginPageComponent implements OnInit {
     password: new FormControl('', [Validators.required])
   });
 
-  slideConfig2 = {
-    className: 'center',
-    centerMode: true,
-    infinite: true,
-    centerPadding: '0',
-    slidesToShow: 1,
-    speed: 500,
-    dots: true,
-  };
-
-
   constructor(
     private service: EncounterService,
     private router: Router,

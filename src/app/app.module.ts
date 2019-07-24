@@ -26,7 +26,8 @@ import {
   MatTableModule,
   MatPaginatorModule,
   MatSortModule,
-  MatListModule } from '@angular/material/';
+  MatListModule,
+  MatSelectModule} from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -59,6 +60,7 @@ import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import {InlineEditorModule} from '@qontu/ngx-inline-editor';
 import { UserIdleModule } from 'angular-user-idle';
+import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +90,8 @@ import { UserIdleModule } from 'angular-user-idle';
     PastVisitsComponent,
     FindPatientComponent,
     Page404Component,
-    SignatureComponent
+    SignatureComponent,
+    EditDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -107,6 +110,7 @@ import { UserIdleModule } from 'angular-user-idle';
     MatNativeDateModule,
     MatListModule,
     MatInputModule,
+    MatSelectModule,
     MatDialogModule,
     NgxPaginationModule,
     NgbModule,
@@ -122,6 +126,7 @@ import { UserIdleModule } from 'angular-user-idle';
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
       { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+      { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
       { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }

@@ -170,10 +170,6 @@ medForm = new FormGroup({
      this.service.postObs(json)
      .subscribe(response => {
       this.meds.push({value: insertValue});
-      Object.keys(this.medForm.controls).forEach(controlName => {
-        this.medForm.controls[controlName].reset();
-        this.medForm.controls[controlName].setErrors(null);
-      });
       this.add = false;
      });
     }

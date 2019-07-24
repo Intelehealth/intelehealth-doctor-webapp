@@ -1,4 +1,3 @@
-import { LoginPageComponent } from './../../login-page/login-page.component';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -9,9 +8,9 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./physical-examination.component.css']
 })
 export class PhysicalExaminationComponent implements OnInit {
-  // baseURL = window.location.host;
-baseURL = '13.233.50.223:8080';
-image: any = [];
+  baseURL = window.location.host;
+// baseURL = '13.233.50.223:8080';
+
 images: any = [];
 physicalExamPresent = false;
 conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';

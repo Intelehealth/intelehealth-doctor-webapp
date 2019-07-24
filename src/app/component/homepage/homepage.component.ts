@@ -66,7 +66,7 @@ export class HomepageComponent implements OnInit {
         visits.forEach(active => {
           if (active.encounters.length > 0) {
             const value = active.encounters[0].display;
-            if (value.match('Vitals') || value.match('ADULTINITIAL') || value.match('Flagged')) {
+            if (value.match('ADULTINITIAL')) {
               length += 1;
             }
             if (!value.match('Flagged') && !value.match('Visit Complete') && !value.match('Patient Exit Survey')) {

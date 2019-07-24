@@ -1,11 +1,11 @@
 <h4><i class="fas fa-book"></i> Follow Up</h4>
 <hr>
 <div>
-<form [formGroup]="followForm" (ngSubmit)='Submit()'>
+<form [formGroup]="followForm">
 <div>
   <p>
     <mat-form-field>
-      <input matInput readonly [matDatepicker]="dp3" placeholder="Choose a date" formControlName='date'>
+      <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" formControlName='date'>
       <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
       <mat-datepicker #dp3 disabled="false"></mat-datepicker>
     </mat-form-field>
@@ -13,11 +13,11 @@
       <mat-form-field class="example-full-width">
         <textarea matInput placeholder="Leave a comment" formControlName='advice'></textarea>
       </mat-form-field>
-<button type="submit" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>Schedule a Follow up</button>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>Schedule a Follow up</button>
 </div>
 {{errorText}}
 </form>
-<ng-container *ngIf="followUp.length >= 0">
+<ng-container *ngIf="followUp.length > 0">
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">{{followUp.value}} 
         <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>

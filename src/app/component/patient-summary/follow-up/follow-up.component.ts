@@ -28,6 +28,7 @@ import { VisitService } from 'src/app/services/visit.service';
  ]
 })
 export class FollowUpComponent implements OnInit {
+minDate = new Date();
 followUp: any = [];
 conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 encounterUuid: string;
@@ -64,9 +65,6 @@ followForm = new FormGroup({
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
-    if (!obsdate || !advice) {
-      this.errorText = 'Please enter text.';
-    } else {
       this.visitService.fetchVisitDetails(this.visitUuid)
       .subscribe(visitDetails => {
         visitDetails.encounters.forEach(encounter => {
@@ -76,23 +74,17 @@ followForm = new FormGroup({
       concept: this.conceptFollow,
       person: this.patientId,
       obsDatetime: date,
-      value: `${obsdate}, Advice: ${advice}`,
+      value: advice ? `${obsdate}, Advice: ${advice}` : obsdate,
       encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
         this.followUp.push({value: json.value});
-        this.errorText = '';
-        Object.keys(this.followForm.controls).forEach(controlName => {
-          this.followForm.controls[controlName].reset();
-          this.followForm.controls[controlName].setErrors(null);
-        });
       });
     }
   });
     });
     }
-  }
 
   delete(i) {
     const uuid = this.followUp[i].uuid;

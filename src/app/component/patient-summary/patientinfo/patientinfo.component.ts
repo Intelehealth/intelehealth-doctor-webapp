@@ -10,7 +10,8 @@ import { VisitService } from 'src/app/services/visit.service';
 })
 
 export class PatientinfoComponent implements OnInit {
-  baseURL = '13.233.50.223:8080';
+  baseURL = window.location.host;
+  // baseURL = '13.233.50.223:8080';
 image: string;
 patientInfo = [];
 info = {};

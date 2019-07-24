@@ -1,4 +1,3 @@
-import { LoginPageComponent } from './../../login-page/login-page.component';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -9,9 +8,8 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
   styleUrls: ['./additional-documents.component.css']
 })
 export class AdditionalDocumentsComponent implements OnInit {
-// baseURL = window.location.host;
-baseURL = '13.233.50.223:8080';
-image: any = [];
+baseURL = window.location.host;
+// baseURL = '13.233.50.223:8080';
 images: any = [];
 additionalDocumentPresent = false;
 conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';

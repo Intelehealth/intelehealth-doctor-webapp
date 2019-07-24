@@ -94,11 +94,6 @@ testForm = new FormGroup({
       this.service.postObs(json)
       .subscribe(resp => {
         this.tests.push({value: value});
-        this.errorText = '';
-        Object.keys(this.testForm.controls).forEach(controlName => {
-          this.testForm.controls[controlName].reset();
-          this.testForm.controls[controlName].setErrors(null);
-        });
       });
     }
   });

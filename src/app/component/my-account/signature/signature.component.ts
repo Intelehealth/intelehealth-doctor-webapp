@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 
 
 @Component({
@@ -11,17 +11,20 @@ import { MatDialogRef } from '@angular/material';
   styleUrls: ['./signature.component.css']
 })
 export class SignatureComponent implements OnInit {
+  baseURL = window.location.host;
+  // baseURL = '13.233.50.223:8080';
+  // baseURL = 'demo.intelehealth.io';
+
   addSignatureForm = new FormGroup({
     signature: new FormControl(''),
     text: new FormControl('')
   });
-
-  baseUrl = window.location.host;
   status = false;
   name = 'Enter text';
 
   constructor(private service: EncounterService,
               private http: HttpClient,
+              private snackbar: MatSnackBar,
               private dialogRef: MatDialogRef<SignatureComponent>) { }
 
   ngOnInit() {
@@ -37,47 +40,51 @@ onSubmit() {
   const signatureValue = formValue.signature;
   const signText = formValue.text;
   if (signatureValue === '1') {
-    signature(signText, 'arty');
+    this.signature(signText, 'arty');
   }
   if (signatureValue === '2') {
-    signature(signText, 'asem');
+    this.signature(signText, 'asem');
   }
   if (signatureValue === '3') {
-    signature(signText, 'youthness');
+    this.signature(signText, 'youthness');
   }
 }
-}
 
-function signature(text: string, font: string) {
+
+signature = (text: string, font: string) => {
 this.service.session()
   .subscribe(response => {
     const userUuid = response.user.uuid;
-    const url = `http://${this.baseUrl}/openmrs/ws/rest/v1/provider?user=${userUuid}`;
-    this.http.get(url)
-      .subscribe(response1 => {
-        const providerUuid = response1.results[0].uuid;
-        const url1 = `http://${this.baseUrl}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
-        this.http.get(url1)
-          .subscribe(response2 => {
-            const data = response2;
-            if (data.results.length !== 0) {
+    this.service.provider(userUuid)
+    .subscribe(provider => {
+      const providerUuid = provider.results[0].uuid;
+      this.service.signRequest(providerUuid)
+          .subscribe(res => {
+            const data = res.results;
+            if (data.length !== 0) {
               this.status = true;
             } else {
-              const url2 = `http://${this.baseUrl}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
+              const url2 = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
               const json = {
-                'attributetype': '',
+                'attributeType': 'c1c6458d-383b-4034-afa0-16a34185b458',
                 'value': text
               };
-              this.http.post(url2, json);
-              const url3 = `http://${this.baseUrl}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
+              this.http.post(url2, json)
+              .subscribe(pp => {
+              });
+              const url3 = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
               const json1 = {
-                'attributetype': '',
+                'attributeType': '8d321915-e59d-4e19-98a9-086946bfc72b',
                 'value': font
               };
-              this.http.post(url3, json1);
+              this.http.post(url3, json1)
+              .subscribe(ps => {
+                this.snackbar.open('Signature added successfully', null, { duration: 4000 });
+              });
             }
-          });
-      });
+    });
   });
+});
+}
 }
 

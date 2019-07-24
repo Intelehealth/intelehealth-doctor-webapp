@@ -94,6 +94,7 @@ constructor(private service: EncounterService,
         const providerUuid = user.results[0].uuid;
         this.service.signRequest(providerUuid)
         .subscribe(res => {
+          console.log(res, 'patient');
           if (res.results.length) {
             this.signPresent = true;
             res.results.forEach(element => {

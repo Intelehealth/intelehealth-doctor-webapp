@@ -8,8 +8,10 @@ import { Observable } from 'rxjs';
 
 
 export class VisitService {
-  // private baseURL = window.location.host;
-  private baseURL = '13.233.50.223:8080';
+  private baseURL = window.location.host;
+  // private baseURL = '13.233.50.223:8080';
+  // private baseURL = 'demo.intelehealth.io';
+
   constructor(private http: HttpClient) { }
 
   getVisits(): Observable<any> {

@@ -1,7 +1,7 @@
 <h4><i class="fas fa-diagnoses"></i> Diagnosis</h4>
 <hr>
 <div>
-<form [formGroup]='diagnosisForm' (submit)='onSubmit()'>
+<form [formGroup]='diagnosisForm'>
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Diagnosis" formControlName="text">
     </mat-form-field>
@@ -18,10 +18,10 @@
       </mat-radio-group>
     </div>
    <br>
-  <button type="submit" mat-raised-button color="primary" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
+  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
 </form>
 </div>
-<ng-container *ngIf="diagnosis.length >= 0">
+<ng-container *ngIf="diagnosis.length > 0">
   <br>
 <div>
     <ul class="list-unstyled">

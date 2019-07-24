@@ -13,8 +13,9 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  // baseURL = window.location.host;
-  baseURL = '13.233.50.223:8080';
+  baseURL = window.location.host;
+  // baseURL = '13.233.50.223:8080';
+  // baseURL = 'demo.intelehealth.io';
   systemAccess = false;
   reportAccess = false;
   values: any = [];

@@ -94,11 +94,6 @@ adviceForm = new FormGroup({
     this.service.postObs(json)
     .subscribe(response => {
       this.advice.push({value: value});
-      this.errorText = '';
-      Object.keys(this.adviceForm.controls).forEach(controlName => {
-        this.adviceForm.controls[controlName].reset();
-        this.adviceForm.controls[controlName].setErrors(null);
-      });
     });
   }
 });

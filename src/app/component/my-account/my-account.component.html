@@ -1,53 +1,42 @@
     <div class="container">
-        <!-- <mat-card> -->
-        <!-- <div class="limiter">
-            <div class="container-login100"> -->
                 <div class="wrap-login100">
                     <div class="login100-form-title">
                             <img class="login100-form-avatar" src='../../../assets/dummy profile image.jpg' width="25%">  
                             <span>{{providerDetails.person.display}}</span>
-                            <span><inline-editor type="text" [(ngModel)]="providerDetails.address" (onSave)="saveAddress($event)" size="24"></inline-editor></span>
+                            <span>{{providerDetails.address.value}}</span>
                     </div>
                     <mat-card class="overlap">
                     <div >
+                        <i class="material-icons" style="float:right; cursor:pointer;" (click)="onEdit()">create</i>
                     <ng-container *ngIf="providerDetails">
                         <table >
-                            <!-- <tr>
-                                <th>Name :</th>
-                                <td>{{providerDetails.person.display}}</td>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.person.display" (onSave)="saveName($event)" size="16"></inline-editor></td>
-                            </tr> -->
                             <tr>
                                 <th>Gender :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.person.gender" (onSave)="saveGender($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.person.gender}}</td>
                             </tr>
                             <tr>
                                 <th>Phone No. :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.phoneNumber" (onSave)="savePhoneNo($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.phoneNumber.value}}</td>
                             </tr>
                             <tr>
                                 <th>Email Id :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.emailId" (onSave)="saveEmail($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.emailId.value}}</td>
                             </tr>
                             <tr>
                                 <th>Qualification :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.qualification" (onSave)="saveQualification($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.qualification.value}}</td>
                             </tr>
                             <tr>
                                 <th>Specialization :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.specialization" (onSave)="saveSpecialization($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.specialization.value}}</td>
                             </tr>
                             <tr>
                                 <th>Registration No. :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.registrationNumber" (onSave)="saveRegistrationNumber($event)" size="16"></inline-editor></td>
+                                <td>{{providerDetails.registrationNumber.value}}</td>
                             </tr>
-                            <!-- <tr>
-                                <th>Address :</th>
-                                <td><inline-editor type="text" [(ngModel)]="providerDetails.address" (onSave)="saveAddress()" size="16"></inline-editor></td>
-                            </tr> -->
                             <tr>
                                 <th>Signature :</th>
-                                <td *ngIf='providerDetails.textOfSign' [style.font-family]="providerDetails.fontOfSign" style="font-size: 50px">{{providerDetails.textOfSign}}</td>
+                                <td *ngIf='providerDetails.textOfSign.value' [style.font-family]="providerDetails.fontOfSign.value" style="font-size: 50px">{{providerDetails.textOfSign.value}}</td>
                                 <td *ngIf='!providerDetails.textOfSign'><button mat-raised-button color="primary" (click)="signature()">Signature</button></td>
                             </tr>
                         </table>
@@ -55,7 +44,4 @@
                     </div>
                     </mat-card>
                 </div>
-            <!-- </div>
-        </div> -->
-    <!-- </mat-card> -->
     </div>
