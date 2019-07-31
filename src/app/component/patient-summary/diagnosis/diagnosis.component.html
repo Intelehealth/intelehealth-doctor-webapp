@@ -2,8 +2,14 @@
 <hr>
 <div>
 <form [formGroup]='diagnosisForm'>
-    <mat-form-field class="example-full-width">
-        <input matInput placeholder="Diagnosis" formControlName="text">
+    <mat-form-field class="example-full-width">  
+      <input matInput placeholder="Diagnosis" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
+        <span>{{state.code}} </span>
+        <span> <b>{{state.name}}</b></span>
+    </mat-option>
+  </mat-autocomplete>
     </mat-form-field>
     <div>
     <mat-radio-group aria-label="Select an option" formControlName="type">
