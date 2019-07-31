@@ -79,7 +79,6 @@ baseURL = window.location.host;
   }
 
   if (value.registrationNumber !== null && value.registrationNumber !== this.data.registrationNumber.value) {
-    console.log(value.registrationNumber)
     // tslint:disable-next-line: max-line-length
     const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.registrationNumber.uuid}`;
     const json = {

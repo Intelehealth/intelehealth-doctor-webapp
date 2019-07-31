@@ -27,7 +27,8 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatListModule,
-  MatSelectModule} from '@angular/material/';
+  MatSelectModule,
+  MatAutocompleteModule} from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -112,6 +113,7 @@ import { EditDetailsComponent } from './component/my-account/edit-details/edit-d
     MatInputModule,
     MatSelectModule,
     MatDialogModule,
+    MatAutocompleteModule,
     NgxPaginationModule,
     NgbModule,
     FormsModule,

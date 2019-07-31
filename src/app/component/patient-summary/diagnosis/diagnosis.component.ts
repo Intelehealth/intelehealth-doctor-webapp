@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-diagnosis',
@@ -27,6 +29,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 })
 export class DiagnosisComponent implements OnInit {
 diagnosis: any = [];
+diagnosisList = [];
 conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
 patientId: string;
 visitUuid: string;
@@ -56,6 +59,13 @@ diagnosisForm = new FormGroup({
     });
   }
 
+  search(event) {
+    this.diagnosisService.getDiagnosisList(event.target.value)
+    .subscribe(response => {
+      this.diagnosisList = response;
+    });
+  }
+
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
@@ -73,6 +83,7 @@ diagnosisForm = new FormGroup({
         };
         this.service.postObs(json)
         .subscribe(resp => {
+          this.diagnosisList = [];
           this.diagnosis.push({value: json.value});
       });
         }
