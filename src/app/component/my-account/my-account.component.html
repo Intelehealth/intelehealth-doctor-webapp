@@ -1,47 +1,48 @@
-    <div class="container">
-                <div class="wrap-login100">
-                    <div class="login100-form-title">
-                            <img class="login100-form-avatar" src='../../../assets/dummy profile image.jpg' width="25%">  
-                            <span>{{providerDetails.person.display}}</span>
-                            <span>{{providerDetails.address.value}}</span>
+<ng-container *ngIf="providerDetails">
+        <div class="container">
+                    <div class="wrap-login100">
+                        <div class="login100-form-title">
+                                <img class="login100-form-avatar" src='../../../assets/dummy profile image.jpg' width="25%">  
+                                <span *ngIf=providerDetails.person.display>{{providerDetails.person.display}}</span>
+                                <span *ngIf=providerDetails.address>{{providerDetails.address.value}}</span>
+                        </div>
+                        <mat-card class="overlap">
+                        <div >
+                            <i class="material-icons" style="float:right; cursor:pointer;" (click)="onEdit()">create</i>
+                        
+                            <table >
+                                <tr>
+                                    <th>Gender :</th>
+                                    <td *ngIf='providerDetails.person'>{{providerDetails.person.gender}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Phone No. :</th>
+                                    <td *ngIf='providerDetails.phoneNumber'>{{providerDetails.phoneNumber.value}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email Id :</th>
+                                    <td *ngIf='providerDetails.emailId'>{{providerDetails.emailId.value}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Qualification :</th>
+                                    <td *ngIf='providerDetails.qualification'>{{providerDetails.qualification.value}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Specialization :</th>
+                                    <td *ngIf='providerDetails.specialization'>{{providerDetails.specialization.value}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Registration No. :</th>
+                                    <td *ngIf='providerDetails.registrationNumber'>{{providerDetails.registrationNumber.value}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Signature :</th>
+                                    <td *ngIf='providerDetails.textOfSign.value' [style.font-family]="providerDetails.fontOfSign.value" style="font-size: 50px">{{providerDetails.textOfSign.value}}</td>
+                                    <td *ngIf='!providerDetails.textOfSign'><button mat-raised-button color="primary" (click)="signature()">Signature</button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        </mat-card>
                     </div>
-                    <mat-card class="overlap">
-                    <div >
-                        <i class="material-icons" style="float:right; cursor:pointer;" (click)="onEdit()">create</i>
-                    <ng-container *ngIf="providerDetails">
-                        <table >
-                            <tr>
-                                <th>Gender :</th>
-                                <td>{{providerDetails.person.gender}}</td>
-                            </tr>
-                            <tr>
-                                <th>Phone No. :</th>
-                                <td>{{providerDetails.phoneNumber.value}}</td>
-                            </tr>
-                            <tr>
-                                <th>Email Id :</th>
-                                <td>{{providerDetails.emailId.value}}</td>
-                            </tr>
-                            <tr>
-                                <th>Qualification :</th>
-                                <td>{{providerDetails.qualification.value}}</td>
-                            </tr>
-                            <tr>
-                                <th>Specialization :</th>
-                                <td>{{providerDetails.specialization.value}}</td>
-                            </tr>
-                            <tr>
-                                <th>Registration No. :</th>
-                                <td>{{providerDetails.registrationNumber.value}}</td>
-                            </tr>
-                            <tr>
-                                <th>Signature :</th>
-                                <td *ngIf='providerDetails.textOfSign.value' [style.font-family]="providerDetails.fontOfSign.value" style="font-size: 50px">{{providerDetails.textOfSign.value}}</td>
-                                <td *ngIf='!providerDetails.textOfSign'><button mat-raised-button color="primary" (click)="signature()">Signature</button></td>
-                            </tr>
-                        </table>
-                </ng-container>
-                    </div>
-                    </mat-card>
-                </div>
-    </div>
+        </div>
+    </ng-container>
