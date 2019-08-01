@@ -11,7 +11,7 @@ export class DiagnosisService {
   private baseURL = window.location.host;
   // private baseURL = '13.233.50.223:8080';
   // private baseURL = 'demo.intelehealth.io';
-  
+
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {
@@ -36,7 +36,7 @@ export class DiagnosisService {
     .pipe(
       map((response: []) => {
         this.diagnosisArray = [];
-        response.forEach((element: {}) => {
+        response.forEach((element: any) => {
           element.concept.conceptMappings.forEach(name => {
             if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
               const diagnosis = {

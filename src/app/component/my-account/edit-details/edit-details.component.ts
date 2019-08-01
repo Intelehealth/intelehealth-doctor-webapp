@@ -13,14 +13,15 @@ export class EditDetailsComponent implements OnInit {
 baseURL = window.location.host;
   // baseURL = '13.233.50.223:8080';
   // baseURL = 'demo.intelehealth.io';
+  baseURLProvider = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute`
 
   editForm = new FormGroup({
-    gender: new FormControl(this.data.person.gender),
-    phoneNumber: new FormControl(this.data.phoneNumber.value),
-    emailId: new FormControl(this.data.emailId.value),
-    qualification: new FormControl(this.data.qualification.value),
-    specialization: new FormControl(this.data.specialization.value),
-    registrationNumber: new FormControl(this.data.registrationNumber.value)
+    gender: new FormControl(this.data.person ? this.data.person.gender : null),
+    phoneNumber: new FormControl(this.data.phoneNumber ? this.data.phoneNumber.value : null),
+    emailId: new FormControl(this.data.emailId ? this.data.emailId.value : null),
+    qualification: new FormControl(this.data.qualification ? this.data.qualification.value : null),
+    specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
+    registrationNumber: new FormControl(this.data.registrationNumber ? this.data.registrationNumber.value : null)
   });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
@@ -34,6 +35,8 @@ baseURL = window.location.host;
     this.dialogRef.close();
   }
 
+
+
   updateDetails() {
   const value = this.editForm.value;
   if (value.gender !== null && value.gender !== this.data.person.gender) {
@@ -45,9 +48,8 @@ baseURL = window.location.host;
     .subscribe(response => {});
   }
 
-  if (value.emailId !== null && value.emailId !== this.data.emailId.value) {
-    // tslint:disable-next-line: max-line-length
-  const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.emailId.uuid}`;
+  if (value.emailId !== null ) {
+  const URL = this.data.emailId ? `${this.baseURLProvider}/${this.data.emailId.uuid}` : this.baseURL;
   const json = {
   'attributeType': '226c0494-d67e-47b4-b7ec-b368064844bd',
   'value': value.emailId
@@ -56,9 +58,8 @@ baseURL = window.location.host;
   .subscribe(response => {});
   }
 
-  if (value.phoneNumber !== null && value.phoneNumber !== this.data.phoneNumber.value) {
-    // tslint:disable-next-line: max-line-length
-  const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.phoneNumber.uuid}`;
+  if (value.phoneNumber !== null) {
+  const URL = this.data.phoneNumber ? `${this.baseURLProvider}/${this.data.phoneNumber.uuid}` : this.baseURLProvider;
   const json = {
   'attributeType': 'e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37',
   'value': value.phoneNumber.toString()
@@ -67,9 +68,8 @@ baseURL = window.location.host;
   .subscribe(response => {});
   }
 
-  if (value.qualification !== null && value.qualification !== this.data.qualification.value) {
-    // tslint:disable-next-line: max-line-length
-  const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.qualification.uuid}`;
+  if (value.qualification !== null ) {
+  const URL = this.data.qualification ? `${this.baseURLProvider}/${this.data.qualification.uuid}` : this.baseURLProvider;
   const json = {
   'attributeType': '4246639f-e9a8-48ea-b9ff-629a7c430543',
   'value': value.qualification
@@ -78,9 +78,8 @@ baseURL = window.location.host;
   .subscribe(response => {});
   }
 
-  if (value.registrationNumber !== null && value.registrationNumber !== this.data.registrationNumber.value) {
-    // tslint:disable-next-line: max-line-length
-    const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.registrationNumber.uuid}`;
+  if (value.registrationNumber !== null) {
+    const URL = this.data.registrationNumber ? `${this.baseURLProvider}/${this.data.registrationNumber.uuid}` : this.baseURLProvider;
     const json = {
     'attributeType': '992ccbdd-201a-44ef-8abb-c2eee079886d',
     'value': value.registrationNumber
@@ -89,9 +88,8 @@ baseURL = window.location.host;
     .subscribe(response => {});
   }
 
-  if (value.specialization !== null && value.specialization !== this.data.specialization.value) {
-    // tslint:disable-next-line: max-line-length
-    const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute/${this.data.specialization.uuid}`;
+  if (value.specialization !== null ) {
+  const URL = this.data.specialization ? `${this.baseURLProvider}/${this.data.specialization.uuid}` : this.baseURLProvider;
   const json = {
   'attributeType': 'ed1715f5-93e2-404e-b3c9-2a2d9600f062',
   'value': value.specialization
