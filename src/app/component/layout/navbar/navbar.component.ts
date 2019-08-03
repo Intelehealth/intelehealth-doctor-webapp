@@ -62,7 +62,13 @@ export class NavbarComponent implements OnInit {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
       .subscribe(response => {
-        this.values = response['results'];
+        response['results'].forEach(value => {
+          if (value) {
+          if (value.identifiers.length) {
+            this.values.push(value);
+          }
+        }
+        });
         this.dialog.open(FindPatientComponent, { width: '90%', data: { value: this.values } });
       }, err => {
         if (err.error instanceof Error) {

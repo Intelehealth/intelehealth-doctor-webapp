@@ -42,7 +42,7 @@ export class DiagnosisService {
               const diagnosis = {
                 name: element.concept.preferredName,
                 code: name.conceptReferenceTerm.code
-              }
+              };
               this.diagnosisArray.push(diagnosis);
             }
           });
