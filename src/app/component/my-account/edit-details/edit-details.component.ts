@@ -49,7 +49,7 @@ baseURL = window.location.host;
   }
 
   if (value.emailId !== null ) {
-  const URL = this.data.emailId ? `${this.baseURLProvider}/${this.data.emailId.uuid}` : this.baseURL;
+  const URL = this.data.emailId ? `${this.baseURLProvider}/${this.data.emailId.uuid}` : this.baseURLProvider;
   const json = {
   'attributeType': '226c0494-d67e-47b4-b7ec-b368064844bd',
   'value': value.emailId

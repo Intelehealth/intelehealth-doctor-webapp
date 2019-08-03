@@ -61,9 +61,14 @@ this.service.session()
       this.service.signRequest(providerUuid)
           .subscribe(res => {
             const data = res.results;
-            if (data.length !== 0) {
-              this.status = true;
-            } else {
+            if (data.length !== 0 ) {
+              data.forEach(value => {
+                if (value.display.match('textOfSign') !== null) {
+                  this.status = true;
+                }
+              });
+            }
+            if (!this.status) {
               const url2 = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
               const json = {
                 'attributeType': 'c1c6458d-383b-4034-afa0-16a34185b458',
