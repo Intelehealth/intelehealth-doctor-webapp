@@ -22,7 +22,7 @@ conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === visitUuid) {
-          this.onExam = obs;
+          this.onExam.push(obs);
         }
       });
       if (this.onExam !== undefined) {

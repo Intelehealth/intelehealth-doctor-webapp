@@ -1,5 +1,9 @@
 <h4><i class="fas fa-users"></i> Family History</h4>
 <hr>
 <ng-container *ngIf="familyHistoryPresent">
-<div [innerHTML] ="familyHistory.value"></div>
+        <table class="table table-responsive borderless" *ngFor="let familyHistory of familyHistory">
+            <tr>
+                <div [innerHTML] ="familyHistory.value"></div>
+            </tr>
+        </table>
 </ng-container>

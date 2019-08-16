@@ -22,7 +22,7 @@ export class PresentingComplaintsComponent implements OnInit {
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === visitUuid) {
-          this.complaint = obs;
+          this.complaint.push(obs);
         }
       });
       if (this.complaint !== undefined) {

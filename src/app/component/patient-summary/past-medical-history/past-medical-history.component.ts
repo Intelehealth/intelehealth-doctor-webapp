@@ -22,7 +22,7 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === visitUuid) {
-          this.pastMedical = obs;
+          this.pastMedical.push(obs);
         }
       });
       if (this.pastMedical !== undefined) {
