@@ -6,8 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ImagesService {
-  private baseURL = window.location.host;
-  // private baseURL = '13.233.50.223:8080';
+  private baseURL = window.location.hostname;
 
   constructor(private http: HttpClient) { }
 
