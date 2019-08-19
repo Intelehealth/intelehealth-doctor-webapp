@@ -5,8 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-diagnosis',

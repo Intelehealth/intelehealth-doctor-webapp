@@ -24,6 +24,7 @@ export class FindPatientComponent implements OnInit {
       this.values = [];
       this.msg = this.data.value;
     } else {
+      this.values = [];
       this.values = this.data.value;
     }
   }

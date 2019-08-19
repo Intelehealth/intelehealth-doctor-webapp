@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MatDialogRef, MatSnackBar } from '@angular/material';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -11,9 +12,7 @@ import { MatDialogRef, MatSnackBar } from '@angular/material';
   styleUrls: ['./signature.component.css']
 })
 export class SignatureComponent implements OnInit {
-  baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
-  // baseURL = 'demo.intelehealth.io';
+  baseURL = environment.baseURL;
 
   addSignatureForm = new FormGroup({
     signature: new FormControl(''),
