@@ -79,7 +79,7 @@ followForm = new FormGroup({
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.followUp.push({value: json.value});
+        this.followUp.push({uuid: resp.uuid, value: json.value});
       });
     }
   });
