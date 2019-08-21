@@ -1,7 +1,9 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+
 
 
 @Component({
@@ -10,9 +12,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./edit-details.component.css']
 })
 export class EditDetailsComponent implements OnInit {
-baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
-  // baseURL = 'demo.intelehealth.io';
+  baseURL = environment.baseURL;
   baseURLProvider = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute`;
 
   editForm = new FormGroup({
