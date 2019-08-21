@@ -93,7 +93,7 @@ testForm = new FormGroup({
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.tests.push({value: value});
+        this.tests.push({uuid: resp.uuid, value: value});
       });
     }
   });

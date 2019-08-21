@@ -169,7 +169,7 @@ medForm = new FormGroup({
       };
      this.service.postObs(json)
      .subscribe(response => {
-      this.meds.push({value: insertValue});
+      this.meds.push({uuid: response.uuid, value: insertValue});
       this.add = false;
      });
     }

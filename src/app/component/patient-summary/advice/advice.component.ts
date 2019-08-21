@@ -93,7 +93,7 @@ adviceForm = new FormGroup({
       };
     this.service.postObs(json)
     .subscribe(response => {
-      this.advice.push({value: value});
+      this.advice.push({uuid: response.uuid, value: value});
     });
   }
 });
