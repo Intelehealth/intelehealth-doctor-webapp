@@ -44,6 +44,8 @@ medForm = new FormGroup({
   med: new FormControl('', [Validators.required]),
   dose: new FormControl('', Validators.min(1)),
   unit: new FormControl('', [Validators.required]),
+  amount: new FormControl('', Validators.min(1)),
+  unitType: new FormControl('', [Validators.required]),
   frequency: new FormControl('', [Validators.required]),
   route: new FormControl(''),
   reason: new FormControl(''),
@@ -154,7 +156,19 @@ medForm = new FormGroup({
     const date = new Date();
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
-    const insertValue = `${value.med}: ${value.dose}, ${value.unit} ${value.frequency} (${value.route}) ${value.reason} for ${value.duration} ${value.durationUnit} ${value.additional}total.`;
+    var insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
+     if (value.route) {
+      insertValue = `${insertValue} (${value.route})`;
+     }
+     if (value.reason) {
+      insertValue = `${insertValue} ${value.reason}`;
+     }
+      insertValue = `${insertValue} for ${value.duration} ${value.durationUnit}`;
+      if (value.additional) {
+        insertValue = `${insertValue} ${value.additional} total`;
+      } else {
+        insertValue = `${insertValue} total.`;
+      }
     this.visitService.fetchVisitDetails(this.visitUuid)
     .subscribe(visitDetails => {
       visitDetails.encounters.forEach(encounter => {
