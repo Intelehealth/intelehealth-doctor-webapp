@@ -72,7 +72,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       };
       this.service.postObs(json)
       .subscribe(resp => {
-      this.comment.push({value: value});
+      this.comment.push({uuid: resp.uuid, value: value});
     });
   }
   });
