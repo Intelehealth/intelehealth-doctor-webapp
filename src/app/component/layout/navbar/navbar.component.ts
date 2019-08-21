@@ -6,6 +6,8 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
+import { environment } from '../../../../environments/environment';
+
 
 @Component({
   selector: 'app-navbar',
@@ -13,9 +15,7 @@ import { FindPatientComponent } from '../../find-patient/find-patient.component'
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
-  // baseURL = 'demo.intelehealth.io';
+  baseURL = environment.baseURL;
   systemAccess = false;
   reportAccess = false;
   values: any = [];
@@ -62,6 +62,7 @@ export class NavbarComponent implements OnInit {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
     .subscribe(response => {
+      this.values = [];
       response['results'].forEach(value => {
         if (value) {
         if (value.identifiers.length) {

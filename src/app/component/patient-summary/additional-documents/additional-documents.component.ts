@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { environment } from '../../../../environments/environment';
+
 
 @Component({
   selector: 'app-additional-documents',
@@ -8,8 +10,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
   styleUrls: ['./additional-documents.component.css']
 })
 export class AdditionalDocumentsComponent implements OnInit {
-baseURL = window.location.host;
-// baseURL = '13.233.50.223:8080';
+baseURL = environment.baseURL;
 images: any = [];
 additionalDocumentPresent = false;
 conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,7 @@ import { Observable } from 'rxjs';
 
 
 export class VisitService {
-  private baseURL = window.location.host;
-  // private baseURL = '13.233.50.223:8080';
-  // private baseURL = 'demo.intelehealth.io';
+  private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) { }
 
