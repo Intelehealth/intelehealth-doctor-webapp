@@ -9,8 +9,6 @@ import { ImagesService } from 'src/app/services/images.service';
   styleUrls: ['./additional-documents.component.css']
 })
 export class AdditionalDocumentsComponent implements OnInit {
-baseURL = window.location.host;
-// baseURL = '13.233.50.223:8080';
 image: any = [];
 images: any = [];
 additionalDocumentPresent = false;

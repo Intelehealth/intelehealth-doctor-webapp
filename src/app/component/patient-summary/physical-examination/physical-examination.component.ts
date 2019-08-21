@@ -9,8 +9,6 @@ import { ImagesService } from 'src/app/services/images.service';
   styleUrls: ['./physical-examination.component.css']
 })
 export class PhysicalExaminationComponent implements OnInit {
-  baseURL = window.location.host;
-// baseURL = '13.233.50.223:8080';
 image: any = [];
 images: any = [];
 physicalExamPresent = false;
