@@ -20,7 +20,7 @@ export class DiagnosisService {
   }
 
   deleteObs(uuid): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}?purge=true`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}`;
     return this.http.delete(url);
   }
 
