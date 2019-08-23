@@ -39,7 +39,7 @@ export class HomepageComponent implements OnInit {
   constructor(private service: VisitService,
               private snackbar: MatSnackBar,
               private userIdle: UserIdleService,
-              private authService: AuthService,) { }
+              private authService: AuthService) { }
 
   @ViewChild('page1') page1: MatPaginator;
   @ViewChild('page2') page2: MatPaginator;
@@ -83,6 +83,7 @@ export class HomepageComponent implements OnInit {
               this.value = {};
             }
             if (value.match('Flagged')) {
+              if (!active.encounters[0].voided) {
               this.value.visitId = active.uuid;
               this.value.patientId = active.patient.uuid;
               this.value.id = active.patient.identifiers[0].identifier;
@@ -95,6 +96,7 @@ export class HomepageComponent implements OnInit {
               this.flagPatient.push(this.value);
               this.value = {};
               flagLength += 1;
+              }
             }
             if (value.match('Visit Note')) {
               visitNoteLength += 1;
