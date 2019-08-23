@@ -9,22 +9,22 @@
     <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>Add Meds</button>
   <div *ngIf="add">
     <div class="form-row">
-      <div class="col-auto">
+      <div class="col">
         <input type="number" min="1" class="form-control" placeholder="Strength" formControlName="dose">
       </div>
-      <div class="col-auto">
+      <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: mg)" formControlName="unit">
       </div>
-      <div class="col-auto">
+      <div class="col">
         <input type="number" min="1" class="form-control" placeholder="Amount" formControlName="amount">
       </div>
-      <div class="col-auto">
+      <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: Tab/Syrup/etc.)" formControlName="unitType">
       </div>
-      <div class="col-auto">
+      <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchFrequency" placeholder="Frequency" formControlName="frequency">
       </div>
-      <div class="col-auto">
+      <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchAdministration" placeholder="Route(optional)" formControlName="route">
       </div>
     </div>
