@@ -39,7 +39,7 @@ export class HomepageComponent implements OnInit {
   constructor(private service: VisitService,
               private snackbar: MatSnackBar,
               private userIdle: UserIdleService,
-              private authService: AuthService,) { }
+              private authService: AuthService) { }
 
   @ViewChild('page1') page1: MatPaginator;
   @ViewChild('page2') page2: MatPaginator;
@@ -83,18 +83,20 @@ export class HomepageComponent implements OnInit {
               this.value = {};
             }
             if (value.match('Flagged')) {
-              this.value.visitId = active.uuid;
-              this.value.patientId = active.patient.uuid;
-              this.value.id = active.patient.identifiers[0].identifier;
-              this.value.name = active.patient.person.display;
-              this.value.gender = active.patient.person.gender;
-              this.value.dob = active.patient.person.birthdate;
-              this.value.location = active.location.display;
-              this.value.status = active.encounters[0].encounterType.display;
-              this.value.lastSeen = active.encounters[0].encounterDatetime;
-              this.flagPatient.push(this.value);
-              this.value = {};
-              flagLength += 1;
+              if (!active.encounters[0].voided) {
+                this.value.visitId = active.uuid;
+                this.value.patientId = active.patient.uuid;
+                this.value.id = active.patient.identifiers[0].identifier;
+                this.value.name = active.patient.person.display;
+                this.value.gender = active.patient.person.gender;
+                this.value.dob = active.patient.person.birthdate;
+                this.value.location = active.location.display;
+                this.value.status = active.encounters[0].encounterType.display;
+                this.value.lastSeen = active.encounters[0].encounterDatetime;
+                this.flagPatient.push(this.value);
+                this.value = {};
+                flagLength += 1;
+              }
             }
             if (value.match('Visit Note')) {
               visitNoteLength += 1;
