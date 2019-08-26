@@ -121,7 +121,7 @@ import { EditDetailsComponent } from './component/my-account/edit-details/edit-d
     ReactiveFormsModule,
     HttpClientModule,
     InlineEditorModule,
-    UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
+    UserIdleModule.forRoot({idle: 30, timeout: 30, ping: 12}),
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
