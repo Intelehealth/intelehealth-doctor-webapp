@@ -127,7 +127,7 @@ encounterUuid: string;
                 encounter: this.encounterUuid
                 };
               this.encounterService.postObs(json)
-              .subscribe(response => {console.log(json , response) });
+              .subscribe(response => {});
             }
           }
         }
