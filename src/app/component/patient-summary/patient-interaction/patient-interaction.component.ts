@@ -4,7 +4,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { htmlAstToRender3Ast } from '@angular/compiler/src/render3/r3_template_transform';
 
 @Component({
   selector: 'app-patient-interaction',
