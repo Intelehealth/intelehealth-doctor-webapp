@@ -4,8 +4,6 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { UserIdleService } from 'angular-user-idle';
-import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-patient-summary',
@@ -24,24 +22,22 @@ constructor(private service: EncounterService,
             private visitService: VisitService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
-            private router: Router,
-            private userIdle: UserIdleService,
-            private authService: AuthService,
-            ) {
+            private router: Router) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
             };
             }
 
   ngOnInit() {
-    this.userIdle.startWatching();
-
-    // Start watching when user idle is starting.
-    this.userIdle.onTimerStart().subscribe(count => {
-      if (count === 1) {
-        this.authService.logout();
-        this.userIdle.stopWatching();
-      }
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.visitService.fetchVisitDetails(visitUuid)
+    .subscribe(visitDetails => {
+      visitDetails.encounters.forEach(visit => {
+        if (visit.display.match('Visit Note') !== null) {
+          this.visitNotePresent = true;
+          this.show = true;
+          }
+        });
       });
   }
 
@@ -49,13 +45,6 @@ constructor(private service: EncounterService,
     const myDate = new Date();
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.visitService.fetchVisitDetails(visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(visit => {
-        if (visit.display.match('Visit Note') !== null) {
-          this.visitNotePresent = true;
-          }
-      });
       if (!this.visitNotePresent) {
         this.service.session()
         .subscribe(session => {
@@ -79,7 +68,6 @@ constructor(private service: EncounterService,
           });
         });
       }
-    });
     this.show = true;
   }
 
@@ -94,7 +82,6 @@ constructor(private service: EncounterService,
         const providerUuid = user.results[0].uuid;
         this.service.signRequest(providerUuid)
         .subscribe(res => {
-          console.log(res, 'patient');
           if (res.results.length) {
             this.signPresent = true;
             res.results.forEach(element => {
@@ -119,10 +106,8 @@ constructor(private service: EncounterService,
                     visit: visitUuid,
                     encounterDatetime: myDate
                   };
-                  console.log(json);
                   this.service.postEncounter(json)
                   .subscribe(post => {
-                    console.log(post);
                   });
                 }
               });
