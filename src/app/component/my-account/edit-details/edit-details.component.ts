@@ -17,6 +17,7 @@ export class EditDetailsComponent implements OnInit {
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(this.data.phoneNumber ? this.data.phoneNumber.value : null),
+    whatsapp: new FormControl(this.data.whatsapp ? this.data.whatsapp.value : null),
     emailId: new FormControl(this.data.emailId ? this.data.emailId.value : null),
     qualification: new FormControl(this.data.qualification ? this.data.qualification.value : null),
     specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
@@ -66,6 +67,16 @@ export class EditDetailsComponent implements OnInit {
   this.http.post(URL, json)
   .subscribe(response => {});
   }
+
+  if (value.whatsapp !== null) {
+    const URL = this.data.whatsapp ? `${this.baseURLProvider}/${this.data.whatsapp.uuid}` : this.baseURLProvider;
+    const json = {
+    'attributeType': 'fccc49f1-49ca-44bb-9e61-21c88ae6dd64',
+    'value': value.whatsapp.toString()
+    };
+    this.http.post(URL, json)
+    .subscribe(response => {console.log(response)});
+    }
 
   if (value.qualification !== null ) {
   const URL = this.data.qualification ? `${this.baseURLProvider}/${this.data.qualification.uuid}` : this.baseURLProvider;
