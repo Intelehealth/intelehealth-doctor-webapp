@@ -46,3 +46,16 @@ mat-cell, .mat-cell {
   min-height:auto; 
   padding: 12px 16px 12px 0;
 }
+
+
+mat-spinner {
+  position: absolute;
+  z-index: 9999;
+  left:46%;
+  top:42%;
+}
+
+.spin {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+}
