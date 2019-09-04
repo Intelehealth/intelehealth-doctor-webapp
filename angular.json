@@ -23,8 +23,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/roboto-fontface/css/roboto/roboto-fontface.css"
+              "src/styles.css"
             ]
           },
           "configurations": {
