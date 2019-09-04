@@ -25,7 +25,6 @@ export class PastVisitsComponent implements OnInit {
                 .subscribe(visitDetails => {
                   this.recentVisit = [];
                       this.recentVisit.details = visitDetails;
-                      // console.log(visitDetails);
                       const encounters = visitDetails.encounters;
                       encounters.forEach(encounter => {
                       const display = encounter.display;

@@ -75,7 +75,7 @@ export class EditDetailsComponent implements OnInit {
     'value': value.whatsapp.toString()
     };
     this.http.post(URL, json)
-    .subscribe(response => {console.log(response)});
+    .subscribe(response => {});
     }
 
   if (value.qualification !== null ) {

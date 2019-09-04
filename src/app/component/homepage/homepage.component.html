@@ -1,4 +1,5 @@
-<div class="container">
+<mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
+<div class="container" [ngClass]="(setSpiner)?'spin':''">
   <div class="modal-body row">
     <div class="col-sm-4" style="padding: 3px">
       <div class="card text-white" style="background: #DD3C62;">

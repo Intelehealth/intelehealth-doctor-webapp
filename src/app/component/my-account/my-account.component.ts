@@ -14,6 +14,7 @@ import { environment } from '../../../environments/environment';
 })
 export class MyAccountComponent implements OnInit {
   baseURL = environment.baseURL;
+  setSpiner = true;
 
   name = 'Enter text';
   providerDetails = null;
@@ -33,6 +34,7 @@ export class MyAccountComponent implements OnInit {
             attributes.forEach(element => {
               this.providerDetails[element.attributeType.display] = {value: element.value, uuid: element.uuid};
             });
+            this.setSpiner = false;
           });
       });
   }
@@ -47,7 +49,7 @@ export class MyAccountComponent implements OnInit {
     'names': value
   };
   this.http.post(URL, json)
-  .subscribe(response => console.log(response));
+  .subscribe(response => {});
   }
 
   saveAddress(value) {
