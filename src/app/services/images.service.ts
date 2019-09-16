@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImagesService {
-  private baseURL = window.location.host;
-  // private baseURL = '13.233.50.223:8080';
+  private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) { }
 

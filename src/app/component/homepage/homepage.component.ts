@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { MatSnackBar, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { UserIdleService } from 'angular-user-idle';
-import { AuthService } from 'src/app/services/auth.service';
 
 export interface VisitData {
   id: string;
@@ -35,11 +33,10 @@ export class HomepageComponent implements OnInit {
   results: VisitData[] = [];
   visitLength = 0;
   flagLength = 0;
+  setSpiner = true;
 
   constructor(private service: VisitService,
-              private snackbar: MatSnackBar,
-              private userIdle: UserIdleService,
-              private authService: AuthService,) { }
+              private snackbar: MatSnackBar) { }
 
   @ViewChild('page1') page1: MatPaginator;
   @ViewChild('page2') page2: MatPaginator;
@@ -47,16 +44,6 @@ export class HomepageComponent implements OnInit {
   @ViewChild('sortCol2') sortCol2: MatSort;
 
   ngOnInit() {
-    this.userIdle.startWatching();
-
-    // Start watching when user idle is starting.
-    this.userIdle.onTimerStart().subscribe(count => {
-      if (count === 1) {
-        this.authService.logout();
-        this.userIdle.stopWatching();
-      }
-      });
-
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;
@@ -83,6 +70,7 @@ export class HomepageComponent implements OnInit {
               this.value = {};
             }
             if (value.match('Flagged')) {
+              if (!active.encounters[0].voided) {
               this.value.visitId = active.uuid;
               this.value.patientId = active.patient.uuid;
               this.value.id = active.patient.identifiers[0].identifier;
@@ -95,6 +83,7 @@ export class HomepageComponent implements OnInit {
               this.flagPatient.push(this.value);
               this.value = {};
               flagLength += 1;
+              }
             }
             if (value.match('Visit Note')) {
               visitNoteLength += 1;
@@ -105,11 +94,13 @@ export class HomepageComponent implements OnInit {
         setTimeout(() => {
           this.dataSourceFlag.paginator = this.page1;
           this.dataSourceFlag.sort = this.sortCol1;
+          this.setSpiner = false;
         }, 1000);
         this.dataSource = new MatTableDataSource<VisitData>(this.results);
         setTimeout(() => {
           this.dataSource.paginator = this.page2;
           this.dataSource.sort = this.sortCol2;
+          this.setSpiner = false;
         }, 1000);
         this.visitLength = this.results.length;
         this.flagLength = this.flagPatient.length;

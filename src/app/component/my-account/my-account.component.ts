@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { SignatureComponent } from './signature/signature.component';
 import { EditDetailsComponent } from './edit-details/edit-details.component';
+import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-my-account',
@@ -11,9 +13,8 @@ import { EditDetailsComponent } from './edit-details/edit-details.component';
   styleUrls: ['./my-account.component.css']
 })
 export class MyAccountComponent implements OnInit {
-  baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
-  // baseURL = 'demo.intelehealth.io';
+  baseURL = environment.baseURL;
+  setSpiner = true;
 
   name = 'Enter text';
   providerDetails = null;
@@ -33,6 +34,7 @@ export class MyAccountComponent implements OnInit {
             attributes.forEach(element => {
               this.providerDetails[element.attributeType.display] = {value: element.value, uuid: element.uuid};
             });
+            this.setSpiner = false;
           });
       });
   }
@@ -47,7 +49,7 @@ export class MyAccountComponent implements OnInit {
     'names': value
   };
   this.http.post(URL, json)
-  .subscribe(response => console.log(response));
+  .subscribe(response => {});
   }
 
   saveAddress(value) {

@@ -1,7 +1,9 @@
 <div>
   <h2 style="text-align:center;">Visit Summary</h2>
 </div>  
-<div class="container">
+<mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
+
+<div class="container" [ngClass]="(setSpiner)?'spin':''">
       <mat-card>
         <app-patientinfo></app-patientinfo>
       </mat-card>
@@ -55,7 +57,7 @@
 <br>
 
   
-  <div class="text-center">
+  <div class="text-center" *ngIf="!show">
     <button (click)="onStartVisit()" mat-raised-button color="primary">Start Visit Note</button>
   </div>
 

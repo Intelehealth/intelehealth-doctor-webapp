@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ImagesService } from 'src/app/services/images.service';
 import { ActivatedRoute } from '@angular/router';
 import { VisitService } from 'src/app/services/visit.service';
+import { environment } from '../../../../environments/environment';
+
 
 @Component({
   selector: 'app-patientinfo',
@@ -10,8 +12,7 @@ import { VisitService } from 'src/app/services/visit.service';
 })
 
 export class PatientinfoComponent implements OnInit {
-  baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
+baseURL = environment.baseURL;
 image: string;
 patientInfo = [];
 info = {};
