@@ -17,6 +17,7 @@ signPresent = false;
 text: string;
 font: string;
 visitNotePresent = false;
+setSpiner = true;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -29,6 +30,7 @@ constructor(private service: EncounterService,
             }
 
   ngOnInit() {
+    setTimeout(() => {this.setSpiner = false; }, 1000);
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.visitService.fetchVisitDetails(visitUuid)
     .subscribe(visitDetails => {

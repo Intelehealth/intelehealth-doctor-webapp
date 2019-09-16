@@ -33,6 +33,7 @@ export class HomepageComponent implements OnInit {
   results: VisitData[] = [];
   visitLength = 0;
   flagLength = 0;
+  setSpiner = true;
 
   constructor(private service: VisitService,
               private snackbar: MatSnackBar) { }
@@ -93,11 +94,13 @@ export class HomepageComponent implements OnInit {
         setTimeout(() => {
           this.dataSourceFlag.paginator = this.page1;
           this.dataSourceFlag.sort = this.sortCol1;
+          this.setSpiner = false;
         }, 1000);
         this.dataSource = new MatTableDataSource<VisitData>(this.results);
         setTimeout(() => {
           this.dataSource.paginator = this.page2;
           this.dataSource.sort = this.sortCol2;
+          this.setSpiner = false;
         }, 1000);
         this.visitLength = this.results.length;
         this.flagLength = this.flagPatient.length;
