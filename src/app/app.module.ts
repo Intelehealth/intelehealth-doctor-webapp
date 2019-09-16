@@ -7,7 +7,6 @@ import { HomepageComponent } from './component/homepage/homepage.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -28,7 +27,8 @@ import {
   MatSortModule,
   MatListModule,
   MatSelectModule,
-  MatAutocompleteModule} from '@angular/material/';
+  MatAutocompleteModule,
+  MatProgressSpinnerModule} from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -55,11 +55,9 @@ import { FooterComponent } from './component/layout/footer/footer.component';
 import { PatientinfoComponent } from './component/patient-summary/patientinfo/patientinfo.component';
 import { PastVisitsComponent } from './component/patient-summary/past-visits/past-visits.component';
 import { DatePipe } from '@angular/common';
-import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FindPatientComponent } from './component/find-patient/find-patient.component';
 import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
-import {InlineEditorModule} from '@qontu/ngx-inline-editor';
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
 
@@ -114,13 +112,11 @@ import { EditDetailsComponent } from './component/my-account/edit-details/edit-d
     MatSelectModule,
     MatDialogModule,
     MatAutocompleteModule,
-    NgxPaginationModule,
+    MatProgressSpinnerModule,
     NgbModule,
     FormsModule,
-    SlickCarouselModule,
     ReactiveFormsModule,
     HttpClientModule,
-    InlineEditorModule,
     UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
