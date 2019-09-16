@@ -1,9 +1,9 @@
-<h4><i class="fas fa-notes-medical"></i> Doctor's Note</h4>
+<h4><i class="fas fa-notes-medical"></i> Notes</h4>
 <hr>
 <form [formGroup]='commentForm'>
 <div>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Doctor's Note" formControlName='comment'>
+        <input matInput placeholder="Notes (not shared with the patient)" formControlName='comment'>
     </mat-form-field>
     &nbsp;&nbsp;
 <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>

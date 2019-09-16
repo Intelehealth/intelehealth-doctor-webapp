@@ -69,7 +69,9 @@ adviceForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.advice.push(obs);
+          if (!obs.value.includes('</a>')) {
+            this.advice.push(obs);
+          }
         }
       });
     });
@@ -93,7 +95,7 @@ adviceForm = new FormGroup({
       };
     this.service.postObs(json)
     .subscribe(response => {
-      this.advice.push({value: value});
+      this.advice.push({uuid: response.uuid, value: value});
     });
   }
 });

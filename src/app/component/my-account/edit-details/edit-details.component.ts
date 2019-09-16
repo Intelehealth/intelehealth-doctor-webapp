@@ -1,7 +1,8 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -10,14 +11,13 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./edit-details.component.css']
 })
 export class EditDetailsComponent implements OnInit {
-baseURL = window.location.host;
-  // baseURL = '13.233.50.223:8080';
-  // baseURL = 'demo.intelehealth.io';
+  baseURL = environment.baseURL;
   baseURLProvider = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute`
 
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(this.data.phoneNumber ? this.data.phoneNumber.value : null),
+    whatsapp: new FormControl(this.data.whatsapp ? this.data.whatsapp.value : null),
     emailId: new FormControl(this.data.emailId ? this.data.emailId.value : null),
     qualification: new FormControl(this.data.qualification ? this.data.qualification.value : null),
     specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
@@ -67,6 +67,16 @@ baseURL = window.location.host;
   this.http.post(URL, json)
   .subscribe(response => {});
   }
+
+  if (value.whatsapp !== null) {
+    const URL = this.data.whatsapp ? `${this.baseURLProvider}/${this.data.whatsapp.uuid}` : this.baseURLProvider;
+    const json = {
+    'attributeType': 'fccc49f1-49ca-44bb-9e61-21c88ae6dd64',
+    'value': value.whatsapp.toString()
+    };
+    this.http.post(URL, json)
+    .subscribe(response => {});
+    }
 
   if (value.qualification !== null ) {
   const URL = this.data.qualification ? `${this.baseURLProvider}/${this.data.qualification.uuid}` : this.baseURLProvider;

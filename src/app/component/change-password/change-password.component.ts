@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from './password.validator';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-change-password',
@@ -10,7 +11,7 @@ import { MatDialogRef } from '@angular/material';
   styleUrls: ['./change-password.component.css']
 })
 export class ChangePasswordComponent implements OnInit {
-  baseURL = window.location.host;
+  baseURL = environment.baseURL;
   message: string;
   changePasswordForm: FormGroup;
 

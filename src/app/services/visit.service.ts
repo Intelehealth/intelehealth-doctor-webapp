@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -8,15 +10,13 @@ import { Observable } from 'rxjs';
 
 
 export class VisitService {
-  private baseURL = window.location.host;
-  // private baseURL = '13.233.50.223:8080';
-  // private baseURL = 'demo.intelehealth.io';
+  private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) { }
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,encounterType:(display)))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display)))`;
     return this.http.get(url);
   }
 
@@ -27,7 +27,7 @@ export class VisitService {
 
   fetchVisitDetails(uuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value)),patient:(uuid))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(attributes))),patient:(uuid,identifiers:(identifier),person:(display)))`;
     return this.http.get(url);
   }
 

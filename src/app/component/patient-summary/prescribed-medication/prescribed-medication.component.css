@@ -6,4 +6,7 @@
     .example-full-width {
       width: 60%;
     }
+    .form-row {
+      display: block
+    }
    }
