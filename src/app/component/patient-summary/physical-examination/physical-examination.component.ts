@@ -27,7 +27,7 @@ export class PhysicalExaminationComponent implements OnInit {
         if (obs.encounter.visit.uuid === visitUuid) {
           this.physicalExamPresent = true;
           const data = {
-            image: `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${obs.uuid}/value`
+            image: `${this.baseURL}/obs/${obs.uuid}/value`
             };
           this.images.push(data);
         }

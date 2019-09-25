@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseURL: 'demo.intelehealth.io'
+  host : 'demo.intelehealth.io',
+  baseURL: 'https://demo.intelehealth.io/openmrs/ws/rest/v1'
 };
 
 /*
