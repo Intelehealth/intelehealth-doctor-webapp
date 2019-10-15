@@ -33,7 +33,7 @@ export class ChangePasswordComponent implements OnInit {
 
   onSubmit() {
     const value = this.changePasswordForm.value;
-    const url = `${this.baseURL}/password`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/password`;
     const json = {
       'oldPassword': value.currentPassword,
       'newPassword': value.newPassword

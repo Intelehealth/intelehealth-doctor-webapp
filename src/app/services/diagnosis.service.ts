@@ -11,27 +11,27 @@ import { environment } from '../../environments/environment';
 export class DiagnosisService {
   diagnosisArray = [];
   private baseURL = environment.baseURL;
-  private host = environment.host;
 
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {
-    const url = `${this.baseURL}/concept/${uuid}`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/concept/${uuid}`;
     return this.http.get(url);
   }
 
   deleteObs(uuid): Observable<any> {
-    const url = `${this.baseURL}/obs/${uuid}`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}`;
     return this.http.delete(url);
   }
 
   getObs(patientId, conceptId): Observable<any> {
-    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    // tslint:disable-next-line: max-line-length
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 
   getDiagnosisList(term) {
-    const url = `https://${this.host}/openmrs/coreapps/diagnoses/search.action?&term=${term}`;
+    const url = `http://${this.baseURL}/openmrs/coreapps/diagnoses/search.action?&term=${term}`;
     return this.http.get(url)
     .pipe(
       map((response: []) => {
