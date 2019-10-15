@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
         <li *ngIf='reportAccess' class="nav-item">
-          <a class="nav-link" href='https://{{host}}/openmrs/reportingui/reportsapp/home.page'>Reports</a>
+          <a class="nav-link" href='http://{{baseURL}}/openmrs/reportingui/reportsapp/home.page'>Reports</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"
@@ -25,7 +25,7 @@
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
             <a class="dropdown-item" routerLink='/myAccount'>My account</a>
             <a *ngIf='systemAccess' class="dropdown-item"
-              href="https://{{host}}/openmrs/admin/index.htm">System
+              href="http://{{baseURL}}/openmrs/admin/index.htm">System
               Setting</a>
             <a class="dropdown-item" (click)="changePassword()">Change Password</a>
           </div>

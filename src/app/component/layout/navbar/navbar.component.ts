@@ -16,7 +16,6 @@ import { environment } from '../../../../environments/environment';
 })
 export class NavbarComponent implements OnInit {
   baseURL = environment.baseURL;
-  host = environment.host;
   systemAccess = false;
   reportAccess = false;
   values: any = [];
@@ -59,7 +58,8 @@ export class NavbarComponent implements OnInit {
     if (search.findInput.length < 3) {
     this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
     } else {
-    const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+    // tslint:disable-next-line: max-line-length
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
     this.http.get(url)
     .subscribe(response => {
       this.values = [];
