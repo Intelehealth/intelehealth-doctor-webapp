@@ -44,7 +44,7 @@ export class MyAccountComponent implements OnInit {
   }
 
   saveName(value) {
-  const URL = `${this.baseURL}/person/${this.providerDetails.person.uuid}`;
+  const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/person/${this.providerDetails.person.uuid}`;
   const json = {
     'names': value
   };
@@ -54,7 +54,7 @@ export class MyAccountComponent implements OnInit {
 
   saveAddress(value) {
 // tslint:disable-next-line: max-line-length
-    // const URL = `${this.baseURL}/provider/${this.providerDetails.uuid}/attribute/${this.providerUpdate.address}`;
+    // const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.providerDetails.uuid}/attribute/${this.providerUpdate.address}`;
     // const json = {
     // 'attributeType': 'eb410260-4f26-4477-85fe-1bdfe3d3dad2',
     // 'value': value
