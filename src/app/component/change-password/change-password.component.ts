@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.css']
 })
-
 export class ChangePasswordComponent implements OnInit {
   baseURL = environment.baseURL;
   message: string;
@@ -29,11 +28,13 @@ export class ChangePasswordComponent implements OnInit {
       });
   }
 
-  ngOnInit() {}
+
+  ngOnInit() {
+  }
 
   onSubmit() {
     const value = this.changePasswordForm.value;
-    const url = `${this.baseURL}/password`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/password`;
     const json = {
       'oldPassword': value.currentPassword,
       'newPassword': value.newPassword

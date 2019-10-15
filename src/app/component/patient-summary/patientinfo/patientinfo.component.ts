@@ -27,7 +27,7 @@ constructor(private route: ActivatedRoute,
       this.service.fetchProfileImage(uuid)
       .subscribe(response => {
         this.profileImagePresent = true;
-        this.image = `${this.baseURL}/personimage/${uuid}`;
+        this.image = `http://${this.baseURL}/openmrs/ws/rest/v1/personimage/${uuid}`;
       });
       this.visitService.patientInfo(uuid)
       .subscribe(info => {
