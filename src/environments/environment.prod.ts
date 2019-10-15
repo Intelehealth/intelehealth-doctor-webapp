@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  baseURL: window.location.host
+  host: window.location.host,
+  baseURL: `https://${window.location.host}/openmrs/ws/rest/v1`
 };
