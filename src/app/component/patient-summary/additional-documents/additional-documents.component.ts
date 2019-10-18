@@ -27,7 +27,7 @@ conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';
       if (obs.encounter.visit.uuid === visitUuid) {
       this.additionalDocumentPresent = true;
       const data = {
-        image: `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${obs.uuid}/value`
+        image: `${this.baseURL}/obs/${obs.uuid}/value`
         };
         this.images.push(data);
       }
