@@ -68,7 +68,7 @@ this.service.session()
               });
             }
             if (!this.status) {
-              const url2 = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
+              const url2 = `${this.baseURL}/provider/${providerUuid}/attribute`;
               const json = {
                 'attributeType': 'c1c6458d-383b-4034-afa0-16a34185b458',
                 'value': text
@@ -76,7 +76,7 @@ this.service.session()
               this.http.post(url2, json)
               .subscribe(pp => {
               });
-              const url3 = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${providerUuid}/attribute`;
+              const url3 = `${this.baseURL}/provider/${providerUuid}/attribute`;
               const json1 = {
                 'attributeType': '8d321915-e59d-4e19-98a9-086946bfc72b',
                 'value': font
