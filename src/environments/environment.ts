@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseURL: 'demo.intelehealth.io'
+  baseURL: 'demo.intelehealth.io',
+  mindmapURL: 'http://localhost:3004/api'
 };
 
 /*

@@ -1,0 +1,30 @@
+.upload {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+button:focus {
+    outline: none;;
+}
+
+textarea {
+    width: 300px;
+    height: 200px;
+    vertical-align: middle;
+    background:#F8F8F8;
+    border: none;
+}
+
+.submit {
+    position: relative;
+    left:40%;
+}
+
+.list_items { 
+    height: 250px;
+    width: 200px;
+    overflow: scroll;
+    overflow-wrap: break-word;
+}

@@ -1,0 +1,44 @@
+<div class="container">
+  <mat-card>
+    <div class="upload">
+      <div>
+        <button mat-button color="primary" (click)=addHandler()>Add</button>
+        <button mat-button color="primary" (click)="chooseHandler()">Choose</button>
+      </div>
+      <mat-form-field *ngIf="add">
+          <input matInput type="text" placeholder="Add Key" [(ngModel)]="addKeyValue">
+      </mat-form-field>
+      <mat-form-field *ngIf="choose">
+        <mat-label>MindMap Key</mat-label>
+        <mat-select [(ngModel)]="value" (selectionChange)="licenceKeyHandler()">
+          <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keys">
+            {{ mindmap.keys }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="list_items">
+        <mat-list role="list" *ngFor="let fileName of mindmapKeyFilesName">
+          <mat-list-item role="listitem">{{fileName}}</mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+    <div class="upload">
+        <button mat-button color="primary"  (click)="uploadDocument('image')">Add Image</button>
+        <button mat-button color="primary"  (click)="uploadDocument('mindmap')">Add Mindmap</button>
+    <textarea matInput>{{ mindmapUploadJson }}</textarea>
+    </div>
+    <br>
+    <br>
+    <div>
+      <button mat-button color="primary" (click)="upload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+    </div>
+  </mat-card>
+</div>
+<input
+  type="file"
+  id="fileUpload"
+  style="display:none;"
+  (change)="fileHandler($event)"
+/>
+
+
