@@ -32,6 +32,10 @@ table {
   width: 10%
 }
 
+.mat-column-provider {
+  width: 10%
+}
+
 .mat-column-lastSeen {
   width: 14%
 }
