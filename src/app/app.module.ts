@@ -60,6 +60,7 @@ import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
+import { TablesComponent } from './component/homepage/tables/tables.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { EditDetailsComponent } from './component/my-account/edit-details/edit-d
     FindPatientComponent,
     Page404Component,
     SignatureComponent,
-    EditDetailsComponent
+    EditDetailsComponent,
+    TablesComponent
   ],
   imports: [
     BrowserModule,
