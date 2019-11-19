@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
+// import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
@@ -61,6 +61,8 @@ import { SignatureComponent } from './component/my-account/signature/signature.c
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
 import { TablesComponent } from './component/homepage/tables/tables.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -131,13 +133,14 @@ import { TablesComponent } from './component/homepage/tables/tables.component';
       { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     CookieService,
     AuthGuard,
     DatePipe,
-    { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    // { provide: APP_BASE_HREF, useValue: '/' },
+    // { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })
