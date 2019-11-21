@@ -1,13 +1,13 @@
 <h4><i class="fas fa-vials"></i> Prescribed Test</h4>
 <hr>
-<div>
+<div id="test-form">
     <form [formGroup]='testForm' >
         <mat-form-field class="example-full-width">
             <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
         &nbsp;&nbsp;
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
+        <button (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
       </form>
 </div>
 <ng-container *ngIf="tests.length > 0">

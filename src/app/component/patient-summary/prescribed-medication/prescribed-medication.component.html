@@ -2,7 +2,7 @@
 <hr>
 <div>
   <form [formGroup]="medForm">
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="example-full-width" id="medication-form">
             <input matInput placeholder="Medication" (keydown)="add = true"  [ngbTypeahead]="searchPrescription" formControlName="med">
         </mat-form-field>
         &nbsp;&nbsp;

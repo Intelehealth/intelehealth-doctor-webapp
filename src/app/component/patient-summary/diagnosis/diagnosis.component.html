@@ -2,7 +2,7 @@
 <hr>
 <div>
 <form [formGroup]='diagnosisForm'>
-    <mat-form-field class="example-full-width">
+    <mat-form-field class="example-full-width" id="dropdown-diagnosis">
         <input matInput placeholder="Diagnosis" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
@@ -11,20 +11,22 @@
       </mat-option>
     </mat-autocomplete>
     </mat-form-field>
-    <div>
+    <div id="primary-confirm">
+    <section>
     <mat-radio-group aria-label="Select an option" formControlName="type">
         <mat-radio-button value="Primary">Primary </mat-radio-button>
         <mat-radio-button value="Secondary">Secondary</mat-radio-button>
       </mat-radio-group>
-    </div>
-    <div>
+    </section>
+    <section>
     <mat-radio-group aria-label="Select an option" formControlName="confirm">
         <mat-radio-button value="Provisional">Provisional </mat-radio-button>
         <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
       </mat-radio-group>
+    </section>
     </div>
    <br>
-  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
+  <button (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">

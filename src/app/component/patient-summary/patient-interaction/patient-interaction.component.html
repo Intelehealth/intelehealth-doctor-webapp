@@ -4,11 +4,11 @@
   Have you spoken with the patient directly?
 </div>
 <div>
-  <span><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank"></a></span>
+  <span><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" id="whatsapp-link"></a></span>
   <span><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
 </div>
 <form [formGroup]='interaction' (ngSubmit)='submit()'>
-<div>
+<div id="patient-interaction">
     <br>
         <mat-radio-group aria-label="Select an option" formControlName="interaction">
             <mat-radio-button value="Yes">Yes </mat-radio-button>
