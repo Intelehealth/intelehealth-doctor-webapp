@@ -27,7 +27,7 @@
   <!-- Flagged Visit -->
   <ng-container *ngIf="flagVisit.length > 0">
     <br>
-    <mat-card>
+    <mat-card id="flagged-table">
       <h4>FLAGGED VISITS</h4>
       <hr>
       <app-tables [data]="flagVisit"></app-tables>
@@ -38,7 +38,7 @@
   <!-- Queue Visit table -->
   <ng-container *ngIf="waitingVisit.length > 0">
     <br>
-    <mat-card>
+    <mat-card id="queued-table">
       <h4>WAITING FOR DOCTOR'S CONSULT</h4>
       <hr>
       <app-tables [data]="waitingVisit"></app-tables>
@@ -48,7 +48,7 @@
   <!-- In Progress Visit -->
   <ng-container *ngIf="progressVisit.length > 0">
       <br>
-      <mat-card>
+      <mat-card id="visit-in-progress">
         <h4>VISIT IN PROGRESS</h4>
         <hr>
         <app-tables [data]="progressVisit"></app-tables>
@@ -58,7 +58,7 @@
     <!-- Complete Visit -->
     <ng-container *ngIf="completedVisit.length > 0">
         <br>
-        <mat-card>
+        <mat-card id="visit-complete">
           <h4>COMPLETED VISIT</h4>
           <hr>
           <app-tables [data]="completedVisit"></app-tables>

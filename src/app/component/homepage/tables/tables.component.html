@@ -8,7 +8,7 @@
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
-      <td mat-cell *matCellDef="let row"><a [routerLink]="['/patientSummary', row.patientId, row.visitId]">
+      <td mat-cell *matCellDef="let row"><a id="patient-id" [routerLink]="['/patientSummary', row.patientId, row.visitId]">
           {{row.id}} </a></td>
     </ng-container>
 
@@ -58,7 +58,7 @@
       <td mat-cell *matCellDef="let row"> {{row.lastSeen | date: 'dd-MMM-yyyy, h:mm a'}} </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayColumns" id="columns-sorting"></tr>
     <tr mat-row *matRowDef="let row; columns: displayColumns;">
     </tr>
   </table>
