@@ -1,24 +1,31 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
   <div class="modal-body row">
-    <div class="col-sm-4" style="padding: 3px">
+    <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #DD3C62;">
         <div class="card-body">
-          <div class="text-left">Flagged Visits<span style="float: right">{{flagPatientNo}}</span></div>
+          <div class="text-left">FLAGGED VISITS<span style="float: right">{{flagPatientNo}}</span></div>
         </div>
       </div>
     </div>
-    <div class="col-sm-4" style="padding: 3px">
+    <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #F6B825;">
         <div class="card-body">
-          <div class="text-left">Adult Initial<span style="float: right">{{activePatient}}</span></div>
+          <div class="text-left">WAITING FOR DOCTOR'S<span style="float: right">{{activePatient}}</span></div>
         </div>
       </div>
     </div>
-    <div class="col-sm-4" style="padding: 3px">
+    <div class="col-sm-3" style="padding: 3px">
+      <div class="card text-white" style="background: #17a2b8;">
+        <div class="card-body">
+          <div class="text-left">VISITS IN PROGRESS<span style="float: right">{{visitNoteNo}}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #4FCA8B;">
         <div class="card-body">
-          <div class="text-left">Visit Note<span style="float: right">{{visitNoteNo}}</span></div>
+          <div class="text-left">COMPLETED VISITS<span style="float: right">{{completeVisitNo}}</span></div>
         </div>
       </div>
     </div>

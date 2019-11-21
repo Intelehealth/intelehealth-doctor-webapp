@@ -27,6 +27,7 @@ export class HomepageComponent implements OnInit {
   activePatient: number;
   flagPatientNo: number;
   visitNoteNo: number;
+  completeVisitNo: number;
   flagVisit: VisitData[] = [];
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
@@ -40,9 +41,7 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;
-        let length = 0;
-        let flagLength = 0;
-        let visitNoteLength = 0;
+        let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {
           if (active.encounters.length > 0) {
             const value = active.encounters[0].display;
@@ -63,6 +62,7 @@ export class HomepageComponent implements OnInit {
             } else if (value.match('Visit Complete')) {
               const values = this.assignValueToProperty(active);
               this.completedVisit.push(values);
+              completeVisitLength += 1;
             }
           }
           this.value = {};
@@ -71,6 +71,7 @@ export class HomepageComponent implements OnInit {
         this.activePatient = length;
         this.flagPatientNo = flagLength;
         this.visitNoteNo = visitNoteLength;
+        this.completeVisitNo = completeVisitLength;
       }, err => {
         if (err.error instanceof Error) {
           this.snackbar.open('Client-side error', null, { duration: 4000 });
