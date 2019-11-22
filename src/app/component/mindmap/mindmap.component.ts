@@ -82,7 +82,9 @@ export class MindmapComponent implements OnInit {
     this.mindmapService.postMindmap(data)
     .subscribe(res => {
       if (res) {
-        this.snackbar.open(`Mindmap added Successfully`, null, {duration: 4000});
+        this.snackbar.open(`Added Successfully`, null, {duration: 4000});
+      } else {
+        this.snackbar.open(`Something went Wrong`, null, {duration: 4000});
       }
     });
   }

@@ -97,8 +97,8 @@ import { environment } from '../environments/environment';
     Page404Component,
     SignatureComponent,
     EditDetailsComponent,
-    MindmapComponent
-    TablesComponent
+    MindmapComponent,
+    TablesComponent,
   ],
   imports: [
     BrowserModule,
