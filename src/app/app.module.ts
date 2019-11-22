@@ -60,9 +60,12 @@ import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
+
+import { MindmapComponent } from './component/mindmap/mindmap.component';
 import { TablesComponent } from './component/homepage/tables/tables.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+
 
 @NgModule({
   declarations: [
@@ -94,10 +97,13 @@ import { environment } from '../environments/environment';
     Page404Component,
     SignatureComponent,
     EditDetailsComponent,
+    MindmapComponent
     TablesComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatTooltipModule,
     MatTableModule,
@@ -118,8 +124,6 @@ import { environment } from '../environments/environment';
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     NgbModule,
-    FormsModule,
-    ReactiveFormsModule,
     HttpClientModule,
     UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
     RouterModule.forRoot([
@@ -127,6 +131,7 @@ import { environment } from '../environments/environment';
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+      { path: 'mindmap', component: MindmapComponent, canActivate: [AuthGuard] },
       { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
