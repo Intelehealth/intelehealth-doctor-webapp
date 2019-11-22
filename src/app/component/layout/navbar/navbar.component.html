@@ -1,6 +1,6 @@
 <div class="container">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-radius">
-    <form class="form-inline" [formGroup]="searchForm" (submit)="search()">
+    <form class="form-inline" [formGroup]="searchForm" (submit)="search()" id='search-patient'>
       <div class="input-group">
         <div class="input-group-prepend">
           <input type="text" class="form-control" placeholder="Find Patient" formControlName="findInput">
@@ -16,25 +16,28 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
-        <li *ngIf='reportAccess' class="nav-item">
+        <li class="nav-item">
+           <a class="nav-link" routerLink='/home'>Home</a>
+        </li>
+        <li *ngIf='systemAccess' class="nav-item">
           <a class="nav-link" routerLink='/mindmap'>MindMap</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" (click)="callTour()">Help</a>
         </li>
         <li *ngIf='reportAccess' class="nav-item">
           <a class="nav-link" href='http://{{baseURL}}/openmrs/reportingui/reportsapp/home.page'>Reports</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Profile </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
+          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"><i class="fa fa-user"></i> Profile </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" routerLink='/myAccount'>My account</a>
-            <a *ngIf='systemAccess' class="dropdown-item"
-              href="http://{{baseURL}}/openmrs/admin/index.htm">System
-              Setting</a>
+            <a *ngIf='systemAccess' class="dropdown-item" href="http://{{baseURL}}/openmrs/admin/index.htm">System Setting</a>
             <a class="dropdown-item" (click)="changePassword()">Change Password</a>
           </div>
         </li>
         <li class="nav-item">
-          <button class=" btn btn-primary" (click)="logout()">Log out</button>
+          <button class=" btn btn-primary" id="logout-link" (click)="logout()">Log out</button>
         </li>
       </ul>
     </div>

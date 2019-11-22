@@ -2,6 +2,10 @@
     background: #b71c1c;
   }
 
+.nav-link{
+  cursor: pointer;
+}
+
   .box-radius {
     border-radius: 0 0 10px 10px;
   }

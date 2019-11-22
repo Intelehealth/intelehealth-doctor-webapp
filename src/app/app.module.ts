@@ -60,7 +60,12 @@ import { Page404Component } from './component/page404/page404.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
+
 import { MindmapComponent } from './component/mindmap/mindmap.component';
+import { TablesComponent } from './component/homepage/tables/tables.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+
 
 @NgModule({
   declarations: [
@@ -93,6 +98,7 @@ import { MindmapComponent } from './component/mindmap/mindmap.component';
     SignatureComponent,
     EditDetailsComponent,
     MindmapComponent
+    TablesComponent
   ],
   imports: [
     BrowserModule,
@@ -132,6 +138,7 @@ import { MindmapComponent } from './component/mindmap/mindmap.component';
       { path: 'patientSummary/:patient_id/:visit_id', component: PatientSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     CookieService,

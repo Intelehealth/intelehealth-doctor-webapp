@@ -65,11 +65,18 @@ constructor(private service: EncounterService,
             };
             this.service.postEncounter(json)
             .subscribe(response => {
+              if (response) {
+                this.show = true;
+                this.snackbar.open(`Visit Note Created`, null, {
+                  duration: 4000
+                });
+              } else {
+                this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
+              }
             });
           });
         });
       }
-    this.show = true;
   }
 
   sign() {

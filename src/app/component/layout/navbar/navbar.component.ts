@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
@@ -23,6 +23,8 @@ export class NavbarComponent implements OnInit {
   searchForm = new FormGroup({
     findInput: new FormControl('', [Validators.required])
   });
+
+  @Output() messageEvent = new EventEmitter<string>();
 
 
   constructor(private authService: AuthService,
@@ -82,4 +84,7 @@ export class NavbarComponent implements OnInit {
     this.searchForm.reset();
   }
 
+  callTour() {
+    this.messageEvent.emit();
+  }
 }
