@@ -33,3 +33,7 @@
   cursor: pointer;
   text-decoration: none;
 }
+
+.material-icons{
+  vertical-align: text-bottom;
+}
