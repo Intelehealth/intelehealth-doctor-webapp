@@ -13,10 +13,10 @@ import { Subscription } from 'rxjs';
 export class PatientSummaryComponent implements OnInit {
 userSubscription: Subscription;
 show = false;
-signPresent = false;
 text: string;
 font: string;
 visitNotePresent = false;
+visitCompletePresent = false;
 setSpiner = true;
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -37,7 +37,29 @@ constructor(private service: EncounterService,
         if (visit.display.match('Visit Note') !== null) {
           this.visitNotePresent = true;
           this.show = true;
-          }
+        }
+        if (visit.display.match('Visit Complete') !== null) {
+          this.visitCompletePresent = true;
+          this.service.session()
+          .subscribe(response => {
+            this.service.provider(response.user.uuid)
+            .subscribe(user => {
+              const providerUuid = user.results[0].uuid;
+              this.service.signRequest(providerUuid)
+              .subscribe(res => {
+                if (res.results.length) {
+                  res.results.forEach(element => {
+                    if (element.attributeType.display === 'textOfSign') {
+                      this.text = element.value;
+                    } if (element.attributeType.display === 'fontOfSign') {
+                      this.font = element.value;
+                    }
+                  });
+                }
+              });
+            });
+          });
+        }
       });
     });
   }
@@ -91,7 +113,6 @@ constructor(private service: EncounterService,
         this.service.signRequest(providerUuid)
         .subscribe(res => {
           if (res.results.length) {
-            this.signPresent = true;
             res.results.forEach(element => {
               if (element.attributeType.display === 'textOfSign') {
                 this.text = element.value;
@@ -99,29 +120,25 @@ constructor(private service: EncounterService,
                 this.font = element.value;
               }
             });
-            this.service.visitComplete(patientUuid)
-              .subscribe(visit => {
-                if (visit.results.length > 0) {
-                  this.snackbar.open('Visit already Complete', null, {duration: 4000});
-                } else {
-                  const json = {
-                    patient: patientUuid,
-                    encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e',
-                    encounterProviders: [{
-                      provider: providerUuid,
-                      encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
-                      }],
-                    visit: visitUuid,
-                    encounterDatetime: myDate
-                  };
-                  this.service.postEncounter(json)
-                  .subscribe(post => {});
-                }
-              });
+            const json = {
+              patient: patientUuid,
+              encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e',
+              encounterProviders: [{
+                provider: providerUuid,
+                encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
+                }],
+              visit: visitUuid,
+              encounterDatetime: myDate
+            };
+            this.service.postEncounter(json)
+            .subscribe(post => {
+              this.visitCompletePresent = true;
+              this.snackbar.open('Visit Complete', null, {duration: 4000});
+            });
           } else {
-            if (window.confirm('Your signature is not setup! If you click "Ok" you would be redirected . Cancel will load this website ')) {
+            if (window.confirm('Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website ')) {
               this.router.navigateByUrl('/myAccount');
-              }
+            }
           }
         });
       });

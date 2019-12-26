@@ -93,7 +93,7 @@
           <app-follow-up></app-follow-up>
         </mat-card>
 <br>
-      <ng-container *ngIf="signPresent">
+      <ng-container *ngIf="visitCompletePresent">
             <div class="d-flex justify-content-center">
                   <mat-card>
                              <div [style.font-family]="font" style="font-size: 50px">{{text}}</div>
@@ -103,7 +103,7 @@
       </ng-container>
 
       <div class="text-center">
-            <button (click)="sign()" id="sign-button" mat-raised-button color="primary">Sign and Submit</button>
+            <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent">Sign and Submit</button>
       </div>
       
 </div>
