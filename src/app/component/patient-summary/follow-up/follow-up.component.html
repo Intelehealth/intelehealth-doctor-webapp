@@ -11,9 +11,9 @@
     </mat-form-field>
   </p>
       <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="Leave a comment" formControlName='advice'></textarea>
+        <textarea matInput placeholder="Follow up remark" formControlName='advice'></textarea>
       </mat-form-field>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>Schedule a Follow up</button>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>Schedule a follow up</button>
 </div>
 {{errorText}}
 </form>

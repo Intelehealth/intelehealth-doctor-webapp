@@ -74,7 +74,7 @@ followForm = new FormGroup({
       concept: this.conceptFollow,
       person: this.patientId,
       obsDatetime: date,
-      value: advice ? `${obsdate}, Advice: ${advice}` : obsdate,
+      value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
       encounter: this.encounterUuid
       };
       this.service.postObs(json)

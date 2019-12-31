@@ -30,26 +30,26 @@ export class AppComponent implements OnInit {
     let steps = [
       {
         // tslint:disable-next-line: max-line-length
-        intro: 'Welcome to  Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advises to the patient.'
+        intro: 'Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.'
       },
       {
         element: '#navbarDropdownMenuLink-4',
-        intro: 'Click here to enter your profile or change your password.'
+        intro: 'Click here to edit your profile or change your password.'
       },
       {
         element: '#flagged-table',
         // tslint:disable-next-line: max-line-length
-        intro: 'These are visits that are marked as emergency by Healthworker. Tip -  Always provided visits in  the flagged visits table first.',
+        intro: 'These are visits that are marked as priority by health worker. Tip - Always provide consultation for priority visit table first.',
         position: 'right'
       },
       {
         element: '#queued-table',
-        intro: 'These are visits that are not provided with prescriptions.',
+        intro: 'These are visits that are not provided with consultation.',
         position: 'left'
       },
       {
         element: '#visit-in-progress',
-        intro: 'These are visits that are seen by doctor and have partially provided with prescriptions',
+        intro: 'These are visits that are seen by the doctor and have been partially provided a consultation',
         position: 'right'
       },
       {
@@ -68,14 +68,14 @@ export class AppComponent implements OnInit {
       },
       {
         element: document.getElementById('patient-id'),
-        intro: 'Click on patient id to give prescription to the patient.'
+        intro: 'Click on patient id to add doctor\'s prescription for the patient.'
       },
       {
         element: '#logout-link',
         intro: 'Click on Logout to sign out from the portal.'
       },
       {
-        intro: 'Great Job,you have completed the tour.'
+        intro: 'Great job, you have completed the tour.'
       }
     ];
     if (window.location.href.split('#/')[1].match('home') !== null) {
@@ -88,11 +88,15 @@ export class AppComponent implements OnInit {
     }
     if (window.location.href.split('#/')[1].match('patientSummary') !== null) {
       steps = [{
+        element: '#past-visits',
+        intro: 'Click on the visit date to see the patient record for that visit and schedule.'
+      },
+        {
         element: '#start-visit',
-        intro: 'Click on start visit/here to write diagnosis, medications, tests,advises and follow up\'s',
+        intro: 'Click on start visit/here to write diagnosis, medications, tests, advice and follow up\'s',
       },
       {
-        element: '#whatsapp-link',
+        element: '#call-link',
         intro: 'Click on whatsapp or phone icon to speak to the patient ',
       },
       {
@@ -113,11 +117,13 @@ export class AppComponent implements OnInit {
       },
       {
         element: '#doctor-notes',
-        intro: 'Write information such as reference notes, patients call notes etc and click on \'Add Note\''
+        // tslint:disable-next-line: max-line-length
+        intro: 'Write information such as reference notes, patients call notes etc and click on \'Add Note\'. These notes are not shared with the patient.'
       },
       {
         element: '#medication-form',
-        intro: 'Write medicines name or choose from drop down option.'
+        // tslint:disable-next-line: max-line-length
+        intro: 'Type the name of the medicines and choose from drop down options. If the name is not available on the drop down options you can type the name.'
       },
       {
         element: '#test-form',
@@ -129,11 +135,11 @@ export class AppComponent implements OnInit {
       },
       {
         element: '#followup-button',
-        intro: 'Click on calender icon and select follow up dates.Write comments and  click on \'Schedule a follow up date\''
+        intro: 'Click on calender icon and select follow up date. Write remarks and click on \'Schedule a follow up\''
       },
       {
         element: '#sign-button',
-        intro: 'Review the prescription and click on \'Sign and Submit\' to send the prescription to the healthworker.'
+        intro: 'Review the prescription and click on \'Sign and Submit\' to send the prescription to the health worker.'
       }
     ];
       this.introJS.setOptions({

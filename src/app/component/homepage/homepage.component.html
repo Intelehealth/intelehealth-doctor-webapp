@@ -4,14 +4,14 @@
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #DD3C62;">
         <div class="card-body">
-          <div class="text-left">FLAGGED VISITS<span style="float: right">{{flagPatientNo}}</span></div>
+          <div class="text-left">PRIORITY VISITS<span style="float: right">{{flagPatientNo}}</span></div>
         </div>
       </div>
     </div>
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #F6B825;">
         <div class="card-body">
-          <div class="text-left">WAITING FOR DOCTOR'S<span style="float: right">{{activePatient}}</span></div>
+          <div class="text-left">AWAITING CONSULT<span style="float: right">{{activePatient}}</span></div>
         </div>
       </div>
     </div>
@@ -31,44 +31,45 @@
     </div>
   </div>
 
-  <!-- Flagged Visit -->
-  <ng-container *ngIf="flagVisit.length > 0">
-    <br>
-    <mat-card id="flagged-table">
-      <h4>FLAGGED VISITS</h4>
-      <hr>
-      <app-tables [data]="flagVisit"></app-tables>
-    </mat-card>
-  </ng-container>
+  <!-- PRIORITY Visit -->
+  <mat-accordion class="example-headers-align" [multi]="true">
+    <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table" >
+      <mat-expansion-panel-header>
+          <mat-panel-title><h5>PRIORITY VISITS</h5></mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="flagVisit.length > 0">
+          <app-tables [data]="flagVisit"></app-tables>
+      </ng-container>
+    </mat-expansion-panel>
+  
+    <!-- Queue Visit table -->
+    <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table">
+      <mat-expansion-panel-header>
+          <mat-panel-title><h5>AWAITING CONSULT</h5></mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="waitingVisit.length > 0">
+        <app-tables [data]="waitingVisit"></app-tables>
+      </ng-container>
+    </mat-expansion-panel>
 
-
-  <!-- Queue Visit table -->
-  <ng-container *ngIf="waitingVisit.length > 0">
-    <br>
-    <mat-card id="queued-table">
-      <h4>WAITING FOR DOCTOR'S CONSULT</h4>
-      <hr>
-      <app-tables [data]="waitingVisit"></app-tables>
-    </mat-card>
-  </ng-container>
-
-  <!-- In Progress Visit -->
-  <ng-container *ngIf="progressVisit.length > 0">
-      <br>
-      <mat-card id="visit-in-progress">
-        <h4>VISIT IN PROGRESS</h4>
-        <hr>
+    <!-- In Progress Visit -->
+    <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress">
+      <mat-expansion-panel-header>
+          <mat-panel-title><h5>VISITS IN PROGRESS</h5></mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="progressVisit.length > 0">
         <app-tables [data]="progressVisit"></app-tables>
-      </mat-card>
-    </ng-container>
+      </ng-container>
+    </mat-expansion-panel>
 
     <!-- Complete Visit -->
-    <ng-container *ngIf="completedVisit.length > 0">
-        <br>
-        <mat-card id="visit-complete">
-          <h4>COMPLETED VISIT</h4>
-          <hr>
-          <app-tables [data]="completedVisit"></app-tables>
-        </mat-card>
+    <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
+      <mat-expansion-panel-header>
+          <mat-panel-title><h5>COMPLETED VISITS</h5></mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="completedVisit.length > 0">
+        <app-tables [data]="completedVisit"></app-tables>
       </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>

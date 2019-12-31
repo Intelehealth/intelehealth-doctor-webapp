@@ -3,10 +3,6 @@
 <div>
   Have you spoken with the patient directly?
 </div>
-<div>
-  <span><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" id="whatsapp-link"></a></span>
-  <span><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
-</div>
 <form [formGroup]='interaction' (ngSubmit)='submit()'>
 <div id="patient-interaction">
     <br>
@@ -15,6 +11,10 @@
             <mat-radio-button value="No">No</mat-radio-button>
           </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">Submit</button>
+</div>
+<div id="call-link"> Start a call: 
+  <span><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a></span>
+  <span><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
 </div>
 <div *ngFor="let msg of msg">  
   <div [@moveInLeft] class="alert alert-primary">{{msg}}</div>

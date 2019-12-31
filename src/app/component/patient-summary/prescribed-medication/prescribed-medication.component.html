@@ -29,18 +29,24 @@
       </div>
     </div>
     <br>
-        <div>As needed for</div> 
-        <input type="text" class="form-control" placeholder="reason(optional)" formControlName="reason"> 
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
+        <div>As needed</div>
+        <div class="form-row">
+          <div class="col">
+            <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">For</span> 
-              </div>
               <input type="number" min="1" class="form-control" placeholder="Duration" formControlName="duration">
-              <div class="input-group-prepend">
-              <input type="text" class="form-control" [ngbTypeahead]="durationUnit" placeholder="Units (eg: Days/Weeks/etc.)" formControlName="durationUnit">
-              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="input-group-prepend">
+              <input type="text" class="form-control" [ngbTypeahead]="durationUnit" placeholder="Units(eg: Days/Weeks/etc.)" formControlName="durationUnit">              
               <span class="input-group-text" id="basic-addon1">total</span>
             </div>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" placeholder="reason(optional)" formControlName="reason"> 
+          </div>
+        </div>
     <br>
     <textarea class="form-control" placeholder="Additional instruction not covered above" formControlName="additional"></textarea>
   </div>

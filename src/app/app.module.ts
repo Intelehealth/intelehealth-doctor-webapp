@@ -28,7 +28,8 @@ import {
   MatListModule,
   MatSelectModule,
   MatAutocompleteModule,
-  MatProgressSpinnerModule} from '@angular/material/';
+  MatProgressSpinnerModule,
+  MatExpansionModule} from '@angular/material/';
 import { PatientSummaryComponent } from './component/patient-summary/patient-summary.component';
 import { FamilyHistoryComponent } from './component/patient-summary/family-history/family-history.component';
 import { PastMedicalHistoryComponent } from './component/patient-summary/past-medical-history/past-medical-history.component';
@@ -61,7 +62,7 @@ import { SignatureComponent } from './component/my-account/signature/signature.c
 import { UserIdleModule } from 'angular-user-idle';
 import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
 
-import { MindmapComponent } from './component/mindmap/mindmap.component';
+import { AyuComponent } from './component/ayu/ayu.component';
 import { TablesComponent } from './component/homepage/tables/tables.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -97,7 +98,7 @@ import { environment } from '../environments/environment';
     Page404Component,
     SignatureComponent,
     EditDetailsComponent,
-    MindmapComponent,
+    AyuComponent,
     TablesComponent,
   ],
   imports: [
@@ -123,6 +124,7 @@ import { environment } from '../environments/environment';
     MatDialogModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
     NgbModule,
     HttpClientModule,
     UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
@@ -131,7 +133,7 @@ import { environment } from '../environments/environment';
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-      { path: 'mindmap', component: MindmapComponent, canActivate: [AuthGuard] },
+      { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
       { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },

@@ -3,7 +3,7 @@
 <div id="advice-form">
   <form [formGroup]='adviceForm'>
       <mat-form-field class="example-full-width">
-          <input matInput placeholder="Advice to patient" [ngbTypeahead]="search" formControlName='advice'>
+          <input matInput placeholder="Advice or referal for patient" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
       &nbsp;&nbsp;
       <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
