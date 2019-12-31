@@ -1,13 +1,13 @@
-import { MindmapService } from './../../services/mindmap.service';
+import { MindmapService } from '../../services/mindmap.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
-  selector: 'app-mindmap',
-  templateUrl: './mindmap.component.html',
-  styleUrls: ['./mindmap.component.css']
+  selector: 'app-ayu',
+  templateUrl: './ayu.component.html',
+  styleUrls: ['./ayu.component.css']
 })
-export class MindmapComponent implements OnInit {
+export class AyuComponent implements OnInit {
   file: any;
   mindmaps = [];
   value: string;

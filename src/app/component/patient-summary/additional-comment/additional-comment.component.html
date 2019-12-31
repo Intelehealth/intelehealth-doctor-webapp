@@ -3,7 +3,7 @@
 <form [formGroup]='commentForm'>
 <div id="doctor-notes">
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Notes (not shared with the patient)" formControlName='comment'>
+        <textarea matInput placeholder="Notes (not shared with the patient)" formControlName='comment'></textarea>
     </mat-form-field>
     &nbsp;&nbsp;
 <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
