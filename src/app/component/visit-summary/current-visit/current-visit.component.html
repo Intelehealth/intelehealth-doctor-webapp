@@ -1,0 +1,9 @@
+<div id="past-visits">
+  <h4><i class="fas fa-clinic-medical"></i> Current Visit</h4>
+<hr>
+<div *ngIf="visitDetail">
+  <div><b>Current Visit : </b>{{visitDetail.startDatetime | date: 'dd-MMM-yyyy' }} <span *ngIf="visitDetail.endDatetime == null" class="badge badge-pill badge-success" style="vertical-align: text-bottom;">Active</span></div>
+  <div><b>CHW Name: </b>{{providerName}}</div>
+  <div><b>Clinic: </b>{{clinicName}}</div>
+</div>
+</div>

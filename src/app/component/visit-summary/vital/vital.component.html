@@ -2,7 +2,7 @@
 <hr>
 <div *ngIf='!vitalsPresent'>No Data</div>
 <div *ngIf='vitalsPresent'>
-  <table class="table table-responsive borderless">
+  <table class="table table-responsive">
     <tr *ngFor='let item of v'>
       <th>Temp:</th>
       <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>

@@ -1,3 +1,4 @@
 td, th {
+    border: none;
     white-space: nowrap;
 }

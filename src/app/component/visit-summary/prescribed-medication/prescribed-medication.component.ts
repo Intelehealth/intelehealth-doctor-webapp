@@ -3,7 +3,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { DiagnosisService } from './../../../services/diagnosis.service';
+import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { VisitService } from 'src/app/services/visit.service';

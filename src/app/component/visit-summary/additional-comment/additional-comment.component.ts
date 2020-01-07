@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { DiagnosisService } from './../../../services/diagnosis.service';
+import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { VisitService } from 'src/app/services/visit.service';
 

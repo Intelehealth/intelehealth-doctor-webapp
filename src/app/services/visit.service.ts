@@ -35,7 +35,7 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  postAttriute(visitId, json): Observable<any> {
+  postAttribute(visitId, json): Observable<any> {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
