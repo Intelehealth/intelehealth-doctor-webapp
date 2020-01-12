@@ -1,0 +1,49 @@
+<div>
+  <h4>{{data.title}} <span style="float: right;cursor: pointer;" (click)="close()">&times;</span></h4>
+</div>
+<br>
+<div>
+  <div *ngIf="data.title === 'Add License key'">
+    <div >
+      <mat-form-field>
+          <input matInput type="text" placeholder="Name" [(ngModel)]="data.key">
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Date Of Expiry" [(ngModel)]="data.expiryDate">
+        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+        <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+  <div *ngIf="data.title === 'Edit Expiry Date'">
+    <mat-form-field>
+      <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Date Of Expiry" [(ngModel)]="data.expiryDate">
+      <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+      <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div>
+    <div *ngIf="data.title === 'Add Mindmap'">
+      <textarea matInput>{{mindmapUploadJson}}</textarea>
+      <br>
+      <br>
+      <br>
+      <div style="text-align: center;">
+        <button mat-raised-button color="primary" (click)="uploadMindmap()">Upload File</button>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: end;">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="data">Add</button>
+  </div>
+</div>
+
+<input
+  type="file"
+  id="mindmapUpload"
+  style="display:none;"
+  (change)="fileHandler($event)"
+/>
