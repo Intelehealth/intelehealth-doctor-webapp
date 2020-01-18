@@ -54,7 +54,7 @@
             <ng-container matColumnDef="action">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
               <td mat-cell *matCellDef="let row; let i = index;">
-                <i class="material-icons" style="cursor:pointer;padding-right:6px;" (click)="editMindmap(i + (paginator.pageIndex * paginator.pageSize))">create</i>
+                <!-- <i class="material-icons" style="cursor:pointer;padding-right:6px;" (click)="editMindmap(i + (paginator.pageIndex * paginator.pageSize))">create</i> -->
                 <i class="material-icons" style="color:rgb(235, 30, 30);cursor: pointer;" (click)="deleteMindmap(i + (paginator.pageIndex * paginator.pageSize))">delete</i>
               </td>
             </ng-container>

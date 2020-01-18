@@ -34,10 +34,14 @@
         <button mat-raised-button color="primary" (click)="uploadMindmap()">Upload File</button>
       </div>
     </div>
+    <div *ngIf="data.title === 'Delete Mindmap'">
+      <div>Are you sure you want to delete?</div>
+    </div>
   </div>
   <div style="text-align: end;">
     <button mat-button (click)="close()">Close</button>
-    <button mat-raised-button color="primary" [mat-dialog-close]="data">Add</button>
+    <button mat-raised-button color="primary" *ngIf="data.title != 'Delete Mindmap'" [mat-dialog-close]="data">Add</button>
+    <button mat-raised-button color="primary" *ngIf="data.title === 'Delete Mindmap'" [mat-dialog-close]="true">Delete</button>
   </div>
 </div>
 

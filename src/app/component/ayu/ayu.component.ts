@@ -120,6 +120,9 @@ export class AyuComponent implements OnInit {
       .subscribe(response => {
         if (response) {
           this.expiryDate = response.updatedDate;
+          this.snackbar.open(`Expiry date updated`, null, {duration: 4000});
+        } else {
+          this.snackbar.open(`Expiry date not updated`, null, {duration: 4000});
         }
       });
     });
@@ -130,10 +133,23 @@ export class AyuComponent implements OnInit {
   }
 
   deleteMindmap(index): void {
-    const mindmapName = this.mindmapData[index].name;
-    this.mindmapService.deleteMindmap(this.selectedKey, {mindmapName})
-    .subscribe(response => {
-      console.log(response)
+    const dialogRef = this.dialog.open(ModalsComponent, {
+      data: {title: 'Delete Mindmap'},
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const mindmapName = this.mindmapData[index].name;
+        this.mindmapService.deleteMindmap(this.selectedKey, {mindmapName})
+        .subscribe(response => {
+          if (response) {
+            this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000});
+          } else {
+            this.snackbar.open(`Mindmap not deleted`, null, {duration: 4000});
+          }
+        });
+      }
     });
   }
 
