@@ -86,7 +86,7 @@ export class AppComponent implements OnInit {
             doneLabel: 'Thanks',
       }).start();
     }
-    if (window.location.href.split('#/')[1].match('patientSummary') !== null) {
+    if (window.location.href.split('#/')[1].match('visitSummary') !== null) {
       steps = [{
         element: '#past-visits',
         intro: 'Click on the visit date to see the patient record for that visit and schedule.'
