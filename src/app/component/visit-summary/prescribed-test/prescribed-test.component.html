@@ -7,7 +7,7 @@
         </mat-form-field>
         &nbsp;&nbsp;
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-        <button (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
+        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
       </form>
 </div>
 <ng-container *ngIf="tests.length > 0">

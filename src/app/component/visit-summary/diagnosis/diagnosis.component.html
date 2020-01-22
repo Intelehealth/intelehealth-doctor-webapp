@@ -26,7 +26,7 @@
     </section>
     </div>
    <br>
-  <button (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
+  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">
