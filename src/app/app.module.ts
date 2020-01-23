@@ -33,6 +33,9 @@ import { EditDetailsComponent } from './component/my-account/edit-details/edit-d
 import { AyuComponent } from './component/ayu/ayu.component';
 import { TablesComponent } from './component/homepage/tables/tables.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
+import { CurrentVisitComponent } from './component/visit-summary/current-visit/current-visit.component';
+import { ModalsComponent } from './component/ayu/modals/modals.component';
+
 
 // Package Import
 import { HttpClientModule } from '@angular/common/http';
@@ -45,7 +48,6 @@ import { DatePipe } from '@angular/common';
 import { UserIdleModule } from 'angular-user-idle';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material Design Imports
@@ -69,7 +71,7 @@ import {
   MatAutocompleteModule,
   MatProgressSpinnerModule,
   MatExpansionModule} from '@angular/material/';
-import { CurrentVisitComponent } from './component/visit-summary/current-visit/current-visit.component';
+
 
 
 @NgModule({
@@ -105,6 +107,7 @@ import { CurrentVisitComponent } from './component/visit-summary/current-visit/c
     AyuComponent,
     TablesComponent,
     CurrentVisitComponent,
+    ModalsComponent,
   ],
   imports: [
     BrowserModule,
@@ -139,6 +142,7 @@ import { CurrentVisitComponent } from './component/visit-summary/current-visit/c
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
       { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+      { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
       { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },

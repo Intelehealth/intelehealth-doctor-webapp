@@ -51,7 +51,7 @@ export class HomepageComponent implements OnInit {
                 this.flagVisit.push(values);
                 flagLength += 1;
               }
-            } else if (value.match('ADULTINITIAL')) {
+            } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
               const values = this.assignValueToProperty(active);
               this.waitingVisit.push(values);
               length += 1;

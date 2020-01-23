@@ -85,7 +85,7 @@ diagnosisForm = new FormGroup({
         .subscribe(resp => {
           this.diagnosisList = [];
           this.diagnosis.push({uuid: resp.uuid, value: json.value});
-      });
+        });
         }
       });
 });
