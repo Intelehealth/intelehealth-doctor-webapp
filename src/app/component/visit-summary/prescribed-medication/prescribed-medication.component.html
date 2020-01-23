@@ -49,12 +49,13 @@
         </div>
     <br>
     <textarea class="form-control" placeholder="Additional instruction not covered above" formControlName="additional"></textarea>
+    <br>
   </div>
 </form>
 </div>
 <ng-container *ngIf="meds.length > 0">
     <ul class="list-unstyled">
-      <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary">
+      <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary" style="margin: 1px;">
         {{meds.value}} 
         <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </mat-list>

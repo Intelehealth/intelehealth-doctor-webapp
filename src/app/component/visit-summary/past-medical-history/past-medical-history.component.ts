@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DiagnosisService } from './../../../services/diagnosis.service';
+import { DiagnosisService } from '../../../services/diagnosis.service';
 
 @Component({
   selector: 'app-past-medical-history',

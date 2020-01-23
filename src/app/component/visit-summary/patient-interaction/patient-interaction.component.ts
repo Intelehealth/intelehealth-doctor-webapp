@@ -86,7 +86,7 @@ encounterUuid: string;
           'attributeType': '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',
           'value': value
           };
-        this.service.postAttriute(visitId, json)
+        this.service.postAttribute(visitId, json)
         .subscribe(response1 => {
           this.msg.push(response1.value);
         });

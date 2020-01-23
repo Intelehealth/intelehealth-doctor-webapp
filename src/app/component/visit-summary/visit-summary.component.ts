@@ -1,4 +1,4 @@
-import { VisitService } from './../../services/visit.service';
+import { VisitService } from '../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,11 +6,11 @@ import { MatSnackBar } from '@angular/material';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-patient-summary',
-  templateUrl: './patient-summary.component.html',
-  styleUrls: ['./patient-summary.component.css']
+  selector: 'app-visit-summary',
+  templateUrl: './visit-summary.component.html',
+  styleUrls: ['./visit-summary.component.css']
 })
-export class PatientSummaryComponent implements OnInit {
+export class VisitSummaryComponent implements OnInit {
 userSubscription: Subscription;
 show = false;
 text: string;

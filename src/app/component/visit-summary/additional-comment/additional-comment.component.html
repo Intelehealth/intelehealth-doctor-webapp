@@ -5,10 +5,10 @@
     <mat-form-field class="example-full-width">
         <textarea matInput placeholder="Notes (not shared with the patient)" formControlName='comment'></textarea>
     </mat-form-field>
-    &nbsp;&nbsp;
 <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
 </div>
 </form>
+<br>
 <ng-container *ngIf="comment.length > 0">
     <ul class="list-unstyled">
         <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
