@@ -165,9 +165,9 @@ medForm = new FormGroup({
      }
       insertValue = `${insertValue} for ${value.duration} ${value.durationUnit}`;
       if (value.additional) {
-        insertValue = `${insertValue} ${value.additional} total`;
+        insertValue = `${insertValue} ${value.additional}`;
       } else {
-        insertValue = `${insertValue} total.`;
+        insertValue = `${insertValue}`;
       }
     this.visitService.fetchVisitDetails(this.visitUuid)
     .subscribe(visitDetails => {
