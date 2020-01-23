@@ -60,7 +60,7 @@ export class AyuComponent implements OnInit {
       .subscribe(response => {
         if (response) {
           if (response.message === 'Key already Present') {
-            this.snackbar.open(`Key Added Exist`, null, {duration: 4000});
+            this.snackbar.open(`Key already Present`, null, {duration: 4000});
             this.addKeyValue = '';
           } else {
             this.snackbar.open(`Key Added`, null, {duration: 4000});
@@ -83,7 +83,6 @@ export class AyuComponent implements OnInit {
         value: result.mindmapJson,
         key: this.selectedKey
       };
-      console.log(data)
       this.mindmapService.postMindmap(data)
       .subscribe(res => {
         if (res) {
@@ -101,7 +100,8 @@ export class AyuComponent implements OnInit {
     .subscribe(response => {
       this.mindmapData = response.datas;
       this.expiryDate = response.expiry;
-      this.image = response.image;
+      const image = response.image || {};
+      this.image = Object.keys(image).length ? response.image : undefined;
       this.dataSource = new MatTableDataSource(this.mindmapData);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -171,7 +171,7 @@ export class AyuComponent implements OnInit {
     fileReader.readAsDataURL(this.file);
   }
 
-  imageUpload() {
+  imageUpdate(): void {
     const data = {
       filename: this.file.name,
       value: this.mindmapUploadJson
@@ -182,6 +182,23 @@ export class AyuComponent implements OnInit {
         this.mindmapUploadJson = '';
         this.image.image_file = data.value;
         this.snackbar.open(`Image Updated`, null, {duration: 4000});
+      }
+    });
+  }
+
+  imageUpload(): void {
+    const data = {
+      key: this.selectedKey,
+      filename: this.file.name,
+      value: this.mindmapUploadJson
+    };
+    this.mindmapService.uploadImage(data)
+    .subscribe(response => {
+      if (response) {
+        this.mindmapUploadJson = '';
+        this.image = {};
+        this.image.image_file = data.value;
+        this.snackbar.open('Image Uploaded', null , {duration: 4000});
       }
     });
   }

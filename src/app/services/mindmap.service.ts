@@ -41,6 +41,11 @@ export class MindmapService {
     return this.http.put(url, value);
   }
 
+  uploadImage(data): Observable<any> {
+    const url = `${this.baseURL}/mindmap/image`;
+    return this.http.post(url, data);
+  }
+
   deleteMindmap(key, data): Observable<any> {
     const url = `${this.baseURL}/mindmap/delete/${key}`;
     return this.http.post(url, data);

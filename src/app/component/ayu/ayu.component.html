@@ -78,6 +78,14 @@
         <br>
         <br>
         <div class="image-card">
+          <button mat-button color="primary" (click)="imageUpdate()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+        </div>
+      </div>
+      <div class="image-card" *ngIf="selectedKey && image === undefined">
+        <button mat-raised-button color="primary" (click)="uploadDocument()">Add Image</button>
+        <br>
+        <br>
+        <div class="image-card">
           <button mat-button color="primary" (click)="imageUpload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
         </div>
       </div>
