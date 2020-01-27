@@ -46,12 +46,6 @@ export class LoginPageComponent implements OnInit {
           duration: 4000
         });
       }
-    }, err => {
-      if (err.error instanceof Error) {
-        this.snackbar.open('Client-side error', null, { duration: 4000 });
-      } else {
-        this.snackbar.open('Server-side error', null, { duration: 4000 });
-      }
     });
   }
 }

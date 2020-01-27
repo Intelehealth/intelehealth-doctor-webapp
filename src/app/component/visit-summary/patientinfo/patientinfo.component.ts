@@ -15,6 +15,7 @@ export class PatientinfoComponent implements OnInit {
 baseURL = environment.baseURL;
 image: string;
 patientInfo = [];
+patientIdentifier: string;
 info = {};
 profileImagePresent = false;
 
@@ -32,6 +33,7 @@ constructor(private route: ActivatedRoute,
       this.visitService.patientInfo(uuid)
       .subscribe(info => {
         this.info = info.person;
+        this.patientIdentifier = info.identifiers[0].identifier;
         this.info['attributes'].forEach(attri => {
           if (attri.attributeType.display.match('Telephone Number')) {
             this.info['telephone'] = attri.value;

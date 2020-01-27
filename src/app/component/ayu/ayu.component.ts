@@ -44,7 +44,7 @@ export class AyuComponent implements OnInit {
         values.value[Object.keys(key)[0]] = Object.values(key)[0];
         this.mindmaps.push(values);
       });
-    });
+    }, err => this.snackbar.open('Error fetching Mindmap keys', null, {duration: 4000}));
   }
 
   addKey(): void {
@@ -85,12 +85,8 @@ export class AyuComponent implements OnInit {
       };
       this.mindmapService.postMindmap(data)
       .subscribe(res => {
-        if (res) {
-          this.snackbar.open(`Added Successfully`, null, {duration: 4000});
-        } else {
-          this.snackbar.open(`Something went Wrong`, null, {duration: 4000});
-        }
-      });
+          this.snackbar.open(res.message, null, {duration: 4000});
+      }, err => this.snackbar.open('Something went Wrong', null, {duration: 4000}));
     });
   }
 
@@ -105,7 +101,7 @@ export class AyuComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.mindmapData);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-    });
+    }, err => this.snackbar.open('Something went Wrong', null, {duration: 4000}));
   }
 
   editExpiryDate(): void {
@@ -118,13 +114,9 @@ export class AyuComponent implements OnInit {
       const newExpiryDate = result.expiryDate;
       this.mindmapService.editExpiryDate(this.selectedKey, {newExpiryDate})
       .subscribe(response => {
-        if (response) {
           this.expiryDate = response.updatedDate;
           this.snackbar.open(`Expiry date updated`, null, {duration: 4000});
-        } else {
-          this.snackbar.open(`Expiry date not updated`, null, {duration: 4000});
-        }
-      });
+        }, err => this.snackbar.open(`Expiry date not updated`, null, {duration: 4000}));
     });
   }
 
@@ -132,7 +124,7 @@ export class AyuComponent implements OnInit {
     console.log(index, this.mindmapData[index].name)
   }
 
-  deleteMindmap(index): void {
+  deleteMindmap(name): void {
     const dialogRef = this.dialog.open(ModalsComponent, {
       data: {title: 'Delete Mindmap'},
       width: '250px'
@@ -140,15 +132,11 @@ export class AyuComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const mindmapName = this.mindmapData[index].name;
+        const mindmapName = name;
         this.mindmapService.deleteMindmap(this.selectedKey, {mindmapName})
         .subscribe(response => {
-          if (response) {
-            this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000});
-          } else {
-            this.snackbar.open(`Mindmap not deleted`, null, {duration: 4000});
-          }
-        });
+          if (response) {this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000}); }
+        }, err => this.snackbar.open(`Mindmap not deleted`, null, {duration: 4000}));
       }
     });
   }

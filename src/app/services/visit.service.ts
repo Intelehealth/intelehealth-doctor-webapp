@@ -42,7 +42,7 @@ export class VisitService {
 
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient/${id}?v=custom:(person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
   }
 }
