@@ -1,0 +1,42 @@
+.upload {
+    display: inline;
+}
+
+button:focus {
+    outline: none;;
+}
+
+.search-text {
+    width: 100%;
+}
+
+.image-card {
+    text-align: center;
+}
+
+.list_items { 
+    height: 250px;
+    width: 200px;
+    overflow: scroll;
+    overflow-wrap: break-word;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-column-id {
+    width:10%
+}
+
+.mat-column-name {
+    width:63%
+}
+
+.mat-column-lastUpdate {
+    width:20%
+}
+
+.mat-column-action {
+    width:30%
+}

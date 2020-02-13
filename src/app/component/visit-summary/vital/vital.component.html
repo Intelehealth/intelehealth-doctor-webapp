@@ -1,0 +1,23 @@
+<h4><i class="fas fa-heartbeat"></i> Vitals</h4>
+<hr>
+<div *ngIf='!vitalsPresent'>No Data</div>
+<div *ngIf='vitalsPresent'>
+  <table class="table table-responsive">
+    <tr *ngFor='let item of v'>
+      <th>Temp:</th>
+      <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>
+      <th>Height:</th>
+      <td>{{item.height}} cm</td>
+      <th>Weight:</th>
+      <td>{{item.weight}} kg</td>
+      <th>BMI:</th>
+      <td>{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>
+      <th>SP02:</th>
+      <td>{{item.sp02}} %</td>
+      <th>BP:</th>
+      <td>{{item.sbp}}/{{item.dbp}}</td>
+      <th>HR:</th>
+      <td>{{item.pulse}}</td>
+    </tr>
+  </table>
+</div>

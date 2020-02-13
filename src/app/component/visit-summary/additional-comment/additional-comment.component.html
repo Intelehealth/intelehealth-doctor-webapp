@@ -1,0 +1,19 @@
+<h4><i class="fas fa-notes-medical"></i> Notes</h4>
+<hr>
+<form [formGroup]='commentForm'>
+<div id="doctor-notes">
+    <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Notes (not shared with the patient)" formControlName='comment'></textarea>
+    </mat-form-field>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
+</div>
+</form>
+<br>
+<ng-container *ngIf="comment.length > 0">
+    <ul class="list-unstyled">
+        <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
+        {{comment.value}} 
+        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        </mat-list>
+    </ul>
+</ng-container>

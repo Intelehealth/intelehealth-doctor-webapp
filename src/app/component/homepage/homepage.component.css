@@ -1,52 +1,6 @@
-table {
-  width: 100%;
+.container {
+  min-height: 79%;
 }
-
-.mat-form-field {
-  font-size: 14px;
-  width: 100%;
-}
-
-
-.mat-column-id {
-  width: 10%
-}
-
-.mat-column-name {
-  width: 14%
-}
-
-.mat-column-dob {
-  width: 10%
-}
-
-.mat-column-gender {
-  width: 10%
-}
-
-.mat-column-location {
-  width: 14%
-}
-
-.mat-column-status {
-  width: 10%
-}
-
-.mat-column-lastSeen {
-  width: 14%
-}
-
-
-.mat-cell,
-.mat-header-cell {
-  white-space: nowrap;
-}
-
-mat-cell, .mat-cell {
-  min-height:auto; 
-  padding: 12px 16px 12px 0;
-}
-
 
 mat-spinner {
   position: absolute;
@@ -58,4 +12,19 @@ mat-spinner {
 .spin {
   filter: blur(8px);
   -webkit-filter: blur(8px);
+}
+
+
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+mat-form-field {
+  margin-right: 12px;
 }

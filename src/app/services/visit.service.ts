@@ -15,7 +15,7 @@ export class VisitService {
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display)))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders))`;
     return this.http.get(url);
   }
 
@@ -35,14 +35,14 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  postAttriute(visitId, json): Observable<any> {
+  postAttribute(visitId, json): Observable<any> {
     const url = `http://${this.baseURL}/openmrs/ws/rest/v1/visit/${visitId}/attribute`;
     return this.http.post(url, json);
   }
 
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient/${id}?v=custom:(person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
   }
 }
