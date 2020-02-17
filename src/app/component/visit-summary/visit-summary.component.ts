@@ -40,24 +40,12 @@ constructor(private service: EncounterService,
         }
         if (visit.display.match('Visit Complete') !== null) {
           this.visitCompletePresent = true;
-          this.service.session()
-          .subscribe(response => {
-            this.service.provider(response.user.uuid)
-            .subscribe(user => {
-              const providerUuid = user.results[0].uuid;
-              this.service.signRequest(providerUuid)
-              .subscribe(res => {
-                if (res.results.length) {
-                  res.results.forEach(element => {
-                    if (element.attributeType.display === 'textOfSign') {
-                      this.text = element.value;
-                    } if (element.attributeType.display === 'fontOfSign') {
-                      this.font = element.value;
-                    }
-                  });
-                }
-              });
-            });
+          visit.encounterProviders[0].provider.attributes.forEach(element => {
+            if (element.attributeType.display === 'textOfSign') {
+              this.text = element.value;
+            } if (element.attributeType.display === 'fontOfSign') {
+              this.font = element.value;
+            }
           });
         }
       });
