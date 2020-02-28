@@ -19,7 +19,8 @@
 </form>
 <ng-container *ngIf="followUp.length > 0">
     <ul class="list-unstyled">
-    <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">{{followUp.value}} 
+    <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">
+        <div class="doctor-value">{{followUp.value}}</div>
         <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
     </mat-list>
     </ul>

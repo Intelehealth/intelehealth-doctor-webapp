@@ -12,7 +12,8 @@
 <ng-container *ngIf="advice.length > 0">
   <div>
   <ul class="list-unstyled">
-  <mat-list [@moveInLeft] *ngFor='let advice of advice, index as i' class="alert alert-primary">{{advice.value}}
+  <mat-list [@moveInLeft] *ngFor='let advice of advice, index as i' class="alert alert-primary">
+    <div class="doctor-value">{{advice.value}}</div>
     <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
   </mat-list>
   </ul>

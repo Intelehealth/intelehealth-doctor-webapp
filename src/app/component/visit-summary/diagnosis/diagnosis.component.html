@@ -34,7 +34,7 @@
 <div>
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let diagnosis of diagnosis, index as i' class="alert alert-primary">
-    {{diagnosis.value}} 
+      <div class="doctor-value">{{diagnosis.value}} </div>
     <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
     </mat-list>
   </ul>

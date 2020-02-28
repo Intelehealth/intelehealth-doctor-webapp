@@ -25,3 +25,11 @@
   html, body{
     height: 100%;
   }
+
+  .alert-primary{
+    display: flex!important;
+  }
+
+  .doctor-value{
+    width: 92%;
+  }

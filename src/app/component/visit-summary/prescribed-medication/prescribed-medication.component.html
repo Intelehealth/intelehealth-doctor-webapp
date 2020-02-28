@@ -56,7 +56,7 @@
 <ng-container *ngIf="meds.length > 0">
     <ul class="list-unstyled">
       <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary" style="margin: 1px;">
-        {{meds.value}} 
+        <div class="doctor-value">{{meds.value}}</div>
         <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </mat-list>
     </ul>
