@@ -13,7 +13,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
-  baseURLProvider = `http://${this.baseURL}/openmrs/ws/rest/v1/provider/${this.data.uuid}/attribute`;
+  baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
 
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
@@ -41,7 +41,7 @@ export class EditDetailsComponent implements OnInit {
   updateDetails() {
   const value = this.editForm.value;
   if (value.gender !== null && value.gender !== this.data.person.gender) {
-    const URL = `http://${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
+    const URL = `${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
     const json = {
       'gender': value.gender
     };

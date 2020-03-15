@@ -26,13 +26,13 @@
             <a class="nav-link" (click)="callTour()">Help</a>
         </li>
         <li *ngIf='reportAccess' class="nav-item">
-          <a class="nav-link" href='http://{{baseURL}}/openmrs/reportingui/reportsapp/home.page'>Reports</a>
+          <a class="nav-link" href='{{baseURLLegacy}}/reportingui/reportsapp/home.page'>Reports</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"><i class="fa fa-user"></i> Profile </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" routerLink='/myAccount'>My account</a>
-            <a *ngIf='systemAccess' class="dropdown-item" href="http://{{baseURL}}/openmrs/admin/index.htm">System administration</a>
+            <a *ngIf='systemAccess' class="dropdown-item" href="{{baseURLLegacy}}/admin/index.htm">System administration</a>
             <a class="dropdown-item" (click)="changePassword()">Change password</a>
           </div>
         </li>

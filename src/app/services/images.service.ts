@@ -13,7 +13,7 @@ export class ImagesService {
   constructor(private http: HttpClient) { }
 
   fetchProfileImage(uuid): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/personimage/${uuid}`;
+    const url = `${this.baseURL}/personimage/${uuid}`;
     return this.http.get(url, { responseType: 'blob' });
   }
 }

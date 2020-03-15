@@ -14,23 +14,23 @@ export class DiagnosisService {
   constructor(private http: HttpClient) { }
 
   concept(uuid): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/concept/${uuid}`;
+    const url = `${this.baseURL}/concept/${uuid}`;
     return this.http.get(url);
   }
 
   deleteObs(uuid): Observable<any> {
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs/${uuid}`;
+    const url = `${this.baseURL}/obs/${uuid}`;
     return this.http.delete(url);
   }
 
   getObs(patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `http://${this.baseURL}/openmrs/ws/rest/v1/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 
   getDiagnosisList(term) {
-    const url = `http://${this.baseURL}/openmrs/coreapps/diagnoses/search.action?&term=${term}`;
+    const url = `${environment.baseURLCoreApp}/search.action?&term=${term}`;
     return this.http.get(url)
     .pipe(
       map((response: []) => {
