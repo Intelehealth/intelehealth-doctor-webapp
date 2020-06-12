@@ -32,6 +32,7 @@ patientDetails: any;
 doctorDetails: any = {};
 conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
 encounterUuid: string;
+patientNo;
 
   interaction = new FormGroup ({
     interaction: new FormControl('', [Validators.required])
@@ -45,6 +46,7 @@ encounterUuid: string;
     this.service.fetchVisitDetails(visitId)
     .subscribe(visitDetails => {
       this.patientDetails = visitDetails.patient;
+      const patientAttributes = this.patientDetails.person.attributes;
       visitDetails.encounters.forEach(encounter => {
         if (encounter.display.match('ADULTINITIAL') != null ) {
           const providerAttribute = encounter.encounterProviders[0].provider.attributes;
@@ -58,6 +60,13 @@ encounterUuid: string;
                 // tslint:disable-next-line: max-line-length
                 const text = encodeURI(`Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`);
                 this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+              }
+            });
+          }
+          if (patientAttributes) {
+            patientAttributes.forEach(attribute => {
+              if (attribute.display.match('Telephone Number')) {
+                this.patientNo = attribute.value;
               }
             });
           }

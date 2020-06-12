@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  baseURL: 'http://demo.intelehealth.io/openmrs/ws/rest/v1',
-  baseURLCoreApp : 'http://demo.intelehealth.io/openmrs/coreapps/diagnoses',
-  baseURLLegacy: 'http://demo.intelehealth.io/openmrs',
-  mindmapURL: 'http://localhost:3004/api'
+  baseURL: 'https://myhealthline.covidhelp.in/openmrs/ws/rest/v1',
+  baseURLCoreApp : 'https://myhealthline.covidhelp.in/openmrs/coreapps/diagnoses',
+  baseURLLegacy: 'https://myhealthline.covidhelp.in/openmrs',
+  mindmapURL: 'https://myhealthline.covidhelp.in/api'
 };
 
 /*

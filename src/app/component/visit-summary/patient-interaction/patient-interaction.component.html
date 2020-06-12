@@ -12,13 +12,17 @@
           </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">Submit</button>
 </div>
-<div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
+<div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call with the healthworker: 
   <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a></span>
   <span *ngIf="phoneNo"><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
 </div>
-<div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
+<div  *ngIf="!whatsappLink && !phoneNo"> 
   Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
   <br/>
+</div>
+<div *ngIf="patientNo"> Start a call with the patient: 
+  <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="https://wa.me/91{{patientNo}}" target="_blank" ></a></span>
+  <span><a href="tel:{{patientNo}}" class="fas fa-phone-volume"></a></span>
 </div>
 <div *ngFor="let msg of msg">  
   <div [@moveInLeft] class="alert alert-primary">{{msg}}</div>
