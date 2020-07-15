@@ -52,6 +52,9 @@ vitalsPresent = false;
                 if (displayObs.match('Pulse') !== null ) {
                   this.answer.pulse = Number(obs.display.slice(7, obs.display.length));
                 }
+                if (displayObs.match('Respiratory rate') !== null ) {
+                  this.answer.respiratoryRate = Number(obs.display.slice(18, obs.display.length));
+                }
               });
               this.v.push(this.answer);
             });
