@@ -86,6 +86,7 @@ export class AyuComponent implements OnInit {
       this.mindmapService.postMindmap(data)
       .subscribe(res => {
           this.snackbar.open(res.message, null, {duration: 4000});
+          this.licenceKeyHandler();
       }, err => this.snackbar.open('Something went Wrong', null, {duration: 4000}));
     });
   }
@@ -135,7 +136,10 @@ export class AyuComponent implements OnInit {
         const mindmapName = name;
         this.mindmapService.deleteMindmap(this.selectedKey, {mindmapName})
         .subscribe(response => {
-          if (response) {this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000}); }
+          if (response) {
+            this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000}); 
+            this.licenceKeyHandler();
+          }
         }, err => this.snackbar.open(`Mindmap not deleted`, null, {duration: 4000}));
       }
     });

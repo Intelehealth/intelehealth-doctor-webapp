@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-visit-summary',
@@ -11,13 +10,14 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./visit-summary.component.css']
 })
 export class VisitSummaryComponent implements OnInit {
-userSubscription: Subscription;
 show = false;
 text: string;
 font: string;
 visitNotePresent = false;
 visitCompletePresent = false;
 setSpiner = true;
+doctorDetails; doctorValue;
+
 constructor(private service: EncounterService,
             private visitService: VisitService,
             private snackbar: MatSnackBar,
@@ -53,7 +53,7 @@ constructor(private service: EncounterService,
   }
 
   onStartVisit() {
-    const myDate = new Date();
+    const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
       if (!this.visitNotePresent) {
@@ -90,13 +90,15 @@ constructor(private service: EncounterService,
   }
 
   sign() {
-    const myDate = new Date();
+    const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.service.session()
     .subscribe(response => {
       this.service.provider(response.user.uuid)
       .subscribe(user => {
+        this.doctorDetails = user.results[0];
+        this.getDoctorValue();
         const providerUuid = user.results[0].uuid;
         this.service.signRequest(providerUuid)
         .subscribe(res => {
@@ -116,7 +118,11 @@ constructor(private service: EncounterService,
                 encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
                 }],
               visit: visitUuid,
-              encounterDatetime: myDate
+              encounterDatetime: myDate,
+              obs: [{
+                concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e',
+                value: JSON.stringify(this.doctorValue)
+              }],
             };
             this.service.postEncounter(json)
             .subscribe(post => {
@@ -132,6 +138,26 @@ constructor(private service: EncounterService,
       });
     });
   }
+
+  getDoctorValue = () => {
+    const doctor = {};
+    doctor['name'] = this.doctorDetails.person.display;
+    // tslint:disable-next-line: max-line-length
+    const doctorAttributes = ['phoneNumber', 'qualification', 'whatsapp', 'emailId', 'registrationNumber', 'specialization', 'address', 'fontOfSign', 'textOfSign'];
+    doctorAttributes.forEach(attr => {
+      const details = this.filterAttributes(this.doctorDetails.attributes, attr);
+      if (details.length) {
+        doctor[attr] = details[details.length - 1 ].value;
+      }
+    });
+    this.doctorValue = doctor;
+  }
+
+
+ filterAttributes = (data, text) => {
+    return data.filter(attr => attr.attributeType['display'].toLowerCase() === text.toLowerCase());
+  }
+
 
 }
 

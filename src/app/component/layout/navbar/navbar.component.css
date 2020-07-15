@@ -1,11 +1,11 @@
 .tooltip-red {
-    background: #b71c1c;
-  }
+  background: #b71c1c;
+}
 
 .nav-link{
   cursor: pointer;
 }
 
-  .box-radius {
-    border-radius: 0 0 10px 10px;
-  }
+.box-radius {
+  border-radius: 0 0 10px 10px;
+}
