@@ -114,3 +114,33 @@
 
 
 
+<ng-container *ngIf="prescription">
+      <div id="prescription" style="padding:20px; background: white;">
+            <div class="project-name">
+                  <div><b>[ Name of the Telemedicine Project ]</b></div>
+                  <div><b>e prescription</b></div>
+            </div>
+            <hr>
+            <div class="patient-details">
+                  <div><b>{{patientValue.name}}</b></div>
+                  <div>Age: {{patientValue.age}} years | Gender: {{patientValue.gender}}</div>
+                  <div>Address and Contact: {{patientValue.address.cityVillage}} {{patientValue.phone}}</div>
+                  <div>Date Of visit: {{patientValue.date | date: 'dd/MM/yyyy'}}</div>
+            </div>
+            <br>
+            <div class="complaint-diagnosis">
+                  <div class="diagnosis" [innerHTML]=prescriptionValue></div>
+            </div>
+            <br>
+            <br>
+            <div class="signature">
+                  <div [style.font-family]="font" style="font-size: 50px">{{text}}</div>
+                  <div>{{doctorValue.name}}</div>
+                  <div>{{doctorValue.qualification}}, {{doctorValue.specialization}}</div>
+                  <div>Phone Number: {{doctorValue.phoneNumber}}</div>
+                  <!-- <div>Address: 14/1 Shreeji Arcade, Thane, Maharastra, 400601</div> -->
+                  <div>Registration No: {{doctorValue.registrationNumber}}</div>
+                  <!-- <div>RMP\'s Signature & Stamp</div> -->
+            </div>
+      </div>
+</ng-container>

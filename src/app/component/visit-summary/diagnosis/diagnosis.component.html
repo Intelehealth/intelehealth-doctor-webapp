@@ -31,7 +31,7 @@
 </div>
 <ng-container *ngIf="diagnosis.length > 0">
   <br>
-<div>
+<div id="diagnosis">
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let diagnosis of diagnosis, index as i' class="alert alert-primary">
       <div class="doctor-value">{{diagnosis.value}} </div>

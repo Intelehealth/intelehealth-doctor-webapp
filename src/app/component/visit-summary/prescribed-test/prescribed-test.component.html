@@ -11,7 +11,7 @@
       </form>
 </div>
 <ng-container *ngIf="tests.length > 0">
-    <ul class="list-unstyled">
+    <ul class="list-unstyled" id="prescribedTest">
       <mat-list [@moveInLeft] *ngFor='let test of tests, index as i' class="alert alert-primary">
         <div class="doctor-value">{{test.value}}</div>
       <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>

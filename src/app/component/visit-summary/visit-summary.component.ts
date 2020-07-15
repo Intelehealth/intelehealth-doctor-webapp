@@ -63,7 +63,7 @@ constructor(private service: EncounterService,
 
   onStartVisit() {
     this.disableButton = true;
-    const myDate = new Date();
+    const myDate = new Date(Date.now() - 30000);
       if (!this.visitNotePresent) {
         this.service.session()
         .subscribe(session => {
@@ -99,7 +99,7 @@ constructor(private service: EncounterService,
   }
 
   sign() {
-    const myDate = new Date();
+    const myDate = new Date(Date.now() - 30000);
     this.service.session()
     .subscribe(response => {
       this.service.provider(response.user.uuid)
@@ -158,7 +158,7 @@ constructor(private service: EncounterService,
       }
     });
     this.doctorValue = doctor;
-    // this.getPatientInfo();
+    this.getPatientInfo();
   }
 
   getPatientInfo = () => {
@@ -167,11 +167,12 @@ constructor(private service: EncounterService,
       this.visitService.patientInfo(this.patientUuid)
       .subscribe(response => {
         if (response) {
-          const {display, preferredAddress, age, attributes} = response.person;
+          const {display, preferredAddress, age, attributes, gender} = response.person;
           patient['date'] =  new Date();
           patient['name'] =  display;
           patient['address'] = preferredAddress;
           patient['age'] = age;
+          patient['gender'] = gender;
           if (attributes) {
             const phone = this.filterAttributes(attributes, 'Telephone Number');
             if (phone.length) {
@@ -196,13 +197,14 @@ constructor(private service: EncounterService,
       if (prescriptionFragment) {
         const fragmentName = this.camelToString(id);
         if (id === 'presentComplaint') {
-          html += `<div class="diagnosis"><div><b>${fragmentName}: </b></div><div>${prescriptionFragment.textContent}</div></div><hr><br>`;
+          // tslint:disable-next-line: max-line-length
+          html += `<div class="diagnosis"><div><b><u>${fragmentName}:</u></b></div><div [innerHTML]=${prescriptionFragment.textContent}></div></div><br>`;
         } else {
           let temp = ``;
           prescriptionFragment.querySelectorAll('.doctor-value').forEach(value => {
             temp += `<div>${value.textContent}</div>`;
           });
-          html += `<div class="diagnosis"><div><b>${fragmentName}: </b></div><div>${temp}</div></div><hr><br>`;
+          html += `<div class="diagnosis"><div><b><u>${fragmentName}: </u></b></div><div>${temp}</div></div><br>`;
         }
       }
     });

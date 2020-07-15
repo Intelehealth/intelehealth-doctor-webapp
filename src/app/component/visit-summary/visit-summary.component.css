@@ -1,11 +1,27 @@
 mat-spinner {
-    position: absolute;
-    z-index: 9999;
-    left:46%;
-    top:42%;
-  }
+  position: absolute;
+  z-index: 9999;
+  left:46%;
+  top:42%;
+}
 
-  .spin {
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
-  }
+.spin {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+}
+
+.project-name {
+  text-align: center;
+}
+
+.prescription-body {
+  padding: 2% 12%;
+}
+
+.patient-details {
+  width: 60%;
+}
+
+.signature {
+  text-align: right;
+}

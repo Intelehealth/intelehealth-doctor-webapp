@@ -10,7 +10,7 @@
   </form>
 </div>
 <ng-container *ngIf="advice.length > 0">
-  <div>
+  <div id="advice">
   <ul class="list-unstyled">
   <mat-list [@moveInLeft] *ngFor='let advice of advice, index as i' class="alert alert-primary">
     <div class="doctor-value">{{advice.value}}</div>

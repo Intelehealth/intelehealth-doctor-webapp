@@ -3,7 +3,7 @@
 <ng-container *ngIf="complaintPresent">
 	<table class="table table-responsive borderless" *ngFor="let complaint of complaint">
 		<tr>
-			<div [innerHTML]='complaint.value'></div>
+			<div [innerHTML]='complaint.value' id="presentComplaint"></div>
 		</tr>
 	</table>
 <div>
