@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { MatSnackBar } from '@angular/material';
+import { EncounterService } from 'src/app/services/encounter.service';
 
 export interface VisitData {
   id: string;
@@ -33,36 +34,82 @@ export class HomepageComponent implements OnInit {
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
+  specialization;
 
-  constructor(private service: VisitService,
+  constructor(private encounterService: EncounterService,
+              private service: VisitService,
               private snackbar: MatSnackBar) { }
 
   ngOnInit() {
+    this.encounterService.session()
+    .subscribe(session => {
+      const userUuid = session.user.uuid;
+      this.encounterService.provider(userUuid)
+      .subscribe(provider => {
+        const attributes = provider.results[0].attributes;
+        attributes.forEach(element => {
+          if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+            this.specialization = element.value;
+          }
+        });
+      });
+    });
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {
           if (active.encounters.length > 0) {
-            const value = active.encounters[0].display;
-            if (value.match('Flagged')) {
-              if (!active.encounters[0].voided) {
-                const values = this.assignValueToProperty(active);
-                this.flagVisit.push(values);
-                flagLength += 1;
+            if (active.attributes.length) {
+              const attributes = active.attributes;
+              const speRequired = attributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
+              if (speRequired.length) {
+                speRequired.forEach(spe => {
+                  if (!spe.voided && spe.value === this.specialization) {
+                    const value = active.encounters[0].display;
+                    if (value.match('Flagged')) {
+                      if (!active.encounters[0].voided) {
+                        const values = this.assignValueToProperty(active);
+                        this.flagVisit.push(values);
+                        flagLength += 1;
+                      }
+                    } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+                      const values = this.assignValueToProperty(active);
+                      this.waitingVisit.push(values);
+                      length += 1;
+                    } else if (value.match('Visit Note')) {
+                      const values = this.assignValueToProperty(active);
+                      this.progressVisit.push(values);
+                      visitNoteLength += 1;
+                    } else if (value.match('Visit Complete')) {
+                      const values = this.assignValueToProperty(active);
+                      this.completedVisit.push(values);
+                      completeVisitLength += 1;
+                    }
+                  }
+                });
               }
-            } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
-              const values = this.assignValueToProperty(active);
-              this.waitingVisit.push(values);
-              length += 1;
-            } else if (value.match('Visit Note')) {
-              const values = this.assignValueToProperty(active);
-              this.progressVisit.push(values);
-              visitNoteLength += 1;
-            } else if (value.match('Visit Complete')) {
-              const values = this.assignValueToProperty(active);
-              this.completedVisit.push(values);
-              completeVisitLength += 1;
+            } else if (this.specialization === 'General Physician') {
+              const value = active.encounters[0].display;
+              if (value.match('Flagged')) {
+                if (!active.encounters[0].voided) {
+                  const values = this.assignValueToProperty(active);
+                  this.flagVisit.push(values);
+                  flagLength += 1;
+                }
+              } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+                const values = this.assignValueToProperty(active);
+                this.waitingVisit.push(values);
+                length += 1;
+              } else if (value.match('Visit Note')) {
+                const values = this.assignValueToProperty(active);
+                this.progressVisit.push(values);
+                visitNoteLength += 1;
+              } else if (value.match('Visit Complete')) {
+                const values = this.assignValueToProperty(active);
+                this.completedVisit.push(values);
+                completeVisitLength += 1;
+              }
             }
           }
           this.value = {};
