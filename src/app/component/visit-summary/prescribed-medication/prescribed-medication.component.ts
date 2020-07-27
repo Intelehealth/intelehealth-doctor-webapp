@@ -186,7 +186,7 @@ medForm = new FormGroup({
       this.meds.push({uuid: response.uuid, value: insertValue});
       this.add = false;
       });
-    } else {this.snackbar.open('Visit note provider mismatch', null, {duration: 4000}); }
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
   }
 
   delete(i) {

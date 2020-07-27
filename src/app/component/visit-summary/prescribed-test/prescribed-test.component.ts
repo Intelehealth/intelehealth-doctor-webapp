@@ -95,7 +95,7 @@ testForm = new FormGroup({
       .subscribe(resp => {
         this.tests.push({uuid: resp.uuid, value: value});
       });
-    } else {this.snackbar.open('Visit note provider mismatch', null, {duration: 4000}); }
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
   }
 
   delete(i) {

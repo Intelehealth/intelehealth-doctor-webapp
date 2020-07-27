@@ -131,6 +131,6 @@ encounterUuid: string;
           .subscribe(response => {});
         }
       }
-    } else {this.snackbar.open('Visit note provider mismatch', null, {duration: 4000}); }
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
   }
 }
