@@ -1,3 +1,4 @@
+import { SessionService } from 'src/app/services/session.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -19,20 +20,21 @@ export class MyAccountComponent implements OnInit {
   name = 'Enter text';
   providerDetails = null;
 
-  constructor(private authService: AuthService,
+  constructor(private sessionService: SessionService,
               private http: HttpClient,
               private dialog: MatDialog) { }
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
-    this.providerDetails = getFromStorage('provider');
-    if (userDetails && this.providerDetails) {
-      const attributes = this.providerDetails.attributes;
+    this.sessionService.provider(userDetails.uuid)
+    .subscribe(provider => {
+      this.providerDetails = provider.results[0];
+      const attributes = provider.results[0].attributes;
       attributes.forEach(element => {
         this.providerDetails[element.attributeType.display] = {value: element.value, uuid: element.uuid};
       });
       this.setSpiner = false;
-    } else {this.authService.logout(); }
+    });
   }
 
   onEdit() {
