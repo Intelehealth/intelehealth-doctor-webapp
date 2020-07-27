@@ -33,6 +33,7 @@ export class AuthService {
       .subscribe(response => {
         deleteFromStorage('user');
         deleteFromStorage('provider');
+        deleteFromStorage('visitNoteProvider');
         this.cookieService.deleteAll();
         this.myRoute.navigate(['/']);
     });
