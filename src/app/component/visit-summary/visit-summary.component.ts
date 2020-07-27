@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
+import { AuthService } from 'src/app/services/auth.service';
+declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
   selector: 'app-visit-summary',
@@ -20,6 +22,7 @@ doctorDetails; doctorValue;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
+            private authService: AuthService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
             private router: Router) {
@@ -35,6 +38,7 @@ constructor(private service: EncounterService,
     .subscribe(visitDetails => {
       visitDetails.encounters.forEach(visit => {
         if (visit.display.match('Visit Note') !== null) {
+          saveToStorage('visitNoteProvider', visit);
           this.visitNotePresent = true;
           this.show = true;
         }
@@ -56,50 +60,49 @@ constructor(private service: EncounterService,
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-      if (!this.visitNotePresent) {
-        this.service.session()
-        .subscribe(session => {
-          const userUuid = session.user.uuid;
-          this.service.provider(userUuid)
-          .subscribe(provider => {
-            const providerUuid = provider.results[0].uuid;
-            const json = {
-              patient: patientUuid,
-              encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
-              encounterProviders: [{
-                provider: providerUuid,
-                encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
-              }],
-              visit: visitUuid,
-              encounterDatetime: myDate
-            };
-            this.service.postEncounter(json)
-            .subscribe(response => {
-              if (response) {
-                this.show = true;
-                this.snackbar.open(`Visit Note Created`, null, {
-                  duration: 4000
-                });
-              } else {
-                this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
-              }
+    if (!this.visitNotePresent) {
+      const userDetails = getFromStorage('user');
+      const providerDetails = getFromStorage('provider');
+      if (userDetails && providerDetails) {
+        const providerUuid = providerDetails.uuid;
+        const json = {
+          patient: patientUuid,
+          encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
+          encounterProviders: [{
+            provider: providerUuid,
+            encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
+          }],
+          visit: visitUuid,
+          encounterDatetime: myDate
+        };
+        this.service.postEncounter(json)
+        .subscribe(response => {
+          if (response) {
+            this.visitService.fetchVisitDetails(visitUuid)
+            .subscribe(visitDetails => { saveToStorage('visitNoteProvider', visitDetails.encounters[0]); });
+            this.show = true;
+            this.snackbar.open(`Visit Note Created`, null, {
+              duration: 4000
             });
-          });
+          } else {
+            this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
+          }
         });
-      }
+      } else {this.authService.logout(); }
+    }
   }
 
   sign() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.service.session()
-    .subscribe(response => {
-      this.service.provider(response.user.uuid)
-      .subscribe(user => {
-        this.doctorDetails = user.results[0];
+    const userDetails = getFromStorage('user');
+    const providerDetails = getFromStorage('provider');
+    if (userDetails && providerDetails) {
+        this.doctorDetails = providerDetails;
         this.getDoctorValue();
-        const providerUuid = user.results[0].uuid;
+        const providerUuid = providerDetails.uuid;
+        if (providerUuid === getEncounterProviderUUID()) {
         this.service.signRequest(providerUuid)
         .subscribe(res => {
           if (res.results.length) {
@@ -135,8 +138,8 @@ constructor(private service: EncounterService,
             }
           }
         });
-      });
-    });
+      } else {this.snackbar.open('Visit note provider mismatch', null, {duration: 4000}); }
+    } else {this.authService.logout(); }
   }
 
   getDoctorValue = () => {

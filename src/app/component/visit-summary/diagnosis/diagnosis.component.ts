@@ -1,12 +1,11 @@
-import { VisitService } from 'src/app/services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-diagnosis',
@@ -42,8 +41,8 @@ diagnosisForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -69,27 +68,24 @@ diagnosisForm = new FormGroup({
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    this.visitService.fetchVisitDetails(this.visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(encounter => {
-        if (encounter.display.match('Visit Note') !== null) {
-          this.encounterUuid = encounter.uuid;
-          const json = {
-            concept: this.conceptDiagnosis,
-            person: this.patientId,
-            obsDatetime: date,
-            value: `${value.text}:${value.type} & ${value.confirm}`,
-            encounter: this.encounterUuid
-        };
-        this.service.postObs(json)
-        .subscribe(resp => {
-          this.diagnosisList = [];
-          this.diagnosis.push({uuid: resp.uuid, value: json.value});
-        });
-        }
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      this.encounterUuid = getEncounterUUID();
+      const json = {
+        concept: this.conceptDiagnosis,
+        person: this.patientId,
+        obsDatetime: date,
+        value: `${value.text}:${value.type} & ${value.confirm}`,
+        encounter: this.encounterUuid
+      };
+      this.service.postObs(json)
+      .subscribe(resp => {
+        this.diagnosisList = [];
+        this.diagnosis.push({uuid: resp.uuid, value: json.value});
       });
-});
-}
+    } else {this.snackbar.open('Visit note provider mismatch', null, {duration: 4000}); }
+  }
 
   delete(i) {
     const uuid = this.diagnosis[i].uuid;
