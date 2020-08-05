@@ -6,7 +6,8 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { VisitService } from 'src/app/services/visit.service';
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-prescribed-test',
@@ -41,8 +42,8 @@ testForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
 
@@ -79,33 +80,30 @@ testForm = new FormGroup({
     const date = new Date();
     const form = this.testForm.value;
     const value = form.test;
-    this.visitService.fetchVisitDetails(this.visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(encounter => {
-      if (encounter.display.match('Visit Note') !== null) {
-      this.encounterUuid = encounter.uuid;
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      this.encounterUuid = getEncounterUUID();
       const json = {
-              concept: this.conceptTest,
-              person: this.patientId,
-              obsDatetime: date,
-              value: value,
-              encounter: this.encounterUuid
+        concept: this.conceptTest,
+        person: this.patientId,
+        obsDatetime: date,
+        value: value,
+        encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
         this.tests.push({uuid: resp.uuid, value: value});
       });
-    }
-  });
-  });
-}
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+  }
 
-    delete(i) {
-      const uuid = this.tests[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-      .subscribe(res => {
-        this.tests.splice(i, 1);
-      });
-    }
+  delete(i) {
+    const uuid = this.tests[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
+    .subscribe(res => {
+      this.tests.splice(i, 1);
+    });
+  }
 }
 

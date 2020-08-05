@@ -37,6 +37,8 @@ constructor(private route: ActivatedRoute,
         this.info['attributes'].forEach(attri => {
           if (attri.attributeType.display.match('Telephone Number')) {
             this.info['telephone'] = attri.value;
+          } else if (attri.attributeType.display.match('occupation')) {
+            this.info['occupation'] = attri.value;
           }
         });
         this.patientInfo.push(this.info);

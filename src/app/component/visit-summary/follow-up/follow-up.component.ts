@@ -5,8 +5,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { VisitService } from 'src/app/services/visit.service';
-
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-follow-up',
@@ -42,8 +42,8 @@ followForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute,
               private datepipe: DatePipe) { }
 
@@ -65,26 +65,23 @@ followForm = new FormGroup({
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
-      this.visitService.fetchVisitDetails(this.visitUuid)
-      .subscribe(visitDetails => {
-        visitDetails.encounters.forEach(encounter => {
-        if (encounter.display.match('Visit Note') !== null) {
-        this.encounterUuid = encounter.uuid;
-    const json = {
-      concept: this.conceptFollow,
-      person: this.patientId,
-      obsDatetime: date,
-      value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
-      encounter: this.encounterUuid
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      this.encounterUuid = getEncounterUUID();
+      const json = {
+        concept: this.conceptFollow,
+        person: this.patientId,
+        obsDatetime: date,
+        value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
+        encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
         this.followUp.push({uuid: resp.uuid, value: json.value});
       });
-    }
-  });
-    });
-    }
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+  }
 
   delete(i) {
     const uuid = this.followUp[i].uuid;

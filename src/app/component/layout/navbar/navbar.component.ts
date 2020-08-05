@@ -2,12 +2,11 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
-import { EncounterService } from 'src/app/services/encounter.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
 import { environment } from '../../../../environments/environment';
-
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-navbar',
@@ -30,22 +29,21 @@ export class NavbarComponent implements OnInit {
 
   constructor(private authService: AuthService,
     private dialog: MatDialog,
-    private service: EncounterService,
     private snackbar: MatSnackBar,
     private http: HttpClient) { }
 
   ngOnInit() {
-    this.service.session()
-      .subscribe(response => {
-        const roles = response.user['roles'];
-        roles.forEach(role => {
-          if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8') {
-            this.systemAccess = true;
-          } if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8' || role.uuid === 'a5df6aa5-d6e5-4b56-b0e7-315ee0899f97') {
-            this.reportAccess = true;
-          }
-        });
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8') {
+          this.systemAccess = true;
+        } if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8' || role.uuid === 'a5df6aa5-d6e5-4b56-b0e7-315ee0899f97') {
+          this.reportAccess = true;
+        }
       });
+    } else { this.authService.logout(); }
   }
 
   logout() {

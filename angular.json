@@ -28,8 +28,9 @@
               "node_modules/intro.js/introjs.css"
             ],
             "scripts": [
+              "src/app/js/util.js",
               "node_modules/intro.js/intro.js"
-            ],
+            ]
           },
           "configurations": {
             "production": {
@@ -88,7 +89,8 @@
               "node_modules/intro.js/introjs.css"
             ],
             "scripts": [
-              "node_modules/intro.js/intro.js"
+              "node_modules/intro.js/intro.js",
+              "src/app/js/util.js"
             ],
             "assets": [
               "src/favicon.ico",

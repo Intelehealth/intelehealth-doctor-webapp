@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { VisitService } from 'src/app/services/visit.service';
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -55,8 +56,8 @@ medForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
     searchPrescription = (text$: Observable<string>) =>
@@ -157,39 +158,36 @@ medForm = new FormGroup({
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
     var insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
-     if (value.route) {
-      insertValue = `${insertValue} (${value.route})`;
-     }
-     if (value.reason) {
-      insertValue = `${insertValue} ${value.reason}`;
-     }
+    if (value.route) {
+    insertValue = `${insertValue} (${value.route})`;
+    }
+    if (value.reason) {
+    insertValue = `${insertValue} ${value.reason}`;
+    }
       insertValue = `${insertValue} for ${value.duration} ${value.durationUnit}`;
-      if (value.additional) {
-        insertValue = `${insertValue} ${value.additional}`;
-      } else {
-        insertValue = `${insertValue}`;
-      }
-    this.visitService.fetchVisitDetails(this.visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(encounter => {
-      if (encounter.display.match('Visit Note') !== null) {
-      this.encounterUuid = encounter.uuid;
-     const json = {
+    if (value.additional) {
+      insertValue = `${insertValue} ${value.additional}`;
+    } else {
+      insertValue = `${insertValue}`;
+    }
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      this.encounterUuid = getEncounterUUID();
+      const json = {
         concept: this.conceptMed,
         person: this.patientId,
         obsDatetime: date,
         value: insertValue,
         encounter: this.encounterUuid
       };
-     this.service.postObs(json)
-     .subscribe(response => {
+      this.service.postObs(json)
+      .subscribe(response => {
       this.meds.push({uuid: response.uuid, value: insertValue});
       this.add = false;
-     });
-    }
-  });
-  });
-}
+      });
+    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+  }
 
   delete(i) {
     const uuid = this.meds[i].uuid;

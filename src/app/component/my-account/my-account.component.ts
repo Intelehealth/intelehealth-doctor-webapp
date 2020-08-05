@@ -1,11 +1,12 @@
+import { SessionService } from 'src/app/services/session.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { Component, OnInit } from '@angular/core';
-import { EncounterService } from 'src/app/services/encounter.service';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { SignatureComponent } from './signature/signature.component';
 import { EditDetailsComponent } from './edit-details/edit-details.component';
 import { environment } from '../../../environments/environment';
-
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-my-account',
@@ -19,24 +20,21 @@ export class MyAccountComponent implements OnInit {
   name = 'Enter text';
   providerDetails = null;
 
-  constructor(private service: EncounterService,
+  constructor(private sessionService: SessionService,
               private http: HttpClient,
               private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.service.session()
-      .subscribe(session => {
-        const userUuid = session.user.uuid;
-        this.service.provider(userUuid)
-          .subscribe(provider => {
-            this.providerDetails = provider.results[0];
-            const attributes = provider.results[0].attributes;
-            attributes.forEach(element => {
-              this.providerDetails[element.attributeType.display] = {value: element.value, uuid: element.uuid};
-            });
-            this.setSpiner = false;
-          });
+    const userDetails = getFromStorage('user');
+    this.sessionService.provider(userDetails.uuid)
+    .subscribe(provider => {
+      this.providerDetails = provider.results[0];
+      const attributes = provider.results[0].attributes;
+      attributes.forEach(element => {
+        this.providerDetails[element.attributeType.display] = {value: element.value, uuid: element.uuid};
       });
+      this.setSpiner = false;
+    });
   }
 
   onEdit() {

@@ -6,8 +6,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { VisitService } from 'src/app/services/visit.service';
-
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-advice',
@@ -42,8 +42,8 @@ adviceForm = new FormGroup({
 });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
     search = (text$: Observable<string>) =>
@@ -81,11 +81,10 @@ adviceForm = new FormGroup({
       const date = new Date();
       const form = this.adviceForm.value;
       const value = form.advice;
-      this.visitService.fetchVisitDetails(this.visitUuid)
-      .subscribe(visitDetails => {
-        visitDetails.encounters.forEach(encounter => {
-        if (encounter.display.match('Visit Note') !== null) {
-        this.encounterUuid = encounter.uuid;
+      const providerDetails = getFromStorage('provider');
+      const providerUuid = providerDetails.uuid;
+      if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+        this.encounterUuid = getEncounterUUID();
         const json = {
             concept: this.conceptAdvice,
             person: this.patientId,
@@ -97,9 +96,7 @@ adviceForm = new FormGroup({
     .subscribe(response => {
       this.advice.push({uuid: response.uuid, value: value});
     });
-  }
-});
-});
+  } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
 }
 
   delete(i) {

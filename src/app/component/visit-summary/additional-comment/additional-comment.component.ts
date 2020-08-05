@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { VisitService } from 'src/app/services/visit.service';
+import { MatSnackBar } from '@angular/material';
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
   selector: 'app-additional-comment',
@@ -37,8 +38,8 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   });
 
   constructor(private service: EncounterService,
-              private visitService: VisitService,
               private diagnosisService: DiagnosisService,
+              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -58,11 +59,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     const date = new Date();
     const form = this.commentForm.value;
     const value = form.comment;
-    this.visitService.fetchVisitDetails(this.visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(encounter => {
-      if (encounter.display.match('Visit Note') !== null) {
-      this.encounterUuid = encounter.uuid;
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptComment,
         person: this.patientId,
@@ -74,9 +74,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       .subscribe(resp => {
       this.comment.push({uuid: resp.uuid, value: value});
     });
-  }
-  });
-});
+  } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
 }
 
   delete(i) {
