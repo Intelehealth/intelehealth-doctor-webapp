@@ -61,9 +61,9 @@ constructor(private service: EncounterService,
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     if (!this.visitNotePresent) {
-      const userDetails = getFromStorage('user');
+      // const userDetails = getFromStorage('user');
       const providerDetails = getFromStorage('provider');
-      if (userDetails && providerDetails) {
+      // if (userDetails && providerDetails) {
         const providerUuid = providerDetails.uuid;
         const json = {
           patient: patientUuid,
@@ -88,7 +88,7 @@ constructor(private service: EncounterService,
             this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
           }
         });
-      } else {this.authService.logout(); }
+      // } else {this.authService.logout(); }
     }
   }
 
@@ -96,13 +96,13 @@ constructor(private service: EncounterService,
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    const userDetails = getFromStorage('user');
+    // const userDetails = getFromStorage('user');
     const providerDetails = getFromStorage('provider');
-    if (userDetails && providerDetails) {
+    // if (userDetails && providerDetails) {
         this.doctorDetails = providerDetails;
         this.getDoctorValue();
         const providerUuid = providerDetails.uuid;
-        if (providerUuid === getEncounterProviderUUID()) {
+        // if (providerUuid === getEncounterProviderUUID()) {
         this.service.signRequest(providerUuid)
         .subscribe(res => {
           if (res.results.length) {
@@ -138,8 +138,8 @@ constructor(private service: EncounterService,
             }
           }
         });
-      } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
-    } else {this.authService.logout(); }
+      // } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+    // } else {this.authService.logout(); }
   }
 
   getDoctorValue = () => {

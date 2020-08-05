@@ -1,3 +1,4 @@
+
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from './../../services/session.service';
 import { Component, OnInit } from '@angular/core';
@@ -36,7 +37,6 @@ export class HomepageComponent implements OnInit {
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
-  specialization;
 
   constructor(private sessionService: SessionService,
               private authService: AuthService,
@@ -50,12 +50,12 @@ export class HomepageComponent implements OnInit {
       this.sessionService.provider(userDetails.uuid)
       .subscribe(provider => {
         saveToStorage('provider', provider.results[0]);
-        const attributes = provider.results[0].attributes;
-        attributes.forEach(element => {
-          if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
-            this.specialization = element.value;
-          }
-        });
+        // const attributes = provider.results[0].attributes;
+        // attributes.forEach(element => {
+        //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+        //     this.specialization = element.value;
+        //   }
+        // });
       });
     } else {this.authService.logout(); }
     this.service.getVisits()
@@ -64,56 +64,25 @@ export class HomepageComponent implements OnInit {
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {
           if (active.encounters.length > 0) {
-            if (active.attributes.length) {
-              const attributes = active.attributes;
-              const speRequired = attributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
-              if (speRequired.length) {
-                speRequired.forEach(spe => {
-                  if (!spe.voided && spe.value === this.specialization) {
-                    const value = active.encounters[0].display;
-                    if (value.match('Flagged')) {
-                      if (!active.encounters[0].voided) {
-                        const values = this.assignValueToProperty(active);
-                        this.flagVisit.push(values);
-                        flagLength += 1;
-                      }
-                    } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
-                      const values = this.assignValueToProperty(active);
-                      this.waitingVisit.push(values);
-                      length += 1;
-                    } else if (value.match('Visit Note')) {
-                      const values = this.assignValueToProperty(active);
-                      this.progressVisit.push(values);
-                      visitNoteLength += 1;
-                    } else if (value.match('Visit Complete')) {
-                      const values = this.assignValueToProperty(active);
-                      this.completedVisit.push(values);
-                      completeVisitLength += 1;
-                    }
-                  }
-                });
+            const value = active.encounters[0].display;
+            if (value.match('Flagged')) {
+              if (!active.encounters[0].voided) {
+                const values = this.assignValueToProperty(active);
+                this.flagVisit.push(values);
+                flagLength += 1;
               }
-            } else if (this.specialization === 'General Physician') {
-              const value = active.encounters[0].display;
-              if (value.match('Flagged')) {
-                if (!active.encounters[0].voided) {
-                  const values = this.assignValueToProperty(active);
-                  this.flagVisit.push(values);
-                  flagLength += 1;
-                }
-              } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
-                const values = this.assignValueToProperty(active);
-                this.waitingVisit.push(values);
-                length += 1;
-              } else if (value.match('Visit Note')) {
-                const values = this.assignValueToProperty(active);
-                this.progressVisit.push(values);
-                visitNoteLength += 1;
-              } else if (value.match('Visit Complete')) {
-                const values = this.assignValueToProperty(active);
-                this.completedVisit.push(values);
-                completeVisitLength += 1;
-              }
+            } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+              const values = this.assignValueToProperty(active);
+              this.waitingVisit.push(values);
+              length += 1;
+            } else if (value.match('Visit Note')) {
+              const values = this.assignValueToProperty(active);
+              this.progressVisit.push(values);
+              visitNoteLength += 1;
+            } else if (value.match('Visit Complete')) {
+              const values = this.assignValueToProperty(active);
+              this.completedVisit.push(values);
+              completeVisitLength += 1;
             }
           }
           this.value = {};
