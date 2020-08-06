@@ -39,7 +39,7 @@ constructor(private route: ActivatedRoute,
             this.info['telephone'] = attri.value;
           } else if (attri.attributeType.display.match('occupation')) {
             this.info['occupation'] = attri.value;
-          } else if (attri.attributeType.display.match('Health insurance card')) {
+          } else if (attri.attributeType.display.match('Health Scheme Card')) {
             this.info['medicalInsurance'] = attri.value;
           }
         });
