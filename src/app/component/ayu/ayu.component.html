@@ -72,7 +72,7 @@
       <div class="image-card" *ngIf="image">
         <div>Images associated with this licence key.</div>
         <br>
-        <div><img src={{image.image_file}} /></div>
+        <div><img src={{image.image_file}} alt=""/></div>
         <br>
         <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
         <br>
