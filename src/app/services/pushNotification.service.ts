@@ -16,14 +16,12 @@ export class PushNotificationsService {
     requestPermission(): void {
         if ('Notification' in window) {
             Notification.requestPermission((status) => {
-                console.log(this.permission)
                 return this.permission = status;
             });
         }
     }
     create(title: string, options ?: PushNotification): any {
         return new Observable((obs) => {
-            console.log(this.permission)
             if (!('Notification' in window)) {
                 console.log('Notifications are not available in this environment');
                 obs.complete();
@@ -64,13 +62,11 @@ export class PushNotificationsService {
         });
     }
     generateNotification(source): void {
-        // source.forEach((item) => {
-            const options = {
-                body: source.alertContent,
-                // icon: '../resource/images/bell-icon.png'
-            };
-            this.create(source.title, options).subscribe();
-        // });
+        const options = {
+            body: source.alertContent,
+            // icon: '../resource/images/bell-icon.png'
+        };
+        this.create(source.title, options).subscribe();
     }
 }
 export declare type Permission = 'denied' | 'granted' | 'default';

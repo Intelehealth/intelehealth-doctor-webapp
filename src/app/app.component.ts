@@ -12,10 +12,6 @@ import { PushNotificationsService } from './services/pushNotification.service';
 })
 export class AppComponent implements OnInit {
   introJS = introJs();
-  data = ({
-    'title': 'To Do Task',
-    'alertContent': 'This is Fifth Alert -- By Debasis Saha'
-  });
   constructor(public authService: AuthService,
               private userIdle: UserIdleService,
               public router: Router,
@@ -31,7 +27,7 @@ export class AppComponent implements OnInit {
         this.userIdle.stopWatching();
       }
       });
-    this._notificationService.generateNotification(this.data);
+    // this._notificationService.generateNotification(this.data);
 
   }
 
@@ -87,7 +83,7 @@ export class AppComponent implements OnInit {
         intro: 'Great job, you have completed the tour.'
       }
     ];
-    if (window.location.href.split('#/')[1].match('home') !== null) {
+    if (window.location.pathname.match('home') !== null) {
       this.introJS.setOptions({
         steps: steps,  showProgress: true,
             showBullets: false,
@@ -95,7 +91,7 @@ export class AppComponent implements OnInit {
             doneLabel: 'Thanks',
       }).start();
     }
-    if (window.location.href.split('#/')[1].match('visitSummary') !== null) {
+    if (window.location.pathname.match('visitSummary') !== null) {
       steps = [{
         element: '#past-visits',
         intro: 'Click on the visit date to see the patient record for that visit and schedule.'
