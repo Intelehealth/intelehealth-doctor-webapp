@@ -2,7 +2,7 @@ import { SessionService } from 'src/app/services/session.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { SignatureComponent } from './signature/signature.component';
 import { EditDetailsComponent } from './edit-details/edit-details.component';
 import { environment } from '../../../environments/environment';
