@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-// import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 // Component Import
 import { AppComponent } from './app.component';
@@ -149,14 +148,13 @@ import {
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    // tslint:disable-next-line: max-line-length
+    ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     CookieService,
     AuthGuard,
     DatePipe,
-    // { provide: APP_BASE_HREF, useValue: '/' },
-    // { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent]
 })

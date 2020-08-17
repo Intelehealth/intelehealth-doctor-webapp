@@ -3,6 +3,7 @@ import { AuthService } from './services/auth.service';
 import { UserIdleService } from 'angular-user-idle';
 import * as introJs from 'intro.js/intro.js';
 import { Router } from '@angular/router';
+import { PushNotificationsService } from './services/pushNotification.service';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +12,15 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   introJS = introJs();
+  data = ({
+    'title': 'To Do Task',
+    'alertContent': 'This is Fifth Alert -- By Debasis Saha'
+  });
   constructor(public authService: AuthService,
               private userIdle: UserIdleService,
-              public router: Router) { }
+              public router: Router,
+              private _notificationService: PushNotificationsService ) {
+                this._notificationService.requestPermission(); }
 
   ngOnInit () {
     this.userIdle.startWatching();
@@ -24,6 +31,8 @@ export class AppComponent implements OnInit {
         this.userIdle.stopWatching();
       }
       });
+    this._notificationService.generateNotification(this.data);
+
   }
 
   receiveMessage() {
@@ -151,3 +160,18 @@ export class AppComponent implements OnInit {
     }
   }
 }
+
+
+// async function showNotification() {
+//   const result = await Notification.requestPermission();
+//   if (result === 'granted') {
+//     const noti = new Notification('Hello!', {
+//       body: 'It’s me.',
+//       icon: 'mario.png'
+//     });
+//     noti.onclick = () => alert('clicked');
+//   }
+// }
+
+// showNotification();
+
