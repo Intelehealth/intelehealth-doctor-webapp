@@ -45,8 +45,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from './auth.guard';
 import { DatePipe } from '@angular/common';
 import { UserIdleModule } from 'angular-user-idle';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material Design Imports
@@ -69,6 +67,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 
@@ -147,8 +147,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
-    // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production }),
+    // tslint:disable-next-line: max-line-length
   ],
   providers: [
     CookieService,
