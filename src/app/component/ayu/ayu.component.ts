@@ -1,7 +1,11 @@
 import { ModalsComponent } from './modals/modals.component';
 import { MindmapService } from '../../services/mindmap.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar, MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-ayu',
@@ -25,8 +29,8 @@ export class AyuComponent implements OnInit {
   expiryDate: string;
 
   constructor(private mindmapService: MindmapService,
-              private snackbar: MatSnackBar,
-              private dialog: MatDialog) { }
+    private snackbar: MatSnackBar,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
     this.fetchMindmap();
@@ -34,22 +38,22 @@ export class AyuComponent implements OnInit {
 
   fetchMindmap(): void {
     this.mindmapService.getMindmapKey()
-    .subscribe(response => {
-      const keys = response.data.licensekey;
-      keys.forEach(key => {
-        const values = {
-          keys : Object.keys(key)[0],
-          value : {}
-        };
-        values.value[Object.keys(key)[0]] = Object.values(key)[0];
-        this.mindmaps.push(values);
-      });
-    }, err => this.snackbar.open('Error fetching Mindmap keys', null, {duration: 4000}));
+      .subscribe(response => {
+        const keys = response.data.licensekey;
+        keys.forEach(key => {
+          const values = {
+            keys: Object.keys(key)[0],
+            value: {}
+          };
+          values.value[Object.keys(key)[0]] = Object.values(key)[0];
+          this.mindmaps.push(values);
+        });
+      }, err => this.snackbar.open('Error fetching Mindmap keys', null, { duration: 4000 }));
   }
 
   addKey(): void {
     const dialogRef = this.dialog.open(ModalsComponent, {
-      data: {title: 'Add License key', key: this.addKeyValue, expiryDate: this.newExpiryDate},
+      data: { title: 'Add License key', key: this.addKeyValue, expiryDate: this.newExpiryDate },
       width: '250px'
     });
 
@@ -57,23 +61,23 @@ export class AyuComponent implements OnInit {
       this.addKeyValue = result.key;
       this.newExpiryDate = result.expiryDate;
       this.mindmapService.addLicenseKey(result)
-      .subscribe(response => {
-        if (response) {
-          if (response.message === 'Key already Present') {
-            this.snackbar.open(`Key already Present`, null, {duration: 4000});
-            this.addKeyValue = '';
-          } else {
-            this.snackbar.open(`Key Added`, null, {duration: 4000});
-            setTimeout(() => window.location.reload(), 1000);
+        .subscribe(response => {
+          if (response) {
+            if (response.message === 'Key already Present') {
+              this.snackbar.open(`Key already Present`, null, { duration: 4000 });
+              this.addKeyValue = '';
+            } else {
+              this.snackbar.open(`Key Added`, null, { duration: 4000 });
+              setTimeout(() => window.location.reload(), 1000);
+            }
           }
-        }
-      });
+        });
     });
   }
 
   addMindmap(): void {
     const dialogRef = this.dialog.open(ModalsComponent, {
-      data: {title: 'Add Mindmap', mindmapJson: this.mindmapUploadJson},
+      data: { title: 'Add Mindmap', mindmapJson: this.mindmapUploadJson },
       width: '40%'
     });
 
@@ -84,40 +88,40 @@ export class AyuComponent implements OnInit {
         key: this.selectedKey
       };
       this.mindmapService.postMindmap(data)
-      .subscribe(res => {
-          this.snackbar.open(res.message, null, {duration: 4000});
+        .subscribe(res => {
+          this.snackbar.open(res.message, null, { duration: 4000 });
           this.licenceKeyHandler();
-      }, err => this.snackbar.open('Something went Wrong', null, {duration: 4000}));
+        }, err => this.snackbar.open('Something went Wrong', null, { duration: 4000 }));
     });
   }
 
 
   licenceKeyHandler(): void {
     this.mindmapService.detailsMindmap(this.selectedKey)
-    .subscribe(response => {
-      this.mindmapData = response.datas;
-      this.expiryDate = response.expiry;
-      const image = response.image || {};
-      this.image = Object.keys(image).length ? response.image : undefined;
-      this.dataSource = new MatTableDataSource(this.mindmapData);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }, err => this.snackbar.open('Something went Wrong', null, {duration: 4000}));
+      .subscribe(response => {
+        this.mindmapData = response.datas;
+        this.expiryDate = response.expiry;
+        const image = response.image || {};
+        this.image = Object.keys(image).length ? response.image : undefined;
+        this.dataSource = new MatTableDataSource(this.mindmapData);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }, err => this.snackbar.open('Something went Wrong', null, { duration: 4000 }));
   }
 
   editExpiryDate(): void {
     const dialogRef = this.dialog.open(ModalsComponent, {
-      data: {title: 'Edit Expiry Date', expiryDate: this.expiryDate},
+      data: { title: 'Edit Expiry Date', expiryDate: this.expiryDate },
       width: '250px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       const newExpiryDate = result.expiryDate;
-      this.mindmapService.editExpiryDate(this.selectedKey, {newExpiryDate})
-      .subscribe(response => {
+      this.mindmapService.editExpiryDate(this.selectedKey, { newExpiryDate })
+        .subscribe(response => {
           this.expiryDate = response.updatedDate;
-          this.snackbar.open(`Expiry date updated`, null, {duration: 4000});
-        }, err => this.snackbar.open(`Expiry date not updated`, null, {duration: 4000}));
+          this.snackbar.open(`Expiry date updated`, null, { duration: 4000 });
+        }, err => this.snackbar.open(`Expiry date not updated`, null, { duration: 4000 }));
     });
   }
 
@@ -127,25 +131,25 @@ export class AyuComponent implements OnInit {
 
   deleteMindmap(name): void {
     const dialogRef = this.dialog.open(ModalsComponent, {
-      data: {title: 'Delete Mindmap'},
+      data: { title: 'Delete Mindmap' },
       width: '250px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const mindmapName = name;
-        this.mindmapService.deleteMindmap(this.selectedKey, {mindmapName})
-        .subscribe(response => {
-          if (response) {
-            this.snackbar.open(`Mindmap deleted sucessfully`, null, {duration: 4000}); 
-            this.licenceKeyHandler();
-          }
-        }, err => this.snackbar.open(`Mindmap not deleted`, null, {duration: 4000}));
+        this.mindmapService.deleteMindmap(this.selectedKey, { mindmapName })
+          .subscribe(response => {
+            if (response) {
+              this.snackbar.open(`Mindmap deleted sucessfully`, null, { duration: 4000 });
+              this.licenceKeyHandler();
+            }
+          }, err => this.snackbar.open(`Mindmap not deleted`, null, { duration: 4000 }));
       }
     });
   }
 
-  fileHandler (event) {
+  fileHandler(event) {
     this.file = event.target.files[0];
     this.saveUpload();
   }
@@ -169,13 +173,13 @@ export class AyuComponent implements OnInit {
       value: this.mindmapUploadJson
     };
     this.mindmapService.updateImage(this.selectedKey, this.image.image_name, data)
-    .subscribe(response => {
-      if (response) {
-        this.mindmapUploadJson = '';
-        this.image.image_file = data.value;
-        this.snackbar.open(`Image Updated`, null, {duration: 4000});
-      }
-    });
+      .subscribe(response => {
+        if (response) {
+          this.mindmapUploadJson = '';
+          this.image.image_file = data.value;
+          this.snackbar.open(`Image Updated`, null, { duration: 4000 });
+        }
+      });
   }
 
   imageUpload(): void {
@@ -185,14 +189,14 @@ export class AyuComponent implements OnInit {
       value: this.mindmapUploadJson
     };
     this.mindmapService.uploadImage(data)
-    .subscribe(response => {
-      if (response) {
-        this.mindmapUploadJson = '';
-        this.image = {};
-        this.image.image_file = data.value;
-        this.snackbar.open('Image Uploaded', null , {duration: 4000});
-      }
-    });
+      .subscribe(response => {
+        if (response) {
+          this.mindmapUploadJson = '';
+          this.image = {};
+          this.image.image_file = data.value;
+          this.snackbar.open('Image Uploaded', null, { duration: 4000 });
+        }
+      });
   }
 
   applyFilter(filterValue: string) {

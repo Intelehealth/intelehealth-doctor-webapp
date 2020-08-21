@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 declare var saveToStorage: any;
@@ -40,9 +40,9 @@ export class LoginPageComponent implements OnInit {
         this.router.navigate(['/home']);
         this.authService.sendToken(response.sessionId);
         saveToStorage('user', response.user);
-        this.snackbar.open(`Welcome ${response.user.person.display}`, null, {duration: 4000});
+        this.snackbar.open(`Welcome ${response.user.person.display}`, null, { duration: 4000 });
       } else {
-        this.snackbar.open('Username & Password doesn\'t match', null, {duration: 4000});
+        this.snackbar.open('Username & Password doesn\'t match', null, { duration: 4000 });
       }
     });
   }

@@ -3,7 +3,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from './../../services/session.service';
 import { Component, OnInit } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {

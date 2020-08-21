@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from './password.validator';
 import { HttpClient } from '@angular/common/http';
-import { MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -15,16 +16,16 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
-              private http: HttpClient,
-              private snackbar: MatSnackBar,
-              private dialogRef: MatDialogRef<ChangePasswordComponent>) {
+    private http: HttpClient,
+    private snackbar: MatSnackBar,
+    private dialogRef: MatDialogRef<ChangePasswordComponent>) {
     this.changePasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
       repeatPassword: ['', Validators.required]
     }, {
-        validator: MustMatch('newPassword', 'repeatPassword')
-      });
+      validator: MustMatch('newPassword', 'repeatPassword')
+    });
   }
 
 

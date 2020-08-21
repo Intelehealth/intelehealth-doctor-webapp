@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -57,28 +58,28 @@ export class NavbarComponent implements OnInit {
   search() {
     const search = this.searchForm.value;
     if (search.findInput.length < 3) {
-    this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
+      this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
     } else {
-    // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
-    this.http.get(url)
-    .subscribe(response => {
-      this.values = [];
-      response['results'].forEach(value => {
-        if (value) {
-        if (value.identifiers.length) {
-          this.values.push(value);
-        }
-      }
-      });
-      this.dialog.open(FindPatientComponent, { width: '90%', data: { value: this.values } });
-    }, err => {
-        if (err.error instanceof Error) {
-          this.snackbar.open('Client-side error', null, { duration: 2000 });
-        } else {
-          this.snackbar.open('Server-side error', null, { duration: 2000 });
-        }
-      });
+      // tslint:disable-next-line: max-line-length
+      const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      this.http.get(url)
+        .subscribe(response => {
+          this.values = [];
+          response['results'].forEach(value => {
+            if (value) {
+              if (value.identifiers.length) {
+                this.values.push(value);
+              }
+            }
+          });
+          this.dialog.open(FindPatientComponent, { width: '90%', data: { value: this.values } });
+        }, err => {
+          if (err.error instanceof Error) {
+            this.snackbar.open('Client-side error', null, { duration: 2000 });
+          } else {
+            this.snackbar.open('Server-side error', null, { duration: 2000 });
+          }
+        });
     }
     this.searchForm.reset();
   }
