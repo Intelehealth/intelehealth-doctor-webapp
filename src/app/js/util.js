@@ -17,3 +17,13 @@ const getEncounterProviderUUID = () => {
 const getEncounterUUID = () => {
     return getFromStorage('visitNoteProvider').uuid;
 }
+
+const CheckNewVisit = (newData, oldData) => {
+    const newVisit = [];
+    newData.forEach(data => {
+        const present = oldData.some(obj => obj.uuid === data.uuid);
+        if (!present)
+        newVisit.push(data)
+    })
+    return newVisit
+}

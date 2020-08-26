@@ -26,5 +26,29 @@
         ]
       }
     }
-  ]
+  ],
+  "dataGroups": [{
+    "name": "api-performance",
+    "urls": [
+      "/assets/i18n/**",
+      "/api/**"
+    ],
+    "cacheConfig": {
+      "strategy": "performance",
+      "maxSize": 100,
+      "maxAge": "3d"
+    }
+  },
+  {
+    "name": "api-freshness",
+    "urls": [
+      "/openmrs/ws/rest/v1/visit"
+    ],
+    "cacheConfig": {
+      "strategy": "freshness",
+      "maxSize": 1000,
+      "maxAge": "0",
+      "timeout": "20s"
+    }
+  }]
 }

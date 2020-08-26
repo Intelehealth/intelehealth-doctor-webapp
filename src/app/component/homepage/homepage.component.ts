@@ -1,3 +1,4 @@
+import { GlobalConstants } from '../../js/global-constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from './../../services/session.service';
 import { Component, OnInit } from '@angular/core';
@@ -60,6 +61,7 @@ export class HomepageComponent implements OnInit {
     } else {this.authService.logout(); }
     this.service.getVisits()
       .subscribe(response => {
+        GlobalConstants.visits = response.results;
         const visits = response.results;
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {

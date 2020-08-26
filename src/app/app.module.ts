@@ -147,8 +147,8 @@ import { environment } from '../environments/environment';
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
-    ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production }),
     // tslint:disable-next-line: max-line-length
+    ServiceWorkerModule.register('/intelehealth/custom-service-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
   ],
   providers: [
     CookieService,

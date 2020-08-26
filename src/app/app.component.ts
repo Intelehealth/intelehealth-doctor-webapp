@@ -1,9 +1,12 @@
+import { VisitService } from './services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { UserIdleService } from 'angular-user-idle';
 import * as introJs from 'intro.js/intro.js';
 import { Router } from '@angular/router';
-import { PushNotificationsService } from './services/pushNotification.service';
+import { PushNotificationsService } from './services/push-notification.service';
+import { GlobalConstants } from './js/global-constants';
+declare var CheckNewVisit: any;
 
 @Component({
   selector: 'app-root',
@@ -15,8 +18,8 @@ export class AppComponent implements OnInit {
   constructor(public authService: AuthService,
               private userIdle: UserIdleService,
               public router: Router,
-              private _notificationService: PushNotificationsService ) {
-                this._notificationService.requestPermission(); }
+              public visitService: VisitService,
+              public notificationService: PushNotificationsService) {}
 
   ngOnInit () {
     this.userIdle.startWatching();
@@ -26,9 +29,23 @@ export class AppComponent implements OnInit {
         this.authService.logout();
         this.userIdle.stopWatching();
       }
+    });
+    setInterval(() => {
+      this.visitService.getVisits()
+      .subscribe(response => {
+        if (response.results.length > GlobalConstants.visits.length) {
+          const unique = CheckNewVisit(response.results, GlobalConstants.visits);
+          unique.forEach(uq => {
+            const data = {
+              patientID: uq.patient.uuid,
+              visitID: uq.uuid
+            };
+            GlobalConstants.visits = response.results;
+            this.notificationService.generateNotification(uq.patient.person.display, 'Click to open see Visit Summary', data);
+          });
+        } else {GlobalConstants.visits = response.results; }
       });
-    // this._notificationService.generateNotification(this.data);
-
+    }, 10000);
   }
 
   receiveMessage() {
@@ -156,18 +173,3 @@ export class AppComponent implements OnInit {
     }
   }
 }
-
-
-// async function showNotification() {
-//   const result = await Notification.requestPermission();
-//   if (result === 'granted') {
-//     const noti = new Notification('Hello!', {
-//       body: 'It’s me.',
-//       icon: 'mario.png'
-//     });
-//     noti.onclick = () => alert('clicked');
-//   }
-// }
-
-// showNotification();
-
