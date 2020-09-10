@@ -35,6 +35,7 @@ export class LoginPageComponent implements OnInit {
     const value = this.loginForm.value;
     const string = `${value.username}:${value.password}`;
     const base64 = btoa(string);
+    saveToStorage('session', base64);
     this.sessionService.loginSession(base64).subscribe(response => {
       if (response.authenticated === true) {
         this.router.navigate(['/home']);

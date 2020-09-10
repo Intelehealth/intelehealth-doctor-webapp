@@ -13,6 +13,9 @@ export class VisitService {
 
   constructor(private http: HttpClient) { }
 
+  syncVisit() {
+    navigator.serviceWorker.ready.then(swRegistration => swRegistration.sync.register('visit_update'));
+  }
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;

@@ -27,3 +27,7 @@ const CheckNewVisit = (newData, oldData) => {
     })
     return newVisit
 }
+
+const CheckVisitNote = (visit, visitNoteList) => {
+    return visitNoteList.filter(vN => vN.uuid === visit.data.uuid)   
+}

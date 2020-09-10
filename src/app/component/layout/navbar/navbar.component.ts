@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
           this.reportAccess = true;
         }
       });
-    } else { this.authService.logout(); }
+    } else { this.logout(); }
   }
 
   logout() {

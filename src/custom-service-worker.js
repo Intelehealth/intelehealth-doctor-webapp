@@ -22,3 +22,10 @@ self.addEventListener('notificationclick', (event) => {
     );
   }
 });
+
+self.addEventListener('sync', function(event) {
+  console.log(event)
+  if (event.tag == 'myFirstSync') {
+    
+  }
+});
