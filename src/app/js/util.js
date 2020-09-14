@@ -20,10 +20,10 @@ const getEncounterUUID = () => {
 
 const CheckNewVisit = (newData, oldData) => {
     const newVisit = [];
-    newData.forEach(data => {
+    newData.forEach((data,index) => {
         const present = oldData.some(obj => obj.uuid === data.uuid);
         if (!present)
-        newVisit.push(data)
+        newVisit.push({index,data})
     })
     return newVisit
 }

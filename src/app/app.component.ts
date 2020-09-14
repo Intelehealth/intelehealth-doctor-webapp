@@ -78,7 +78,7 @@ export class AppComponent implements OnInit {
     this.visitNote = [];
     const visits = response.results;
     visits.forEach(active => {
-      if (active.encounters.length > 0) {
+      if (active.encounters.length) {
         if (active.attributes.length) {
           const visitAttributes = active.attributes;
           const speRequired = visitAttributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
@@ -99,6 +99,7 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    console.log(this.newVisits.length, GlobalConstants.visits.length)
     if (this.newVisits.length > GlobalConstants.visits.length) {
       const newVisit = CheckNewVisit(this.newVisits, GlobalConstants.visits);
       newVisit.forEach(uq => {
@@ -114,7 +115,7 @@ export class AppComponent implements OnInit {
       seenVisit.forEach(uq => {
         const visitNote = CheckVisitNote(uq, this.visitNote);
         const providerDetails = getFromStorage('provider');
-        if (visitNote[0].encounters[0].encounterProviders[0].provider.uuid !== providerDetails.uuid) {
+        if (visitNote.length && visitNote[0].encounters[0].encounterProviders[0].provider.uuid !== providerDetails.uuid) {
           const data = {
             patientID: uq.data.patient.uuid,
             visitID: uq.data.uuid
