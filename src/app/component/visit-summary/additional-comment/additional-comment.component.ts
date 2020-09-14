@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({

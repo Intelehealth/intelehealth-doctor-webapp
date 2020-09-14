@@ -4,7 +4,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -71,7 +71,11 @@ encounterUuid: string;
     .subscribe(response => {
       const result = response.results;
       if (result.length !== 0) {
-        this.msg.push(result[0].value);
+        result.forEach(rs => {
+          if (rs.attributeType.uuid === '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc') {
+            this.msg.push(rs.value);
+          }
+        });
       }
     });
   }
@@ -83,11 +87,19 @@ encounterUuid: string;
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+      let flag = false;
       this.service.getAttribute(visitId)
       .subscribe(response => {
         const result = response.results;
-        if (result.length !== 0) {
-        } else {
+        if (result.length === 0) {
+          result.forEach(rs => {
+            if (rs.attributeType.uuid === '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc') {
+              flag = true;
+            }
+          });
+        }
+        });
+        if (!flag) {
           const json = {
             'attributeType': '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',
             'value': value
@@ -97,7 +109,6 @@ encounterUuid: string;
             this.msg.push(response1.value);
           });
         }
-      });
       this.encounterUuid = getEncounterUUID;
       const attributes = providerDetails.attributes;
       this.doctorDetails.name = providerDetails.person.display;

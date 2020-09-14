@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
