@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 // Component Import
 import { AppComponent } from './app.component';
@@ -46,31 +45,30 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from './auth.guard';
 import { DatePipe } from '@angular/common';
 import { UserIdleModule } from 'angular-user-idle';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Material Design Imports
-import {
-  MatDialogModule,
-  MatGridListModule,
-  MatCardModule,
-  MatSnackBarModule,
-  MatInputModule,
-  MatDatepickerModule,
-  MatNativeDateModule,
-  MatButtonModule,
-  MatIconModule,
-  MatRadioModule,
-  MatTooltipModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatListModule,
-  MatSelectModule,
-  MatAutocompleteModule,
-  MatProgressSpinnerModule,
-  MatExpansionModule} from '@angular/material/';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 
@@ -149,14 +147,15 @@ import {
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    // tslint:disable-next-line: max-line-length
+    ServiceWorkerModule.register('/intelehealth/custom-service-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
   ],
   providers: [
     CookieService,
     AuthGuard,
     DatePipe,
-    { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   bootstrap: [AppComponent]
 })

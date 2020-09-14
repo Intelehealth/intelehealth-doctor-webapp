@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 declare var saveToStorage: any;
@@ -35,6 +35,7 @@ export class LoginPageComponent implements OnInit {
     const value = this.loginForm.value;
     const string = `${value.username}:${value.password}`;
     const base64 = btoa(string);
+    saveToStorage('session', base64);
     this.sessionService.loginSession(base64).subscribe(response => {
       if (response.authenticated === true) {
         this.router.navigate(['/home']);

@@ -11,7 +11,7 @@ import {MatTableDataSource} from '@angular/material/table';
 export class TablesComponent implements OnInit {
   displayColumns: string[] = ['id', 'name', 'gender', 'dob', 'location', 'status', 'provider', 'lastSeen'];
   dataSource;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @Input() data;
   constructor() { }

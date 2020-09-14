@@ -2,7 +2,7 @@ import { VisitService } from '../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
 declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
