@@ -99,7 +99,6 @@ export class AppComponent implements OnInit {
         }
       }
     });
-    console.log(this.newVisits.length, GlobalConstants.visits.length)
     if (this.newVisits.length > GlobalConstants.visits.length) {
       const newVisit = CheckNewVisit(this.newVisits, GlobalConstants.visits);
       newVisit.forEach(uq => {
