@@ -1,35 +1,54 @@
 /* You can add global styles to this file, and also import other style files */
+
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-
 @font-face {
     font-family: arty;
     src: url(assets/fonts/Arty.otf) format("opentype");
-  }
+}
+
+@font-face {
+    font-family: lato;
+    src: url(assets/fonts/Lato-Regular.ttf)format("opentype");
+}
 
 @font-face {
     font-family: asem;
     src: url(assets/fonts/Asem.otf) format("opentype");
-  }
+}
 
 @font-face {
     font-family: youthness;
     src: url(assets/fonts/Youthness.ttf) format("opentype");
-  }
+}
 
-  body {
+body {
     background-color: #f1f4f6;
     margin: 0;
-  }
+}
 
-  html, body{
+html,
+body {
     height: 100%;
-  }
+}
 
-  .alert-primary{
+.alert-primary {
     display: flex!important;
-  }
+}
 
-  .doctor-value{
+.doctor-value {
     width: 92%;
-  }
+}
+
+body.font-lato div,
+body.font-lato span,
+body.font-lato h1,
+body.font-lato h2,
+body.font-lato h3,
+body.font-lato h4,
+body.font-lato h5,
+body.font-lato h6,
+body.font-lato a,
+body.font-lato th,
+body.font-lato td {
+    font-family: lato;
+}
