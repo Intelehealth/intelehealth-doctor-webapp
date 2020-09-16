@@ -22,7 +22,7 @@ export class PresentingComplaintsComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === visitUuid) {
-            const _obs = { ...obs, value: obs.value.replace('?', '') }
+            const _obs = { ...obs, value: obs.value.replace('?<br>','\u25BA') }
             this.complaint.push(_obs);
 
           }
