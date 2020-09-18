@@ -22,9 +22,8 @@ export class PresentingComplaintsComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === visitUuid) {
-            const _obs = { ...obs, value: obs.value.replace('?<br>','\u25BA') }
+            let _obs = { ...obs, value: obs.value.replaceAll('?<b>', '\u25BA<b>') }
             this.complaint.push(_obs);
-
           }
         });
         if (this.complaint !== undefined) {
