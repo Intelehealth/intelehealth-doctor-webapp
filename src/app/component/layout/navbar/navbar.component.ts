@@ -7,7 +7,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
 import { environment } from '../../../../environments/environment';
-declare var getFromStorage: any;
+import { SwPush, SwUpdate } from '@angular/service-worker';
+import { PushNotificationsService } from 'src/app/services/push-notification.service';
+declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +21,9 @@ export class NavbarComponent implements OnInit {
   baseURLLegacy = environment.baseURLLegacy;
   systemAccess = false;
   reportAccess = false;
+  subscribeAccess = false;
   values: any = [];
+  readonly VapidKEY = 'BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg';
 
   searchForm = new FormGroup({
     findInput: new FormControl('', [Validators.required])
@@ -29,12 +33,16 @@ export class NavbarComponent implements OnInit {
 
 
   constructor(private authService: AuthService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
-    private http: HttpClient) { }
+              private dialog: MatDialog,
+              private snackbar: MatSnackBar,
+              private http: HttpClient,
+              public swUpdate: SwUpdate,
+              public swPush: SwPush,
+              public notificationService: PushNotificationsService) { }
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
+    this.subscribeAccess = getFromStorage('subscribed') || false;
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
@@ -86,5 +94,29 @@ export class NavbarComponent implements OnInit {
 
   callTour() {
     this.messageEvent.emit();
+  }
+
+  subscribeNotification() {
+    if (this.swUpdate.isEnabled) {
+      this.swPush.requestSubscription({
+        serverPublicKey: this.VapidKEY
+      }).then(sub => {
+        const providerDetails = getFromStorage('provider');
+        if (providerDetails) {
+          const attributes = providerDetails.attributes;
+          attributes.forEach(element => {
+            if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+              this.notificationService.postSubscription(sub, element.value, providerDetails.person.display).subscribe(response => {
+                if (response) {
+                  this.snackbar.open(`Notification Subscribed Successfully`, null, {duration: 4000});
+                  saveToStorage('subscribed', true);
+                  this.subscribeAccess = true;
+                }
+              });
+            }
+          });
+        }
+      });
+    }
   }
 }
