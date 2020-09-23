@@ -38,14 +38,14 @@ export class PatientInteractionComponent implements OnInit {
   interaction = new FormGroup({
     interaction: new FormControl('', [Validators.required])
   });
-  constructor(private service: VisitService,
+  constructor(private visitService: VisitService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private encounterService: EncounterService) { }
 
   ngOnInit() {
     const visitId = this.route.snapshot.params['visit_id'];
-    this.service.fetchVisitDetails(visitId)
+    this.visitService.fetchVisitDetails(visitId)
       .subscribe(visitDetails => {
         this.patientDetails = visitDetails.patient;
         visitDetails.encounters.forEach(encounter => {
@@ -67,11 +67,11 @@ export class PatientInteractionComponent implements OnInit {
           }
         });
       });
-    this.service.getAttribute(visitId)
+    this.visitService.getAttribute(visitId)
       .subscribe(response => {
         const result = response.results;
         if (result.length !== 0) {
-          this.msg.push(result[0].value);
+          this.msg.push({ uuid: result[0].uuid, value: result[0].value });
         }
       });
   }
@@ -83,7 +83,7 @@ export class PatientInteractionComponent implements OnInit {
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
-      this.service.getAttribute(visitId)
+      this.visitService.getAttribute(visitId)
         .subscribe(response => {
           const result = response.results;
           if (result.length !== 0) {
@@ -92,9 +92,9 @@ export class PatientInteractionComponent implements OnInit {
               'attributeType': '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',
               'value': value
             };
-            this.service.postAttribute(visitId, json)
+            this.visitService.postAttribute(visitId, json)
               .subscribe(response1 => {
-                this.msg.push(response1.value);
+                this.msg.push({ uuid: response1.uuid, value: response1.value });
               });
           }
         });
@@ -132,5 +132,13 @@ export class PatientInteractionComponent implements OnInit {
         }
       }
     } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+  }
+
+  delete(i) {
+    const visitId = this.route.snapshot.params['visit_id'];
+    this.visitService.deleteAttribute(visitId, i)
+      .subscribe(res => {
+        this.msg = [];
+      });
   }
 }

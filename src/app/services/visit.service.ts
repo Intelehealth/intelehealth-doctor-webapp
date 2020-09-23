@@ -40,6 +40,11 @@ export class VisitService {
     return this.http.post(url, json);
   }
 
+  deleteAttribute(visitId, uuid) {
+    const url = `${this.baseURL}/visit/${visitId}/attribute/${uuid}`;
+    return this.http.delete(url);
+  }
+
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
