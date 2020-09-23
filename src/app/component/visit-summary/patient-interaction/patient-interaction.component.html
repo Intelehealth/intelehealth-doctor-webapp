@@ -22,8 +22,8 @@
 </div>
 <div *ngFor="let msg of msg">  
   <div [@moveInLeft] class="alert alert-primary">
-    <div class="doctor-value">{{msg}}</div>
-    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+    <div class="doctor-value">{{msg.value}}</div>
+    <i (click)="delete(msg.uuid)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
   </div>
 </div>
 </form>

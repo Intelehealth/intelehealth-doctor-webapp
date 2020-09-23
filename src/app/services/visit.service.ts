@@ -40,9 +40,9 @@ export class VisitService {
     return this.http.post(url, json);
   }
 
-  deleteAttribute(visitId, uuid, json) {
+  deleteAttribute(visitId, uuid) {
     const url = `${this.baseURL}/visit/${visitId}/attribute/${uuid}`;
-    return this.http.delete(url, json);
+    return this.http.delete(url);
   }
 
   patientInfo(id): Observable<any> {

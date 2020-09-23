@@ -68,7 +68,7 @@ export class AdviceComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
             if (!obs.value.includes('</a>')) {
               this.advice.push(obs);
             }
