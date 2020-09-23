@@ -21,15 +21,17 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/js/util.js"
             ],
             "styles": [
               "src/styles.css",
               "node_modules/intro.js/introjs.css"
             ],
             "scripts": [
+              "src/app/js/util.js",
               "node_modules/intro.js/intro.js"
-            ],
+            ]
           },
           "configurations": {
             "production": {
@@ -88,12 +90,14 @@
               "node_modules/intro.js/introjs.css"
             ],
             "scripts": [
-              "node_modules/intro.js/intro.js"
+              "node_modules/intro.js/intro.js",
+              "src/app/js/util.js"
             ],
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/js/util.js"
             ]
           }
         },
@@ -140,5 +144,8 @@
       }
     }
   },
-  "defaultProject": "intelehealth-ui"
+  "defaultProject": "intelehealth-ui",
+  "cli": {
+    "analytics": false
+  }
 }

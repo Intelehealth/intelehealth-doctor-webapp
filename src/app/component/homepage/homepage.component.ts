@@ -1,6 +1,10 @@
+
+import { AuthService } from 'src/app/services/auth.service';
+import { SessionService } from './../../services/session.service';
 import { Component, OnInit } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
   id: string;
@@ -34,10 +38,26 @@ export class HomepageComponent implements OnInit {
   completedVisit: VisitData[] = [];
   setSpiner = true;
 
-  constructor(private service: VisitService,
+  constructor(private sessionService: SessionService,
+              private authService: AuthService,
+              private service: VisitService,
               private snackbar: MatSnackBar) { }
 
   ngOnInit() {
+    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      this.sessionService.provider(userDetails.uuid)
+      .subscribe(provider => {
+        saveToStorage('provider', provider.results[0]);
+        // const attributes = provider.results[0].attributes;
+        // attributes.forEach(element => {
+        //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+        //     this.specialization = element.value;
+        //   }
+        // });
+      });
+    } else {this.authService.logout(); }
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;

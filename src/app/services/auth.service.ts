@@ -1,7 +1,9 @@
-import { EncounterService } from 'src/app/services/encounter.service';
+import { SessionService } from './session.service';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+
+declare var deleteFromStorage: any;
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,7 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   constructor(private myRoute: Router,
-              private service: EncounterService,
+              private sessionService: SessionService,
               private cookieService: CookieService) { }
 
   sendToken(token) {
@@ -25,10 +27,13 @@ export class AuthService {
   }
 
   logout() {
-    this.service.session()
+    this.sessionService.session()
     .subscribe(res => {
-      this.service.deleteSession(res.sessionId)
+      this.sessionService.deleteSession(res.sessionId)
       .subscribe(response => {
+        deleteFromStorage('user');
+        deleteFromStorage('provider');
+        deleteFromStorage('visitNoteProvider');
         this.cookieService.deleteAll();
         this.myRoute.navigate(['/']);
     });
