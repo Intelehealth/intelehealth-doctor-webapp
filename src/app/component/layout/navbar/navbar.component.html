@@ -1,80 +1,180 @@
 <div class="container">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-radius">
-    <form class="form-inline" [formGroup]="searchForm" (submit)="search()" id='search-patient'>
+    <form
+      class="form-inline"
+      [formGroup]="searchForm"
+      (submit)="search()"
+      id="search-patient"
+    >
       <div class="input-group">
         <div class="input-group-prepend">
-          <input type="text" class="form-control" placeholder="Find Patient" formControlName="findInput">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Find Patient"
+            formControlName="findInput"
+          />
         </div>
-        <button class="input-group-text" type="submit" matTooltip="Search Patient using ID and Name"
-          matTooltipClass="tooltip-red"><i class="fas fa-search"></i></button>
+        <button
+          class="input-group-text"
+          type="submit"
+          matTooltip="Search Patient using ID and Name"
+          matTooltipClass="tooltip-red"
+        >
+          <i class="fas fa-search"></i>
+        </button>
       </div>
     </form>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
-      aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent-4"
+      aria-controls="navbarSupportedContent-4"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-           <a class="nav-link" routerLink='/home'>Home</a>
+          <a class="nav-link" routerLink="/home">Home</a>
         </li>
-        <li class="nav-item" *ngIf='!subscribeAccess'>
+        <li class="nav-item" *ngIf="!subscribeAccess">
           <a class="nav-link" (click)="subscribeNotification()">Subscribe</a>
-       </li>
-        <li *ngIf='systemAccess' class="nav-item">
-          <a class="nav-link" routerLink='/ayu'>Ayu</a>
+        </li>
+        <li *ngIf="systemAccess" class="nav-item">
+          <a class="nav-link" routerLink="/ayu">Ayu</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" (click)="callTour()">Help</a>
+          <a class="nav-link" (click)="callTour()">Help</a>
         </li>
-        <li *ngIf='reportAccess' class="nav-item">
-          <a class="nav-link" href='{{baseURLLegacy}}/reportingui/reportsapp/home.page'>Reports</a>
+        <li *ngIf="reportAccess" class="nav-item">
+          <a
+            class="nav-link"
+            href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page"
+            >Reports</a
+          >
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"><i class="fa fa-user"></i> Profile </a>
+          <a
+            class="nav-link dropdown-toggle"
+            id="navbarDropdownMenuLink-4"
+            href=""
+            data-toggle="dropdown"
+            ><i class="fa fa-user"></i> Profile
+          </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" routerLink='/myAccount'>My account</a>
-            <a *ngIf='systemAccess' class="dropdown-item" href="{{baseURLLegacy}}/admin/index.htm">System administration</a>
-            <a class="dropdown-item" (click)="changePassword()">Change password</a>
+            <a class="dropdown-item" routerLink="/myAccount">My account</a>
+            <a
+              *ngIf="systemAccess"
+              class="dropdown-item"
+              href="{{ baseURLLegacy }}/admin/index.htm"
+              >System administration</a
+            >
+            <a class="dropdown-item" (click)="changePassword()"
+              >Change password</a
+            >
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle no-arrow" id="navbarDropdownMenuLink-4" data-toggle="dropdown">
-            <i class="fas fa-bell bell-icn" *ngIf="showBellIcon" (click)="toggleIcon()"></i>
-            <i class="fas fa-bell-slash bell-icn" *ngIf="!showBellIcon" (click)="toggleIcon()"></i>
+          <a
+            class="nav-link dropdown-toggle no-arrow"
+            id="navbarDropdownMenuLink-4"
+            data-toggle="dropdown"
+          >
+            <i
+              class="fas fa-bell bell-icn"
+              *ngIf="showBellIcon"
+              (click)="toggleIcon()"
+            ></i>
+            <i
+              class="fas fa-bell-slash bell-icn"
+              *ngIf="!showBellIcon"
+              (click)="toggleIcon()"
+            ></i>
           </a>
           <div
             [class.d-block]="notificationMenu"
             class="bell-menu dropdown-menu dropdown-menu-right dropdown-cyan"
           >
             <a class="dropdown-item" (click)="setNotification('30m')"
+              >Do not disturb
+              <i *ngIf="selectedNotification == 'dnd'" class="fa fa-check"></i>
+            </a>
+            <a class="dropdown-item" (click)="setNotification('30m')"
               >30 minutes
               <i *ngIf="selectedNotification == '30m'" class="fa fa-check"></i>
             </a>
             <a class="dropdown-item" (click)="setNotification('1h')"
-              >1 hour <i *ngIf="selectedNotification == '1h'" class="fa fa-check"></i
+              >1 hour
+              <i *ngIf="selectedNotification == '1h'" class="fa fa-check"></i
             ></a>
             <a class="dropdown-item" (click)="setNotification('2h')"
-              >2 hours <i *ngIf="selectedNotification == '2h'" class="fa fa-check"></i
+              >2 hours
+              <i *ngIf="selectedNotification == '2h'" class="fa fa-check"></i
             ></a>
-            <a class="dropdown-item" (click)="setNotification('custom')"
-              >Custom <i *ngIf="selectedNotification == 'custom'" class="fa fa-check"></i
+            <a
+              class="dropdown-item"
+              data-toggle="modal"
+              data-target="#customNotification"
+              (click)="setNotification('custom')"
+              >Custom
+              <i
+                *ngIf="selectedNotification == 'custom'"
+                class="fa fa-check"
+              ></i
             ></a>
             <hr />
             <a class="dropdown-item" (click)="setNotification('off')"
-              >Turn Off <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i
+              >Turn Off
+              <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i
             ></a>
           </div>
         </li>
-        <li *ngIf='reportAccess' class="nav-item">
-        
-        </li>
+        <li *ngIf="reportAccess" class="nav-item"></li>
         <li class="nav-item">
-          <button class=" btn btn-primary" id="logout-link" (click)="logout()">Log out</button>
+          <button class="btn btn-primary" id="logout-link" (click)="logout()">
+            Log out
+          </button>
         </li>
       </ul>
     </div>
   </nav>
 </div>
-<br>
+<br />
+
+<div class="modal" id="customNotification" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Custom Notifications:</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li *ngFor="let day of weekDays" class="d-flex">
+            <label class="py-2 col-2">{{day.day}}</label>
+            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" type="time" />
+            <input class="form-control col-4" [(ngModel)]="day.endTime" type="time" />
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
