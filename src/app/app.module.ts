@@ -148,7 +148,7 @@ import { environment } from '../environments/environment';
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register('/intelehealth/custom-service-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
+    ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
   ],
   providers: [
     CookieService,
