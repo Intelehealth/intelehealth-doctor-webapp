@@ -13,9 +13,6 @@ export class VisitService {
 
   constructor(private http: HttpClient) { }
 
-  syncVisit() {
-    navigator.serviceWorker.ready.then(swRegistration => swRegistration.sync.register('visit_update'));
-  }
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
@@ -41,6 +38,11 @@ export class VisitService {
   postAttribute(visitId, json): Observable<any> {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
+  }
+
+  deleteAttribute(visitId, uuid) {
+    const url = `${this.baseURL}/visit/${visitId}/attribute/${uuid}`;
+    return this.http.delete(url);
   }
 
   patientInfo(id): Observable<any> {

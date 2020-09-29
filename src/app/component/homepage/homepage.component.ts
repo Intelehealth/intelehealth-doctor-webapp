@@ -45,7 +45,6 @@ export class HomepageComponent implements OnInit {
               private snackbar: MatSnackBar) { }
 
   ngOnInit() {
-    this.service.syncVisit();
     if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
     const userDetails = getFromStorage('user');
     if (userDetails) {
