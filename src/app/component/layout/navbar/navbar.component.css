@@ -2,10 +2,28 @@
   background: #b71c1c;
 }
 
-.nav-link{
+.nav-link {
   cursor: pointer;
 }
 
 .box-radius {
   border-radius: 0 0 10px 10px;
+}
+
+.fas {
+  color: rgba(255, 255, 255, 0.5);
+  width: 30px;
+  font-size: 22px;
+  /* margin-top: 8px; */
+}
+
+.no-arrow.dropdown-toggle::after {
+  display: none;
+}
+
+.bell-menu .fa-check {
+  position: absolute;
+  font-size: 15px;
+  color: #007bff;
+  margin: 4px 0 0 10px;
 }

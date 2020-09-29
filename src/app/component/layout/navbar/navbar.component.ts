@@ -22,6 +22,9 @@ export class NavbarComponent implements OnInit {
   systemAccess = false;
   reportAccess = false;
   subscribeAccess = false;
+  notificationMenu = false;
+  showBellIcon = false;
+  selectedNotification = '';
   values: any = [];
   readonly VapidKEY = 'BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg';
 
@@ -118,5 +121,19 @@ export class NavbarComponent implements OnInit {
         }
       });
     }
+  }
+
+  public toggleIcon() {
+    this.notificationMenu = !this.notificationMenu;
+    if (this.notificationMenu) {
+      localStorage.setItem("showNotification", "1");
+    } else {
+      localStorage.setItem("showNotification", "0");
+    }
+  }
+
+  setNotification(period){
+    this.selectedNotification = period;
+    this.notificationMenu = false;
   }
 }
