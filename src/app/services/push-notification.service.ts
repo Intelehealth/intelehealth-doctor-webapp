@@ -1,3 +1,5 @@
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -5,39 +7,30 @@ import { Injectable } from '@angular/core';
 })
 
 export class PushNotificationsService {
-    public permission: Permission;
+    private baseURL =  environment.notificationURL;
+    public snoozeTimeout =  null;
 
-    constructor() {
-        this.permission = this.isSupported() ? 'default' : 'denied';
+    constructor(private http: HttpClient) { }
+
+    postSubscription (sub: PushSubscription, speciality, providerName) {
+        return this.http.post(`${this.baseURL}/subscribe`, {sub, speciality, providerName});
     }
 
-    public isSupported(): boolean {
-        return 'Notification' in window;
+    postNotification (payload) {
+        return this.http.post(`${this.baseURL}/push`, payload);
+    }
+    
+    setSnoozeFor(snooze_for) {
+        return this.http.put(`${environment.mindmapURL}/mindmap/snooze_notification`, {
+          user_uuid:JSON.parse(localStorage.user).uuid,
+          snooze_for,
+        });
     }
 
-    requestPermission() {
-        const self = this;
-        if ('Notification' in window) {
-            Notification.requestPermission(function(status) {
-                return self.permission = status;
-            });
-        }
-    }
-
-    generateNotification(message, body, data): void {
-        const options = {
-            body,
-            // actions: [
-            //   { action: 'refresh', title: 'Yes' },
-            //   { action: 'cancel', title: 'No' }
-            // ],
-            data
-        };
-        try {
-            navigator.serviceWorker.getRegistration()
-              .then((reg) => reg.showNotification(message, options));
-        } catch (err) {}
+    getUserSettings(_uuid?) {
+        const uuid = _uuid ? _uuid : JSON.parse(localStorage.user).uuid;
+        return this.http.get(
+          `${environment.mindmapURL}/mindmap/user_settings/${uuid}`
+        );
     }
 }
-
-export declare type Permission = 'denied' | 'granted' | 'default';

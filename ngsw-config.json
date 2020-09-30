@@ -42,7 +42,9 @@
   {
     "name": "api-freshness",
     "urls": [
-      "/openmrs/ws/rest/v1/visit"
+      "https://fonts.googleapis.com/**",
+      "https://use.fontawesome.com/**",
+      "/openmrs/ws/rest/v1/visit/**"
     ],
     "cacheConfig": {
       "strategy": "freshness",

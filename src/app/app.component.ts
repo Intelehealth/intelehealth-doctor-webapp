@@ -7,6 +7,7 @@ import * as introJs from 'intro.js/intro.js';
 import { Router } from '@angular/router';
 import { PushNotificationsService } from './services/push-notification.service';
 import { GlobalConstants } from './js/global-constants';
+import { SwPush, SwUpdate } from '@angular/service-worker';
 declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -19,15 +20,26 @@ export class AppComponent implements OnInit {
   specialization;
   newVisits;
   visitNote;
+  readonly VapidKEY = 'BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg';
   constructor(public authService: AuthService,
               public sessionService: SessionService,
               // private userIdle: UserIdleService,
               public router: Router,
               public visitService: VisitService,
-              public notificationService: PushNotificationsService) {
-                this.notificationService.requestPermission();
-              }
+              public notificationService: PushNotificationsService,
+              public swUpdate: SwUpdate,
+              public swPush: SwPush) {}
 
+
+  reloadCache() {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.available.subscribe(() => {
+        if (confirm('New version available')) {
+          window.location.reload();
+        }
+      });
+    }
+  }
   ngOnInit () {
     // this.userIdle.startWatching();
     // // Start watching when user idle is starting.
@@ -37,6 +49,7 @@ export class AppComponent implements OnInit {
     //     this.userIdle.stopWatching();
     //   }
     // });
+    this.reloadCache();
     const session = getFromStorage('session');
     const providerDetails = getFromStorage('provider');
     if (session) {
@@ -56,88 +69,88 @@ export class AppComponent implements OnInit {
         }
       });
     }
-    setInterval(() => {
-      this.visitService.getVisits()
-      .subscribe(visists => {
-        if (visists) {
-          this.checkForNewOrUpdatedVisit(visists);
-        } else {
-          this.sessionService.loginSession(session).subscribe(response => {
-            if (response.authenticated === true) {
-              this.authService.sendToken(response.sessionId);
-              saveToStorage('user', response.user);
-            }
-          });
-        }
-      });
-    }, 10000);
+    // setInterval(() => {
+    //   this.visitService.getVisits()
+    //   .subscribe(visists => {
+    //     if (visists) {
+    //       this.checkForNewOrUpdatedVisit(visists);
+    //     } else {
+    //       this.sessionService.loginSession(session).subscribe(response => {
+    //         if (response.authenticated === true) {
+    //           this.authService.sendToken(response.sessionId);
+    //           saveToStorage('user', response.user);
+    //         }
+    //       });
+    //     }
+    //   });
+    // }, 10000);
   }
 
-  checkForNewOrUpdatedVisit(response) {
-    this.newVisits = [];
-    this.visitNote = [];
-    const visits = response.results;
-    visits.forEach(active => {
-      if (active.encounters.length) {
-        if (active.attributes.length) {
-          const visitAttributes = active.attributes;
-          const speRequired = visitAttributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
-          if (speRequired.length) {
-            speRequired.forEach((spe, index) => {
-              if (!spe.voided && spe.value === this.specialization) {
-                if (index === 0) {
-                  this.visitCategory(active);
-                }
-                if (index === 1 && spe[0] !== spe[1]) {
-                  this.visitCategory(active);
-                }
-              }
-            });
-          }
-        } else if (this.specialization === 'General Physician') {
-          this.visitCategory(active);
-        }
-      }
-    });
-    if (this.newVisits.length > GlobalConstants.visits.length) {
-      const newVisit = CheckNewVisit(this.newVisits, GlobalConstants.visits);
-      newVisit.forEach(uq => {
-        const data = {
-          patientID: uq.data.patient.uuid,
-          visitID: uq.data.uuid
-        };
-        GlobalConstants.visits = this.newVisits;
-        this.notificationService.generateNotification(uq.data.patient.person.display, 'Click to open see Visit Summary', data);
-      });
-    } else if (this.newVisits.length < GlobalConstants.visits.length) {
-      const seenVisit = CheckNewVisit(GlobalConstants.visits, this.newVisits);
-      seenVisit.forEach(uq => {
-        const visitNote = CheckVisitNote(uq, this.visitNote);
-        const providerDetails = getFromStorage('provider');
-        if (visitNote.length && visitNote[0].encounters[0].encounterProviders[0].provider.uuid !== providerDetails.uuid) {
-          const data = {
-            patientID: uq.data.patient.uuid,
-            visitID: uq.data.uuid
-          };
-          this.notificationService.generateNotification(uq.data.patient.person.display, 'Seen by doctor', data);
-        }
-        GlobalConstants.visits = this.newVisits;
-      });
-    }
-  }
+  // checkForNewOrUpdatedVisit(response) {
+  //   this.newVisits = [];
+  //   this.visitNote = [];
+  //   const visits = response.results;
+  //   visits.forEach(active => {
+  //     if (active.encounters.length) {
+  //       if (active.attributes.length) {
+  //         const visitAttributes = active.attributes;
+  //         const speRequired = visitAttributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
+  //         if (speRequired.length) {
+  //           speRequired.forEach((spe, index) => {
+  //             if (!spe.voided && spe.value === this.specialization) {
+  //               if (index === 0) {
+  //                 this.visitCategory(active);
+  //               }
+  //               if (index === 1 && spe[0] !== spe[1]) {
+  //                 this.visitCategory(active);
+  //               }
+  //             }
+  //           });
+  //         }
+  //       } else if (this.specialization === 'General Physician') {
+  //         this.visitCategory(active);
+  //       }
+  //     }
+  //   });
+  //   if (this.newVisits.length > GlobalConstants.visits.length) {
+  //     const newVisit = CheckNewVisit(this.newVisits, GlobalConstants.visits);
+  //     newVisit.forEach(uq => {
+  //       const data = {
+  //         patientID: uq.data.patient.uuid,
+  //         visitID: uq.data.uuid
+  //       };
+  //       GlobalConstants.visits = this.newVisits;
+  //       this.notificationService.generateNotification(uq.data.patient.person.display, 'Click to open see Visit Summary', data);
+  //     });
+  //   } else if (this.newVisits.length < GlobalConstants.visits.length) {
+  //     const seenVisit = CheckNewVisit(GlobalConstants.visits, this.newVisits);
+  //     seenVisit.forEach(uq => {
+  //       const visitNote = CheckVisitNote(uq, this.visitNote);
+  //       const providerDetails = getFromStorage('provider');
+  //       if (visitNote.length && visitNote[0].encounters[0].encounterProviders[0].provider.uuid !== providerDetails.uuid) {
+  //         const data = {
+  //           patientID: uq.data.patient.uuid,
+  //           visitID: uq.data.uuid
+  //         };
+  //         this.notificationService.generateNotification(uq.data.patient.person.display, 'Seen by doctor', data);
+  //       }
+  //       GlobalConstants.visits = this.newVisits;
+  //     });
+  //   }
+  // }
 
-  visitCategory(active) {
-    const value = active.encounters[0].display;
-    if (value.match('Flagged') || value.match('ADULTINITIAL') || value.match('Vitals')) {
-      if (!active.encounters[0].voided) {
-        this.newVisits.push(active);
-      }
-    } else if (value.match('Visit Note')) {
-      if (!active.encounters[0].voided) {
-        this.visitNote.push(active);
-      }
-    }
-  }
+  // visitCategory(active) {
+  //   const value = active.encounters[0].display;
+  //   if (value.match('Flagged') || value.match('ADULTINITIAL') || value.match('Vitals')) {
+  //     if (!active.encounters[0].voided) {
+  //       this.newVisits.push(active);
+  //     }
+  //   } else if (value.match('Visit Note')) {
+  //     if (!active.encounters[0].voided) {
+  //       this.visitNote.push(active);
+  //     }
+  //   }
+  // }
 
   receiveMessage() {
     let steps = [
@@ -263,4 +276,5 @@ export class AppComponent implements OnInit {
       }).start();
     }
   }
+
 }

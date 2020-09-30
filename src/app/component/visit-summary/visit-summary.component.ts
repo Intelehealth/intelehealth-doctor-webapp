@@ -1,3 +1,4 @@
+import { PushNotificationsService } from 'src/app/services/push-notification.service';
 import { VisitService } from '../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -25,7 +26,8 @@ constructor(private service: EncounterService,
             private authService: AuthService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
-            private router: Router) {
+            private router: Router,
+            private pushNotificationService: PushNotificationsService) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
             };
@@ -63,6 +65,7 @@ constructor(private service: EncounterService,
     if (!this.visitNotePresent) {
       const userDetails = getFromStorage('user');
       const providerDetails = getFromStorage('provider');
+      const attributes = providerDetails.attributes;
       if (userDetails && providerDetails) {
         const providerUuid = providerDetails.uuid;
         const json = {
@@ -81,8 +84,20 @@ constructor(private service: EncounterService,
             this.visitService.fetchVisitDetails(visitUuid)
             .subscribe(visitDetails => { saveToStorage('visitNoteProvider', visitDetails.encounters[0]); });
             this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, {
-              duration: 4000
+            this.snackbar.open(`Visit Note Created`, null, {duration: 4000});
+            attributes.forEach(element => {
+              if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+                const payload = {
+                  speciality: element.value,
+                  patient: {
+                    name: response.patient.display,
+                    provider: response.encounterProviders[0].display
+                  }
+                };
+                if(!this.pushNotificationService.snoozeTimeout){
+                  this.pushNotificationService.postNotification(payload).subscribe();
+                }
+              }
             });
           } else {
             this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
