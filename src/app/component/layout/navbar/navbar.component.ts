@@ -73,6 +73,12 @@ export class NavbarComponent implements OnInit {
     } else {
       this.logout();
     }
+
+    this.notificationService.getUserSettings().subscribe((res) => {
+      if (res && res["data"] && res["data"].snooze_till) {
+        this.setSnoozeTimeout(res["data"].snooze_till);
+      }
+    });
   }
 
   logout() {
@@ -177,6 +183,32 @@ export class NavbarComponent implements OnInit {
     if (period !== "custom") {
       this.selectedNotification = period;
     }
+    this.notificationService.setSnoozeFor(period).subscribe((response) => {
+      if (!response["snooze_till"]) {
+        this.notificationService.snoozeTimeout = clearTimeout(
+          this.notificationService.snoozeTimeout
+        );
+      } else {
+        this.setSnoozeTimeout(response["snooze_till"]);
+      }
+    });
     this.notificationMenu = false;
+  }
+
+  setSnoozeTimeout(timeout) {
+    if (this.notificationService.snoozeTimeout)
+      clearTimeout(this.notificationService.snoozeTimeout);
+    this.notificationService.snoozeTimeout = setTimeout(() => {
+      this.notificationService.setSnoozeFor("off").subscribe((response) => {
+        if (this.notificationService.snoozeTimeout)
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+      });
+    }, timeout);
+  }
+
+  get snoozeTimeout(){
+    return this.notificationService.snoozeTimeout;
   }
 }
