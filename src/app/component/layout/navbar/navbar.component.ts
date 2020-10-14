@@ -24,7 +24,7 @@ export class NavbarComponent implements OnInit {
   subscribeAccess = false;
   notificationMenu = false;
   showBellIcon = false;
-  selectedNotification = "";
+  selectedNotification = "off";
   values: any = [];
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -79,6 +79,9 @@ export class NavbarComponent implements OnInit {
         this.setSnoozeTimeout(res["data"].snooze_till);
       }
     });
+    if (this.swPush.isEnabled) {
+      this.notificationService.notificationHandler();
+    }
   }
 
   logout() {
@@ -182,16 +185,17 @@ export class NavbarComponent implements OnInit {
   setNotification(period) {
     if (period !== "custom") {
       this.selectedNotification = period;
+      this.notificationService.setSnoozeFor(period).subscribe((response) => {
+        if (!response["snooze_till"]) {
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+        } else {
+          this.setSnoozeTimeout(response["snooze_till"]);
+        }
+      });
     }
-    this.notificationService.setSnoozeFor(period).subscribe((response) => {
-      if (!response["snooze_till"]) {
-        this.notificationService.snoozeTimeout = clearTimeout(
-          this.notificationService.snoozeTimeout
-        );
-      } else {
-        this.setSnoozeTimeout(response["snooze_till"]);
-      }
-    });
+
     this.notificationMenu = false;
   }
 
@@ -208,7 +212,7 @@ export class NavbarComponent implements OnInit {
     }, timeout);
   }
 
-  get snoozeTimeout(){
+  get snoozeTimeout() {
     return this.notificationService.snoozeTimeout;
   }
 }
