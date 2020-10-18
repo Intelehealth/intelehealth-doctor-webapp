@@ -1,33 +1,37 @@
 .tooltip-red {
-  background: #b71c1c;
+    background: #b71c1c;
 }
 
 .nav-link {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .box-radius {
-  border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
 }
 
-.fas {
+
+/* .fas {
   color: rgba(255, 255, 255, 0.5);
   width: 30px;
   font-size: 22px;
-  /* margin-top: 8px; */
-}
+  
+} */
 
-.no-arrow.dropdown-toggle::after {
-  display: none;
-}
 
-.bell-menu .fa-check {
+/* .no-arrow.dropdown-toggle::after {
+    display: none;
+} */
+
+
+/* .bell-menu .fa-check {
   position: absolute;
   font-size: 15px;
   color: #007bff;
   margin: 4px 0 0 10px;
-}
+} */
 
-hr {
-  margin: 0;
-}
+
+/* hr {
+    margin: 0;
+} */
