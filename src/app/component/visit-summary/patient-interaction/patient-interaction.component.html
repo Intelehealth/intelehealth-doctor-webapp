@@ -20,10 +20,7 @@
         Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message
         <br/>
     </div>
-    <!-- <div *ngFor="let msg of msg">  
-  <div [@moveInLeft] class="alert alert-primary">
-    <div class="doctor-value">{{msg.value}}</div>
-    <i (click)="delete(msg.uuid)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-  </div>
-</div> -->
+    <div *ngFor="let msg of msg">
+        <div [@moveInLeft] class="alert alert-primary">{{msg}}</div>
+    </div>
 </form>
