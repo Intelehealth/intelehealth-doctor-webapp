@@ -21,7 +21,7 @@ export class EditDetailsComponent implements OnInit {
     whatsapp: new FormControl(this.data.whatsapp ? this.data.whatsapp.value : null),
     emailId: new FormControl(this.data.emailId ? this.data.emailId.value : null),
     qualification: new FormControl(this.data.qualification ? this.data.qualification.value : null),
-    specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
+    // specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
     registrationNumber: new FormControl(this.data.registrationNumber ? this.data.registrationNumber.value : null)
   });
 
@@ -99,15 +99,15 @@ export class EditDetailsComponent implements OnInit {
         .subscribe(response => { });
     }
 
-    if (value.specialization !== null) {
-      const URL = this.data.specialization ? `${this.baseURLProvider}/${this.data.specialization.uuid}` : this.baseURLProvider;
-      const json = {
-        'attributeType': 'ed1715f5-93e2-404e-b3c9-2a2d9600f062',
-        'value': value.specialization
-      };
-      this.http.post(URL, json)
-        .subscribe(response => { });
-    }
+    // if (value.specialization !== null) {
+    //   const URL = this.data.specialization ? `${this.baseURLProvider}/${this.data.specialization.uuid}` : this.baseURLProvider;
+    //   const json = {
+    //     'attributeType': 'ed1715f5-93e2-404e-b3c9-2a2d9600f062',
+    //     'value': value.specialization
+    //   };
+    //   this.http.post(URL, json)
+    //     .subscribe(response => { });
+    // }
 
     setTimeout(() => window.location.reload(), 2000);
   }

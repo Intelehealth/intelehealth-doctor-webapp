@@ -1,4 +1,4 @@
-<h4>Update Details <a style="float: right; cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>    
+<h4>Update Details <a style="float: right; cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
 <form [formGroup]='editForm' (submit)="updateDetails()">
     <mat-form-field class="example-full-width">
         <mat-select placeholder="Gender" formControlName="gender">
@@ -18,13 +18,13 @@
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Qualification" formControlName="qualification">
     </mat-form-field>
-    <mat-form-field class="example-full-width">
+    <!-- <mat-form-field class="example-full-width">
         <input matInput placeholder="Specialization" formControlName="specialization">
-    </mat-form-field>
+    </mat-form-field> -->
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Registration No" formControlName="registrationNumber">
     </mat-form-field>
     <div style="float: right">
-    <button mat-raised-button color="primary" type="submit">Save</button>
+        <button mat-raised-button color="primary" type="submit">Save</button>
     </div>
 </form>

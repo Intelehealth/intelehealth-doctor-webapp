@@ -1,75 +1,83 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
-  <div class="modal-body row">
-    <div class="col-sm-3" style="padding: 3px">
-      <div class="card text-white" style="background: #DD3C62;">
-        <div class="card-body">
-          <div class="text-left">PRIORITY VISITS<span style="float: right">{{flagPatientNo}}</span></div>
+    <div class="modal-body row">
+        <div class="col-sm-3" style="padding: 3px">
+            <div class="card text-white" style="background: #DD3C62;">
+                <div class="card-body">
+                    <div class="text-left">PRIORITY VISITS<span style="float: right">{{flagPatientNo}}</span></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-3" style="padding: 3px">
-      <div class="card text-white" style="background: #F6B825;">
-        <div class="card-body">
-          <div class="text-left">AWAITING CONSULT<span style="float: right">{{activePatient}}</span></div>
+        <div class="col-sm-3" style="padding: 3px">
+            <div class="card text-white" style="background: #F6B825;">
+                <div class="card-body">
+                    <div class="text-left">AWAITING CONSULT<span style="float: right">{{activePatient}}</span></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-3" style="padding: 3px">
-      <div class="card text-white" style="background: #17a2b8;">
-        <div class="card-body">
-          <div class="text-left">VISITS IN PROGRESS<span style="float: right">{{visitNoteNo}}</span></div>
+        <div class="col-sm-3" style="padding: 3px">
+            <div class="card text-white" style="background: #17a2b8;">
+                <div class="card-body">
+                    <div class="text-left">VISITS IN PROGRESS<span style="float: right">{{visitNoteNo}}</span></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-sm-3" style="padding: 3px">
-      <div class="card text-white" style="background: #4FCA8B;">
-        <div class="card-body">
-          <div class="text-left">COMPLETED VISITS<span style="float: right">{{completeVisitNo}}</span></div>
+        <div class="col-sm-3" style="padding: 3px">
+            <div class="card text-white" style="background: #4FCA8B;">
+                <div class="card-body">
+                    <div class="text-left">COMPLETED VISITS<span style="float: right">{{completeVisitNo}}</span></div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- PRIORITY Visit -->
-  <mat-accordion class="example-headers-align" [multi]="true">
-    <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table" >
-      <mat-expansion-panel-header>
-          <mat-panel-title><h5>PRIORITY VISITS</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="flagVisit.length > 0">
-          <app-tables [data]="flagVisit"></app-tables>
-      </ng-container>
-    </mat-expansion-panel>
-  
-    <!-- Queue Visit table -->
-    <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table">
-      <mat-expansion-panel-header>
-          <mat-panel-title><h5>AWAITING CONSULT</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="waitingVisit.length > 0">
-        <app-tables [data]="waitingVisit"></app-tables>
-      </ng-container>
-    </mat-expansion-panel>
+    <!-- PRIORITY Visit -->
+    <mat-accordion class="example-headers-align" [multi]="true">
+        <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h5>PRIORITY VISITS</h5>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="flagVisit.length > 0">
+                <app-tables [data]="flagVisit"></app-tables>
+            </ng-container>
+        </mat-expansion-panel>
 
-    <!-- In Progress Visit -->
-    <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress">
-      <mat-expansion-panel-header>
-          <mat-panel-title><h5>VISITS IN PROGRESS</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="progressVisit.length > 0">
-        <app-tables [data]="progressVisit"></app-tables>
-      </ng-container>
-    </mat-expansion-panel>
+        <!-- Queue Visit table -->
+        <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h5>AWAITING CONSULT</h5>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="waitingVisit.length > 0">
+                <app-tables [data]="waitingVisit"></app-tables>
+            </ng-container>
+        </mat-expansion-panel>
 
-    <!-- Complete Visit -->
-    <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
-      <mat-expansion-panel-header>
-          <mat-panel-title><h5>COMPLETED VISITS</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="completedVisit.length > 0">
-        <app-tables [data]="completedVisit"></app-tables>
-      </ng-container>
-    </mat-expansion-panel>
-  </mat-accordion>
+        <!-- In Progress Visit -->
+        <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h5>VISITS IN PROGRESS</h5>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="progressVisit.length > 0">
+                <app-tables [data]="progressVisit"></app-tables>
+            </ng-container>
+        </mat-expansion-panel>
+
+        <!-- Complete Visit -->
+        <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h5>COMPLETED VISITS</h5>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="completedVisit.length > 0">
+                <app-tables [data]="completedVisit"></app-tables>
+            </ng-container>
+        </mat-expansion-panel>
+    </mat-accordion>
 </div>
