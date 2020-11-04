@@ -92,7 +92,8 @@ constructor(private service: EncounterService,
                   patient: {
                     name: response.patient.display,
                     provider: response.encounterProviders[0].display
-                  }
+                  },
+                  skipFlag: true
                 };
                 if(!this.pushNotificationService.snoozeTimeout){
                   this.pushNotificationService.postNotification(payload).subscribe();
