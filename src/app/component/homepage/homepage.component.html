@@ -33,8 +33,8 @@
 
     <!-- PRIORITY Visit -->
     <mat-accordion class="example-headers-align" [multi]="true">
-        <!-- <mat-expansion-panel [expanded]="true" id="flagged-table"> -->
-        <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table">
+        <mat-expansion-panel [expanded]="true" id="flagged-table">
+            <!-- <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table"> -->
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <h5>PRIORITY VISITS</h5>
@@ -46,8 +46,8 @@
         </mat-expansion-panel>
 
         <!-- Queue Visit table -->
-        <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table">
-            <!-- <mat-expansion-panel [expanded]="true" id="queued-table"> -->
+        <!-- <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table"> -->
+        <mat-expansion-panel [expanded]="true" id="queued-table">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <h5>AWAITING CONSULT</h5>
@@ -59,8 +59,8 @@
         </mat-expansion-panel>
 
         <!-- In Progress Visit -->
-        <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress">
-            <!-- <mat-expansion-panel [expanded]="true" id="visit-in-progress"> -->
+        <!-- <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress"> -->
+        <mat-expansion-panel [expanded]="true" id="visit-in-progress">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <h5>VISITS IN PROGRESS</h5>
@@ -72,8 +72,8 @@
         </mat-expansion-panel>
 
         <!-- Complete Visit -->
-        <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
-            <!-- <mat-expansion-panel [expanded]="true" id="visit-complete"> -->
+        <!-- <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete"> -->
+        <mat-expansion-panel [expanded]="true" id="visit-complete">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <h5>COMPLETED VISITS</h5>
