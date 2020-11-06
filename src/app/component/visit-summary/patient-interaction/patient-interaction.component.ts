@@ -265,7 +265,9 @@ export class PatientInteractionComponent implements OnInit {
         const result = response.results;
         if (result.length !== 0) {
           this.showMsg = 1;
-          if(result[0].value == 'Dermatologist'){
+          // if(result[0].value == 'Dermatologist' || result[0].value == 'General Physician' || result[0].value == 'Physiotherapist')
+          if(['General Physician', 'Dermatologist', 'Physiotherapist', 'Gynecologist', 'Pediatrician'].includes(result[0].value))
+          {
             this.msg = [];
             this.msg.push({ uuid: result[0].uuid, value: this.interaction.value.interaction });
             }else{
