@@ -144,8 +144,9 @@ constructor(private service: EncounterService,
               }],
             };
             this.service.postEncounter(json)
-            .subscribe(post => {
+            .subscribe(post => { 
               this.visitCompletePresent = true;
+              this.router.navigateByUrl('/home');
               this.snackbar.open('Visit Complete', null, {duration: 4000});
             });
           } else {

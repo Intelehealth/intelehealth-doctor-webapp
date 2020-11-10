@@ -66,8 +66,8 @@ export class PatientInteractionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    var localData = JSON.parse(localStorage.getItem('visitNoteProvider'));
-   this.getEncounterUuid = localData.uuid;
+  //   var localData = JSON.parse(localStorage.getItem('visitNoteProvider'));
+  //  this.getEncounterUuid = localData.uuid;
     const visitId = this.route.snapshot.params["visit_id"];
     this.visitService.fetchVisitDetails(visitId).subscribe((visitDetails) => {
       this.patientDetails = visitDetails.patient;
@@ -144,7 +144,7 @@ export class PatientInteractionComponent implements OnInit {
         }
       });
      
-      // this.encounterUuid = this.getEncounterUuid;
+      this.encounterUuid = getEncounterUUID();
            
       const attributes = providerDetails.attributes;
       this.doctorDetails.name = providerDetails.person.display;

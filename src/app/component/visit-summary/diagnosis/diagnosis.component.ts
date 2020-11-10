@@ -52,13 +52,14 @@ diagnosisForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosis.push(obs);
+          this.diagnosis.push(Array.from(new Set(obs)));
         }
       });
     });
   }
 
   search(event) {
+    console.log('event: ', event);
     this.diagnosisService.getDiagnosisList(event.target.value)
     .subscribe(response => {
       this.diagnosisList = response;
