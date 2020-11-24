@@ -52,7 +52,7 @@ diagnosisForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosis.push(Array.from(new Set(obs)));
+          this.diagnosis.push(obs);
         }
       });
     });

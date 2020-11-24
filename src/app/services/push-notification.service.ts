@@ -39,7 +39,7 @@ export class PushNotificationsService {
         );
       }
     
-      notificanotificationHandlertionHandler() {
+      notificationHandler() {
         navigator.serviceWorker.addEventListener("message", (event) => {
           switch (event.data.type) {
             case "PUSH":

@@ -79,6 +79,11 @@ export class NavbarComponent implements OnInit {
         this.setSnoozeTimeout(res["data"].snooze_till);
       }
     });
+    if (this.swPush.isEnabled) {
+      console.log('this.swPush.isEnabled: ', this.swPush.isEnabled);
+      
+      this.notificationService.notificationHandler();
+    }
   }
 
   logout() {
@@ -131,6 +136,7 @@ export class NavbarComponent implements OnInit {
   }
 
   subscribeNotification() {
+    console.log("----mmm");
     if (this.swUpdate.isEnabled) {
       this.swPush
         .requestSubscription({
