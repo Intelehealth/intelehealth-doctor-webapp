@@ -70,7 +70,7 @@ export class HomepageComponent implements OnInit {
               const speRequired = attributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
               if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
-                  if (!spe.voided && spe.value === this.specialization) {
+                  if (spe.value === this.specialization) {
                     if (index === 0) {
                       this.visitCategory(active);
                     }

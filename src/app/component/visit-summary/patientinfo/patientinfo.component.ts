@@ -60,35 +60,17 @@ export class PatientinfoComponent implements OnInit {
     var mydate = dateString.replace(
       /^(\d{2})\/(\d{2})\/(\d{4})$/,
       "$3, $2, $1"
-    );
+      );
 
     this.now = new Date();
     var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
 
-    var a = moment([todayDate]);
-    var b = moment([mydate]);
-
+    var a = moment(todayDate);
+    var b = moment(mydate);
     var diffDuration = moment.duration(a.diff(b));
     var ageString = diffDuration.years() + " years - " + diffDuration.months() + " months - " + diffDuration.days() + " days";
     return ageString;
     
-
-    // console.log("year----",diffDuration.years()); // 8 years
-    // console.log("months----",diffDuration.months()); // 5 months
-    // console.log("days----", diffDuration.days()); // 2 days
-
-    // var years = a.diff(b, 'year');
-    // b.add(years, 'years');
-
-    // var months = a.diff(b, 'months', true) % 12;
-    // console.log('months: ', months);
-    // b.add(months, 'months');
-
-    // var days = a.diff(b, 'days', true);
-
-    // ageString = years + " years " + months + " months " + days + " days";
-    // return ageString;
-
     //----sol 3-----------
     //   var now = new Date();
     //   var today = new Date(now.getFullYear(),now.getMonth(),now.getDate());

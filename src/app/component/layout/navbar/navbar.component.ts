@@ -36,8 +36,10 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-    "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg";
-
+  "BDGWYaKQhSDtC8VtcPekovFWM4M7mhs3NHe-X1HA7HH-t7nkiexSyYxUxQkwl2H44BiojKJjOdXi367XgxXxvpw" //myTeleDoc
+    // "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg"; //old
+    // "BGg2p-PUsSzVF-_DgnNfTPTtnel4-oX7Z6lHT7BnDv88D-SffP_dj1XFVV_r0CsUKz59HmaJp8JadZuHNzzWyzs"  //testing
+    
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
@@ -81,7 +83,6 @@ export class NavbarComponent implements OnInit {
     });
     if (this.swPush.isEnabled) {
       console.log('this.swPush.isEnabled: ', this.swPush.isEnabled);
-      
       this.notificationService.notificationHandler();
     }
   }
@@ -136,7 +137,6 @@ export class NavbarComponent implements OnInit {
   }
 
   subscribeNotification() {
-    console.log("----mmm");
     if (this.swUpdate.isEnabled) {
       this.swPush
         .requestSubscription({

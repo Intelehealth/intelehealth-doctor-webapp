@@ -46,6 +46,7 @@ import { AuthGuard } from './auth.guard';
 import { DatePipe } from '@angular/common';
 import { UserIdleModule } from 'angular-user-idle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 // Material Design Imports
 import { MatDialogModule } from '@angular/material/dialog';
@@ -107,6 +108,7 @@ import { environment } from '../environments/environment';
     CurrentVisitComponent,
     ModalsComponent,
   ],
+  
   imports: [
     BrowserModule,
     FormsModule,
@@ -133,6 +135,7 @@ import { environment } from '../environments/environment';
     MatExpansionModule,
     NgbModule,
     HttpClientModule,
+    NgxSpinnerModule,
     UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
@@ -148,7 +151,7 @@ import { environment } from '../environments/environment';
       { path: '**', component: Page404Component }
     ], {scrollPositionRestoration: 'enabled'}),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
+    ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
   ],
   providers: [
     CookieService,

@@ -1,5 +1,5 @@
-<h4>Update Details <a style="float: right; cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>    
-<form [formGroup]='editForm' (submit)="updateDetails()">
+<h4>Update Details <a style="float: right; cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
+<form [formGroup]='editForm'>
     <mat-form-field class="example-full-width">
         <mat-select placeholder="Gender" formControlName="gender">
             <mat-option value="Male">Male</mat-option>
@@ -18,7 +18,7 @@
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Qualification" formControlName="qualification">
     </mat-form-field>
-    <mat-form-field class="example-full-width">
+    <mat-form-field class="example-full-width" *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
         <mat-select placeholder="Specialization" formControlName="specialization">
             <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{specialization}}</mat-option>
         </mat-select>
@@ -26,7 +26,14 @@
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Registration No" formControlName="registrationNumber">
     </mat-form-field>
+
+    <!-- <mat-form-field class="example-full-width"> -->
+    <div style="float: left" *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
+        <button mat-raised-button color="primary" (click)="editSignature()">Edit Signature</button>
+        <!-- </mat-form-field> -->
+    </div>
+
     <div style="float: right">
-    <button mat-raised-button color="primary" type="submit">Save</button>
+        <button mat-raised-button color="primary" type="submit" (click)="updateDetails()">Save</button>
     </div>
 </form>

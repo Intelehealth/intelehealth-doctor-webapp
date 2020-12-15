@@ -1,16 +1,16 @@
-<h4>Setup your Signature <a style="float: right;cursor: pointer;" (click)="onClose()" class="material-icons" >clear</a></h4>
+<h4>Setup your Signature <a style="float: right;cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
 <br>
-<form [formGroup]="addSignatureForm" (ngSubmit)="onSubmit()">
-<div class="input-group">
-<mat-form-field class="example-full-width">
-      <input matInput placeholder="Enter Text" [(ngModel)]="name" formControlName="text">
-</mat-form-field>
-</div>
-<input type="radio" value='1' formControlName="signature"><span style="font-family: arty; font-size: 100px"> {{name}}</span>
-<br>
-<input type="radio" value='2' formControlName="signature"><span style="font-family: asem; font-size: 50px"> {{name}}</span>
-<br>
-<input type="radio" value='3' formControlName="signature"><span style="font-family: youthness; font-size: 50px"> {{name}}</span>
-<br>
-<button mat-raised-button color="primary">Select</button>
+<form [formGroup]="addSignatureForm">
+    <div class="input-group">
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="Enter Text" [(ngModel)]="name" formControlName="text">
+        </mat-form-field>
+    </div>
+    <input type="radio" value='1' formControlName="signature"><span style="font-family: arty; font-size: 100px"> {{name}}</span>
+    <br>
+    <input type="radio" value='2' formControlName="signature"><span style="font-family: asem; font-size: 50px"> {{name}}</span>
+    <br>
+    <input type="radio" value='3' formControlName="signature"><span style="font-family: youthness; font-size: 50px"> {{name}}</span>
+    <br>
+    <button mat-raised-button color="primary" (click)= "onSubmit()">Select</button>
 </form>
