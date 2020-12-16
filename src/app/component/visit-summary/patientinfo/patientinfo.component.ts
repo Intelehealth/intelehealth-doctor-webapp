@@ -59,8 +59,8 @@ constructor(private route: ActivatedRoute,
       this.now = new Date();
       var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
   
-      var a = moment([todayDate]);
-      var b = moment([mydate]);
+      var a = moment(todayDate);
+      var b = moment(mydate);
   
       var diffDuration = moment.duration(a.diff(b));
       var ageString = diffDuration.years() + " years - " + diffDuration.months() + " months - " + diffDuration.days() + " days";
