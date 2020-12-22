@@ -18,7 +18,7 @@
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Qualification" formControlName="qualification">
     </mat-form-field>
-    <mat-form-field class="example-full-width" >
+    <mat-form-field class="example-full-width" *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
         <input matInput placeholder="Specialization" formControlName="specialization">
     </mat-form-field>
     <mat-form-field class="example-full-width">

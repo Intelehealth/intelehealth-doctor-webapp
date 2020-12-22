@@ -19,14 +19,14 @@ export class MyAccountComponent implements OnInit {
 
   name = 'Enter text';
   providerDetails = null;
-
+  userDetails: any
   constructor(private sessionService: SessionService,
     private http: HttpClient,
     private dialog: MatDialog) { }
 
   ngOnInit() {
-    const userDetails = getFromStorage('user');
-    this.sessionService.provider(userDetails.uuid)
+    this.userDetails = getFromStorage('user');
+    this.sessionService.provider(this.userDetails.uuid)
       .subscribe(provider => {
         this.providerDetails = provider.results[0];
         const attributes = provider.results[0].attributes;
