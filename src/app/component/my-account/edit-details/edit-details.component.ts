@@ -3,7 +3,11 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-
+import { EncounterService } from "src/app/services/encounter.service";
+import { MatDialog } from "@angular/material/dialog";
+import { SignatureComponent } from "../signature/signature.component";
+import { Router } from '@angular/router';
+declare var getFromStorage: any;
 
 
 @Component({
@@ -24,18 +28,33 @@ export class EditDetailsComponent implements OnInit {
     specialization: new FormControl(this.data.specialization ? this.data.specialization.value : null),
     registrationNumber: new FormControl(this.data.registrationNumber ? this.data.registrationNumber.value : null)
   });
-
+  status = false;
+  name = "Enter text";
+  userDetails: any
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<EditDetailsComponent>,
+    private dialog: MatDialog,
     private http: HttpClient) { }
 
   ngOnInit() {
+    this.userDetails = getFromStorage('user');
   }
 
   onClose() {
     this.dialogRef.close();
   }
 
+  editSignature() {
+    var obj = {
+        name: this.data.textOfSign.value,
+        textOfSignuuid: this.data.textOfSign.uuid,
+        font: this.data.fontOfSign.value,
+        fontOfSignuuid:this.data.fontOfSign.uuid,
+        pid: this.data.uuid,
+        type: "edit"
+    }
+    this.dialog.open(SignatureComponent, { width: "500px", data: obj});
+  }
 
 
   updateDetails() {

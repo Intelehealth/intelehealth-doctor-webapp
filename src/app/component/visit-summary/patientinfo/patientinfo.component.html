@@ -15,10 +15,10 @@
                     <th scope="row">Sex</th>
                     <td>{{info.gender}}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th scope="row">DOB</th>
                     <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th scope="row">Age</th>
                     <td>{{getAge(info.birthdate | date: 'dd/MM/yyy')}}</td>
@@ -40,7 +40,7 @@
     </div>
     <div class="col-md-6">
         <div *ngIf="profileImagePresent" style="text-align: center">
-            <img [src]=i mage width="40%" height="200">
+            <img [src]=image width="40%" height="200">
         </div>
         <div *ngIf="!profileImagePresent" style="text-align: center">
             <img src="../../../../assets/dummy profile image.jpg" width="40%" height="40%">

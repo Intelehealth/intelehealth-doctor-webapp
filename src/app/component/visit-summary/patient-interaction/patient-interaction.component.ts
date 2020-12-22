@@ -98,7 +98,7 @@ export class PatientInteractionComponent implements OnInit {
               });
           }
         });
-      this.encounterUuid = getEncounterUUID;
+      this.encounterUuid = getEncounterUUID();
       const attributes = providerDetails.attributes;
       this.doctorDetails.name = providerDetails.person.display;
       if (attributes.length) {
