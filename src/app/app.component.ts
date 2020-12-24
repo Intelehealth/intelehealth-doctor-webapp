@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
     if (session) {
       this.sessionService.loginSession(session).subscribe(response => {
         if (response.authenticated === true) {
-          this.router.navigate(['/home']);
+          // this.router.navigate(['/home']);
           this.authService.sendToken(response.sessionId);
           saveToStorage('user', response.user);
         }

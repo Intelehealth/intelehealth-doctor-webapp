@@ -139,7 +139,7 @@ import { environment } from '../environments/environment';
     NgxSpinnerModule,
     UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
     RouterModule.forRoot([
-      { path: '', component: LoginPageComponent },
+      { path: 'login', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
@@ -149,7 +149,8 @@ import { environment } from '../environments/environment';
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-      { path: '**', component: Page404Component }
+      { path: '', redirectTo:'home',pathMatch: 'full' },
+      { path: '**', component: Page404Component },
     ], {scrollPositionRestoration: 'enabled'}),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
