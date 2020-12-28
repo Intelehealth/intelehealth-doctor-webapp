@@ -96,28 +96,35 @@ export class HomepageComponent implements OnInit {
       });
   }
 
+  checkVisit(encounters, visitType) {
+    return encounters.find(({ display = '' }) => display.includes(visitType));
+  }
+
   visitCategory(active) {
-    const value = active.encounters[0].display;
-    if (value.match('Flagged')) {
-      if (!active.encounters[0].voided) {
+    const { encounters = [] } = active;
+    if (this.checkVisit(encounters, "Visit Complete")) {
+      const values = this.assignValueToProperty(active);
+      this.completedVisit.push(values);
+      this.completeVisitNo += 1;
+    } else if (this.checkVisit(encounters, "Visit Note")) {
+      const values = this.assignValueToProperty(active);
+      this.progressVisit.push(values);
+      this.visitNoteNo += 1;
+    } else if (this.checkVisit(encounters, "Flagged")) {
+      if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active);
         this.flagVisit.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
-    } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+    } else if (
+      this.checkVisit(encounters, "ADULTINITIAL") ||
+      this.checkVisit(encounters, "Vitals")
+    ) {
       const values = this.assignValueToProperty(active);
       this.waitingVisit.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
-    } else if (value.match('Visit Note')) {
-      const values = this.assignValueToProperty(active);
-      this.progressVisit.push(values);
-      this.visitNoteNo += 1;
-    } else if (value.match('Visit Complete')) {
-      const values = this.assignValueToProperty(active);
-      this.completedVisit.push(values);
-      this.completeVisitNo += 1;
     }
   }
 
