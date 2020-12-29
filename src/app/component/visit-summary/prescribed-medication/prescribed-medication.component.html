@@ -5,7 +5,6 @@
         <mat-form-field class="w-100" id="medication-form">
             <input matInput placeholder="Medication" (keydown)="add = true"  [ngbTypeahead]="searchPrescription" formControlName="med">
         </mat-form-field>
-    <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>Add Meds</button>
   <div *ngIf="add">
     <div class="form-row">
       <div class="col">
@@ -49,6 +48,7 @@
     <br>
     <textarea class="form-control" placeholder="Additional instruction not covered above" formControlName="additional"></textarea>
     <br>
+    <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>Add Meds</button>
   </div>
 </form>
 </div>
