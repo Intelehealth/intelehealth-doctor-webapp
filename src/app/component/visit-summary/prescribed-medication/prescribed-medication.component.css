@@ -1,12 +1,5 @@
-.example-full-width {
-    width: 30%;
+@media only screen and (max-width: 768px) {
+  .form-row {
+    display: block;
   }
-
-  @media only screen and (max-width: 768px) { 
-    .example-full-width {
-      width: 60%;
-    }
-    .form-row {
-      display: block
-    }
-   }
+}
