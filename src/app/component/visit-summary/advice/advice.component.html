@@ -2,9 +2,10 @@
 <hr>
 <div id="advice-form">
   <form [formGroup]='adviceForm'>
-      <mat-form-field class="w-100">
+      <mat-form-field class="example-full-width">
           <input matInput placeholder="Advice or Refer Patient" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
+      &nbsp;&nbsp;
       <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
   </form>
 </div>
