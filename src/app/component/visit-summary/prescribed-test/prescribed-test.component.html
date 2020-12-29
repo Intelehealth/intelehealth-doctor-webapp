@@ -1,10 +1,11 @@
-<h4><i class="fas fa-vials"></i> Prescribed Tests</h4>
+<h4><i class="fas fa-vials"></i> Prescribed Test</h4>
 <hr>
 <div id="test-form">
     <form [formGroup]='testForm' >
-        <mat-form-field class="w-100">
+        <mat-form-field class="example-full-width">
             <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
+        &nbsp;&nbsp;
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
         <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
       </form>
