@@ -45,7 +45,7 @@ export class PrescribedMedicationComponent implements OnInit {
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
-    dose: new FormControl('', Validators.min(1)),
+    dose: new FormControl('', Validators.min(0)),
     unit: new FormControl('', [Validators.required]),
     amount: new FormControl('', Validators.min(1)),
     unitType: new FormControl('', [Validators.required]),
@@ -152,10 +152,7 @@ export class PrescribedMedicationComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptMed)
       .subscribe(response => {
         response.results.forEach(obs => {
-          console.log('obs: -------------------->>>>> ', obs);
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            console.log('obs1111111: -------------------->>>>> ', obs.encounter.visit.uuid === this.visitUuid);
-
             this.meds.push(obs);
           }
         });
