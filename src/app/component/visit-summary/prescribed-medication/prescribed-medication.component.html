@@ -10,7 +10,7 @@
   <div *ngIf="add">
     <div class="form-row">
       <div class="col">
-        <input type="number" min="1" class="form-control" placeholder="Strength" formControlName="dose">
+        <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control" placeholder="Strength" formControlName="dose">
       </div>
       <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: mg)" formControlName="unit">
