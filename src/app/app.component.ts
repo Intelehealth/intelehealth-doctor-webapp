@@ -204,7 +204,7 @@ export class AppComponent implements OnInit {
         intro: 'Great job, you have completed the tour.'
       }
     ];
-    if (window.location.pathname.match('home') !== null) {
+    if (window.location.hash.match('home') !== null) {
       this.introJS.setOptions({
         steps: steps,  showProgress: true,
             showBullets: false,
@@ -212,7 +212,7 @@ export class AppComponent implements OnInit {
             doneLabel: 'Thanks',
       }).start();
     }
-    if (window.location.pathname.match('visitSummary') !== null) {
+    if (window.location.hash.match('visitSummary') !== null) {
       steps = [{
         element: '#past-visits',
         intro: 'Click on the visit date to see the patient record for that visit and schedule.'
@@ -276,5 +276,4 @@ export class AppComponent implements OnInit {
       }).start();
     }
   }
-
 }
