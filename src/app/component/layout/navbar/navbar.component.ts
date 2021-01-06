@@ -36,10 +36,11 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-  // "BDGWYaKQhSDtC8VtcPekovFWM4M7mhs3NHe-X1HA7HH-t7nkiexSyYxUxQkwl2H44BiojKJjOdXi367XgxXxvpw" //myTeleDoc
+    // "BAfolLQ7VpRSmWm6DskG-YyG3jjzq5z0rjKEl5HXLCw2W8CKS9cVmifnCAWnrlJMETgbgjuV1pWKLUf8zlbojH0"; // new
+    // "BDGWYaKQhSDtC8VtcPekovFWM4M7mhs3NHe-X1HA7HH-t7nkiexSyYxUxQkwl2H44BiojKJjOdXi367XgxXxvpw" //myTeleDoc
     // "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg"; //old
-    "BGg2p-PUsSzVF-_DgnNfTPTtnel4-oX7Z6lHT7BnDv88D-SffP_dj1XFVV_r0CsUKz59HmaJp8JadZuHNzzWyzs"  //testing
-    
+    "BGg2p-PUsSzVF-_DgnNfTPTtnel4-oX7Z6lHT7BnDv88D-SffP_dj1XFVV_r0CsUKz59HmaJp8JadZuHNzzWyzs"; //testing
+
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
@@ -75,6 +76,10 @@ export class NavbarComponent implements OnInit {
     } else {
       this.logout();
     }
+    this.authService.getFingerPrint();
+    setTimeout(() => {
+      this.subscribeNotification(true);
+    }, 1000);
 
     // this.notificationService.getUserSettings().subscribe((res) => {
     //   if (res && res["data"] && res["data"].snooze_till) {
@@ -135,7 +140,15 @@ export class NavbarComponent implements OnInit {
     this.messageEvent.emit();
   }
 
-  subscribeNotification() {
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  subscribeNotification(reSubscribe = false) {
     if (this.swUpdate.isEnabled) {
       this.swPush
         .requestSubscription({
@@ -155,15 +168,19 @@ export class NavbarComponent implements OnInit {
                   .postSubscription(
                     sub,
                     element.value,
-                    providerDetails.person.display
+                    providerDetails.person.display,
+                    this.user.uuid,
+                    this.authService.fingerPrint
                   )
                   .subscribe((response) => {
                     if (response) {
-                      this.snackbar.open(
-                        `Notification Subscribed Successfully`,
-                        null,
-                        { duration: 4000 }
-                      );
+                      if (!reSubscribe) {
+                        this.snackbar.open(
+                          `Notification Subscribed Successfully`,
+                          null,
+                          { duration: 4000 }
+                        );
+                      }
                       saveToStorage("subscribed", true);
                       this.subscribeAccess = true;
                     }
@@ -213,7 +230,7 @@ export class NavbarComponent implements OnInit {
   //   }, timeout);
   // }
 
-  get snoozeTimeout(){
+  get snoozeTimeout() {
     return this.notificationService.snoozeTimeout;
   }
 }

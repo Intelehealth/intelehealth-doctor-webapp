@@ -18,7 +18,7 @@
                     <a class="nav-link" routerLink="/home">Home</a>
                 </li>
                 <li class="nav-item" *ngIf="!subscribeAccess">
-                    <a class="nav-link" (click)="subscribeNotification()">Subscribe</a>
+                    <a class="nav-link" (click)="subscribeNotification(false)">Subscribe</a>
                 </li>
                 <li *ngIf="systemAccess" class="nav-item">
                     <a class="nav-link" routerLink="/ayu">Ayu</a>
