@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "~10.0.9",
     "@angular/router": "~10.0.9",
     "@angular/service-worker": "~10.0.9",
+    "@fingerprintjs/fingerprintjs": "^3.0.5",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
     "@types/intro.js": "^2.4.7",
     "angular-user-idle": "^2.2.2",
