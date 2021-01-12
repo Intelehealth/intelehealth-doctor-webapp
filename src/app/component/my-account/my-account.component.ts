@@ -63,7 +63,7 @@ export class MyAccountComponent implements OnInit {
 
 
   signature() {
-    this.dialog.open(SignatureComponent, { width: '500px' });
+    this.dialog.open(SignatureComponent, { width: '500px', data: {type: "add"} });
   }
 
 }

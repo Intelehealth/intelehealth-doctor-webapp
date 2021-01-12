@@ -29,6 +29,7 @@
         "angular-user-idle": "^2.2.4",
         "core-js": "^3.6.5",
         "intro.js": "^2.9.3",
+        "moment": "^2.24.0",
         "ngx-cookie-service": "^10.0.1",
         "rxjs": "~6.6.2",
         "serialize-javascript": "^4.0.0",
