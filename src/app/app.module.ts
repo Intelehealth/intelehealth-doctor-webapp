@@ -159,7 +159,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     HttpClientModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
-      { path: '', component: LoginPageComponent },
+      { path: 'login', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
@@ -169,7 +169,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-      { path: '**', component: Page404Component }
+      { path: '', redirectTo: 'home', pathMatch:'full' },
+      { path: '**', component: Page404Component },
     ], { scrollPositionRestoration: 'enabled' }),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
