@@ -95,9 +95,9 @@ constructor(private service: EncounterService,
                   },
                   skipFlag: true
                 };
-                if(!this.pushNotificationService.snoozeTimeout){
-                  this.pushNotificationService.postNotification(payload).subscribe();
-                }
+                // if(!this.pushNotificationService.snoozeTimeout){
+                //   this.pushNotificationService.postNotification(payload).subscribe();
+                // }
               }
             });
           } else {
@@ -146,7 +146,6 @@ constructor(private service: EncounterService,
             this.service.postEncounter(json)
             .subscribe(post => { 
               this.visitCompletePresent = true;
-              this.router.navigateByUrl('/home');
               this.snackbar.open('Visit Complete', null, {duration: 4000});
             });
           } else {
