@@ -1,21 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { HelperService } from "./helper.service";
+import { VisitData } from "../component/homepage/homepage.component";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
-
 export class VisitService {
   private baseURL = environment.baseURL;
+  public flagVisit: VisitData[] = [];
+  public waitingVisit: VisitData[] = [];
+  public progressVisit: VisitData[] = [];
+  public completedVisit: VisitData[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private helper: HelperService) {}
 
-  getVisits(): Observable<any> {
-    // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
+  getVisits(params = {}): Observable<any> {
+    const query = {
+      ...{
+        includeInactive: false,
+        v:
+          "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+      },
+      ...params,
+    };
+    const url = `${this.baseURL}/visit${this.helper.toParamString(query)}`;
     return this.http.get(url);
   }
 

@@ -41,7 +41,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="flagVisit.length > 0">
-                <app-tables [data]="flagVisit"></app-tables>
+                <app-tables [tableFor]="'flagVisit'" (tableEmitter)="tableChange($event)" [data]="flagVisit"></app-tables>
             </ng-container>
         </mat-expansion-panel>
 
@@ -54,7 +54,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="waitingVisit.length > 0">
-                <app-tables [data]="waitingVisit"></app-tables>
+                <app-tables [tableFor]="'waitingVisit'" (tableEmitter)="tableChange($event)" [data]="waitingVisit"></app-tables>
             </ng-container>
         </mat-expansion-panel>
 
@@ -67,7 +67,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="progressVisit.length > 0">
-                <app-tables [data]="progressVisit"></app-tables>
+                <app-tables [tableFor]="'progressVisit'" (tableEmitter)="tableChange($event)" [data]="progressVisit"></app-tables>
             </ng-container>
         </mat-expansion-panel>
 
@@ -80,7 +80,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="completedVisit.length > 0">
-                <app-tables [data]="completedVisit"></app-tables>
+                <app-tables [tableFor]="'completedVisit'" (tableEmitter)="tableChange($event)" [data]="completedVisit"></app-tables>
             </ng-container>
         </mat-expansion-panel>
     </mat-accordion>
