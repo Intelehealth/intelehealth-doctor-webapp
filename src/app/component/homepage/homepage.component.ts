@@ -1,7 +1,6 @@
-import { GlobalConstants } from "../../js/global-constants";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { HelperService } from "src/app/services/helper.service";
@@ -27,7 +26,7 @@ export interface VisitData {
   templateUrl: "./homepage.component.html",
   styleUrls: ["./homepage.component.css"],
 })
-export class HomepageComponent implements OnInit {
+export class HomepageComponent implements OnInit, OnDestroy {
   value: any = {};
 
   setSpiner = true;
@@ -67,6 +66,13 @@ export class HomepageComponent implements OnInit {
       this.authService.logout();
     }
     this.getVisits();
+  }
+
+  ngOnDestroy() {
+    this.service.flagVisit = [];
+    this.service.waitingVisit = [];
+    this.service.progressVisit = [];
+    this.service.completedVisit = [];
   }
 
   get nextPage() {
@@ -153,25 +159,24 @@ export class HomepageComponent implements OnInit {
 
   visitCategory(active) {
     const { encounters = [] } = active;
+    const update = this.helper.getUpdatedValue;
     if (this.checkVisit(encounters, "Visit Complete")) {
       const values = this.assignValueToProperty(active);
-      this.service.completedVisit.push(values);
+      this.service.completedVisit = update(this.completedVisit, values, "id");
     } else if (this.checkVisit(encounters, "Visit Note")) {
       const values = this.assignValueToProperty(active);
-      this.service.progressVisit.push(values);
+      this.service.progressVisit = update(this.progressVisit, values, "id");
     } else if (this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active);
-        this.service.flagVisit.push(values);
-        GlobalConstants.visits.push(active);
+        this.service.flagVisit = update(this.flagVisit, values, "id");
       }
     } else if (
       this.checkVisit(encounters, "ADULTINITIAL") ||
       this.checkVisit(encounters, "Vitals")
     ) {
       const values = this.assignValueToProperty(active);
-      this.service.waitingVisit.push(values);
-      GlobalConstants.visits.push(active);
+      this.service.waitingVisit = update(this.waitingVisit, values, "id");
     }
   }
 
