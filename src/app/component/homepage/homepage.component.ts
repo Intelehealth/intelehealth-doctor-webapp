@@ -1,9 +1,9 @@
-import { GlobalConstants } from '../../js/global-constants';
-import { AuthService } from 'src/app/services/auth.service';
-import { SessionService } from './../../services/session.service';
-import { Component, OnInit } from '@angular/core';
-import { VisitService } from 'src/app/services/visit.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { GlobalConstants } from "../../js/global-constants";
+import { AuthService } from "src/app/services/auth.service";
+import { SessionService } from "./../../services/session.service";
+import { Component, OnInit } from "@angular/core";
+import { VisitService } from "src/app/services/visit.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -19,13 +19,11 @@ export interface VisitData {
   provider: string;
 }
 
-
 @Component({
-  selector: 'app-homepage',
-  templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.css']
+  selector: "app-homepage",
+  templateUrl: "./homepage.component.html",
+  styleUrls: ["./homepage.component.css"],
 })
-
 export class HomepageComponent implements OnInit {
   value: any = {};
   activePatient = 0;
@@ -39,35 +37,51 @@ export class HomepageComponent implements OnInit {
   setSpiner = true;
   specialization;
 
-  constructor(private sessionService: SessionService,
-              private authService: AuthService,
-              private service: VisitService,
-              private snackbar: MatSnackBar) { }
+  constructor(
+    private sessionService: SessionService,
+    private authService: AuthService,
+    private service: VisitService,
+    private snackbar: MatSnackBar
+  ) {}
 
   ngOnInit() {
-    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
-    const userDetails = getFromStorage('user');
+    if (getFromStorage("visitNoteProvider")) {
+      deleteFromStorage("visitNoteProvider");
+    }
+    const userDetails = getFromStorage("user");
     if (userDetails) {
-      this.sessionService.provider(userDetails.uuid)
-      .subscribe(provider => {
-        saveToStorage('provider', provider.results[0]);
+      this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
+        saveToStorage("provider", provider.results[0]);
         const attributes = provider.results[0].attributes;
-        attributes.forEach(element => {
-          if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+        attributes.forEach((element) => {
+          if (
+            element.attributeType.uuid ===
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            !element.voided
+          ) {
             this.specialization = element.value;
           }
         });
+        this.getVisits();
       });
-    } else {this.authService.logout(); }
-    this.service.getVisits()
-      .subscribe(response => {
-        // GlobalConstants.visits = response.results;
+    } else {
+      this.authService.logout();
+    }
+  }
+
+  getVisits() {
+    this.service.getVisits().subscribe(
+      (response) => {
         const visits = response.results;
-        visits.forEach(active => {
+        visits.forEach((active) => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
-              const speRequired = attributes.filter(attr => attr.attributeType.uuid === '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d');
+              const speRequired = attributes.filter(
+                (attr) =>
+                  attr.attributeType.uuid ===
+                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+              );
               if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization) {
@@ -80,24 +94,26 @@ export class HomepageComponent implements OnInit {
                   }
                 });
               }
-            } else if (this.specialization === 'General Physician') {
+            } else if (this.specialization === "General Physician") {
               this.visitCategory(active);
             }
           }
           this.value = {};
         });
         this.setSpiner = false;
-      }, err => {
+      },
+      (err) => {
         if (err.error instanceof Error) {
-          this.snackbar.open('Client-side error', null, { duration: 4000 });
+          this.snackbar.open("Client-side error", null, { duration: 4000 });
         } else {
-          this.snackbar.open('Server-side error', null, { duration: 4000 });
+          this.snackbar.open("Server-side error", null, { duration: 4000 });
         }
-      });
+      }
+    );
   }
 
   checkVisit(encounters, visitType) {
-    return encounters.find(({ display = '' }) => display.includes(visitType));
+    return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
   visitCategory(active) {
@@ -137,9 +153,10 @@ export class HomepageComponent implements OnInit {
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
     this.value.status = active.encounters[0].encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split('- ')[1];
+    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
+      "- "
+    )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }
-
 }
