@@ -31,6 +31,10 @@ export class PushNotificationsService {
     return this.http.post(`${this.baseURL}/push`, payload);
   }
 
+  unsubscribeNotification(payload) {
+    return this.http.post(`${this.baseURL}/unsubscribe`, payload);
+  }
+
   //Snooze notification functionality
   setSnoozeFor(snooze_for) {
     return this.http.put(
