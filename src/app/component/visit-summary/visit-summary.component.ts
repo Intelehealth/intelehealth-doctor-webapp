@@ -5,6 +5,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -20,6 +21,10 @@ visitNotePresent = false;
 visitCompletePresent = false;
 setSpiner = true;
 doctorDetails; doctorValue;
+conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
+diagnosis: any = [];
+patientId: string;
+visitUuid: string;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -27,6 +32,7 @@ constructor(private service: EncounterService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
             private router: Router,
+            private diagnosisService: DiagnosisService,
             private pushNotificationService: PushNotificationsService) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
@@ -108,13 +114,27 @@ constructor(private service: EncounterService,
     }
   }
 
-  sign() {
+  sign() { 
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.patientId = this.route.snapshot.params['patient_id'];
+    this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
+    .subscribe(response => {
+      console.log('response: ', response.results.length > 0);
+      if(response.results.length > 0){
+        this.signandsubmit();
+      }else{
+        this.snackbar.open('Diagnosis is required!', null, {duration: 4000, panelClass: ['red-snackbar']});
+      }
+    });
+  }
+
+  signandsubmit(){
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     const userDetails = getFromStorage('user');
     const providerDetails = getFromStorage('provider');
-    if (userDetails && providerDetails) {
+    if (userDetails && providerDetails ) {
         this.doctorDetails = providerDetails;
         this.getDoctorValue();
         const providerUuid = providerDetails.uuid;

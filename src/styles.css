@@ -52,3 +52,9 @@ body.font-lato th,
 body.font-lato td {
     font-family: lato;
 }
+
+.red-snackbar {
+    color: white;
+    font-weight: bold;
+    background-color:  #F44336 !important;
+  }
