@@ -50,9 +50,9 @@ export class EditDetailsComponent implements OnInit {
     private http: HttpClient,
     private dialog: MatDialog,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit() {      
+  ngOnInit() {
     this.userDetails = getFromStorage('user');
   }
 
@@ -62,16 +62,12 @@ export class EditDetailsComponent implements OnInit {
 
   editSignature() {
     var obj = {
-        name: this.data.textOfSign.value,
-        textOfSignuuid: this.data.textOfSign.uuid,
-        font: this.data.fontOfSign.value,
-        fontOfSignuuid:this.data.fontOfSign.uuid,
-        pid: this.data.uuid,
-        type: "edit"
+      pid: this.data.uuid,
+      type: "edit"
     }
-    this.dialog.open(SignatureComponent, { width: "500px", data: obj});
+    this.dialog.open(SignatureComponent, { width: "500px", data: obj });
   }
-  
+
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {
@@ -79,7 +75,7 @@ export class EditDetailsComponent implements OnInit {
       const json = {
         gender: value.gender,
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.emailId !== null) {
@@ -90,7 +86,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "226c0494-d67e-47b4-b7ec-b368064844bd",
         value: value.emailId,
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.phoneNphoneNphoneNumberumberphoneNumberumber !== null) {
@@ -101,7 +97,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37",
         value: value.phoneNumber.toString(),
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.whatsapp !== null) {
@@ -112,18 +108,18 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "fccc49f1-49ca-44bb-9e61-21c88ae6dd64",
         value: value.whatsapp.toString(),
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.qualification !== null) {
       const URL = this.data.qualification
-      ? `${this.baseURLProvider}/${this.data.qualification.uuid}`
-      : this.baseURLProvider;
+        ? `${this.baseURLProvider}/${this.data.qualification.uuid}`
+        : this.baseURLProvider;
       const json = {
         attributeType: "4246639f-e9a8-48ea-b9ff-629a7c430543",
         value: value.qualification,
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.registrationNumber !== null) {
@@ -133,8 +129,8 @@ export class EditDetailsComponent implements OnInit {
       const json = {
         attributeType: "992ccbdd-201a-44ef-8abb-c2eee079886d",
         value: value.registrationNumber,
-      }; 
-      this.http.post(URL, json).subscribe((response) => {});
+      };
+      this.http.post(URL, json).subscribe((response) => { });
     }
 
     if (value.signature !== null) {
@@ -156,10 +152,10 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "ed1715f5-93e2-404e-b3c9-2a2d9600f062",
         value: value.specialization,
       };
-      this.http.post(URL, json).subscribe((response) => {});
+      this.http.post(URL, json).subscribe((response) => { });
     }
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }
-  
+
 }

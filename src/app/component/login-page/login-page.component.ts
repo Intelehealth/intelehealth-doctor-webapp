@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
-declare var saveToStorage: any;
-
+// declare var saveToStorage: any;
+declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -43,12 +43,21 @@ export class LoginPageComponent implements OnInit {
     saveToStorage('session', base64);
     this.sessionService.loginSession(base64).subscribe(response => {
       if (response.authenticated === true) {
-        this.router.navigate(['/home']);
-        this.authService.sendToken(response.sessionId);
+        this.sessionService.provider(response.user.uuid).subscribe((provider) => {
+          if (provider.results[0].attributes.length === 0) {
+            this.router.navigate(['/myAccount']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+
+        }, (error) => {
+          this.router.navigate(['home']);
+        })
+        this.authService.sendToken(response.user.sessionId);
         saveToStorage('user', response.user);
-        this.snackbar.open(`Welcome ${response.user.person.display}`, null, {duration: 4000});
+        this.snackbar.open(`Welcome ${response.user.person.display}`, null, { duration: 4000 });
       } else {
-        this.snackbar.open('Username & Password doesn\'t match', null, {duration: 4000});
+        this.snackbar.open('Username & Password doesn\'t match', null, { duration: 4000 });
       }
     });
   }
