@@ -6,7 +6,7 @@ import { environment } from "../../../../environments/environment";
 import { EncounterService } from "src/app/services/encounter.service";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 declare var getFromStorage: any;
 
 @Component({
@@ -17,9 +17,7 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
-  specializations = [
-    "General Physician"
-  ];
+  specializations = ["General Physician"];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
@@ -39,21 +37,21 @@ export class EditDetailsComponent implements OnInit {
     ),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
-    )
+    ),
   });
   status = false;
   name = "Enter text";
-  userDetails: any
+  userDetails: any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<EditDetailsComponent>,
     private http: HttpClient,
     private dialog: MatDialog,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.userDetails = getFromStorage('user');
+    this.userDetails = getFromStorage("user");
   }
 
   onClose() {
@@ -62,9 +60,13 @@ export class EditDetailsComponent implements OnInit {
 
   editSignature() {
     var obj = {
+      name: this.data.textOfSign.value,
+      textOfSignuuid: this.data.textOfSign.uuid,
+      font: this.data.fontOfSign.value,
+      fontOfSignuuid: this.data.fontOfSign.uuid,
       pid: this.data.uuid,
-      type: "edit"
-    }
+      type: "edit",
+    };
     this.dialog.open(SignatureComponent, { width: "500px", data: obj });
   }
 
@@ -75,7 +77,7 @@ export class EditDetailsComponent implements OnInit {
       const json = {
         gender: value.gender,
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.emailId !== null) {
@@ -86,7 +88,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "226c0494-d67e-47b4-b7ec-b368064844bd",
         value: value.emailId,
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.phoneNphoneNphoneNumberumberphoneNumberumber !== null) {
@@ -97,7 +99,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37",
         value: value.phoneNumber.toString(),
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.whatsapp !== null) {
@@ -108,7 +110,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "fccc49f1-49ca-44bb-9e61-21c88ae6dd64",
         value: value.whatsapp.toString(),
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.qualification !== null) {
@@ -119,7 +121,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "4246639f-e9a8-48ea-b9ff-629a7c430543",
         value: value.qualification,
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.registrationNumber !== null) {
@@ -130,7 +132,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "992ccbdd-201a-44ef-8abb-c2eee079886d",
         value: value.registrationNumber,
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
 
     if (value.signature !== null) {
@@ -152,10 +154,9 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "ed1715f5-93e2-404e-b3c9-2a2d9600f062",
         value: value.specialization,
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      this.http.post(URL, json).subscribe((response) => {});
     }
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }
-
 }
