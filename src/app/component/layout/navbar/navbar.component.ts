@@ -35,11 +35,6 @@ export class NavbarComponent implements OnInit {
     { day: "Saturday", startTime: null, endTime: null },
     { day: "Sunday", startTime: null, endTime: null },
   ];
-  // readonly VapidKEY =
-  //   "BAfolLQ7VpRSmWm6DskG-YyG3jjzq5z0rjKEl5HXLCw2W8CKS9cVmifnCAWnrlJMETgbgjuV1pWKLUf8zlbojH0"; // new
-    // "BDGWYaKQhSDtC8VtcPekovFWM4M7mhs3NHe-X1HA7HH-t7nkiexSyYxUxQkwl2H44BiojKJjOdXi367XgxXxvpw" //myTeleDoc
-    // "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg"; //old
-    // "BGg2p-PUsSzVF-_DgnNfTPTtnel4-oX7Z6lHT7BnDv88D-SffP_dj1XFVV_r0CsUKz59HmaJp8JadZuHNzzWyzs"; //testing
 
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
@@ -77,18 +72,6 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
-    // setTimeout(() => {
-    //   this.subscribeNotification(true);
-    // }, 1000);
-
-    // // this.notificationService.getUserSettings().subscribe((res) => {
-    // //   if (res && res["data"] && res["data"].snooze_till) {
-    // //     this.setSnoozeTimeout(res["data"].snooze_till);
-    // //   }
-    // // });
-    // if (this.swPush.isEnabled) {
-    //   this.notificationService.notificationHandler();
-    // }
   }
 
   logout() {
@@ -147,90 +130,4 @@ export class NavbarComponent implements OnInit {
       return {};
     }
   }
-
-  // subscribeNotification(reSubscribe = false) {
-  //   if (this.swUpdate.isEnabled) {
-  //     this.swPush
-  //       .requestSubscription({
-  //         serverPublicKey: this.VapidKEY,
-  //       })
-  //       .then((sub) => {
-  //         const providerDetails = getFromStorage("provider");
-  //         if (providerDetails) {
-  //           const attributes = providerDetails.attributes;
-  //           attributes.forEach((element) => {
-  //             if (
-  //               element.attributeType.uuid ===
-  //                 "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-  //               !element.voided
-  //             ) {
-  //               this.notificationService
-  //                 .postSubscription(
-  //                   sub,
-  //                   element.value,
-  //                   providerDetails.person.display,
-  //                   this.user.uuid,
-  //                   this.authService.fingerPrint
-  //                 )
-  //                 .subscribe((response) => {
-  //                   if (response) {
-  //                     if (!reSubscribe) {
-  //                       this.snackbar.open(
-  //                         `Notification Subscribed Successfully`,
-  //                         null,
-  //                         { duration: 4000 }
-  //                       );
-  //                     }
-  //                     saveToStorage("subscribed", true);
-  //                     this.subscribeAccess = true;
-  //                   }
-  //                 });
-  //             }
-  //           });
-  //         }
-  //       });
-  //   }
-  // }
-
-  // public toggleIcon() {
-  //   this.notificationMenu = !this.notificationMenu;
-  //   if (this.notificationMenu) {
-  //     localStorage.setItem("showNotification", "1");
-  //   } else {
-  //     localStorage.setItem("showNotification", "0");
-  //   }
-  // }
-
-  // // setNotification(period) {
-  // //   if (period !== "custom") {
-  // //     this.selectedNotification = period;
-  // //   }
-  // //   this.notificationService.setSnoozeFor(period).subscribe((response) => {
-  // //     if (!response["snooze_till"]) {
-  // //       this.notificationService.snoozeTimeout = clearTimeout(
-  // //         this.notificationService.snoozeTimeout
-  // //       );
-  // //     } else {
-  // //       this.setSnoozeTimeout(response["snooze_till"]);
-  // //     }
-  // //   });
-  // //   this.notificationMenu = false;
-  // // }
-
-  // // setSnoozeTimeout(timeout) {
-  // //   if (this.notificationService.snoozeTimeout)
-  // //     clearTimeout(this.notificationService.snoozeTimeout);
-  // //   this.notificationService.snoozeTimeout = setTimeout(() => {
-  // //     this.notificationService.setSnoozeFor("off").subscribe((response) => {
-  // //       if (this.notificationService.snoozeTimeout)
-  // //         this.notificationService.snoozeTimeout = clearTimeout(
-  // //           this.notificationService.snoozeTimeout
-  // //         );
-  // //     });
-  // //   }, timeout);
-  // // }
-
-  // get snoozeTimeout() {
-  //   return this.notificationService.snoozeTimeout;
-  // }
 }

@@ -60,17 +60,6 @@ export class MyAccountComponent implements OnInit {
     this.http.post(URL, json).subscribe((response) => { });
   }
 
-  saveAddress(value) {
-    // tslint:disable-next-line: max-line-length
-    // const URL = `${this.baseURL}/provider/${this.providerDetails.uuid}/attribute/${this.providerUpdate.address}`;
-    // const json = {
-    // 'attributeType': 'eb410260-4f26-4477-85fe-1bdfe3d3dad2',
-    // 'value': value
-    // };
-    // this.http.post(URL, json)
-    // .subscribe(response => console.log(response));
-  }
-
   signature() {
     this.dialog.open(SignatureComponent, {
       width: "500px",

@@ -4,8 +4,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
-// declare var saveToStorage: any;
-declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
+declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
   templateUrl: "./login-page.component.html",
