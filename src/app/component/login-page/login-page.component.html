@@ -36,6 +36,12 @@
                     formControlName="username"
                   />
                 </div>
+                <div
+                  class="alert alert-danger"
+                  *ngIf="submitted && controls.username.errors?.maxlength"
+                >
+                  Username must not be greater than 12 characters.
+                </div>
               </div>
               <div role="group" class="form-group">
                 <div>
@@ -67,6 +73,12 @@
                   </div>
                   <div
                     class="alert alert-danger"
+                    *ngIf="submitted && controls.password.errors?.maxlength"
+                  >
+                    Password must not be greater than 12 characters.
+                  </div>
+                  <div
+                    class="alert alert-danger"
                     *ngIf="submitted && controls.password.errors?.required"
                   >
                     Password is required.
@@ -76,7 +88,11 @@
             </div>
             <div class="modal-footer clearfix">
               <div class="float-right">
-                <button type="submit" class="btn btn-primary">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="submitted && loginForm.invalid"
+                >
                   Login to Dashboard
                 </button>
               </div>

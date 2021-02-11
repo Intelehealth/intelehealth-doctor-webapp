@@ -139,7 +139,6 @@ export class VisitSummaryComponent implements OnInit {
     this.diagnosisService
       .getObs(this.patientId, this.conceptDiagnosis)
       .subscribe((response) => {
-        console.log("response: ", response.results.length > 0);
         if (response.results.length > 0) {
           this.signandsubmit();
         } else {

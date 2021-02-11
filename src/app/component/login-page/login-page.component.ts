@@ -12,10 +12,14 @@ declare var saveToStorage: any;
 })
 export class LoginPageComponent implements OnInit {
   loginForm = new FormGroup({
-    username: new FormControl("", [Validators.required]),
+    username: new FormControl("", [
+      Validators.required,
+      Validators.maxLength(12),
+    ]),
     password: new FormControl("", [
       Validators.required,
       Validators.minLength(8),
+      Validators.maxLength(12),
     ]),
   });
 

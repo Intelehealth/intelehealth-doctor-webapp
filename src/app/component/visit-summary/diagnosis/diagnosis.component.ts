@@ -80,7 +80,6 @@ export class DiagnosisComponent implements OnInit {
   }
 
   search(event) {
-    console.log("event: ", event);
     this.diagnosisService
       .getDiagnosisList(event.target.value)
       .subscribe((response) => {
