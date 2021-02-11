@@ -47,7 +47,7 @@ export class PatientinfoComponent implements OnInit {
           this.info["telephone"] = attri.value;
         } else if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
-        } 
+        }
       });
       this.patientInfo.push(this.info);
     });
@@ -58,7 +58,7 @@ export class PatientinfoComponent implements OnInit {
     var mydate = dateString.replace(
       /^(\d{2})\/(\d{2})\/(\d{4})$/,
       "$3, $2, $1"
-      );
+    );
 
     this.now = new Date();
     var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
@@ -66,8 +66,13 @@ export class PatientinfoComponent implements OnInit {
     var a = moment(todayDate);
     var b = moment(mydate);
     var diffDuration = moment.duration(a.diff(b));
-    var ageString = diffDuration.years() + " years - " + diffDuration.months() + " months - " + diffDuration.days() + " days";
+    var ageString =
+      diffDuration.years() +
+      " years - " +
+      diffDuration.months() +
+      " months - " +
+      diffDuration.days() +
+      " days";
     return ageString;
-    
   }
 }

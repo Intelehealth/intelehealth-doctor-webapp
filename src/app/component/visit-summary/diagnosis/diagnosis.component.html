@@ -1,42 +1,74 @@
-<h4><i class="fas fa-diagnoses"></i> Diagnosis<span style="color: red;">*</span></h4>
-<hr>
+<h4>
+  <i class="fas fa-diagnoses"></i> Diagnosis<span style="color: red">*</span>
+</h4>
+<hr />
 <div>
-<form [formGroup]='diagnosisForm'>
+  <form [formGroup]="diagnosisForm">
     <mat-form-field class="example-full-width" id="dropdown-diagnosis">
-        <input matInput placeholder="Diagnosis" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
-          <span>{{state.code}} </span>
-          <span> <b>{{state.name}}</b></span>
-      </mat-option>
-    </mat-autocomplete>
+      <input
+        matInput
+        placeholder="Diagnosis"
+        aria-label="State"
+        [matAutocomplete]="auto"
+        (keydown)="search($event)"
+        formControlName="text"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
+          <span>{{ state.code }} </span>
+          <span>
+            <b>{{ state.name }}</b></span
+          >
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
     <div id="primary-confirm">
-    <section>
-    <mat-radio-group aria-label="Select an option" formControlName="type">
-        <mat-radio-button value="Primary">Primary </mat-radio-button>
-        <mat-radio-button value="Secondary">Secondary</mat-radio-button>
-      </mat-radio-group>
-    </section>
-    <section>
-    <mat-radio-group aria-label="Select an option" formControlName="confirm">
-        <mat-radio-button value="Provisional">Provisional </mat-radio-button>
-        <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
-      </mat-radio-group>
-    </section>
+      <section>
+        <mat-radio-group aria-label="Select an option" formControlName="type">
+          <mat-radio-button value="Primary">Primary </mat-radio-button>
+          <mat-radio-button value="Secondary">Secondary</mat-radio-button>
+        </mat-radio-group>
+      </section>
+      <section>
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="confirm"
+        >
+          <mat-radio-button value="Provisional">Provisional </mat-radio-button>
+          <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
+        </mat-radio-group>
+      </section>
     </div>
-   <br>
-  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
-</form>
+    <br />
+    <button
+      type="reset"
+      (click)="onSubmit()"
+      mat-raised-button
+      color="primary"
+      id="diagnosis-submit"
+      [disabled]="!diagnosisForm.valid"
+    >
+      Add Diagnosis
+    </button>
+  </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">
-  <br>
-<div>
+  <br />
+  <div>
     <ul class="list-unstyled">
-    <mat-list [@moveInLeft] *ngFor='let diagnosis of diagnosis, index as i' class="alert alert-primary">
-      <div class="doctor-value">{{diagnosis.value}} </div>
-    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-    </mat-list>
-  </ul>
-</div>
+      <mat-list
+        [@moveInLeft]
+        *ngFor="let diagnosis of diagnosis; index as i"
+        class="alert alert-primary"
+      >
+        <div class="doctor-value">{{ diagnosis.value }}</div>
+        <i
+          (click)="delete(i)"
+          class="material-icons float-right"
+          style="color: rgb(235, 30, 30); cursor: pointer"
+          >delete</i
+        >
+      </mat-list>
+    </ul>
+  </div>
 </ng-container>

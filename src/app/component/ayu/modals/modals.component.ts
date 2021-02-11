@@ -1,20 +1,21 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-modals',
-  templateUrl: './modals.component.html',
-  styleUrls: ['./modals.component.css']
+  selector: "app-modals",
+  templateUrl: "./modals.component.html",
+  styleUrls: ["./modals.component.css"],
 })
 export class ModalsComponent implements OnInit {
   file: any;
   mindmapUploadJson: any;
   minDate = new Date();
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
-  private dialogRef: MatDialogRef<ModalsComponent>) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data,
+    private dialogRef: MatDialogRef<ModalsComponent>
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   close(): void {
     this.dialogRef.close();
@@ -26,7 +27,9 @@ export class ModalsComponent implements OnInit {
   }
 
   uploadMindmap() {
-    const mindmapUpload = document.getElementById('mindmapUpload') as HTMLInputElement;
+    const mindmapUpload = document.getElementById(
+      "mindmapUpload"
+    ) as HTMLInputElement;
     mindmapUpload.click();
   }
 
@@ -39,5 +42,4 @@ export class ModalsComponent implements OnInit {
     };
     fileReader.readAsText(this.file);
   }
-
 }

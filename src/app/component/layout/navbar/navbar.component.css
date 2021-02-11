@@ -1,15 +1,14 @@
 .tooltip-red {
-    background: #b71c1c;
+  background: #b71c1c;
 }
 
 .nav-link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .box-radius {
-    border-radius: 0 0 10px 10px;
+  border-radius: 0 0 10px 10px;
 }
-
 
 /* .fas {
   color: rgba(255, 255, 255, 0.5);
@@ -18,11 +17,9 @@
   
 } */
 
-
 /* .no-arrow.dropdown-toggle::after {
     display: none;
 } */
-
 
 /* .bell-menu .fa-check {
   position: absolute;
@@ -30,7 +27,6 @@
   color: #007bff;
   margin: 4px 0 0 10px;
 } */
-
 
 /* hr {
     margin: 0;

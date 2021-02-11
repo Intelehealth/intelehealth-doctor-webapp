@@ -24,7 +24,7 @@ export class MyAccountComponent implements OnInit {
     private sessionService: SessionService,
     private http: HttpClient,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.setSpiner = true;
@@ -57,7 +57,7 @@ export class MyAccountComponent implements OnInit {
     const json = {
       names: value,
     };
-    this.http.post(URL, json).subscribe((response) => { });
+    this.http.post(URL, json).subscribe((response) => {});
   }
 
   signature() {

@@ -77,7 +77,7 @@ export class SignatureComponent implements OnInit {
             attributeType: "c1c6458d-383b-4034-afa0-16a34185b458",
             value: text,
           };
-          this.http.post(url2, json).subscribe((pp) => { });
+          this.http.post(url2, json).subscribe((pp) => {});
           const url3 = `${this.baseURL}/provider/${providerUuid}/attribute`;
           const json1 = {
             attributeType: "8d321915-e59d-4e19-98a9-086946bfc72b",
@@ -100,7 +100,7 @@ export class SignatureComponent implements OnInit {
         attributeType: "c1c6458d-383b-4034-afa0-16a34185b458",
         value: text,
       };
-      this.http.post(url2, json).subscribe((pp) => { });
+      this.http.post(url2, json).subscribe((pp) => {});
 
       const url3 = this.data.font
         ? `${this.baseURLProvider}/${this.data.fontOfSignuuid}`

@@ -21,7 +21,7 @@
 .fas {
   font-size: 30px;
   padding: 10px;
-  color: #0080FF;
+  color: #0080ff;
   cursor: pointer;
   text-decoration: none;
 }
@@ -29,11 +29,11 @@
 .fas:hover {
   font-size: 35px;
   padding: 10px;
-  color: #0080FF;
+  color: #0080ff;
   cursor: pointer;
   text-decoration: none;
 }
 
-.material-icons{
+.material-icons {
   vertical-align: text-bottom;
 }

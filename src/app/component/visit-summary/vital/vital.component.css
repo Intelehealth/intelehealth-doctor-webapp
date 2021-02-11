@@ -1,4 +1,5 @@
-td, th {
-    border: none;
-    white-space: nowrap;
+td,
+th {
+  border: none;
+  white-space: nowrap;
 }

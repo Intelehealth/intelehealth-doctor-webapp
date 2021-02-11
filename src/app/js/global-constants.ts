@@ -1,3 +1,3 @@
 export class GlobalConstants {
-    public static visits = [];
+  public static visits = [];
 }

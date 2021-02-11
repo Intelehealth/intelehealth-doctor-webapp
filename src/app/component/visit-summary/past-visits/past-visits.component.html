@@ -1,10 +1,20 @@
 <div id="past-visits">
-    <h4><i class="fas fa-hospital"></i> Past Visits</h4>
-<hr>
-<div *ngFor="let data of recent">
-    <div> <a [routerLink]="['/visitSummary', data.details.patient.uuid, data.details.uuid]">{{data.details.startDatetime | date:"dd-MMM-yyyy"}}</a>
-      <span> {{data.observation}} </span> 
-      <span class="badge badge-pill badge-success float-right">{{data.visitStatus}}</span>
+  <h4><i class="fas fa-hospital"></i> Past Visits</h4>
+  <hr />
+  <div *ngFor="let data of recent">
+    <div>
+      <a
+        [routerLink]="[
+          '/visitSummary',
+          data.details.patient.uuid,
+          data.details.uuid
+        ]"
+        >{{ data.details.startDatetime | date: "dd-MMM-yyyy" }}</a
+      >
+      <span> {{ data.observation }} </span>
+      <span class="badge badge-pill badge-success float-right">{{
+        data.visitStatus
+      }}</span>
     </div>
-</div>
+  </div>
 </div>

@@ -1,15 +1,15 @@
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class MindmapService {
-  private baseURL =  environment.mindmapURL;
+  private baseURL = environment.mindmapURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getMindmapKey(): Observable<any> {
     const url = `${this.baseURL}/mindmap`;

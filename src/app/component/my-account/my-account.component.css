@@ -2,8 +2,8 @@
     width: 100%;
     margin: 0 auto;
   } */
-  
-  /* .container-login100 {
+
+/* .container-login100 {
     width: 100%;  
     display: -webkit-box;
     display: -webkit-flex;
@@ -14,59 +14,58 @@
     justify-content: center;
     align-items: center;
   } */
-  
-  
-  .wrap-login100 {
-    width: 100%;
-    background: #fff;
-    overflow: hidden;
-    position: relative;
-    background: url('../../../assets/images/Doctor-profile-page-background-without-blur.png');
-    background-size: 100% 100%;
-    border-radius: 10px;
-  }
-  
-  .login100-form-title {
-    width: 100%;
-    position: relative;
-    z-index: 1;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    padding-top: 70px;
-  }
-  
-  .login100-form-title::before {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    border-radius: 10px;
-    /* background-color: rgba(54,84,99,0.7); */
-  }
-  
-  .login100-form-avatar {
+
+.wrap-login100 {
+  width: 100%;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  background: url("../../../assets/images/Doctor-profile-page-background-without-blur.png");
+  background-size: 100% 100%;
+  border-radius: 10px;
+}
+
+.login100-form-title {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding-top: 70px;
+}
+
+.login100-form-title::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 10px;
+  /* background-color: rgba(54,84,99,0.7); */
+}
+
+.login100-form-avatar {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto
-  }
+  margin: 0 auto;
+}
 
-  table {
-    width: 100%;
+table {
+  width: 100%;
 }
 th {
   width: 50%;
@@ -75,36 +74,33 @@ td {
   width: 50%;
 }
 
-
-.overlap{
+.overlap {
   top: -100px;
   position: relative;
   left: 27%;
   width: 45%;
   border-radius: 10px;
   padding-top: 140px;
-  }
+}
 
 mat-spinner {
   position: absolute;
   z-index: 9999;
-  left:46%;
-  top:42%;
+  left: 46%;
+  top: 42%;
 }
 
-  @media only screen and (max-width: 768px) { 
-    .overlap{
-      top: -100px;
-      position: relative;
-      left: 8%;
-      width: 85%;
-      border-radius: 10px;
-      padding-top: 140px;
-      }
+@media only screen and (max-width: 768px) {
+  .overlap {
+    top: -100px;
+    position: relative;
+    left: 8%;
+    width: 85%;
+    border-radius: 10px;
+    padding-top: 140px;
+  }
 
-      .wrap-login100 {
-        background: none
-      }
-   }
-
-
+  .wrap-login100 {
+    background: none;
+  }
+}

@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class EncounterService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   recentVitals(id): Observable<any> {
     const url = `${this.baseURL}/encounter?patient=${id}`;

@@ -1,18 +1,40 @@
 <h4><i class="fas fa-vials"></i> Prescribed Tests</h4>
-<hr>
+<hr />
 <div id="test-form">
-    <form [formGroup]='testForm' >
-        <mat-form-field class="w-100">
-            <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
-        </mat-form-field>
-        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
-      </form>
+  <form [formGroup]="testForm">
+    <mat-form-field class="w-100">
+      <input
+        matInput
+        placeholder="Test"
+        [ngbTypeahead]="search"
+        formControlName="test"
+      />
+    </mat-form-field>
+    <button
+      type="reset"
+      (click)="submit()"
+      mat-raised-button
+      color="primary"
+      [disabled]="!testForm.valid"
+    >
+      Add Test
+    </button>
+  </form>
 </div>
 <ng-container *ngIf="tests.length > 0">
-    <ul class="list-unstyled">
-      <mat-list [@moveInLeft] *ngFor='let test of tests, index as i' class="alert alert-primary">
-        <div class="doctor-value">{{test.value}}</div>
-      <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-      </mat-list>
-      </ul>
+  <ul class="list-unstyled">
+    <mat-list
+      [@moveInLeft]
+      *ngFor="let test of tests; index as i"
+      class="alert alert-primary"
+    >
+      <div class="doctor-value">{{ test.value }}</div>
+      <i
+        (click)="delete(i)"
+        class="material-icons float-right"
+        style="color: rgb(235, 30, 30); cursor: pointer"
+        >delete</i
+      >
+    </mat-list>
+  </ul>
 </ng-container>

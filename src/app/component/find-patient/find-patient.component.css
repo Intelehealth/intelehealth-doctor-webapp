@@ -1,24 +1,25 @@
 .patient-identifier {
-    display: inline-block;
-}    
-    
+  display: inline-block;
+}
+
 .identifier-type {
-      display: block;
-      font-size: 0.6em;
-      text-decoration: underline;
+  display: block;
+  font-size: 0.6em;
+  text-decoration: underline;
 }
-    
+
 .identifier {
-      display: block;
+  display: block;
 }
 
-  .preferred-name {
-    display: inline-block;
-    font-size: 1.5em;
-    padding: 5px;
-    width: 50%;
-  }
+.preferred-name {
+  display: inline-block;
+  font-size: 1.5em;
+  padding: 5px;
+  width: 50%;
+}
 
-  .age, .gender {
-    font-size: 1.2em;
-  }
+.age,
+.gender {
+  font-size: 1.2em;
+}

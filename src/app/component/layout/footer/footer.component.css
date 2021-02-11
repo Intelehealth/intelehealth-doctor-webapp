@@ -1,16 +1,16 @@
 .footer-bottom {
-    background-color: #343A40;
-    min-height: 30px;
-    width: 100%;
-    border-radius: 10px 10px 0 0;
+  background-color: #343a40;
+  min-height: 30px;
+  width: 100%;
+  border-radius: 10px 10px 0 0;
 }
 .design {
-    color: #fff;
-    line-height: 30px;
-    min-height: 30px;
-    padding: 7px 0;
-    text-align: right;
+  color: #fff;
+  line-height: 30px;
+  min-height: 30px;
+  padding: 7px 0;
+  text-align: right;
 }
 .design a {
-    color: #fff;
+  color: #fff;
 }

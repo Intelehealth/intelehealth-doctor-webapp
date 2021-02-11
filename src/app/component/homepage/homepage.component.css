@@ -5,15 +5,14 @@
 mat-spinner {
   position: absolute;
   z-index: 9999;
-  left:46%;
-  top:42%;
+  left: 46%;
+  top: 42%;
 }
 
 .spin {
   filter: blur(8px);
   -webkit-filter: blur(8px);
 }
-
 
 .example-headers-align .mat-expansion-panel-header-title,
 .example-headers-align .mat-expansion-panel-header-description {

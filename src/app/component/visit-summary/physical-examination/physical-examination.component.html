@@ -1,12 +1,15 @@
 <h4>Physical Examination</h4>
-<hr>
+<hr />
 <div *ngIf="physicalExamPresent">
-<div class="row">
-<div *ngFor="let image of images" class="col">
-    <a href={{image.image}}><img src= {{image.image}} [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}" alt=""></a>
+  <div class="row">
+    <div *ngFor="let image of images" class="col">
+      <a href="{{ image.image }}"
+        ><img
+          src="{{ image.image }}"
+          [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }"
+          alt=""
+      /></a>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-<div *ngIf="!physicalExamPresent">
-    	No Physical Exam Images available!
-</div>
+<div *ngIf="!physicalExamPresent">No Physical Exam Images available!</div>

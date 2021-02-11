@@ -1,13 +1,13 @@
 .example-full-width {
-    width: 30%;
-  }
+  width: 30%;
+}
 
-  .mat-radio-button ~ .mat-radio-button {
-    margin-left: 16px;
-  }
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
 
-  @media only screen and (max-width: 768px) { 
-    .example-full-width {
-      width: 60%;
-    }
-   }
+@media only screen and (max-width: 768px) {
+  .example-full-width {
+    width: 60%;
+  }
+}

@@ -1,30 +1,58 @@
 <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-radius">
-        <form class="form-inline" [formGroup]="searchForm" (submit)="search()" id="search-patient">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <input type="text" class="form-control" placeholder="Find Patient" formControlName="findInput" />
-                </div>
-                <button class="input-group-text" type="submit" matTooltip="Search Patient using ID and Name" matTooltipClass="tooltip-red"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-radius">
+    <form
+      class="form-inline"
+      [formGroup]="searchForm"
+      (submit)="search()"
+      id="search-patient"
+    >
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Find Patient"
+            formControlName="findInput"
+          />
+        </div>
+        <button
+          class="input-group-text"
+          type="submit"
+          matTooltip="Search Patient using ID and Name"
+          matTooltipClass="tooltip-red"
+        >
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent-4"
+      aria-controls="navbarSupportedContent-4"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/home">Home</a>
-                </li>
-                <li *ngIf="systemAccess" class="nav-item">
-                    <a class="nav-link" routerLink="/ayu">Ayu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" (click)="callTour()">Help</a>
-                </li>
-                <li *ngIf="reportAccess" class="nav-item">
-                    <a class="nav-link" href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page">Reports</a
+    <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home">Home</a>
+        </li>
+        <li *ngIf="systemAccess" class="nav-item">
+          <a class="nav-link" routerLink="/ayu">Ayu</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="callTour()">Help</a>
+        </li>
+        <li *ngIf="reportAccess" class="nav-item">
+          <a
+            class="nav-link"
+            href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page"
+            >Reports</a
           >
         </li>
         <li class="nav-item dropdown">
@@ -35,23 +63,27 @@
             data-toggle="dropdown"
             ><i class="fa fa-user"></i> Profile
           </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-                        <a class="dropdown-item" routerLink="/myAccount">My account</a>
-                        <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">System administration</a
+          <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
+            <a class="dropdown-item" routerLink="/myAccount">My account</a>
+            <a
+              *ngIf="systemAccess"
+              class="dropdown-item"
+              href="{{ baseURLLegacy }}/admin/index.htm"
+              >System administration</a
             >
             <a class="dropdown-item" (click)="changePassword()"
               >Change password</a
             >
           </div>
         </li>
-                        <li *ngIf="reportAccess" class="nav-item"></li>
-                <li class="nav-item">
-                    <button class="btn btn-primary" id="logout-link" (click)="logout()">
+        <li *ngIf="reportAccess" class="nav-item"></li>
+        <li class="nav-item">
+          <button class="btn btn-primary" id="logout-link" (click)="logout()">
             Log out
           </button>
-                </li>
-            </ul>
-            </div>
-    </nav>
+        </li>
+      </ul>
     </div>
-    <br />
+  </nav>
+</div>
+<br />
