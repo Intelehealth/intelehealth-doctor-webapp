@@ -5,7 +5,6 @@
         <mat-form-field class="w-100">
             <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
-        <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
         <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
       </form>
 </div>
