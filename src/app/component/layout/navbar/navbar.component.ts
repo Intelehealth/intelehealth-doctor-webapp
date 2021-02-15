@@ -74,14 +74,23 @@ export class NavbarComponent implements OnInit {
     this.authService.getFingerPrint();
   }
 
+  /**
+   * Remove session and navigates to login screen
+   */
   logout() {
     this.authService.logout();
   }
 
+  /**
+   * Opens dialog modal allow user to change password
+   */
   changePassword() {
     this.dialog.open(ChangePasswordComponent, { width: "500px" });
   }
 
+  /**
+   * Take value from search input and show patient in the modal
+   */
   search() {
     const search = this.searchForm.value;
     if (search.findInput.length < 3) {
@@ -119,6 +128,9 @@ export class NavbarComponent implements OnInit {
     this.searchForm.reset();
   }
 
+  /**
+   * Initiates help tour
+   */
   callTour() {
     this.messageEvent.emit();
   }

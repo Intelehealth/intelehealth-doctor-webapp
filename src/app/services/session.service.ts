@@ -11,11 +11,20 @@ export class SessionService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Fetch current session
+   * @returns Observable
+   */
   session(): Observable<any> {
     const url = `${this.baseURL}/session`;
     return this.http.get(url);
   }
 
+  /**
+   * Delete session by its sessionId
+   * @param sessionId String
+   * @returns Observable
+   */
   deleteSession(id): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.set("cookie", `JSESSIONID=${id}`);
@@ -23,6 +32,11 @@ export class SessionService {
     return this.http.delete(url);
   }
 
+  /**
+   * Return login session
+   * @param base64
+   * @returns Observable
+   */
   loginSession(base64): Observable<any> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append("Authorization", "Basic " + base64);
@@ -30,6 +44,11 @@ export class SessionService {
     return this.http.get(url, { headers });
   }
 
+  /**
+   * Get provider by userId
+   * @param userId String
+   * @returns Observable
+   */
   provider(userId): Observable<any> {
     const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender),attributes)`;
     return this.http.get(url);

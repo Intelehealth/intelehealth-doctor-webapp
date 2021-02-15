@@ -31,6 +31,10 @@ export class TablesComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  /**
+   * Apply filter with the filter string
+   * @param filterValue String
+   */
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
