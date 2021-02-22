@@ -72,10 +72,11 @@
               <th>Signature :</th>
               <td
                 *ngIf="providerDetails.textOfSign"
-                [style.font-family]="providerDetails.fontOfSign.value"
+                [class]="providerDetails?.fontOfSign?.value"
+                [style.font-family]="providerDetails?.fontOfSign?.value"
                 style="font-size: 50px"
               >
-                {{ providerDetails.textOfSign.value }}
+                {{ providerDetails?.textOfSign?.value }}
               </td>
               <td
                 *ngIf="

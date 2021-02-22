@@ -19,23 +19,62 @@
       />
     </mat-form-field>
   </div>
-  <input type="radio" value="1" formControlName="signature" /><span
-    style="font-family: arty; font-size: 100px"
-  >
-    {{ name }}</span
-  >
+  <div class="sign">
+    <input type="radio" value="1" formControlName="signature" /><span
+      style="font-family: arty; font-size: 50px; top: -20px"
+    >
+      {{ name }}</span
+    >
+  </div>
   <br />
-  <input type="radio" value="2" formControlName="signature" /><span
-    style="font-family: asem; font-size: 50px"
-  >
-    {{ name }}</span
-  >
+  <div class="sign">
+    <input type="radio" value="2" formControlName="signature" /><span
+      style="font-family: asem; font-size: 50px; top: -25px"
+    >
+      {{ name }}</span
+    >
+  </div>
   <br />
-  <input type="radio" value="3" formControlName="signature" /><span
-    style="font-family: youthness; font-size: 50px"
-  >
-    {{ name }}</span
-  >
+  <div class="sign">
+    <input type="radio" value="3" formControlName="signature" /><span
+      style="font-family: youthness; font-size: 50px; top: -20px"
+    >
+      {{ name }}</span
+    >
+  </div>
+  <br />
+  <div class="sign">
+    <input type="radio" value="4" formControlName="signature" /><span
+      style="font-family: terecia; font-size: 30px; top: -10px"
+    >
+      {{ name }}</span
+    >
+  </div>
+  <br />
+  <div class="sign">
+    <input type="radio" value="5" formControlName="signature" /><span
+      class="signature"
+      style="font-family: siganature; font-size: 25px; top: 10px"
+    >
+      {{ name }}</span
+    >
+  </div>
+  <br />
+  <div class="sign">
+    <input type="radio" value="6" formControlName="signature" /><span
+      style="font-family: almondita; font-size: 50px; top: -23px"
+    >
+      {{ name }}</span
+    >
+  </div>
+  <br />
+  <div class="sign">
+    <input type="radio" value="7" formControlName="signature" /><span
+      style="font-family: margareta; font-size: 17px"
+    >
+      {{ name }}</span
+    >
+  </div>
   <br />
   <button mat-raised-button color="primary" (click)="onSubmit()">Select</button>
 </form>

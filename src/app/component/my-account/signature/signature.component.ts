@@ -55,6 +55,18 @@ export class SignatureComponent implements OnInit {
     if (signatureValue === "3") {
       this.signature(signText, "youthness");
     }
+    if (signatureValue === "4") {
+      this.signature(signText, "terecia");
+    }
+    if (signatureValue === "5") {
+      this.signature(signText, "siganature");
+    }
+    if (signatureValue === "6") {
+      this.signature(signText, "almondita");
+    }
+    if (signatureValue === "7") {
+      this.signature(signText, "margareta");
+    }
   }
 
   /**
