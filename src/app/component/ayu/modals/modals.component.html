@@ -41,7 +41,7 @@
   <div style="text-align: end;">
     <button mat-button (click)="close()">Close</button>&nbsp;&nbsp;
     <button mat-raised-button color="primary" *ngIf="data.title != 'Delete Mindmap'" [disabled]="!file" [hidden]= "data.title === 'Add License key' || data.title === 'Edit Expiry Date'" [mat-dialog-close]="data">Add</button>
-    <button mat-raised-button color="primary" *ngIf="data.title != 'Delete Mindmap' && data.title === 'Add License key'" [mat-dialog-close]="data">Add</button>
+    <button mat-raised-button color="primary" *ngIf="data.title != 'Delete Mindmap' && data.title === 'Add License key'"   [disabled]="!data.key || !data.expiryDate" [mat-dialog-close]="data">Add</button>
     <button mat-raised-button color="primary" *ngIf="data.title != 'Delete Mindmap' && data.title === 'Edit Expiry Date'" [mat-dialog-close]="data">Add</button>
     <button mat-raised-button color="primary" *ngIf="data.title === 'Delete Mindmap'" [mat-dialog-close]="true">Delete</button>
   </div>
