@@ -35,6 +35,9 @@ export class ChangePasswordComponent implements OnInit {
 
   ngOnInit() {}
 
+  /**
+   * Check current and new password and request to change it in the system
+   */
   onSubmit() {
     const value = this.changePasswordForm.value;
     const url = `${this.baseURL}/password`;

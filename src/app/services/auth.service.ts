@@ -16,18 +16,33 @@ export class AuthService {
   ) {}
   public fingerPrint;
 
+  /**
+   * Set passed JSESSIONID token
+   * @param token String
+   */
   sendToken(token) {
     this.cookieService.set("JSESSIONID", token);
   }
 
+  /**
+   * Returns JSESSIONID token
+   * @returns String
+   */
   getToken() {
     return this.cookieService.check("JSESSIONID");
   }
 
+  /**
+   * Returns true if token exists
+   * @returns Boolean
+   */
   isLoggedIn() {
     return this.getToken() !== false;
   }
 
+  /**
+   * Removes session
+   */
   logout() {
     this.sessionService.session().subscribe((res) => {
       this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
@@ -41,6 +56,9 @@ export class AuthService {
     });
   }
 
+  /**
+   * Returns browser's unique fingerprint
+   */
   getFingerPrint() {
     (async () => {
       const fp = await FingerprintJS.load();

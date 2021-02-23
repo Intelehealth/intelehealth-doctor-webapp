@@ -45,6 +45,9 @@ export class MyAccountComponent implements OnInit {
       });
   }
 
+  /**
+   * Open edit details modal
+   */
   onEdit() {
     this.dialog.open(EditDetailsComponent, {
       width: "400px",
@@ -52,6 +55,10 @@ export class MyAccountComponent implements OnInit {
     });
   }
 
+  /**
+   * Save name to the system
+   * @param value String
+   */
   saveName(value) {
     const URL = `${this.baseURL}/person/${this.providerDetails.person.uuid}`;
     const json = {
@@ -60,6 +67,9 @@ export class MyAccountComponent implements OnInit {
     this.http.post(URL, json).subscribe((response) => {});
   }
 
+  /**
+   * Open Signature component
+   */
   signature() {
     this.dialog.open(SignatureComponent, {
       width: "500px",

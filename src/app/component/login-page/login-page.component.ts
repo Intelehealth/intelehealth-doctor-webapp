@@ -11,6 +11,7 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
+  submitted = false;
   loginForm = new FormGroup({
     username: new FormControl("", [
       Validators.required,
@@ -42,11 +43,17 @@ export class LoginPageComponent implements OnInit {
     this.fieldTextType = !this.fieldTextType;
   }
 
+  /**
+   * Login form control
+   */
   get controls() {
     return this.loginForm.controls;
   }
 
-  submitted = false;
+  /**
+   * Take username and password from the login form
+   * and create session and save base65 session to localStorage
+   */
   onSubmit() {
     this.submitted = true;
     if (!this.loginForm.invalid) {

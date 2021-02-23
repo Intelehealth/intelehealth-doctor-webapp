@@ -69,6 +69,9 @@ export class HomepageComponent implements OnInit {
     }
   }
 
+  /**
+   * Get all visits
+   */
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
@@ -112,10 +115,20 @@ export class HomepageComponent implements OnInit {
     );
   }
 
+  /**
+   * Check for encounter as per visit type passed
+   * @param encounters Array
+   * @param visitType String
+   * @returns Object | null
+   */
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
-
+  
+  /**
+   * Check for a visit and put it to the respective table as per their encounter
+   * @param visitObject Object 
+   */
   visitCategory(active) {
     const { encounters = [] } = active;
     if (this.checkVisit(encounters, "Visit Complete")) {
@@ -144,6 +157,11 @@ export class HomepageComponent implements OnInit {
     }
   }
 
+  /**
+   * Transform visit Object to make it compatible to show in the mat table
+   * @param visitObject Object 
+   * @returns Object
+   */
   assignValueToProperty(active) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;

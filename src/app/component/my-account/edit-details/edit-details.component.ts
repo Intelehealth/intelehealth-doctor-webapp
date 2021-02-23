@@ -67,6 +67,9 @@ export class EditDetailsComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  /**
+   * Open edit signature modal
+   */
   editSignature() {
     var obj = {
       name: this.data.textOfSign.value,
@@ -79,6 +82,9 @@ export class EditDetailsComponent implements OnInit {
     this.dialog.open(SignatureComponent, { width: "500px", data: obj });
   }
 
+  /**
+   * Take form value from edit details form and update it to the openMRS system
+   */
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {

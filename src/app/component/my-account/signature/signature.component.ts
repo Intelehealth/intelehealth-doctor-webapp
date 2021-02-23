@@ -57,6 +57,11 @@ export class SignatureComponent implements OnInit {
     }
   }
 
+  /**
+   * Save repective signature font in the system as per user selection
+   * @param text String
+   * @param font String
+   */
   signature = (text: string, font: string) => {
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
