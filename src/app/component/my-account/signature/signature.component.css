@@ -1,0 +1,19 @@
+.sign {
+  height: 40px;
+  position: relative;
+}
+.sign span{
+    top: 0;
+    display: block;
+    padding-left: 32px;
+    position: absolute;
+}
+
+.signature {
+  display: block;
+}
+
+.sign input{
+  z-index: 99;
+  position: absolute;
+}

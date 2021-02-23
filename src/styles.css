@@ -21,6 +21,26 @@
   src: url(assets/fonts/Youthness.ttf) format("opentype");
 }
 
+@font-face {
+  font-family: signature;
+  src: url(assets/fonts/signature.otf) format("opentype");
+}
+
+@font-face {
+  font-family: margareta;
+  src: url(assets/fonts/margareta.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: almondita;
+  src: url(assets/fonts/almondita.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: terecia;
+  src: url(assets/fonts/terecia.otf) format("opentype");
+}
+
 body {
   background-color: #f1f4f6;
   margin: 0;

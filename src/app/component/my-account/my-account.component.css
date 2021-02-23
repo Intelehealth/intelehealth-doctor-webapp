@@ -77,8 +77,10 @@ td {
 .overlap {
   top: -100px;
   position: relative;
-  left: 27%;
-  width: 45%;
+  /* left: 27%; */
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
   border-radius: 10px;
   padding-top: 140px;
 }
@@ -103,4 +105,24 @@ mat-spinner {
   .wrap-login100 {
     background: none;
   }
+}
+
+.signature {
+  padding-top: 20px;
+  font-size: 22px !important;
+}
+.margareta {
+  padding-top: 20px;
+  font-size: 20px !important;
+}
+.almondita {
+  padding-top: 20px;
+}
+.terecia {
+  padding-top: 20px;
+  font-size: 30px !important;
+}
+
+.sign {
+  height: 50px;
 }
