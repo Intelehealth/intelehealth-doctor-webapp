@@ -73,7 +73,8 @@
     </button>
     <button
       mat-raised-button
-      color="primary"
+      color="primary" 
+      [disabled]="!data.key || !data.expiryDate"
       *ngIf="data.title != 'Delete Mindmap' && data.title === 'Add License key'"
       [mat-dialog-close]="data"
     >
