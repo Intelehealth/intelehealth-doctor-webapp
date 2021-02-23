@@ -22,13 +22,8 @@
 }
 
 @font-face {
-  font-family: signature;
-  src: url(assets/fonts/signature.otf) format("opentype");
-}
-
-@font-face {
-  font-family: margareta;
-  src: url(assets/fonts/margareta.ttf) format("opentype");
+  font-family: aletheia;
+  src: url(assets/fonts/aletheia.otf) format("opentype");
 }
 
 @font-face {

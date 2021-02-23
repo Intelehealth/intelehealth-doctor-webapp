@@ -107,7 +107,11 @@
     <ng-container *ngIf="visitCompletePresent">
       <div class="d-flex justify-content-center">
         <mat-card>
-          <div [style.font-family]="font" style="font-size: 50px">
+          <div
+            [style.font-family]="font"
+            [class]="font"
+            style="font-size: 50px"
+          >
             {{ text }}
           </div>
         </mat-card>
