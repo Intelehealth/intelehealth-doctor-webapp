@@ -91,9 +91,9 @@ testForm = new FormGroup({
         value: value,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-      .subscribe(resp => {
-        this.tests.push({uuid: resp.uuid, value: value});
+      this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.tests.push({ uuid: resp.uuid, value: value });
       });
     } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
   }

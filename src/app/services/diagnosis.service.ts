@@ -7,11 +7,15 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
+
 export class DiagnosisService {
   diagnosisArray = [];
-  private baseURL = environment.baseURL;
+  public isVisitSummaryChanged = false
 
-  constructor(private http: HttpClient) { }
+  private baseURL = environment.baseURL;
+  constructor(
+    private http: HttpClient,
+  ) { }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -27,6 +31,13 @@ export class DiagnosisService {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
+  }
+
+  getObsAll(patientId): Observable<any> {
+    // tslint:disable-next-line: max-line-length
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,concept:(uuid),encounter:(visit:(uuid)))`;
+    return this.http.get(url);
+
   }
 
   getDiagnosisList(term) {
@@ -50,4 +61,9 @@ export class DiagnosisService {
       })
     );
   }
+
+
+
 }
+
+

@@ -5,6 +5,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -13,13 +14,32 @@ declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: a
   styleUrls: ['./visit-summary.component.css']
 })
 export class VisitSummaryComponent implements OnInit {
-show = false;
-text: string;
-font: string;
-visitNotePresent = false;
-visitCompletePresent = false;
-setSpiner = true;
-doctorDetails; doctorValue;
+  show = false;
+  text: string;
+  font: string;
+  visitNotePresent = false;
+  visitCompletePresent = false;
+  setSpiner = true;
+  doctorDetails;
+  doctorValue;
+  diagnosis: any = [];
+  patientId: string;
+  visitUuid: string;
+  conceptIds = [
+    "537bb20d-d09d-4f88-930b-cc45c7d662df",
+    "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "67a050c1-35e5-451c-a4ab-fff9d57b0db1",
+    "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca",
+    "23601d71-50e6-483f-968d-aeef3031346d",
+    "67a050c1-35e5-451c-a4ab-fff9d57b0db1",
+    "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86",
+    "62bff84b-795a-45ad-aae1-80e7f5163a82",
+    "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba",
+    "e1761e85-9b50-48ae-8c4d-e6b7eeeba084",
+    "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
+    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
+  ];
+
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -27,6 +47,7 @@ constructor(private service: EncounterService,
             private snackbar: MatSnackBar,
             private route: ActivatedRoute,
             private router: Router,
+            private diagnosisService: DiagnosisService,
             private pushNotificationService: PushNotificationsService) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
@@ -34,13 +55,30 @@ constructor(private service: EncounterService,
             }
 
   ngOnInit() {
-    setTimeout(() => {this.setSpiner = false; }, 1000);
-    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.visitService.fetchVisitDetails(visitUuid)
-    .subscribe(visitDetails => {
-      visitDetails.encounters.forEach(visit => {
-        if (visit.display.match('Visit Note') !== null) {
-          saveToStorage('visitNoteProvider', visit);
+    setTimeout(() => {
+      this.setSpiner = false;
+    }, 1000);
+
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.patientId = this.route.snapshot.params["patient_id"];
+    this.diagnosisService
+      .getObsAll(this.patientId)
+      .subscribe((response) => {
+      const ObsData = response.results.filter(a=>this.conceptIds.includes(a.concept.uuid))
+      console.log('ObsData: ', ObsData.length);
+      if(ObsData.length>0){
+        this.diagnosisService.isVisitSummaryChanged = true
+      }
+      else{
+        this.diagnosisService.isVisitSummaryChanged = false
+      }
+       
+     });
+    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      visitDetails.encounters.forEach((visit) => {
+        if (visit.display.match("Visit Note") !== null) {
+          saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
         }
@@ -56,6 +94,10 @@ constructor(private service: EncounterService,
         }
       });
     });
+  }
+
+  get isVisitSummaryChanged() {
+    return !this.diagnosisService.isVisitSummaryChanged;
   }
 
   onStartVisit() {
@@ -84,9 +126,13 @@ constructor(private service: EncounterService,
             this.visitService.fetchVisitDetails(visitUuid)
             .subscribe(visitDetails => { saveToStorage('visitNoteProvider', visitDetails.encounters[0]); });
             this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, {duration: 4000});
-            attributes.forEach(element => {
-              if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+            this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
+            attributes.forEach((element) => {
+              if (
+                element.attributeType.uuid ===
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                !element.voided
+              ) {
                 const payload = {
                   speciality: element.value,
                   patient: {
@@ -103,12 +149,27 @@ constructor(private service: EncounterService,
           } else {
             this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
           }
+          this.diagnosisService.isVisitSummaryChanged = false;
         });
       } else {this.authService.logout(); }
     }
   }
 
   sign() {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.patientId = this.route.snapshot.params["patient_id"];
+    this.diagnosisService
+      .getObsAll(this.patientId)
+      .subscribe((response) => {
+        console.log('response: ', response);
+        if (response) {
+          this.signandsubmit();
+        }
+       
+      });
+  }
+
+  signandsubmit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');

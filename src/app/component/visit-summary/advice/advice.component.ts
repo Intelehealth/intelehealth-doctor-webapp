@@ -92,11 +92,15 @@ export class AdviceComponent implements OnInit {
         value: value,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-        .subscribe(response => {
-          this.advice.push({ uuid: response.uuid, value: value });
-        });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+      this.service.postObs(json).subscribe((response) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.advice.push({ uuid: response.uuid, value: value });
+      });
+    } else {
+      this.snackbar.open("Another doctor is viewing this case", null, {
+        duration: 4000,
+      });
+    }
   }
 
   delete(i) {

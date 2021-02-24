@@ -80,8 +80,8 @@ diagnosisForm = new FormGroup({
         value: `${value.text}:${value.type} & ${value.confirm}`,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-      .subscribe(resp => {
+      this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
         this.diagnosisList = [];
         this.diagnosis.push({uuid: resp.uuid, value: json.value});
       });

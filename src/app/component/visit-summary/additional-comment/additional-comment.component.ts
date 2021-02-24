@@ -70,12 +70,16 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
         value: value,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-      .subscribe(resp => {
-      this.comment.push({uuid: resp.uuid, value: value});
-    });
-  } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
-}
+      this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.comment.push({ uuid: resp.uuid, value: value });
+      });
+    } else {
+      this.snackbar.open("Another doctor is viewing this case", null, {
+        duration: 4000,
+      });
+    }
+  }
 
   delete(i) {
     const uuid = this.comment[i].uuid;

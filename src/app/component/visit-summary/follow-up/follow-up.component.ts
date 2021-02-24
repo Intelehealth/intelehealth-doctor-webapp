@@ -76,11 +76,15 @@ followForm = new FormGroup({
         value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-      .subscribe(resp => {
-        this.followUp.push({uuid: resp.uuid, value: json.value});
+      this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.followUp.push({ uuid: resp.uuid, value: json.value });
       });
-    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+    } else {
+      this.snackbar.open("Another doctor is viewing this case", null, {
+        duration: 4000,
+      });
+    }
   }
 
   delete(i) {

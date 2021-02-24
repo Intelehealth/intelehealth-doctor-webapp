@@ -187,12 +187,16 @@ export class PrescribedMedicationComponent implements OnInit {
         value: insertValue,
         encounter: this.encounterUuid
       };
-      this.service.postObs(json)
-        .subscribe(response => {
-          this.meds.push({ uuid: response.uuid, value: insertValue });
-          this.add = false;
-        });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+      this.service.postObs(json).subscribe((response) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.meds.push({ uuid: response.uuid, value: insertValue });
+        this.add = false;
+      });
+    } else {
+      this.snackbar.open("Another doctor is viewing this case", null, {
+        duration: 4000,
+      });
+    }
   }
 
   delete(i) {
