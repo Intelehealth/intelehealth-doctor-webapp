@@ -102,6 +102,7 @@ export class DiagnosisComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
         this.diagnosisList = [];
         this.diagnosis.push({ uuid: resp.uuid, value: json.value });
       });

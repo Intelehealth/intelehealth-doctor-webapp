@@ -98,6 +98,7 @@ export class FollowUpComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
         this.followUp.push({ uuid: resp.uuid, value: json.value });
       });
     } else {

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { ActivatedRoute } from "@angular/router";
 import {
   transition,
@@ -57,6 +58,7 @@ export class PatientInteractionComponent implements OnInit {
     interaction: new FormControl("", [Validators.required]),
   });
   constructor(
+    private diagnosisService: DiagnosisService,
     private visitService: VisitService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
@@ -152,7 +154,9 @@ export class PatientInteractionComponent implements OnInit {
             value: this.doctorDetails.html,
             encounter: this.encounterUuid,
           };
-          this.encounterService.postObs(json).subscribe((response) => {});
+          this.encounterService.postObs(json).subscribe((response) => {
+            this.diagnosisService.isVisitSummaryChanged = true;
+          });
         }
       }
     } else {
