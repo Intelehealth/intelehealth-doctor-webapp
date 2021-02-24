@@ -22,18 +22,8 @@
 }
 
 @font-face {
-  font-family: aletheia;
-  src: url(assets/fonts/aletheia.otf) format("opentype");
-}
-
-@font-face {
   font-family: almondita;
   src: url(assets/fonts/almondita.ttf) format("opentype");
-}
-
-@font-face {
-  font-family: terecia;
-  src: url(assets/fonts/terecia.otf) format("opentype");
 }
 
 body {
