@@ -17,8 +17,13 @@
 }
 
 @font-face {
-    font-family: youthness;
-    src: url(assets/fonts/Youthness.ttf) format("opentype");
+  font-family: youthness;
+  src: url(assets/fonts/Youthness.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: almondita;
+  src: url(assets/fonts/Almondita.ttf) format("opentype");
 }
 
 body {
