@@ -118,6 +118,7 @@ export class AdviceComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((response) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
         this.advice.push({ uuid: response.uuid, value: value });
       });
     } else {
