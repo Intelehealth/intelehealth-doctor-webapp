@@ -26,6 +26,7 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
+  errorDays = false;
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
     { day: "Tuesday", startTime: null, endTime: null },
@@ -44,6 +45,8 @@ export class NavbarComponent implements OnInit {
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
+
+
 
   @Output() messageEvent = new EventEmitter<string>();
 
@@ -199,6 +202,16 @@ export class NavbarComponent implements OnInit {
     } else {
       localStorage.setItem("showNotification", "0");
     }
+  }
+
+  onSubmit(weekDays){
+    // if(this.weekDays.startTime == null || this.weekDays.endTime == null){
+    //   this.errorDays = true
+    // }else{
+      this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
+        console.log("------", response);
+      })
+    // }
   }
 
   setNotification(period) {

@@ -32,12 +32,12 @@ export class PushNotificationsService {
   }
 
   //Snooze notification functionality
-  setSnoozeFor(snooze_for) {
+  setSnoozeFor(snooze_for, custom = false) {
     return this.http.put(
       `${environment.mindmapURL}/mindmap/snooze_notification`,
       {
         user_uuid: JSON.parse(localStorage.user).uuid,
-        snooze_for,
+        snooze_for, custom
       }
     );
   }
@@ -48,6 +48,7 @@ export class PushNotificationsService {
       `${environment.mindmapURL}/mindmap/user_settings/${uuid}`
     );
   }
+
 
   notificationHandler() {
     navigator.serviceWorker.addEventListener("message", (event) => {
