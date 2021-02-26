@@ -73,7 +73,7 @@ export class HomepageComponent implements OnInit {
     const attribute = provider.find(
       ({ attributeType }) => attributeType.uuid === this.visitStateAttributeType
     );
-    return attribute && attribute.value ? attribute.value : "NA";
+    return attribute && attribute.value ? attribute.value : null;
   }
 
   /**
