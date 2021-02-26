@@ -38,6 +38,7 @@ export class HomepageComponent implements OnInit {
   specialization;
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
+  visitState = null;
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -61,6 +62,12 @@ export class HomepageComponent implements OnInit {
           ) {
             this.specialization = attribute.value;
           }
+          if (
+            attribute.attributeType.uuid ===
+            this.sessionService.visitStateProviderType
+          ) {
+            this.visitState = attribute.value;
+          }
         });
         this.getVisits();
       });
@@ -73,14 +80,7 @@ export class HomepageComponent implements OnInit {
     const attribute = provider.find(
       ({ attributeType }) => attributeType.uuid === this.visitStateAttributeType
     );
-    return attribute && attribute.value ? attribute.value : null;
-  }
-
-  /**
-   * Return visit from service
-   */
-  get visitState() {
-    return this.sessionService.visitState;
+    return attribute && attribute.value ? attribute.value : "missing";
   }
 
   /**
@@ -90,12 +90,14 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits().subscribe(
       (response) => {
         const visits = response.results;
-        let stateVisits = visits;
-        if (this.visitState !== "All") {
+        let stateVisits = [];
+        if (this.visitState && this.visitState !== "All") {
           stateVisits = visits.filter(({ attributes }) => {
             const visitState = this.getStateFromVisit(attributes);
             return this.visitState === visitState;
           });
+        } else if (this.visitState === "All") {
+          stateVisits = visits;
         }
         stateVisits.forEach((active) => {
           if (active.encounters.length > 0) {
