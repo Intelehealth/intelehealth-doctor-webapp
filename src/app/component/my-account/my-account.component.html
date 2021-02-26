@@ -33,6 +33,12 @@
               </td>
             </tr>
             <tr>
+              <th>Visit State :</th>
+              <td *ngIf="providerDetails.person">
+                {{ visitState }}
+              </td>
+            </tr>
+            <tr>
               <th>Phone No. :</th>
               <td *ngIf="providerDetails.phoneNumber">
                 {{ providerDetails.phoneNumber.value }}

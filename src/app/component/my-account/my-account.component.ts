@@ -1,5 +1,4 @@
 import { SessionService } from "src/app/services/session.service";
-import { AuthService } from "src/app/services/auth.service";
 import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
@@ -18,6 +17,7 @@ export class MyAccountComponent implements OnInit {
   setSpiner: boolean = true;
 
   name = "Enter text";
+  visitState = "NA";
   providerDetails = null;
   userDetails: any;
   constructor(
@@ -35,16 +35,21 @@ export class MyAccountComponent implements OnInit {
         this.providerDetails = provider.results[0];
         saveToStorage("provider", this.providerDetails);
         const attributes = provider.results[0].attributes;
-        attributes.forEach((element) => {
-          this.providerDetails[element.attributeType.display] = {
-            value: element.value,
-            uuid: element.uuid,
+        attributes.forEach((attribute) => {
+          this.providerDetails[attribute.attributeType.display] = {
+            value: attribute.value,
+            uuid: attribute.uuid,
           };
+          if (
+            attribute.attributeType.uuid ===
+            this.sessionService.visitStateProviderType
+          ) {
+            this.visitState = attribute.value;
+          }
         });
         this.setSpiner = false;
       });
   }
-
   /**
    * Open edit details modal
    */
