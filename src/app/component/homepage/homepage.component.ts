@@ -36,7 +36,9 @@ export class HomepageComponent implements OnInit {
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
-
+  visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
+  specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
+  visitState = null;
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -53,13 +55,18 @@ export class HomepageComponent implements OnInit {
       this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
         const attributes = provider.results[0].attributes;
-        attributes.forEach((element) => {
+        attributes.forEach((attribute) => {
           if (
-            element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-            !element.voided
+            attribute.attributeType.uuid === this.specializationProviderType &&
+            !attribute.voided
           ) {
-            this.specialization = element.value;
+            this.specialization = attribute.value;
+          }
+          if (
+            attribute.attributeType.uuid ===
+            this.sessionService.visitStateProviderType
+          ) {
+            this.visitState = attribute.value;
           }
         });
         this.getVisits();
@@ -69,6 +76,13 @@ export class HomepageComponent implements OnInit {
     }
   }
 
+  getStateFromVisit(provider) {
+    const attribute = provider.find(
+      ({ attributeType }) => attributeType.uuid === this.visitStateAttributeType
+    );
+    return attribute && attribute.value ? attribute.value : "missing";
+  }
+
   /**
    * Get all visits
    */
@@ -76,7 +90,16 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits().subscribe(
       (response) => {
         const visits = response.results;
-        visits.forEach((active) => {
+        let stateVisits = [];
+        if (this.visitState && this.visitState !== "All") {
+          stateVisits = visits.filter(({ attributes }) => {
+            const visitState = this.getStateFromVisit(attributes);
+            return this.visitState === visitState;
+          });
+        } else if (this.visitState === "All") {
+          stateVisits = visits;
+        }
+        stateVisits.forEach((active) => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
@@ -124,10 +147,10 @@ export class HomepageComponent implements OnInit {
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
-  
+
   /**
    * Check for a visit and put it to the respective table as per their encounter
-   * @param visitObject Object 
+   * @param visitObject Object
    */
   visitCategory(active) {
     const { encounters = [] } = active;
@@ -159,7 +182,7 @@ export class HomepageComponent implements OnInit {
 
   /**
    * Transform visit Object to make it compatible to show in the mat table
-   * @param visitObject Object 
+   * @param visitObject Object
    * @returns Object
    */
   assignValueToProperty(active) {

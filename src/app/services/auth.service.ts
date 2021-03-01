@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
+declare var deleteFromStorage: any;
 
 @Injectable({
   providedIn: "root",
