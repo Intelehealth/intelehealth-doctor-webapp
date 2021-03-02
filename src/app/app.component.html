@@ -1,7 +1,7 @@
 <app-navbar
   (messageEvent)="receiveMessage()"
-  *ngIf="authService.isLoggedIn()"
+  *ngIf="isLoggedIn"
 ></app-navbar>
 <router-outlet></router-outlet>
 <br />
-<app-footer *ngIf="authService.isLoggedIn()"></app-footer>
+<app-footer *ngIf="isLoggedIn"></app-footer>

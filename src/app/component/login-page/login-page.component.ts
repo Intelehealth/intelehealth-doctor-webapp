@@ -66,6 +66,8 @@ export class LoginPageComponent implements OnInit {
         if (response.authenticated === true) {
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
+              this.authService.sendToken(response.user.sessionId);
+              saveToStorage("user", response.user);
               if (provider.results[0].attributes.length === 0) {
                 this.router.navigate(["/myAccount"]);
               } else {
@@ -79,8 +81,6 @@ export class LoginPageComponent implements OnInit {
               this.router.navigate(["home"]);
             }
           );
-          this.authService.sendToken(response.user.sessionId);
-          saveToStorage("user", response.user);
           
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {

@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
   specialization;
   newVisits;
   visitNote;
+  isLoggedIn = false;
+
   readonly VapidKEY =
     "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg";
   constructor(
@@ -40,6 +42,7 @@ export class AppComponent implements OnInit {
     }
   }
   ngOnInit() {
+    this.isLoggedIn = this.authService.isLoggedIn();
     this.reloadCache();
     const session = getFromStorage("session");
     const providerDetails = getFromStorage("provider");
