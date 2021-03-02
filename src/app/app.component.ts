@@ -20,16 +20,19 @@ export class AppComponent implements OnInit {
   specialization;
   newVisits;
   visitNote;
-  readonly VapidKEY = 'BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg';
-  constructor(public authService: AuthService,
-              public sessionService: SessionService,
-              // private userIdle: UserIdleService,
-              public router: Router,
-              public visitService: VisitService,
-              public notificationService: PushNotificationsService,
-              public swUpdate: SwUpdate,
-              public swPush: SwPush) {}
+  isLoggedIn = false;
 
+  readonly VapidKEY =
+    "BFwuhYcJpWKFnTewNm9XtBTycAV_qvBqvIfbALC02CtOaMeXwrO6Zhm7MI_NIjDV9_TCbrr0FMmaDnZ7jllV6Xg";
+  constructor(
+    public authService: AuthService,
+    public sessionService: SessionService,
+    public router: Router,
+    public visitService: VisitService,
+    public notificationService: PushNotificationsService,
+    public swUpdate: SwUpdate,
+    public swPush: SwPush
+  ) {}
 
   reloadCache() {
     if (this.swUpdate.isEnabled) {
@@ -40,15 +43,8 @@ export class AppComponent implements OnInit {
       });
     }
   }
-  ngOnInit () {
-    // this.userIdle.startWatching();
-    // // Start watching when user idle is starting.
-    // this.userIdle.onTimerStart().subscribe(count => {
-    //   if (count === 1) {
-    //     this.authService.logout();
-    //     this.userIdle.stopWatching();
-    //   }
-    // });
+  ngOnInit() {
+    this.isLoggedIn = this.authService.isLoggedIn();
     this.reloadCache();
     const session = getFromStorage('session');
     const providerDetails = getFromStorage('provider');
