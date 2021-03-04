@@ -71,6 +71,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { MainComponent } from './component/main/main.component';
 
 
 
@@ -108,8 +109,9 @@ import { environment } from '../environments/environment';
     TablesComponent,
     CurrentVisitComponent,
     ModalsComponent,
+    MainComponent,
   ],
-  
+
   imports: [
     BrowserModule,
     FormsModule,
@@ -137,21 +139,24 @@ import { environment } from '../environments/environment';
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
-    UserIdleModule.forRoot({idle: 900, timeout: 30, ping: 12}),
+    UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
-      { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
-      { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
-      { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-      { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
-      { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
-      { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
-      { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-      { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-      { path: '', redirectTo:'home',pathMatch: 'full' },
+      {
+        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
+        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: '', redirectTo: 'home', pathMatch: 'full' },
+        ]
+      },
       { path: '**', component: Page404Component },
-    ], {scrollPositionRestoration: 'enabled'}),
+    ], { scrollPositionRestoration: 'enabled' }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
   ],
