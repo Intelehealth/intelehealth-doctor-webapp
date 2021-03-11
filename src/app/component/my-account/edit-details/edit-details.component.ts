@@ -23,6 +23,7 @@ export class EditDetailsComponent implements OnInit {
     "Physiotherapist",
     "Gynecologist",
     "Pediatrician",
+    "SAM"
   ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
