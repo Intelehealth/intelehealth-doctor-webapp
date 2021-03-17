@@ -72,6 +72,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
+import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
 
 
 
@@ -110,6 +111,7 @@ import { MainComponent } from './component/main/main.component';
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
+    ReassignSpecialityComponent,
   ],
 
   imports: [
