@@ -54,27 +54,30 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 
 // Material Design Imports
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { MatCardModule } from "@angular/material/card";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { MatInputModule } from "@angular/material/input";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatNativeDateModule } from "@angular/material/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatRadioModule } from "@angular/material/radio";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatTableModule } from "@angular/material/table";
-import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatSortModule } from "@angular/material/sort";
-import { MatListModule } from "@angular/material/list";
-import { MatSelectModule } from "@angular/material/select";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { ServiceWorkerModule } from "@angular/service-worker";
-import { environment } from "../environments/environment";
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
+
+
 
 @NgModule({
   declarations: [
@@ -110,6 +113,7 @@ import { environment } from "../environments/environment";
     TablesComponent,
     CurrentVisitComponent,
     ModalsComponent,
+    ReassignSpecialityComponent,
   ],
 
   imports: [
