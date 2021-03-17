@@ -3,7 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormControl } from "@angular/forms";
 import { VisitService } from 'src/app/services/visit.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-reassign-speciality',
@@ -13,8 +14,9 @@ import { ActivatedRoute } from '@angular/router';
 export class ReassignSpecialityComponent implements OnInit {
   type = 'N'
   patientDetails: any;
+  visitUuid = this.route.snapshot.paramMap.get("visit_id");
   baseURL = environment.baseURL;
-  // baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
+  baseURLProvider = `${this.baseURL}/visit/${this.visitUuid}/attribute`;
   specializations = [
     "General Physician",
     "Dermatologist",
@@ -33,13 +35,14 @@ export class ReassignSpecialityComponent implements OnInit {
   constructor(
     private visitService: VisitService,
     private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.getVisit(visitUuid).subscribe((visitDetails) => {
+    this.visitService.getVisit(this.visitUuid).subscribe((visitDetails) => {
          this.patientDetails = visitDetails
-         console.log('this.patientDetails---42: ', this.patientDetails);
+         console.log(' this.patientDetails : ',  this.patientDetails );
          this.updateSpeciality.controls.specialization.setValue(this.patientDetails.attributes[0].display)
     })
   }
@@ -48,17 +51,17 @@ export class ReassignSpecialityComponent implements OnInit {
     if(confirm("Are you sure to re-assign this visit to another doctor ")) {
       const value = this.updateSpeciality.value;
       if (value.specialization !== null) {
-      //   const URL = this.data.specialization
-      //     ? `${this.baseURLProvider}/${this.data.specialization.uuid}`
-      //     : this.baseURLProvider;
-      //   const json = {
-      //     attributeType: "ed1715f5-93e2-404e-b3c9-2a2d9600f062",
-      //     value: value.specialization,
-      //   };
-      //   this.http.post(URL, json).subscribe((response) => {});
-      // }
-      // this.onClose();
-      // setTimeout(() => window.location.reload(), 2000);
+        const URL = this.patientDetails.attributes[0].display
+          ? `${this.baseURLProvider}/${this.patientDetails.attributes[0].uuid}`
+          : this.baseURLProvider;
+        const json = {
+          attributeType: "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d",
+          value: value.specialization,
+        };
+        this.http.post(URL, json).subscribe((response) => {
+            this.router.navigate(['/home'])
+        })
+     
     }
     }
   }
