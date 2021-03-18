@@ -161,7 +161,6 @@ constructor(private service: EncounterService,
     this.diagnosisService
       .getObsAll(this.patientId)
       .subscribe((response) => {
-        console.log('response: ', response);
         if (response) {
           this.signandsubmit();
         }
