@@ -48,7 +48,7 @@ export class ReassignSpecialityComponent implements OnInit {
   }
 
   Submit() {
-    if(confirm("Are you sure to re-assign this visit to another doctor ")) {
+    if(confirm("Are you sure to re-assign this visit to another doctor?")) {
       const value = this.updateSpeciality.value;
       if (value.specialization !== null) {
         const URL = this.patientDetails.attributes[0].display
