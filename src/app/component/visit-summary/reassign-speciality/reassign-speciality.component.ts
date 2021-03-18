@@ -25,6 +25,7 @@ export class ReassignSpecialityComponent implements OnInit {
     "Pediatrician",
     "SAM",
   ];
+  errorText: string;
 
   updateSpeciality = new FormGroup({
     specialization: new FormControl(""),
