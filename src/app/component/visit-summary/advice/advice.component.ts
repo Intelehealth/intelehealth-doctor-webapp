@@ -55,21 +55,24 @@ export class AdviceComponent implements OnInit {
     )
 
   ngOnInit() {
-    const adviceUuid = '0308000d-77a2-46e0-a6fa-a8c1dcbc3141';
-    this.diagnosisService.concept(adviceUuid)
-      .subscribe(res => {
-        const result = res.answers;
-        result.forEach(ans => {
-          this.advices.push(ans.display);
-        });
+    const adviceUuid = "0308000d-77a2-46e0-a6fa-a8c1dcbc3141";
+    this.diagnosisService.concept(adviceUuid).subscribe((res) => {
+      const result = res.answers;
+      result.forEach((ans) => {
+        this.advices.push(ans.display);
       });
-    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
-      .subscribe(response => {
-        response.results.forEach(obs => {
+    });
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.patientId = this.route.snapshot.params["patient_id"];
+    this.diagnosisService
+      .getObs(this.patientId, this.conceptAdvice)
+      .subscribe((response) => {
+        response.results.forEach((obs) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
-            if (!obs.value.includes('</a>')) {
+            if (
+              !obs.value.includes("</a>") ||
+              obs.value.toLowerCase().includes("watch:")
+            ) {
               this.advice.push(obs);
             }
           }
