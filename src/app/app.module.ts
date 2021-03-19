@@ -73,6 +73,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
+import { ConfirmDialogComponent } from './component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component';
 
 
 
@@ -112,6 +113,7 @@ import { ReassignSpecialityComponent } from './component/visit-summary/reassign-
     ModalsComponent,
     MainComponent,
     ReassignSpecialityComponent,
+    ConfirmDialogComponent,
   ],
 
   imports: [
