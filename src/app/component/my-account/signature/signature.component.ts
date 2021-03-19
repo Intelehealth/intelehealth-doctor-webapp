@@ -91,6 +91,8 @@ signature = (text: string, font: string) => {
         this.http.post(url3, json1)
         .subscribe(ps => {
           this.snackbar.open('Signature added successfully', null, { duration: 4000 });
+          this.onClose();
+          setTimeout(() => window.location.reload(), 2000);
         });
       }
     });

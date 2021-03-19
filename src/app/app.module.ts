@@ -76,6 +76,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
+import { ConfirmDialogComponent } from './component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component';
 
 
 
@@ -114,6 +115,7 @@ import { ReassignSpecialityComponent } from './component/visit-summary/reassign-
     CurrentVisitComponent,
     ModalsComponent,
     ReassignSpecialityComponent,
+    ConfirmDialogComponent,
   ],
 
   imports: [

@@ -2,9 +2,11 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from 'src/environments/environment';
 import { FormGroup, FormControl } from "@angular/forms";
-import { VisitService } from 'src/app/services/visit.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { VisitService } from "src/app/services/visit.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
+import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 
 @Component({
   selector: 'app-reassign-speciality',
@@ -37,6 +39,7 @@ export class ReassignSpecialityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private dialogService: ConfirmDialogService
   ) { }
 
   ngOnInit(): void {
@@ -48,21 +51,40 @@ export class ReassignSpecialityComponent implements OnInit {
   }
 
   Submit() {
-    if(confirm("Are you sure to re-assign this visit to another doctor ")) {
-      const value = this.updateSpeciality.value;
-      if (value.specialization !== null) {
-        const URL = this.patientDetails.attributes[0].display
-          ? `${this.baseURLProvider}/${this.patientDetails.attributes[0].uuid}`
-          : this.baseURLProvider;
-        const json = {
-          attributeType: "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d",
-          value: value.specialization,
-        };
-        this.http.post(URL, json).subscribe((response) => {
-            this.router.navigate(['/home'])
-        })
-     
-    }
-    }
+    const value = this.updateSpeciality.value;
+    this.dialogService.openConfirmDialog("Are you sure to re-assign this visit to another doctor?")
+      .afterClosed().subscribe(res => {
+        if (res) {
+          if (value.specialization !== null) {
+            const URL = this.patientDetails.attributes[0].display
+              ? `${this.baseURLProvider}/${this.patientDetails.attributes[0].uuid}`
+              : this.baseURLProvider;
+            const json = {
+              attributeType: "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d",
+              value: value.specialization,
+            };
+            this.http.post(URL, json).subscribe((response) => {
+              this.router.navigate(["/home"]);
+            });
+          }
+        }
+      })
+
+    // if (confirm("Are you sure to re-assign this visit to another doctor?")) {
+    //   const value = this.updateSpeciality.value;
+    //   if (value.specialization !== null) {
+    //     const URL = this.patientDetails.attributes[0].display
+    //       ? `${this.baseURLProvider}/${this.patientDetails.attributes[0].uuid}`
+    //       : this.baseURLProvider;
+    //     const json = {
+    //       attributeType: "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d",
+    //       value: value.specialization,
+    //     };
+    //     this.http.post(URL, json).subscribe((response) => {
+    //       this.router.navigate(["/home"]);
+    //     });
+    //   }
+    // }
   }
+
 }
