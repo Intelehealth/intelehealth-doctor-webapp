@@ -123,7 +123,6 @@ export class PatientInteractionComponent implements OnInit {
       .getObs(this.patientId, this.conceptAdvice)
       .subscribe(({ results }) => {
         this.adviceObs = results;
-        console.log("this.adviceObs: ", this.adviceObs);
       });
   }
 
@@ -180,6 +179,7 @@ export class PatientInteractionComponent implements OnInit {
           };
           this.encounterService.postObs(json).subscribe((response) => {
             this.diagnosisService.isVisitSummaryChanged = true;
+            this.getAdviceObs();
           });
         }
       }
