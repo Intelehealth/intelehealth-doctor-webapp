@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.componen
 import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { EncounterService } from "src/app/services/encounter.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any,
   saveToStorage: any;
 @Component({
@@ -44,7 +45,8 @@ export class ReassignSpecialityComponent implements OnInit {
     private http: HttpClient,
     private dialogService: ConfirmDialogService,
     private pushNotificationService: PushNotificationsService,
-    private EncounterService: EncounterService
+    private EncounterService: EncounterService,
+    private snackbar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -70,7 +72,10 @@ export class ReassignSpecialityComponent implements OnInit {
               value: value.specialization,
             };
             this.http.post(URL, json).subscribe((response) => {
-              // this.router.navigate(["/home"]);
+              this.router.navigate(["/home"]);
+              this.snackbar.open(`Patient is reassigned to ${value.specialization} successfully.`, null, {
+                duration: 4000,
+              });
               //* Send Notification
               const myDate = new Date(Date.now() - 30000);
               const patientUuid = this.route.snapshot.paramMap.get("patient_id");
