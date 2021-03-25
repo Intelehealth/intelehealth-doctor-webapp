@@ -1,0 +1,25 @@
+<h3>Username: {{ socketService?.socket?.id }}</h3>
+
+<div class="row">
+  <div class="col-xs-6">
+    <video #localVideo autoplay controls class="localVideo"></video>
+  </div>
+  <div class="col-xs-6">
+    <video #remoteVideo class="remoteVideo" autoplay controls></video>
+  </div>
+</div>
+<div class="row">
+  <ul>
+    <label>User socket</label>
+    <li *ngFor="let user of users">
+      {{ user }}{{ socketService.socket.id == user ? "(me)" : "" }}
+      <!-- <button
+        *ngIf="!playing && socketService.socket.id != user"
+        (click)="call(user)"
+        class="btn btn-primary"
+      >
+        Call
+      </button> -->
+    </li>
+  </ul>
+</div>

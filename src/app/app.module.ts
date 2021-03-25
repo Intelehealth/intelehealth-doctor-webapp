@@ -72,6 +72,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
+import { VcComponent } from './component/vc/vc.component';
+import { SocketService } from './services/socket.service';
 
 
 
@@ -110,6 +112,7 @@ import { MainComponent } from './component/main/main.component';
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
+    VcComponent,
   ],
 
   imports: [
@@ -152,6 +155,7 @@ import { MainComponent } from './component/main/main.component';
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'vc/call', component: VcComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },
@@ -166,6 +170,7 @@ import { MainComponent } from './component/main/main.component';
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
+    SocketService,
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
