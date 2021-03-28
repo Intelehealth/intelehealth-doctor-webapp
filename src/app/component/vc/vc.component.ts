@@ -8,9 +8,11 @@ import { SocketService } from "src/app/services/socket.service";
 export class VcComponent implements OnInit {
   @ViewChild("remoteVideo") remoteVideoRef: any;
   @ViewChild("localVideo") localVideoRef: any;
+  @ViewChild("mainContainer") mainContainer: any;
+  @ViewChild("localContainer") localContainer: any;
 
   callerStream: any;
-  localStream;
+  localStream: MediaStream;
   myId;
   callerSignal;
   callerInfo;
@@ -20,6 +22,8 @@ export class VcComponent implements OnInit {
   pc;
   isChannelReady;
   room = "foo";
+  isMute = false;
+  isFullscreen = false;
 
   constructor(public socketService: SocketService) {}
 
@@ -30,6 +34,37 @@ export class VcComponent implements OnInit {
     this.initSocketEvents();
     this.socketService.emitEvent("create or join", this.room);
     console.log("Attempted to create or  join room", this.room);
+  }
+
+  videoPos = {
+    x: 0,
+    y: 0,
+  };
+  dragVideo(e) {
+    console.log("e: ", e);
+    this.videoPos = {
+      x: e.pageX,
+      y: e.pageY,
+    };
+  }
+
+  dragVideoLeave() {
+    console.log("this.videoPos: ", this.videoPos);
+    this.localContainer.nativeElement.style.bottom = this.videoPos.x + "px";
+    this.localContainer.nativeElement.style.left = this.videoPos.y + "px";
+  }
+
+  mute() {
+    this.isMute = !this.isMute;
+  }
+
+  fullscreen() {
+    if (this.isFullscreen) {
+      document.exitFullscreen();
+    } else {
+      this.mainContainer.nativeElement.requestFullscreen();
+    }
+    this.isFullscreen = !this.isFullscreen;
   }
 
   isStreamAvailable;
@@ -56,7 +91,10 @@ export class VcComponent implements OnInit {
       mediaConfig,
       (stream: MediaStream) => {
         this.localStream = stream;
-        this.localVideoRef.nativeElement.srcObject = this.localStream;
+        console.log("this.localStream: ", this.localStream);
+        const localStream = new MediaStream();
+        localStream.addTrack(stream.getVideoTracks()[0]);
+        this.localVideoRef.nativeElement.srcObject = localStream;
         cb();
       },
       (err) => {

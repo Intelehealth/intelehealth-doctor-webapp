@@ -74,6 +74,7 @@ import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
+import { HoverClassDirective } from './directives/hover-class.directive';
 
 
 
@@ -113,6 +114,7 @@ import { SocketService } from './services/socket.service';
     ModalsComponent,
     MainComponent,
     VcComponent,
+    HoverClassDirective,
   ],
 
   imports: [
