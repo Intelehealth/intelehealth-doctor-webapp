@@ -83,7 +83,7 @@ export class ReassignSpecialityComponent implements OnInit {
               const providerDetails = getFromStorage("provider");
               const attributes = providerDetails.attributes;
               const providerUuid = providerDetails.uuid;
-              
+
               const json = {
                 patient: patientUuid,
                 encounterType: "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f",
@@ -114,15 +114,14 @@ export class ReassignSpecialityComponent implements OnInit {
                         speciality: element.value,
                         patient: {
                           name: response.patient.display,
-                          provider: response.encounterProviders[0].display,
+                          provider: value.specialization,
                         },
                         skipFlag: false,
                       };
+                 
                       this.pushNotificationService
                         .postNotification(payload)
-                        .subscribe((sent) => {
-
-                        });
+                        .subscribe();
                     }
                   });
                 }
