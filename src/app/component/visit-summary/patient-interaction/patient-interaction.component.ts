@@ -176,6 +176,7 @@ export class PatientInteractionComponent implements OnInit {
             encounter: this.encounterUuid,
           };
           this.encounterService.postObs(json).subscribe((response) => {
+            this.diagnosisService.isVisitSummaryChanged = true;
             this.getAdviceObs();
           });
         }

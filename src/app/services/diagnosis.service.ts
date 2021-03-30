@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class DiagnosisService {
   diagnosisArray = [];
+  public isVisitSummaryChanged = false
   private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) { }
