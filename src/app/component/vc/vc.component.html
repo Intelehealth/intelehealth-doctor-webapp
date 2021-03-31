@@ -1,25 +1,47 @@
-<h3>Username: {{ socketService?.socket?.id }}</h3>
-
-<div class="row">
-  <div class="col-xs-6">
-    <video #localVideo autoplay controls class="localVideo"></video>
+<div #mainContainer class="main bg-dark">
+  <video #remoteVideo class="remoteVideo" autoplay></video>
+  <div #localContainer class="local-container col-xs-6">
+    <video #localVideo autoplay class="localVideo"></video>
   </div>
-  <div class="col-xs-6">
-    <video #remoteVideo class="remoteVideo" autoplay controls></video>
-  </div>
-</div>
-<div class="row">
-  <ul>
-    <label>User socket</label>
-    <li *ngFor="let user of users">
-      {{ user }}{{ socketService.socket.id == user ? "(me)" : "" }}
-      <!-- <button
-        *ngIf="!playing && socketService.socket.id != user"
-        (click)="call(user)"
-        class="btn btn-primary"
+  <div class="button-tab p-3 w-100 position-absolute">
+    <div class="container d-flex">
+      <div
+        [class.bg-primary]="isVideoOff"
+        hover-class="bg-info"
+        class="icon rounded-circle mx-3 video"
+        (click)="video()"
       >
-        Call
-      </button> -->
-    </li>
-  </ul>
+        <img
+          *ngIf="!isVideoOff"
+          class="text-secondary"
+          src="../../../assets/svgs/video.svg"
+        />
+        <img
+          *ngIf="isVideoOff"
+          class="text-secondary"
+          src="../../../assets/svgs/video-slash.svg"
+        />
+      </div>
+      <div
+        [class.bg-primary]="isMute"
+        hover-class="bg-info"
+        class="icon rounded-circle mx-3 mute"
+        (click)="mute()"
+      >
+        <i *ngIf="!isMute" class="fa fa-microphone"></i>
+        <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
+      </div>
+      <div hover-class="bg-info" class="icon rounded-circle mx-3 end-call">
+        <i class="fa fa-phone text-danger"></i>
+      </div>
+      <div
+        [class.bg-primary]="isFullscreen"
+        hover-class="bg-info"
+        (click)="fullscreen()"
+        class="icon rounded-circle mx-3 full-screen"
+      >
+        <i class="fa fa-arrows-alt"></i>
+      </div>
+    </div>
+  </div>
 </div>
