@@ -112,14 +112,13 @@ export class ReassignSpecialityComponent implements OnInit {
                       !element.voided
                     ) {
                       const payload = {
-                        speciality: element.value,
+                        speciality: value.specialization,
                         patient: {
                           name: response.patient.display,
-                          provider: value.specialization,
+                          provider: response.encounterProviders[0].display,
                         },
                         skipFlag: false,
                       };
-                 
                       this.pushNotificationService
                         .postNotification(payload)
                         .subscribe();
