@@ -75,6 +75,7 @@ import { MainComponent } from './component/main/main.component';
 import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
 import { HoverClassDirective } from './directives/hover-class.directive';
+import { ChatComponent } from './component/chat/chat.component';
 
 
 
@@ -115,6 +116,7 @@ import { HoverClassDirective } from './directives/hover-class.directive';
     MainComponent,
     VcComponent,
     HoverClassDirective,
+    ChatComponent,
   ],
 
   imports: [
