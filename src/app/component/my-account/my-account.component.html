@@ -62,7 +62,7 @@
                 {{ providerDetails.qualification.value }}
               </td>
             </tr>
-            <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
+            <tr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'">
               <th>Specialization :</th>
               <td *ngIf="providerDetails.specialization">
                 {{ providerDetails.specialization.value }}
@@ -74,7 +74,7 @@
                 {{ providerDetails.registrationNumber.value }}
               </td>
             </tr>
-            <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
+            <tr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'">
               <th>Signature :</th>
               <td
                 *ngIf="providerDetails.textOfSign"
