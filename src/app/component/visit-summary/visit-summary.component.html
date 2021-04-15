@@ -2,7 +2,6 @@
       <h2 style="text-align:center;">Visit Summary</h2>
 </div>
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
-
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
       <mat-card>
             <app-patientinfo></app-patientinfo>
@@ -118,3 +117,4 @@
             </div>
       </div>
 </div>
+<app-chat></app-chat>

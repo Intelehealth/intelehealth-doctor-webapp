@@ -76,6 +76,7 @@ import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
 import { HoverClassDirective } from './directives/hover-class.directive';
 import { ChatComponent } from './component/chat/chat.component';
+import { TestChatComponent } from './component/test-chat/test-chat.component';
 
 
 
@@ -117,6 +118,7 @@ import { ChatComponent } from './component/chat/chat.component';
     VcComponent,
     HoverClassDirective,
     ChatComponent,
+    TestChatComponent,
   ],
 
   imports: [
@@ -160,6 +162,7 @@ import { ChatComponent } from './component/chat/chat.component';
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
         { path: 'vc/call', component: VcComponent },
+        { path: 'test/chat', component: TestChatComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },

@@ -1,7 +1,94 @@
+.chat-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: rgb(38, 94, 199);
+  box-shadow: 3px 3px 3px rgba(218, 215, 215, 0.925);
+  padding: 10px;
+  cursor: pointer;
+}
+.chat-button i {
+  color: white;
+  font-size: 30px;
+}
 .container {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: 200px;
-  width: 100px;
+  padding: 0px;
+  display: none;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ddd;
+}
+.card-header i {
+  cursor: pointer;
+}
+.no-history {
+  color: grey;
+  text-align: center;
+}
+.chat-box {
+  min-height: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.message-header-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+.message-header-container span {
+  font-size: 11px;
+  font-weight: bold;
+  word-spacing: 5x;
+}
+
+.message-header-container.user-message-time {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.user-message {
+  background-color: #ececec;
+  border-radius: 10px;
+  padding: 8px;
+  color: #666;
+  margin-top: 10px;
+  max-width: 80%;
+  min-width: 100px;
+}
+.user-message-container {
+  display: flex;
+}
+.user-message-container.user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-message.incoming-message {
+  background-color: #579ffb;
+  border-radius: 10px;
+  padding: 8px;
+  color: #fff;
+  margin-top: 10px;
+  max-width: 80%;
+  justify-content: flex-end;
+  min-width: 100px;
+}
+.user-message p {
+  margin: 0px;
+}
+
+.container.active {
+  display: block;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 0px;
+  background-color: #fff;
+  box-shadow: 3px 3px 3px rgba(218, 215, 215, 0.925);
+  border-radius: 10px;
 }

@@ -2,14 +2,19 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 declare const getFromStorage;
-@Component({
-  selector: "app-chat",
-  templateUrl: "./chat.component.html",
-  styleUrls: ["./chat.component.css"],
-})
-export class ChatComponent implements OnInit {
-  @ViewChild("chatInput") chatInput: ElementRef;
 
+@Component({
+  selector: "app-test-chat",
+  templateUrl: "./test-chat.component.html",
+  styleUrls: ["./test-chat.component.css"],
+})
+export class TestChatComponent implements OnInit {
+  @ViewChild("chatInput") chatInput: ElementRef;
+  data = {
+    to: "",
+    from: "",
+    patientId: "",
+  };
   classFlag = false;
   chats = [];
   isUser;
@@ -24,7 +29,6 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
-    this.updateMessages();
   }
 
   get chatElem() {
@@ -52,9 +56,19 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage(event) {
-    if (this.toUser && this.patientId && this.chatElem.value) {
+    if (
+      this.data.to &&
+      this.data.from &&
+      this.data.patientId &&
+      this.chatElem.value
+    ) {
       this.chatService
-        .sendMessage(this.toUser, this.patientId, this.chatElem.value)
+        .sendMessage(
+          this.data.to,
+          this.data.patientId,
+          this.chatElem.value,
+          this.data.from
+        )
         .subscribe((res) => {
           this.updateMessages();
         });
@@ -64,9 +78,8 @@ export class ChatComponent implements OnInit {
 
   updateMessages() {
     this.chatService
-      .getPatientMessages(this.toUser, this.patientId)
+      .getPatientMessages(this.data.to, this.data.patientId, this.data.from)
       .subscribe((res: { data }) => {
-        console.log("res: >>>>>>>>>>", res);
         this.chats = res.data;
       });
   }
@@ -82,9 +95,5 @@ export class ChatComponent implements OnInit {
   }
   chatClose() {
     this.classFlag = false;
-  }
-
-  get userUuid() {
-    return this.chatService.user.uuid;
   }
 }

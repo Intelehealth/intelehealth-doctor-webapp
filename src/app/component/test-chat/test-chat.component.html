@@ -1,7 +1,34 @@
+<div class="card container col-md-6 d-block">
+  {{ data | json }}
+  <div class="input-group input-group-sm mb-3 mt-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">Patient Id</span>
+    </div>
+    <input [(ngModel)]="data.patientId" type="text" class="form-control" />
+  </div>
+  <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm"
+        >From User Id</span
+      >
+    </div>
+    <input [(ngModel)]="data.from" type="text" class="form-control" />
+  </div>
+  <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-sm">To User Id</span>
+    </div>
+    <input [(ngModel)]="data.to" type="text" class="form-control" />
+  </div>
+  <button class="btn btn-primary" (click)="updateMessages($event)">
+    Get Messages
+  </button>
+</div>
+
 <div class="chat-button" id="chat-button" (click)="chatLaunch()">
   <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
 </div>
-<div [class.active]="classFlag" class="card container col-md-3">
+<div [class.active]="classFlag" class="card container col-md-6">
   <div class="card-header" (click)="chatClose()">
     <h6>Chat</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
@@ -9,10 +36,10 @@
   <div class="chat-box card-body">
     <div
       class="user-message-container"
-      [class.user]="chat.fromUser == userUuid"
+      [class.user]="chat.isUser"
       *ngFor="let chat of chats"
     >
-      <div class="user-message" [class.incoming-message]="chat.fromUser != userUuid">
+      <div class="user-message" [class.incoming-message]="chat.isUser">
         <p>{{ chat?.message }}</p>
         <div
           class="message-header-container"
