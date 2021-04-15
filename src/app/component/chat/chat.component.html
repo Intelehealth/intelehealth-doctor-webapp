@@ -1,0 +1,53 @@
+<div class="chat-button" id="chat-button" (click)="chatLaunch()">
+  <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
+</div>
+<div [class.active]="classFlag" class="card container col-md-3">
+  <div class="card-header" (click)="chatClose()">
+    <h6>Chat</h6>
+    <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
+  </div>
+  <div #chatBox class="chat-box card-body">
+    <div
+      class="user-message-container"
+      [class.user]="chat.fromUser == userUuid"
+      *ngFor="let chat of chats"
+    >
+      <div class="user-message" [class.incoming-message]="chat.fromUser != userUuid">
+        <p>{{ chat?.message }}</p>
+        <div
+          class="message-header-container"
+          [class.user-message-time]="chat.isUser"
+        >
+          <span class="user-name"></span>
+          <span class="user-time">{{
+            chat?.createdAt | date: "dd-MM-yy, h:mm a"
+          }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="no-history" *ngIf="!chats?.length">No chat history found.</div>
+  </div>
+  <div class="message-form card-footer">
+    <div class="input-group mb-3">
+      <input
+        #chatInput
+        type="text"
+        class="form-control"
+        placeholder="message"
+        name="message"
+        aria-label="Recipient's username"
+        [(ngModel)]="message"
+        (keydown)="onPressEnter($event)"
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-primary btn-pill"
+          type="submit"
+          (click)="sendMessage($event)"
+        >
+          <i class="fa fa-paper-plane" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -75,8 +75,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
-import { ConfirmDialogComponent } from './component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component';
+import { MainComponent } from './component/main/main.component';
+import { VcComponent } from './component/vc/vc.component';
+import { SocketService } from './services/socket.service';
+import { HoverClassDirective } from './directives/hover-class.directive';
+import { ChatComponent } from './component/chat/chat.component';
+import { TestChatComponent } from './component/test-chat/test-chat.component';
 
 
 
@@ -114,8 +118,11 @@ import { ConfirmDialogComponent } from './component/visit-summary/reassign-speci
     TablesComponent,
     CurrentVisitComponent,
     ModalsComponent,
-    ReassignSpecialityComponent,
-    ConfirmDialogComponent,
+    MainComponent,
+    VcComponent,
+    HoverClassDirective,
+    ChatComponent,
+    TestChatComponent,
   ],
 
   imports: [
@@ -146,55 +153,25 @@ import { ConfirmDialogComponent } from './component/visit-summary/reassign-speci
     HttpClientModule,
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot(
-      [
-        { path: "login", component: LoginPageComponent },
-        {
-          path: "home",
-          component: HomepageComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "findPatient",
-          component: FindPatientComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "myAccount",
-          component: MyAccountComponent,
-          canActivate: [AuthGuard],
-        },
-        { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-        {
-          path: "modals",
-          component: ModalsComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "signature",
-          component: SignatureComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "editDetails",
-          component: EditDetailsComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "changePassword",
-          component: ChangePasswordComponent,
-          canActivate: [AuthGuard],
-        },
-        {
-          path: "visitSummary/:patient_id/:visit_id",
-          component: VisitSummaryComponent,
-          canActivate: [AuthGuard],
-        },
-        { path: "", redirectTo: "home", pathMatch: "full" },
-        { path: "**", component: Page404Component },
-      ],
-      { scrollPositionRestoration: "enabled" }
-    ),
+    RouterModule.forRoot([
+      { path: 'login', component: LoginPageComponent },
+      {
+        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
+        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'vc/call', component: VcComponent },
+        { path: 'test/chat', component: TestChatComponent },
+        { path: '', redirectTo: 'home', pathMatch: 'full' },
+        ]
+      },
+      { path: '**', component: Page404Component },
+    ], { scrollPositionRestoration: 'enabled' }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
@@ -207,8 +184,9 @@ import { ConfirmDialogComponent } from './component/visit-summary/reassign-speci
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
-    { provide: APP_BASE_HREF, useValue: "/" },
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    SocketService,
+    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
   bootstrap: [AppComponent],
 })

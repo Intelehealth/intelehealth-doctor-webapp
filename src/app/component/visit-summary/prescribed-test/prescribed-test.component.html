@@ -8,6 +8,7 @@
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
         <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
       </form>
+      <br>
 </div>
 <ng-container *ngIf="tests.length > 0">
     <ul class="list-unstyled">
