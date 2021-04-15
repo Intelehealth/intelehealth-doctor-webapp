@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
+import { SocketService } from "src/app/services/socket.service";
 declare const getFromStorage;
 
 @Component({
@@ -10,10 +11,11 @@ declare const getFromStorage;
 })
 export class TestChatComponent implements OnInit {
   @ViewChild("chatInput") chatInput: ElementRef;
+  @ViewChild("chatBox") chatBox: ElementRef;
   data = {
-    to: "",
-    from: "",
-    patientId: "",
+    to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
+    from: "28cea4ab-3188-434a-82f0-055133090a38",
+    patientId: "a286e0de-eba0-4ad5-b698-900657d8ac75",
   };
   classFlag = false;
   chats = [];
@@ -24,11 +26,26 @@ export class TestChatComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private socket: SocketService
   ) {}
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
+    this.reInitSocket();
+  }
+
+  get activeUsers() {
+    return Object.keys(this.socket.activeUsers);
+  }
+
+  reInitSocket() {
+    localStorage.socketQuery = `userId=${this.data.from}`;
+    this.socket.initSocket(true);
+    this.socket.onEvent("updateMessage").subscribe(() => {
+      this.updateMessages();
+      this.playNotify();
+    });
   }
 
   get chatElem() {
@@ -81,6 +98,7 @@ export class TestChatComponent implements OnInit {
       .getPatientMessages(this.data.to, this.data.patientId, this.data.from)
       .subscribe((res: { data }) => {
         this.chats = res.data;
+        this.scroll();
       });
   }
 
@@ -92,8 +110,19 @@ export class TestChatComponent implements OnInit {
 
   chatLaunch() {
     this.classFlag = true;
+    this.scroll();
   }
   chatClose() {
     this.classFlag = false;
+  }
+
+  scroll() {
+    setTimeout(() => {
+      this.chatBox.nativeElement.scroll(0, 99999999);
+    }, 0);
+  }
+
+  playNotify() {
+    new Audio("../../../../assets/notification.mp3").play();
   }
 }

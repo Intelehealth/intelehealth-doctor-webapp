@@ -23,15 +23,18 @@ export class SocketService {
     return this.http.post(url, message);
   }
 
-  public initSocket() {
-    this.socket = io(environment.socketURL, {
-      query: localStorage.socketQuery,
-    });
-
-    this.onEvent("allUsers").subscribe((data) => {
-      const users = Object.keys(data);
-      this.activeUsers = users;
-    });
+  public initSocket(forceInit = false) {
+    if (forceInit && this.socket?.id && this.socket?.disconnect) {
+      this.socket.disconnect();
+    }
+    if (!this.socket || forceInit) {
+      this.socket = io(environment.socketURL, {
+        query: localStorage.socketQuery,
+      });
+      this.onEvent("allUsers").subscribe((data) => {
+        this.activeUsers = data;
+      });
+    }
   }
 
   public emitEvent(action, data) {

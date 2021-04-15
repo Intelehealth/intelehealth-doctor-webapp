@@ -17,6 +17,7 @@
 .container {
   padding: 0px;
   display: none;
+  z-index: 9;
 }
 .card-header {
   display: flex;
@@ -34,6 +35,7 @@
   min-height: 300px;
   max-height: 400px;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 .message-header-container {
   display: flex;

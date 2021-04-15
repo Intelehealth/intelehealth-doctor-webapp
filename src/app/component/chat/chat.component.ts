@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
+import { SocketService } from "src/app/services/socket.service";
 declare const getFromStorage;
 @Component({
   selector: "app-chat",
@@ -9,6 +10,7 @@ declare const getFromStorage;
 })
 export class ChatComponent implements OnInit {
   @ViewChild("chatInput") chatInput: ElementRef;
+  @ViewChild("chatBox") chatBox: ElementRef;
 
   classFlag = false;
   chats = [];
@@ -19,12 +21,19 @@ export class ChatComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private socket: SocketService
   ) {}
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
+    localStorage.socketQuery = `userId=${this.userUuid}`;
     this.updateMessages();
+    this.socket.initSocket();
+    this.socket.onEvent("updateMessage").subscribe(() => {
+      this.updateMessages();
+      this.playNotify();
+    });
   }
 
   get chatElem() {
@@ -66,8 +75,8 @@ export class ChatComponent implements OnInit {
     this.chatService
       .getPatientMessages(this.toUser, this.patientId)
       .subscribe((res: { data }) => {
-        console.log("res: >>>>>>>>>>", res);
         this.chats = res.data;
+        this.scroll();
       });
   }
 
@@ -79,12 +88,23 @@ export class ChatComponent implements OnInit {
 
   chatLaunch() {
     this.classFlag = true;
+    this.scroll();
   }
   chatClose() {
     this.classFlag = false;
   }
 
+  scroll() {
+    setTimeout(() => {
+      this.chatBox.nativeElement.scroll(0, 99999999);
+    }, 500);
+  }
+
   get userUuid() {
     return this.chatService.user.uuid;
+  }
+
+  playNotify() {
+    new Audio("../../../../assets/notification.mp3").play();
   }
 }

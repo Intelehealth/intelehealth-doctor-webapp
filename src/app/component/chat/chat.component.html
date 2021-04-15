@@ -6,7 +6,7 @@
     <h6>Chat</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
-  <div class="chat-box card-body">
+  <div #chatBox class="chat-box card-body">
     <div
       class="user-message-container"
       [class.user]="chat.fromUser == userUuid"

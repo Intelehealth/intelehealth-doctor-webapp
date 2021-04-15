@@ -20,10 +20,22 @@
     </div>
     <input [(ngModel)]="data.to" type="text" class="form-control" />
   </div>
-  <button class="btn btn-primary" (click)="updateMessages($event)">
+  <button
+    class="btn btn-primary"
+    (click)="updateMessages($event); reInitSocket()"
+  >
     Get Messages
   </button>
 </div>
+
+<ul class="card mt-5">
+  <li class="mt-2" *ngFor="let user of activeUsers">
+    {{ user }}&nbsp;&nbsp;&nbsp;
+    <span>({{ socket.activeUsers[user]?.status }})</span>
+    &nbsp;
+    <span *ngIf="user == socket?.socket?.id">(me)</span>
+  </li>
+</ul>
 
 <div class="chat-button" id="chat-button" (click)="chatLaunch()">
   <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
@@ -33,13 +45,16 @@
     <h6>Chat</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
-  <div class="chat-box card-body">
+  <div #chatBox class="chat-box card-body">
     <div
       class="user-message-container"
-      [class.user]="chat.isUser"
+      [class.user]="chat.fromUser == data.from"
       *ngFor="let chat of chats"
     >
-      <div class="user-message" [class.incoming-message]="chat.isUser">
+      <div
+        class="user-message"
+        [class.incoming-message]="chat.fromUser != data.from"
+      >
         <p>{{ chat?.message }}</p>
         <div
           class="message-header-container"
