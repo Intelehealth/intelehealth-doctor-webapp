@@ -1,5 +1,50 @@
 .remoteVideo {
   width: 98.9vw;
+  height: 79vh;
+}
+
+.localVideo {
+  height: 180px;
+}
+
+.main {
+  position: relative;
+}
+.local-container {
+  position: absolute;
+  bottom: 15%;
+  right: 3%;
+}
+
+i.fa {
+  font-size: 25px;
+  padding: 10px;
+}
+
+.icon {
+  cursor: pointer;
+  background-color: #fff;
+  height: 45px;
+  width: 45px;
+}
+.mute i {
+  padding-left: 14px;
+}
+.fa-microphone-slash {
+  padding-left: 7px !important;
+}
+
+.button-tab {
+  bottom: 10%;
+}
+.container {
+  margin: 0 auto;
+  width: 25%;
+}
+.icon img {
+  height: 25px;
+  width: 50px;
+  margin-top: 8px;
 }
 
 .localVideo {

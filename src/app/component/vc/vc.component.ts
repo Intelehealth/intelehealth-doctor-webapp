@@ -23,6 +23,7 @@ export class VcComponent implements OnInit {
   isChannelReady;
   room = "foo";
   isMute = false;
+  isVideoOff = false;
   isFullscreen = false;
 
   constructor(public socketService: SocketService) {}
@@ -55,7 +56,13 @@ export class VcComponent implements OnInit {
   }
 
   mute() {
+    this.localStream.getAudioTracks()[0].enabled = this.isMute;
     this.isMute = !this.isMute;
+  }
+
+  video() {
+    this.localStream.getVideoTracks()[0].enabled = this.isVideoOff;
+    this.isVideoOff = !this.isVideoOff;
   }
 
   fullscreen() {
@@ -91,7 +98,6 @@ export class VcComponent implements OnInit {
       mediaConfig,
       (stream: MediaStream) => {
         this.localStream = stream;
-        console.log("this.localStream: ", this.localStream);
         const localStream = new MediaStream();
         localStream.addTrack(stream.getVideoTracks()[0]);
         this.localVideoRef.nativeElement.srcObject = localStream;
