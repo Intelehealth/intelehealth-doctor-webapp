@@ -81,6 +81,8 @@ import { SocketService } from './services/socket.service';
 import { HoverClassDirective } from './directives/hover-class.directive';
 import { ChatComponent } from './component/chat/chat.component';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
+import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
+import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 
 
 
@@ -123,6 +125,8 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
     HoverClassDirective,
     ChatComponent,
     TestChatComponent,
+    ReassignSpecialityComponent,
+    ConfirmDialogComponent
   ],
 
   imports: [

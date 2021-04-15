@@ -218,7 +218,7 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  onSubmit(weekDays){
+  onSubmit(){
     // if(this.weekDays.startTime == null || this.weekDays.endTime == null){
     //   this.errorDays = true
     // }else{

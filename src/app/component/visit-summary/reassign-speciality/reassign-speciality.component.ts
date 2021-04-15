@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { environment } from 'src/environments/environment';
+import { environment } from "src/environments/environment";
 import { FormGroup, FormControl } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -13,12 +13,12 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any,
   saveToStorage: any;
 @Component({
-  selector: 'app-reassign-speciality',
-  templateUrl: './reassign-speciality.component.html',
-  styleUrls: ['./reassign-speciality.component.css']
+  selector: "app-reassign-speciality",
+  templateUrl: "./reassign-speciality.component.html",
+  styleUrls: ["./reassign-speciality.component.css"],
 })
 export class ReassignSpecialityComponent implements OnInit {
-  type = 'N'
+  type = "N";
   patientDetails: any;
   visitUuid = this.route.snapshot.paramMap.get("visit_id");
 
@@ -31,14 +31,12 @@ export class ReassignSpecialityComponent implements OnInit {
     "Physiotherapist",
     "Gynecologist",
     "Pediatrician",
-    "SAM"
+    "SAM",
   ];
+  errorText: string;
 
-  updateSpeciality = new FormGroup({ 
-    specialization: new FormControl(
-      ""
-      // this.data.specialization ? this.data.specialization.value : null
-    )
+  updateSpeciality = new FormGroup({
+    specialization: new FormControl(""),
   });
   constructor(
     private visitService: VisitService,
@@ -53,10 +51,11 @@ export class ReassignSpecialityComponent implements OnInit {
 
   ngOnInit(): void {
     this.visitService.getVisit(this.visitUuid).subscribe((visitDetails) => {
-         this.patientDetails = visitDetails
-         console.log(' this.patientDetails : ',  this.patientDetails );
-         this.updateSpeciality.controls.specialization.setValue(this.patientDetails.attributes[0].display)
-    })
+      this.patientDetails = visitDetails;
+      this.updateSpeciality.controls.specialization.setValue(
+        this.patientDetails.attributes[0].value
+      );
+    });
   }
 
   Submit() {
