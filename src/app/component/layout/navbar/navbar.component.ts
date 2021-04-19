@@ -218,14 +218,17 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  onSubmit(){
-    // if(this.weekDays.startTime == null || this.weekDays.endTime == null){
-    //   this.errorDays = true
-    // }else{
-      this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
-        console.log("------", response);
-      })
+  compareTwoDates(weekDays){
+    // if(new Date(this.form.controls['date_end'].value)<new Date(this.form.controls['date_start'].value)){
+    //    this.error={isError:true,errorMessage:'End Date can't before start date'};
     // }
+ }
+
+  onSubmit(){
+      this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
+        console.log('response: ', response);
+        this.dialog.closeAll();
+      })
   }
 
   setNotification(period) {

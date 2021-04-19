@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   baseURL: "https://testing.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://testing.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://testing.intelehealth.org/openmrs",
