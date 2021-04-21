@@ -30,8 +30,7 @@ export class ReassignSpecialityComponent implements OnInit {
     "Dermatologist",
     "Physiotherapist",
     "Gynecologist",
-    "Pediatrician",
-    "SAM",
+    "Pediatrician"
   ];
   errorText: string;
 
