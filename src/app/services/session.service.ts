@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class SessionService {
   private baseURL = environment.baseURL;
-
+  visitStateProviderType = "0406ffeb-a11a-4bb3-8ea6-3ef43b79dc77";
   constructor(private http: HttpClient) { }
 
   session(): Observable<any> {

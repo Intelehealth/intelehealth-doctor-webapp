@@ -26,6 +26,7 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
+  errorDays = false;
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
     { day: "Tuesday", startTime: null, endTime: null },
@@ -44,6 +45,8 @@ export class NavbarComponent implements OnInit {
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
+
+
 
   @Output() messageEvent = new EventEmitter<string>();
 
@@ -81,6 +84,11 @@ export class NavbarComponent implements OnInit {
       this.subscribeNotification(true);
     }, 1000);
 
+    this.notificationService.getUserSettings().subscribe((res) => {
+      if (res && res["data"] && res["data"].snooze_till) {
+        this.setSnoozeTimeout(res["data"].snooze_till);
+      }
+    });
     if (this.swPush.isEnabled) {
       this.notificationService.notificationHandler();
     }
@@ -208,6 +216,48 @@ export class NavbarComponent implements OnInit {
     } else {
       localStorage.setItem("showNotification", "0");
     }
+  }
+
+  compareTwoDates(weekDays){
+    // if(new Date(this.form.controls['date_end'].value)<new Date(this.form.controls['date_start'].value)){
+    //    this.error={isError:true,errorMessage:'End Date can't before start date'};
+    // }
+ }
+
+  onSubmit(){
+      this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
+        console.log('response: ', response);
+        this.dialog.closeAll();
+      })
+  }
+
+  setNotification(period) {
+    if (period !== "custom") {
+      this.selectedNotification = period;
+    }
+    this.notificationService.setSnoozeFor(period).subscribe((response) => {
+      if (!response["snooze_till"]) {
+        this.notificationService.snoozeTimeout = clearTimeout(
+          this.notificationService.snoozeTimeout
+        );
+      } else {
+        this.setSnoozeTimeout(response["snooze_till"]);
+      }
+    });
+    this.notificationMenu = false;
+  }
+
+  setSnoozeTimeout(timeout) {
+    if (this.notificationService.snoozeTimeout)
+      clearTimeout(this.notificationService.snoozeTimeout);
+    this.notificationService.snoozeTimeout = setTimeout(() => {
+      this.notificationService.setSnoozeFor("off").subscribe((response) => {
+        if (this.notificationService.snoozeTimeout)
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+      });
+    }, timeout);
   }
 
   get snoozeTimeout() {

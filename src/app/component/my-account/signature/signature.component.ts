@@ -41,22 +41,25 @@ export class SignatureComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  onSubmit() {
+    const formValue = this.addSignatureForm.value;
+    const signatureValue = formValue.signature;
+    const signText = formValue.text;
+    if (signatureValue === "1") {
+      this.signature(signText, "arty");
+    }
+    if (signatureValue === "2") {
+      this.signature(signText, "asem");
+    }
+    if (signatureValue === "3") {
+      this.signature(signText, "youthness");
+    }
+    if (signatureValue === "4") {
+      this.signature(signText, "almondita");
+    }
+  }
 
-onSubmit() {
-  const formValue = this.addSignatureForm.value;
-  const signatureValue = formValue.signature;
-  const signText = formValue.text;
-  if (signatureValue === '1') {
-    this.signature(signText, 'arty');
-  }
-  if (signatureValue === '2') {
-    this.signature(signText, 'asem');
-  }
-  if (signatureValue === '3') {
-    this.signature(signText, 'youthness');
-  }
 
-}
 
 
 signature = (text: string, font: string) => {
@@ -91,6 +94,8 @@ signature = (text: string, font: string) => {
         this.http.post(url3, json1)
         .subscribe(ps => {
           this.snackbar.open('Signature added successfully', null, { duration: 4000 });
+          this.onClose();
+          setTimeout(() => window.location.reload(), 2000);
         });
       }
     });
@@ -119,3 +124,4 @@ signature = (text: string, font: string) => {
   }
 }
 }
+

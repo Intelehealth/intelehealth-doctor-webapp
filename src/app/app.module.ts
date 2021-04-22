@@ -1,52 +1,56 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { CommonModule, APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import {
+  CommonModule,
+  APP_BASE_HREF,
+  LocationStrategy,
+  HashLocationStrategy,
+} from "@angular/common";
 
 // Component Import
-import { AppComponent } from './app.component';
-import { HomepageComponent } from './component/homepage/homepage.component';
-import { VisitSummaryComponent } from './component/visit-summary/visit-summary.component';
-import { FamilyHistoryComponent } from './component/visit-summary/family-history/family-history.component';
-import { PastMedicalHistoryComponent } from './component/visit-summary/past-medical-history/past-medical-history.component';
-import { PresentingComplaintsComponent } from './component/visit-summary/presenting-complaints/presenting-complaints.component';
-import { OnExaminationComponent } from './component/visit-summary/on-examination/on-examination.component';
-import { PhysicalExaminationComponent } from './component/visit-summary/physical-examination/physical-examination.component';
-import { AdditionalDocumentsComponent } from './component/visit-summary/additional-documents/additional-documents.component';
-import { VitalComponent } from './component/visit-summary/vital/vital.component';
-import { MyAccountComponent } from './component/my-account/my-account.component';
-import { PatientInteractionComponent } from './component/visit-summary/patient-interaction/patient-interaction.component';
-import { AdditionalCommentComponent } from './component/visit-summary/additional-comment/additional-comment.component';
-import { DiagnosisComponent } from './component/visit-summary/diagnosis/diagnosis.component';
-import { PrescribedTestComponent } from './component/visit-summary/prescribed-test/prescribed-test.component';
-import { AdviceComponent } from './component/visit-summary/advice/advice.component';
-import { FollowUpComponent } from './component/visit-summary/follow-up/follow-up.component';
-import { PrescribedMedicationComponent } from './component/visit-summary/prescribed-medication/prescribed-medication.component';
-import { LoginPageComponent } from './component/login-page/login-page.component';
-import { NavbarComponent } from './component/layout/navbar/navbar.component';
-import { ChangePasswordComponent } from './component/change-password/change-password.component';
-import { FooterComponent } from './component/layout/footer/footer.component';
-import { PatientinfoComponent } from './component/visit-summary/patientinfo/patientinfo.component';
-import { PastVisitsComponent } from './component/visit-summary/past-visits/past-visits.component';
-import { FindPatientComponent } from './component/find-patient/find-patient.component';
-import { Page404Component } from './component/page404/page404.component';
-import { EditDetailsComponent } from './component/my-account/edit-details/edit-details.component';
-import { AyuComponent } from './component/ayu/ayu.component';
-import { TablesComponent } from './component/homepage/tables/tables.component';
-import { SignatureComponent } from './component/my-account/signature/signature.component';
-import { CurrentVisitComponent } from './component/visit-summary/current-visit/current-visit.component';
-import { ModalsComponent } from './component/ayu/modals/modals.component';
-
+import { AppComponent } from "./app.component";
+import { HomepageComponent } from "./component/homepage/homepage.component";
+import { VisitSummaryComponent } from "./component/visit-summary/visit-summary.component";
+import { FamilyHistoryComponent } from "./component/visit-summary/family-history/family-history.component";
+import { PastMedicalHistoryComponent } from "./component/visit-summary/past-medical-history/past-medical-history.component";
+import { PresentingComplaintsComponent } from "./component/visit-summary/presenting-complaints/presenting-complaints.component";
+import { OnExaminationComponent } from "./component/visit-summary/on-examination/on-examination.component";
+import { PhysicalExaminationComponent } from "./component/visit-summary/physical-examination/physical-examination.component";
+import { AdditionalDocumentsComponent } from "./component/visit-summary/additional-documents/additional-documents.component";
+import { VitalComponent } from "./component/visit-summary/vital/vital.component";
+import { MyAccountComponent } from "./component/my-account/my-account.component";
+import { PatientInteractionComponent } from "./component/visit-summary/patient-interaction/patient-interaction.component";
+import { AdditionalCommentComponent } from "./component/visit-summary/additional-comment/additional-comment.component";
+import { DiagnosisComponent } from "./component/visit-summary/diagnosis/diagnosis.component";
+import { PrescribedTestComponent } from "./component/visit-summary/prescribed-test/prescribed-test.component";
+import { AdviceComponent } from "./component/visit-summary/advice/advice.component";
+import { FollowUpComponent } from "./component/visit-summary/follow-up/follow-up.component";
+import { PrescribedMedicationComponent } from "./component/visit-summary/prescribed-medication/prescribed-medication.component";
+import { LoginPageComponent } from "./component/login-page/login-page.component";
+import { NavbarComponent } from "./component/layout/navbar/navbar.component";
+import { ChangePasswordComponent } from "./component/change-password/change-password.component";
+import { FooterComponent } from "./component/layout/footer/footer.component";
+import { PatientinfoComponent } from "./component/visit-summary/patientinfo/patientinfo.component";
+import { PastVisitsComponent } from "./component/visit-summary/past-visits/past-visits.component";
+import { FindPatientComponent } from "./component/find-patient/find-patient.component";
+import { Page404Component } from "./component/page404/page404.component";
+import { EditDetailsComponent } from "./component/my-account/edit-details/edit-details.component";
+import { AyuComponent } from "./component/ayu/ayu.component";
+import { TablesComponent } from "./component/homepage/tables/tables.component";
+import { SignatureComponent } from "./component/my-account/signature/signature.component";
+import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
+import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CookieService } from 'ngx-cookie-service';
-import { AuthGuard } from './auth.guard';
-import { DatePipe } from '@angular/common';
-import { UserIdleModule } from 'angular-user-idle';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from "@angular/common/http";
+import { RouterModule } from "@angular/router";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { CookieService } from "ngx-cookie-service";
+import { AuthGuard } from "./auth.guard";
+import { DatePipe } from "@angular/common";
+import { UserIdleModule } from "angular-user-idle";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 
 // Material Design Imports
@@ -77,6 +81,8 @@ import { SocketService } from './services/socket.service';
 import { HoverClassDirective } from './directives/hover-class.directive';
 import { ChatComponent } from './component/chat/chat.component';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
+import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
+import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 
 
 
@@ -119,6 +125,8 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
     HoverClassDirective,
     ChatComponent,
     TestChatComponent,
+    ReassignSpecialityComponent,
+    ConfirmDialogComponent
   ],
 
   imports: [
@@ -169,7 +177,10 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
       { path: '**', component: Page404Component },
     ], { scrollPositionRestoration: 'enabled' }),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register('/intelehealth/ngsw-worker.js', { enabled: environment.production, registrationStrategy: 'registerImmediately' }),
+    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+      enabled: environment.production,
+      registrationStrategy: "registerImmediately",
+    }),
   ],
   providers: [
     CookieService,
@@ -181,6 +192,6 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
