@@ -21,7 +21,7 @@ export class VcComponent implements OnInit {
   isStarted;
   pc;
   isChannelReady;
-  room = "foo";
+  room = "";
   isMute = false;
   isVideoOff = false;
   isFullscreen = false;
@@ -30,11 +30,8 @@ export class VcComponent implements OnInit {
 
   ngOnInit(): void {
     this.socketService.initSocket();
-    this.startUserMedia();
     this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
     this.initSocketEvents();
-    this.socketService.emitEvent("create or join", this.room);
-    console.log("Attempted to create or  join room", this.room);
   }
 
   videoPos = {
@@ -47,6 +44,12 @@ export class VcComponent implements OnInit {
       x: e.pageX,
       y: e.pageY,
     };
+  }
+
+  makeCall() {
+    this.startUserMedia();
+    this.socketService.emitEvent("create or join", this.room);
+    console.log("Attempted to create or  join room", this.room);
   }
 
   dragVideoLeave() {

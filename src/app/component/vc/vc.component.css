@@ -85,3 +85,8 @@ i.fa {
   margin: 0 auto;
   width: 25%;
 } 
+
+.room_id{
+  display: flex;
+  justify-content: center;
+}
