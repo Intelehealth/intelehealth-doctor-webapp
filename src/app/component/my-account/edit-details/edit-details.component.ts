@@ -16,7 +16,11 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
-  specializations = ["General Physician"];
+  specializations = [
+                      "General Physician",
+                      "Homeopathy",
+                      "Ayurveda"
+                    ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
