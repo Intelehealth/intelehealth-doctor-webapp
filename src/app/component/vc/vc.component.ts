@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { SocketService } from "src/app/services/socket.service";
 @Component({
   selector: "app-vc",
@@ -25,12 +26,24 @@ export class VcComponent implements OnInit {
   isMute = false;
   isVideoOff = false;
   isFullscreen = false;
+  classFlag = false;
 
-  constructor(public socketService: SocketService) {}
+  constructor(
+    public socketService: SocketService,
+    @Inject(MAT_DIALOG_DATA) public data,
+    public dialogRef: MatDialogRef<VcComponent>
+  ) {}
+
+  close() {
+    this.dialogRef.close();
+  }
 
   ngOnInit(): void {
     this.socketService.initSocket();
     this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
+    this.socketService.onEvent("bye").subscribe(() => {
+      this.handleRemoteHangup();
+    });
     this.initSocketEvents();
   }
 
@@ -80,10 +93,7 @@ export class VcComponent implements OnInit {
   isStreamAvailable;
   startUserMedia(config?: any, cb = () => {}): void {
     let mediaConfig = {
-      video: {
-        width: { min: 1024, ideal: 1280, max: 1920 },
-        height: { min: 576, ideal: 720, max: 1080 },
-      },
+      video: true,
       audio: true,
     };
 
@@ -116,10 +126,7 @@ export class VcComponent implements OnInit {
   initSocketEvents() {
     this.socketService.onEvent("message").subscribe((room) => {
       this.isInitiator = true;
-    });
-
-    this.socketService.onEvent("message").subscribe((room) => {
-      console.log("Room " + room + " is full");
+      console.log("message:this.isInitiator ", this.isInitiator);
     });
 
     this.socketService.onEvent("join").subscribe((room) => {
@@ -276,14 +283,21 @@ export class VcComponent implements OnInit {
 
   handleRemoteHangup() {
     console.log("Session terminated.");
-    stop();
     this.isInitiator = false;
+    this.stop();
   }
 
   stop() {
     this.isStarted = false;
-    this.pc.close();
-    this.pc = null;
+    this.localStream &&
+      this.localStream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+    if (this.pc) {
+      this.pc.close();
+      this.pc = null;
+    }
+    this.close();
   }
 
   get users() {

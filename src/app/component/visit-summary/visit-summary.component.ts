@@ -5,6 +5,8 @@ import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
+import { VcComponent } from "../vc/vc.component";
+import { MatDialog } from "@angular/material/dialog";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -31,7 +33,8 @@ export class VisitSummaryComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
-    private pushNotificationService: PushNotificationsService
+    private pushNotificationService: PushNotificationsService,
+    private dialog: MatDialog
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -232,4 +235,10 @@ export class VisitSummaryComponent implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  openVcModal() {
+    this.dialog.open(VcComponent, {
+      data: {},
+    });
+  }
 }

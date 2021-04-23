@@ -1,5 +1,5 @@
 .remoteVideo {
-  width: 98.9vw;
+  width: 78vw;
   height: 79vh;
 }
 
@@ -84,9 +84,9 @@ i.fa {
 .container {
   margin: 0 auto;
   width: 25%;
-} 
+}
 
-.room_id{
+.room_id {
   display: flex;
   justify-content: center;
 }

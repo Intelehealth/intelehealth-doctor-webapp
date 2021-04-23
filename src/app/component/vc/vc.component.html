@@ -32,7 +32,11 @@
         <i *ngIf="!isMute" class="fa fa-microphone"></i>
         <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
       </div>
-      <div hover-class="bg-info" class="icon rounded-circle mx-3 end-call">
+      <div
+        (click)="handleRemoteHangup()"
+        hover-class="bg-info"
+        class="icon rounded-circle mx-3 end-call"
+      >
         <i class="fa fa-phone text-danger"></i>
       </div>
       <div
@@ -43,11 +47,17 @@
       >
         <i class="fa fa-arrows-alt"></i>
       </div>
-
     </div>
     <div class="room_id">
       <div class="form-group">
-        <input type="text" id="room" name="room" class="form-control" [(ngModel)]="room" placeholder="Room Id">
+        <input
+          type="text"
+          id="room"
+          name="room"
+          class="form-control"
+          [(ngModel)]="room"
+          placeholder="Room Id"
+        />
         <button class="btn btn-success" (click)="makeCall()">Call</button>
       </div>
     </div>

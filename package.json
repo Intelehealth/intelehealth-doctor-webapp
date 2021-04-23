@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "ng-host": "ng s --host 0.0.0.0",
+    "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
     "start": "ng serve",
     "build": "ng build --prod",
     "test": "ng test",
@@ -36,6 +36,7 @@
     "rxjs": "~6.6.2",
     "serialize-javascript": "^2.1.2",
     "tslib": "^1.9.0",
+    "webrtc-adapter": "^7.7.1",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {
