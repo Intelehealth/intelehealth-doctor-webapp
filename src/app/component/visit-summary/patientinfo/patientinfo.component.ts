@@ -18,6 +18,7 @@ export class PatientinfoComponent implements OnInit {
   patientInfo = [];
   patientIdentifier: string;
   info = {};
+  state: string;
   profileImagePresent = false;
   personAge: any;
   yearAge: any;
@@ -40,14 +41,12 @@ export class PatientinfoComponent implements OnInit {
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
-
+      this.state = info.identifiers[0].location.display
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
-        } else if (attri.attributeType.display.match("occupation")) {
-          this.info["occupation"] = attri.value;
-        }
+        } 
       });
       this.patientInfo.push(this.info);
     });

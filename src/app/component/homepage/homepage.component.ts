@@ -9,6 +9,7 @@ declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 export interface VisitData {
   id: string;
   name: string;
+  telephone: string;
   gender: string;
   age: string;
   location: string;
@@ -103,6 +104,7 @@ export class HomepageComponent implements OnInit {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
+              
               const speRequired = attributes.filter(
                 (attr) =>
                   attr.attributeType.uuid ===
@@ -125,6 +127,7 @@ export class HomepageComponent implements OnInit {
             }
           }
           this.value = {};
+          
         });
         this.setSpiner = false;
       },
@@ -191,6 +194,7 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
+    this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
     this.value.status = active.encounters[0].encounterType.display;

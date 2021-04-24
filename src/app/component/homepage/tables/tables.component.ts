@@ -12,6 +12,7 @@ export class TablesComponent implements OnInit {
   displayColumns: string[] = [
     "id",
     "name",
+    "telephone",
     "gender",
     "age",
     "location",
