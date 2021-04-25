@@ -40,8 +40,10 @@ export class PatientinfoComponent implements OnInit {
       this.image = `${this.baseURL}/personimage/${uuid}`;
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
+      console.log('info: ', info);
       this.info = info.person;
-      this.state = info.identifiers[0].location.display
+      this.state = info.person.preferredAddress.stateProvince
+      console.log('this.state:----46 ', this.state);
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
