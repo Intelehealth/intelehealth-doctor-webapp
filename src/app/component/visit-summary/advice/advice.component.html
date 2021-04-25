@@ -3,39 +3,21 @@
 <div id="advice-form">
   <form [formGroup]="adviceForm">
     <mat-form-field class="w-100">
-      <input
-        matInput
-        placeholder="Advice or Refer Patient"
-        [ngbTypeahead]="search"
-        formControlName="advice"
-      />
+      <input matInput placeholder="Advice or Refer Patient" [ngbTypeahead]="search" formControlName="advice" />
     </mat-form-field>
-    <button
-      mat-raised-button
-      color="primary"
-      type="reset"
-      (click)="submit()"
-      [disabled]="!adviceForm.valid"
-    >
+    <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]="!adviceForm.valid">
       Add Advice
     </button>
   </form>
 </div>
+<br>
 <ng-container *ngIf="advice.length > 0">
   <div>
     <ul class="list-unstyled">
-      <mat-list
-        [@moveInLeft]
-        *ngFor="let advice of advice; index as i"
-        class="alert alert-primary"
-      >
+      <mat-list [@moveInLeft] *ngFor="let advice of advice; index as i" class="alert alert-primary">
         <div class="doctor-value">{{ advice.value }}</div>
-        <i
-          (click)="delete(i)"
-          class="material-icons float-right"
-          style="color: rgb(235, 30, 30); cursor: pointer"
-          >delete</i
-        >
+        <i (click)="delete(i)" class="material-icons float-right"
+          style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
       </mat-list>
     </ul>
   </div>
