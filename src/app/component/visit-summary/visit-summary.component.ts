@@ -1,4 +1,3 @@
-import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
 import { Component, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -6,6 +5,9 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { environment } from "../../../environments/environment";
+import { HttpClient } from "@angular/common/http";
+
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -16,6 +18,8 @@ declare var getFromStorage: any,
   styleUrls: ["./visit-summary.component.css"],
 })
 export class VisitSummaryComponent implements OnInit {
+  baseURL = environment.baseURL;
+
   show = false;
   text: string;
   font: string;
@@ -50,8 +54,8 @@ export class VisitSummaryComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpClient,
     private diagnosisService: DiagnosisService,
-    private pushNotificationService: PushNotificationsService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -68,16 +72,16 @@ export class VisitSummaryComponent implements OnInit {
     this.diagnosisService
       .getObsAll(this.patientId)
       .subscribe((response) => {
-      const ObsData = response.results.filter(a=>this.conceptIds.includes(a.concept.uuid))
-      console.log('ObsData: ', ObsData.length);
-      if(ObsData.length>0){
-        this.diagnosisService.isVisitSummaryChanged = true
-      }
-      else{
-        this.diagnosisService.isVisitSummaryChanged = false
-      }
-       
-     });
+        const ObsData = response.results.filter(a => this.conceptIds.includes(a.concept.uuid))
+        console.log('ObsData: ', ObsData.length);
+        if (ObsData.length > 0) {
+          this.diagnosisService.isVisitSummaryChanged = true
+        }
+        else {
+          this.diagnosisService.isVisitSummaryChanged = false
+        }
+
+      });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       visitDetails.encounters.forEach((visit) => {
@@ -174,17 +178,34 @@ export class VisitSummaryComponent implements OnInit {
     this.diagnosisService
       .getObsAll(this.patientId)
       .subscribe((response) => {
+        console.log('response: ', response);
         if (response) {
           this.signandsubmit();
+          // this.updateVisit();
         }
-       
+
       });
+  }
+
+
+  updateVisit() {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+
+    const myDate = new Date(Date.now() - 30000);
+    const json = {
+      stopDatetime: myDate,
+    };
+    this.http.post(URL, json).subscribe((response) => {
+    });
   }
 
   signandsubmit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
     if (userDetails && providerDetails) {
@@ -224,6 +245,9 @@ export class VisitSummaryComponent implements OnInit {
               this.visitCompletePresent = true;
               this.snackbar.open("Visit Complete", null, { duration: 4000 });
             });
+
+            this.updateVisit();
+
           } else {
             if (
               window.confirm(

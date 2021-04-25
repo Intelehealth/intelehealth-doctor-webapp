@@ -8,7 +8,6 @@ import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
-import { PushNotificationsService } from "src/app/services/push-notification.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -49,7 +48,6 @@ export class NavbarComponent implements OnInit {
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
-    public notificationService: PushNotificationsService
   ) {}
 
   ngOnInit() {

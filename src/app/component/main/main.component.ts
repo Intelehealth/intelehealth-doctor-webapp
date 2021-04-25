@@ -7,7 +7,6 @@ import { SwPush, SwUpdate } from '@angular/service-worker';
 import { VisitService } from 'src/app/services/visit.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
-import { PushNotificationsService } from 'src/app/services/push-notification.service';
 declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
 @Component({
   selector: 'app-main',
@@ -26,7 +25,6 @@ export class MainComponent implements OnInit {
     // private userIdle: UserIdleService,
     public router: Router,
     public visitService: VisitService,
-    public notificationService: PushNotificationsService,
     public swUpdate: SwUpdate,
     public swPush: SwPush) { }
 

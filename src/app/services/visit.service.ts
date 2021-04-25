@@ -23,6 +23,11 @@ export class VisitService {
     return this.http.get(url);
   }
 
+  // updateVisit(id): Observable<any> {
+  //   const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
+  //   return this.http.post(url);
+  // }
+
   fetchVisitDetails(uuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)))`;
