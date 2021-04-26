@@ -7,6 +7,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
+import { environment } from "src/environments/environment";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -25,6 +26,9 @@ export class VisitSummaryComponent implements OnInit {
   setSpiner = true;
   doctorDetails;
   doctorValue;
+  videoIcon = environment.production
+    ? "../../../intelehealth/assets/svgs/video-w.svg"
+    : "../../../assets/svgs/video-w.svg";
 
   constructor(
     private service: EncounterService,
