@@ -4,10 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://arogyasahayta.ekalarogya.org/openmrs/ws/rest/v1",
-  baseURLCoreApp:
-    "https://arogyasahayta.ekalarogya.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://arogyasahayta.ekalarogya.org/openmrs",
+  baseURL: "https://helpline.ekalarogya.org/openmrs/ws/rest/v1",
+  baseURLCoreApp:"https://helpline.ekalarogya.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://helpline.ekalarogya.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };

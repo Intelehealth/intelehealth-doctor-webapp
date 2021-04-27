@@ -19,7 +19,8 @@ export class EditDetailsComponent implements OnInit {
   specializations = [
                       "General Physician",
                       "Homeopathy",
-                      "Ayurveda"
+                      "Ayurveda",
+                      "No Doctor Needed"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
