@@ -9,7 +9,7 @@
       <div
         [class.bg-primary]="isVideoOff"
         hover-class="bg-info"
-        class="icon rounded-circle mx-3 video"
+        class="icon rounded-circle mr-2 video"
         (click)="video()"
       >
         <img
@@ -26,7 +26,7 @@
       <div
         [class.bg-primary]="isMute"
         hover-class="bg-info"
-        class="icon rounded-circle mx-3 mute"
+        class="icon rounded-circle mr-2 mute"
         (click)="mute()"
       >
         <i *ngIf="!isMute" class="fa fa-microphone"></i>
@@ -35,7 +35,7 @@
       <div
         (click)="handleRemoteHangup()"
         hover-class="bg-info"
-        class="icon rounded-circle mx-3 end-call"
+        class="icon rounded-circle mr-2 end-call"
       >
         <i class="fa fa-phone text-danger"></i>
       </div>
@@ -43,12 +43,12 @@
         [class.bg-primary]="isFullscreen"
         hover-class="bg-info"
         (click)="fullscreen()"
-        class="icon rounded-circle mx-3 full-screen"
+        class="icon rounded-circle full-screen"
       >
         <i class="fa fa-arrows-alt"></i>
       </div>
     </div>
-    <div class="room_id">
+    <!-- <div class="room_id">
       <div class="form-group">
         <input
           type="text"
@@ -60,6 +60,6 @@
         />
         <button class="btn btn-success" (click)="makeCall()">Call</button>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>

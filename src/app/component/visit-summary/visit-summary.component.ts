@@ -26,6 +26,8 @@ export class VisitSummaryComponent implements OnInit {
   setSpiner = true;
   doctorDetails;
   doctorValue;
+  patientUuid = "";
+  visitUuid = "";
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
@@ -49,39 +51,42 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-      visitDetails.encounters.forEach((visit) => {
-        if (visit.display.match("Visit Note") !== null) {
-          saveToStorage("visitNoteProvider", visit);
-          this.visitNotePresent = true;
-          this.show = true;
-        }
-        if (visit.display.match("Visit Complete") !== null) {
-          this.visitCompletePresent = true;
-          visit.encounterProviders[0].provider.attributes.forEach((element) => {
-            if (element.attributeType.display === "textOfSign") {
-              this.text = element.value;
-            }
-            if (element.attributeType.display === "fontOfSign") {
-              this.font = element.value;
-            }
-          });
-        }
-        if (
-          visit.display.includes("ADULTINITIAL") |
-          visit.display.includes("Vitals")
-        ) {
-          saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
-        }
+    this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.visitService
+      .fetchVisitDetails(this.visitUuid)
+      .subscribe((visitDetails) => {
+        visitDetails.encounters.forEach((visit) => {
+          if (visit.display.match("Visit Note") !== null) {
+            saveToStorage("visitNoteProvider", visit);
+            this.visitNotePresent = true;
+            this.show = true;
+          }
+          if (visit.display.match("Visit Complete") !== null) {
+            this.visitCompletePresent = true;
+            visit.encounterProviders[0].provider.attributes.forEach(
+              (element) => {
+                if (element.attributeType.display === "textOfSign") {
+                  this.text = element.value;
+                }
+                if (element.attributeType.display === "fontOfSign") {
+                  this.font = element.value;
+                }
+              }
+            );
+          }
+          if (
+            visit.display.includes("ADULTINITIAL") |
+            visit.display.includes("Vitals")
+          ) {
+            saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
+          }
+        });
       });
-    });
   }
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
-    const patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     if (!this.visitNotePresent) {
       const userDetails = getFromStorage("user");
       const providerDetails = getFromStorage("provider");
@@ -89,7 +94,7 @@ export class VisitSummaryComponent implements OnInit {
       if (userDetails && providerDetails) {
         const providerUuid = providerDetails.uuid;
         const json = {
-          patient: patientUuid,
+          patient: this.patientUuid,
           encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
           encounterProviders: [
             {
@@ -97,13 +102,13 @@ export class VisitSummaryComponent implements OnInit {
               encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
             },
           ],
-          visit: visitUuid,
+          visit: this.visitUuid,
           encounterDatetime: myDate,
         };
         this.service.postEncounter(json).subscribe((response) => {
           if (response) {
             this.visitService
-              .fetchVisitDetails(visitUuid)
+              .fetchVisitDetails(this.visitUuid)
               .subscribe((visitDetails) => {
                 saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
               });
@@ -144,8 +149,6 @@ export class VisitSummaryComponent implements OnInit {
 
   sign() {
     const myDate = new Date(Date.now() - 30000);
-    const patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
     if (userDetails && providerDetails) {
@@ -164,7 +167,7 @@ export class VisitSummaryComponent implements OnInit {
               }
             });
             const json = {
-              patient: patientUuid,
+              patient: this.patientUuid,
               encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
               encounterProviders: [
                 {
@@ -172,7 +175,7 @@ export class VisitSummaryComponent implements OnInit {
                   encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
                 },
               ],
-              visit: visitUuid,
+              visit: this.visitUuid,
               encounterDatetime: myDate,
               obs: [
                 {
@@ -242,7 +245,10 @@ export class VisitSummaryComponent implements OnInit {
 
   openVcModal() {
     this.dialog.open(VcComponent, {
-      data: {},
+      disableClose: true,
+      data: {
+        patientUuid: this.patientUuid,
+      },
     });
   }
 }

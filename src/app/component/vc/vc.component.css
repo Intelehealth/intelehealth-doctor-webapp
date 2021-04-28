@@ -20,26 +20,11 @@ i.fa {
   font-size: 25px;
   padding: 10px;
 }
-
-.icon {
-  cursor: pointer;
-  background-color: #fff;
-  height: 45px;
-  width: 45px;
-}
 .mute i {
   padding-left: 14px;
 }
 .fa-microphone-slash {
   padding-left: 7px !important;
-}
-
-.button-tab {
-  bottom: 10%;
-}
-.container {
-  margin: 0 auto;
-  width: 25%;
 }
 .icon img {
   height: 25px;
@@ -71,15 +56,12 @@ i.fa {
   height: 45px;
   width: 45px;
 }
-.mute i {
-  padding-left: 14px;
-}
 .fa-microphone-slash {
   padding-left: 7px !important;
 }
 
 .button-tab {
-  bottom: 10%;
+  bottom: 5%;
 }
 .container {
   margin: 0 auto;

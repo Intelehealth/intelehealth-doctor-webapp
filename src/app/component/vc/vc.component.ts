@@ -1,4 +1,10 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { SocketService } from "src/app/services/socket.service";
 @Component({
@@ -27,6 +33,7 @@ export class VcComponent implements OnInit {
   isVideoOff = false;
   isFullscreen = false;
   classFlag = false;
+  patientUuid = "";
 
   constructor(
     public socketService: SocketService,
@@ -39,36 +46,25 @@ export class VcComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.room = this.data.patientUuid;
     this.socketService.initSocket();
     this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
     this.socketService.onEvent("bye").subscribe(() => {
       this.handleRemoteHangup();
     });
     this.initSocketEvents();
+    this.makeCall(); 
   }
 
-  videoPos = {
-    x: 0,
-    y: 0,
-  };
-  dragVideo(e) {
-    console.log("e: ", e);
-    this.videoPos = {
-      x: e.pageX,
-      y: e.pageY,
-    };
+  @HostListener("fullscreenchange")
+  fullScreenChange() {
+    this.isFullscreen = document.fullscreenEnabled;
   }
 
   makeCall() {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
     console.log("Attempted to create or  join room", this.room);
-  }
-
-  dragVideoLeave() {
-    console.log("this.videoPos: ", this.videoPos);
-    this.localContainer.nativeElement.style.bottom = this.videoPos.x + "px";
-    this.localContainer.nativeElement.style.left = this.videoPos.y + "px";
   }
 
   mute() {
