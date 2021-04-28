@@ -154,6 +154,9 @@ export class VisitSummaryComponent implements OnInit {
                 }
               }
             });
+            setTimeout(() => {
+              this.showReminder(visitUuid);
+            }, 900000);
           } else {
             this.snackbar.open(`Visit Note Not Created`, null, {
               duration: 4000,
@@ -275,6 +278,31 @@ export class VisitSummaryComponent implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  /**
+   * show reminder to doctor if he is idle after starting the visit
+   * @param visitUuid string
+   */
+  showReminder(visitUuid:string) {
+    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary') 
+       && visitUuid === this.router.url.split('/')[3]) {
+        var data = "Patient "+ visitDetails.patient.person.display +" is waiting, Please provide prescription.";
+        window.confirm(data);
+      }
+    });
+  }
+
+   /**
+   * Check for encounter as per visit type passed
+   * @param encounters Array
+   * @param visitType String
+   * @returns Object | null
+   */
+  checkVisit(encounters, visitType) {
+    return encounters.find(({ display = '' }) => display.includes(visitType));
+  }
+
 }
 
 
