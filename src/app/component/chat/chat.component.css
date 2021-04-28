@@ -94,3 +94,15 @@
   box-shadow: 3px 3px 3px rgba(218, 215, 215, 0.925);
   border-radius: 10px;
 }
+@media screen and (max-width: 600px) {
+  .chat.card.container {
+    height: 100vh;
+    bottom: 0;
+    right: 0;
+  }
+  .chat .message-form.card-footer {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
