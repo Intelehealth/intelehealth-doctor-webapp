@@ -62,7 +62,7 @@
               (click)="setNotification('custom')">Custom
               <i *ngIf="selectedNotification == 'custom'" class="fa fa-check"></i></a>
             <hr />
-            <a class="dropdown-item" (click)="setNotification('off')">Turn Off
+            <a class="dropdown-item" *ngIf="snoozeTimeout" (click)="setNotification('off')">Turn Off
               <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i></a>
           </div>
         </li>
@@ -89,17 +89,17 @@
       </div>
       <div class="modal-body">
         <ul>
-
           <li *ngFor="let day of weekDays" class="d-flex">
             <label class="py-2 col-2">{{day.day}}</label>
-            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" [ngClass]="{ }" type="time" />
-            <input class="form-control col-4" [(ngModel)]="day.endTime" 
-              [ngClass]="{ }" type="time" />
+            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" [ngClass]="{}" type="time" />
+            <input class="form-control col-4" [(ngModel)]="day.endTime" [ngClass]="{}" type="time" />
           </li>
         </ul>
-      
-
       </div>
+
+      <span *ngIf="error.isError" class="danger">
+        {{ error.errorMessage }}
+      </span> 
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Save changes</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
