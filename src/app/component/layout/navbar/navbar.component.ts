@@ -26,7 +26,12 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
+  condition: any;
+  condition1: any;
   errorDays = false;
+
+  error:any={isError:false,errorMessage:''};
+
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
     { day: "Tuesday", startTime: null, endTime: null },
@@ -218,17 +223,20 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  compareTwoDates(weekDays){
-    // if(new Date(this.form.controls['date_end'].value)<new Date(this.form.controls['date_start'].value)){
-    //    this.error={isError:true,errorMessage:'End Date can't before start date'};
-    // }
- }
 
   onSubmit(){
+    // this.class1 = 
+    let sDate = this.weekDays.filter(a=>a.startTime)
+    let sDate1 = sDate[0].startTime
+    let eDate1 = sDate[0].endTime
+    this.condition = sDate1 ? eDate1 !== null : '';
+    this.condition1 = eDate1<sDate1 ?  this.error={isError:true,errorMessage:"End Date can't before start date"} : "Success";
+
+    if(this.condition == true && this.condition1 == "Success"){
       this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
         console.log('response: ', response);
-        this.dialog.closeAll();
       })
+    }
   }
 
   setNotification(period) {
