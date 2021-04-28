@@ -1,20 +1,8 @@
 <div class="h-100 bg-plum-plate bg-animation">
   <div class="d-flex h-100 justify-content-center align-items-center">
     <div class="mx-auto app-login-box col-md-8">
-      <div class="mx-auto" style="text-align: center">
-        <img
-          class="afi-logo"
-          src="https://afitesting.intelehealth.org/intelehealth/assets/images/Intelehealth-logo-white.png"
-          alt=""
-        />
-      </div>
-      <div class="ih-logo mx-auto mb-3" style="text-align: center">
-        <img
-          class="in-logo"
-          src="https://afitesting.intelehealth.org/intelehealth/assets/images/Intelehealth-logo-white1.png"
-          alt=""
-        />
-      </div>
+      <div class="mx-auto mb-3" style="text-align: center"><img src="../../../assets/images/Intelehealth-logo-white.png"
+          alt=""></div>
       <div class="modal-dialog w-100 mx-auto">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="modal-content">
@@ -29,78 +17,37 @@
               <div role="group" class="form-group">
                 <div>
                   <label for="examplePassword">Username :</label>
-                  <input
-                    type="email"
-                    placeholder="Enter Username..."
-                    class="form-control"
-                    formControlName="username"
-                  />
-                </div>
-                <div
-                  class="alert alert-danger"
-                  *ngIf="submitted && controls.username.errors?.maxlength"
-                >
-                  Username must not be greater than 12 characters.
+                  <input type="email" placeholder="Enter Username..." class="form-control" formControlName="username">
                 </div>
               </div>
               <div role="group" class="form-group">
                 <div>
                   <label for="examplePassword">Password :</label>
-                  <div style="display: flex">
-                    <input
-                      [type]="fieldTextType ? 'text' : 'password'"
-                      placeholder="Enter password..."
-                      class="form-control"
-                      formControlName="password"
-                    />
+                  <div style="display: flex;">
+                    <input [type]="fieldTextType ? 'text' : 'password'" placeholder="Enter password..."
+                      class="form-control" formControlName="password">
+                    <!-- <div class="input-group-append"> -->
                     <span class="input-group-text">
-                      <i
-                        class="fa"
-                        [ngClass]="{
-                          'fa-eye-slash': !fieldTextType,
-                          'fa-eye': fieldTextType
-                        }"
-                        (click)="toggleFieldTextType()"
-                        style="width: 25px"
-                      ></i>
+                      <i class="fa" [ngClass]="{
+                      'fa-eye-slash': !fieldTextType,
+                      'fa-eye': fieldTextType
+                    }" (click)="toggleFieldTextType()" style="width: 25px;"></i>
                     </span>
                   </div>
-                  <div
-                    class="alert alert-danger"
-                    *ngIf="submitted && controls.password.errors?.minlength"
-                  >
-                    Password must be at least 8 characters long.
-                  </div>
-                  <div
-                    class="alert alert-danger"
-                    *ngIf="submitted && controls.password.errors?.maxlength"
-                  >
-                    Password must not be greater than 12 characters.
-                  </div>
-                  <div
-                    class="alert alert-danger"
-                    *ngIf="submitted && controls.password.errors?.required"
-                  >
-                    Password is required.
-                  </div>
+                  <!-- </div> -->
                 </div>
               </div>
+
+
             </div>
             <div class="modal-footer clearfix">
               <div class="float-right">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  [disabled]="submitted && loginForm.invalid"
-                >
-                  Login to Dashboard
-                </button>
+                <button type="submit" class="btn btn-primary" [disabled]='!loginForm.valid'>Login to Dashboard</button>
               </div>
             </div>
           </div>
         </form>
       </div>
     </div>
-    <div class="version">EA1.0</div>
   </div>
 </div>
