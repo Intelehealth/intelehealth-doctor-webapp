@@ -231,8 +231,8 @@ export class NavbarComponent implements OnInit {
 
     if(this.condition == true && this.condition1 == "Success"){
       this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response)=>{
-        this.snackbar.open("Snoozed Successfully!!!", null, { duration: 2000 });
-
+        this.closeModal();
+        this.snackbar.open("Snoozed Successfully!", null, { duration: 4000 });
       })
     }
   }
