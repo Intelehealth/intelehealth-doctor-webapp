@@ -91,15 +91,16 @@
         <ul>
           <li *ngFor="let day of weekDays" class="d-flex">
             <label class="py-2 col-2">{{day.day}}</label>
-            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" [ngClass]="{}" type="time" />
-            <input class="form-control col-4" [(ngModel)]="day.endTime" [ngClass]="{}" type="time" />
+            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" type="time" />
+            <input class="form-control col-4" [(ngModel)]="day.endTime" type="time" />
           </li>
         </ul>
       </div>
 
       <span *ngIf="error.isError" class="danger">
         {{ error.errorMessage }}
-      </span> 
+      </span>
+      
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Save changes</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
