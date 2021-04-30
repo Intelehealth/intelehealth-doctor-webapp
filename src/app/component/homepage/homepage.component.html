@@ -80,7 +80,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="completedVisit.length > 0">
-                <app-tables [data]="completedVisit"></app-tables>
+                <app-tables [data]="completedVisit" [isCompletedVisit]="true"></app-tables>
             </ng-container>
         </mat-expansion-panel>
     </mat-accordion>
