@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { SocketService } from "src/app/services/socket.service";
+declare const getFromStorage: Function;
 @Component({
   selector: "app-vc",
   templateUrl: "./vc.component.html",
@@ -34,6 +35,7 @@ export class VcComponent implements OnInit {
   isFullscreen = false;
   classFlag = false;
   patientUuid = "";
+  nurseId: { uuid } = { uuid: null };
 
   constructor(
     public socketService: SocketService,
@@ -47,13 +49,21 @@ export class VcComponent implements OnInit {
 
   ngOnInit(): void {
     this.room = this.data.patientUuid;
+    const patientVisitProvider = getFromStorage("patientVisitProvider");
+    this.nurseId =
+      patientVisitProvider && patientVisitProvider.provider
+        ? patientVisitProvider.provider
+        : this.nurseId;
+
     this.socketService.initSocket();
+    this.initSocketEvents();
     this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
-    this.socketService.onEvent("bye").subscribe(() => {
+    this.socketService.onEvent("bye").subscribe((data) => {
+      console.log("bye::: ", data);
       this.handleRemoteHangup();
     });
-    this.initSocketEvents();
-    this.makeCall(); 
+    this.socketService.emitEvent("call", this.nurseId.uuid);
+    this.makeCall();
   }
 
   @HostListener("fullscreenchange")
@@ -281,6 +291,10 @@ export class VcComponent implements OnInit {
     console.log("Session terminated.");
     this.isInitiator = false;
     this.stop();
+  }
+
+  endCallInRoom() {
+    this.socketService.emitEvent("bye", this.room);
   }
 
   stop() {
