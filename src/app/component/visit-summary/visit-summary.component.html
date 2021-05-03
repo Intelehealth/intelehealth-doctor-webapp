@@ -43,7 +43,7 @@
             <app-additional-documents></app-additional-documents>
       </mat-card>
       <br>
-      <mat-card>
+      <mat-card *ngIf="!visitNotePresent">
         <app-reassign-speciality></app-reassign-speciality>
       </mat-card>
       <br>
