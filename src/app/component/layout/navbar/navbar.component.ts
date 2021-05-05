@@ -26,7 +26,7 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
-  pdfUrl = './../../../../assets/COVID19_Management_Algorithm_22042021_v1.pdf';
+  pdfUrl = 'https://helpline.intelehealth.org/intelehealth/assets/COVID19_Management_Algorithm_22042021_v1.pdf';
   pdfName = 'COVID19_Management_Algorithm';
   
   weekDays: any = [
