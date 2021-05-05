@@ -130,11 +130,6 @@ export class VcComponent implements OnInit {
   }
 
   initSocketEvents() {
-    this.socketService.onEvent("message").subscribe((room) => {
-      this.isInitiator = true;
-      console.log("message:this.isInitiator ", this.isInitiator);
-    });
-
     this.socketService.onEvent("join").subscribe((room) => {
       console.log("Another peer made a request to join room " + room);
       console.log("This peer is the initiator of room " + room + "!");
@@ -147,7 +142,6 @@ export class VcComponent implements OnInit {
     });
 
     this.socketService.onEvent("log").subscribe((array) => {
-      console.log("array:log ", array);
       console.log.apply(console, array);
     });
 
