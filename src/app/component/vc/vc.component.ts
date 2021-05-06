@@ -36,6 +36,7 @@ export class VcComponent implements OnInit {
   classFlag = false;
   patientUuid = "";
   nurseId: { uuid } = { uuid: null };
+  doctorName = "";
 
   constructor(
     public socketService: SocketService,
@@ -50,6 +51,9 @@ export class VcComponent implements OnInit {
   ngOnInit(): void {
     this.room = this.data.patientUuid;
     const patientVisitProvider = getFromStorage("patientVisitProvider");
+    const doctorName = getFromStorage("doctorName");
+    this.doctorName = doctorName ? doctorName : this.user.display;
+
     this.nurseId =
       patientVisitProvider && patientVisitProvider.provider
         ? patientVisitProvider.provider
@@ -62,7 +66,11 @@ export class VcComponent implements OnInit {
       console.log("bye::: ", data);
       this.handleRemoteHangup();
     });
-    this.socketService.emitEvent("call", this.nurseId.uuid);
+    this.socketService.emitEvent("call", {
+      nurseId: this.nurseId.uuid,
+      doctorName: this.doctorName,
+      roomId: this.room,
+    });
     this.makeCall();
   }
 
@@ -289,6 +297,7 @@ export class VcComponent implements OnInit {
 
   endCallInRoom() {
     this.socketService.emitEvent("bye", this.room);
+    this.close();
   }
 
   stop() {
@@ -306,5 +315,13 @@ export class VcComponent implements OnInit {
 
   get users() {
     return this.socketService.activeUsers;
+  }
+
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return {};
+    }
   }
 }

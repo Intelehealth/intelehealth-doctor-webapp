@@ -1,23 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService } from 'src/app/services/auth.service';
-import { SessionService } from 'src/app/services/session.service';
-import { PushNotificationsService } from 'src/app/services/push-notification.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ChangePasswordComponent } from '../change-password/change-password.component';
-// declare var saveToStorage: any;
-declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
+import { Component, OnInit } from "@angular/core";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { AuthService } from "src/app/services/auth.service";
+import { SessionService } from "src/app/services/session.service";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
+import { MatDialog } from "@angular/material/dialog";
+import { ChangePasswordComponent } from "../change-password/change-password.component";
+declare var saveToStorage: any;
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css']
+  selector: "app-login-page",
+  templateUrl: "./login-page.component.html",
+  styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
   loginForm = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required])
+    username: new FormControl("", [Validators.required]),
+    password: new FormControl("", [Validators.required]),
   });
 
   submitted = false;
@@ -31,12 +30,7 @@ export class LoginPageComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit() {
-    // const isLoggedIn: boolean = this.authService.isLoggedIn();
-    // if (isLoggedIn) {
-    //   this.router.navigateByUrl("/home");
-    // }
-  }
+  ngOnInit() {}
 
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
@@ -56,26 +50,35 @@ export class LoginPageComponent implements OnInit {
               this.authService.sendToken(response.user.sessionId);
               saveToStorage("user", response.user);
 
-              this.pushNotificationsService.getUserSettings(response.user.uuid).subscribe((response) => {
-                if(response['data'].isChange == 0){
-                  this.dialog.open(ChangePasswordComponent, { width: '500px', data: {isChange: false } });
-                }
-              })
+              this.pushNotificationsService
+                .getUserSettings(response.user.uuid)
+                .subscribe((response) => {
+                  if (response["data"].isChange == 0) {
+                    this.dialog.open(ChangePasswordComponent, {
+                      width: "500px",
+                      data: { isChange: false },
+                    });
+                  }
+                });
 
               if (provider.results[0].attributes.length === 0) {
                 this.router.navigate(["/myAccount"]);
               } else {
                 this.router.navigate(["/home"]);
               }
-              this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
-                duration: 4000,
-              });
+              this.snackbar.open(
+                `Welcome ${provider.results[0].person.display}`,
+                null,
+                {
+                  duration: 4000,
+                }
+              );
+              saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
               this.router.navigate(["home"]);
             }
           );
-          
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
