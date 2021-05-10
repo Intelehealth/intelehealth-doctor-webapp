@@ -96,22 +96,24 @@ export class NavbarComponent implements OnInit {
       this.subscribeNotification(true);
     }, 1000);
 
-    this.notificationService.getUserSettings().subscribe((res: { data }) => {
-      if (res && res.data && res.data.snooze_till) {
-        const snoozeTill = (() => {
-          try {
-            return JSON.parse(res.data.snooze_till);
-          } catch (error) {
-            return res.data.snooze_till;
+    this.notificationService
+      .getUserSettings()
+      .subscribe((res: { data; snooze_till }) => {
+        if (res && res.data && res.data.snooze_till) {
+          const snoozeTill = (() => {
+            try {
+              return JSON.parse(res.data.snooze_till);
+            } catch (error) {
+              return res.data.snooze_till;
+            }
+          })();
+          if (Array.isArray(snoozeTill)) {
+            this.weekDays = snoozeTill;
+          } else {
+            this.setSnoozeTimeout(res.snooze_till);
           }
-        })();
-        if (Array.isArray(snoozeTill)) {
-          this.weekDays = snoozeTill;
-        } else {
-          this.setSnoozeTimeout(res.data.snooze_till);
         }
-      }
-    });
+      });
     if (this.swPush.isEnabled) {
       this.notificationService.notificationHandler();
     }
