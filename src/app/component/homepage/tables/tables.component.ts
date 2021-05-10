@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -18,7 +18,7 @@ export class TablesComponent implements OnInit {
 >>>>>>> 3356066ba26f380a66762d4f7523800d32ff0ac6
   dataSource;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
   @Input() data;
   @Input() isCompletedVisit: boolean;
   
@@ -42,6 +42,7 @@ export class TablesComponent implements OnInit {
       }
     }
     this.dataSource.paginator = this.paginator;
+    this.sort.sort(({ id: 'lastSeen', start: 'asc'}) as MatSortable);
     this.dataSource.sort = this.sort;
   }
 
