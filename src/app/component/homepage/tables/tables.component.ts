@@ -11,11 +11,7 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./tables.component.css']
 })
 export class TablesComponent implements OnInit {
-<<<<<<< HEAD
-  displayColumns: string[] = ['id', 'name', 'gender', 'age', 'location', 'status', 'provider', 'lastSeen'];
-=======
   displayColumns: string[] = ['id', 'name', 'gender', 'dob', 'location', 'status', 'provider','complaints', 'lastSeen'];
->>>>>>> 3356066ba26f380a66762d4f7523800d32ff0ac6
   dataSource;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
