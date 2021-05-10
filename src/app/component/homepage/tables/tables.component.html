@@ -3,7 +3,7 @@
 </mat-form-field>
   
 <form *ngIf="isCompletedVisit" class="date-block" [formGroup]="filterForm">
-    <mat-form-field [class.mat-form-field1] = "isCompletedVisit">
+    <mat-form-field class="mat-form-field1">
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
     </mat-form-field>
     <div class="date-block-list">
