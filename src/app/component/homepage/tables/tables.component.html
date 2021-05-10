@@ -79,6 +79,13 @@
         <td mat-cell *matCellDef="let row"> {{row.provider}} </td>
     </ng-container>
 
+    <!-- Complaints column -->
+    <ng-container matColumnDef="complaints">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Complaints </th>
+      <td mat-cell *matCellDef="let row" class="complaints" [matTooltipClass]="{ 'tool-tip': true }"
+      [matTooltip]="row.complaints"> {{row.complaints}} </td>
+    </ng-container>
+
     <!-- lastSeen column -->
     <ng-container matColumnDef="lastSeen">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
