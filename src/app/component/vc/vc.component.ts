@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 declare const getFromStorage: Function;
 @Component({
@@ -41,11 +42,26 @@ export class VcComponent implements OnInit {
   constructor(
     public socketService: SocketService,
     @Inject(MAT_DIALOG_DATA) public data,
-    public dialogRef: MatDialogRef<VcComponent>
+    public dialogRef: MatDialogRef<VcComponent>,
+    private snackbar: MatSnackBar
   ) {}
 
   close() {
     this.dialogRef.close();
+  }
+
+  toast({
+    message,
+    duration = 5000,
+    horizontalPosition = "center",
+    verticalPosition = "bottom",
+  }) {
+    const opts: any = {
+      duration,
+      horizontalPosition,
+      verticalPosition,
+    };
+    this.snackbar.open(message, null, opts);
   }
 
   ngOnInit(): void {
@@ -59,13 +75,8 @@ export class VcComponent implements OnInit {
         ? patientVisitProvider.provider
         : this.nurseId;
 
-    this.socketService.initSocket();
+    this.socketService.initSocket(true);
     this.initSocketEvents();
-    this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
-    this.socketService.onEvent("bye").subscribe((data) => {
-      console.log("bye::: ", data);
-      this.handleRemoteHangup();
-    });
     this.socketService.emitEvent("call", {
       nurseId: this.nurseId.uuid,
       doctorName: this.doctorName,
@@ -83,6 +94,7 @@ export class VcComponent implements OnInit {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
     console.log("Attempted to create or  join room", this.room);
+    this.toast({ message: "Calling....", duration: 8000 });
   }
 
   mute() {
@@ -174,6 +186,17 @@ export class VcComponent implements OnInit {
       } else if (message === "bye" && this.isStarted) {
         this.handleRemoteHangup();
       }
+    });
+
+    this.socketService.onEvent("myId").subscribe((id) => (this.myId = id));
+    this.socketService.onEvent("bye").subscribe((data) => {
+      console.log("bye::: ", data);
+      this.handleRemoteHangup();
+    });
+    this.socketService.onEvent("no answer").subscribe((data) => {
+      console.log("no answer: ", data);
+      this.toast({ message: "No answer." });
+      this.close();
     });
   }
 
@@ -293,6 +316,7 @@ export class VcComponent implements OnInit {
     console.log("Session terminated.");
     this.isInitiator = false;
     this.stop();
+    if (this.socketService.socket) this.socketService.socket.close();
   }
 
   endCallInRoom() {
