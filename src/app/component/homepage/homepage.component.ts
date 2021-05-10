@@ -4,6 +4,7 @@ import { SessionService } from "./../../services/session.service";
 import { Component, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { environment } from "src/environments/environment";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -27,6 +28,7 @@ export interface VisitData {
 })
 export class HomepageComponent implements OnInit {
   value: any = {};
+  whatsappLink: string;
   activePatient = 0;
   flagPatientNo = 0;
   visitNoteNo = 0;
@@ -40,6 +42,9 @@ export class HomepageComponent implements OnInit {
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   visitState = null;
+  whatsappIco = environment.production
+  ? "https://helpline.ekalarogya.org/intelehealth/assets/images/whatsapp.svg"
+  : "../../../assets/images/whatsapp.svg";
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -48,10 +53,12 @@ export class HomepageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
     const userDetails = getFromStorage("user");
+    console.log('userDetails: ', userDetails);
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
@@ -75,6 +82,11 @@ export class HomepageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
+
+    const text = encodeURI(
+      `Hello, my name is ${userDetails.person.display} and I need some assistance.`
+      );
+    this.whatsappLink = `https://wa.me/917005308163?text=${text}`;
   }
 
   getStateFromVisit(provider) {
