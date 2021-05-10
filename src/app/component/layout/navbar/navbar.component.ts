@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -17,7 +24,7 @@ declare var getFromStorage: any, saveToStorage: any;
   styleUrls: ["./navbar.component.css"],
 })
 export class NavbarComponent implements OnInit {
-  @ViewChild('closeBtn') closeBtn: ElementRef;
+  @ViewChild("closeBtn") closeBtn: ElementRef;
   baseURL = environment.baseURL;
   baseURLLegacy = environment.baseURLLegacy;
   systemAccess = false;
@@ -32,10 +39,10 @@ export class NavbarComponent implements OnInit {
   fromDate: any;
   errorDays = false;
   customSnoozeData: any;
-  startTimeData: any
-  endTimeData: any
+  startTimeData: any;
+  endTimeData: any;
   showData: any;
-  error: any = { isError: false, errorMessage: '' };
+  error: any = { isError: false, errorMessage: "" };
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -63,18 +70,9 @@ export class NavbarComponent implements OnInit {
     public swUpdate: SwUpdate,
     public swPush: SwPush,
     public notificationService: PushNotificationsService
-  ) { }
+  ) {}
 
   ngOnInit() {
-   
-    // this.notificationService.getSnoozeTime().subscribe((snoozeTime) => {
-    //   console.log('snoozeTime: ', snoozeTime);
-    //   let data2 = data1;
-    //   this.customSnoozeData = JSON.parse(snoozeTime['Data1']);
-    //   this.showData = this.customSnoozeData == null ? data2 : this.customSnoozeData;
-    //   // console.log('this.showData: ', this.showData);
-    // })
-
     const userDetails = getFromStorage("user");
     this.subscribeAccess = getFromStorage("subscribed") || false;
     if (userDetails) {
@@ -98,13 +96,20 @@ export class NavbarComponent implements OnInit {
       this.subscribeNotification(true);
     }, 1000);
 
-    this.notificationService.getUserSettings().subscribe((res) => {
-      // let data1 = this.weekDays
-      // this.customSnoozeData = JSON.parse(res["data1"].snooze_till);
-      // this.showData = this.customSnoozeData == null ? data1 : this.customSnoozeData;
-
-      if (res && res["data"] && res["data"].snooze_till) {
-        this.setSnoozeTimeout(res["data"].snooze_till);
+    this.notificationService.getUserSettings().subscribe((res: { data }) => {
+      if (res && res.data && res.data.snooze_till) {
+        const snoozeTill = (() => {
+          try {
+            return JSON.parse(res.data.snooze_till);
+          } catch (error) {
+            return res.data.snooze_till;
+          }
+        })();
+        if (Array.isArray(snoozeTill)) {
+          this.weekDays = snoozeTill;
+        } else {
+          this.setSnoozeTimeout(res.data.snooze_till);
+        }
       }
     });
     if (this.swPush.isEnabled) {
@@ -196,7 +201,7 @@ export class NavbarComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 this.notificationService
@@ -236,24 +241,30 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-
   onSubmit() {
-    // this.class1 = 
-    let sDate = this.weekDays.filter(a => a.startTime)
-    let sDate1 = sDate[0].startTime
-    let eDate1 = sDate[0].endTime
+    let sDate = this.weekDays.filter((a) => a.startTime);
+    let sDate1 = sDate[0].startTime;
+    let eDate1 = sDate[0].endTime;
 
-    this.condition = sDate1 ? (eDate1 !== null) : '';
-    this.fromDate = eDate1 ? sDate1! == null : '';
+    this.condition = sDate1 ? eDate1 !== null : "";
+    this.fromDate = eDate1 ? sDate1! == null : "";
 
-    this.condition1 = eDate1 < sDate1 ? this.error = { isError: true, errorMessage: "End Date can't before start time" } : "Success";
+    this.condition1 =
+      eDate1 < sDate1
+        ? (this.error = {
+            isError: true,
+            errorMessage: "End Date can't before start time",
+          })
+        : "Success";
 
     if (this.condition == true && this.condition1 == "Success") {
-      this.notificationService.setSnoozeFor(JSON.stringify(this.weekDays), true).subscribe((response) => {
-        this.closeModal();
+      this.notificationService
+        .setSnoozeFor(JSON.stringify(this.weekDays), true)
+        .subscribe((response) => {
+          this.closeModal();
 
-        this.snackbar.open("Snoozed Successfully!", null, { duration: 4000 });
-      })
+          this.snackbar.open("Snoozed Successfully!", null, { duration: 4000 });
+        });
     }
   }
 
@@ -264,16 +275,16 @@ export class NavbarComponent implements OnInit {
   setNotification(period) {
     if (period !== "custom") {
       this.selectedNotification = period;
+      this.notificationService.setSnoozeFor(period).subscribe((response) => {
+        if (!response["snooze_till"]) {
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+        } else {
+          this.setSnoozeTimeout(response["snooze_till"]);
+        }
+      });
     }
-    this.notificationService.setSnoozeFor(period).subscribe((response) => {
-      if (!response["snooze_till"]) {
-        this.notificationService.snoozeTimeout = clearTimeout(
-          this.notificationService.snoozeTimeout
-        );
-      } else {
-        this.setSnoozeTimeout(response["snooze_till"]);
-      }
-    });
     this.notificationMenu = false;
   }
 
