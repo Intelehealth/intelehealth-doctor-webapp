@@ -30,26 +30,19 @@ export class ChatComponent implements OnInit {
     localStorage.socketQuery = `userId=${this.userUuid}`;
     this.updateMessages();
     this.socket.initSocket();
-    this.socket.onEvent("updateMessage").subscribe(() => {
+    this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
+      this.socket.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
       this.playNotify();
     });
   }
 
   get chatElem() {
     return this.chatInput.nativeElement;
-  }
-
-  onsubmit() {
-    if (this.message) {
-      console.log(this.message);
-      this.user_messages = {
-        message: this.message,
-        isUser: true,
-      };
-      this.chats.push(this.user_messages);
-      this.message = "";
-    }
   }
 
   get patientVisitProvider() {

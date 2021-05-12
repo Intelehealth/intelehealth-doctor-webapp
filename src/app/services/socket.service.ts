@@ -4,15 +4,14 @@ import { Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
 
-export interface Notification {
-  from: string;
-  peerid: string;
-}
-
 @Injectable()
 export class SocketService {
   public socket: any;
   public activeUsers = [];
+  appIcon =
+    false && environment.production
+      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
+      : "/assets/images/intelehealth-logo-reverse.png";
 
   private baseURL = environment.socketURL;
 
@@ -45,5 +44,19 @@ export class SocketService {
     return new Observable<any>((observer) => {
       this.socket.on(action, (data) => observer.next(data));
     });
+  }
+
+  async showNotification({ title, body, timestamp = Date.now() }) {
+    if ("Notification" in window === true) {
+      if ("granted" === (await Notification.requestPermission())) {
+        const icon = this.appIcon;
+        return new Notification(title, {
+          body,
+          icon,
+          vibrate: [200, 100, 200],
+          timestamp: Math.floor(timestamp),
+        });
+      }
+    }
   }
 }
