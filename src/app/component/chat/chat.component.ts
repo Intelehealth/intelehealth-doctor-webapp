@@ -18,6 +18,7 @@ export class ChatComponent implements OnInit {
   user_messages;
   message;
   patientId = null;
+  visitId = null;
 
   constructor(
     private chatService: ChatService,
@@ -27,6 +28,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
+    this.visitId = this.route.snapshot.paramMap.get("visit_id");
     localStorage.socketQuery = `userId=${this.userUuid}`;
     this.updateMessages();
     this.socket.initSocket();
@@ -56,7 +58,9 @@ export class ChatComponent implements OnInit {
   sendMessage(event) {
     if (this.toUser && this.patientId && this.chatElem.value) {
       this.chatService
-        .sendMessage(this.toUser, this.patientId, this.chatElem.value)
+        .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
+          visitId: this.visitId,
+        })
         .subscribe((res) => {
           this.updateMessages();
         });

@@ -9,8 +9,14 @@ export class ChatService {
   private baseURL = environment.mindmapURL;
   constructor(private http: HttpClient) {}
 
-  sendMessage(toUser, patientId, message, fromUser = this.user.uuid) {
-    const payload = { fromUser, toUser, patientId, message };
+  sendMessage(toUser, patientId, message, additionalPayload = {}) {
+    const payload = {
+      ...additionalPayload,
+      fromUser: this.user.uuid,
+      toUser,
+      patientId,
+      message,
+    };
     return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
   }
 
