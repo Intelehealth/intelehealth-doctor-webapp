@@ -107,6 +107,7 @@ export class VisitSummaryComponent implements OnInit {
         };
         this.service.postEncounter(json).subscribe((response) => {
           if (response) {
+            this.visitNotePresent = true;
             this.visitService
               .fetchVisitDetails(this.visitUuid)
               .subscribe((visitDetails) => {
