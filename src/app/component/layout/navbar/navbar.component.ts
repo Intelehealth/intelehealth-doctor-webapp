@@ -8,7 +8,6 @@ import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
-import { saveAs } from 'file-saver';
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({

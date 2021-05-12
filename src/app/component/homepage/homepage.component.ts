@@ -43,7 +43,7 @@ export class HomepageComponent implements OnInit {
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   visitState = null;
   whatsappIco = environment.production
-  ? "https://helpline.ekalarogya.org/intelehealth/assets/images/whatsapp.png"
+  ? "https://helpline.intelehealth.org/intelehealth/assets/images/whatsapp.png"
   : "../../../assets/images/whatsapp.png";
   constructor(
     private sessionService: SessionService,
