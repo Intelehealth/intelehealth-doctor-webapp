@@ -40,6 +40,7 @@ export class PatientinfoComponent implements OnInit {
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
+      localStorage.setItem("patientName", this.info["display"]);
 
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
@@ -60,7 +61,7 @@ export class PatientinfoComponent implements OnInit {
     var mydate = dateString.replace(
       /^(\d{2})\/(\d{2})\/(\d{4})$/,
       "$3, $2, $1"
-      );
+    );
 
     this.now = new Date();
     var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
@@ -68,8 +69,13 @@ export class PatientinfoComponent implements OnInit {
     var a = moment(todayDate);
     var b = moment(mydate);
     var diffDuration = moment.duration(a.diff(b));
-    var ageString = diffDuration.years() + " years - " + diffDuration.months() + " months - " + diffDuration.days() + " days";
+    var ageString =
+      diffDuration.years() +
+      " years - " +
+      diffDuration.months() +
+      " months - " +
+      diffDuration.days() +
+      " days";
     return ageString;
-    
   }
 }

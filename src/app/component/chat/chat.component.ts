@@ -34,11 +34,6 @@ export class ChatComponent implements OnInit {
     this.socket.initSocket();
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
       this.playNotify();
     });
   }
@@ -60,6 +55,7 @@ export class ChatComponent implements OnInit {
       this.chatService
         .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
           visitId: this.visitId,
+          patientName: localStorage.patientName,
         })
         .subscribe((res) => {
           this.updateMessages();

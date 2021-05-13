@@ -1,9 +1,10 @@
 import { GlobalConstants } from "../../js/global-constants";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { SocketService } from "src/app/services/socket.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -24,7 +25,7 @@ export interface VisitData {
   templateUrl: "./homepage.component.html",
   styleUrls: ["./homepage.component.css"],
 })
-export class HomepageComponent implements OnInit {
+export class HomepageComponent implements OnInit, OnDestroy {
   value: any = {};
   activePatient = 0;
   flagPatientNo = 0;
@@ -41,7 +42,8 @@ export class HomepageComponent implements OnInit {
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private socket: SocketService
   ) {}
 
   ngOnInit() {
@@ -67,6 +69,20 @@ export class HomepageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
+    this.socket.initSocket();
+    this.socket.onEvent("updateMessage").subscribe((data) => {
+      this.socket.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+      this.playNotify();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.socket.socket && this.socket.socket.close)
+      this.socket.socket.close();
   }
 
   getVisits() {
@@ -153,10 +169,16 @@ export class HomepageComponent implements OnInit {
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
     this.value.status = active.encounters[0].encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
-      "- "
-    )[1];
+    this.value.provider =
+      active.encounters[0].encounterProviders[0].provider.display.split(
+        "- "
+      )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
+  }
+
+  playNotify() {
+    const audioUrl = "../../../../intelehealth/assets/notification.mp3";
+    new Audio(audioUrl).play();
   }
 }
