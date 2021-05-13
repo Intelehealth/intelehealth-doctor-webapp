@@ -152,11 +152,11 @@ export class PatientInteractionComponent implements OnInit {
       if (attributes.length) {
         attributes.forEach((attribute) => {
           if (attribute.display.match("phoneNumber") != null) {
-            this.doctorDetails.phone = `<a href="tel:${attribute.value}">Start Audio Call with ${this.doctorDetails.name} </a>`;
+            this.doctorDetails.phone = `<a href="tel:${attribute.value}">Start Audio Call with Doctor_</a>`;
           }
           if (attribute.display.match("whatsapp") != null) {
             // tslint:disable-next-line: max-line-length
-            this.doctorDetails.whatsapp = `<a href="https://wa.me/91${attribute.value}">Start WhatsApp Call ${this.doctorDetails.name}</a>`;
+            this.doctorDetails.whatsapp = `<a href="https://wa.me/91${attribute.value}">Start WhatsApp Call with Doctor_</a>`;
           }
         });
         if (this.doctorDetails.phone || this.doctorDetails.whatsapp) {
