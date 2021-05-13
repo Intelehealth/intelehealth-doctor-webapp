@@ -18,7 +18,7 @@
     <mat-form-field class="example-full-width">
         <input matInput placeholder="Qualification" formControlName="qualification">
     </mat-form-field>
-    <mat-form-field class="example-full-width" *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
+    <mat-form-field class="example-full-width" *ngIf= 'userDetails.roles[0].name != "Organizational: Nurse"'>
         <mat-select placeholder="Specialization" formControlName="specialization">
             <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{specialization}}</mat-option>
         </mat-select>
@@ -28,7 +28,7 @@
     </mat-form-field>
 
     <!-- <mat-form-field class="example-full-width"> -->
-    <div style="float: left" *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
+    <div style="float: left" *ngIf= 'userDetails.roles[0].name != "Organizational: Nurse"'>
         <button mat-raised-button color="primary" (click)="editSignature()">Edit Signature</button>
         <!-- </mat-form-field> -->
     </div>

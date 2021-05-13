@@ -32,7 +32,7 @@
                             <th>Qualification :</th>
                             <td *ngIf='providerDetails.qualification'>{{providerDetails.qualification.value}}</td>
                         </tr>
-                        <tr *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
+                        <tr *ngIf= 'userDetails.roles[0].name!= "Organizational: Nurse"'>
                             <th>Specialization :</th>
                             <td *ngIf='providerDetails.specialization'>{{providerDetails.specialization.value}}</td>
                         </tr>
@@ -40,7 +40,7 @@
                             <th>Registration No. :</th>
                             <td *ngIf='providerDetails.registrationNumber'>{{providerDetails.registrationNumber.value}}</td>
                         </tr>
-                        <tr *ngIf= 'userDetails.roles[0].display != "Organizational: Nurse"'>
+                        <tr *ngIf= 'userDetails.roles[0].name!= "Organizational: Nurse"'>
                             <th>Signature :</th>
                             <td *ngIf='providerDetails.textOfSign' [style.font-family]="providerDetails.fontOfSign.value" style="font-size: 50px">{{providerDetails.textOfSign.value}}</td>
                             <td *ngIf='!providerDetails.textOfSign || action === "add"'><button mat-raised-button color="primary" (click)="signature('add')">Signature</button></td>
