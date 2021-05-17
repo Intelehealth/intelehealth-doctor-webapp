@@ -69,7 +69,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     } else {
       this.authService.logout();
     }
-    this.socket.initSocket();
+    this.socket.initSocket(true);
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.socket.showNotification({
         title: "New chat message",

@@ -32,6 +32,8 @@
   <li class="mt-2" *ngFor="let user of activeUsers">
     {{ user }}&nbsp;&nbsp;&nbsp;
     <span>({{ socket.activeUsers[user]?.status }})</span>
+    <span>-({{ socket.activeUsers[user]?.uuid }})</span>
+    <span>-({{ socket.activeUsers[user]?.name }})</span>
     &nbsp;
     <span *ngIf="user == socket?.socket?.id">(me)</span>
   </li>

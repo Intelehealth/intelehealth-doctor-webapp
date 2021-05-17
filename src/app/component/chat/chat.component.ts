@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
+import { environment } from "src/environments/environment";
 declare const getFromStorage;
 @Component({
   selector: "app-chat",
@@ -29,9 +30,9 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
     this.visitId = this.route.snapshot.paramMap.get("visit_id");
-    localStorage.socketQuery = `userId=${this.userUuid}`;
+    localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
     this.updateMessages();
-    this.socket.initSocket();
+    this.socket.initSocket(true);
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
       this.playNotify();
@@ -97,7 +98,14 @@ export class ChatComponent implements OnInit {
     return this.chatService.user.uuid;
   }
 
+  get userName() {
+    return this.chatService.user.display;
+  }
+
   playNotify() {
-    new Audio("../../../../intelehealth/assets/notification.mp3").play();
+    const src = environment.production
+      ? "../../../../intelehealth/assets/notification.mp3"
+      : "../../../../assets/notification.mp3";
+    new Audio(src).play();
   }
 }

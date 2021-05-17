@@ -40,7 +40,7 @@ export class TestChatComponent implements OnInit {
   }
 
   reInitSocket() {
-    localStorage.socketQuery = `userId=${this.data.from}`;
+    localStorage.socketQuery = `userId=${this.data.from}&name=mobile`;
     this.socket.initSocket(true);
     this.socket.onEvent("updateMessage").subscribe(() => {
       this.updateMessages();
