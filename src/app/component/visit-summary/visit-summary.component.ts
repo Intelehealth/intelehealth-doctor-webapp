@@ -171,7 +171,6 @@ export class VisitSummaryComponent implements OnInit {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
-      console.log("response: ", response);
       if (response) {
         this.signandsubmit();
       }
