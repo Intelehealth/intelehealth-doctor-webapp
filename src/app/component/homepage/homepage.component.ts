@@ -62,7 +62,18 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits()
       .subscribe(response => {
         // GlobalConstants.visits = response.results;
-        const visits = response.results;
+
+        // Filter duplicate visits
+        const result = response.results;
+        const setObj = new Set();
+        var visits = result.reduce((acc,item)=>{
+          if(!setObj.has(item.patient.identifiers[0].identifier)){
+            setObj.add(item.patient.identifiers[0].identifier)
+            acc.push(item)
+          }
+          return acc;
+        },[]);
+
         visits.forEach(active => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
@@ -86,6 +97,14 @@ export class HomepageComponent implements OnInit {
           }
           this.value = {};
         });
+
+        // this.waitingVisit.forEach((elem) => { 
+        //   const idx = this.completedVisit.findIndex((c) => (c.id = elem.id));
+        //   const idx1 = this.completedVisit.filter(a=>a.id === "10LEK-7")
+        //   console.log('idx1: ', idx1[0]);
+        //   // this.completedVisit.push(idx1[0]);
+        // });
+        
         this.setSpiner = false;
       }, err => {
         if (err.error instanceof Error) {
