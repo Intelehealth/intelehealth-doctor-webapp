@@ -60,13 +60,14 @@ export class HomepageComponent implements OnInit {
       });
     } else {this.authService.logout(); }
     this.service.getVisits()
-      .subscribe(response => {
-        // GlobalConstants.visits = response.results;
-
-        // Filter duplicate visits
-        const result = response.results;
+    .subscribe(response => {
+      // GlobalConstants.visits = response.results;
+      // Filter duplicate visits
+      const pVisits = response.results;
+      const visits1 = pVisits.filter(a=>a.attributes.length > 0 ? a.attributes[0].value == this.specialization : "")
+     
         const setObj = new Set();
-        var visits = result.reduce((acc,item)=>{
+        var visits = visits1.reduce((acc,item)=>{
           if(!setObj.has(item.patient.identifiers[0].identifier)){
             setObj.add(item.patient.identifiers[0].identifier)
             acc.push(item)
