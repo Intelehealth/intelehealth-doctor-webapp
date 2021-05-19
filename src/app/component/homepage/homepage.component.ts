@@ -102,7 +102,17 @@ export class HomepageComponent implements OnInit {
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
-        const visits = response.results;
+        const pVisits = response.results;
+        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+
+        const setObj = new Set();
+        var visits = visits1.reduce((acc, item) => {
+          if (!setObj.has(item.patient.identifiers[0].identifier)) {
+            setObj.add(item.patient.identifiers[0].identifier)
+            acc.push(item)
+          }
+          return acc;
+        }, []);
         let stateVisits = [];
         if (this.visitState && this.visitState !== "All") {
           stateVisits = visits.filter(({ attributes }) => {
