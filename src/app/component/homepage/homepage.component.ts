@@ -43,14 +43,14 @@ export class HomepageComponent implements OnInit {
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   visitState = null;
   whatsappIco = environment.production
-  ? "https://helpline.intelehealth.org/intelehealth/assets/images/whatsapp.png"
-  : "../../../assets/images/whatsapp.png";
+    ? "https://helpline.intelehealth.org/intelehealth/assets/images/whatsapp.png"
+    : "../../../assets/images/whatsapp.png";
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit() {
 
@@ -85,7 +85,7 @@ export class HomepageComponent implements OnInit {
 
     const text = encodeURI(
       `Hello, my name is ${userDetails.person.display} and I need some assistance.`
-      );
+    );
     this.whatsappLink = `https://wa.me/917005308163?text=${text}`;
   }
 
@@ -102,7 +102,18 @@ export class HomepageComponent implements OnInit {
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
-        const visits = response.results;
+        // Filter duplicate visits
+        const pVisits = response.results;
+        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes[0].value == this.specialization) || (a.attributes[1].value == this.specialization)  : "")
+
+        const setObj = new Set();
+        var visits = visits1.reduce((acc, item) => {
+          if (!setObj.has(item.patient.identifiers[0].identifier)) {
+            setObj.add(item.patient.identifiers[0].identifier)
+            acc.push(item)
+          }
+          return acc;
+        }, []);
         let stateVisits = [];
         if (this.visitState && this.visitState !== "All") {
           stateVisits = visits.filter(({ attributes }) => {
@@ -116,7 +127,7 @@ export class HomepageComponent implements OnInit {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
-              
+
               const speRequired = attributes.filter(
                 (attr) =>
                   attr.attributeType.uuid ===
@@ -139,7 +150,7 @@ export class HomepageComponent implements OnInit {
             }
           }
           this.value = {};
-          
+
         });
         this.setSpiner = false;
       },
@@ -206,7 +217,7 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
-    this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
+    this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided";
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
     this.value.status = active.encounters[0].encounterType.display;
