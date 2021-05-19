@@ -104,7 +104,7 @@ export class HomepageComponent implements OnInit {
       (response) => {
         // Filter duplicate visits
         const pVisits = response.results;
-        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes[0].value == this.specialization) || (a.attributes[1].value == this.specialization)  : "")
+        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
 
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
