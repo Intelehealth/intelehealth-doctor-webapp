@@ -76,17 +76,19 @@
         <br>
         <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
         <br>
+        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpdate()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpdate()" class="submit" [disabled]="isImageError"><mat-icon>file_upload</mat-icon>Upload</button>
         </div>
       </div>
       <div class="image-card" *ngIf="selectedKey && image === undefined">
         <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
         <br>
+        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpload()" class="submit" [disabled]="isImageError"><mat-icon>file_upload</mat-icon>Upload</button>
         </div>
       </div>
     </div>

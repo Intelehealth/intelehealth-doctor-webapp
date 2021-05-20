@@ -27,6 +27,7 @@ export class AyuComponent implements OnInit {
   addKeyValue: string;
   newExpiryDate: string;
   expiryDate: string;
+  isImageError:boolean= false;
 
   constructor(private mindmapService: MindmapService,
               private snackbar: MatSnackBar,
@@ -97,6 +98,7 @@ export class AyuComponent implements OnInit {
 
 
   licenceKeyHandler(): void {
+    this.isImageError = false;
     this.mindmapService.detailsMindmap(this.selectedKey)
     .subscribe(response => {
       this.mindmapData = response.datas;
@@ -162,6 +164,17 @@ export class AyuComponent implements OnInit {
   saveUpload() {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
+      const image = new Image();
+        image.src = <string>fileReader.result;
+        image.onload = rs => {
+            const img_height = rs.currentTarget['height'];
+            const img_width = rs.currentTarget['width'];
+            if (img_height > 320 && img_width > 320) {
+              this.isImageError = true; 
+          } else {
+              this.isImageError = false;
+          }
+        }
       this.mindmapUploadJson = fileReader.result;
     };
     fileReader.readAsDataURL(this.file);
