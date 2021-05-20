@@ -169,10 +169,10 @@ export class AyuComponent implements OnInit {
 
   imageUpdate(): void {
     const data = {
-      filename: this.file.name,
+      filename: "ic_logo.png",
       value: this.mindmapUploadJson
     };
-    this.mindmapService.updateImage(this.selectedKey, this.image.image_name, data)
+    this.mindmapService.updateImage(this.selectedKey, "ic_logo.png", data)
     .subscribe(response => {
       if (response) {
         this.mindmapUploadJson = '';
@@ -185,7 +185,7 @@ export class AyuComponent implements OnInit {
   imageUpload(): void {
     const data = {
       key: this.selectedKey,
-      filename: this.file.name,
+      filename: "ic_logo.png",
       value: this.mindmapUploadJson
     };
     this.mindmapService.uploadImage(data)
