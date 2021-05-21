@@ -4,7 +4,7 @@
       <div><b>Select licence Key: </b> &nbsp;&nbsp;
         <mat-form-field>
           <mat-label>MindMap Key</mat-label>
-          <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler($event)">
+          <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
             <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
               {{ mindmap.keyName }}
             </mat-option>
