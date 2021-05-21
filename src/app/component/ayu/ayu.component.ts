@@ -230,7 +230,7 @@ export class AyuComponent implements OnInit {
   imageUpload(): void {
     const data = {
       key: this.selectedKey,
-      imageName: this.file.name,
+      imageName: "ic_logo.png",
       imageValue: this.mindmapUploadJson,
       type: "image",
     };
