@@ -27,6 +27,7 @@ export class AyuComponent implements OnInit {
   addKeyValue: string;
   newExpiryDate: string;
   expiryDate: string;
+  isImageError:boolean= false;
 
   constructor(
     private mindmapService: MindmapService,
@@ -120,6 +121,7 @@ export class AyuComponent implements OnInit {
       (err) =>
         this.snackbar.open("Something went Wrong", null, { duration: 4000 })
     );
+    this.isImageError = false;
   }
 
   editExpiryDate(): void {
@@ -206,25 +208,20 @@ export class AyuComponent implements OnInit {
   saveUpload() {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
+      const image = new Image();
+      image.src = <string>fileReader.result;
+      image.onload = rs => {
+          const img_height = rs.currentTarget['height'];
+          const img_width = rs.currentTarget['width'];
+          if (img_height > 320 && img_width > 320) {
+            this.isImageError = true; 
+        } else {
+            this.isImageError = false;
+        }
+      }
       this.mindmapUploadJson = fileReader.result;
     };
     fileReader.readAsDataURL(this.file);
-  }
-
-  imageUpdate(): void {
-    const data = {
-      filename: this.file.name,
-      value: this.mindmapUploadJson,
-    };
-    this.mindmapService
-      .updateImage(this.selectedKey, this.image.image_name, data)
-      .subscribe((response) => {
-        if (response) {
-          this.mindmapUploadJson = "";
-          this.image.image_file = data.value;
-          this.snackbar.open(`Image Updated`, null, { duration: 4000 });
-        }
-      });
   }
 
   imageUpload(): void {

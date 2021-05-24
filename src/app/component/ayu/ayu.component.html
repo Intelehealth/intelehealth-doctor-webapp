@@ -76,26 +76,32 @@
         <br>
         <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
         <br>
+        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
         </div>
       </div>
       <div class="image-card" *ngIf="selectedKey && !image">
         <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
         <br>
+        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
         </div>
       </div>
     </div>
   </mat-card>
 </div>
 <input
+  #fileInput
   type="file"
   id="fileUpload"
   style="display:none;"
+  accept="image/png"
+  (click)="fileInput.value = null"
+  value=""
   (change)="fileHandler($event)"
 />
 
