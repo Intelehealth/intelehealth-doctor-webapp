@@ -40,40 +40,40 @@ export class HomepageComponent implements OnInit {
   specialization;
 
   constructor(private sessionService: SessionService,
-              private authService: AuthService,
-              private service: VisitService,
-              private snackbar: MatSnackBar) { }
+    private authService: AuthService,
+    private service: VisitService,
+    private snackbar: MatSnackBar) { }
 
   ngOnInit() {
-    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
+    if (getFromStorage('visitNoteProvider')) { deleteFromStorage('visitNoteProvider'); }
     const userDetails = getFromStorage('user');
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid)
-      .subscribe(provider => {
-        saveToStorage('provider', provider.results[0]);
-        const attributes = provider.results[0].attributes;
-        attributes.forEach(element => {
-          if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
-            this.specialization = element.value;
-          }
+        .subscribe(provider => {
+          saveToStorage('provider', provider.results[0]);
+          const attributes = provider.results[0].attributes;
+          attributes.forEach(element => {
+            if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+              this.specialization = element.value;
+            }
+          });
         });
-      });
-    } else {this.authService.logout(); }
+    } else { this.authService.logout(); }
     this.service.getVisits()
-    .subscribe(response => {
-      // GlobalConstants.visits = response.results;
-      // Filter duplicate visits
-      const pVisits = response.results;
-      const visits1 = pVisits.filter(a=>a.attributes.length > 0 ? a.attributes[0].value == this.specialization : "")
-     
+      .subscribe(response => {
+        // GlobalConstants.visits = response.results;
+        // Filter duplicate visits
+        const pVisits = response.results;
+        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+
         const setObj = new Set();
-        var visits = visits1.reduce((acc,item)=>{
-          if(!setObj.has(item.patient.identifiers[0].identifier)){
+        var visits = visits1.reduce((acc, item) => {
+          if (!setObj.has(item.patient.identifiers[0].identifier)) {
             setObj.add(item.patient.identifiers[0].identifier)
             acc.push(item)
           }
           return acc;
-        },[]);
+        }, []);
 
         visits.forEach(active => {
           if (active.encounters.length > 0) {
@@ -105,7 +105,7 @@ export class HomepageComponent implements OnInit {
         //   console.log('idx1: ', idx1[0]);
         //   // this.completedVisit.push(idx1[0]);
         // });
-        
+
         this.setSpiner = false;
       }, err => {
         if (err.error instanceof Error) {
@@ -165,25 +165,25 @@ export class HomepageComponent implements OnInit {
 
   // get current complaints from encounters
   getComplaints(encounters) {
-    let recent: any =[];
+    let recent: any = [];
     encounters.forEach(encounter => {
-    const display = encounter.display;
-    if (display.match('ADULTINITIAL') !== null ) {
-      const obs = encounter.obs;
-      obs.forEach(currentObs => {
-        if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-          const currentComplaint = currentObs.display.split('<b>');
-          for (let i = 1; i < currentComplaint.length; i++) {
-            const obs1 = currentComplaint[i].split('<');
-            if (!obs1[0].match('Associated symptoms')) {   
-              recent.push(obs1[0]);
+      const display = encounter.display;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+            const currentComplaint = currentObs.display.split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
             }
           }
-        }
-      });
-    }
-   });
-   return recent;
+        });
+      }
+    });
+    return recent;
   }
 
 }
