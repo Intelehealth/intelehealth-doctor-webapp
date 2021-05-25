@@ -19,12 +19,6 @@
         <li class="nav-item">
            <a class="nav-link" routerLink='/home'>Home</a>
         </li>
-        <li *ngIf='systemAccess' class="nav-item">
-          <a class="nav-link" routerLink='/ayu'>Ayu</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" (click)="callTour()">Help</a>
-        </li>
         <li *ngIf='reportAccess' class="nav-item">
           <a class="nav-link" href='{{baseURLLegacy}}/reportingui/reportsapp/home.page'>Reports</a>
         </li>
