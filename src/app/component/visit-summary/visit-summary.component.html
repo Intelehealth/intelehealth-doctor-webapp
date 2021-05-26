@@ -38,7 +38,7 @@
 
   
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">Start Visit Note</button>
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="isVisitEnded">Start Visit Note</button>
   </div>
 
   <br>
@@ -82,7 +82,7 @@
       </ng-container>
 
       <div class="text-center">
-            <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent">Sign and Submit</button>
+            <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent || isVisitEnded">Sign and Submit</button>
       </div>
 </div>
 </div>

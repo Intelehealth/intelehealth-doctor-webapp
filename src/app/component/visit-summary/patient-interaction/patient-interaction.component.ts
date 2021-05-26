@@ -38,6 +38,7 @@ export class PatientInteractionComponent implements OnInit {
   interaction = new FormGroup({
     interaction: new FormControl('', [Validators.required])
   });
+
   constructor(private visitService: VisitService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
@@ -71,7 +72,9 @@ export class PatientInteractionComponent implements OnInit {
       .subscribe(response => {
         const result = response.results;
         if (result.length !== 0) {
-          this.msg.push({ uuid: result[0].uuid, value: result[0].value });
+          this.msg = result.filter((pType) =>
+          ["Yes", "No"].includes(pType.value)
+        );
         }
       });
   }
@@ -86,7 +89,7 @@ export class PatientInteractionComponent implements OnInit {
       this.visitService.getAttribute(visitId)
         .subscribe(response => {
           const result = response.results;
-          if (result.length !== 0) {
+          if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
           } else {
             const json = {
               'attributeType': '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc',

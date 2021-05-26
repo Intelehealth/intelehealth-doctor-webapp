@@ -19,6 +19,7 @@ visitNotePresent = false;
 visitCompletePresent = false;
 setSpiner = true;
 doctorDetails; doctorValue;
+isVisitEnded = false;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -53,6 +54,9 @@ constructor(private service: EncounterService,
           });
         }
       });
+      if(visitDetails.stopDatetime !== null) {
+        this.isVisitEnded = true;
+      }
     });
   }
 

@@ -60,7 +60,16 @@ export class HomepageComponent implements OnInit {
     } else {this.authService.logout(); }
     this.service.getVisits()
       .subscribe(response => {
-        const visits = response.results;
+        const result = response.results;
+        const setObj = new Set();
+        var visits = result.reduce((acc,item)=>{
+          if(!setObj.has(item.patient.identifiers[0].identifier)){
+            setObj.add(item.patient.identifiers[0].identifier)
+            acc.push(item)
+          }
+          return acc;
+        },[]);
+
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {
           if (active.encounters.length > 0) {
@@ -71,15 +80,15 @@ export class HomepageComponent implements OnInit {
                 this.flagVisit.push(values);
                 flagLength += 1;
               }
-            } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+            } else if ( (value.match('ADULTINITIAL') || value.match('Vitals')) && active.stopDatetime == null) {
               const values = this.assignValueToProperty(active);
               this.waitingVisit.push(values);
               length += 1;
-            } else if (value.match('Visit Note')) {
+            } else if (value.match('Visit Note') && active.stopDatetime == null) {
               const values = this.assignValueToProperty(active);
               this.progressVisit.push(values);
               visitNoteLength += 1;
-            } else if (value.match('Visit Complete')) {
+            } else if (value.match('Visit Complete') || active.stopDatetime != null) {
               const values = this.assignValueToProperty(active);
               this.completedVisit.push(values);
               completeVisitLength += 1;
