@@ -7,7 +7,7 @@ export const environment = {
   baseURL: 'https://intelesafe.intelehealth.org/openmrs/ws/rest/v1',
   baseURLCoreApp : 'https://intelesafe.intelehealth.org/openmrs/coreapps/diagnoses',
   baseURLLegacy: 'https://intelesafe.intelehealth.org/openmrs',
-  mindmapURL: 'https://localhost:3004/api'
+  mindmapURL: 'http://localhost:3004/api',
 };
 
 /*

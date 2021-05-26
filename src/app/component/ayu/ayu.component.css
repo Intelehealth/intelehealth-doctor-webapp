@@ -40,3 +40,9 @@ table {
 .mat-column-action {
     width:30%
 }
+
+.error {
+    color: red; 
+    text-align: center;
+     margin-top: 10px;
+}
