@@ -7,7 +7,7 @@
           <mat-label>MindMap Key</mat-label>
           <mat-select
             [(ngModel)]="selectedKey"
-            (selectionChange)="licenceKeyHandler($event)"
+            (selectionChange)="licenceKeyHandler()"
           >
             <mat-option
               *ngFor="let mindmap of mindmaps"
