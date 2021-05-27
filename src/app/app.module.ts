@@ -171,7 +171,10 @@ import {MatPaginatorModule} from '@angular/material/paginator';
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], { scrollPositionRestoration: 'enabled' }),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+      enabled: environment.production,
+      registrationStrategy: "registerImmediately",
+    }),
   ],
   providers: [
     CookieService,
