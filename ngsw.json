@@ -1,0 +1,141 @@
+{
+  "configVersion": 1,
+  "timestamp": 1601382706646,
+  "index": "C:/Program Files/Git/intelehealth/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "C:/Program Files/Git/intelehealth/custom-service-worker.js",
+        "C:/Program Files/Git/intelehealth/favicon.ico",
+        "C:/Program Files/Git/intelehealth/index.html",
+        "C:/Program Files/Git/intelehealth/main.d65bfa5d9dbaa04d5b0b.js",
+        "C:/Program Files/Git/intelehealth/manifest.webmanifest",
+        "C:/Program Files/Git/intelehealth/polyfills-es5.2f68bc6afdc2207bf020.js",
+        "C:/Program Files/Git/intelehealth/polyfills.d59faa4c12de2ad27d24.js",
+        "C:/Program Files/Git/intelehealth/runtime.e227d1a0e31cbccbf8ec.js",
+        "C:/Program Files/Git/intelehealth/scripts.546ff3dfbc0a6005597b.js",
+        "C:/Program Files/Git/intelehealth/styles.0454ce20de168dc1cb6d.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "C:/Program Files/Git/intelehealth/Arty.b41bff081a53f55eb006.otf",
+        "C:/Program Files/Git/intelehealth/Asem.268250bd0c608f402587.otf",
+        "C:/Program Files/Git/intelehealth/Doctor-profile-page-background-without-blur.f2349d6f0062f1dfca5a.png",
+        "C:/Program Files/Git/intelehealth/Lato-Regular.9919edff6283018571ad.ttf",
+        "C:/Program Files/Git/intelehealth/Youthness.3973b05213902f036728.ttf",
+        "C:/Program Files/Git/intelehealth/assets/dummy profile image.jpg",
+        "C:/Program Files/Git/intelehealth/assets/fonts/Arty.otf",
+        "C:/Program Files/Git/intelehealth/assets/fonts/Asem.otf",
+        "C:/Program Files/Git/intelehealth/assets/fonts/Lato-Regular.ttf",
+        "C:/Program Files/Git/intelehealth/assets/fonts/Youthness.ttf",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-128x128.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-144x144.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-152x152.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-192x192.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-384x384.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-512x512.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-72x72.png",
+        "C:/Program Files/Git/intelehealth/assets/icons/icon-96x96.png",
+        "C:/Program Files/Git/intelehealth/assets/images/Doctor-profile-page-background-without-blur.png",
+        "C:/Program Files/Git/intelehealth/assets/images/Intelehealth-logo-white.png",
+        "C:/Program Files/Git/intelehealth/assets/images/intelehealth-logo-reverse.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-performance",
+      "patterns": [
+        "\\/assets\\/i18n\\/.*",
+        "\\/api\\/.*"
+      ],
+      "strategy": "performance",
+      "maxSize": 100,
+      "maxAge": 259200000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    },
+    {
+      "name": "api-freshness",
+      "patterns": [
+        "\\/openmrs\\/ws\\/rest\\/v1\\/visit"
+      ],
+      "strategy": "freshness",
+      "maxSize": 1000,
+      "maxAge": 0,
+      "timeoutMs": 20000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "C:/Program Files/Git/intelehealth/Arty.b41bff081a53f55eb006.otf": "090c56f136020382456367356503c00b0af8dc2f",
+    "C:/Program Files/Git/intelehealth/Asem.268250bd0c608f402587.otf": "931a38fe12fb8d1ab33a9b661703685ceebbf403",
+    "C:/Program Files/Git/intelehealth/Doctor-profile-page-background-without-blur.f2349d6f0062f1dfca5a.png": "3f98213112703b50506bbe670ede0eafe435b2ba",
+    "C:/Program Files/Git/intelehealth/Lato-Regular.9919edff6283018571ad.ttf": "83dc5921761a7c3d1ee7badba3fc7e1e1f5ed803",
+    "C:/Program Files/Git/intelehealth/Youthness.3973b05213902f036728.ttf": "9764cacb02ca5f87124204b515a865105f5dac89",
+    "C:/Program Files/Git/intelehealth/assets/dummy profile image.jpg": "e4ec019183c7365fbace2cf63962f8ba18f6bbf6",
+    "C:/Program Files/Git/intelehealth/assets/fonts/Arty.otf": "090c56f136020382456367356503c00b0af8dc2f",
+    "C:/Program Files/Git/intelehealth/assets/fonts/Asem.otf": "931a38fe12fb8d1ab33a9b661703685ceebbf403",
+    "C:/Program Files/Git/intelehealth/assets/fonts/Lato-Regular.ttf": "83dc5921761a7c3d1ee7badba3fc7e1e1f5ed803",
+    "C:/Program Files/Git/intelehealth/assets/fonts/Youthness.ttf": "9764cacb02ca5f87124204b515a865105f5dac89",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-128x128.png": "325b33af5da9b7e0fc4950922a683995ff90fcc2",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-144x144.png": "efb21ce6a04b6a0e59bfc98698611a842d077ce4",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-152x152.png": "941b17f5abe1e4f2ab0b367cae6872809b324ced",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-192x192.png": "55d5251bde75a3562cf1ce37049cdc68f9faa6cb",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-384x384.png": "274964977d72f9417723992c6e40e8812dcc3077",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-512x512.png": "4e941996e00cbedabc7b397eae4699759fb34a1d",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-72x72.png": "6ba44634586733d87a9ffcdabd0dc26fcf3914e3",
+    "C:/Program Files/Git/intelehealth/assets/icons/icon-96x96.png": "7ee7686e840edc0e5193642eaca7e7cb588411aa",
+    "C:/Program Files/Git/intelehealth/assets/images/Doctor-profile-page-background-without-blur.png": "3f98213112703b50506bbe670ede0eafe435b2ba",
+    "C:/Program Files/Git/intelehealth/assets/images/Intelehealth-logo-white.png": "3351698d3fc04a7129fb25ab6ca60a35c9836ddc",
+    "C:/Program Files/Git/intelehealth/assets/images/intelehealth-logo-reverse.png": "987e275cc5b32023455b4ce78793eaf75bef7f29",
+    "C:/Program Files/Git/intelehealth/custom-service-worker.js": "1f0751ffb7105b0cda76eed4a0bbf11390b84f03",
+    "C:/Program Files/Git/intelehealth/favicon.ico": "9fde8e63c112120d53b5018f4512d753f5262f2c",
+    "C:/Program Files/Git/intelehealth/index.html": "6b4e907d9cf6d29ec6c67be21c847acc5e91c873",
+    "C:/Program Files/Git/intelehealth/main.d65bfa5d9dbaa04d5b0b.js": "c6bef3f75131d17e759bdf268110446afb7c7793",
+    "C:/Program Files/Git/intelehealth/manifest.webmanifest": "b6ea50edbbd956766bc99eecfc0d7af5e269f74e",
+    "C:/Program Files/Git/intelehealth/polyfills-es5.2f68bc6afdc2207bf020.js": "6350e1e104db8b06cb9e0c9e2c30f36cd9ef282f",
+    "C:/Program Files/Git/intelehealth/polyfills.d59faa4c12de2ad27d24.js": "cda35de091b9701140c4a2a08fa3cf8895601213",
+    "C:/Program Files/Git/intelehealth/runtime.e227d1a0e31cbccbf8ec.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "C:/Program Files/Git/intelehealth/scripts.546ff3dfbc0a6005597b.js": "78907ddec8c727b4db45a58875929bc546203ef9",
+    "C:/Program Files/Git/intelehealth/styles.0454ce20de168dc1cb6d.css": "a40e5272aede7607f9a906463539d67375b0592a"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}
