@@ -20,8 +20,20 @@
             </div>
             <div role="group" class="form-group">
               <div>
-                  <label for="examplePassword">Password :</label>
-                <input type="password" placeholder="Enter password..." class="form-control" formControlName="password">
+                <label for="examplePassword">Password :</label>
+                <div style="display: flex;">
+                <input  [type]="fieldTextType ? 'text' : 'password'" placeholder="Enter password..." class="form-control" formControlName="password">
+                  <span class="input-group-text" >
+                    <i
+                      class="fa"
+                      [ngClass]="{
+                      'fa-eye-slash': !fieldTextType,
+                      'fa-eye': fieldTextType}"
+                      (click)="toggleFieldTextType()"
+                      style="width: 25px;"
+                    ></i>
+                  </span>
+                </div>
               </div>
             </div>
            

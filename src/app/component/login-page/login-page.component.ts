@@ -17,6 +17,7 @@ export class LoginPageComponent implements OnInit {
     password: new FormControl('', [Validators.required])
   });
 
+  fieldTextType: boolean;
   constructor(
     private sessionService: SessionService,
     private router: Router,
@@ -29,6 +30,10 @@ export class LoginPageComponent implements OnInit {
     if (isLoggedIn) {
       this.router.navigateByUrl('/home');
     }
+  }
+
+  toggleFieldTextType() {
+    this.fieldTextType = !this.fieldTextType;
   }
 
   onSubmit() {
