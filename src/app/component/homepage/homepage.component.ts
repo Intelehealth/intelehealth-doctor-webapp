@@ -37,6 +37,7 @@ export class HomepageComponent implements OnInit {
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
+  specialization: string;
 
   constructor(private sessionService: SessionService,
               private authService: AuthService,
@@ -49,26 +50,35 @@ export class HomepageComponent implements OnInit {
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid)
       .subscribe(provider => {
-        saveToStorage('provider', provider.results[0]);
-        // const attributes = provider.results[0].attributes;
-        // attributes.forEach(element => {
-        //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
-        //     this.specialization = element.value;
-        //   }
-        // });
+        saveToStorage("provider", provider.results[0]);
+        const attributes = provider.results[0].attributes;
+        attributes.forEach((element) => {
+          if (
+            element.attributeType.uuid ===
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            !element.voided
+          ) {
+            this.specialization = element.value;
+          }
+        });
       });
     } else {this.authService.logout(); }
+    this.getVisits();
+  }
+
+  getVisits() {
     this.service.getVisits()
       .subscribe(response => {
         const result = response.results;
+        const visits1 = result.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
         const setObj = new Set();
-        var visits = result.reduce((acc,item)=>{
-          if(!setObj.has(item.patient.identifiers[0].identifier)){
-            setObj.add(item.patient.identifiers[0].identifier)
-            acc.push(item)
+        var visits = visits1.reduce((acc, item) => {
+          if (!setObj.has(item.patient.identifiers[0].identifier)) {
+            setObj.add(item.patient.identifiers[0].identifier);
+            acc.push(item);
           }
           return acc;
-        },[]);
+        }, []);
 
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
         visits.forEach(active => {
@@ -80,7 +90,7 @@ export class HomepageComponent implements OnInit {
                 this.flagVisit.push(values);
                 flagLength += 1;
               }
-            } else if ( (value.match('ADULTINITIAL') || value.match('Vitals')) && active.stopDatetime == null) {
+            } else if ((value.match('ADULTINITIAL') || value.match('Vitals')) && active.stopDatetime == null) {
               const values = this.assignValueToProperty(active);
               this.waitingVisit.push(values);
               length += 1;

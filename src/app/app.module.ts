@@ -35,6 +35,9 @@ import { TablesComponent } from './component/homepage/tables/tables.component';
 import { SignatureComponent } from './component/my-account/signature/signature.component';
 import { CurrentVisitComponent } from './component/visit-summary/current-visit/current-visit.component';
 import { ModalsComponent } from './component/ayu/modals/modals.component';
+import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
+import { ConfirmDialogComponent } from './component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component';
+
 
 
 // Package Import
@@ -129,6 +132,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     TablesComponent,
     CurrentVisitComponent,
     ModalsComponent,
+    ReassignSpecialityComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,

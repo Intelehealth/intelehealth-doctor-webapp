@@ -1,0 +1,39 @@
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+  }
+  
+  .fab {
+    font-size: 30px;
+    padding: 10px;
+    color: green;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .fab:hover {
+    font-size: 35px;
+    padding: 10px;
+    color: green;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .fas {
+    font-size: 30px;
+    padding: 10px;
+    color: #0080FF;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .fas:hover {
+    font-size: 35px;
+    padding: 10px;
+    color: #0080FF;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .material-icons{
+    vertical-align: text-bottom;
+  }

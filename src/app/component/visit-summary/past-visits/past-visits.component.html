@@ -1,7 +1,6 @@
 <div id="past-visits">
     <h4><i class="fas fa-hospital"></i> Past Visits</h4>
 <hr>
-<b>Date of teleconsult/check-in</b>
 <div *ngFor="let data of recent">
     <div> <a [routerLink]="['/visitSummary', data.details.patient.uuid, data.details.uuid]">{{data.details.startDatetime | date:"dd-MMM-yyyy"}}</a>
       <span> {{data.observation}} </span> 

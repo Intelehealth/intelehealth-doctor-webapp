@@ -7,20 +7,47 @@
       <mat-card>
             <app-patientinfo></app-patientinfo>
       </mat-card>
-<br>
-      <mat-card >
+      <br>
+      <mat-card>
             <app-past-visits></app-past-visits>
       </mat-card>
-<br>
+      <br>
       <mat-card>
             <app-current-visit></app-current-visit>
       </mat-card>
-<br>
+      <br>
+      <mat-card>
+            <app-presenting-complaints></app-presenting-complaints>
+      </mat-card>
+      <br>
+      <mat-card>
+            <app-family-history></app-family-history>
+      </mat-card>
+      <br>
+      <mat-card>
+            <app-past-medical-history></app-past-medical-history>
+      </mat-card>
+      <br>
+      <mat-card>
+            <app-vital></app-vital>
+      </mat-card>
+      <br>
       <mat-card>
             <app-on-examination></app-on-examination>
       </mat-card>
-<br>
-
+      <br>
+      <mat-card>
+            <app-physical-examination></app-physical-examination>
+      </mat-card>
+      <br>
+      <mat-card>
+            <app-additional-documents></app-additional-documents>
+      </mat-card>
+      <br>
+      <mat-card *ngIf="!visitNotePresent">
+        <app-reassign-speciality></app-reassign-speciality>
+      </mat-card>
+      <br>
 
 <mat-card>
 <small style="color: red">
