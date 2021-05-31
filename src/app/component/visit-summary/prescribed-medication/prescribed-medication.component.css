@@ -3,3 +3,7 @@
     display: block;
   }
 }
+
+input.checkbox-custom{
+  margin: .4rem;
+}

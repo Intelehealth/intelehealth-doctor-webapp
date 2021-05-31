@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -27,6 +28,8 @@ export class VisitSummaryComponent implements OnInit {
   diagnosis: any = [];
   patientId: string;
   visitUuid: string;
+  isValid = true
+
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -61,10 +64,10 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+
       const ObsData = response.results.filter((a) =>
         this.conceptIds.includes(a.concept.uuid)
       );
@@ -95,10 +98,25 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
     });
+    this.obsValidate("event");
   }
 
   get isVisitSummaryChanged() {
     return !this.diagnosisService.isVisitSummaryChanged;
+  }
+
+  obsValidate(e) {
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      let obsData = response.results.filter(a => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df" 
+      || (a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1" && a.value.includes("<a")) 
+      || a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
+      );
+      if(obsData.length>2){
+        this.isValid = false;
+      }else{
+        this.isValid = true;
+      } 
+    })
   }
 
   onStartVisit() {
@@ -136,7 +154,7 @@ export class VisitSummaryComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -282,22 +300,22 @@ export class VisitSummaryComponent implements OnInit {
    * show reminder to doctor if he is idle after starting the visit
    * @param visitUuid string
    */
-  showReminder(visitUuid:string) {
+  showReminder(visitUuid: string) {
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-      if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary') 
-       && visitUuid === this.router.url.split('/')[3]) {
-        var data = "Patient "+ visitDetails.patient.person.display +" is waiting, Please provide prescription.";
+      if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary')
+        && visitUuid === this.router.url.split('/')[3]) {
+        var data = "Patient " + visitDetails.patient.person.display + " is waiting, Please provide prescription.";
         window.confirm(data);
       }
     });
   }
 
-   /**
-   * Check for encounter as per visit type passed
-   * @param encounters Array
-   * @param visitType String
-   * @returns Object | null
-   */
+  /**
+  * Check for encounter as per visit type passed
+  * @param encounters Array
+  * @param visitType String
+  * @returns Object | null
+  */
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = '' }) => display.includes(visitType));
   }

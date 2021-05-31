@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Output, EventEmitter} from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -30,6 +30,7 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
   ]
 })
 export class PrescribedMedicationComponent implements OnInit {
+  @Output() onIntChange = new EventEmitter();
   meds: any = [];
   add = false;
   encounterUuid: string;
@@ -40,6 +41,9 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptfrequency = [];
   conceptAdministration = [];
   conceptDurationUnit = [];
+  isChecked = false;
+  insertValue:any;
+  isSearch = false;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
   
 
@@ -54,7 +58,8 @@ export class PrescribedMedicationComponent implements OnInit {
     reason: new FormControl(''),
     duration: new FormControl('', Validators.min(1)),
     durationUnit: new FormControl('', [Validators.required]),
-    additional: new FormControl('')
+    additional: new FormControl(''),
+    chk1:new FormControl('')
   });
 
   constructor(private service: EncounterService,
@@ -151,31 +156,61 @@ export class PrescribedMedicationComponent implements OnInit {
     // this.meds = this.medicines
     this.diagnosisService.getObs(this.patientId, this.conceptMed)
       .subscribe(response => {
-        response.results.forEach(obs => {
+        response.results.forEach(obs => {        
           if (obs.encounter.visit.uuid === this.visitUuid) {
+            if(obs.value == "Medication not needed"){
+              this.isChecked =  true;
+            }
+            else{
+              this.isSearch = true
+            }
             this.meds.push(obs);
           }
         });
       });
   }
 
+  isValidMedication(e){
+      this.isChecked = e.target.checked;
+      const date = new Date();
+      this.encounterUuid = getEncounterUUID();
+      if(this.isChecked){
+        const json = {
+          concept: this.conceptMed,
+          person: this.patientId,
+          obsDatetime: date,
+          value: e.target.value,
+          encounter: this.encounterUuid
+        };
+        this.service.postObs(json).subscribe((response) => {
+          this.diagnosisService.isVisitSummaryChanged = true;
+          this.meds.push({ uuid: response.uuid, value: e.target.value });
+          this.add = false;
+          this.onIntChange.emit("emit");
+        });
+      }
+
+
+  }
+
   onSubmit() {
     const date = new Date();
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
-    var insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
+    this.insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
     if (value.route) {
-      insertValue = `${insertValue} (${value.route})`;
+      this.insertValue = `${this.insertValue} (${value.route})`;
     }
     if (value.reason) {
-      insertValue = `${insertValue} ${value.reason}`;
+      this.insertValue = `${this.insertValue} ${value.reason}`;
     }
-    insertValue = `${insertValue} for ${value.duration} ${value.durationUnit}`;
+    this.insertValue = `${this.insertValue} for ${value.duration} ${value.durationUnit}`;
     if (value.additional) {
-      insertValue = `${insertValue} ${value.additional}`;
+      this.insertValue = `${this.insertValue} ${value.additional}`;
     } else {
-      insertValue = `${insertValue}`;
+      this.insertValue = `${this.insertValue}`;
     }
+
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
@@ -184,13 +219,15 @@ export class PrescribedMedicationComponent implements OnInit {
         concept: this.conceptMed,
         person: this.patientId,
         obsDatetime: date,
-        value: insertValue,
+        value: this.insertValue,
         encounter: this.encounterUuid
       };
       this.service.postObs(json).subscribe((response) => {
         this.diagnosisService.isVisitSummaryChanged = true;
-        this.meds.push({ uuid: response.uuid, value: insertValue });
+        this.meds.push({ uuid: response.uuid, value: this.insertValue });
         this.add = false;
+        this.isSearch = true;
+        this.onIntChange.emit("emit");
       });
     } else {
       this.snackbar.open("Another doctor is viewing this case", null, {
@@ -204,6 +241,9 @@ export class PrescribedMedicationComponent implements OnInit {
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
         this.meds.splice(i, 1);
+        this.isChecked = false;
+        this.isSearch = false;
+        this.onIntChange.emit("emit");
       });
   }
 

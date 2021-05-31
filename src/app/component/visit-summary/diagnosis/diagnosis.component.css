@@ -11,3 +11,8 @@
       width: 60%;
     }
    }
+
+   h4.required:after{
+    content: " *";
+    color: red;
+   }

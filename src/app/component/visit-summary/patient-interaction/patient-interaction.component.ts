@@ -1,10 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { ActivatedRoute } from "@angular/router";
-import {
+
+import { 
   transition,
   trigger,
   style,
@@ -12,6 +13,7 @@ import {
   keyframes,
 } from "@angular/animations";
 import { MatSnackBar } from "@angular/material/snack-bar";
+
 declare var getEncounterProviderUUID: any,
   getFromStorage: any,
   getEncounterUUID: any;
@@ -46,6 +48,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class PatientInteractionComponent implements OnInit {
+  @Output() onIntChange = new EventEmitter();
   msg: any = [];
   whatsappLink: string;
   phoneNo;
@@ -66,6 +69,7 @@ export class PatientInteractionComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private encounterService: EncounterService
+    
   ) {}
 
   ngOnInit() {
@@ -180,6 +184,7 @@ export class PatientInteractionComponent implements OnInit {
           this.encounterService.postObs(json).subscribe((response) => {
             this.diagnosisService.isVisitSummaryChanged = true;
             this.getAdviceObs();
+            this.onIntChange.emit("emit");
           });
         }
       }
@@ -197,7 +202,9 @@ export class PatientInteractionComponent implements OnInit {
     });
     if (this.adviceObs.length > 0) {
       this.adviceObs.forEach(({ uuid }) => {
-        this.diagnosisService.deleteObs(uuid).subscribe();
+        this.diagnosisService.deleteObs(uuid).subscribe(res=>{
+          this.onIntChange.emit("emit")
+        });
       });
     }
   }

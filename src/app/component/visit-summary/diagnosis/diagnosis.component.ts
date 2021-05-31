@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -27,6 +27,8 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
  ]
 })
 export class DiagnosisComponent implements OnInit {
+  @Output() onIntChange = new EventEmitter();
+
 diagnosis: any = [];
 diagnosisList = [];
 conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
@@ -84,6 +86,7 @@ diagnosisForm = new FormGroup({
         this.diagnosisService.isVisitSummaryChanged = true;
         this.diagnosisList = [];
         this.diagnosis.push({uuid: resp.uuid, value: json.value});
+        this.onIntChange.emit("emit")
       });
     } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
   }
@@ -93,6 +96,7 @@ diagnosisForm = new FormGroup({
     this.diagnosisService.deleteObs(uuid)
     .subscribe(res => {
       this.diagnosis.splice(i, 1);
+      this.onIntChange.emit("emit")
     });
   }
 }

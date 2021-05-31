@@ -73,15 +73,15 @@
     
       <div *ngIf="show">
             <mat-card>
-                  <app-patient-interaction></app-patient-interaction>
+                  <app-patient-interaction (onIntChange)="obsValidate($event)"></app-patient-interaction>
             </mat-card>
             <br>
             <mat-card>
-                  <app-diagnosis></app-diagnosis>
+                  <app-diagnosis (onIntChange)="obsValidate($event)"></app-diagnosis>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-medication></app-prescribed-medication>
+                  <app-prescribed-medication (onIntChange)="obsValidate($event)"></app-prescribed-medication>
             </mat-card>
             <br>
             <mat-card>
@@ -110,10 +110,10 @@
                   </div>
                   <br>
             </ng-container>
-    
+            
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent || isVisitSummaryChanged">Sign and Submit</button>
+                        [disabled]="visitCompletePresent || isValid">Sign and Submit</button>
             </div>
       </div>
     </div>
