@@ -105,13 +105,18 @@ export class VisitSummaryComponent implements OnInit {
     return !this.diagnosisService.isVisitSummaryChanged;
   }
 
+
+  /**
+   * @For Validate Patient-Interaction and Diagnosis 
+   */
   obsValidate(e) {
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
-      let obsData = response.results.filter(a => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df" 
+      let currentData = response.results.filter(a=>a.encounter.visit.uuid == this.visitUuid)
+      let obsData = currentData.filter(a => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df" 
       || (a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1" && a.value.includes("<a")) 
-      || a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
       );
-      if(obsData.length>2){
+
+      if(obsData.length>1){
         this.isValid = false;
       }else{
         this.isValid = true;

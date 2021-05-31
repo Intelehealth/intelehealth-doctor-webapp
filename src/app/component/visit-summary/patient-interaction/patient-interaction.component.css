@@ -34,6 +34,11 @@
   text-decoration: none;
 }
 
+h4.required:after{
+  content: " *";
+  color: red;
+ }
+
 .material-icons{
   vertical-align: text-bottom;
 }

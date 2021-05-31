@@ -1,4 +1,4 @@
-import { Component, OnInit,Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -42,10 +42,10 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptAdministration = [];
   conceptDurationUnit = [];
   isChecked = false;
-  insertValue:any;
+  insertValue: any;
   isSearch = false;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
-  
+
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
@@ -59,14 +59,14 @@ export class PrescribedMedicationComponent implements OnInit {
     duration: new FormControl('', Validators.min(1)),
     durationUnit: new FormControl('', [Validators.required]),
     additional: new FormControl(''),
-    chk1:new FormControl('')
+    chk1: new FormControl('')
   });
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-) { }
+  ) { }
 
   searchPrescription = (text$: Observable<string>) =>
     text$.pipe(
@@ -156,12 +156,12 @@ export class PrescribedMedicationComponent implements OnInit {
     // this.meds = this.medicines
     this.diagnosisService.getObs(this.patientId, this.conceptMed)
       .subscribe(response => {
-        response.results.forEach(obs => {        
+        response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            if(obs.value == "Medication not needed"){
-              this.isChecked =  true;
+            if (obs.value == "Medication not needed") {
+              this.isChecked = true;
             }
-            else{
+            else {
               this.isSearch = true
             }
             this.meds.push(obs);
@@ -170,27 +170,24 @@ export class PrescribedMedicationComponent implements OnInit {
       });
   }
 
-  isValidMedication(e){
-      this.isChecked = e.target.checked;
-      const date = new Date();
-      this.encounterUuid = getEncounterUUID();
-      if(this.isChecked){
-        const json = {
-          concept: this.conceptMed,
-          person: this.patientId,
-          obsDatetime: date,
-          value: e.target.value,
-          encounter: this.encounterUuid
-        };
-        this.service.postObs(json).subscribe((response) => {
-          this.diagnosisService.isVisitSummaryChanged = true;
-          this.meds.push({ uuid: response.uuid, value: e.target.value });
-          this.add = false;
-          this.onIntChange.emit("emit");
-        });
-      }
-
-
+  isValidMedication(e) {
+    this.isChecked = e.target.checked;
+    const date = new Date();
+    this.encounterUuid = getEncounterUUID();
+    if (this.isChecked) {
+      const json = {
+        concept: this.conceptMed,
+        person: this.patientId,
+        obsDatetime: date,
+        value: e.target.value,
+        encounter: this.encounterUuid
+      };
+      this.service.postObs(json).subscribe((response) => {
+        this.diagnosisService.isVisitSummaryChanged = true;
+        this.meds.push({ uuid: response.uuid, value: e.target.value });
+        this.add = false;
+      });
+    }
   }
 
   onSubmit() {
@@ -227,7 +224,6 @@ export class PrescribedMedicationComponent implements OnInit {
         this.meds.push({ uuid: response.uuid, value: this.insertValue });
         this.add = false;
         this.isSearch = true;
-        this.onIntChange.emit("emit");
       });
     } else {
       this.snackbar.open("Another doctor is viewing this case", null, {
@@ -243,7 +239,6 @@ export class PrescribedMedicationComponent implements OnInit {
         this.meds.splice(i, 1);
         this.isChecked = false;
         this.isSearch = false;
-        this.onIntChange.emit("emit");
       });
   }
 
