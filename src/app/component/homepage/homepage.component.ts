@@ -70,7 +70,7 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits()
       .subscribe(response => {
         const result = response.results;
-        const visits1 = result.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+        const visits1 =  this.specialization === "All" ? result: result.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
           if (!setObj.has(item.patient.identifiers[0].identifier)) {

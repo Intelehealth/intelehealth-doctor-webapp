@@ -1,30 +1,46 @@
-<h4>Update Details <a style="float: right; cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>    
-<form [formGroup]='editForm' (submit)="updateDetails()">
+<h4>
+    Update Details
+    <a style="float: right; cursor: pointer" (click)="onClose()" class="material-icons">clear</a>
+  </h4>
+  <form [formGroup]="editForm">
     <mat-form-field class="example-full-width">
-        <mat-select placeholder="Gender" formControlName="gender">
-            <mat-option value="Male">Male</mat-option>
-            <mat-option value="Female">Female</mat-option>
-        </mat-select>
+      <mat-select placeholder="Gender" formControlName="gender">
+        <mat-option value="Male">Male</mat-option>
+        <mat-option value="Female">Female</mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Phone No" type="number" formControlName="phoneNumber">
+      <input matInput placeholder="Phone No" type="number" formControlName="phoneNumber" />
     </mat-form-field>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="WhatsApp No" formControlName="whatsapp">
+      <input matInput placeholder="WhatsApp No" formControlName="whatsapp" />
     </mat-form-field>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Email Id" type="email" formControlName="emailId">
+      <input matInput placeholder="Email Id" type="email" formControlName="emailId" />
     </mat-form-field>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Qualification" formControlName="qualification">
+      <input matInput placeholder="Qualification" formControlName="qualification" />
+    </mat-form-field>
+    <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
+      <mat-select placeholder="Specialization" formControlName="specialization">
+        <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{ specialization }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-        <input matInput placeholder="Specialization" formControlName="specialization">
+      <input matInput placeholder="Registration No" formControlName="registrationNumber" />
     </mat-form-field>
-    <mat-form-field class="example-full-width">
-        <input matInput placeholder="Registration No" formControlName="registrationNumber">
-    </mat-form-field>
-    <div style="float: right">
-    <button mat-raised-button color="primary" type="submit">Save</button>
+  
+    <div style="float: left" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
+      <button *ngIf="attributes.length != '0' && data?.textOfSign?.uuid" mat-raised-button color="primary"
+        (click)="editSignature()">
+        Edit Signature
+      </button>
     </div>
-</form>
+  
+    <div style="float: right">
+      <button mat-raised-button color="primary" type="submit" (click)="updateDetails()">
+        Save
+      </button>
+    </div>
+  </form>
