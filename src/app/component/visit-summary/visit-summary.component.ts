@@ -31,6 +31,7 @@ export class VisitSummaryComponent implements OnInit {
   diagnosis: any = [];
   patientId: string;
   visitUuid: string;
+  userRole: any;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -66,6 +67,10 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
+    const userDetails = getFromStorage("user");
+    const hideRole =  userDetails.roles.filter(a=>a.name == "Project Manager");
+    this.userRole = hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
+    console.log('this.userRole: ', this.userRole);
 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];

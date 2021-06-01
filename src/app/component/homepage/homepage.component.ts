@@ -45,6 +45,9 @@ export class HomepageComponent implements OnInit {
   whatsappIco = environment.production
   ? "https://helpline.ekalarogya.org/intelehealth/assets/images/whatsapp.png"
   : "../../../assets/images/whatsapp.png";
+
+  userDetails: any;
+
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -57,10 +60,11 @@ export class HomepageComponent implements OnInit {
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
-    const userDetails = getFromStorage("user");
-    if (userDetails) {
-      this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
+     this.userDetails = getFromStorage("user");
+    if (this.userDetails) {
+      this.sessionService.provider(this.userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
+        
         const attributes = provider.results[0].attributes;
         attributes.forEach((attribute) => {
           if (
@@ -72,37 +76,39 @@ export class HomepageComponent implements OnInit {
           if (
             attribute.attributeType.uuid ===
             this.sessionService.visitStateProviderType
-          ) {
-            this.visitState = attribute.value;
-          }
+            ) {
+              this.visitState = attribute.value;
+            }
+          });
+          this.getVisits();
         });
-        this.getVisits();
-      });
-    } else {
-      this.authService.logout();
-    }
-
-    const text = encodeURI(
-      `Hello, my name is ${userDetails.person.display} and I need some assistance.`
-      );
-    this.whatsappLink = `https://wa.me/917005308163?text=${text}`;
-  }
-
-  getStateFromVisit(provider) {
-    const attribute = provider.find(
-      ({ attributeType }) => attributeType.uuid === this.visitStateAttributeType
-    );
-    return attribute && attribute.value ? attribute.value : "missing";
-  }
-
-  /**
-   * Get all visits
-   */
-  getVisits() {
+      } else {
+        this.authService.logout();
+      }
+      
+      const text = encodeURI(
+        `Hello, my name is ${this.userDetails.person.display} and I need some assistance.`
+        );
+        this.whatsappLink = `https://wa.me/917005308163?text=${text}`;
+      }
+      
+      getStateFromVisit(provider) {
+        const attribute = provider.find(
+          ({ attributeType }) => attributeType.uuid === this.visitStateAttributeType
+          );
+          return attribute && attribute.value ? attribute.value : "missing";
+        }
+        
+        /**
+         * Get all visits
+         */
+        getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
         const pVisits = response.results;
-        const visits1 = pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+        const userRoles = this.userDetails.roles.filter(a=>a.name == "Project Manager")
+        console.log('userRoles:---110 ', userRoles);
+        const visits1 = userRoles.length > 0 ? pVisits : pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
 
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
@@ -122,15 +128,19 @@ export class HomepageComponent implements OnInit {
           stateVisits = visits;
         }
         stateVisits.forEach((active) => {
+          
+          if(this.specialization === undefined){
+            this.visitCategory(active);
+          }
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
               
               const speRequired = attributes.filter(
                 (attr) =>
-                  attr.attributeType.uuid ===
-                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-              );
+                attr.attributeType.uuid ===
+                "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+                );
               if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization) {
@@ -146,6 +156,7 @@ export class HomepageComponent implements OnInit {
             } else if (this.specialization === "General Physician") {
               this.visitCategory(active);
             }
+            
           }
           this.value = {};
           

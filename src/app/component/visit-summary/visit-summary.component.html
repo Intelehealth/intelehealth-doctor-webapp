@@ -201,7 +201,7 @@ require by speaking with the patient directly.  -->
   <br>
 
 
-  <div class="text-center" *ngIf="!show">
+  <div class="text-center" *ngIf="!show" [hidden]="userRole" >
         <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">Start Visit
               Note</button>
   </div>
@@ -247,7 +247,7 @@ require by speaking with the patient directly.  -->
         </ng-container>
 
         <div class="text-center">
-              <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
+              <button (click)="sign()" [hidden]="userRole"  id="sign-button" mat-raised-button color="primary"
                     [disabled]="visitCompletePresent || isVisitSummaryChanged">Sign and Submit</button>
         </div>
   </div>
