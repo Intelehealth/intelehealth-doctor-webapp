@@ -17,6 +17,16 @@
     src: url(assets/fonts/Youthness.ttf) format("opentype");
   }
 
+@font-face {
+  font-family: lato;
+  src: url(assets/fonts/Lato-Regular.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: almondita;
+  src: url(assets/fonts/Almondita.ttf) format("opentype");
+}
+
   body {
     background-color: #f1f4f6;
     margin: 0;
