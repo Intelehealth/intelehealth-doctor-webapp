@@ -94,6 +94,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { ChatComponent } from './component/chat/chat.component';
+import { VcComponent } from './component/vc/vc.component';
+import { SocketService } from './services/socket.service';
+import { TestChatComponent } from './component/test-chat/test-chat.component';
 
 
 
@@ -133,7 +137,10 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     CurrentVisitComponent,
     ModalsComponent,
     ReassignSpecialityComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ChatComponent,
+    VcComponent,
+    TestChatComponent
   ],
   imports: [
     BrowserModule,
@@ -174,6 +181,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+      { path: 'test/chat', component: TestChatComponent },
       { path: '**', component: Page404Component }
     ], { scrollPositionRestoration: 'enabled' }),
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
@@ -186,7 +194,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     AuthGuard,
     DatePipe,
     { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    SocketService,
   ],
   bootstrap: [AppComponent]
 })
