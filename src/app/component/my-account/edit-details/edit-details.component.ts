@@ -26,7 +26,8 @@ export class EditDetailsComponent implements OnInit {
   "ENT",
   "Psychologist",
   "Rehabilitative physiotherapy",
-  "Dietician/Nutritional Counsellor"
+  "Dietician/Nutritional Counsellor",
+  "Cardiologist"
   ];
 
   editForm = new FormGroup({
