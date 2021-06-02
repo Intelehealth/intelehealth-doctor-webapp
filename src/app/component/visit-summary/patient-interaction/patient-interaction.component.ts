@@ -5,6 +5,9 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { VcComponent } from '../../vc/vc.component';
+import { environment } from 'src/environments/environment';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -33,6 +36,10 @@ export class PatientInteractionComponent implements OnInit {
   doctorDetails: any = {};
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   encounterUuid: string;
+  patientUuid = "";
+  videoIcon = environment.production
+  ? "../../../intelehealth/assets/svgs/video-w.svg"
+  : "../../../assets/svgs/video-w.svg";
 
   interaction = new FormGroup({
     interaction: new FormControl('', [Validators.required])
@@ -41,10 +48,13 @@ export class PatientInteractionComponent implements OnInit {
   constructor(private visitService: VisitService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-    private encounterService: EncounterService) { }
+    private encounterService: EncounterService,
+    private dialog: MatDialog
+    ) { }
 
   ngOnInit() {
     const visitId = this.route.snapshot.params['visit_id'];
+    this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const uuid = this.route.snapshot.paramMap.get('patient_id');
     this.visitService.patientInfo(uuid)
       .subscribe(info => {
@@ -136,5 +146,14 @@ export class PatientInteractionComponent implements OnInit {
       .subscribe(res => {
         this.msg = [];
       });
+  }
+
+  openVcModal() {
+    this.dialog.open(VcComponent, {
+      disableClose: true,
+      data: {
+        patientUuid: this.patientUuid,
+      },
+    });
   }
 }

@@ -5,8 +5,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { environment } from "src/environments/environment";
-import { MatDialog } from "@angular/material/dialog";
-import { VcComponent } from "../vc/vc.component";
+// import { MatDialog } from "@angular/material/dialog";
+// import { VcComponent } from "../vc/vc.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -38,7 +38,7 @@ export class VisitSummaryComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    // private dialog: MatDialog
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -209,12 +209,12 @@ export class VisitSummaryComponent implements OnInit {
     );
   };
 
-  openVcModal() {
-    this.dialog.open(VcComponent, {
-      disableClose: true,
-      data: {
-        patientUuid: this.patientUuid,
-      },
-    });
-  }
+  // openVcModal() {
+  //   this.dialog.open(VcComponent, {
+  //     disableClose: true,
+  //     data: {
+  //       patientUuid: this.patientUuid,
+  //     },
+  //   });
+  // }
 }
