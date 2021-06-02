@@ -17,12 +17,16 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
  specializations = [
-    "All",
-    "General Physician",
-    "Dermatologist",
-    "Physiotherapist",
-    "Gynecologist",
-    "Pediatrician"
+  "General Physician",
+  "Paediatrician", 
+  "Gynaecologist",
+  "Medicine",
+  "Pulmonologist",
+  "Ophthalmologist",
+  "ENT",
+  "Psychologist",
+  "Rehabilitative physiotherapy",
+  "Dietician/Nutritional Counsellor"
   ];
 
   editForm = new FormGroup({

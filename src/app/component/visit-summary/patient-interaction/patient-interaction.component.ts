@@ -30,7 +30,6 @@ export class PatientInteractionComponent implements OnInit {
   msg: any = [];
   whatsappLink: string;
   phoneNo;
-  patientDetails: any;
   doctorDetails: any = {};
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   encounterUuid: string;
@@ -46,27 +45,21 @@ export class PatientInteractionComponent implements OnInit {
 
   ngOnInit() {
     const visitId = this.route.snapshot.params['visit_id'];
-    this.visitService.fetchVisitDetails(visitId)
-      .subscribe(visitDetails => {
-        this.patientDetails = visitDetails.patient;
-        visitDetails.encounters.forEach(encounter => {
-          if (encounter.display.match('ADULTINITIAL') != null) {
-            const providerAttribute = encounter.encounterProviders[0].provider.attributes;
-            if (providerAttribute.length) {
-              providerAttribute.forEach(attribute => {
-                if (attribute.display.match('phoneNumber') != null) {
-                  this.phoneNo = attribute.value;
-                }
-                if (attribute.display.match('whatsapp') != null) {
-                  const whatsapp = attribute.value;
-                  // tslint:disable-next-line: max-line-length
-                  const text = encodeURI(`Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`);
-                  this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-                }
-              });
-            }
+    const uuid = this.route.snapshot.paramMap.get('patient_id');
+    this.visitService.patientInfo(uuid)
+      .subscribe(info => {
+        info.person['attributes'].forEach(attri => {
+          if (attri.attributeType.display.match('Telephone Number')) {
+            info['telephone'] = attri.value;
           }
         });
+          if ( info['telephone'] != null) {
+            this.phoneNo =  info['telephone'];
+            const whatsapp =  info['telephone'];
+            // tslint:disable-next-line: max-line-length
+            const text = encodeURI(`Hello I'm calling for patient ${info.person.display} from Swasth Sampark Helpline`);
+            this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+          }
       });
     this.visitService.getAttribute(visitId)
       .subscribe(response => {
