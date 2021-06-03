@@ -12,7 +12,7 @@
           </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">Submit</button>
 </div>
-<div id="call-link" style="display: flex;" *ngIf="whatsappLink || phoneNo"> Start a call: 
+<div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
   <span *ngIf="whatsappLink">
     <div class="fas vc-button" (click)="openVcModal()">
       <img [src]="videoIcon" />

@@ -21,36 +21,57 @@
 .fas {
   font-size: 30px;
   padding: 10px;
-  color: #0080FF;
+  color: #0080ff;
   cursor: pointer;
   text-decoration: none;
-  padding-top: 0;
 }
-/* 
+
 .fas:hover {
   font-size: 35px;
   padding: 10px;
   color: #0080FF;
   cursor: pointer;
   text-decoration: none;
-} */
+}
 
 .material-icons{
   vertical-align: text-bottom;
 }
 
 .vc-button {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background-color: rgb(40 167 69);
+  box-shadow: 3px 3px 3px rgb(218 215 215 / 93%);
+  padding: 0px 0px 0px 7px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.vc-button:hover {
   height: 35px;
   width: 35px;
   border-radius: 50%;
   background-color: rgb(40 167 69);
   box-shadow: 3px 3px 3px rgb(218 215 215 / 93%);
-  padding: 1px 0px 0px 6px;
+  padding: 0px 0px 0px 7px;
   cursor: pointer;
   margin-left: 10px;
 }
+
+
 .vc-button img {
   color: white;
-  height: 22px;
-  width: 22px;
+  height: 18px;
+  width: 18px;
+  margin-bottom: 5px;
+}
+
+.vc-button img:hover {
+  color: white;
+  height:18px;
+  width: 18px;
+  position: inherit;
+  margin-bottom: 3px;
 }
