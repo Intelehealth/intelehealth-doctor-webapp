@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { environment } from "src/environments/environment";
+import { HttpClient } from "@angular/common/http";
+
 // import { MatDialog } from "@angular/material/dialog";
 // import { VcComponent } from "../vc/vc.component";
 declare var getFromStorage: any,
@@ -17,6 +19,7 @@ declare var getFromStorage: any,
   styleUrls: ["./visit-summary.component.css"],
 })
 export class VisitSummaryComponent implements OnInit {
+  baseURL = environment.baseURL;
   show = false;
   text: string;
   font: string;
@@ -25,6 +28,7 @@ export class VisitSummaryComponent implements OnInit {
   setSpiner = true;
   doctorDetails;
   doctorValue;
+  visitUuid: string;
   isVisitEnded = false;
   patientUuid = "";
   videoIcon = environment.production
@@ -38,6 +42,7 @@ export class VisitSummaryComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpClient
     // private dialog: MatDialog
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
@@ -46,6 +51,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   ngOnInit() {
+
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
@@ -118,10 +124,24 @@ export class VisitSummaryComponent implements OnInit {
     }
   }
 
+
+  updateVisit() {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+
+    const myDate = new Date(Date.now() - 30000);
+    const json = {
+      stopDatetime: myDate,
+    };
+    this.http.post(URL, json).subscribe((response) => {
+    });
+  }
+
   sign() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${visitUuid}`;
     // const userDetails = getFromStorage('user');
     const providerDetails = getFromStorage("provider");
     // if (userDetails && providerDetails) {
@@ -161,6 +181,7 @@ export class VisitSummaryComponent implements OnInit {
           this.visitCompletePresent = true;
           this.snackbar.open("Visit Complete", null, { duration: 4000 });
         });
+        this.updateVisit();
       } else {
         if (
           window.confirm(
