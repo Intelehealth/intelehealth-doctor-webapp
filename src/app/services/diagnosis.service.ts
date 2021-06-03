@@ -50,4 +50,11 @@ export class DiagnosisService {
       })
     );
   }
+
+  getObsAll(patientId): Observable<any> {
+    // tslint:disable-next-line: max-line-length
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,concept:(uuid),encounter:(visit:(uuid)))`;
+    return this.http.get(url);
+
+  }
 }

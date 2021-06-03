@@ -2,13 +2,14 @@ import { VisitService } from "../../services/visit.service";
 import { Component, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthService } from "src/app/services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
 
 // import { MatDialog } from "@angular/material/dialog";
 // import { VcComponent } from "../vc/vc.component";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -30,7 +31,7 @@ export class VisitSummaryComponent implements OnInit {
   doctorValue;
   visitUuid: string;
   isVisitEnded = false;
-  patientUuid = "";
+  patientUuid: string;
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
@@ -38,12 +39,13 @@ export class VisitSummaryComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
-    private authService: AuthService,
+    private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
-    // private dialog: MatDialog
+    private http: HttpClient,
+    // private dialog: MatDialog,
+    private dialogService: ConfirmDialogService,
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -56,8 +58,8 @@ export class VisitSummaryComponent implements OnInit {
       this.setSpiner = false;
     }, 1000);
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.visitService.fetchVisitDetails(this.visitUuid).subscribe((visitDetails) => {
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
@@ -134,6 +136,7 @@ export class VisitSummaryComponent implements OnInit {
       stopDatetime: myDate,
     };
     this.http.post(URL, json).subscribe((response) => {
+     // this.sendSms();
     });
   }
 
@@ -238,4 +241,65 @@ export class VisitSummaryComponent implements OnInit {
   //     },
   //   });
   // }
+
+  sendSms() {
+    const userDetails = getFromStorage("provider");
+    this.visitService.patientInfo(this.patientUuid).subscribe((info) => {
+      var patientInfo = {
+        "name": info.person.display,
+        "age": info.person.age,
+        "gender": info.person.gender,
+        "providerName": userDetails.person.display,
+      }
+      let patientNo = info.person.attributes.find(a => a.attributeType.display == "Telephone Number")
+
+      this.diagnosisService
+        .getObsAll(this.patientUuid)
+        .subscribe((response) => {
+          let currentVisit = response.results.filter(a => a.encounter?.visit?.uuid == this.visitUuid)
+          let diagnosisConcept = this.getText(currentVisit.filter(a => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df"));
+          let followUpConcept = this.getText(currentVisit.filter(a => a.concept.uuid == "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"));
+          let preTestConcept = this.getText(currentVisit.filter(a => a.concept.uuid == "23601d71-50e6-483f-968d-aeef3031346d"));
+          let advConcept = currentVisit.filter(a => a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1")
+          advConcept.forEach((c, index) => {
+            if (c.value.includes("<a")) {
+              advConcept.splice(index, 1);
+            }
+          });
+          advConcept = this.getText(advConcept);
+          let medicationConcept = this.getText(response.results.filter(a => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"));
+          let smsText: string = `Intelehealth Swasthya Sampark Helpline, Telemedicine Project,\n e-prescription  \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
+            \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
+            \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457`;
+          smsText.replace("\n", "<br>");
+          console.log("patient no", patientNo.value)
+          console.log("SMS", smsText);
+          this.visitService.sendSMS(this.patientUuid,patientNo, smsText)
+          .subscribe((res) => {
+              this.openDialog();
+          })
+        });
+    });
+  }
+
+  getText(data) {
+    let text: string = "";
+    if (data.length > 0) {
+      data.forEach(element => {
+        text += '- ' + element.value + '\n';
+      });
+    } else {
+      text = "- No Data Available";
+    }
+    return text;
+  }
+
+  openDialog() {
+    this.dialogService.openConfirmDialog("Prescription is sent to patient", true)
+      .afterClosed().subscribe(res => {
+        if (res) {
+          this.router.navigateByUrl("/home");
+        }
+      });
+  }
 }

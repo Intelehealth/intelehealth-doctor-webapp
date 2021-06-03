@@ -3,8 +3,10 @@
       <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
       <span class="content-span full-width">{{data.message}}</span>
     </div>
-    <button  mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">NO</button>
-    <button  mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">YES</button>
+    <button *ngIf="!data.isSms" mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">NO</button>
+    <button *ngIf="!data.isSms" mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">YES</button>
+
+    <button *ngIf="data.isSms" mat-raised-button color="primary" id="ok-button" [mat-dialog-close]="true">OK</button>
     
     <!-- <button mat-flat-button id="no-button" [mat-dialog-close]="false">NO</button> -->
     <!-- <button mat-flat-button id="yes-button" [mat-dialog-close]="true">YES</button> -->

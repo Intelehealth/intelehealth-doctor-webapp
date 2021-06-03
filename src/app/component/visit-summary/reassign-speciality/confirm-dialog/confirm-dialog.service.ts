@@ -9,14 +9,15 @@ export class ConfirmDialogService {
 
   constructor(private dialog: MatDialog) { }
 
-  openConfirmDialog(msg){
+  openConfirmDialog(msg: string, isSms?: boolean){
     return this.dialog.open(ConfirmDialogComponent,{
-       width: '550px',
+       width: isSms ? '360px':'550px',
        panelClass: 'confirm-dialog-container',
        disableClose: true,
        position: { top: "180px" },
        data :{
-         message : msg
+         message : msg,
+         isSms: isSms
        }
      });
    }
