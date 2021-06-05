@@ -136,7 +136,7 @@ export class VisitSummaryComponent implements OnInit {
       stopDatetime: myDate,
     };
     this.http.post(URL, json).subscribe((response) => {
-     // this.sendSms();
+      this.sendSms();
     });
   }
 
@@ -182,7 +182,6 @@ export class VisitSummaryComponent implements OnInit {
         };
         this.service.postEncounter(json).subscribe((post) => {
           this.visitCompletePresent = true;
-          this.snackbar.open("Visit Complete", null, { duration: 4000 });
         });
         this.updateVisit();
       } else {
@@ -268,16 +267,20 @@ export class VisitSummaryComponent implements OnInit {
           });
           advConcept = this.getText(advConcept);
           let medicationConcept = this.getText(response.results.filter(a => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"));
-          let smsText: string = `Intelehealth Swasthya Sampark Helpline, Telemedicine Project,\n e-prescription  \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
+          //need to change this
+          //let link = `https://trainingss.intelehealth.org/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`
+         // \n Download complete prescription from link below \n${link}
+          let smsText: string = `Intelehealth SwastSampark Helpline, Telemedicine Project,\n e-prescription  \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
             \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
             \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457`;
           smsText.replace("\n", "<br>");
-          console.log("patient no", patientNo.value)
-          console.log("SMS", smsText);
-          this.visitService.sendSMS(this.patientUuid,patientNo, smsText)
-          .subscribe((res) => {
+          this.visitService.sendSMS(patientNo.value, smsText).subscribe((res) => {
               this.openDialog();
-          })
+          }, ()=> {
+            this.snackbar.open(`Error while sending SMS`, null, {
+              duration: 4000,
+            });
+          });
         });
     });
   }
@@ -286,7 +289,7 @@ export class VisitSummaryComponent implements OnInit {
     let text: string = "";
     if (data.length > 0) {
       data.forEach(element => {
-        text += '- ' + element.value + '\n';
+        text += element.value + '\n';
       });
     } else {
       text = "- No Data Available";

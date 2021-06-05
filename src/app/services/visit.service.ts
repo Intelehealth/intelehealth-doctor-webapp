@@ -57,11 +57,22 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  //need to change URL
-  sendSMS(id, patientNo, smsBody): Observable<any> {
-    console.log("URL", patientNo, smsBody);
-    // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,age,birthdate,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
-    return this.http.get(url);
+  sendSMS(patientNo, smsBody): Observable<any> {
+    let url = `${environment.mindmapURL}/mindmap/sendSMS`;
+    let body = {
+      patientNo: patientNo,
+      smsBody: smsBody
+    }
+    return this.http.post(url, body);
   }
+
+  startCall(patientMobileNo, doctorsMobileNo) {
+    let url = `${environment.mindmapURL}/mindmap/startCall`;
+    let body = {
+      patientMobileNo: patientMobileNo,
+      doctorsMobileNo: doctorsMobileNo
+    }
+    return this.http.post(url, body);
+  }
+
 }

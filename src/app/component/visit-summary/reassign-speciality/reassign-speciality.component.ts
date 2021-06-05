@@ -35,7 +35,8 @@ export class ReassignSpecialityComponent implements OnInit {
       "Psychologist",
       "Rehabilitative physiotherapy",
       "Dietician/Nutritional Counsellor",
-      "Cardiologist"
+      "Cardiologist",
+      "Specialist Doctor Not Needed"
   ];
   errorText: string;
 
