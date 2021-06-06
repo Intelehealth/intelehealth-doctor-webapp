@@ -17,7 +17,6 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  
   recentVisits(id): Observable<any> {
     const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     return this.http.get(url);
@@ -53,5 +52,11 @@ export class VisitService {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(stateProvince),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
+  }
+
+  shortUrl(link) {
+    return this.http.post(`${environment.mindmapURL}/mindmap/shortLink`, {
+      link,
+    });
   }
 }
