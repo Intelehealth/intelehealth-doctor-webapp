@@ -17,7 +17,6 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  
   recentVisits(id): Observable<any> {
     const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     return this.http.get(url);

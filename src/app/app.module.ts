@@ -67,7 +67,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
@@ -77,12 +76,16 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import { RedirectComponent } from "./component/redirect/redirect.component";
+
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    MainComponent,
     HomepageComponent,
     VisitSummaryComponent,
     FamilyHistoryComponent,
@@ -147,9 +150,10 @@ import { MainComponent } from './component/main/main.component';
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
-      { path: 'login', component: LoginPageComponent },
-      {
-        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+      { path: 'l/:hash', component: RedirectComponent },
+      { path: '', component: MainComponent, children:[
+        { path: '', component: LoginPageComponent },
+        { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
         { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
         { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },

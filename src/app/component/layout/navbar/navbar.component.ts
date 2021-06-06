@@ -8,7 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
-declare var getFromStorage: any, saveToStorage: any;
+declare var getFromStorage: any;
 
 @Component({
   selector: "app-navbar",
