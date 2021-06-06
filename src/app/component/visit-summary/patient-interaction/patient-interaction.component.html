@@ -19,7 +19,10 @@
     </div>
     <!-- <a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a> -->
   </span>
-  <span *ngIf="phoneNo"><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
+  <span *ngIf="phoneNo"> 
+      <div class="fas fa-phone-volume" (click)= "startCall(phoneNo)">
+      </div>  
+  </span>
 </div>
 <div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
   Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 

@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { VcComponent } from '../../vc/vc.component';
 import { environment } from 'src/environments/environment';
+import { ConfirmDialogService } from '../reassign-speciality/confirm-dialog/confirm-dialog.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -49,7 +50,8 @@ export class PatientInteractionComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private encounterService: EncounterService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: ConfirmDialogService,
     ) { }
 
   ngOnInit() {
@@ -155,5 +157,30 @@ export class PatientInteractionComponent implements OnInit {
         patientUuid: this.patientUuid,
       },
     });
+  }
+
+  startCall(patientMobileNo) {
+    const providerDetails = getFromStorage('provider');
+    let doctorsMobileNo: string;
+    providerDetails.attributes.forEach(attribute => {
+      if (attribute.display.match('phoneNumber') != null) {
+        doctorsMobileNo = attribute.value;
+      }
+    });
+    if (doctorsMobileNo) {
+      this.visitService.startCall(patientMobileNo, doctorsMobileNo)
+      .subscribe(()=> {
+            this.openDialog("Calling to patient")
+      }, () => {
+            this.openDialog("Unable to connect this call, please try again")
+      });
+    } else {
+      this.snackbar.open('To perform call, please update your phone no in MyAccount section', null, { duration: 4000 }); 
+    }
+  }
+
+  openDialog(msg:string) {
+    this.dialogService.openConfirmDialog(msg, true)
+      .afterClosed().subscribe();
   }
 }
