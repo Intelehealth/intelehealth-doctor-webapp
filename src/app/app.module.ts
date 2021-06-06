@@ -98,6 +98,8 @@ import { ChatComponent } from './component/chat/chat.component';
 import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
+import { RedirectComponent } from './component/redirect/redirect.component';
+import { MainComponent } from './component/main/main.component';
 
 
 
@@ -105,6 +107,7 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
 @NgModule({
   declarations: [
     AppComponent,
+    MainComponent,
     HomepageComponent,
     VisitSummaryComponent,
     FamilyHistoryComponent,
@@ -171,17 +174,20 @@ import { TestChatComponent } from './component/test-chat/test-chat.component';
     HttpClientModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
-      { path: '', component: LoginPageComponent },
-      { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
-      { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
-      { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-      { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
-      { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
-      { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
-      { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
-      { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-      { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-      { path: 'test/chat', component: TestChatComponent },
+      { path: 'l/:hash', component: RedirectComponent },
+      { path: '', component: MainComponent, children:[
+        { path: '', component: LoginPageComponent },
+        { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
+        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'test/chat', component: TestChatComponent },
+      ] },
       { path: '**', component: Page404Component }
     ], { scrollPositionRestoration: 'enabled' }),
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
