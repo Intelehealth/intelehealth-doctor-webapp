@@ -1,17 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
-
 export class VisitService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
@@ -61,8 +59,8 @@ export class VisitService {
     let url = `${environment.mindmapURL}/mindmap/sendSMS`;
     let body = {
       patientNo: patientNo,
-      smsBody: smsBody
-    }
+      smsBody: smsBody,
+    };
     return this.http.post(url, body);
   }
 
@@ -70,9 +68,14 @@ export class VisitService {
     let url = `${environment.mindmapURL}/mindmap/startCall`;
     let body = {
       patientMobileNo: patientMobileNo,
-      doctorsMobileNo: doctorsMobileNo
-    }
+      doctorsMobileNo: doctorsMobileNo,
+    };
     return this.http.post(url, body);
   }
 
+  shortUrl(link) {
+    return this.http.post(`${environment.mindmapURL}/mindmap/shortLink`, {
+      link,
+    });
+  }
 }
