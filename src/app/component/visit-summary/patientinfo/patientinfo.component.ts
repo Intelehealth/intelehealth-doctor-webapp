@@ -39,6 +39,10 @@ constructor(private route: ActivatedRoute,
             this.info['telephone'] = attri.value;
           } else if (attri.attributeType.display.match('occupation')) {
             this.info['occupation'] = attri.value;
+          } else if (attri.attributeType.display.match('Education')) {
+            this.info['education'] = attri.value;
+          } else if (attri.attributeType.display.match('positiveDate')) {
+            this.info['positiveDate'] = attri.value;
           }
         });
         this.patientInfo.push(this.info);

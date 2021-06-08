@@ -20,8 +20,24 @@
                         <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
                     </tr>
                     <tr>
-                        <th scope="row">Village</th>
-                        <td>{{info.preferredAddress.cityVillage}}</td>
+                        <th scope="row">State</th>
+                        <td *ngIf="info.positiveDate">{{info?.preferredAddress?.stateProvince}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">District</th>
+                        <td>{{info?.preferredAddress.cityVillage}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Block</th>
+                        <td *ngIf="info.education">{{info.education}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date of Positive</th>
+                        <td *ngIf="info.positiveDate">{{info.positiveDate | date: 'dd-MMM-yyy'}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Pincode</th>
+                        <td *ngIf="info.positiveDate">{{info?.preferredAddress?.postalCode}}</td>
                     </tr>
                     <tr>
                         <th scope="row">Contact Info</th>
