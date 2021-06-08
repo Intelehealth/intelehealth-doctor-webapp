@@ -25,7 +25,7 @@ export class PresentingComplaintsComponent implements OnInit {
           this.complaint.push(obs);
         }
       });
-      if (this.complaint !== undefined) {
+      if (this.complaint !== undefined && this.complaint.length > 0) {
         this.complaintPresent = true;
       }
     });

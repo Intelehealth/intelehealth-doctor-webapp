@@ -48,6 +48,7 @@ export class PastVisitsComponent implements OnInit {
         if (visitDetails.stopDatetime === null || visitDetails.stopDatetime === undefined) {
           this.recentVisit.visitStatus = 'Active';
         }
+        this.recentVisit.hasOwnProperty("observation") ? this.recentVisit: this.recentVisit["observation"]= "| Self assessment";
         this.recent.push(this.recentVisit);
         });
       });

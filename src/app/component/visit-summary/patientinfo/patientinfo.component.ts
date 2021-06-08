@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ImagesService } from 'src/app/services/images.service';
 import { ActivatedRoute } from '@angular/router';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from '../../../../environments/environment';
@@ -13,23 +12,15 @@ import { environment } from '../../../../environments/environment';
 
 export class PatientinfoComponent implements OnInit {
 baseURL = environment.baseURL;
-image: string;
 patientInfo = [];
 patientIdentifier: string;
 info = {};
-profileImagePresent = false;
 
 constructor(private route: ActivatedRoute,
-            private visitService: VisitService,
-            private service: ImagesService) { }
+            private visitService: VisitService) { }
 
   ngOnInit() {
       const uuid = this.route.snapshot.paramMap.get('patient_id');
-      this.service.fetchProfileImage(uuid)
-      .subscribe(response => {
-        this.profileImagePresent = true;
-        this.image = `${this.baseURL}/personimage/${uuid}`;
-      });
       this.visitService.patientInfo(uuid)
       .subscribe(info => {
         this.info = info.person;
