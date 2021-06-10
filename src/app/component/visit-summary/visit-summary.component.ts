@@ -7,6 +7,7 @@ import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
+import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 
 declare var getFromStorage: any,
   saveToStorage: any,
@@ -57,6 +58,7 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private diagnosisService: DiagnosisService,
+    private confirmDialogService: ConfirmDialogService,
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -200,6 +202,7 @@ export class VisitSummaryComponent implements OnInit {
       stopDatetime: myDate,
     };
     this.http.post(URL, json).subscribe((response) => {
+      this.sendSms();
     });
   }
 
@@ -246,7 +249,6 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
-              this.snackbar.open("Visit Complete", null, { duration: 4000 });
             });
 
             this.updateVisit();
@@ -304,4 +306,104 @@ export class VisitSummaryComponent implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  sendSms() {
+    const userDetails = getFromStorage("provider");
+    this.visitService.patientInfo(this.patientId).subscribe((info) => {
+      var patientInfo = {
+        name: info.person.display,
+        age: info.person.age,
+        gender: info.person.gender,
+        providerName: userDetails.person.display,
+      };
+      let patientNo = info.person.attributes.find(
+        (a) => a.attributeType.display == "Telephone Number"
+      );
+
+      this.diagnosisService
+        .getObsAll(this.patientId)
+        .subscribe((response) => {
+          let currentVisit = response.results.filter(
+            (a) => a.encounter?.visit?.uuid == this.visitUuid
+          );
+          let diagnosisConcept = this.getText(
+            currentVisit.filter(
+              (a) => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df"
+            )
+          );
+          let followUpConcept = this.getText(
+            currentVisit.filter(
+              (a) => a.concept.uuid == "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
+            )
+          );
+          let preTestConcept = this.getText(
+            currentVisit.filter(
+              (a) => a.concept.uuid == "23601d71-50e6-483f-968d-aeef3031346d"
+            )
+          );
+          let advConcept = currentVisit.filter(
+            (a) => a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1"
+          );
+          advConcept.forEach((c, index) => {
+            if (c.value.includes("<a")) {
+              advConcept.splice(index, 1);
+            }
+          });
+          advConcept = this.getText(advConcept);
+          let medicationConcept = this.getText(
+            response.results.filter(
+              (a) => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
+            )
+          );
+          //need to change this link
+          let link = `https://trainingss.intelehealth.org/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
+          this.visitService.shortUrl(link).subscribe((res: { data }) => {
+            const hash = res.data.hash;
+            const shortLink = this.getLinkFromHash(hash);
+            let smsText: string = `e-prescription Ekal Helpline \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
+            \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
+            \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457 \n Download complete prescription from link below \n ${shortLink}
+            \n - Powered by Intelehealth`;
+            smsText.replace("\n", "<br>");
+            this.visitService.sendSMS(patientNo.value, smsText).subscribe(
+              (res) => {
+                this.openDialog();
+              },
+              () => {
+                this.snackbar.open(`Error while sending SMS`, null, {
+                  duration: 4000,
+                });
+              }
+            );
+          });
+        });
+    });
+  }
+
+  getLinkFromHash(hash) {
+    return `${window.location.protocol}//${window.location.hostname}/intelehealth/#/l/${hash}`;
+  }
+
+  getText(data) {
+    let text: string = "";
+    if (data.length > 0) {
+      data.forEach((element) => {
+        text += element.value + "\n";
+      });
+    } else {
+      text = "No Data Available";
+    }
+    return text;
+  }
+
+  openDialog() {
+    this.confirmDialogService
+      .openConfirmDialog("Prescription is sent to patient")
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.router.navigateByUrl("/home");
+        }
+      });
+  }
 }
