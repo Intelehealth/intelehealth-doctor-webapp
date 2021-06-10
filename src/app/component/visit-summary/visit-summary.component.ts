@@ -45,9 +45,8 @@ export class VisitSummaryComponent implements OnInit {
     "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba",
     "e1761e85-9b50-48ae-8c4d-e6b7eeeba084",
     "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
-    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
+    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b",
   ];
-
 
   constructor(
     private service: EncounterService,
@@ -58,7 +57,7 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private diagnosisService: DiagnosisService,
-    private confirmDialogService: ConfirmDialogService,
+    private confirmDialogService: ConfirmDialogService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -70,24 +69,25 @@ export class VisitSummaryComponent implements OnInit {
       this.setSpiner = false;
     }, 1000);
     const userDetails = getFromStorage("user");
-    const hideRole =  userDetails.roles.filter(a=>a.name == "Project Manager");
-    this.userRole = hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
-    console.log('this.userRole: ', this.userRole);
+    const hideRole = userDetails.roles.filter(
+      (a) => a.name == "Project Manager"
+    );
+    this.userRole =
+      hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
+    console.log("this.userRole: ", this.userRole);
 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-        const ObsData = response.results.filter(a => this.conceptIds.includes(a.concept.uuid))
-        if (ObsData.length > 0) {
-          this.diagnosisService.isVisitSummaryChanged = true
-        }
-        else {
-          this.diagnosisService.isVisitSummaryChanged = false
-        }
-
-      });
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      const ObsData = response.results.filter((a) =>
+        this.conceptIds.includes(a.concept.uuid)
+      );
+      if (ObsData.length > 0) {
+        this.diagnosisService.isVisitSummaryChanged = true;
+      } else {
+        this.diagnosisService.isVisitSummaryChanged = false;
+      }
+    });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       visitDetails.encounters.forEach((visit) => {
@@ -149,7 +149,7 @@ export class VisitSummaryComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -181,17 +181,13 @@ export class VisitSummaryComponent implements OnInit {
   sign() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-        if (response) {
-          this.signandsubmit();
-          // this.updateVisit();
-        }
-
-      });
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      if (response) {
+        this.signandsubmit();
+        // this.updateVisit();
+      }
+    });
   }
-
 
   updateVisit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
@@ -252,7 +248,6 @@ export class VisitSummaryComponent implements OnInit {
             });
 
             this.updateVisit();
-
           } else {
             if (
               window.confirm(
@@ -320,64 +315,66 @@ export class VisitSummaryComponent implements OnInit {
         (a) => a.attributeType.display == "Telephone Number"
       );
 
-      this.diagnosisService
-        .getObsAll(this.patientId)
-        .subscribe((response) => {
-          let currentVisit = response.results.filter(
-            (a) => a.encounter?.visit?.uuid == this.visitUuid
-          );
-          let diagnosisConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df"
-            )
-          );
-          let followUpConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
-            )
-          );
-          let preTestConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "23601d71-50e6-483f-968d-aeef3031346d"
-            )
-          );
-          let advConcept = currentVisit.filter(
-            (a) => a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1"
-          );
-          advConcept.forEach((c, index) => {
-            if (c.value.includes("<a")) {
-              advConcept.splice(index, 1);
-            }
-          });
-          advConcept = this.getText(advConcept);
-          let medicationConcept = this.getText(
-            response.results.filter(
-              (a) => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
-            )
-          );
-          //need to change this link
-          let link = `https://trainingss.intelehealth.org/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
-          this.visitService.shortUrl(link).subscribe((res: { data }) => {
-            const hash = res.data.hash;
-            const shortLink = this.getLinkFromHash(hash);
-            let smsText: string = `e-prescription Ekal Helpline \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
+      this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+        let currentVisit = response.results.filter(
+          (a) => a.encounter?.visit?.uuid == this.visitUuid
+        );
+        let diagnosisConcept = this.getText(
+          currentVisit.filter(
+            (a) => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df"
+          )
+        );
+        let followUpConcept = this.getText(
+          currentVisit.filter(
+            (a) => a.concept.uuid == "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
+          )
+        );
+        let preTestConcept = this.getText(
+          currentVisit.filter(
+            (a) => a.concept.uuid == "23601d71-50e6-483f-968d-aeef3031346d"
+          )
+        );
+        let advConcept = currentVisit.filter(
+          (a) => a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1"
+        );
+        advConcept.forEach((c, index) => {
+          if (c.value.includes("<a")) {
+            advConcept.splice(index, 1);
+          }
+        });
+        advConcept = this.getText(advConcept);
+        let medicationConcept = this.getText(
+          response.results.filter(
+            (a) => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
+          )
+        );
+        //need to change this link
+        let link = this.getLink(info);
+        this.visitService.shortUrl(link).subscribe((res: { data }) => {
+          const hash = res.data.hash;
+          const shortLink = this.getLinkFromHash(hash);
+          let smsText: string = `e-prescription Ekal Helpline \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
             \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
             \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457 \n Download complete prescription from link below \n ${shortLink}
             \n - Powered by Intelehealth`;
-            smsText.replace("\n", "<br>");
-            this.visitService.sendSMS(patientNo.value, smsText).subscribe(
-              (res) => {
-                this.openDialog();
-              },
-              () => {
-                this.snackbar.open(`Error while sending SMS`, null, {
-                  duration: 4000,
-                });
-              }
-            );
-          });
+          smsText.replace("\n", "<br>");
+          this.visitService.sendSMS(patientNo.value, smsText).subscribe(
+            (res) => {
+              this.openDialog();
+            },
+            () => {
+              this.snackbar.open(`Error while sending SMS`, null, {
+                duration: 4000,
+              });
+            }
+          );
         });
+      });
     });
+  }
+
+  getLink(info) {
+    return `${window.location.protocol}//${window.location.hostname}/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
   }
 
   getLinkFromHash(hash) {
