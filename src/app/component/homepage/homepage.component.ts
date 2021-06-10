@@ -126,7 +126,7 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.age;
+    this.value.age = active.patient.person.age ? active.patient.person.age + " Years": "Not Provided";
     this.value.location = active.location.display;
     this.value.status = active.stopDatetime != null ? 'Visit Complete': active.encounters[0].encounterType.display;
     this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split('- ')[1];
