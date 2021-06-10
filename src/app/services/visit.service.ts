@@ -54,4 +54,29 @@ export class VisitService {
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(stateProvince),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
   }
+
+  sendSMS(patientNo, smsBody): Observable<any> {
+    let url = `${environment.mindmapURL}/mindmap/sendSMS`;
+    let body = {
+      patientNo: patientNo,
+      smsBody: smsBody
+    }
+    return this.http.post(url, body);
+  }
+
+  shortUrl(link) {
+    return this.http.post(`${environment.mindmapURL}/mindmap/shortLink`, {
+      link,
+    });
+  }
+
+  startCall(patientMobileNo, doctorsMobileNo) {
+    let url = `${environment.mindmapURL}/mindmap/startCall`;
+    let body = {
+      patientMobileNo: patientMobileNo,
+      doctorsMobileNo: doctorsMobileNo,
+    };
+    return this.http.post(url, body);
+  }
+
 }
