@@ -12,6 +12,7 @@ import {
 } from "@angular/animations";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { ConfirmDialogService } from "../confirm-dialog/confirm-dialog.service";
 declare var getEncounterProviderUUID: any,
   getFromStorage: any,
   getEncounterUUID: any;
@@ -65,7 +66,8 @@ export class PatientInteractionComponent implements OnInit {
     private visitService: VisitService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
-    private encounterService: EncounterService
+    private encounterService: EncounterService,
+    private confirmDialogService: ConfirmDialogService,
   ) {}
 
   ngOnInit() {
@@ -75,34 +77,25 @@ export class PatientInteractionComponent implements OnInit {
     this.getAttributes();
     this.getAdviceObs();
   }
+
   fetchVisitDetails() {
-    this.visitService
-      .fetchVisitDetails(this.visitId)
-      .subscribe((visitDetails) => {
-        this.patientDetails = visitDetails.patient;
-        visitDetails.encounters.forEach((encounter) => {
-          if (encounter.display.match("ADULTINITIAL") != null) {
-            const providerAttribute =
-              encounter.encounterProviders[0].provider.attributes;
-            if (providerAttribute.length) {
-              providerAttribute.forEach((attribute) => {
-                if (attribute.display.match("phoneNumber") != null) {
-                  this.phoneNo = attribute.value;
-                }
-                if (attribute.display.match("whatsapp") != null) {
-                  const whatsapp = attribute.value;
-                  // tslint:disable-next-line: max-line-length
-                  const text = encodeURI(
-                    `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
-                  );
-                  this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-                }
-              });
-            }
-          }
-        });
+    this.visitService.patientInfo(this.patientId)
+    .subscribe(info => {
+      info.person['attributes'].forEach(attri => {
+        if (attri.attributeType.display.match('Telephone Number')) {
+          info['telephone'] = attri.value;
+        }
       });
-  }
+        if ( info['telephone'] != null) {
+          this.phoneNo =  info['telephone'];
+          const whatsapp =  info['telephone'];
+          // tslint:disable-next-line: max-line-length
+          const text = encodeURI(
+          `Hello I'm calling for patient ${info.person.display} OpenMRS ID ${info.identifiers[0].identifier}`                  );
+          this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+          }
+     });     
+}
 
   getAttributes() {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
@@ -197,4 +190,30 @@ export class PatientInteractionComponent implements OnInit {
       });
     }
   }
+
+  startCall(patientMobileNo) {
+    const providerDetails = getFromStorage('provider');
+    let doctorsMobileNo: string;
+    providerDetails.attributes.forEach(attribute => {
+      if (attribute.display.match('phoneNumber') != null) {
+        doctorsMobileNo = attribute.value;
+      }
+    });
+    if (doctorsMobileNo) {
+      this.visitService.startCall(patientMobileNo, doctorsMobileNo)
+      .subscribe(()=> {
+            this.openDialog("Calling to patient")
+      }, () => {
+            this.openDialog("Unable to connect this call, please try again")
+      });
+    } else {
+      this.snackbar.open('To perform call, please update your phone no in MyAccount section', null, { duration: 4000 }); 
+    }
+  }
+
+  openDialog(msg:string) {
+    this.confirmDialogService.openConfirmDialog(msg)
+      .afterClosed().subscribe();
+  }
+
 }

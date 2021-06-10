@@ -40,6 +40,7 @@ import { TablesComponent } from "./component/homepage/tables/tables.component";
 import { SignatureComponent } from "./component/my-account/signature/signature.component";
 import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
+import { ConfirmDialogComponent } from "./component/visit-summary/confirm-dialog/confirm-dialog.component";
 
 // Package Import
 import { HttpClientModule } from "@angular/common/http";
@@ -117,6 +118,7 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
+    ConfirmDialogComponent
   ],
 
   imports: [
