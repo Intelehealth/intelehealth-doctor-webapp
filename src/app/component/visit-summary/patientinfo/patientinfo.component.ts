@@ -49,21 +49,21 @@ export class PatientinfoComponent implements OnInit {
   }
 
 
-  getAge(dateString) {
-    var mydate = dateString.replace(
-      /^(\d{2})\/(\d{2})\/(\d{4})$/,
-      "$3, $2, $1"
-    );
+  // getAge(dateString) {
+  //   var mydate = dateString.replace(
+  //     /^(\d{2})\/(\d{2})\/(\d{4})$/,
+  //     "$3, $2, $1"
+  //   );
 
-    this.now = new Date();
-    var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
+  //   this.now = new Date();
+  //   var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
 
-    var a = moment(todayDate);
-    var b = moment(mydate);
-    var diffDuration = moment.duration(a.diff(b));
-    var ageString =
-      diffDuration.years() +
-      " years" 
-    return ageString;
-  }
+  //   var a = moment(todayDate);
+  //   var b = moment(mydate);
+  //   var diffDuration = moment.duration(a.diff(b));
+  //   var ageString =
+  //     diffDuration.years() +
+  //     " years" 
+  //   return ageString;
+  // }
 }
