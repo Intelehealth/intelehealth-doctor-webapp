@@ -2,8 +2,8 @@
 <form [formGroup]='editForm'>
     <mat-form-field class="example-full-width">
         <mat-select placeholder="Gender" formControlName="gender">
-            <mat-option value="Male">Male</mat-option>
-            <mat-option value="Female">Female</mat-option>
+            <mat-option value="M">Male</mat-option>
+            <mat-option value="F">Female</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width">
@@ -34,6 +34,7 @@
     </div>
 
     <div style="float: right">
-        <button mat-raised-button color="primary" type="submit" (click)="updateDetails()">Save</button>
+        <button mat-raised-button color="primary" type="submit" (click)="updateDetails()"
+        [disabled]="!editForm.valid">Save</button>
     </div>
 </form>
