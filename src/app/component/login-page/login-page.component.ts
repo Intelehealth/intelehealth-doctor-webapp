@@ -13,9 +13,7 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
-  logoSrc = environment.production
-    ? "intelehealth/assets/images/Intelehealth-logo-white.png"
-    : "assets/images/Intelehealth-logo-white.png";
+  logoSrc = "assets/images/Intelehealth-logo-white.png";
   loginForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),
