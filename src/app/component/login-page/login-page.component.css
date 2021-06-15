@@ -7,11 +7,14 @@
 }
 
 .bg-plum-plate {
-  background-image: linear-gradient( #394E83 0%, #B0B6DA 100%) !important;
+  background-image: linear-gradient(#394e83 0%, #b0b6da 100%) !important;
 }
 
 .modal-dialog {
-  box-shadow: 0 0.76875rem 2.4875rem rgba(52, 58, 64, 0.3), 0 1.3375rem 1.70625rem rgba(52, 58, 64, 0.3), 0 0.55rem 0.53125rem rgba(0, 0, 0, 0.05), 0 0.225rem 0.4375rem rgba(52, 58, 64, 0.3);
+  box-shadow: 0 0.76875rem 2.4875rem rgba(52, 58, 64, 0.3),
+    0 1.3375rem 1.70625rem rgba(52, 58, 64, 0.3),
+    0 0.55rem 0.53125rem rgba(0, 0, 0, 0.05),
+    0 0.225rem 0.4375rem rgba(52, 58, 64, 0.3);
   border-radius: 0.25rem;
 }
 
@@ -25,35 +28,50 @@
 }
 
 .app-login-box div {
-  opacity: .6rem;
+  opacity: 0.6rem;
 }
 
 .app-login-box span {
   font-size: 1.1rem;
 }
 
-img.sw-logo{
-  width: 192px;
-  height: 192px;
+img.sw-logo {
+  width: 165px;
+  height: 165px;
 }
 
-img.ussid{
+img.ussid {
   width: 17% !important;
   height: 30% !important;
 }
 
-img.nhm{
+img.nhm {
   width: 13% !important;
   height: 25% !important;
   margin-left: 15px;
 }
 
-img.nishtha{
+img.nishtha {
   width: 20% !important;
   height: 25% !important;
 }
 
-img.jhpiego{
+img.jhpiego {
   width: 10% !important;
   height: 25% !important;
+}
+
+@media screen and (max-width: 600px) {
+  img.sw-logo {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  img.sw-logo {
+    margin-top: 75px;
+    width: 110px;
+    height: 110px;
+  }
 }

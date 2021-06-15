@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
+import { environment } from "src/environments/environment";
 declare var saveToStorage: any;
 
 @Component({
@@ -12,6 +13,9 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
+  logoSrc = environment.production
+    ? "intelehealth/assets/images/Intelehealth-logo-white.png"
+    : "assets/images/Intelehealth-logo-white.png";
   loginForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),
