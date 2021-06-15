@@ -39,13 +39,13 @@ export class EditDetailsComponent implements OnInit {
       this.data.emailId ? this.data.emailId.value : null
     ),
     qualification: new FormControl(
-      this.data.qualification ? this.data.qualification.value : null,Validators.required
+      this.data.qualification ? this.data.qualification.value : null
     ),
     specialization: new FormControl(
-      this.data.specialization ? this.data.specialization.value : null,Validators.required
+      this.data.specialization ? this.data.specialization.value : null
     ),
     registrationNumber: new FormControl(
-      this.data.registrationNumber ? this.data.registrationNumber.value : null,Validators.required
+      this.data.registrationNumber ? this.data.registrationNumber.value : null
     )
   });
   status = false;
