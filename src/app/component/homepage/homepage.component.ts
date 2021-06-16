@@ -1,9 +1,8 @@
-
-import { AuthService } from 'src/app/services/auth.service';
-import { SessionService } from './../../services/session.service';
-import { Component, OnInit } from '@angular/core';
-import { VisitService } from 'src/app/services/visit.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from "src/app/services/auth.service";
+import { SessionService } from "./../../services/session.service";
+import { Component, OnInit } from "@angular/core";
+import { VisitService } from "src/app/services/visit.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -19,13 +18,11 @@ export interface VisitData {
   provider: string;
 }
 
-
 @Component({
-  selector: 'app-homepage',
-  templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.css']
+  selector: "app-homepage",
+  templateUrl: "./homepage.component.html",
+  styleUrls: ["./homepage.component.css"],
 })
-
 export class HomepageComponent implements OnInit {
   value: any = {};
   activePatient: number;
@@ -39,17 +36,20 @@ export class HomepageComponent implements OnInit {
   setSpiner = true;
   specialization: string;
 
-  constructor(private sessionService: SessionService,
-              private authService: AuthService,
-              private service: VisitService,
-              private snackbar: MatSnackBar) { }
+  constructor(
+    private sessionService: SessionService,
+    private authService: AuthService,
+    private service: VisitService,
+    private snackbar: MatSnackBar
+  ) {}
 
   ngOnInit() {
-    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
-    const userDetails = getFromStorage('user');
+    if (getFromStorage("visitNoteProvider")) {
+      deleteFromStorage("visitNoteProvider");
+    }
+    const userDetails = getFromStorage("user");
     if (userDetails) {
-      this.sessionService.provider(userDetails.uuid)
-      .subscribe(provider => {
+      this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
         const attributes = provider.results[0].attributes;
         attributes.forEach((element) => {
@@ -62,15 +62,29 @@ export class HomepageComponent implements OnInit {
           }
         });
       });
-    } else {this.authService.logout(); }
+    } else {
+      this.authService.logout();
+    }
     this.getVisits();
   }
 
   getVisits() {
-    this.service.getVisits()
-      .subscribe(response => {
+    this.service.getVisits().subscribe(
+      (response) => {
+        let visits1 = [];
         const result = response.results;
-        const visits1 = result.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+        console.log('this.specialization: ', this.specialization);
+        if (this.specialization && this.specialization.toLowerCase() == "all") {
+          visits1 = result;
+        } else {
+          visits1 = result.filter((a) =>
+            a.attributes.length > 0
+              ? a.attributes.find((b) => {
+                  return b.value == this.specialization;
+                })
+              : ""
+          );
+        }
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
           if (!setObj.has(item.patient.identifiers[0].identifier)) {
@@ -80,25 +94,37 @@ export class HomepageComponent implements OnInit {
           return acc;
         }, []);
 
-        let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
-        visits.forEach(active => {
+        let length = 0,
+          flagLength = 0,
+          visitNoteLength = 0,
+          completeVisitLength = 0;
+        visits.forEach((active) => {
           if (active.encounters.length > 0) {
             const value = active.encounters[0].display;
-            if (value.match('Flagged')) {
+            if (value.match("Flagged")) {
               if (!active.encounters[0].voided) {
                 const values = this.assignValueToProperty(active);
                 this.flagVisit.push(values);
                 flagLength += 1;
               }
-            } else if ((value.match('ADULTINITIAL') || value.match('Vitals')) && active.stopDatetime == null) {
+            } else if (
+              (value.match("ADULTINITIAL") || value.match("Vitals")) &&
+              active.stopDatetime == null
+            ) {
               const values = this.assignValueToProperty(active);
               this.waitingVisit.push(values);
               length += 1;
-            } else if (value.match('Visit Note') && active.stopDatetime == null) {
+            } else if (
+              value.match("Visit Note") &&
+              active.stopDatetime == null
+            ) {
               const values = this.assignValueToProperty(active);
               this.progressVisit.push(values);
               visitNoteLength += 1;
-            } else if (value.match('Visit Complete') || active.stopDatetime != null) {
+            } else if (
+              value.match("Visit Complete") ||
+              active.stopDatetime != null
+            ) {
               const values = this.assignValueToProperty(active);
               this.completedVisit.push(values);
               completeVisitLength += 1;
@@ -111,13 +137,15 @@ export class HomepageComponent implements OnInit {
         this.flagPatientNo = flagLength;
         this.visitNoteNo = visitNoteLength;
         this.completeVisitNo = completeVisitLength;
-      }, err => {
+      },
+      (err) => {
         if (err.error instanceof Error) {
-          this.snackbar.open('Client-side error', null, { duration: 4000 });
+          this.snackbar.open("Client-side error", null, { duration: 4000 });
         } else {
-          this.snackbar.open('Server-side error', null, { duration: 4000 });
+          this.snackbar.open("Server-side error", null, { duration: 4000 });
         }
-      });
+      }
+    );
   }
 
   assignValueToProperty(active) {
@@ -126,12 +154,19 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.age ? active.patient.person.age + " Years": "Not Provided";
+    this.value.age = active.patient.person.age
+      ? active.patient.person.age + " Years"
+      : "Not Provided";
     this.value.location = active.location.display;
-    this.value.status = active.stopDatetime != null ? 'Visit Complete': active.encounters[0].encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split('- ')[1];
+    this.value.status =
+      active.stopDatetime != null
+        ? "Visit Complete"
+        : active.encounters[0].encounterType.display;
+    this.value.provider =
+      active.encounters[0].encounterProviders[0].provider.display.split(
+        "- "
+      )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }
-
 }

@@ -9,8 +9,7 @@ import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.componen
 import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 import { EncounterService } from "src/app/services/encounter.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getFromStorage: any,
-  saveToStorage: any;
+declare var getFromStorage: any, saveToStorage: any;
 @Component({
   selector: "app-reassign-speciality",
   templateUrl: "./reassign-speciality.component.html",
@@ -21,21 +20,21 @@ export class ReassignSpecialityComponent implements OnInit {
   patientDetails: any;
   visitUuid = this.route.snapshot.paramMap.get("visit_id");
 
-
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/visit/${this.visitUuid}/attribute`;
   specializations = [
-      "General Physician",
-      "Paediatrician", 
-      "Gynaecologist",
-      "Medicine",
-      "Pulmonologist",
-      "Ophthalmologist",
-      "ENT",
-      "Psychologist",
-      "Rehabilitative physiotherapy",
-      "Dietician/Nutritional Counsellor",
-      "Cardiologist"
+    "General Physician",
+    "Paediatrician",
+    "Gynaecologist",
+    "Medicine",
+    "Pulmonologist",
+    "Ophthalmologist",
+    "ENT",
+    "Psychologist",
+    "Rehabilitative physiotherapy",
+    "Dietician/Nutritional Counsellor",
+    "Cardiologist",
+    "All",
   ];
   errorText: string;
 
@@ -50,7 +49,7 @@ export class ReassignSpecialityComponent implements OnInit {
     private dialogService: ConfirmDialogService,
     private EncounterService: EncounterService,
     private snackbar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.visitService.getVisit(this.visitUuid).subscribe((visitDetails) => {
@@ -63,8 +62,12 @@ export class ReassignSpecialityComponent implements OnInit {
 
   Submit() {
     const value = this.updateSpeciality.value;
-    this.dialogService.openConfirmDialog("Are you sure to re-assign this visit to another doctor?")
-      .afterClosed().subscribe(res => {
+    this.dialogService
+      .openConfirmDialog(
+        "Are you sure to re-assign this visit to another doctor?"
+      )
+      .afterClosed()
+      .subscribe((res) => {
         if (res) {
           if (value.specialization !== null) {
             const URL = this.patientDetails.attributes[0].display
@@ -76,12 +79,17 @@ export class ReassignSpecialityComponent implements OnInit {
             };
             this.http.post(URL, json).subscribe((response) => {
               this.router.navigate(["/home"]);
-              this.snackbar.open(`Patient is reassigned to ${value.specialization} successfully.`, null, {
-                duration: 4000,
-              });
+              this.snackbar.open(
+                `Patient is reassigned to ${value.specialization} successfully.`,
+                null,
+                {
+                  duration: 4000,
+                }
+              );
               //* Send Notification
               const myDate = new Date(Date.now() - 30000);
-              const patientUuid = this.route.snapshot.paramMap.get("patient_id");
+              const patientUuid =
+                this.route.snapshot.paramMap.get("patient_id");
 
               const providerDetails = getFromStorage("provider");
               const attributes = providerDetails.attributes;
@@ -99,37 +107,40 @@ export class ReassignSpecialityComponent implements OnInit {
                 visit: this.visitUuid,
                 encounterDatetime: myDate,
               };
-              this.EncounterService.postEncounter(json).subscribe((response) => {
-                if (response) {
-                  this.visitService
-                    .fetchVisitDetails(this.visitUuid)
-                    .subscribe((visitDetails) => {
-                      saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
-                    });
+              this.EncounterService.postEncounter(json).subscribe(
+                (response) => {
+                  if (response) {
+                    this.visitService
+                      .fetchVisitDetails(this.visitUuid)
+                      .subscribe((visitDetails) => {
+                        saveToStorage(
+                          "visitNoteProvider",
+                          visitDetails.encounters[0]
+                        );
+                      });
 
-                  attributes.forEach((element) => {
-                    if (
-                      element.attributeType.uuid ===
-                      "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-                      !element.voided
-                    ) {
-                      const payload = {
-                        speciality: value.specialization,
-                        patient: {
-                          name: response.patient.display,
-                          provider: response.encounterProviders[0].display,
-                        },
-                        skipFlag: false,
+                    attributes.forEach((element) => {
+                      if (
+                        element.attributeType.uuid ===
+                          "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                        !element.voided
+                      ) {
+                        const payload = {
+                          speciality: value.specialization,
+                          patient: {
+                            name: response.patient.display,
+                            provider: response.encounterProviders[0].display,
+                          },
+                          skipFlag: false,
+                        };
                       }
-                    }
-                  });
+                    });
+                  }
                 }
-              });
-
+              );
             });
           }
         }
-      })
+      });
   }
-
 }
