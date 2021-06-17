@@ -43,7 +43,7 @@ export class PrescribedMedicationComponent implements OnInit {
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
-    dose: new FormControl('', Validators.min(1)),
+    dose: new FormControl('', Validators.min(0)),
     unit: new FormControl('', [Validators.required]),
     amount: new FormControl('', Validators.min(1)),
     unitType: new FormControl('', [Validators.required]),
