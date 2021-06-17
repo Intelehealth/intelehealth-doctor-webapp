@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -52,6 +52,8 @@ import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 
 // Material Design Imports
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -85,6 +87,9 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 
 
+export function TranslationLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -181,6 +186,9 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
+    TranslateModule.forRoot({
+      loader: {provide: TranslateLoader, useFactory: TranslationLoaderFactory, deps: [HttpClient]}
+})
   ],
   providers: [
     CookieService,
