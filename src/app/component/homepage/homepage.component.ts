@@ -123,6 +123,7 @@ export class HomepageComponent implements OnInit {
       const { encounters = [{}] } = active;
       const value = encounters[0].display;
       if (
+        this.checkVisit(encounters, "Patient Exit Survey") ||
         this.checkVisit(encounters, "Visit Complete") ||
         active.stopDatetime != null
       ) {
