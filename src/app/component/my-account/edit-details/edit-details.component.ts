@@ -28,6 +28,7 @@ export class EditDetailsComponent implements OnInit {
     "Psychologist",
     "Rehabilitative physiotherapy",
     "Dietician/Nutritional Counsellor",
+    "Specialist Doctor Not Needed",
     "All",
   ];
 
