@@ -58,7 +58,6 @@ export class HomepageComponent implements OnInit {
       deleteFromStorage("visitNoteProvider");
     }
     const userDetails = getFromStorage("user");
-    console.log('userDetails: ', userDetails);
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
