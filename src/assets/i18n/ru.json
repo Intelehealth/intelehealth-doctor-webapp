@@ -1,3 +1,27 @@
 {
-    "findPatient": "Найти пациента"
+    "findPatient": "Найти пациента",
+    "Home":"Дом",
+    "Subscribe":"Подписаться",
+    "Ayu":"Аю",
+    "Help":"Помощь",
+    "Reports":"Отчеты",
+    "Profile":"Профиль",
+    "My account":"Мой аккаунт",
+    "System administration":"Системное администрирование",
+    "Change password":"Измени пароль",
+    "Log out":"Выйти",
+    "PRIORITY VISITS":"ПРИОРИТЕТНЫЕ ПОСЕЩЕНИЯ",
+    "AWAITING CONSULT":"ВОЖИДАНИИ КОНСУЛЬТАЦИИ",
+    "VISITS IN PROGRESS":"ВИЗИТЫ В ПРОЦЕССЕ",
+    "COMPLETED VISITS":"ЗАВЕРШЕННЫЕ ВИЗИТЫ",
+    "Language":"Язык",
+    "Search":"Поиск",
+    "Patient ID":"ID пациента",
+    "Name":"Имя",
+    "Gender":"Пол",
+    "Age":"Возраст",
+    "Location":"Место расположения",
+    "Status":"Статус",
+    "Provider":"Провайдер",
+    "Last Seen":"Последний визит"
  }

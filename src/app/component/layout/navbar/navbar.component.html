@@ -17,29 +17,28 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">Home</a>
+          <a class="nav-link" routerLink="/home">{{'Home'| translate}}</a>
         </li>
         <li class="nav-item" *ngIf="!subscribeAccess">
-          <a class="nav-link" (click)="subscribeNotification(false)">Subscribe</a>
+          <a class="nav-link" (click)="subscribeNotification(false)">{{'Subscribe'| translate}}</a>
         </li>
         <li *ngIf="systemAccess" class="nav-item">
-          <a class="nav-link" routerLink="/ayu">Ayu</a>
+          <a class="nav-link" routerLink="/ayu">{{'Ayu'| translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" (click)="callTour()">Help</a>
+          <a class="nav-link" (click)="callTour()">{{'Help'| translate}}</a>
         </li>
         <li *ngIf="reportAccess" class="nav-item">
-          <a class="nav-link" href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page">Reports</a>
+          <a class="nav-link" href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page">{{'Reports' | translate }}</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"><i
-              class="fa fa-user"></i> Profile
+              class="fa fa-user"></i> {{ 'Profile' | translate }}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" routerLink="/myAccount">My account</a>
-            <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">System
-              administration</a>
-            <a class="dropdown-item" (click)="changePassword()">Change password</a>
+            <a class="dropdown-item" routerLink="/myAccount">{{ 'My account' | translate}} </a>
+            <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System administration' | translate}} </a>
+            <a class="dropdown-item" (click)="changePassword()">{{ 'Change password' | translate}}</a>
           </div>
         </li>
         <li class="nav-item dropdown">
@@ -67,7 +66,7 @@
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown">Language
+          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown">{{'Language'|translate}}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" (click)="useLanguage('en')">English
@@ -81,7 +80,7 @@
         <li *ngIf="reportAccess" class="nav-item"></li>
         <li class="nav-item">
           <button class="btn btn-primary" id="logout-link" (click)="logout()">
-            Log out
+            {{ 'Log out' | translate }}
           </button>
         </li>
       </ul>

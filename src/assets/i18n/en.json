@@ -1,3 +1,28 @@
 {
-    "findPatient": "Find Patient"
+    "findPatient": "Find Patient",
+    "Home":"Home",
+    "Subscribe":"Subscribe",
+    "Ayu":"Ayu",
+    "Help":"Help",
+    "Reports":"Reports",
+    "Profile":"Profile",
+    "My account":"My account",
+    "System administration":"System administration",
+    "Change password":"Change password",
+    "Log out":"Log out",
+    "PRIORITY VISITS":"PRIORITY VISITS",
+    "AWAITING CONSULT":"AWAITING CONSULT",
+    "VISITS IN PROGRESS":"VISITS IN PROGRESS",
+    "COMPLETED VISITS":"COMPLETED VISITS",
+    "Language":"Language",
+    "Search":"Search",
+    "Patient ID":"Patient ID",
+    "Name":"Name",
+    "Gender":"Gender",
+    "Age":"Age",
+    "Location":"Location",
+    "Status":"Status",
+    "Provider":"Provider",
+    "Last Seen":"Last Seen"
+
  }
