@@ -353,11 +353,7 @@ export class VisitSummaryComponent implements OnInit {
         this.visitService.shortUrl(link).subscribe((res: { data }) => {
           const hash = res.data.hash;
           const shortLink = this.getLinkFromHash(hash);
-          let smsText: string = `e-prescription Ekal Helpline \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
-            \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
-            \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457 \n Download complete prescription from link below \n ${shortLink}
-            \n - Powered by Intelehealth`;
-          smsText.replace("\n", "<br>");
+          let smsText: string = `Ekal Helpline Project Dear ${patientInfo.name} You prescription is available to download at ${shortLink} - Powered by Intelehealth`;
           this.visitService.sendSMS(patientNo.value, smsText).subscribe(
             (res) => {
               this.openDialog();
