@@ -41,13 +41,13 @@ export class EditDetailsComponent implements OnInit {
     ),
 
     qualification: new FormControl(
-      this.data.qualification ? this.data.qualification.value : null, Validators.required),
+      this.data.qualification ? this.data.qualification.value : null),
 
     specialization: new FormControl(
-      this.data.specialization ? this.data.specialization.value : null, Validators.required),
+      this.data.specialization ? this.data.specialization.value : null),
 
     registrationNumber: new FormControl(
-      this.data.registrationNumber ? this.data.registrationNumber.value : null, Validators.required),
+      this.data.registrationNumber ? this.data.registrationNumber.value : null),
   });
   status = false;
   name = "Enter text";
@@ -99,7 +99,7 @@ export class EditDetailsComponent implements OnInit {
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {
-      const URL = `${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
+      const URL = `${this.baseURL}/person/${this.data.person.uuid}`;
       const json = {
         gender: value.gender,
       };
