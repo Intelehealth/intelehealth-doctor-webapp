@@ -161,6 +161,8 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
+    var speciality = active.attributes.filter(a=>a.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d")
+    this.value.speciality = speciality[0].value;
     this.value.age = active.patient.person.age
       ? active.patient.person.age + " Years"
       : "Not Provided";
