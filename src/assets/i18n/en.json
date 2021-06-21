@@ -23,6 +23,16 @@
     "Location":"Location",
     "Status":"Status",
     "Provider":"Provider",
-    "Last Seen":"Last Seen"
+    "Last Seen":"Last Seen",
+    "Do not disturb":"Do not disturb",
+    "30 minutes":"30 minutes",
+    "1 hour":"1 hour",
+    "2 hours":"2 hours",
+    "Custom":"Custom",
+    "Turn Off":"Turn Off",
+    "Custom Notifications:":"Custom Notifications",
+    "Save changes":"Save changes",
+    "Close":"Close",
+    "Welcome":"Welcome"
 
  }
