@@ -97,7 +97,7 @@ export class HomepageComponent implements OnInit {
         this.flagPatientNo = 0;
         this.visitNoteNo = 0;
         this.completeVisitNo = 0;
-        this.activePatient = length;
+        this.activePatient = 0;
         visits.forEach((active) => {
           this.visitCategory(active);
           this.value = {};
@@ -146,11 +146,12 @@ export class HomepageComponent implements OnInit {
       } else if (
         (this.checkVisit(encounters, "ADULTINITIAL") ||
           this.checkVisit(encounters, "Vitals")) &&
-        active.stopDatetime == null
-      ) {
-        const values = this.assignValueToProperty(active);
-        this.waitingVisit.push(values);
-        length += 1;
+          active.stopDatetime == null
+          ) {
+            const values = this.assignValueToProperty(active);
+            this.waitingVisit.push(values);
+            this.activePatient +=1;
+        // length += 1;
       }
     }
   }
