@@ -13,15 +13,15 @@
         </tr>
         <tr>
           <th scope="row">Sex</th>
-          <td>{{ info.gender }}</td>
+          <td>{{ info.gender === 'M' ? 'Male': 'Female'}}</td>
         </tr>
-        <tr>
+       <!--> <tr>
           <th scope="row">DOB</th>
           <td>{{ info.birthdate | date: "dd-MMM-yyy" }}</td>
-        </tr>
+        </tr> -->
         <tr>
           <th scope="row">Age</th>
-          <td>{{ getAge(info.birthdate | date: "dd/MM/yyy") }}</td>
+          <td>{{ info.age }} Years</td>
         </tr>
         <tr>
           <th scope="row">State</th>
