@@ -1,32 +1,32 @@
 <div class="container">
   <mat-card>
     <div class="upload">
-      <div><b>Select licence Key: </b> &nbsp;&nbsp;
+      <div><b>{{ 'Select licence Key' | translate}}: </b> &nbsp;&nbsp;
         <mat-form-field>
-          <mat-label>MindMap Key</mat-label>
+          <mat-label>{{ 'MindMap Key' | translate}}</mat-label>
           <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
             <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
               {{ mindmap.keyName }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="addKey()" style="float: right;">Add New Key</button>
+        <button mat-raised-button color="primary" (click)="addKey()" style="float: right;">{{'Add New Key' | translate }}</button>
       </div>
       <div *ngIf="selectedKey">
-        <div>Expiry Date: {{expiryDate | date: 'dd-MMM-yyyy'}}
+        <div>{{ 'Expiry Date' | translate }}: {{expiryDate | date: 'dd-MMM-yyyy'}}
           <span>
             <i class="material-icons" style="cursor:pointer;vertical-align: text-bottom;" (click)="editExpiryDate()">create</i>
           </span>
         </div>
         <br>
-        <div>Mindmaps associated with this licence key are :
+        <div>{{ 'Mindmaps associated with this licence key are' | translate }} :
           <span style="float: right;">
-            <button mat-raised-button color="primary" (click)="addMindmap()" style="float: right;">Add Mindmap</button>
+            <button mat-raised-button color="primary" (click)="addMindmap()" style="float: right;">{{ 'Add Mindmap'| translate }}</button>
           </span>
         </div>
         <br>
         <mat-form-field class="search-text">
-          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="{{'Search'|translate}}">
         </mat-form-field>
         
         <div class="mat-elevation-z8">
@@ -40,19 +40,19 @@
         
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Name'| translate }} </th>
               <td mat-cell *matCellDef="let row">{{row.name}} </td>
             </ng-container>
         
             <!-- Last Updated Column -->
             <ng-container matColumnDef="lastUpdate">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Update </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Last Update' | translate }} </th>
               <td mat-cell *matCellDef="let row">{{row.updatedAt | date: 'dd-MMM-yyyy'}} </td>
             </ng-container>
 
             <!-- Action Column -->
             <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Action' | translate}} </th>
               <td mat-cell *matCellDef="let row; let i = index;">
                 <!-- <i class="material-icons" style="cursor:pointer;padding-right:6px;" (click)="editMindmap(i + (paginator.pageIndex * paginator.pageSize))">create</i> -->
                 <i class="material-icons" style="color:rgb(235, 30, 30);cursor: pointer;" (click)="deleteMindmap(row.name)">delete</i>
@@ -70,25 +70,25 @@
       <br>
       <br>
       <div class="image-card" *ngIf="image">
-        <div>Images associated with this licence key.</div>
+        <div> {{'Images associated with this licence key' | translate }}.</div>
         <br>
         <div><img src={{image}} alt=""/></div>
         <br>
-        <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
+        <button mat-raised-button color="primary" (click)="uploadDocument()">{{ 'Browse Image' | translate }}</button>
         <br>
-        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
+        <p class="error" *ngIf="isImageError"> {{ 'Maximum dimentions allowed 320*320 px' | translate }}</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>{{ 'Upload' | translate }}</button>
         </div>
       </div>
       <div class="image-card" *ngIf="selectedKey && !image">
-        <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
+        <button mat-raised-button color="primary" (click)="uploadDocument()">{{ 'Browse Image' | translate}}</button>
         <br>
-        <p class="error" *ngIf="isImageError"> Maximum dimentions allowed 320*320 px</p>
+        <p class="error" *ngIf="isImageError"> {{ 'Maximum dimentions allowed 320*320 px' | translate }}</p>
         <br>
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>{{ 'Upload' | translate }}</button>
         </div>
       </div>
     </div>
