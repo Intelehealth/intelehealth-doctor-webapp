@@ -1,11 +1,11 @@
-<h4><i class="fas fa-notes-medical"></i> Notes</h4>
+<h4><i class="fas fa-notes-medical"></i> {{ 'Notes' | translate }}</h4>
 <hr>
 <form [formGroup]='commentForm'>
 <div id="doctor-notes">
     <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="Notes (not shared with the patient)" formControlName='comment'></textarea>
+        <textarea matInput placeholder="{{ 'Notes (not shared with the patient)' | translate }}" formControlName='comment'></textarea>
     </mat-form-field>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>{{ 'Add Note' | translate}}</button>
 </div>
 </form>
 <br>

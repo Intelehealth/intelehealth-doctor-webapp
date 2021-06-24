@@ -1,9 +1,9 @@
-<h4><i class="fas fa-diagnoses"></i> Diagnosis</h4>
+<h4><i class="fas fa-diagnoses"></i> {{ 'Diagnosis' | translate }}</h4>
 <hr>
 <div>
 <form [formGroup]='diagnosisForm'>
     <mat-form-field class="example-full-width" id="dropdown-diagnosis">
-        <input matInput placeholder="Diagnosis" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
+        <input matInput placeholder="{{ 'Diagnosis' | translate}}" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
           <span>{{state.code}} </span>
@@ -14,19 +14,19 @@
     <div id="primary-confirm">
     <section>
     <mat-radio-group aria-label="Select an option" formControlName="type">
-        <mat-radio-button value="Primary">Primary </mat-radio-button>
-        <mat-radio-button value="Secondary">Secondary</mat-radio-button>
+        <mat-radio-button value="Primary">{{ 'Primary'| translate}} </mat-radio-button>
+        <mat-radio-button value="Secondary">{{ 'Secondary' | translate }}</mat-radio-button>
       </mat-radio-group>
     </section>
     <section>
     <mat-radio-group aria-label="Select an option" formControlName="confirm">
-        <mat-radio-button value="Provisional">Provisional </mat-radio-button>
-        <mat-radio-button value="Confirmed">Confirmed</mat-radio-button>
+        <mat-radio-button value="Provisional">{{'Provisional'|translate}} </mat-radio-button>
+        <mat-radio-button value="Confirmed">{{'Confirmed'|translate}}</mat-radio-button>
       </mat-radio-group>
     </section>
     </div>
    <br>
-  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
+  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>{{'Add Diagnosis'|translate}}</button>
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">

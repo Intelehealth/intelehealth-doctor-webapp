@@ -1,10 +1,10 @@
 <div>
     <div class="content-container">
       <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
-      <span class="content-span full-width">{{data.message}}</span>
+      <span class="content-span full-width">{{(data.message) | translate}}</span>
     </div>
-    <button  mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">NO</button>
-    <button  mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">YES</button>
+    <button  mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">{{'NO'|translate}}</button>
+    <button  mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">{{'YES'|translate}}</button>
     
     <!-- <button mat-flat-button id="no-button" [mat-dialog-close]="false">NO</button> -->
     <!-- <button mat-flat-button id="yes-button" [mat-dialog-close]="true">YES</button> -->

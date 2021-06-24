@@ -1,42 +1,42 @@
-<h4><i class="fas fa-info-circle"></i> Patient Information</h4>
+<h4><i class="fas fa-info-circle"></i> {{'Patient Information'| translate}}</h4>
 <div class="modal-body row">
     <div class="col-md-6">
         <table class="table table-borderless table-sm">
             <tbody *ngFor="let info of patientInfo">
                 <tr>
-                    <th scope="row">Name</th>
+                    <th scope="row">{{'Name'|translate}}</th>
                     <td>{{info.display}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">OpenMRS ID</th>
+                    <th scope="row">{{'OpenMRS ID'|translate}}</th>
                     <td>{{patientIdentifier}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Sex</th>
+                    <th scope="row">{{'Sex'|translate}}</th>
                     <td>{{info.gender}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">DOB</th>
+                    <th scope="row">{{'DOB'|translate}}</th>
                     <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Age</th>
+                    <th scope="row">{{'Age'|translate}}</th>
                     <td>{{getAge(info.birthdate | date: 'dd/MM/yyy')}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Village</th>
+                    <th scope="row">{{'Village'|translate}}</th>
                     <td>{{info.preferredAddress.cityVillage}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Contact Info</th>
+                    <th scope="row">{{'Contact Info'|translate}}</th>
                     <td *ngIf="info.telephone">{{info.telephone}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Occupation</th>
+                    <th scope="row">{{'Occupation'|translate}}</th>
                     <td *ngIf="info.occupation">{{info.occupation}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Health Scheme Card</th>
+                    <th scope="row">{{'Health Scheme Card'|translate}}</th>
                     <td *ngIf="info.medicalInsurance">{{info.medicalInsurance}}</td>
                 </tr>
             </tbody>

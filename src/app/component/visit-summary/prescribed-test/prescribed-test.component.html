@@ -1,12 +1,12 @@
-<h4><i class="fas fa-vials"></i> Prescribed Tests</h4>
+<h4><i class="fas fa-vials"></i> {{'Prescribed Tests'|translate}}</h4>
 <hr>
 <div id="test-form">
     <form [formGroup]='testForm' >
         <mat-form-field class="w-100">
-            <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
+            <input matInput placeholder="{{'Test'|translate}}" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
+        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>{{'Add Test'|translate}}</button>
       </form>
       <br>
 </div>
