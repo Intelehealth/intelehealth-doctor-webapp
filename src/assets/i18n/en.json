@@ -170,5 +170,10 @@
     "SP02":"SP02",
     "BP":"BP",
     "HR":"HR",
-    "RR":"RR"
+    "RR":"RR",
+    "messages": {
+            "welcome":"Welcome",
+            "loginError":"Username & Password doesn't match"
+            
+    }
 }

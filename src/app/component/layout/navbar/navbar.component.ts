@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
   endTimeData: any;
   showData: any;
   error: any = { isError: false, errorMessage: "" };
-  langs = ['en', 'ru'];
+  langs = ['en', 'ru', 'KG'];
   selectedLanguage:string = 'en';
 
   weekDays: any = [

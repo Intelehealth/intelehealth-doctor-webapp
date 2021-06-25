@@ -7,6 +7,7 @@ import { SessionService } from "src/app/services/session.service";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
+import { TranslateService } from "@ngx-translate/core";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -27,10 +28,14 @@ export class LoginPageComponent implements OnInit {
     private snackbar: MatSnackBar,
     private authService: AuthService,
     private pushNotificationsService: PushNotificationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    let browserlang = this.translate.getBrowserLang();
+    this.translate.setDefaultLang(browserlang);
+  }
 
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
@@ -66,13 +71,9 @@ export class LoginPageComponent implements OnInit {
               } else {
                 this.router.navigate(["/home"]);
               }
-              this.snackbar.open(
-                `Welcome ${provider.results[0].person.display}`,
-                null,
-                {
-                  duration: 4000,
-                }
-              );
+              this.translate.get('messages.welcome').subscribe((res: string) => {
+                this.snackbar.open(`${res} ${provider.results[0].person.display}`,null, {duration: 2000});
+              });
               saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
@@ -80,9 +81,9 @@ export class LoginPageComponent implements OnInit {
             }
           );
         } else {
-          this.snackbar.open("Username & Password doesn't match", null, {
-            duration: 4000,
-          });
+          this.translate.get('messages.loginError').subscribe((res: string) => {
+          this.snackbar.open(res, null, {duration: 4000});
+        });
         }
       });
     }
