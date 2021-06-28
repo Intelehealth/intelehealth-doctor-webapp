@@ -16,12 +16,8 @@
                     <td>{{ info.gender === 'M' ? 'Male': 'Female'}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">{{'DOB'|translate}}</th>
-                    <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
-                </tr>
-                <tr>
                     <th scope="row">{{'Age'|translate}}</th>
-                    <td>{{getAge(info.birthdate | date: 'dd/MM/yyy')}}</td>
+                    <td>{{info.age}} Years</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Village'|translate}}</th>
