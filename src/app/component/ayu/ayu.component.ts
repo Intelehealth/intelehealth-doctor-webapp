@@ -3,9 +3,9 @@ import { MindmapService } from "../../services/mindmap.service";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { TranslationService } from "../../services/translation.service";
 
 @Component({
   selector: "app-ayu",
@@ -31,8 +31,8 @@ export class AyuComponent implements OnInit {
 
   constructor(
     private mindmapService: MindmapService,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit() {
@@ -45,11 +45,8 @@ export class AyuComponent implements OnInit {
         this.mindmaps = response.data;
       },
       (err) => {
-        const message =
-          err?.error?.message || err?.message || "Something went wrong";
-        this.snackbar.open(message, null, {
-          duration: 4000,
-        });
+        const message = err?.error?.message || err?.message || "Something went wrong";
+        this.translationService.getTranslation(message);
       }
     );
   }
@@ -70,11 +67,11 @@ export class AyuComponent implements OnInit {
       this.mindmapService.addUpdateLicenseKey(result).subscribe((response) => {
         if (response) {
           if (response.success) {
-            this.snackbar.open(`Key Added`, null, { duration: 4000 });
+            this.translationService.getTranslation('Key Added');
             this.fetchMindmap();
           } else {
             const message = response.message || "Something went wrong.";
-            this.snackbar.open(message, null, { duration: 4000 });
+            this.translationService.getTranslation(message);
             this.addKeyValue = "";
           }
         }
@@ -96,12 +93,12 @@ export class AyuComponent implements OnInit {
       };
       this.mindmapService.postMindmap(data).subscribe(
         (res) => {
-          this.snackbar.open(res.message, null, { duration: 4000 });
+          this.translationService.getTranslation(res.message)
           this.licenceKeyHandler();
         },
-        (err) =>
-          this.snackbar.open("Something went Wrong", null, { duration: 4000 })
-      );
+        (err) => {
+          this.translationService.getTranslation('somethingWentWrong');
+    });
     });
   }
 
@@ -118,8 +115,9 @@ export class AyuComponent implements OnInit {
         this.expiryDate = expiry;
         this.image = imageValue;
       },
-      (err) =>
-        this.snackbar.open("Something went Wrong", null, { duration: 4000 })
+      (err) => {
+        this.translationService.getTranslation('somethingWentWrong');
+      }
     );
     this.isImageError = false;
   }
@@ -142,16 +140,11 @@ export class AyuComponent implements OnInit {
             if (response.success) {
               this.expiryDate = response?.data?.expiry;
             }
-            this.snackbar.open(response.message, null, {
-              duration: 4000,
-            });
+            this.translationService.getTranslation(response.message);
           },
           (err) => {
-            const message =
-              err?.error?.message || err?.message || "Something went wrong";
-            this.snackbar.open(message, null, {
-              duration: 4000,
-            });
+            const message = err?.error?.message || err?.message || "Something went wrong";
+            this.translationService.getTranslation(message);
           }
         );
     });
@@ -175,18 +168,13 @@ export class AyuComponent implements OnInit {
           .subscribe(
             (response) => {
               if (response) {
-                this.snackbar.open(response.message, null, {
-                  duration: 4000,
-                });
+                this.translationService.getTranslation(response.message);
                 this.licenceKeyHandler();
               }
             },
             (err) => {
-              const message =
-                err?.error?.message || err?.message || "Something went wrong";
-              this.snackbar.open(message, null, {
-                duration: 4000,
-              });
+              const message = err?.error?.message || err?.message || "Something went wrong";
+              this.translationService.getTranslation(message);
             }
           );
       }
@@ -235,7 +223,7 @@ export class AyuComponent implements OnInit {
       if (response) {
         this.mindmapUploadJson = "";
         this.image = response?.data?.imageValue;
-        this.snackbar.open(response.message, null, { duration: 4000 });
+        this.translationService.getTranslation(response.message);
         this.fetchMindmap();
       }
     });

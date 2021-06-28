@@ -7,7 +7,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -59,7 +59,7 @@ export class PrescribedMedicationComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
+    private translationService: TranslationService,
     private route: ActivatedRoute,
 ) { }
 
@@ -192,7 +192,7 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.push({ uuid: response.uuid, value: insertValue });
           this.add = false;
         });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+    } else { this.translationService.getTranslation('Another doctor is viewing this case'); }
   }
 
   delete(i) {

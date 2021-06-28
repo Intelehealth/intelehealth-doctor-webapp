@@ -1,11 +1,10 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../../environments/environment';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getFromStorage: any;
 
 @Component({
@@ -26,9 +25,8 @@ export class SignatureComponent implements OnInit {
   constructor(
               @Inject(MAT_DIALOG_DATA) public data,
               private service: EncounterService,
-              private authService: AuthService,
+              private translationService: TranslationService,
               private http: HttpClient,
-              private snackbar: MatSnackBar,
               private dialogRef: MatDialogRef<SignatureComponent>) {  dialogRef.disableClose = true; }
 
   ngOnInit() {
@@ -93,7 +91,7 @@ signature = (text: string, font: string) => {
         };
         this.http.post(url3, json1)
         .subscribe(ps => {
-          this.snackbar.open('Signature added successfully', null, { duration: 4000 });
+          this.translationService.getTranslation('Signature added successfully');
           this.onClose();
           setTimeout(() => window.location.reload(), 2000);
         });
@@ -116,7 +114,7 @@ signature = (text: string, font: string) => {
             'value': font
           };
           this.http.post(url3, json1).subscribe(ps => {
-            this.snackbar.open('Signature Updated successfully', null, { duration: 4000 });
+            this.translationService.getTranslation('Signature Updated successfully');
             this.onClose();
             
     });

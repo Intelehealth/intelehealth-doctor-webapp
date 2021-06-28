@@ -6,7 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -43,7 +43,7 @@ export class AdviceComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
+    private translationService: TranslationService,
     private route: ActivatedRoute) { }
 
   search = (text$: Observable<string>) =>
@@ -96,7 +96,7 @@ export class AdviceComponent implements OnInit {
         .subscribe(response => {
           this.advice.push({ uuid: response.uuid, value: value });
         });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+    } else { this.translationService.getTranslation('Another doctor is viewing this case'); }
   }
 
   delete(i) {

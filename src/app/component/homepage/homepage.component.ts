@@ -3,8 +3,8 @@ import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -42,8 +42,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
-    private snackbar: MatSnackBar,
-    private socket: SocketService
+    private socket: SocketService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit() {
@@ -120,9 +120,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
       },
       (err) => {
         if (err.error instanceof Error) {
-          this.snackbar.open("Client-side error", null, { duration: 4000 });
+          this.translationService.getTranslation("Client-side error");
         } else {
-          this.snackbar.open("Server-side error", null, { duration: 4000 });
+          this.translationService.getTranslation("Server-side error");
         }
       }
     );

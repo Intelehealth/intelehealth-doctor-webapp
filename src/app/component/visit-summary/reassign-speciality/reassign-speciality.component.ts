@@ -1,14 +1,13 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormControl } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { ConfirmDialogComponent } from "./confirm-dialog/confirm-dialog.component";
 import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { EncounterService } from "src/app/services/encounter.service";
+import { TranslateService } from "@ngx-translate/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any,
   saveToStorage: any;
@@ -45,7 +44,8 @@ export class ReassignSpecialityComponent implements OnInit {
     private dialogService: ConfirmDialogService,
     private pushNotificationService: PushNotificationsService,
     private EncounterService: EncounterService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private translationService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -72,8 +72,8 @@ export class ReassignSpecialityComponent implements OnInit {
             };
             this.http.post(URL, json).subscribe((response) => {
               this.router.navigate(["/home"]);
-              this.snackbar.open(`Patient is reassigned to ${value.specialization} successfully.`, null, {
-                duration: 4000,
+              this.translationService.get('messages.reassignedSuccessfully', {value: value.specialization}).subscribe((res: string) => {
+                this.snackbar.open(res,null, {duration: 4000});
               });
               //* Send Notification
               const myDate = new Date(Date.now() - 30000);

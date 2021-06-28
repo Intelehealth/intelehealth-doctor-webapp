@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -42,7 +42,7 @@ diagnosisForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private snackbar: MatSnackBar,
+              private translationService: TranslationService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -85,7 +85,7 @@ diagnosisForm = new FormGroup({
         this.diagnosisList = [];
         this.diagnosis.push({uuid: resp.uuid, value: json.value});
       });
-    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+    } else {this.translationService.getTranslation('Another doctor is viewing this case'); }
   }
 
   delete(i) {

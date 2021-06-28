@@ -3,11 +3,11 @@ import { VisitService } from "../../services/visit.service";
 import { Component, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -36,7 +36,7 @@ export class VisitSummaryComponent implements OnInit {
     private service: EncounterService,
     private visitService: VisitService,
     private authService: AuthService,
-    private snackbar: MatSnackBar,
+    private translationService: TranslationService,
     private route: ActivatedRoute,
     private router: Router,
     private pushNotificationService: PushNotificationsService,
@@ -114,7 +114,7 @@ export class VisitSummaryComponent implements OnInit {
                 saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
               });
             this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
+            this.translationService.getTranslation(`Visit Note Created`);
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
@@ -137,9 +137,7 @@ export class VisitSummaryComponent implements OnInit {
               }
             });
           } else {
-            this.snackbar.open(`Visit Note Not Created`, null, {
-              duration: 4000,
-            });
+            this.translationService.getTranslation(`Visit Note Not Created`);
           }
         });
       } else {
@@ -188,7 +186,7 @@ export class VisitSummaryComponent implements OnInit {
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
               this.router.navigateByUrl("/home");
-              this.snackbar.open("Visit Complete", null, { duration: 4000 });
+              this.translationService.getTranslation("Visit Complete");
             });
           } else {
             if (
@@ -201,9 +199,7 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
       } else {
-        this.snackbar.open("Another doctor is viewing this case", null, {
-          duration: 4000,
-        });
+        this.translationService.getTranslation("Another doctor is viewing this case");
       }
     } else {
       this.authService.logout();

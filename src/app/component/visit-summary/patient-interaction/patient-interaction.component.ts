@@ -10,8 +10,8 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getEncounterProviderUUID: any,
   getFromStorage: any,
   getEncounterUUID: any;
@@ -63,7 +63,7 @@ export class PatientInteractionComponent implements OnInit {
   constructor(
     private diagnosisService: DiagnosisService,
     private visitService: VisitService,
-    private snackbar: MatSnackBar,
+    private translationService: TranslationService,
     private route: ActivatedRoute,
     private encounterService: EncounterService
   ) {}
@@ -182,9 +182,7 @@ export class PatientInteractionComponent implements OnInit {
         }
       }
     } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
+      this.translationService.getTranslation("Another doctor is viewing this case");
     }
   }
 

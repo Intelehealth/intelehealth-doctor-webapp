@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -39,7 +39,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private snackbar: MatSnackBar,
+              private translationService: TranslationService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -74,7 +74,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       .subscribe(resp => {
       this.comment.push({uuid: resp.uuid, value: value});
     });
-  } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+  } else {this.translationService.getTranslation('Another doctor is viewing this case'); }
 }
 
   delete(i) {

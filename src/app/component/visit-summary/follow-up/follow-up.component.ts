@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -43,7 +43,7 @@ followForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private snackbar: MatSnackBar,
+              private translationService: TranslationService,
               private route: ActivatedRoute,
               private datepipe: DatePipe) { }
 
@@ -80,7 +80,7 @@ followForm = new FormGroup({
       .subscribe(resp => {
         this.followUp.push({uuid: resp.uuid, value: json.value});
       });
-    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+    } else {this.translationService.getTranslation('Another doctor is viewing this case'); }
   }
 
   delete(i) {

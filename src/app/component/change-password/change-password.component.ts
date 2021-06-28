@@ -3,10 +3,9 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from './password.validator';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
-import { SessionService } from 'src/app/services/session.service';
 import { PushNotificationsService } from 'src/app/services/push-notification.service';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getFromStorage: any
 @Component({
   selector: 'app-change-password',
@@ -18,12 +17,11 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   userUuid: string;
   constructor(
-              private sessionService: SessionService,
               private formBuilder: FormBuilder,
               private http: HttpClient,
-              private snackbar: MatSnackBar,
               private dialogRef: MatDialogRef<ChangePasswordComponent>,
-              private pushNotificationsService: PushNotificationsService,    
+              private pushNotificationsService: PushNotificationsService,  
+              private translationService: TranslationService 
               ) {
     this.changePasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required],
@@ -63,13 +61,13 @@ export class ChangePasswordComponent implements OnInit {
       .subscribe(response => {
         if (response == null) {
           this.pushNotificationsService.changePassword(json1).subscribe((response)=>{
-            this.snackbar.open('Password changed successfully.', null, { duration: 4000 });
+            this.translationService.getTranslation('Password changed successfully.');
             this.dialogRef.close();
           })
         }
       }, error => {
         if (error.error.message.match('Old password is not correct.')) {
-          this.snackbar.open('Old password is incorrect.', null, { duration: 4000 });
+          this.translationService.getTranslation('Old password is incorrect.');
         }
       });
   }
