@@ -78,12 +78,17 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let browserlang = this.translateService.getBrowserLang();
-    if (this.langs.indexOf(browserlang) > -1) {
-      this.translateService.setDefaultLang(browserlang);
-      this.selectedLanguage = browserlang;
+    if(localStorage.getItem("selectedLanguage")) {
+      this.translateService.setDefaultLang(localStorage.getItem("selectedLanguage"));
+      this.selectedLanguage = localStorage.getItem("selectedLanguage");
     } else {
-      this.translateService.setDefaultLang('en');
+      let browserlang = this.translateService.getBrowserLang();
+      if (this.langs.indexOf(browserlang) > -1) {
+        this.translateService.setDefaultLang(browserlang);
+        this.selectedLanguage = browserlang;
+      } else {
+        this.translateService.setDefaultLang('en');
+      }
     }
     const userDetails = getFromStorage("user");
     this.subscribeAccess = getFromStorage("subscribed") || false;
@@ -317,5 +322,6 @@ export class NavbarComponent implements OnInit {
   useLanguage(lang: string): void {
     this.translateService.setDefaultLang(lang);
     this.selectedLanguage = lang;
+    localStorage.setItem("selectedLanguage", this.selectedLanguage);
   }
 }

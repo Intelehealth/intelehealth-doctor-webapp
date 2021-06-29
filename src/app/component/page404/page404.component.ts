@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-page404',
@@ -6,7 +7,7 @@ import { Component } from '@angular/core';
               <div class="error">
                 <section class="text">
                   <h1>404</h1>
-                  <h2>Oops!! You're on a wrong page</h2>
+                  <h2>{{msg}}</h2>
                 </section>
               </div>
             </div>`,
@@ -23,7 +24,9 @@ import { Component } from '@angular/core';
           }`]
 })
 export class Page404Component {
-
-  constructor() { }
+  msg = this.translate.instant('Oops!! You are on a wrong page')
+  constructor(
+    private translate: TranslateService
+  ) { }
 
 }

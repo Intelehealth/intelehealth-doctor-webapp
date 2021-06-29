@@ -8,21 +8,21 @@
           <div class="modal-body">
             <div class="h5 modal-title text-center">
               <h4 class="mt-2">
-                <div>Welcome back,</div>
-                <span>Please sign in to your account below.</span></h4>
+                <div>{{'Welcome back,'| translate }}</div>
+                <span>{{'Please sign in to your account below.'| translate}}</span></h4>
             </div>
             
             <div role="group" class="form-group">
               <div>
-                  <label for="examplePassword">Username :</label>
-                <input type="email" placeholder="Enter Username..." class="form-control" formControlName="username">
+                  <label for="examplePassword">{{'Username'|translate}} :</label>
+                <input type="email" placeholder="{{ 'Enter Username...'| translate}}" class="form-control" formControlName="username">
               </div>
             </div>
             <div role="group" class="form-group">
               <div>
-                  <label for="examplePassword">Password :</label>
+                  <label for="examplePassword">{{'Password'|translate}} :</label>
                   <div style="display: flex;">
-                <input  [type]="fieldTextType ? 'text' : 'password'" placeholder="Enter password..." class="form-control" formControlName="password">
+                <input  [type]="fieldTextType ? 'text' : 'password'" placeholder="{{'Enter password...'| translate}}" class="form-control" formControlName="password">
                 <!-- <div class="input-group-append"> -->
                   <span class="input-group-text" >
                     <i
@@ -44,7 +44,7 @@
             </div>
           <div class="modal-footer clearfix">
             <div class="float-right">
-              <button type="submit" class="btn btn-primary" [disabled]='!loginForm.valid'>Login to Dashboard</button>
+              <button type="submit" class="btn btn-primary" [disabled]='!loginForm.valid'>{{'Login to Dashboard'| translate}}</button>
             </div>
           </div>
         </div>

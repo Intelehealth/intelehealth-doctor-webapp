@@ -2,21 +2,21 @@
   {{ data | json }}
   <div class="input-group input-group-sm mb-3 mt-3">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-sm">Patient Id</span>
+      <span class="input-group-text" id="inputGroup-sizing-sm">{{ 'Patient Id' | translate}}</span>
     </div>
     <input [(ngModel)]="data.patientId" type="text" class="form-control" />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm"
-        >From User Id</span
+        >{{'From User Id' | translate}}</span
       >
     </div>
     <input [(ngModel)]="data.from" type="text" class="form-control" />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-sm">To User Id</span>
+      <span class="input-group-text" id="inputGroup-sizing-sm">{{'To User Id'| translate}}</span>
     </div>
     <input [(ngModel)]="data.to" type="text" class="form-control" />
   </div>
@@ -24,7 +24,7 @@
     class="btn btn-primary"
     (click)="updateMessages(); reInitSocket()"
   >
-    Get Messages
+    {{ 'Get Messages' | translate }}
   </button>
 </div>
 
@@ -44,7 +44,7 @@
 </div>
 <div [class.active]="classFlag" class="card container col-md-6">
   <div class="card-header" (click)="chatClose()">
-    <h6>Chat</h6>
+    <h6>{{ 'Chat' | translate }}</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
@@ -69,7 +69,7 @@
         </div>
       </div>
     </div>
-    <div class="no-history" *ngIf="!chats?.length">No chat history found.</div>
+    <div class="no-history" *ngIf="!chats?.length">{{'No chat history found.'| translate}}</div>
   </div>
   <div class="message-form card-footer">
     <div class="input-group mb-3">

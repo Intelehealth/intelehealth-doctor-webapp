@@ -78,6 +78,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       });
       this.playNotify();
     });
+    this.translationService.getSelectedLanguage();
   }
 
   ngOnDestroy() {

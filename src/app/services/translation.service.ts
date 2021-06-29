@@ -16,4 +16,8 @@ export class TranslationService {
       this.snackbar.open(res, null, {duration: 4000});
     });
   }
+
+  getSelectedLanguage() {
+    this.translateService.setDefaultLang(localStorage.getItem('selectedLanguage'));
+  }
 }

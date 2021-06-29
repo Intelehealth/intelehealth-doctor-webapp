@@ -5,6 +5,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "./signature/signature.component";
 import { EditDetailsComponent } from "./edit-details/edit-details.component";
 import { environment } from "../../../environments/environment";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -24,8 +25,8 @@ export class MyAccountComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
     private http: HttpClient,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog, 
+    private translationService: TranslationService) {}
 
   ngOnInit() {
     this.setSpiner = true;
@@ -50,6 +51,7 @@ export class MyAccountComponent implements OnInit {
         });
         this.setSpiner = false;
       });
+      this.translationService.getSelectedLanguage();
   }
   /**
    * Open edit details modal

@@ -2,6 +2,7 @@ import { VisitService } from './../../services/visit.service';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -12,12 +13,13 @@ import { Router } from '@angular/router';
 
 export class FindPatientComponent implements OnInit {
   values: any;
-  msg = 'Sorry no Patient Found..';
+  msg = this.translate.instant('Sorry no Patient Found..');
 
   constructor(public dialog: MatDialogRef<FindPatientComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private service: VisitService,
-    private router: Router) { }
+    private router: Router,
+    private translate: TranslateService) { }
 
   ngOnInit() {
     if (typeof this.data.value === 'string') {
@@ -26,6 +28,7 @@ export class FindPatientComponent implements OnInit {
     } else {
       this.values = this.data.value;
     }
+    this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
   }
 
   find(uuid) {

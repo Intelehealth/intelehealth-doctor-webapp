@@ -83,6 +83,7 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
       });
+      this.translationService.getSelectedLanguage();
   }
 
   onStartVisit() {
