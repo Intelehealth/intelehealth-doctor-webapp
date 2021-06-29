@@ -255,53 +255,12 @@ export class VisitSummaryComponent implements OnInit {
       let patientNo = info.person.attributes.find(
         (a) => a.attributeType.display == "Telephone Number"
       );
-
-      this.diagnosisService
-        .getObsAll(this.patientUuid)
-        .subscribe((response) => {
-          let currentVisit = response.results.filter(
-            (a) => a.encounter?.visit?.uuid == this.visitUuid
-          );
-          let diagnosisConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "537bb20d-d09d-4f88-930b-cc45c7d662df"
-            )
-          );
-          let followUpConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
-            )
-          );
-          let preTestConcept = this.getText(
-            currentVisit.filter(
-              (a) => a.concept.uuid == "23601d71-50e6-483f-968d-aeef3031346d"
-            )
-          );
-          let advConcept = currentVisit.filter(
-            (a) => a.concept.uuid == "67a050c1-35e5-451c-a4ab-fff9d57b0db1"
-          );
-          advConcept.forEach((c, index) => {
-            if (c.value.includes("<a")) {
-              advConcept.splice(index, 1);
-            }
-          });
-          advConcept = this.getText(advConcept);
-          let medicationConcept = this.getText(
-            response.results.filter(
-              (a) => a.concept.uuid == "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca"
-            )
-          );
-          //need to change this
-          let link = `https://trainingss.intelehealth.org/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
+          let link = this.getLink(info);
           this.visitService.shortUrl(link).subscribe((res: { data }) => {
             const hash = res.data.hash;
             const shortLink = this.getLinkFromHash(hash);
-            let smsText: string = `Intelehealth SwastSampark Helpline, Telemedicine Project,\n e-prescription  \n ${patientInfo.name} \n Age: ${patientInfo.age} | Gender: ${patientInfo.gender}  \n Diagnosis \n ${diagnosisConcept}
-            \n Medication(s) plan \n ${medicationConcept} \n Recommended Investigation(s) \n ${preTestConcept} \n Advice \n ${advConcept}
-            \n Follow Up Date \n ${followUpConcept} \n ${patientInfo.providerName} \n +911141236457 \n Download complete prescription from link below \n ${shortLink}`;
-            smsText.replace("\n", "<br>");
-            this.visitService.sendSMS(patientNo.value, smsText).subscribe(
-              (res) => {
+            let smsText: string = `SwasthyaSampark Helpline Project Dear ${patientInfo.name} Your prescription is available to download at ${shortLink} - Powered by Intelehealth`;
+            this.visitService.sendSMS(patientNo.value, smsText).subscribe((res) => {
                 this.openDialog();
               },
               () => {
@@ -312,7 +271,10 @@ export class VisitSummaryComponent implements OnInit {
             );
           });
         });
-    });
+  }
+
+  getLink(info) {
+    return `${window.location.protocol}//${window.location.hostname}/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
   }
 
   getLinkFromHash(hash) {
