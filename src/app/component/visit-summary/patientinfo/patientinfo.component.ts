@@ -32,6 +32,7 @@ export class PatientinfoComponent implements OnInit {
     this.visitService.patientInfo(uuid)
       .subscribe(info => {
         this.info = info.person;
+        localStorage.setItem('person',JSON.stringify(this.info));
         this.patientIdentifier = info.identifiers[0].identifier;
         this.info['attributes'].forEach(attri => {
           if (attri.attributeType.display.match('Telephone Number')) {
