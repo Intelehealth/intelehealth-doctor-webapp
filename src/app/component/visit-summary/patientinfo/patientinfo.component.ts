@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import * as moment from "moment";
 import { DatePipe } from "@angular/common";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { ImagesService } from 'src/app/services/images.service';
 
 @Component({
   selector: 'app-patientinfo',
@@ -17,6 +18,7 @@ export class PatientinfoComponent implements OnInit {
   patientInfo = [];
   patientIdentifier: string;
   info = {};
+  image: string;
   personAge: any;
   yearAge: any;
   age: any = {};
@@ -24,16 +26,23 @@ export class PatientinfoComponent implements OnInit {
   a: any;
   images: any = [];
   patientDocumentPresent = false;
+  profileImagePresent = false;
   conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';
 
   constructor(private route: ActivatedRoute,
     private visitService: VisitService,
     private datePipe: DatePipe,
-    private diagnosisService: DiagnosisService
+    private diagnosisService: DiagnosisService,
+    private service: ImagesService,
   ) { }
 
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get('patient_id');
+    this.service.fetchProfileImage(uuid).subscribe((response) => {
+      this.profileImagePresent = true;
+      this.image = `${this.baseURL}/personimage/${uuid}`;
+    });
+
     this.diagnosisService.getObs(uuid, this.conceptAdditionlDocument)
       .subscribe(response => {
         response.results.forEach(obs => {
