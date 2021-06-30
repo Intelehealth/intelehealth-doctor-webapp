@@ -10,5 +10,28 @@
     "System administration":"Тутумду башкаруу",
     "Change password":"Сыр сөздү өзгөртүү",
     "Language":"Тил",
-    "Log out":"Чыгуу"
+    "Log out":"Чыгуу",
+    "PRIORITY VISITS":"АРТЫКЧЫЛЫК САПАРЛАРЫ",
+    "AWAITING CONSULT":"КҮТҮҮ КЕНЕШ",
+    "VISITS IN PROGRESS":"ПРОГРЕССТЕГИ САПАРЛАР",
+    "COMPLETED VISITS":"АЯКТАЛГАН САПАРЛАР",
+    "Search":"Издөө",
+    "Patient ID":"Бейтаптын ID",
+    "Name":"Аты-жөнү",
+    "Gender":"Гендер",
+    "Age":"Жашы",
+    "Location":"Жайгашкан жер",
+    "Status":"Статус",
+    "Provider":"Провайдер",
+    "Last Seen":"Акыркы көрүү",
+    "I18N": {
+        "MAT_PAGINATOR": {
+        "FIRST_PAGE": "Биринчи бет",
+        "ITEMS_PER_PAGE": "Ар бир нерсе:",
+        "LAST_PAGE": "Акыркы бет",
+        "NEXT_PAGE": "Кийинки бет",
+        "PREVIOUS_PAGE": "Мурунку бет",
+        "OF": "боюнча"
+      }
+    }
 }

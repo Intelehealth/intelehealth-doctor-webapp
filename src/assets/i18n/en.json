@@ -251,5 +251,15 @@
     "helpMsg21":"Type the name of the medicines and choose from drop down options. If the name is not available on the drop down options you can type the name.rite or choose from drop down options of tests and click on Add Test",
     "helpMsg22":"Write or choose from drop down options of advise and then click on Add Advice",
     "helpMsg23":"Click on calendar icon and select follow up date. Write remarks and click on Schedule a follow up",
-    "helpMsg24":"Review the prescription and click on Sign and Submit to send the prescription to the health worker."
+    "helpMsg24":"Review the prescription and click on Sign and Submit to send the prescription to the health worker.",
+    "I18N": {
+        "MAT_PAGINATOR": {
+        "FIRST_PAGE": "First page",
+        "ITEMS_PER_PAGE": "Items per page:",
+        "LAST_PAGE": "Last page",
+        "NEXT_PAGE": "Next page",
+        "PREVIOUS_PAGE": "Previous page",
+        "OF": "of"
+      }
+    }
 }
