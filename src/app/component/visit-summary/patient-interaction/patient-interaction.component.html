@@ -12,9 +12,10 @@
       {{'Submit'|translate}}
     </button>
   </div>
-  <div id="call-link" *ngIf="whatsappLink || phoneNo">
+  <div id="call-link" *ngIf="whatsappLink || phoneNo || telegramLink">
     {{'Start a call'| translate}}:
     <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
+    <span *ngIf="telegramLink"><a style='color:#0088cc' class="fab fa-telegram" href="{{ telegramLink }}" target="_blank"></a></span>
     <span *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
   </div>
   <div id="call-link" *ngIf="!whatsappLink && !phoneNo">

@@ -48,6 +48,7 @@ declare var getEncounterProviderUUID: any,
 export class PatientInteractionComponent implements OnInit {
   msg: any = [];
   whatsappLink: string;
+  telegramLink: string;
   phoneNo;
   patientDetails: any;
   doctorDetails: any = {};
@@ -96,6 +97,7 @@ export class PatientInteractionComponent implements OnInit {
                     `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
                   );
                   this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+                  this.telegramLink = `https://telegram.me/share/url?phone=91${whatsapp}&url=${text}`;
                 }
               });
             }
