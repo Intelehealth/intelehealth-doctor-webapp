@@ -46,6 +46,7 @@ export class AyuComponent implements OnInit {
       },
       (err) => {
         const message = err?.error?.message || err?.message || "Something went wrong";
+        message.includes("Http failure response") ? this.translationService.getTranslation('Server-side error') :
         this.translationService.getTranslation(message);
       }
     );

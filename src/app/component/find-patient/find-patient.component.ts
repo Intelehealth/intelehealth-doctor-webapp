@@ -24,7 +24,7 @@ export class FindPatientComponent implements OnInit {
   ngOnInit() {
     if (typeof this.data.value === 'string') {
       this.values = [];
-      this.msg = this.data.value;
+      this.msg = this.translate.instant(this.data.value);
     } else {
       this.values = this.data.value;
     }

@@ -34,7 +34,7 @@
         
             <!-- ID Column -->
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>No. </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'No'| translate}}. </th>
               <td mat-cell *matCellDef="let row; let i = index;">{{i + (paginator.pageIndex * paginator.pageSize) + 1}}</td>
             </ng-container>
         

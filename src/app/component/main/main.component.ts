@@ -122,6 +122,8 @@ export class MainComponent implements OnInit {
         this.introJS.setOptions({
           steps: steps, showProgress: true,
           showBullets: false,
+          nextLabel: this.translate.instant('Next'),
+          prevLabel: this.translate.instant('Back'),
           skipLabel: this.translate.instant('Exit'),
           doneLabel: this.translate.instant('Thanks'),
         }).start();
