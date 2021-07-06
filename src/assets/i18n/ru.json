@@ -134,7 +134,7 @@
     "Past Medical History":"Прошлый медицинский анамнез",
     "Past Visits":"Прошлые посещения",
     "Patient Interaction":"Взаимодействие с пациентом",
-    "Have you spoken with the patient directly":"Вы говорили с пациентом напрямую?",
+    "Have you spoken with the patient directly":"Вы говорили с пациентом напрямую",
     "Yes":"да",
     "Start a call":"Начать звонок",
     "Please provide health workers contact number at":"Укажите контактный номер медицинского работника по адресу",
@@ -206,6 +206,7 @@
     "Next":"Следующий",
     "Back":"Назад",
     "Oops!! You are on a wrong page":"Ой !! Вы не на той странице",
+    "No Data Available":"Данные недоступны",
     "messages": {
         "welcome":"Добро пожаловать",
         "loginError":"Имя пользователя и пароль не совпадают",

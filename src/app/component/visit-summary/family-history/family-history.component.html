@@ -7,3 +7,7 @@
             </tr>
         </table>
 </ng-container>
+
+<ng-container *ngIf="!familyHistoryPresent">
+    {{'No Data Available'| translate}}!
+</ng-container>

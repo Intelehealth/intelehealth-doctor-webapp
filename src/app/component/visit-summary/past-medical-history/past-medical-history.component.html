@@ -7,3 +7,6 @@
         </tr>
     </table>
 </ng-container>
+<ng-container *ngIf="!pastMedicalHistoryPresent">
+    {{'No Data Available'| translate}}!
+</ng-container>
