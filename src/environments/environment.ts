@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://helpline.ekalarogya.org/openmrs/ws/rest/v1",
-  baseURLCoreApp:"https://helpline.ekalarogya.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://helpline.ekalarogya.org/openmrs",
+  baseURL: "https://msftraining.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp:"https://msftraining.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://msftraining.intelehealth.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };
