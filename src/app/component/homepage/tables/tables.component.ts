@@ -12,7 +12,7 @@ export class TablesComponent implements OnInit {
   displayColumns: string[] = ['id', 'name', 'gender', 'age', 'location', 'status', 'provider', 'lastSeen'];
   dataSource;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
   @Input() data;
   constructor() { }
 
