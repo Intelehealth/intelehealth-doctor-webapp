@@ -25,10 +25,6 @@ export interface VisitData {
 })
 export class HomepageComponent implements OnInit {
   value: any = {};
-  activePatient: number;
-  flagPatientNo: number;
-  visitNoteNo: number;
-  completeVisitNo: number;
   flagVisit: VisitData[] = [];
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
@@ -93,11 +89,6 @@ export class HomepageComponent implements OnInit {
           return acc;
         }, []);
 
-        let length = 0;
-        this.flagPatientNo = 0;
-        this.visitNoteNo = 0;
-        this.completeVisitNo = 0;
-        this.activePatient = 0;
         visits.forEach((active) => {
           this.visitCategory(active);
           this.value = {};
@@ -118,6 +109,22 @@ export class HomepageComponent implements OnInit {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
+  get completeVisitNo() {
+    return this.completedVisit.length;
+  }
+
+  get visitNoteNo() {
+    return this.progressVisit.length;
+  }
+
+  get flagPatientNo() {
+    return this.flagVisit.length;
+  }
+
+  get activePatient() {
+    return this.waitingVisit.length;
+  }
+
   visitCategory(active) {
     if (active.encounters.length > 0) {
       const { encounters = [{}] } = active;
@@ -129,29 +136,24 @@ export class HomepageComponent implements OnInit {
       ) {
         const values = this.assignValueToProperty(active);
         this.completedVisit.push(values);
-        this.completeVisitNo += 1;
       } else if (
         this.checkVisit(encounters, "Visit Note") &&
         active.stopDatetime == null
       ) {
         const values = this.assignValueToProperty(active);
         this.progressVisit.push(values);
-        this.visitNoteNo += 1;
       } else if (this.checkVisit(encounters, "Flagged")) {
         if (!this.checkVisit(encounters, "Flagged").voided) {
           const values = this.assignValueToProperty(active);
           this.flagVisit.push(values);
-          this.flagPatientNo += 1;
         }
       } else if (
         (this.checkVisit(encounters, "ADULTINITIAL") ||
           this.checkVisit(encounters, "Vitals")) &&
-          active.stopDatetime == null
-          ) {
-            const values = this.assignValueToProperty(active);
-            this.waitingVisit.push(values);
-            this.activePatient +=1;
-        // length += 1;
+        active.stopDatetime == null
+      ) {
+        const values = this.assignValueToProperty(active);
+        this.waitingVisit.push(values);
       }
     }
   }
@@ -162,7 +164,9 @@ export class HomepageComponent implements OnInit {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
-    var speciality = active.attributes.filter(a=>a.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d")
+    var speciality = active.attributes.filter(
+      (a) => a.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+    );
     this.value.speciality = speciality[0].value;
     this.value.age = active.patient.person.age
       ? active.patient.person.age + " Years"
