@@ -28,7 +28,7 @@ export class FamilyHistoryComponent implements OnInit {
             this.familyHistory.push(obs);
           }
         });
-        if (this.familyHistory !== undefined) {
+        if (this.familyHistory !== undefined && this.familyHistory.length > 0) {
           this.familyHistoryPresent = true;
         }
       });

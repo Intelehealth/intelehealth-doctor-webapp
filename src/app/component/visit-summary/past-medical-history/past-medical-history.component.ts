@@ -28,7 +28,7 @@ export class PastMedicalHistoryComponent implements OnInit {
             this.pastMedical.push(obs);
           }
         });
-        if (this.pastMedical !== undefined) {
+        if (this.pastMedical !== undefined && this.pastMedical.length > 0) {
           this.pastMedicalHistoryPresent = true;
         }
       });
