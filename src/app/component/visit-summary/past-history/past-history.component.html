@@ -1,0 +1,54 @@
+<h4><i class="fas fa-history"></i> Past History</h4>
+<div class="modal-body row">
+    <div class="col-md-6">
+        <table class="table table-borderless table-sm">
+            <tbody>
+                <tr>
+                    <th scope="row">Date of Admission</th>
+                    <td>{{pastHistory?.covid_history?.date_of_admission}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Stay in Hospital in Days</th>
+                    <td>{{pastHistory?.covid_history.stay_in_hospital_days}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Stay Type</th>
+                    <td>{{pastHistory?.covid_history.stay_type}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Any Medical conditions before Covid</th>
+                    <td>{{pastHistory?.past_history.taking_medicine  ? 'Yes' : 'No'}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Current medication</th>
+                    <td>{{pastHistory?.past_history.medical_conditions}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Family history of any disease</th>
+                    <td>{{pastHistory?.past_history.family_history_disease}}</td>
+                </tr>
+               
+                <tr>
+                    <th scope="row">Any Allergies</th>
+                    <td>{{pastHistory?.past_history.allergies ? 'Yes' : 'No'}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Consume Alcohol</th>
+                    <td>{{pastHistory?.past_history.consume_alcohol ? 'Yes' : 'No'}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Consume Tabacco Smoke</th>
+                    <td>{{pastHistory?.past_history.consume_tobacco ? 'Yes' : 'No'}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Consulting doctor for post covid care</th>
+                    <td>{{pastHistory?.post_covid_care.consulting_doctor ? 'Yes' : 'No'}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">If yes, please mention the complaint</th>
+                    <td>{{pastHistory?.post_covid_care.complaint}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

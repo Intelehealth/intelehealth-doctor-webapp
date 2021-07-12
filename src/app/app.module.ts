@@ -100,6 +100,7 @@ import { SocketService } from './services/socket.service';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { RedirectComponent } from './component/redirect/redirect.component';
 import { MainComponent } from './component/main/main.component';
+import { PastHistoryComponent } from './component/visit-summary/past-history/past-history.component';
 
 
 
@@ -143,7 +144,8 @@ import { MainComponent } from './component/main/main.component';
     ConfirmDialogComponent,
     ChatComponent,
     VcComponent,
-    TestChatComponent
+    TestChatComponent,
+    PastHistoryComponent
   ],
   imports: [
     BrowserModule,
