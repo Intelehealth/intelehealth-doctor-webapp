@@ -33,9 +33,13 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let browserlang = this.translate.getBrowserLang();
-    this.translate.setDefaultLang(browserlang);
-    localStorage.setItem("selectedLanguage", browserlang);
+    if(localStorage.getItem('selectedLanguage')) {
+      this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
+    } else {
+      let browserlang = this.translate.getBrowserLang();
+      this.translate.setDefaultLang(browserlang);
+      localStorage.setItem("selectedLanguage", browserlang);
+    }
   }
 
   toggleFieldTextType() {

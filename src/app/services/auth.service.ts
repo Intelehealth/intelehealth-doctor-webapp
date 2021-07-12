@@ -35,7 +35,6 @@ export class AuthService {
         deleteFromStorage("provider");
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
-        deleteFromStorage("selectedLanguage");
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
