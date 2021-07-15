@@ -33,6 +33,7 @@ export class VisitSummaryComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   userRole: any;
+  isVisitEnded = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -108,6 +109,9 @@ export class VisitSummaryComponent implements OnInit {
           });
         }
       });
+      if (visitDetails.stopDatetime !== null) {
+        this.isVisitEnded = true;
+      }
     });
   }
 
