@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://vivtraining.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp:"https://vivtraining.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://vivtraining.intelehealth.org/openmrs",
+  baseURL: "https://svhmtraining.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp:"https://svhmtraining.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://svhmtraining.intelehealth.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };
