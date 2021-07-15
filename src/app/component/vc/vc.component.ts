@@ -225,14 +225,14 @@ export class VcComponent implements OnInit {
       this.pc = new RTCPeerConnection({
         iceServers: [
           {
-            urls: ["turn:40.80.93.209:3478"],
-            credential: "nochat",
-            username: "chat",
+            urls: ["turn:demo.intelehealth.org:3478"],
+            username: "ihuser",
+            credential: "keepitsecrect",
           },
           {
-            urls: ["turn:numb.viagenie.ca"],
-            username: "sultan1640@gmail.com",
-            credential: "98376683",
+            urls: ["turn:testing.intelehealth.org:3478"],
+            username: "ihuser",
+            credential: "keepitsecrect",
           },
           { urls: ["stun:stun.l.google.com:19302"] },
           { urls: ["stun:stun1.l.google.com:19302"] },
