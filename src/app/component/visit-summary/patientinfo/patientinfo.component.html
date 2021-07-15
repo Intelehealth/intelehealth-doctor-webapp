@@ -15,7 +15,7 @@
           <th scope="row">Sex</th>
           <td>{{ info.gender === 'M' ? 'Male': 'Female'}}</td>
         </tr>
-       <!--> <tr>
+       <!--<tr>
           <th scope="row">DOB</th>
           <td>{{ info.birthdate | date: "dd-MMM-yyy" }}</td>
         </tr> -->
@@ -26,6 +26,10 @@
         <tr>
           <th scope="row">State</th>
           <td>{{state}}</td>
+        </tr>
+        <tr>
+          <th scope="row">District</th>
+          <td>{{info?.preferredAddress.cityVillage}}</td>
         </tr>
         <tr>
           <th scope="row">Contact Info</th>
