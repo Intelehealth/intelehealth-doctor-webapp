@@ -16,6 +16,7 @@ export class PatientinfoComponent implements OnInit {
   patientIdentifier: string;
   info = {};
   state: string;
+  district: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,7 +26,8 @@ export class PatientinfoComponent implements OnInit {
     const uuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
-      this.state = info.person.preferredAddress.stateProvince
+      this.state = info.person.preferredAddress.stateProvince;
+      this.district = info.person.preferredAddress?.cityVillage ? info.person.preferredAddress?.cityVillage : '';
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
