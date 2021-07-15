@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PastHistoryComponent implements OnInit {
   baseURL = environment.baseURL;
-  pastHistory: {};
+  pastHistory: any;
   history: any
   conceptPastHistory = '68968661-1e7a-4ea9-8ccb-571469bc659c';
   constructor(
