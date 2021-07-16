@@ -28,7 +28,7 @@ export class OnExaminationComponent implements OnInit {
             this.onExam.push(obs);
           }
         });
-        if (this.onExam !== undefined) {
+        if (this.onExam !== undefined && this.onExam.length > 0) {
           this.onExamPresent = true;
         }
       });

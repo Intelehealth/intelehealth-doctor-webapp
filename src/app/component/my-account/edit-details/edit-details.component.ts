@@ -23,7 +23,9 @@ export class EditDetailsComponent implements OnInit {
                       "Pediatrician",
                       "Neurologist",
                       "Critical Care & Physician",
-                      "Dentist"
+                      "Dentist",
+                      "Specialist Doctor Not Needed",
+                       "All"
     ];
   editForm = new FormGroup({
     gender: new FormControl(
