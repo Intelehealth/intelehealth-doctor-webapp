@@ -200,20 +200,19 @@ export class PatientInteractionComponent implements OnInit {
       }
     });
     if (doctorsMobileNo) {
-      this.openDialog("This feature will coming soon...")
-      // this.visitService.startCall(patientMobileNo, doctorsMobileNo)
-      // .subscribe(()=> {
-      //       this.openDialog("Calling to patient")
-      // }, () => {
-      //       this.openDialog("Unable to connect this call, please try again")
-      // });
+      this.visitService.startCall(patientMobileNo, doctorsMobileNo)
+      .subscribe(()=> {
+            this.openDialog("Calling to patient")
+      }, () => {
+            this.openDialog("Unable to connect this call, please try again")
+      });
     } else {
       this.snackbar.open('To perform call, please update your phone no in MyAccount section', null, { duration: 4000 }); 
     }
   }
 
   openDialog(msg:string) {
-    this.confirmDialogService.openConfirmDialog(msg)
+    this.confirmDialogService.openConfirmDialog(msg, true)
       .afterClosed().subscribe();
   }
 

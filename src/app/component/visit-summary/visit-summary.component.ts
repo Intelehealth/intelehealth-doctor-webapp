@@ -343,7 +343,7 @@ export class VisitSummaryComponent implements OnInit {
 
   openDialog() {
     this.confirmDialogService
-      .openConfirmDialog("Prescription is sent to patient")
+      .openConfirmDialog("Prescription is sent to patient", true)
       .afterClosed()
       .subscribe((res) => {
         if (res) {

@@ -41,6 +41,7 @@ import { SignatureComponent } from "./component/my-account/signature/signature.c
 import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/confirm-dialog/confirm-dialog.component";
+import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 
 // Package Import
 import { HttpClientModule } from "@angular/common/http";
@@ -118,7 +119,8 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ReassignSpecialityComponent
   ],
 
   imports: [
