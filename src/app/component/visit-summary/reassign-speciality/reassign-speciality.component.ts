@@ -22,13 +22,8 @@ export class ReassignSpecialityComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/visit/${this.visitUuid}/attribute`;
   specializations = [
-    "Allopathy",
-    "Homeopathy",
-    "Ayurveda and Yog",
-    "No Doctor Needed",
-    "General Physician",
-    "General Medicine",
-    "Obstetrics and Gynaecology"
+    "Referred out",
+    "MSF MD"
   ];
   errorText: string;
 
