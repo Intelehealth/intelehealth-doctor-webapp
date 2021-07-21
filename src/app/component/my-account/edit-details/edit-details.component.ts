@@ -20,7 +20,10 @@ export class EditDetailsComponent implements OnInit {
                       "Allopathy",
                       "Homeopathy",
                       "Ayurveda and Yog",
-                      "No Doctor Needed"
+                      "No Doctor Needed",
+                      "General Physician",
+                      "General Medicine",
+                      "Obstetrics and Gynaecology"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(
