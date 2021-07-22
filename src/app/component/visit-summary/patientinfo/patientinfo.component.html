@@ -13,11 +13,11 @@
                 </tr>
                 <tr>
                     <th scope="row">{{'Sex'|translate}}</th>
-                    <td>{{ info.gender === 'M' ? 'Male': 'Female'}}</td>
+                    <td>{{ info.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Age'|translate}}</th>
-                    <td>{{info.age}} Years</td>
+                    <td>{{info.age}} {{'Years'| translate}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Village'|translate}}</th>
