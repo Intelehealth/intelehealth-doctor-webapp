@@ -202,7 +202,7 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show" [hidden]="userRole" >
-        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">Start Visit
+        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="visitSpeciality != userSpeciality">Start Visit
               Note</button>
   </div>
 
