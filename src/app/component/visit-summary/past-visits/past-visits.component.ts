@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute } from "@angular/router";
 
@@ -8,6 +8,7 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./past-visits.component.css"],
 })
 export class PastVisitsComponent implements OnInit {
+  @Output() chiefComplaint = new EventEmitter<string>();
   recentVisit: any = [];
   observation: {};
   visitStatus: String;
@@ -48,6 +49,7 @@ export class PastVisitsComponent implements OnInit {
           ) {
             this.recentVisit.visitStatus = "Active";
           }
+          this.chiefComplaint.emit(this.recentVisit);
           this.recent.push(this.recentVisit);
         });
       });

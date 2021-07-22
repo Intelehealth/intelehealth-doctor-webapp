@@ -33,6 +33,7 @@ export class VisitSummaryComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   userRole: any;
+  isFollowUpComplaint:boolean = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -189,6 +190,12 @@ export class VisitSummaryComponent implements OnInit {
     });
   }
 
+  getChiefComplaint(complaint) {
+    if(complaint && complaint.observation.match("Follow-up for Covid-19") !== null && complaint.visitStatus ==="Active") {
+      this.isFollowUpComplaint = true;
+    }
+  }
+
   updateVisit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     let URL = `${this.baseURL}/visit/${this.visitUuid}`;
@@ -246,8 +253,11 @@ export class VisitSummaryComponent implements OnInit {
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
             });
-
-            this.updateVisit();
+            if (this.isFollowUpComplaint) {
+              this.sendSms(); 
+             } else {
+              this.updateVisit();
+            } 
           } else {
             if (
               window.confirm(

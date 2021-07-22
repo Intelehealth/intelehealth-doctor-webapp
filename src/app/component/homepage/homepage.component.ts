@@ -189,7 +189,9 @@ export class HomepageComponent implements OnInit {
    */
   visitCategory(active) {
     const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Visit Complete")) {
+    if (this.checkVisit(encounters, "Patient Exit Survey") ||
+        this.checkVisit(encounters, "Visit Complete") ||
+         active.stopDatetime != null) {
       const values = this.assignValueToProperty(active);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
@@ -229,7 +231,10 @@ export class HomepageComponent implements OnInit {
     this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = active.encounters[0].encounterType.display;
+    this.value.status =
+    active.stopDatetime != null
+      ? "Visit Complete"
+      : active.encounters[0]?.encounterType.display;
     this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
       "- "
     )[1];
