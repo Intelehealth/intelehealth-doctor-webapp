@@ -32,7 +32,11 @@ export class VisitSummaryComponent implements OnInit {
   diagnosis: any = [];
   patientId: string;
   visitUuid: string;
+  visitAttributes: any;
+  visitSpeciality: any;
+  userSpeciality: any;
   userRole: any;
+  DoctorNotNeeded: any
   isFollowUpComplaint:boolean = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
@@ -75,7 +79,6 @@ export class VisitSummaryComponent implements OnInit {
     );
     this.userRole =
       hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
-    console.log("this.userRole: ", this.userRole);
 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
@@ -91,7 +94,15 @@ export class VisitSummaryComponent implements OnInit {
     });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      this.visitAttributes= visitDetails;
+      this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+      const providerDetails = getFromStorage("provider");
+      this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
+      
+      //Doctor not need speciality
+      this.DoctorNotNeeded = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value == "Doctor not needed";
       visitDetails.encounters.forEach((visit) => {
+        
         if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
