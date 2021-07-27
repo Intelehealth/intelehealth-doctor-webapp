@@ -36,7 +36,8 @@ export class VisitSummaryComponent implements OnInit {
   visitSpeciality: any;
   userSpeciality: any;
   userRole: any;
-  DoctorNotNeeded: any
+  DoctorNotNeeded: any;
+  isVisitEnded:boolean = false;
   isFollowUpComplaint:boolean = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
@@ -101,6 +102,9 @@ export class VisitSummaryComponent implements OnInit {
       
       //Doctor not need speciality
       this.DoctorNotNeeded = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value == "Doctor not needed";
+      if (visitDetails.stopDatetime !== null) {
+        this.isVisitEnded = true;
+      }
       visitDetails.encounters.forEach((visit) => {
         
         if (visit.display.match("Visit Note") !== null) {
@@ -121,6 +125,7 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
     });
+   
   }
 
   get isVisitSummaryChanged() {
