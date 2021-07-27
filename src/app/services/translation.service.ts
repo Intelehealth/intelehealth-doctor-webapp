@@ -20,4 +20,9 @@ export class TranslationService {
   getSelectedLanguage() {
     this.translateService.setDefaultLang(localStorage.getItem('selectedLanguage'));
   }
+
+  getDropdownTranslation(element:string, elementName:string) {
+    return this.translateService.instant(`${element}.${elementName}`);
+  }
+
 }

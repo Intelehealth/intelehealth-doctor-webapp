@@ -60,7 +60,7 @@ export class AdviceComponent implements OnInit {
       .subscribe(res => {
         const result = res.answers;
         result.forEach(ans => {
-          this.advices.push(ans.display);
+          this.advices.push(this.translationService.getDropdownTranslation('advice', ans.display));
         });
       });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');

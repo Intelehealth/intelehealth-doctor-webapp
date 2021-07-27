@@ -5,23 +5,23 @@
     <mat-form-field class="example-full-width" id="dropdown-diagnosis">
         <input matInput placeholder="{{ 'Diagnosis' | translate}}" aria-label="State" [matAutocomplete]="auto" (keydown)="search($event)" formControlName="text">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let state of diagnosisList" [value]="state.name">
+          <mat-option *ngFor="let state of diagnosisList" [value]="(state.name) | translate">
           <span>{{state.code}} </span>
-          <span> <b>{{state.name}}</b></span>
+          <span> <b>{{(state.name) | translate}}</b></span>
       </mat-option>
     </mat-autocomplete>
     </mat-form-field>
     <div id="primary-confirm">
     <section>
     <mat-radio-group aria-label="Select an option" formControlName="type">
-        <mat-radio-button value="Primary">{{ 'Primary'| translate}} </mat-radio-button>
-        <mat-radio-button value="Secondary">{{ 'Secondary' | translate }}</mat-radio-button>
+        <mat-radio-button value="{{'Primary' | translate}}">{{ 'Primary'| translate}} </mat-radio-button>
+        <mat-radio-button value="{{'Secondary' | translate}}">{{ 'Secondary' | translate }}</mat-radio-button>
       </mat-radio-group>
     </section>
     <section>
     <mat-radio-group aria-label="Select an option" formControlName="confirm">
-        <mat-radio-button value="Provisional">{{'Provisional'|translate}} </mat-radio-button>
-        <mat-radio-button value="Confirmed">{{'Confirmed'|translate}}</mat-radio-button>
+        <mat-radio-button value="{{'Provisional'| translate}}">{{'Provisional'|translate}} </mat-radio-button>
+        <mat-radio-button value="{{'Confirmed' | translate}}">{{'Confirmed'|translate}}</mat-radio-button>
       </mat-radio-group>
     </section>
     </div>

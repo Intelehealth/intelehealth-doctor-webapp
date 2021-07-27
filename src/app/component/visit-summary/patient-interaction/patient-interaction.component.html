@@ -5,8 +5,8 @@
   <div id="patient-interaction">
     <br />
     <mat-radio-group aria-label="Select an option" formControlName="interaction">
-      <mat-radio-button value="Yes">{{'Yes' |translate}} </mat-radio-button>
-      <mat-radio-button value="No">{{'No'|translate}}</mat-radio-button>
+      <mat-radio-button value="{{'Yes' | translate}}">{{'Yes' |translate}} </mat-radio-button>
+      <mat-radio-button value="{{'No' | translate}}">{{'No'|translate}}</mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">
       {{'Submit'|translate}}

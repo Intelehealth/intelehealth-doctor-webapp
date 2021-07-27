@@ -110,7 +110,7 @@ export class PatientInteractionComponent implements OnInit {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
       const result = response.results;
       var tempMsg = result.filter((pType) =>
-        ["Yes", "No"].includes(pType.value)
+        ["Yes", "No", "да", "Нет"].includes(pType.value)
       );
       if (result.length !== 0) {
         this.msg = tempMsg;

@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseURL: "http://uniceftraining.intelehealth.org/openmrs/ws/rest/v1",
+  baseURL: "https://uniceftraining.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://uniceftraining.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://uniceftraining.intelehealth.org/openmrs",
   mindmapURL: "http://localhost:3004/api",

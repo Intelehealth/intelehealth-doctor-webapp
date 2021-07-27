@@ -61,7 +61,7 @@ testForm = new FormGroup({
     .subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.test.push(ans.display);
+        this.test.push(this.translationService.getDropdownTranslation('tests', ans.display));
       });
     });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
