@@ -195,7 +195,8 @@ export class HomepageComponent implements OnInit {
       const values = this.assignValueToProperty(active);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")) {
+    } else if (this.checkVisit(encounters, "Visit Note")&&
+    active.stopDatetime == null) {
       const values = this.assignValueToProperty(active);
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
@@ -208,7 +209,8 @@ export class HomepageComponent implements OnInit {
       }
     } else if (
       this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")
+      this.checkVisit(encounters, "Vitals")&&
+      active.stopDatetime == null
     ) {
       const values = this.assignValueToProperty(active);
       this.waitingVisit.push(values);
