@@ -320,7 +320,23 @@
             "ULTRASOUND, ABDOMEN":"УЛЬТРАЗВУК, ЖИВОТ",
             "PELVIC ULTRASOUND":"УЗИ таза",
             "ECG":"ЭКГ",
-            "Concept #163201":"Концепция № 163201"
+            "Concept #163201":"Концепция № 163201",
+            "CRP":"CRP",
+            "D dimer":"D димер",
+            "Il 6":"Il 6",
+            "Ferritin":"Ферритин",
+            "LDH":"LDH",
+            "Procalcitonin":"Прокальцитонин",
+            "Tropionine I":"Тропионин I",
+            "Serum Creatinine":"Креатинин сыворотки",
+            "BT":"BT",
+            "CT":"CT",
+            "PT":"PT",
+            "APTT":"APTT",
+            "HRCT":"HRCT",
+            "RTPCR (Covid)":"RTPCR (Covid)",
+            "RAT (Covid)":"КРЫСА (Covid)",
+            "SERUM CREATININE":"КРЕАТИНИН СЫВОРОТКИ"
     },
     "advice": {
             "DO NOT SLEEP AT NOON": "Не спите в полдень",
@@ -5479,5 +5495,10 @@
     "Dental caries":"Кариес",
     "Pneumonia":"Пневмония",
     "Asthma":"Астма",
-    "Candidiasis":"Кандидоз"
+    "Candidiasis":"Кандидоз",
+    "Covid suspected":"Подозревается Covid",
+    "Covid 19":"COVID-19",
+    "Covid follow up":"Covid продолжение",
+    "Long Covid":"Лонг Ковид",
+    "Covid complications":"Covid осложнения"
 }

@@ -320,7 +320,23 @@
         "ULTRASOUND, ABDOMEN":"ULTRASOUND, ABDOMEN",
         "PELVIC ULTRASOUND":"PELVIC ULTRASOUND",
         "ECG":"ECG",
-        "Concept #163201":"Concept #163201"
+        "Concept #163201":"Concept #163201",
+        "CRP":"CRP",
+        "D dimer":"D dimer",
+        "Il 6":"Il 6",
+        "Ferritin":"Ferritin",
+        "LDH":"LDH",
+        "Procalcitonin":"Procalcitonin",
+        "Tropionine I":"Tropionine I",
+        "Serum Creatinine":"Serum Creatinine",
+        "BT":"BT",
+        "CT":"CT",
+        "PT":"PT",
+        "APTT":"APTT",
+        "HRCT":"HRCT",
+        "RTPCR (Covid)":"RTPCR (Covid)",
+        "RAT (Covid)":"RAT (Covid)",
+        "SERUM CREATININE":"SERUM CREATININE"
     },
     "advice": {
         "DO NOT SLEEP AT NOON": "DO NOT SLEEP AT NOON",
@@ -5479,5 +5495,10 @@
     "Dental caries":"Dental caries",
     "Pneumonia":"Pneumonia",
     "Asthma":"Asthma",
-    "Candidiasis":"Candidiasis"
+    "Candidiasis":"Candidiasis",
+    "Covid suspected":"Covid suspected",
+    "Covid 19":"Covid 19",
+    "Covid follow up":"Covid follow up",
+    "Long Covid":"Long Covid",
+    "Covid complications":"Covid complications"
 }
