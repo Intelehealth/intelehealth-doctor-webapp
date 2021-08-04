@@ -3,29 +3,41 @@
 </div>
 <div [class.active]="classFlag" class="chat card container col-md-3">
   <div class="card-header" (click)="chatClose()">
-    <h6> {{ 'Chat' | translate }}</h6>
+    <h6>{{ "Chat" | translate }}</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
-    <div
-      class="user-message-container"
-      [class.user]="chat.fromUser == userUuid"
-      *ngFor="let chat of chats"
-    >
-      <div class="user-message" [class.incoming-message]="chat.fromUser != userUuid">
-        <p>{{ chat?.message }}</p>
+    <mat-spinner
+      class="spinner"
+      *ngIf="setSpiner"
+      [diameter]="50"
+    ></mat-spinner>
+    <div *ngIf="!setSpiner">
+      <div
+        class="user-message-container"
+        [class.user]="chat.fromUser == userUuid"
+        *ngFor="let chat of chats"
+      >
         <div
-          class="message-header-container"
-          [class.user-message-time]="chat.isUser"
+          class="user-message"
+          [class.incoming-message]="chat.fromUser != userUuid"
         >
-          <span class="user-name"></span>
-          <span class="user-time">{{
-            chat?.createdAt | date: "dd-MM-yy, h:mm a"
-          }}</span>
+          <p>{{ chat?.message }}</p>
+          <div
+            class="message-header-container"
+            [class.user-message-time]="chat.isUser"
+          >
+            <span class="user-name"></span>
+            <span class="user-time">{{
+              chat?.createdAt | date: "dd-MM-yy, h:mm a"
+            }}</span>
+          </div>
         </div>
       </div>
+      <div class="no-history" *ngIf="!chats?.length">
+        {{ "No chat history found." | translate }}
+      </div>
     </div>
-    <div class="no-history" *ngIf="!chats?.length">{{ 'No chat history found.' | translate }}</div>
   </div>
   <div class="message-form card-footer">
     <div class="input-group mb-3">
@@ -33,7 +45,7 @@
         #chatInput
         type="text"
         class="form-control"
-        placeholder="{{'message' | translate}}"
+        placeholder="{{ 'message' | translate }}"
         name="message"
         aria-label="Recipient's username"
         [(ngModel)]="message"

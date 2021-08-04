@@ -14,6 +14,7 @@ export class ChatComponent implements OnInit {
   @ViewChild("chatBox") chatBox: ElementRef;
 
   classFlag = false;
+  setSpiner = true;
   chats = [];
   isUser;
   user_messages;
@@ -53,6 +54,7 @@ export class ChatComponent implements OnInit {
 
   sendMessage(event) {
     if (this.toUser && this.patientId && this.chatElem.value) {
+      this.setSpiner = true;
       this.chatService
         .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
           visitId: this.visitId,
@@ -70,6 +72,7 @@ export class ChatComponent implements OnInit {
       .getPatientMessages(this.toUser, this.patientId)
       .subscribe((res: { data }) => {
         this.chats = res.data;
+        this.setSpiner = false;
         this.scroll();
       });
   }
