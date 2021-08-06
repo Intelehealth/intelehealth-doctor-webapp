@@ -202,7 +202,7 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show" [hidden]="userRole" >
-        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="visitSpeciality != userSpeciality">Start Visit
+        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="visitSpeciality != userSpeciality || isVisitEnded || doctorNotNeeded">Start Visit
               Note</button>
   </div>
 
@@ -237,7 +237,7 @@ require by speaking with the patient directly.  -->
               <app-follow-up></app-follow-up>
         </mat-card>
         <br>
-        <ng-container *ngIf="visitCompletePresent">
+        <ng-container *ngIf="visitCompletePresent && text">
               <div class="d-flex justify-content-center">
                     <mat-card>
                           <div [style.font-family]="font" style="font-size: 50px">{{text}}</div>
@@ -248,7 +248,7 @@ require by speaking with the patient directly.  -->
 
         <div class="text-center">
               <button (click)="sign()" [hidden]="userRole"  id="sign-button" mat-raised-button color="primary"
-                    [disabled]="visitCompletePresent || isVisitSummaryChanged">Sign and Submit</button>
+                    [disabled]="visitCompletePresent || isVisitSummaryChanged || isVisitEnded || doctorNotNeeded">Sign and Submit</button>
         </div>
   </div>
 </div>

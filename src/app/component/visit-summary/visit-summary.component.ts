@@ -36,6 +36,8 @@ export class VisitSummaryComponent implements OnInit {
   visitAttributes: any;
   visitSpeciality: any;
   userSpeciality: any;
+  isVisitEnded:boolean = false;
+  doctorNotNeeded:boolean =false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -96,6 +98,8 @@ export class VisitSummaryComponent implements OnInit {
       this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
       const providerDetails = getFromStorage("provider");
       this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
+      //No Doctor Needed speciality
+      this.doctorNotNeeded = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value == "No Doctor Needed";
 
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null) {
@@ -115,6 +119,9 @@ export class VisitSummaryComponent implements OnInit {
           });
         }
       });
+      if (visitDetails.stopDatetime !== null) {
+        this.isVisitEnded = true;
+      }
     });
   }
 
