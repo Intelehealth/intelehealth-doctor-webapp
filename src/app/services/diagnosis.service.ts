@@ -34,16 +34,16 @@ export class DiagnosisService {
     return this.http.get(url)
     .pipe(
       map((response: []) => {
-        this.diagnosisArray = [];
-        response.forEach((element: any) => {
-          element.concept.conceptMappings.forEach(name => {
-            if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-              const diagnosis = {
-                name: element.concept.preferredName,
-                code: name.conceptReferenceTerm.code
-              };
-              this.diagnosisArray.push(diagnosis);
-            }
+        this.diagnosisArray = ["Mature Cataract", "Immature Cataract", "Refractive Error", "Pterygium", "Corneal Infection", "Other"];
+        //response.forEach((element: any) => {
+        //  element.concept.conceptMappings.forEach(name => {
+        //    if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
+        //      const diagnosis = {
+        //        name: element.concept.preferredName,
+        //        code: name.conceptReferenceTerm.code
+        //      };
+        //      this.diagnosisArray.push(diagnosis);
+        //    }
           });
         });
         return this.diagnosisArray;
