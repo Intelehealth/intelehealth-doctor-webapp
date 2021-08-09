@@ -240,7 +240,7 @@ require by speaking with the patient directly.  -->
               <app-follow-up></app-follow-up>
         </mat-card>
         <br>
-        <ng-container *ngIf="visitCompletePresent">
+        <ng-container *ngIf="visitCompletePresent && text">
               <div class="d-flex justify-content-center">
                     <mat-card>
                           <div [style.font-family]="font" style="font-size: 50px">{{text}}</div>

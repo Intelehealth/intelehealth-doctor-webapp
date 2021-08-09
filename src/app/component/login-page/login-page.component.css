@@ -7,11 +7,7 @@
 }
 
 .bg-plum-plate {
-  background-image: linear-gradient(
-    135deg,
-    #667eea 0%,
-    #ea7b85 100%
-  ) !important;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
 }
 
 .modal-dialog {
