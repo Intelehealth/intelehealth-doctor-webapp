@@ -44,8 +44,8 @@ export class DiagnosisService {
         //      };
         //      this.diagnosisArray.push(diagnosis);
         //    }
-          });
-        });
+        //  });
+        //});
         return this.diagnosisArray;
       })
     );
