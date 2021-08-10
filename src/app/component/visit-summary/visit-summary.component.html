@@ -8,10 +8,12 @@
             <app-patientinfo></app-patientinfo>
       </mat-card>
 <br>
-      <mat-card >
+<!--      <mat-card >
             <app-past-visits></app-past-visits>
       </mat-card>
+
 <br>
+-->
       <mat-card>
             <app-current-visit></app-current-visit>
       </mat-card>
@@ -28,10 +30,12 @@
             <app-past-medical-history></app-past-medical-history>    
       </mat-card>
 <br>
-      <mat-card >
+<!--      <mat-card >
             <app-vital></app-vital>
       </mat-card>
+
 <br>
+-->
       <mat-card>
             <app-on-examination></app-on-examination>
       </mat-card>
@@ -67,15 +71,11 @@
 
   <br>
 
-  <div *ngIf="show"> 
-      <mat-card>
-            <app-patient-interaction></app-patient-interaction>
-      </mat-card>
-<br>
       <mat-card >  
             <app-diagnosis></app-diagnosis>
       </mat-card>
 <br>
+  <!--
       <mat-card>
             <app-prescribed-medication></app-prescribed-medication>
       </mat-card>
@@ -84,6 +84,7 @@
             <app-prescribed-test></app-prescribed-test>
       </mat-card>
 <br>
+-->
       <mat-card>
             <app-advice></app-advice>
       </mat-card>
@@ -94,6 +95,12 @@
 <br>
       <mat-card>
           <app-follow-up></app-follow-up>
+      </mat-card>
+  
+<br>
+    <div *ngIf="show"> 
+      <mat-card>
+            <app-patient-interaction></app-patient-interaction>
       </mat-card>
 <br>
       <ng-container *ngIf="visitCompletePresent">
