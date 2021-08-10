@@ -37,7 +37,7 @@ export class DiagnosisService {
         this.diagnosisArray = [];
         response.forEach((element: any) => {
           element.concept.preferredName.forEach(name => {
-            if (name==="Pterygium"| name==="Mature Cataract"){
+            if (name==="Pterygium"|| name==="Mature Cataract"){
               const diagnosis ={
                 name: element.concept.preferredName
             
