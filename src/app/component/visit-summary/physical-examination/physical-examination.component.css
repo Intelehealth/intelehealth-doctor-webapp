@@ -1,7 +1,10 @@
-.image1 {
-    width: 60%
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 15px;
+  overflow: hidden;
 }
-
-.image2 {
-    width: 50%
-}
+.grid img{
+    max-width: 100%;
+    max-height: auto;
+    display: block;
