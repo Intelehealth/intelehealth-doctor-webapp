@@ -135,11 +135,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   visitCategory(active) {
     const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Visit Complete")) {
+    if (this.checkVisit(encounters, "Patient Exit Survey") ||
+        this.checkVisit(encounters, "Visit Complete") ||
+        active.stopDatetime != null) {
       const values = this.assignValueToProperty(active);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")) {
+    } else if (this.checkVisit(encounters, "Visit Note")&&
+               active.stopDatetime == null) {
       const values = this.assignValueToProperty(active);
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
@@ -152,7 +155,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
       }
     } else if (
       this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")
+      this.checkVisit(encounters, "Vitals")&&
+      active.stopDatetime == null
     ) {
       const values = this.assignValueToProperty(active);
       this.waitingVisit.push(values);
@@ -169,7 +173,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = active.encounters[0].encounterType.display;
+    this.value.status =
+    active.stopDatetime != null
+      ? "Visit Complete"
+      : active.encounters[0].encounterType.display;
     this.value.provider =
       active.encounters[0].encounterProviders[0].provider.display.split(
         "- "
