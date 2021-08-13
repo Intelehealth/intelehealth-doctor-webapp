@@ -1,7 +1,6 @@
 <h4>Physical Examination</h4>
 <hr>
 <div class="grid">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Cataract_in_human_eye.png/450px-Cataract_in_human_eye.png" />
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Cataract_in_human_eye.png/450px-Cataract_in_human_eye.png" />
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Cataract_in_human_eye.png/450px-Cataract_in_human_eye.png" />
+  <ng-container *ngFor="let image of images">
+    <a href={{image.image}}><img src={{image.image}}></a>
 </div>
