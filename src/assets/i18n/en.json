@@ -60,6 +60,8 @@
     "Update Details":"Update Details",
     "Male":"Male",
     "Female":"Female",
+    "M":"Male",
+    "F":"Female",
     "Edit Signature":"Edit Signature",
     "Save":"Save",
     "Setup your Signature":"Setup your Signature",
@@ -206,6 +208,7 @@
     "Back":"Back",
     "Oops!! You are on a wrong page":"Oops!! You're on a wrong page",
     "No Data Available":"No Data Available",
+    "All":"All",
     "messages": {
             "welcome":"Welcome",
             "loginError":"Username & Password doesn't match",

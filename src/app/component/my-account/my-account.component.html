@@ -19,13 +19,13 @@
             <tr>
               <th>{{ 'Gender' | translate }}:</th>
               <td *ngIf="providerDetails.person">
-                {{ providerDetails.person.gender }}
+                {{ (providerDetails.person.gender) | translate }}
               </td>
             </tr>
             <tr>
               <th>{{ 'State' | translate }} :</th>
               <td *ngIf="providerDetails.person">
-                {{ visitState }}
+                {{ (visitState) | translate }}
               </td>
             </tr>
             <tr>
