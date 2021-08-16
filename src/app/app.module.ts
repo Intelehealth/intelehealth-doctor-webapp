@@ -20,6 +20,7 @@ import { DiagnosisComponent } from './component/visit-summary/diagnosis/diagnosi
 import { PrescribedTestComponent } from './component/visit-summary/prescribed-test/prescribed-test.component';
 import { AdviceComponent } from './component/visit-summary/advice/advice.component';
 import { FollowUpComponent } from './component/visit-summary/follow-up/follow-up.component';
+import { ReferralComponent } from './component/visit-summary/referral/referral.component';
 import { PrescribedMedicationComponent } from './component/visit-summary/prescribed-medication/prescribed-medication.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { NavbarComponent } from './component/layout/navbar/navbar.component';
@@ -114,6 +115,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     PrescribedTestComponent,
     AdviceComponent,
     FollowUpComponent,
+    ReferralComponent,
     LoginPageComponent,
     PrescribedMedicationComponent,
     NavbarComponent,
