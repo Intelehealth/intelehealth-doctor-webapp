@@ -85,6 +85,11 @@ export class VcComponent implements OnInit {
       roomId: this.room,
     });
     this.makeCall();
+    this.socketService.onEvent("toast").subscribe((data) => {
+      if (data?.message) {
+        this.toast(data);
+      }
+    });
   }
 
   @HostListener("fullscreenchange")
