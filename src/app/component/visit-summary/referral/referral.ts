@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Group, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
@@ -74,8 +74,11 @@ export class ReferralComponent implements OnInit {
 
   Submit() {
     const date= new Date();
-    const form = this.referralForm.value;
-    const form = this.urgentForm.value;
+    const formReferral = this.referralForm.value;
+    const valueReferral = this.formReferral.value;
+    const formUrgent = this.urgentForm.value;
+    const valueReferral = this.formUrgent.value;
+    
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
@@ -84,7 +87,7 @@ export class ReferralComponent implements OnInit {
         concept: this.conceptReferral,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.referral}`,
+        value: valueReferral,
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
@@ -96,7 +99,7 @@ export class ReferralComponent implements OnInit {
         concept: this.conceptUrgent,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.urgent}`,
+        value: valueUrgent,
         encounter: this.encounterUuid
       };
       this.service.postObs(jsonUrgent)
@@ -113,7 +116,7 @@ export class ReferralComponent implements OnInit {
         this.referralStatus.splice(i, 1);
       });
     const uuid1 = this.urgentStatus[i].uuid1;
-    this.diagnosisService.deleteObs(uuid2)
+    this.diagnosisService.deleteObs(uuid1)
       .subscribe(res => {
         this.urgentStatus.splice(i, 1);
       });
