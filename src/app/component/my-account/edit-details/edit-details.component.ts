@@ -17,9 +17,10 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
-                      "Referred out",
-                      "MSF MD",
-                      "Doctor not needed"
+                      "Gynecologists",
+                      "Ayurvedic Physician",
+                      "TLD Query",
+                      "Agent Resolution"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(
