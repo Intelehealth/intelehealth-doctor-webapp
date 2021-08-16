@@ -211,32 +211,32 @@ require by speaking with the patient directly.  -->
 
   <br>
 
-  <div *ngIf="show">
-        <mat-card>
+  <div *ngIf="show" [class.resize-tab]="userSpeciality === 'TLD Query'">
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-patient-interaction></app-patient-interaction>
         </mat-card>
         <br>
-        <mat-card>
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-diagnosis></app-diagnosis>
         </mat-card>
         <br>
-        <mat-card>
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-prescribed-medication></app-prescribed-medication>
         </mat-card>
         <br>
-        <mat-card>
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-prescribed-test></app-prescribed-test>
         </mat-card>
         <br>
         <mat-card>
-              <app-advice></app-advice>
+              <app-advice [userSpeciality]="userSpeciality"></app-advice>
         </mat-card>
         <br>
-        <mat-card>
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-additional-comment></app-additional-comment>
         </mat-card>
         <br>
-        <mat-card>
+        <mat-card *ngIf="userSpeciality !== 'TLD Query'">
               <app-follow-up></app-follow-up>
         </mat-card>
         <br>

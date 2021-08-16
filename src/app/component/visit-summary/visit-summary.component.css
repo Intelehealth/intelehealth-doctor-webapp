@@ -9,3 +9,7 @@ mat-spinner {
   filter: blur(8px);
   -webkit-filter: blur(8px);
 }
+
+.resize-tab {
+  margin-top: -95px;
+}
