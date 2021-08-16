@@ -95,16 +95,16 @@ export class ReferralComponent implements OnInit {
           this.referralStatus.push({ uuid: resp.uuid, value: json.value });
         });
 
-      const jsonUrgent = {
+      const json = {
         concept: this.conceptUrgent,
         person: this.patientId,
         obsDatetime: date,
         value: valueUrgent,
         encounter: this.encounterUuid
       };
-      this.service.postObs(jsonUrgent)
+      this.service.postObs(json)
         .subscribe(resp => {
-          this.referralStatus.push({ uuid: resp.uuid, value: jsonUrgent.value });
+          this.referralStatus.push({ uuid: resp.uuid, value: json.value });
         });
     } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
   }
@@ -115,8 +115,8 @@ export class ReferralComponent implements OnInit {
       .subscribe(res => {
         this.referralStatus.splice(i, 1);
       });
-    const uuid1 = this.urgentStatus[i].uuid1;
-    this.diagnosisService.deleteObs(uuid1)
+    const uuid = this.urgentStatus[i].uuid;
+    this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
         this.urgentStatus.splice(i, 1);
       });
