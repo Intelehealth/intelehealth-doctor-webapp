@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
-import { Group, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
@@ -75,9 +75,9 @@ export class ReferralComponent implements OnInit {
   Submit() {
     const date= new Date();
     const formReferral = this.referralForm.value;
-    const valueReferral = this.formReferral.value;
+    const valueReferral = formReferral.referral;
     const formUrgent = this.urgentForm.value;
-    const valueReferral = this.formUrgent.value;
+    const valueUrgent = formUrgent.urgent;
     
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
