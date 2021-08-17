@@ -30,6 +30,9 @@ export class PatientinfoComponent implements OnInit {
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
+        }
+        if (attri.attributeType.display.match("Secondary Phone Number")) {
+          this.info["secondTelephone"] = attri.value;
         } 
       });
       this.patientInfo.push(this.info);

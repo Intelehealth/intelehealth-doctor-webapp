@@ -32,13 +32,13 @@
           <td>{{info?.preferredAddress.cityVillage}}</td>
         </tr>
         <tr>
-          <th scope="row">Contact Info</th>
+          <th scope="row">Primary Contact Number</th>
           <td *ngIf="info.telephone">{{ info.telephone }}</td>
         </tr>
-        <!-- <tr>
-          <th scope="row">Occupation</th>
-          <td *ngIf="info.occupation">{{ info.occupation }}</td>
-        </tr> -->
+        <tr>
+          <th scope="row">Secondary Contact Number</th>
+          <td *ngIf="info.secondTelephone">{{ info.secondTelephone }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
