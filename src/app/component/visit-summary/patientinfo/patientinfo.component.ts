@@ -43,6 +43,8 @@ export class PatientinfoComponent implements OnInit {
           this.info["telephone"] = attri.value;
         } else if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
+        }else if (attri.attributeType.display.match("Citizen Id")) {
+          this.info["citizenId"] = attri.value;
         }
       });
       this.patientInfo.push(this.info);
