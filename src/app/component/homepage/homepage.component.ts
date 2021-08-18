@@ -232,7 +232,7 @@ export class HomepageComponent implements OnInit {
     this.value.gender = active.patient.person.gender;
     this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
     this.value.age = active.patient.person.age;
-    this.value.location = active.location.display;
+    this.value.location = active.patient.person.preferredAddress.stateProvince;
     this.value.status =
     active.stopDatetime != null
       ? "Visit Complete"
