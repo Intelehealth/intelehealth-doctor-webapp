@@ -269,12 +269,8 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
-            });
-            if (this.isFollowUpComplaint) {
               this.sendSms(); 
-             } else {
-              this.updateVisit();
-            } 
+            }); 
           } else {
             if (
               window.confirm(
