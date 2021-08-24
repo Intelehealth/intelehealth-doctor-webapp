@@ -17,8 +17,6 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
-                      "Referred out",
-                      "MSF MD",
                       "Doctor not needed"
                     ];
   editForm = new FormGroup({

@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { async } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { environment } from "../../../../environments/environment";
@@ -25,15 +26,18 @@ export class AdditionalDocumentsComponent implements OnInit {
     this.diagnosisService
       .getObs(patientUuid, this.conceptAdditionlDocument)
       .subscribe((response) => {
-        response.results.forEach((obs) => {
+        response.results.forEach(async (obs) => {
           if (
             obs.encounter !== null &&
             obs.encounter.visit.uuid === visitUuid
           ) {
             this.additionalDocumentPresent = true;
+            const imageNameData = await fetch(`${this.baseURL}/pullimage/${patientUuid}/${obs.uuid}`);
             const data = {
               image: `${this.baseURL}/obs/${obs.uuid}/value`,
+              // imageName: 
             };
+
             this.images.push(data);
           }
         });

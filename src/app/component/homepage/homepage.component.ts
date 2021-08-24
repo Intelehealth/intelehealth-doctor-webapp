@@ -37,6 +37,7 @@ export class HomepageComponent implements OnInit {
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
+  allVisitData: VisitData[] = [];
   setSpiner = true;
   specialization;
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
@@ -107,7 +108,6 @@ export class HomepageComponent implements OnInit {
       (response) => {
         const pVisits = response.results;
         const userRoles = this.userDetails.roles.filter(a=>a.name == "Project Manager")
-        console.log('userRoles:---110 ', userRoles);
         const visits1 = userRoles.length > 0 ? pVisits : pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
 
         const setObj = new Set();
@@ -193,17 +193,17 @@ export class HomepageComponent implements OnInit {
         this.checkVisit(encounters, "Visit Complete") ||
          active.stopDatetime != null) {
       const values = this.assignValueToProperty(active);
-      this.completedVisit.push(values);
+      this.allVisitData.push(values);
       this.completeVisitNo += 1;
     } else if (this.checkVisit(encounters, "Visit Note")&&
     active.stopDatetime == null) {
       const values = this.assignValueToProperty(active);
-      this.progressVisit.push(values);
+      this.allVisitData.push(values);
       this.visitNoteNo += 1;
     } else if (this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active);
-        this.flagVisit.push(values);
+        this.allVisitData.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
@@ -213,7 +213,7 @@ export class HomepageComponent implements OnInit {
       active.stopDatetime == null
     ) {
       const values = this.assignValueToProperty(active);
-      this.waitingVisit.push(values);
+      this.allVisitData.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
     }

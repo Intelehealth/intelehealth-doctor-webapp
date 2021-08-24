@@ -133,7 +133,7 @@
   </div>
 </div> -->
 <div>
-  <h2 style="text-align:center;">Visit Summary</h2>
+  <h2 style="text-align:center;">Case Summary</h2>
 </div>
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 
@@ -205,7 +205,7 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show" [hidden]="userRole" >
-        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="DoctorNotNeeded || visitSpeciality != userSpeciality || isVisitEnded">Start Visit
+        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="DoctorNotNeeded || visitSpeciality != userSpeciality || isVisitEnded">Start Case
               Note</button>
   </div>
 
