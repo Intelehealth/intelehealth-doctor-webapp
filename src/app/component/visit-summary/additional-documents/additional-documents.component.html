@@ -3,6 +3,7 @@
 <div *ngIf="additionalDocumentPresent">
   <div class="row">
     <div *ngFor="let image of images" class="col">
+      <span style="margin-left: 70px;">{{image.imageName}}</span><br>
       <a href="{{ image.image }}"
         ><img
           src="{{ image.image }}"

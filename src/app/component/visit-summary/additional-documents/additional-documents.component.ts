@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { async } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
@@ -13,11 +14,13 @@ export class AdditionalDocumentsComponent implements OnInit {
   baseURL = environment.baseURL;
   images: any = [];
   additionalDocumentPresent = false;
+  imageNameData =[];
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
 
   constructor(
     private diagnosisService: DiagnosisService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -32,15 +35,20 @@ export class AdditionalDocumentsComponent implements OnInit {
             obs.encounter.visit.uuid === visitUuid
           ) {
             this.additionalDocumentPresent = true;
-            const imageNameData = await fetch(`${this.baseURL}/pullimage/${patientUuid}/${obs.uuid}`);
+          
+            const data1: any = await this.diagnosisService.getImageName(patientUuid, obs.uuid).toPromise();
+            
             const data = {
               image: `${this.baseURL}/obs/${obs.uuid}/value`,
-              // imageName: 
+              imageName: data1.data[0].imageName
             };
-
             this.images.push(data);
           }
         });
       });
+  }
+
+  getImage() {
+
   }
 }

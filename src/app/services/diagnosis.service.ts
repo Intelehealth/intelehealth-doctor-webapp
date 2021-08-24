@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "../../environments/environment";
@@ -32,12 +32,23 @@ export class DiagnosisService {
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
+  
 
   getObsAll(patientId): Observable<any> {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,concept:(uuid),encounter:(visit:(uuid)))`;
     return this.http.get(url);
 
+  }
+  getImageName(patientId, obsUuid){
+    var header = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
+      })
+    }
+    const url = `https://testhelpline.intelehealth.org/pullimage/${patientId}/${obsUuid}`;
+    return this.http.get(url, header);
   }
 
   getDiagnosisList(term) {
