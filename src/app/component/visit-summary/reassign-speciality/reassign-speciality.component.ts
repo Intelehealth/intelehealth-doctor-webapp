@@ -25,7 +25,8 @@ export class ReassignSpecialityComponent implements OnInit {
                       "Gynecologists",
                       "Ayurvedic Physician",
                       "TLD Query",
-                      "Agent Resolution"
+                      "Agent Resolution",
+                      "Curiosity Resolution"
   ];
   errorText: string;
 

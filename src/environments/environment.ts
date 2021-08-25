@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://hellosathi.uninhibited.org.in/openmrs/ws/rest/v1",
-  baseURLCoreApp:"https://hellosathi.uninhibited.org.in/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://hellosathi.uninhibited.org.in/openmrs",
+  baseURL: "https://hellosaathi.uninhibited.org.in/openmrs/ws/rest/v1",
+  baseURLCoreApp:"https://hellosaathi.uninhibited.org.in/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://hellosaathi.uninhibited.org.in/openmrs",
   mindmapURL: "http://localhost:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };

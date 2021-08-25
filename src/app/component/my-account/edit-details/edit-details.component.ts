@@ -20,7 +20,8 @@ export class EditDetailsComponent implements OnInit {
                       "Gynecologists",
                       "Ayurvedic Physician",
                       "TLD Query",
-                      "Agent Resolution"
+                      "Agent Resolution",
+                      "Curiosity Resolution"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(
