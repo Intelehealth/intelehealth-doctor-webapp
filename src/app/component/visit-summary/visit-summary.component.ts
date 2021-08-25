@@ -337,11 +337,14 @@ export class VisitSummaryComponent implements OnInit {
       let patientNo = info.person.attributes.find(
         (a) => a.attributeType.display == "Telephone Number"
       );
+      let language =  info.person.attributes.find(
+        (attri) => attri.attributeType.display == "Preferred Language"
+      );
         let link = this.getLink(info);
         this.visitService.shortUrl(link).subscribe((res: { data }) => {
           const hash = res.data.hash;
           const shortLink = this.getLinkFromHash(hash);
-          let smsText: string = `Hello Saathi Helpline Project Dear ${patientInfo.name} Your prescription is available to download at ${shortLink} - Powered by Intelehealth`;
+           let smsText: string = this.getSmsText(language?.value, patientInfo.name, shortLink);
           this.visitService.sendSMS(patientNo.value, smsText).subscribe(
             (res) => {
               this.openDialog();
@@ -362,6 +365,23 @@ export class VisitSummaryComponent implements OnInit {
 
   getLinkFromHash(hash) {
     return `${window.location.protocol}//${window.location.hostname}/intelehealth/#/l/${hash}`;
+  }
+
+  getSmsText(language:string, name:string, link) {
+    switch(language) {
+      case "English": 
+                      return `Hello Saathi Helpline Project Dear ${name} Your prescription is available to download at ${link} - Powered by Intelehealth`;
+      case "Hindi": 
+                      return `प्रिय ${name} हैलो साथी को कॉल करने के लिए धन्यवाद | आपका नुस्खा यहां डाउनलोड करने के लिए उपलब्ध है ${link}`
+      case "Marathi": 
+                      return `प्रिय ${name}, "हॅलो साथी" ला कॉल केल्याबद्दल धन्यवाद.आपली औषधोपचार डाउनलोड करण्यासाठी येथे उपलब्ध आहे ${link}`
+      case "Kannada": 
+                      return `ಪ್ರಿಯ ${name}. ಹಲೋ ಸಾಥಿಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮಔಷಧಿ ಚೀಟಿ ಇಲ್ಲಿ ${link} ಡೌನ್ಲೋಡ್ ಮಾಡಬಹುದು.`
+      case "Tamil": 
+                      return `அன்புள்ள ${name}. ஹலோ சாத்திய அழைத்ததற்கு நன்றி. உங்களுடைய மருத்துவம் குறிப்பு இங்கே ${link} பதிவிறக்கம் செய்ய தயாராக உள்ளது`
+      default:        
+                      return `Hello Saathi Helpline Project Dear ${name} Your prescription is available to download at ${link} - Powered by Intelehealth`;
+    }
   }
 
   openDialog() {
