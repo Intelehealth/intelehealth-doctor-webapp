@@ -38,7 +38,7 @@ export class VisitSummaryComponent implements OnInit {
   userRole: any;
   DoctorNotNeeded: any;
   isVisitEnded:boolean = false;
-  isFollowUpComplaint:boolean = false;
+  isTLDComplaint:boolean = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -208,8 +208,8 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   getChiefComplaint(complaint) {
-    if(complaint && complaint.observation.match("Follow-up for Covid-19") !== null && complaint.visitStatus ==="Active") {
-      this.isFollowUpComplaint = true;
+    if(complaint && complaint.observation.match("TLD Query") !== null && complaint.visitStatus ==="Active") {
+      this.isTLDComplaint = true;
     }
   }
 
@@ -269,7 +269,9 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
-              this.sendSms(); 
+              if(!this.isTLDComplaint) {
+                this.sendSms(); 
+              }
             }); 
           } else {
             if (
