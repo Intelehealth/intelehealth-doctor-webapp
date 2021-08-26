@@ -36,16 +36,11 @@ export class DiagnosisService {
       map((response: []) => {
         this.diagnosisArray = [];
         response.forEach((element: any) => {
-          element.concept.preferredName.forEach(name => {
-            if (name==="Pterygium"|| name==="Mature Cataract"){
-              const diagnosis ={
-                name: element.concept.preferredName
-            
-          //element.concept.conceptMappings.forEach(name => {
-          // if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-          //    const diagnosis = {
-          //      name: element.concept.preferredName,
-          //      code: name.conceptReferenceTerm.code
+          element.concept.conceptMappings.forEach(name => {
+           if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
+              const diagnosis = {
+                name: element.concept.preferredName,
+                code: name.conceptReferenceTerm.code
               };
               this.diagnosisArray.push(diagnosis);
             }
