@@ -222,7 +222,7 @@ export class VisitSummaryComponent implements OnInit {
       stopDatetime: myDate,
     };
     this.http.post(URL, json).subscribe((response) => {
-      this.sendSms();
+      // this.sendSms();
     });
   }
 
@@ -271,7 +271,7 @@ export class VisitSummaryComponent implements OnInit {
               this.visitCompletePresent = true;
             });
             if (this.isFollowUpComplaint) {
-              this.sendSms(); 
+              // this.sendSms(); 
              } else {
               this.updateVisit();
             } 
@@ -329,44 +329,44 @@ export class VisitSummaryComponent implements OnInit {
     );
   };
 
-  sendSms() {
-    const userDetails = getFromStorage("provider");
-    this.visitService.patientInfo(this.patientId).subscribe((info) => {
-      var patientInfo = {
-        name: info.person.display,
-        age: info.person.age,
-        gender: info.person.gender,
-        providerName: userDetails.person.display,
-      };
-      let patientNo = info.person.attributes.find(
-        (a) => a.attributeType.display == "Telephone Number"
-      );
-        let link = this.getLink(info);
-        this.visitService.shortUrl(link).subscribe((res: { data }) => {
-          const hash = res.data.hash;
-          const shortLink = this.getLinkFromHash(hash);
-          let smsText: string = `MSF Arogya Bharat Project Dear ${patientInfo.name} Your prescription is available to download at ${shortLink} - Powered by Intelehealth`;
-          this.visitService.sendSMS(patientNo.value, smsText).subscribe(
-            (res) => {
-              this.openDialog();
-            },
-            () => {
-              this.snackbar.open(`Error while sending SMS`, null, {
-                duration: 4000,
-              });
-            }
-          );
-        });
-    });
-  }
+  // sendSms() {
+  //   const userDetails = getFromStorage("provider");
+  //   this.visitService.patientInfo(this.patientId).subscribe((info) => {
+  //     var patientInfo = {
+  //       name: info.person.display,
+  //       age: info.person.age,
+  //       gender: info.person.gender,
+  //       providerName: userDetails.person.display,
+  //     };
+  //     let patientNo = info.person.attributes.find(
+  //       (a) => a.attributeType.display == "Telephone Number"
+  //     );
+  //       let link = this.getLink(info);
+  //       this.visitService.shortUrl(link).subscribe((res: { data }) => {
+  //         const hash = res.data.hash;
+  //         const shortLink = this.getLinkFromHash(hash);
+  //         let smsText: string = `MSF Arogya Bharat Project Dear ${patientInfo.name} Your prescription is available to download at ${shortLink} - Powered by Intelehealth`;
+  //         this.visitService.sendSMS(patientNo.value, smsText).subscribe(
+  //           (res) => {
+  //             this.openDialog();
+  //           },
+  //           () => {
+  //             this.snackbar.open(`Error while sending SMS`, null, {
+  //               duration: 4000,
+  //             });
+  //           }
+  //         );
+  //       });
+  //   });
+  // }
 
-  getLink(info) {
-    return `${window.location.protocol}//${window.location.hostname}/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
-  }
+  // getLink(info) {
+  //   return `${window.location.protocol}//${window.location.hostname}/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
+  // }
 
-  getLinkFromHash(hash) {
-    return `${window.location.protocol}//${window.location.hostname}/intelehealth/#/l/${hash}`;
-  }
+  // getLinkFromHash(hash) {
+  //   return `${window.location.protocol}//${window.location.hostname}/intelehealth/#/l/${hash}`;
+  // }
 
   openDialog() {
     this.confirmDialogService

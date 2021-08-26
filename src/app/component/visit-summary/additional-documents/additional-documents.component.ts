@@ -37,6 +37,7 @@ export class AdditionalDocumentsComponent implements OnInit {
             this.additionalDocumentPresent = true;
           
             const data1: any = await this.diagnosisService.getImageName(patientUuid, obs.uuid).toPromise();
+            console.log('data1: ', data1);
             
             const data = {
               image: `${this.baseURL}/obs/${obs.uuid}/value`,
@@ -46,9 +47,5 @@ export class AdditionalDocumentsComponent implements OnInit {
           }
         });
       });
-  }
-
-  getImage() {
-
   }
 }
