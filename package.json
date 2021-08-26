@@ -10,6 +10,7 @@
         "e2e": "ng e2e"
     },
     "private": true,
+    "postinstall": "ngcc",
     "dependencies": {
         "@angular/animations": "^10.0.11",
         "@angular/cdk": "^10.1.3",

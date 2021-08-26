@@ -1,0 +1,29 @@
+<h4><i class="material-icons">contact_phone</i> Referral</h4>
+<hr>
+<div>
+    <div class="same-section">
+        <label>Does this patient need a referral?</label>
+        <mat-checkbox class="example-margin" [(ngModel)]="referral" [disabled]="referral" (change)="updateValue('referral', $event.checked)">Yes</mat-checkbox>
+        <br/>
+    </div>
+    <div class="same-section">
+        <label>Is referral urgent?</label>
+        <mat-checkbox class="example-margin" [(ngModel)]="urgent" [disabled]="urgent" (change)="updateValue('urgent', $event.checked)">Yes</mat-checkbox>
+    </div>
+    <ng-container *ngIf="referral">
+        <ul class="list-unstyled">
+            <mat-list [@moveInLeft] class="alert alert-primary">
+                <div class="doctor-value">Referral</div>
+                <i (click)="delete('referral', referralObs.uuid)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+            </mat-list>
+        </ul>
+    </ng-container>
+    <ng-container *ngIf="urgent">
+        <ul class="list-unstyled">
+            <mat-list [@moveInLeft] class="alert alert-primary">
+                <div class="doctor-value">Urgent</div>
+                <i (click)="delete('urgent', urgentObs.uuid)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+            </mat-list>
+        </ul>
+    </ng-container>
+</div>
