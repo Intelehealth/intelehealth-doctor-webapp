@@ -107,7 +107,7 @@ export class DiagnosisComponent implements OnInit {
         this.diagnosis.push({ uuid: resp.uuid, value: json.value });
       });
     } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
+      this.snackbar.open("Another agent is viewing this case", null, {
         duration: 4000,
       });
     }

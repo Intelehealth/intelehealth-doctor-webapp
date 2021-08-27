@@ -224,7 +224,7 @@ export class PrescribedMedicationComponent implements OnInit {
         this.add = false;
       });
     } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
+      this.snackbar.open("Another agent is viewing this case", null, {
         duration: 4000,
       });
     }

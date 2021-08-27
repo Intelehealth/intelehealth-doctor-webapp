@@ -120,7 +120,7 @@ export class PrescribedTestComponent implements OnInit {
         this.tests.push({ uuid: resp.uuid, value: value });
       });
     } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
+      this.snackbar.open("Another agent is viewing this case", null, {
         duration: 4000,
       });
     }
