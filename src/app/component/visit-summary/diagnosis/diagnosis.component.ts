@@ -27,17 +27,24 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
   ]
 })
 export class DiagnosisComponent implements OnInit {
-  diagnosis: any = [];
+  leftDiagnosis: any = [];
+  rightDiagnosis: any = [];
   diagnosisList = [];
-  conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
+  eyeDiagnosisList = ['Immature Cataract', 'Mature Cataract', 'Refractive Error', 'Pterygium', 'Normal'];
+  // conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
+  conceptLeftEyeDiagnosis: String = '1796244d-e936-4ab8-ac8a-c9bcfa476570';
+  conceptRightEyeDiagnosis: String = '58cae684-1509-4fd5-b256-5ca980ec6bb4';
   patientId: string;
   visitUuid: string;
   encounterUuid: string;
+  showLeftEyeOtherInput: Boolean = false;
+  showRightEyeOtherInput: Boolean = false;
 
   diagnosisForm = new FormGroup({
-    text: new FormControl('', [Validators.required]),
-    type: new FormControl('', [Validators.required]),
-    confirm: new FormControl('', [Validators.required])
+    lefteye: new FormControl(''),
+    righteye: new FormControl(''),
+    leftEyeOtherValue: new FormControl(''),
+    rightEyeOtherValue: new FormControl('')
   });
 
   constructor(private service: EncounterService,
@@ -48,50 +55,78 @@ export class DiagnosisComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
+    this.diagnosisService.getObs(this.patientId, this.conceptLeftEyeDiagnosis)
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosis.push(obs);
+            this.leftDiagnosis.push(obs);
+          }
+        });
+      });
+    this.diagnosisService.getObs(this.patientId, this.conceptRightEyeDiagnosis)
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            this.rightDiagnosis.push(obs);
           }
         });
       });
   }
 
   search(event) {
-    this.diagnosisService.getDiagnosisList(event.target.value)
-      .subscribe(response => {
-        this.diagnosisList = response;
-      });
+    const searchedTerm = event?.target?.value.toLowerCase();
+    const list = ['Early Cataract', 'Nasal Pterygium', 'Corneal opacity', 'Pseudophakia', 'Conjunctivitis',
+          'Subconjunctival hemorrhage', 'Infectious Keratitis/ Corneal infection', 'Presbyopia',
+          'Corneal infection', 'Adherent Leucoma', 'Glaucoma Screening', 'Diabetic Retinopathy Screening',
+          'Posterior Segment Screening', 'Cannot be assessed'];
+    this.diagnosisList = list.filter(eye => eye.toLowerCase().includes(searchedTerm));
+    // this.diagnosisService.getDiagnosisList(event.target.value)
+    //   .subscribe(response => {
+    //     this.diagnosisList = response;
+    //   });
   }
 
-  onSubmit() {
+  onChangeHandler = (type) => {
+    if (type === 'right') {
+      this.showRightEyeOtherInput = true;
+    } else if (type === 'hideLeft') {
+      this.showLeftEyeOtherInput = false;
+    } else if (type === 'hideRight') {
+        this.showRightEyeOtherInput = false;
+    } else {
+      this.showLeftEyeOtherInput = true;
+    }
+  }
+
+  onSubmit(side) {
     const date = new Date();
     const value = this.diagnosisForm.value;
+    value.lefteye = value.lefteye === 'Other' ? value.leftEyeOtherValue : value.lefteye;
+    value.righteye = value.righteye === 'Other' ? value.rightEyeOtherValue : value.righteye;
     const providerDetails = getFromStorage('provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: this.conceptDiagnosis,
+        concept: side === 'right' ? this.conceptRightEyeDiagnosis : this.conceptLeftEyeDiagnosis,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.text}:${value.type} & ${value.confirm}`,
+        value: side === 'right' ? value.righteye : value.lefteye,
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
         .subscribe(resp => {
           this.diagnosisList = [];
-          this.diagnosis.push({ uuid: resp.uuid, value: json.value });
+          this[side === 'right' ? 'rightDiagnosis' : 'leftDiagnosis'].push({ uuid: resp.uuid, value: json.value });
         });
     } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
   }
 
-  delete(i) {
-    const uuid = this.diagnosis[i].uuid;
+  delete(side, i) {
+    const uuid = this[side === 'right' ? 'rightDiagnosis' : 'leftDiagnosis'][i].uuid;
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
-        this.diagnosis.splice(i, 1);
+        this[side === 'right' ? 'rightDiagnosis' : 'leftDiagnosis'].splice(i, 1);
       });
   }
 }

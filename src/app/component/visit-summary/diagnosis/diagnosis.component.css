@@ -1,13 +1,38 @@
 .example-full-width {
-    width: 30%;
+  width: 100%;
+}
+
+.section {
+  width: 26%;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-around;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.radio-button {
+  margin: 5px;
+}
+
+@media only screen and (max-width: 768px) { 
+  .example-full-width {
+    width: 100%;
   }
 
-  .mat-radio-button ~ .mat-radio-button {
-    margin-left: 16px;
+  .flex {
+    flex-direction: column;
   }
 
-  @media only screen and (max-width: 768px) { 
-    .example-full-width {
-      width: 60%;
-    }
-   }
+  .section {
+    width: 100%;
+  }
+}
+
+

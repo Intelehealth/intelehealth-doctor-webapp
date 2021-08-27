@@ -1,5 +1,6 @@
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -36,6 +37,7 @@ export class ReferralComponent implements OnInit {
   urgentObs: object = {};
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
+    private snackbar: MatSnackBar,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -90,7 +92,7 @@ export class ReferralComponent implements OnInit {
         };
         this[`${type}Obs`] = data;
       });
-    }
+    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
   }
 
   delete(type, uuid) {
