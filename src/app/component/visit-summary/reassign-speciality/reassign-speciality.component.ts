@@ -49,7 +49,7 @@ export class ReassignSpecialityComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.visitService.getVisit(this.visitUuid).subscribe((visitDetails) => {
+    this.visitService.getVisits(this.visitUuid).subscribe((visitDetails) => {
       this.patientDetails = visitDetails;
       this.updateSpeciality.controls.specialization.setValue(
         this.patientDetails.attributes[0].value
