@@ -20,7 +20,6 @@ import { DiagnosisComponent } from './component/visit-summary/diagnosis/diagnosi
 import { PrescribedTestComponent } from './component/visit-summary/prescribed-test/prescribed-test.component';
 import { AdviceComponent } from './component/visit-summary/advice/advice.component';
 import { FollowUpComponent } from './component/visit-summary/follow-up/follow-up.component';
-import { ReferralComponent } from './component/visit-summary/referral/referral.component';
 import { PrescribedMedicationComponent } from './component/visit-summary/prescribed-medication/prescribed-medication.component';
 import { LoginPageComponent } from './component/login-page/login-page.component';
 import { NavbarComponent } from './component/layout/navbar/navbar.component';
@@ -59,27 +58,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 
-// Material Design Imports
-// import {
-//   MatDialogModule,
-//   MatGridListModule,
-//   MatCardModule,
-//   MatSnackBarModule,
-//   MatInputModule,
-//   MatDatepickerModule,
-//   MatNativeDateModule,
-//   MatButtonModule,
-//   MatIconModule,
-//   MatRadioModule,
-//   MatTooltipModule,
-//   MatTableModule,
-//   MatPaginatorModule,
-//   MatSortModule,
-//   MatListModule,
-//   MatSelectModule,
-//   MatAutocompleteModule,
-//   MatProgressSpinnerModule,
-//   MatExpansionModule} from '@angular/material/';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -92,10 +70,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatPaginatorModule} from '@angular/material/paginator';
-
-
-
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -115,7 +89,6 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     PrescribedTestComponent,
     AdviceComponent,
     FollowUpComponent,
-    ReferralComponent,
     LoginPageComponent,
     PrescribedMedicationComponent,
     NavbarComponent,
