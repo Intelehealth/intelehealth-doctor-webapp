@@ -79,15 +79,6 @@
             </button>
             </div>
 
-      <br />
-      <mat-card>
-            <app-referral></app-referral>
-      </mat-card>
-      <br />
-      <mat-card>
-            <app-diagnosis></app-diagnosis>
-      </mat-card>
-      <br />
   <!--
       <mat-card>
             <app-prescribed-medication></app-prescribed-medication>
@@ -103,16 +94,22 @@
       </mat-card>
 <br>
 -->
-      <mat-card>
-            <app-additional-comment></app-additional-comment>
-      </mat-card>
-      <br />
-      <!-- <mat-card>
-            <app-referral></app-referral>
-      </mat-card> -->
 
       <br />
       <div *ngIf="show">
+            <br />
+            <mat-card>
+                  <app-referral></app-referral>
+            </mat-card>
+            <br />
+            <mat-card>
+                  <app-diagnosis></app-diagnosis>
+            </mat-card>
+            <br />
+            <mat-card>
+                  <app-additional-comment></app-additional-comment>
+            </mat-card>
+            <br />
             <mat-card>
                   <app-patient-interaction></app-patient-interaction>
             </mat-card>
