@@ -169,7 +169,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   visitCategory(active) {
     const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Visit Complete")) {
+    if (
+      this.checkVisit(encounters, "Visit Complete") ||
+      this.checkVisit(encounters, "Patient Exit Survey")
+    ) {
       const values = this.assignValueToProperty(active);
       this.service.completedVisit.push(values);
     } else if (this.checkVisit(encounters, "Visit Note")) {
