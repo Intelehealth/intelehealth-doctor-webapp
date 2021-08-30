@@ -77,9 +77,9 @@ export class NavbarComponent implements OnInit {
     this.authService.getFingerPrint();
   }
 
-  openDoc() {
-    window.open(this.pdfUrl);  
-  }
+  // openDoc() {
+  //   window.open(this.pdfUrl);  
+  // }
 
   /**
    * Remove session and navigates to login screen
