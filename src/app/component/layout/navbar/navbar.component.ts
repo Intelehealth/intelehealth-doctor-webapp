@@ -25,8 +25,6 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
-  pdfUrl = 'https://helpline.ekalarogya.org/intelehealth/assets/COVID19_Management_Algorithm_22042021_v1.pdf';
-  pdfName = 'COVID19_Management_Algorithm';
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -75,10 +73,6 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
-  }
-
-  openDoc() {
-    window.open(this.pdfUrl);  
   }
 
   /**
