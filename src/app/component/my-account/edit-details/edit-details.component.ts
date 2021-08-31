@@ -17,11 +17,12 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
-                      "Gynecologists",
                       "Ayurvedic Physician",
                       "TLD Query",
                       "Agent Resolution",
-                      "Curiosity Resolution"
+                      "Curiosity Resolution",
+                      "Gynecologists (Kannada)",
+                      "Gynecologists (Hindi)"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(
