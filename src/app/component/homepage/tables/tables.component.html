@@ -41,7 +41,7 @@
     <!-- Gender Column -->
     <ng-container matColumnDef="gender">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
-      <td mat-cell *matCellDef="let row">{{ row.gender === 'M' ? 'Male': 'Female'}}</td>
+      <td mat-cell *matCellDef="let row">{{ row.gender === 'M' ? 'Male': row.gender === 'F'? 'Female':row.gender}}</td>
     </ng-container>
 
     <!-- Date OF Birth Column -->
