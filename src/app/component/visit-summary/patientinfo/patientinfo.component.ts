@@ -3,7 +3,6 @@ import { ImagesService } from "src/app/services/images.service";
 import { ActivatedRoute } from "@angular/router";
 import { VisitService } from "src/app/services/visit.service";
 import { environment } from "../../../../environments/environment";
-import * as moment from "moment";
 import { DatePipe } from "@angular/common";
 
 @Component({
@@ -19,17 +18,11 @@ export class PatientinfoComponent implements OnInit {
   patientIdentifier: string;
   info = {};
   profileImagePresent = false;
-  personAge: any;
-  yearAge: any;
-  age: any = {};
-  now: any;
-  a: any;
 
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    private service: ImagesService,
-    private datePipe: DatePipe
+    private service: ImagesService
   ) {}
 
   ngOnInit() {
@@ -48,34 +41,9 @@ export class PatientinfoComponent implements OnInit {
           this.info["telephone"] = attri.value;
         } else if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
-        } else if (attri.attributeType.display.match("Health Scheme Card")) {
-          this.info["medicalInsurance"] = attri.value;
         }
       });
       this.patientInfo.push(this.info);
     });
-  }
-
-  getAge(dateString) {
-    //------sol 1 ---------------
-    var mydate = dateString.replace(
-      /^(\d{2})\/(\d{2})\/(\d{4})$/,
-      "$3, $2, $1"
-    );
-
-    this.now = new Date();
-    var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
-
-    var a = moment(todayDate);
-    var b = moment(mydate);
-    var diffDuration = moment.duration(a.diff(b));
-    var ageString =
-      diffDuration.years() +
-      " years - " +
-      diffDuration.months() +
-      " months - " +
-      diffDuration.days() +
-      " days";
-    return ageString;
   }
 }

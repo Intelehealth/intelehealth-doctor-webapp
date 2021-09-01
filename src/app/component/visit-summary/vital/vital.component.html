@@ -7,15 +7,15 @@
       <th>Temp:</th>
       <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>
       <th>Height:</th>
-      <td>{{item.height}} cm</td>
+      <td><span *ngIf="item.height">{{item.height}} cm</span></td>
       <th>Weight:</th>
-      <td>{{item.weight}} kg</td>
+      <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
       <th>BMI:</th>
-      <td>{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>
+      <td><span *ngIf="item.weight && item.height">{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</span></td>
       <th>SP02:</th>
-      <td>{{item.sp02}} %</td>
+      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
       <th>BP:</th>
-      <td>{{item.sbp}}/{{item.dbp}}</td>
+      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
       <th>HR:</th>
       <td>{{item.pulse}}</td>
       <th>RR:</th>

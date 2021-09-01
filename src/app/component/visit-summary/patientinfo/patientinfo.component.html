@@ -13,15 +13,15 @@
                 </tr>
                 <tr>
                     <th scope="row">Sex</th>
-                    <td>{{info.gender}}</td>
+                    <td>{{ info.gender === 'M' ? 'Male': info.gender === 'F'? 'Female':info.gender}}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th scope="row">DOB</th>
                     <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th scope="row">Age</th>
-                    <td>{{getAge(info.birthdate | date: 'dd/MM/yyy')}}</td>
+                    <td>{{info.age}} Years</td>
                 </tr>
                 <tr>
                     <th scope="row">Village</th>
@@ -35,10 +35,10 @@
                     <th scope="row">Occupation</th>
                     <td *ngIf="info.occupation">{{info.occupation}}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th scope="row">Health Scheme Card</th>
                     <td *ngIf="info.medicalInsurance">{{info.medicalInsurance}}</td>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
     </div>
@@ -47,7 +47,7 @@
             <img [src]=image width="40%" height="200" alt="">
         </div>
         <div *ngIf="!profileImagePresent" style="text-align: center">
-            <img src="../../../../assets/dummy profile image.jpg" width="40%" height="40%" alt="">
+            <img src="assets/dummy profile image.jpg" width="40%" height="40%" alt="">
         </div>
     </div>
 </div>

@@ -28,6 +28,7 @@ export class VisitSummaryComponent implements OnInit {
   doctorValue;
   patientUuid = "";
   visitUuid = "";
+  isVisitEnded:boolean = false;
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
@@ -82,6 +83,9 @@ export class VisitSummaryComponent implements OnInit {
             saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
           }
         });
+        if (visitDetails.stopDatetime !== null) {
+          this.isVisitEnded = true;
+        }
       });
   }
 
