@@ -69,11 +69,12 @@ followForm = new FormGroup({
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
+      let remark = localStorage.getItem('selectedLanguage') === 'ru'?  'Замечание': 'Remark';
       const json = {
         concept: this.conceptFollow,
         person: this.patientId,
         obsDatetime: date,
-        value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
+        value: advice ? `${obsdate}, ${remark}: ${advice}` : obsdate,
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
