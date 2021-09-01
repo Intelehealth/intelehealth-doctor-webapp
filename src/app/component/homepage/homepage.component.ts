@@ -33,7 +33,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completeVisitNo = 0;
   setSpiner = true;
   specialization;
-  allVisits: VisitData[] = [];
+  allVisits = [];
   limit = 100;
 
   constructor(
@@ -108,9 +108,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
   getVisits(query: any = {}, cb = () => {}) {
     this.service.getVisits(query).subscribe(
       (response) => {
-        const visits = response.results;
-        let count = 0;
-        visits.forEach((active) => {
+        this.allVisits = response.results;
+        this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
               const attributes = active.attributes;
@@ -122,7 +121,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
               if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization) {
-                    count++;
                     this.visitCategory(active);
                   }
                 });
