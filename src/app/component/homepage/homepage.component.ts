@@ -108,7 +108,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
   getVisits(query: any = {}, cb = () => {}) {
     this.service.getVisits(query).subscribe(
       (response) => {
-        this.allVisits = response.results;
+        response.results.forEach((item) => {
+          this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
+        });
         this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
