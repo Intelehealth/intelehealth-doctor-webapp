@@ -37,6 +37,7 @@ export class TablesComponent implements OnInit {
   @Input() tableFor;
   @Input() visitCounts;
   @Output() tableEmitter = new EventEmitter();
+  @Output() emptyRow = new EventEmitter();
   loadedDataLength: Number = 0;
 
   constructor(private service: VisitService, private helper: HelperService) {}
@@ -78,6 +79,10 @@ export class TablesComponent implements OnInit {
       this.dataSource.sort = this.sort;
       this.table.renderRows();
     }
+  }
+
+  hasEmptyRow() {
+    this.emptyRow.emit();
   }
 
   changePage({ length, pageIndex, pageSize }) {

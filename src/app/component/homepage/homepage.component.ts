@@ -136,6 +136,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           this.value = {};
         });
         this.setSpiner = false;
+        this.isLoadingNextSlot = false;
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -196,12 +197,20 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   tableChange({ loadMore, refresh }) {
     if (loadMore) {
-      this.setSpiner = true;
+      if (!this.isLoadingNextSlot) this.setSpiner = true;
       const query = {
         limit: this.limit,
         startIndex: this.allVisits.length,
       };
       this.getVisits(query, refresh);
+    }
+  }
+
+  isLoadingNextSlot = false;
+  loadNextSlot() {
+    if (!this.isLoadingNextSlot) {
+      this.isLoadingNextSlot = true;
+      this.tableChange({ loadMore: true, refresh: () => {} });
     }
   }
 

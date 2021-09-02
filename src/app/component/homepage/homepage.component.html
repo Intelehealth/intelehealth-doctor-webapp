@@ -67,6 +67,7 @@
           [visitCounts]="flagPatientNo"
           [tableFor]="'flagVisit'"
           (tableEmitter)="tableChange($event)"
+          (emptyRow)="loadNextSlot($event)"
           [data]="flagVisit"
         ></app-tables>
       </ng-container>
@@ -88,6 +89,7 @@
           [tableFor]="'waitingVisit'"
           (tableEmitter)="tableChange($event)"
           [data]="waitingVisit"
+          (emptyRow)="loadNextSlot($event)"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
@@ -108,6 +110,7 @@
           [tableFor]="'progressVisit'"
           (tableEmitter)="tableChange($event)"
           [data]="progressVisit"
+          (emptyRow)="loadNextSlot($event)"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
@@ -128,6 +131,7 @@
           [tableFor]="'completedVisit'"
           (tableEmitter)="tableChange($event)"
           [data]="completedVisit"
+          (emptyRow)="loadNextSlot($event)"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
