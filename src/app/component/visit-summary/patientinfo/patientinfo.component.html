@@ -15,10 +15,10 @@
           <th scope="row">Sex</th>
           <td>{{ info.gender === 'M' ? 'Male': 'Female'}}</td>
         </tr>
-       <!--<tr>
+        <tr>
           <th scope="row">DOB</th>
           <td>{{ info.birthdate | date: "dd-MMM-yyy" }}</td>
-        </tr> -->
+        </tr>
         <tr>
           <th scope="row">Age</th>
           <td>{{ info.age }} Years</td>
@@ -35,19 +35,111 @@
           <th scope="row">Contact Info</th>
           <td *ngIf="info.telephone">{{ info.telephone }}</td>
         </tr>
-        <!-- <tr>
+        <tr>
+          <th scope="row">Caste</th>
+          <td *ngIf="info.Caste">{{ info.Caste }}</td>
+        </tr>
+        <tr>
           <th scope="row">Occupation</th>
           <td *ngIf="info.occupation">{{ info.occupation }}</td>
-        </tr> -->
+        </tr>
+        <tr>
+          <th scope="row">Landmark</th>
+          <td *ngIf="info.Landmark">{{ info.Landmark }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Survivor marriage type</th>
+          <td *ngIf="info.Survivor_marriage_type">{{ info.Survivor_marriage_type }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Survivor Maritual Status</th>
+          <td *ngIf="info.Survivor_maritual_status">{{ info.Survivor_maritual_status }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Survivor Living With</th>
+          <td *ngIf="info.Survivor_living_with">{{ info.Survivor_living_with }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Marriage age</th>
+          <td *ngIf="info.Marriage_age">{{ info.Marriage_age }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Maritual Status</th>
+          <td *ngIf="info.maritualStatus">{{ info.maritualStatus }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Children Status</th>
+          <td *ngIf="info.Children_Status">{{ info.Children_Status }}</td>
+        </tr>
+        <tr>
+          <th scope="row">No. of Children</th>
+          <td *ngIf="info.No_of_Childrens">{{ info.No_of_Childrens }}</td>
+        </tr>
       </tbody>
     </table>
   </div>
-  <!-- <div class="col-md-6">
-    <div *ngIf="profileImagePresent" style="text-align: center">
+  <div class="col-md-6">
+    <table class="table table-borderless table-sm">
+      <tbody *ngFor="let info of patientInfo">
+        <tr>
+          <th scope="row">Education</th>
+          <td *ngIf="info.Education">{{ info.Education }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Telephone No for survivor</th>
+          <td *ngIf="info.Telephone_number_for_survivor">{{ info.Telephone_number_for_survivor }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Case Reffered By</th>
+          <td *ngIf="info.caseRefferedBy">{{ info.caseRefferedBy }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Am Speaking with survivor</th>
+          <td *ngIf="info.amSpeakingWithSurvivor">{{ info.amSpeakingWithSurvivor }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Son/wife/daughter</th>
+          <td *ngIf="info.SWD">{{ info.SWD }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Contact Type</th>
+          <td *ngIf="info.contactType">{{ info.contactType }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Husband Occupation</th>
+          <td *ngIf="info.husbandOccupation">{{ info.husbandOccupation }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Income</th>
+          <td *ngIf="info.income">{{ info.income }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Husband Income</th>
+          <td *ngIf="info.income">{{ info.husbandIncome }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Maternal home address</th>
+          <td *ngIf="info.Maternal_home_address">{{ info.Maternal_home_address }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Maternal phone number</th>
+          <td *ngIf="info.Maternal_phone_number">{{ info.Maternal_phone_number }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Address of in-laws</th>
+          <td *ngIf="info.Address_of_in_laws">{{ info.Address_of_in_laws }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Emergency Phone Number</th>
+          <td *ngIf="info.Emergency_Phone_Number">{{ info.Emergency_Phone_Number}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <div *ngIf="profileImagePresent" style="text-align: center">
       <img [src]="image" width="40%" height="200" alt="" />
     </div>
     <div *ngIf="!profileImagePresent" style="text-align: center">
       <img src="https://helpline.ekalarogya.org/intelehealth/assets/dummy profile image.jpg" width="40%" height="40%" alt="" />
-    </div>
-  </div> -->
+    </div> -->
+  </div>
 </div>
