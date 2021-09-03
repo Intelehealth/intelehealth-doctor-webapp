@@ -45,25 +45,38 @@ export class PatientInteractionComponent implements OnInit {
 
   ngOnInit() {
     const visitId = this.route.snapshot.params['visit_id'];
-    this.visitService.fetchVisitDetails(visitId)
-      .subscribe(visitDetails => {
-        this.patientDetails = visitDetails.patient;
-        visitDetails.encounters.forEach(encounter => {
-          if (encounter.display.match('ADULTINITIAL') != null) {
-            const providerAttribute = encounter.encounterProviders[0].provider.attributes;
-            if (providerAttribute.length) {
-              providerAttribute.forEach(attribute => {
-                if (attribute.display.match('phoneNumber') != null) {
-                  this.phoneNo = attribute.value;
-                }
-                if (attribute.display.match('whatsapp') != null) {
-                  const whatsapp = attribute.value;
-                  // tslint:disable-next-line: max-line-length
-                  const text = encodeURI(`Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`);
-                  this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-                }
-              });
-            }
+    // this.visitService.fetchVisitDetails(visitId)
+    //   .subscribe(visitDetails => {
+    //     this.patientDetails = visitDetails.patient;
+    //     console.log(this.patientDetails)
+    //     visitDetails.encounters.forEach(encounter => {
+    //       if (encounter.display.match('ADULTINITIAL') != null) {
+    //         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
+    //         if (providerAttribute.length) {
+    //           providerAttribute.forEach(attribute => {
+    //             if (attribute.display.match('phoneNumber') != null) {
+    //               this.phoneNo = attribute.value;
+    //             }
+    //             if (attribute.display.match('whatsapp') != null) {
+    //               const whatsapp = attribute.value;
+    //               // tslint:disable-next-line: max-line-length
+    //               const text = encodeURI(`Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`);
+    //               this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+    //             }
+    //           });
+    //         }
+    //       }
+    //     });
+    //   });
+    const patientId = this.route.snapshot.paramMap.get('patient_id');
+    this.visitService.patientInfo(patientId)
+      .subscribe(info => {
+        info.person['attributes'].forEach(attri => {
+          if (attri.attributeType.display.match('Telephone Number')) {
+            this.phoneNo = attri.value;
+            // tslint:disable-next-line: max-line-length
+            const text = encodeURI(`Hello I'm calling for patient ${info.person.display} OpenMRS ID ${info.identifiers[0].identifier}`);
+            this.whatsappLink = `https://wa.me/91${this.phoneNo}?text=${text}`;
           }
         });
       });

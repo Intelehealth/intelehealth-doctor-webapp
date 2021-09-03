@@ -21,7 +21,7 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <button type="reset" (click)="onSubmit('left')" mat-raised-button color="primary" id="diagnosis-submit"
+        <button type="reset" (click)="onSubmit('left')" mat-raised-button color="primary"
         [disabled]="!diagnosisForm.valid">Add Left Eye Diagnosis</button>
         <br />
         <ng-container *ngIf="leftDiagnosis.length > 0">
@@ -57,7 +57,7 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary" id="diagnosis-submit"
+        <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary"
         [disabled]="!diagnosisForm.valid">Add Right Eye Diagnosis</button>
         <br />
         <ng-container *ngIf="rightDiagnosis.length > 0">

@@ -111,10 +111,10 @@ export class AppComponent implements OnInit {
         element: '#primary-confirm',
         intro: 'Select from PRIMARY AND SECONDARY and from PROVISIONAL and CONFIRMED '
       },
-      {
-        element: '#diagnosis-submit',
-        intro: 'Click on \'Add diagnosis\' to give diagnosis'
-      },
+      // {
+      //   element: '#diagnosis-submit',
+      //   intro: 'Click on \'Add diagnosis\' to give diagnosis'
+      // },
       {
         element: '#doctor-notes',
         // tslint:disable-next-line: max-line-length
