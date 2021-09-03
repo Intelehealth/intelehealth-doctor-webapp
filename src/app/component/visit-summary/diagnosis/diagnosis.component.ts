@@ -55,22 +55,19 @@ export class DiagnosisComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptLeftEyeDiagnosis)
+    [
+      {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
+      {concept: this.conceptRightEyeDiagnosis , name: 'rightDiagnosis'}
+    ].forEach(each => {
+      this.diagnosisService.getObs(this.patientId, each.concept)
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.leftDiagnosis.push(obs);
+            this[each.name].push(obs);
           }
         });
       });
-    this.diagnosisService.getObs(this.patientId, this.conceptRightEyeDiagnosis)
-      .subscribe(response => {
-        response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.rightDiagnosis.push(obs);
-          }
-        });
-      });
+    });
   }
 
   search(event) {

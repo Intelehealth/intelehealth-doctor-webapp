@@ -12,9 +12,9 @@
           </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">Submit</button>
 </div>
-<div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
-  <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a></span>
-  <span *ngIf="phoneNo"><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
+<div id="call-link" *ngIf="phoneNo"> Start a call: 
+  <span (click)="getWhatsApp()"><a class="fab fa-whatsapp"></a></span>
+  <span><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
 </div>
 <div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
   Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
