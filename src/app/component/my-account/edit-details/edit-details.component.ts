@@ -17,6 +17,7 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
+                      "All",
                       "Referred out",
                       "MSF MD",
                       "Doctor not needed"

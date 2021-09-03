@@ -108,8 +108,19 @@ export class HomepageComponent implements OnInit {
         const pVisits = response.results;
         const userRoles = this.userDetails.roles.filter(a=>a.name == "Project Manager")
         console.log('userRoles:---110 ', userRoles);
-        const visits1 = userRoles.length > 0 ? pVisits : pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
-
+        //const visits1 = userRoles.length > 0 ? pVisits : pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
+        let visits1 =[];
+        if (this.specialization && this.specialization.toLowerCase() == "all") {
+          visits1 = pVisits;
+        } else {
+          visits1 = pVisits.filter((a) =>
+            a.attributes.length > 0
+              ? a.attributes.find((b) => {
+                  return b.value == this.specialization;
+                })
+              : ""
+          );
+        }
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
           if (!setObj.has(item.patient.identifiers[0].identifier)) {
@@ -128,38 +139,8 @@ export class HomepageComponent implements OnInit {
           stateVisits = visits;
         }
         stateVisits.forEach((active) => {
-          
-          if(this.specialization === undefined){
-            this.visitCategory(active);
-          }
-          if (active.encounters.length > 0) {
-            if (active.attributes.length) {
-              const attributes = active.attributes;
-              
-              const speRequired = attributes.filter(
-                (attr) =>
-                attr.attributeType.uuid ===
-                "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-                );
-              if (speRequired.length) {
-                speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
-                    if (index === 0) {
-                      this.visitCategory(active);
-                    }
-                    if (index === 1 && spe[0] !== spe[1]) {
-                      this.visitCategory(active);
-                    }
-                  }
-                });
-              }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
-            }
-            
-          }
+          this.visitCategory(active);
           this.value = {};
-          
         });
         this.setSpiner = false;
       },
