@@ -7,10 +7,6 @@
 label {
     margin-right: 20px;
 }
-
-.mat-radio-button ~ .mat-radio-button {
-    margin-left: 16px;
-}
   
 .fab {
     font-size: 30px;
@@ -46,4 +42,14 @@ label {
   
 .material-icons{
     vertical-align: text-bottom;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+}
+
+.radio-button {
+    margin: 5px;
 }

@@ -39,6 +39,8 @@ export class PatientInteractionComponent implements OnInit {
   patientId: string;
   conceptLeftEyeDiagnosis: String = '1796244d-e936-4ab8-ac8a-c9bcfa476570';
   conceptRightEyeDiagnosis: String = '58cae684-1509-4fd5-b256-5ca980ec6bb4';
+  ReferralLocationConcept: String = '56ed8dca-a028-4108-b42e-6f9fab6f5d9e';
+  referralLocation: any = [];
   leftDiagnosis: any = [];
   rightDiagnosis: any = [];
   patientInfo: any;
@@ -97,13 +99,35 @@ export class PatientInteractionComponent implements OnInit {
       });
   }
 
+  // [{concept: this.referralConcept, name: 'referral'},
+  //     {concept: this.urgentConcept, name: 'urgent'},
+  //     {concept: this.ReferralLocationConcept, name: 'referralLocation'},
+  //     {concept: this.ReferralReasonConcept, name: 'referralReason'}
+  //   ].forEach(each => {
+  //     this.diagnosisService.getObs(this.patientId, each.concept)
+  //     .subscribe(response => {
+  //       response.results.forEach(obs => {
+  //         if (obs.encounter.visit.uuid === this.visitUuid) {
+  //           if (obs.value === 'true') {
+  //             this[each.name] = true;
+  //             this[`${each.name}Obs`] = obs;
+  //           } else {
+  //             this[`${each.name}Obs`] = obs;
+  //           }
+  //         }
+  //       });
+  //     });
+  //   });
+
+
   getWhatsApp = () => {
     this.leftDiagnosis = [];
     this.rightDiagnosis = [];
     let leftEye = '', rightEye = '', flag = 0, createMsg = false;
     [
       {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
-      {concept: this.conceptRightEyeDiagnosis, name: 'rightDiagnosis'}
+      {concept: this.conceptRightEyeDiagnosis, name: 'rightDiagnosis'},
+      {concept: this.ReferralLocationConcept, name: 'referralLocation'}
     ].forEach((each) => {
       this.diagnosisService.getObs(this.patientId, each.concept)
       .subscribe(response => {
@@ -115,7 +139,7 @@ export class PatientInteractionComponent implements OnInit {
               createMsg = true;
             }
           }
-          if (flag === 2 && createMsg) {
+          if (flag === 3 && createMsg) {
             // tslint:disable-next-line: max-line-length
             for (let j = 0; j < this.rightDiagnosis.length; j++) {
               rightEye += `${this.rightDiagnosis[j].value}${this.rightDiagnosis.length !== j + 1 ? ', ' : ''}`;
@@ -128,7 +152,8 @@ export class PatientInteractionComponent implements OnInit {
               %0aRight Eye: ${rightEye ? rightEye : ''}
               %0aLeft Eye: ${leftEye ? leftEye : ''}
               %0a
-              %0aIt is recommended that ${this.patientInfo.person.display} come to the nearest {ReferralLocation} to receive free additional testing and treatment.
+              ${this.referralLocation.length ?
+              `%0aIt is recommended that ${this.patientInfo.person.display} come to the nearest ${this.referralLocation[0].value} to receive free additional testing and treatment.` : ''}
               %0a
               %0aFor questions, please call: (0413) 261 9100`;
               window.open(`https://wa.me/91${9763264138}?text=${text}`, '_blank');
