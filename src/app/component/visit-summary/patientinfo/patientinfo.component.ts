@@ -42,16 +42,16 @@ export class PatientinfoComponent implements OnInit {
         if (attri.attributeType.display.match("Landmark")) {
           this.info["Landmark"] = attri.value;
         } 
-        if (attri.attributeType.display.match("Survivor_marriage_type")) {
+        if (attri.attributeType.display.match("Survivor marriage type")) {
           this.info["Survivor_marriage_type"] = attri.value;
         } 
-        if (attri.attributeType.display.match("Marriage_age")) {
+        if (attri.attributeType.display.match("Marriage age")) {
           this.info["Marriage_age"] = attri.value;
         } 
         if (attri.attributeType.display.match("Education")) {
           this.info["Education"] = attri.value;
         }
-        if (attri.attributeType.display.match("Telephone_number_for_survivor")) {
+        if (attri.attributeType.display.match("Telephone number for survivor")) {
           this.info["Telephone_number_for_survivor"] = attri.value;
         }
         if (attri.attributeType.display.match("Case reffered by")) {
@@ -98,6 +98,9 @@ export class PatientinfoComponent implements OnInit {
         }
         if (attri.attributeType.display.match("Survivor living with")) {
           this.info["Survivor_living_with"] = attri.value;
+        }
+        if (attri.attributeType.display.match("Maritual Status")) {
+          this.info["maritualStatus"] = attri.value;
         }
       })
       this.patientInfo.push(this.info);
