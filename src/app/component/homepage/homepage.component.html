@@ -69,6 +69,7 @@
           (tableEmitter)="tableChange($event)"
           (emptyRow)="loadNextSlot($event)"
           [data]="flagVisit"
+          [allVisitsLoaded]="allVisitsLoaded"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
@@ -90,6 +91,7 @@
           (tableEmitter)="tableChange($event)"
           [data]="waitingVisit"
           (emptyRow)="loadNextSlot($event)"
+          [allVisitsLoaded]="allVisitsLoaded"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
@@ -111,6 +113,7 @@
           (tableEmitter)="tableChange($event)"
           [data]="progressVisit"
           (emptyRow)="loadNextSlot($event)"
+          [allVisitsLoaded]="allVisitsLoaded"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>
@@ -132,6 +135,7 @@
           (tableEmitter)="tableChange($event)"
           [data]="completedVisit"
           (emptyRow)="loadNextSlot($event)"
+          [allVisitsLoaded]="allVisitsLoaded"
         ></app-tables>
       </ng-container>
     </mat-expansion-panel>

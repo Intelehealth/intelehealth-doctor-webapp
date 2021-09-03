@@ -35,6 +35,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   specialization;
   allVisits = [];
   limit = 100;
+  allVisitsLoaded = false;
 
   constructor(
     private sessionService: SessionService,
@@ -131,12 +132,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
               this.visitCategory(active);
             }
           }
-          if (typeof cb === "function") {
-            cb();
-            this.helper.refreshTable.next();
-          }
           this.value = {};
         });
+        if (response.results.length === 0) {
+          this.setVisitlengthAsPerLoadedData();
+          this.allVisitsLoaded = true;
+        }
+        this.helper.refreshTable.next();
         this.setSpiner = false;
         this.isLoadingNextSlot = false;
       },
@@ -148,6 +150,21 @@ export class HomepageComponent implements OnInit, OnDestroy {
         }
       }
     );
+  }
+
+  getLength(arr) {
+    let data = [];
+    arr.forEach((item) => {
+      data = this.helper.getUpdatedValue(data, item, "id");
+    });
+    return data.filter((i) => i).slice().length;
+  }
+
+  setVisitlengthAsPerLoadedData() {
+    this.flagPatientNo = this.getLength(this.flagVisit);
+    this.activePatient = this.getLength(this.waitingVisit);
+    this.visitNoteNo = this.getLength(this.progressVisit);
+    this.completeVisitNo = this.getLength(this.completedVisit);
   }
 
   get completedVisit() {
@@ -170,25 +187,28 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   visitCategory(active) {
     const { encounters = [] } = active;
+    let encounter;
     if (
-      this.checkVisit(encounters, "Visit Complete") ||
-      this.checkVisit(encounters, "Patient Exit Survey")
+      (encounter =
+        this.checkVisit(encounters, "Visit Complete") ||
+        this.checkVisit(encounters, "Patient Exit Survey"))
     ) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active, encounter);
       this.service.completedVisit.push(values);
-    } else if (this.checkVisit(encounters, "Visit Note")) {
-      const values = this.assignValueToProperty(active);
+    } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
+      const values = this.assignValueToProperty(active, encounter);
       this.service.progressVisit.push(values);
-    } else if (this.checkVisit(encounters, "Flagged")) {
+    } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active);
+        const values = this.assignValueToProperty(active, encounter);
         this.service.flagVisit.push(values);
       }
     } else if (
-      this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")
+      (encounter =
+        this.checkVisit(encounters, "ADULTINITIAL") ||
+        this.checkVisit(encounters, "Vitals"))
     ) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active, encounter);
       this.service.waitingVisit.push(values);
     }
   }
@@ -210,13 +230,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   isLoadingNextSlot = false;
   loadNextSlot() {
-    if (!this.isLoadingNextSlot) {
+    if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
       this.isLoadingNextSlot = true;
       this.tableChange({ loadMore: true, refresh: () => {} });
     }
   }
 
-  assignValueToProperty(active) {
+  assignValueToProperty(active, encounter) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -224,12 +244,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = active.encounters[0].encounterType.display;
+    this.value.status = encounter.encounterType.display;
     this.value.provider =
-      active.encounters[0].encounterProviders[0].provider.display.split(
-        "- "
-      )[1];
-    this.value.lastSeen = active.encounters[0].encounterDatetime;
+      encounter.encounterProviders[0].provider.display.split("- ")[1];
+    this.value.lastSeen = encounter.encounterDatetime;
     return this.value;
   }
 

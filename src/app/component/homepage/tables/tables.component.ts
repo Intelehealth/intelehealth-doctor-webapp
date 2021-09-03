@@ -38,6 +38,13 @@ export class TablesComponent implements OnInit {
   @Input() visitCounts;
   @Output() tableEmitter = new EventEmitter();
   @Output() emptyRow = new EventEmitter();
+  @Input() set allVisitsLoaded(val) {
+    this.dataLoaded = val;
+    if (this.dataLoaded) {
+      this.refresh();
+    }
+  }
+  dataLoaded = false;
   loadedDataLength: Number = 0;
 
   constructor(private service: VisitService, private helper: HelperService) {}
@@ -82,7 +89,9 @@ export class TablesComponent implements OnInit {
   }
 
   hasEmptyRow() {
-    this.emptyRow.emit();
+    if (!this.dataLoaded) {
+      this.emptyRow.emit();
+    }
   }
 
   changePage({ length, pageIndex, pageSize }) {
