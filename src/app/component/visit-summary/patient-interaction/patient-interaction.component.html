@@ -16,8 +16,8 @@
   <span (click)="getWhatsApp()"><a class="fab fa-whatsapp"></a></span>
   <span><a href="tel:{{phoneNo}}" class="fas fa-phone-volume"></a></span>
 </div>
-<div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
-  Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
+<div id="call-link" *ngIf="!phoneNo"> 
+  Patient phone number is not available
   <br/>
 </div>
 <div *ngFor="let msg of msg">  

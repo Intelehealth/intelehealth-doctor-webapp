@@ -29,8 +29,7 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
 })
 export class PatientInteractionComponent implements OnInit {
   msg: any = [];
-  whatsappLink: Boolean;
-  phoneNo: any;
+  phoneNo: any = 999999999;
   patientDetails: any;
   doctorDetails: any = {};
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
@@ -84,9 +83,8 @@ export class PatientInteractionComponent implements OnInit {
     .subscribe(info => {
       this.patientInfo = info;
       info.person['attributes'].forEach(attri => {
-        if (attri.attributeType.display.match('Telephone Number')) {
-          this.phoneNo = attri.value;
-          this.whatsappLink = true;
+        if (!attri.attributeType.display.match('Telephone Number')) {
+          // this.phoneNo = attri.value;
         }
       });
     });
@@ -98,27 +96,6 @@ export class PatientInteractionComponent implements OnInit {
         }
       });
   }
-
-  // [{concept: this.referralConcept, name: 'referral'},
-  //     {concept: this.urgentConcept, name: 'urgent'},
-  //     {concept: this.ReferralLocationConcept, name: 'referralLocation'},
-  //     {concept: this.ReferralReasonConcept, name: 'referralReason'}
-  //   ].forEach(each => {
-  //     this.diagnosisService.getObs(this.patientId, each.concept)
-  //     .subscribe(response => {
-  //       response.results.forEach(obs => {
-  //         if (obs.encounter.visit.uuid === this.visitUuid) {
-  //           if (obs.value === 'true') {
-  //             this[each.name] = true;
-  //             this[`${each.name}Obs`] = obs;
-  //           } else {
-  //             this[`${each.name}Obs`] = obs;
-  //           }
-  //         }
-  //       });
-  //     });
-  //   });
-
 
   getWhatsApp = () => {
     this.leftDiagnosis = [];
@@ -156,7 +133,7 @@ export class PatientInteractionComponent implements OnInit {
               `%0aIt is recommended that ${this.patientInfo.person.display} come to the nearest ${this.referralLocation[0].value} to receive free additional testing and treatment.` : ''}
               %0a
               %0aFor questions, please call: (0413) 261 9100`;
-              window.open(`https://wa.me/91${9763264138}?text=${text}`, '_blank');
+              window.open(`https://wa.me/91${this.phoneNo}?text=${text}`, '_blank');
             }, 1000);
           }
         });
