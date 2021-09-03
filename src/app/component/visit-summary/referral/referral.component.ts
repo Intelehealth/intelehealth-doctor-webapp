@@ -26,15 +26,22 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
   ]
 })
 export class ReferralComponent implements OnInit {
-  referral: Boolean = false;
-  urgent: Boolean = false;
-  referralConcept = '3269f1ca-29ae-4b23-b5b9-9db6c1848eb9';
-  urgentConcept = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
+  referralConcept: String = '3269f1ca-29ae-4b23-b5b9-9db6c1848eb9';
+  urgentConcept: String = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
   encounterUuid: string;
   patientId: string;
   visitUuid: string;
+  referral: Boolean = false;
+  urgent: Boolean = false;
   referralObs: object = {};
   urgentObs: object = {};
+  ReferralLocationConcept: String = '56ed8dca-a028-4108-b42e-6f9fab6f5d9e';
+  referralLocationObs: object = {};
+  referralLocation: string;
+  ReferralReasonConcept: String = 'de7740d4-1f5c-4c0d-834a-b8de7b5b5458';
+  referralReasonObs: object = {};
+  referralReason: string;
+
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
@@ -43,31 +50,28 @@ export class ReferralComponent implements OnInit {
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.referralConcept)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          if (obs.value === 'true') {
-            this.referral = true;
-            this.referralObs = obs;
+    [{concept: this.referralConcept, name: 'referral'},
+      {concept: this.urgentConcept, name: 'urgent'},
+      {concept: this.ReferralLocationConcept, name: 'referralLocation'},
+      {concept: this.ReferralReasonConcept, name: 'referralReason'}
+    ].forEach(each => {
+      this.diagnosisService.getObs(this.patientId, each.concept)
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            if (obs.value === 'true') {
+              this[each.name] = true;
+              this[`${each.name}Obs`] = obs;
+            } else {
+              this[`${each.name}Obs`] = obs;
+            }
           }
-        }
-      });
-    });
-    this.diagnosisService.getObs(this.patientId, this.urgentConcept)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          if (obs.value === 'true') {
-            this.urgent = true;
-            this.urgentObs = obs;
-          }
-        }
+        });
       });
     });
   }
 
-  updateValue = (type, value) => {
+  onChangeHandler = (type, value) => {
     this[type] = value;
     this.save(type);
   }
@@ -78,11 +82,14 @@ export class ReferralComponent implements OnInit {
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
+      // tslint:disable-next-line: max-line-length
+      const concept = type === 'referralLocation' ? this.ReferralLocationConcept : type === 'referralReason' ? this.ReferralReasonConcept : type === 'referral' ? this.referralConcept : this.urgentConcept;
+      const value = type === 'referralLocation' ? this.referralLocation : type === 'referralReason' ? this.referralReason : type === 'referral' ? this.referral : this.urgent;
       const json = {
-        concept: type === 'referral' ? this.referralConcept : this.urgentConcept,
+        concept,
         person: this.patientId,
         obsDatetime: date,
-        value: type === 'referral' ? this.referral : this.urgent,
+        value,
         encounter: this.encounterUuid
       };
       this.service.postObs(json).subscribe(response => {
@@ -98,7 +105,12 @@ export class ReferralComponent implements OnInit {
   delete(type, uuid) {
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
-        this[type] = false;
+        if (type === 'referral' || type === 'urgent') {
+          this[type] = false;
+          this[`${type}Obs`] = {};
+        } else {
+          this[`${type}Obs`] = {};
+        }
       });
   }
 }
