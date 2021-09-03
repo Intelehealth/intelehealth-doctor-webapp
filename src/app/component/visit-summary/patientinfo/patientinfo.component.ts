@@ -25,7 +25,6 @@ export class PatientinfoComponent implements OnInit {
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitService.patientInfo(uuid).subscribe((info) => {
-      console.log('info: ', info);
       this.info = info.person;
       this.state = info.person.preferredAddress.stateProvince
       this.patientIdentifier = info.identifiers[0].identifier;
@@ -69,10 +68,10 @@ export class PatientinfoComponent implements OnInit {
         if (attri.attributeType.display.match("Husband Occupation")) {
           this.info["husbandOccupation"] = attri.value;
         }
-        if (attri.attributeType.display.match("Income")) {
+        if (attri.attributeType.display?.startsWith("Income")) {
           this.info["income"] = attri.value;
         }
-        if (attri.attributeType.display.match("Husband's Income")) {
+        if (attri.attributeType.display?.startsWith("Husband's Income")) {
           this.info["husbandIncome"] = attri.value;
         }
         if (attri.attributeType.display.match("Survivor maritual status")) {
