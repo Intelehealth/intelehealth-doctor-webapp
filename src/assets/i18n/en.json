@@ -210,6 +210,11 @@
     "Oops!! You are on a wrong page":"Oops!! You're on a wrong page",
     "No Data Available":"No Data Available",
     "All":"All",
+    "Pediatrician":"Pediatrician",
+    "Neonatologist":"Neonatologist",
+    "Neuropathologist":"Neuropathologist",
+    "Family doctor":"Family doctor",
+    "Infectious disease specialist":"Infectious disease specialist",
     "messages": {
             "welcome":"Welcome",
             "loginError":"Username & Password doesn't match",

@@ -210,6 +210,11 @@
     "Oops!! You are on a wrong page":"Ошибка! Вы попали не на ту страницу",
     "No Data Available":"Данные недоступны",
     "All":"Все",
+    "Pediatrician":"педиатр",
+    "Neonatologist":"неонатолог",
+    "Neuropathologist":"невропатолог",
+    "Family doctor":"семейный врач",
+    "Infectious disease specialist":"инфекционист",
     "messages": {
         "welcome":"Добро пожаловать",
         "loginError":"Имя пользователя и пароль не совпадают",

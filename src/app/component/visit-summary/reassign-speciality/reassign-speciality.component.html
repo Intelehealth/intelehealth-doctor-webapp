@@ -15,7 +15,7 @@
 <div id="followup-button" *ngIf="type == 'Y'">
     <mat-form-field class="example-full-width"  >
         <mat-select placeholder="{{'Specialization'|translate}}" formControlName="specialization">
-            <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{specialization}}</mat-option>
+            <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{(specialization) | translate}}</mat-option>
         </mat-select>
     </mat-form-field>
     <br>

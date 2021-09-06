@@ -55,7 +55,7 @@
             <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
               <th> {{ 'Specialization' | translate }} :</th>
               <td *ngIf="providerDetails.specialization">
-                {{ providerDetails.specialization.value }}
+                {{ (providerDetails.specialization.value) | translate }}
               </td>
             </tr>
             <tr>
