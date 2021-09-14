@@ -22,6 +22,19 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
   ngOnInit() {
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    
+     this.diagnosisService.getObs(patientUuid, this.conceptFamilyHistory)
+    .subscribe(response => {
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === visitUuid) {
+          this.pastMedical.push(obs);
+        }
+      });
+      if (this.pastMedical !== undefined) {
+        this.pastMedicalHistoryPresent = true;
+      }
+    });
+    
     this.diagnosisService.getObs(patientUuid, this.conceptPastMedical)
     .subscribe(response => {
       response.results.forEach(obs => {
@@ -34,17 +47,7 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
       }
     });
     
-    this.diagnosisService.getObs(patientUuid, this.conceptFamilyHistory)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === visitUuid) {
-          this.pastMedical.push(obs);
-        }
-      });
-      if (this.pastMedical !== undefined) {
-        this.pastMedicalHistoryPresent = true;
-      }
-    });
+
 }
 }
 
