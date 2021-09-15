@@ -43,6 +43,17 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-3" style="padding: 3px">
+            <div class="card text-white" style="background: #410685">
+                <div class="card-body">
+                    <div class="text-left">
+                        FOLLOW UP VISITS<span style="float: right">{{
+                            followUpVisitNo
+                            }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- PRIORITY Visit -->
@@ -91,6 +102,18 @@
             </mat-expansion-panel-header>
             <ng-container *ngIf="completedVisit.length > 0">
                 <app-tables [data]="completedVisit"></app-tables>
+            </ng-container>
+        </mat-expansion-panel>
+
+        <!-- Follow up visits-->
+        <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <h5>FOLLOW UP VISITS</h5>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="followUpVisit.length > 0">
+                <app-tables [data]="followUpVisit" [isFollowup]="true"></app-tables>
             </ng-container>
         </mat-expansion-panel>
     </mat-accordion>

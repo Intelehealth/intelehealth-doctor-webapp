@@ -24,6 +24,7 @@ export class TablesComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input() data;
+  @Input() isFollowup;
   constructor() {}
 
   ngOnInit() {

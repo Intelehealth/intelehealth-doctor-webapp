@@ -19,6 +19,7 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID</th>
       <td mat-cell *matCellDef="let row">
         <a
+          [class.disabled]="isFollowup ? true : null"
           id="patient-id"
           [routerLink]="['/visitSummary', row.patientId, row.visitId]"
         >
