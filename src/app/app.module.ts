@@ -79,6 +79,7 @@ import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { RedirectComponent } from "./component/redirect/redirect.component";
+import { ResolutionFeedbackComponent } from './component/visit-summary/resolution-feedback/resolution-feedback.component';
 
 
 
@@ -120,7 +121,8 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     ModalsComponent,
     MainComponent,
     ConfirmDialogComponent,
-    ReassignSpecialityComponent
+    ReassignSpecialityComponent,
+    ResolutionFeedbackComponent
   ],
 
   imports: [

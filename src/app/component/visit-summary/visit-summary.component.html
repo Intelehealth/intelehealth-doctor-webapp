@@ -21,6 +21,10 @@
         <app-presenting-complaints></app-presenting-complaints>
   </mat-card>
   <br>
+  <mat-card *ngIf="!isFollowUpComplaint">
+        <app-resolution-feedback ></app-resolution-feedback>
+  </mat-card>
+  <br>
   <!-- <mat-card>
         <app-family-history></app-family-history>
   </mat-card> -->
@@ -28,7 +32,6 @@
   <mat-card>
         <app-past-medical-history></app-past-medical-history>
   </mat-card> -->
-  <br>
   <!-- <mat-card>
         <app-vital></app-vital>
   </mat-card>
@@ -67,7 +70,7 @@
 
 
   <div class="text-center" *ngIf="!show" [hidden]="userRole" >
-        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">Start Case
+        <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="!caseNote">Start Case
               Note</button>
   </div>
 

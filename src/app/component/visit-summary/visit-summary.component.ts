@@ -25,6 +25,7 @@ export class VisitSummaryComponent implements OnInit {
   text: string;
   font: string;
   visitNotePresent = false;
+  caseNote = false;
   visitCompletePresent = false;
   setSpiner = true;
   doctorDetails;
@@ -110,6 +111,7 @@ export class VisitSummaryComponent implements OnInit {
         if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
+          this.caseNote = true;
           this.show = true;
         }
         if (visit.display.match("Visit Complete") !== null) {
@@ -137,6 +139,7 @@ export class VisitSummaryComponent implements OnInit {
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     if (!this.visitNotePresent) {
+      this.caseNote = true;
       const userDetails = getFromStorage("user");
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
@@ -156,7 +159,6 @@ export class VisitSummaryComponent implements OnInit {
         };
         this.service.postEncounter(json).subscribe((response) => {
           if (response) {
-            this.visitNotePresent = true;
             this.visitService
               .fetchVisitDetails(visitUuid)
               .subscribe((visitDetails) => {
@@ -208,7 +210,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   getChiefComplaint(complaint) {
-    if(complaint && complaint.observation.match("Follow-up for Covid-19") !== null && complaint.visitStatus ==="Active") {
+    if(complaint && complaint.observation.match("Domestic Violence") !== null && complaint.observation.match("Safe abortion") !== null  && complaint.visitStatus ==="Active") {
       this.isFollowUpComplaint = true;
     }
   }

@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://testhelpline.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp:"https://testhelpline.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://testhelpline.intelehealth.org/openmrs",
-  mindmapURL: "http://localhost:3004/api",
+  baseURL: "https://training.vikalpindia.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://training.vikalpindia.org/openmrs/coreapps/diagnoses",
+  basURLLegacy: "https://training.vikalpindia.org/openmrs",
+  minmapURL: "http://localhost:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };
 
