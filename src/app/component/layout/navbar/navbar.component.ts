@@ -167,7 +167,7 @@ export class NavbarComponent implements OnInit {
       });
     } else {
       // tslint:disable-next-line: max-line-length
-      const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      const url = `${this.baseURL}/person?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe(
         (response) => {
           this.values = [];
