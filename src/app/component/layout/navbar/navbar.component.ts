@@ -160,7 +160,7 @@ export class NavbarComponent implements OnInit {
 
   search() {
     const search = this.searchForm.value;
-    if (search.findInput.length < 3) {
+    if (search.findInput === null || search.findInput.length < 3) {
       this.dialog.open(FindPatientComponent, {
         width: "50%",
         data: { value: "Please Enter min 3 characters" },
