@@ -44,8 +44,8 @@ export class NavbarComponent implements OnInit {
   endTimeData: any;
   showData: any;
   error: any = { isError: false, errorMessage: "" };
-  langs = ['en', 'ru', 'KG'];
-  selectedLanguage:string = 'en';
+  langs = ["en", "ru", "KG"];
+  selectedLanguage: string = "en";
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -78,8 +78,10 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if(localStorage.getItem("selectedLanguage")) {
-      this.translateService.setDefaultLang(localStorage.getItem("selectedLanguage"));
+    if (localStorage.getItem("selectedLanguage")) {
+      this.translateService.setDefaultLang(
+        localStorage.getItem("selectedLanguage")
+      );
       this.selectedLanguage = localStorage.getItem("selectedLanguage");
     } else {
       let browserlang = this.translateService.getBrowserLang();
@@ -87,7 +89,7 @@ export class NavbarComponent implements OnInit {
         this.translateService.setDefaultLang(browserlang);
         this.selectedLanguage = browserlang;
       } else {
-        this.translateService.setDefaultLang('en');
+        this.translateService.setDefaultLang("en");
       }
     }
     const userDetails = getFromStorage("user");
@@ -158,6 +160,17 @@ export class NavbarComponent implements OnInit {
     this.dialog.open(ChangePasswordComponent, { width: "500px" });
   }
 
+  searchPatientId(term) {
+    const url = `${this.baseURL}/patient?q=${term}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+    this.http.get(url).subscribe((res: any) => {
+      this.values = res.results.filter((i) => i);
+      this.dialog.open(FindPatientComponent, {
+        width: "90%",
+        data: { value: this.values },
+      });
+    });
+  }
+
   search() {
     const search = this.searchForm.value;
     if (search.findInput === null || search.findInput.length < 3) {
@@ -167,7 +180,8 @@ export class NavbarComponent implements OnInit {
       });
     } else {
       // tslint:disable-next-line: max-line-length
-      const url = `${this.baseURL}/person?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      const term = search.findInput;
+      const url = `${this.baseURL}/person?q=${term}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe(
         (response) => {
           this.values = [];
@@ -178,10 +192,14 @@ export class NavbarComponent implements OnInit {
               }
             }
           });
-          this.dialog.open(FindPatientComponent, {
-            width: "90%",
-            data: { value: this.values },
-          });
+          if (this.values.length === 0) {
+            this.searchPatientId(term);
+          } else {
+            this.dialog.open(FindPatientComponent, {
+              width: "90%",
+              data: { value: this.values },
+            });
+          }
         },
         (err) => {
           if (err.error instanceof Error) {
@@ -234,7 +252,10 @@ export class NavbarComponent implements OnInit {
                   .subscribe((response) => {
                     if (response) {
                       if (!reSubscribe) {
-                        this.translationService.getTranslation('Notification Subscribed Successfully')                    }
+                        this.translationService.getTranslation(
+                          "Notification Subscribed Successfully"
+                        );
+                      }
                       saveToStorage("subscribed", true);
                       this.subscribeAccess = true;
                     }
