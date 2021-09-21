@@ -27,11 +27,11 @@ export class EditDetailsComponent implements OnInit {
     gender: new FormControl(this.data.person ? this.data.person.gender : null, Validators.required),
     phoneNumber: new FormControl(
       this.data.phoneNumber ? this.data.phoneNumber.value : null,
-      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
+      [Validators.required, Validators.pattern("^[0-9]{10,12}$")]
     ),
     whatsapp: new FormControl(
       this.data.whatsapp ? this.data.whatsapp.value : null,
-      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
+      [Validators.required, Validators.pattern("^[0-9]{10,12}$")]
     ),
     emailId: new FormControl(
       this.data.emailId ? this.data.emailId.value : null

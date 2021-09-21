@@ -10,7 +10,7 @@
         </span>
         <span class="preferred-name">{{ value.person.display }}</span>
         <span class="gender"
-          >{{ value?.person?.gender || value?.person?.person?.gender }},
+          >{{ (value?.person?.gender || value?.person?.person?.gender) | translate }},
         </span>
         <span class="age">{{
           value?.person?.age || value?.person?.person?.age
