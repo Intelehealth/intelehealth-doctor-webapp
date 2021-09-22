@@ -12,18 +12,18 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^10.0.9",
-    "@angular/cdk": "^10.1.3",
-    "@angular/common": "~10.0.9",
-    "@angular/compiler": "~10.0.9",
-    "@angular/core": "~10.0.9",
-    "@angular/forms": "~10.0.9",
-    "@angular/localize": "^10.0.9",
+    "@angular/animations": "^13.0.0-next.6",
+    "@angular/cdk": "^12.2.6",
+    "@angular/common": "~13.0.0-next.6",
+    "@angular/compiler": "~13.0.0-next.6",
+    "@angular/core": "~13.0.0-next.6",
+    "@angular/forms": "~13.0.0-next.6",
+    "@angular/localize": "^13.0.0-next.6",
     "@angular/material": "^10.1.3",
-    "@angular/platform-browser": "~10.0.9",
-    "@angular/platform-browser-dynamic": "~10.0.9",
-    "@angular/router": "~10.0.9",
-    "@angular/service-worker": "~10.0.9",
+    "@angular/platform-browser": "~13.0.0-next.6",
+    "@angular/platform-browser-dynamic": "~13.0.0-next.6",
+    "@angular/router": "~13.0.0-next.6",
+    "@angular/service-worker": "~13.0.0-next.6",
     "@fingerprintjs/fingerprintjs": "^3.0.5",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
     "@types/intro.js": "^2.4.7",
@@ -37,13 +37,13 @@
     "serialize-javascript": "^2.1.2",
     "tslib": "^1.9.0",
     "webrtc-adapter": "^7.7.1",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.6",
     "@angular/cli": "~10.0.6",
-    "@angular/compiler-cli": "~10.0.9",
-    "@angular/language-service": "~10.0.9",
+    "@angular/compiler-cli": "~13.0.0-next.6",
+    "@angular/language-service": "~13.0.0-next.6",
     "@schematics/angular": "^10.0.6",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
@@ -59,6 +59,6 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "~3.9.7"
+    "typescript": "~4.3.5"
   }
 }

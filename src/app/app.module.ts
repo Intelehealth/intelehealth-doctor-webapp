@@ -175,7 +175,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
         ]
       },
       { path: '**', component: Page404Component },
-    ], { scrollPositionRestoration: 'enabled' }),
+    ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
