@@ -113,13 +113,16 @@ export class HomepageComponent implements OnInit {
         if (this.specialization && this.specialization.toLowerCase() == "all") {
           visits1 = pVisits;
         } else {
-          visits1 = pVisits.filter((a) =>
-            a.attributes.length > 0
-              ? a.attributes.find((b) => {
-                  return b.value == this.specialization;
-                })
-              : ""
-          );
+          visits1 = pVisits.filter((a) => {
+            if(a.attributes.length > 0) {
+              let splAttributes = a.attributes.filter((a) =>  a.display.includes("Visit Speciality"));              
+              if(splAttributes.length > 1) {
+                return splAttributes.sort((a,b) => a.dateChanged > b.dateChanged)[0].value == this.specialization;
+              } else {
+                return splAttributes[0].value == this.specialization;
+              }
+            }
+          });
         }
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
