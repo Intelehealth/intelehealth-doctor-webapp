@@ -87,6 +87,7 @@ export class HomepageComponent implements OnInit {
           }
           this.value = {};
         });
+        saveToStorage('allAwaitingConsult', this.waitingVisit);
         this.setSpiner = false;
         this.activePatient = length;
         this.flagPatientNo = flagLength;

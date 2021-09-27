@@ -19,6 +19,11 @@ visitNotePresent = false;
 visitCompletePresent = false;
 setSpiner = true;
 doctorDetails; doctorValue;
+allVisit: Array<{}> = getFromStorage('allAwaitingConsult');
+visitUuid: String = '';
+patientUuid: String = '';
+next: any;
+noVisit: Boolean = false;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,
@@ -28,13 +33,14 @@ constructor(private service: EncounterService,
             private router: Router) {
               this.router.routeReuseStrategy.shouldReuseRoute = function() {
                 return false;
-            };
+              };
             }
 
   ngOnInit() {
     setTimeout(() => {this.setSpiner = false; }, 1000);
-    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.visitService.fetchVisitDetails(visitUuid)
+    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    this.visitService.fetchVisitDetails(this.visitUuid)
     .subscribe(visitDetails => {
       visitDetails.encounters.forEach(visit => {
         if (visit.display.match('Visit Note') !== null) {
@@ -54,36 +60,53 @@ constructor(private service: EncounterService,
         }
       });
     });
+    this.nextVisitButton();
+  }
+
+  nextVisitButton() {
+    if (this.allVisit.length > 1) {
+      const currentVisit = this.allVisit.findIndex((visit: any) => this.visitUuid === visit.visitId);
+      if (currentVisit !== -1) {
+        this.next = {
+          patientId : this.allVisit[currentVisit + 1]['patientId'],
+          visitId: this.allVisit[currentVisit + 1]['visitId']
+        };
+      }
+    } else {
+      this.noVisit = true;
+    }
   }
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
-    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
-    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     if (!this.visitNotePresent) {
       // const userDetails = getFromStorage('user');
       const providerDetails = getFromStorage('provider');
       // if (userDetails && providerDetails) {
         const providerUuid = providerDetails.uuid;
         const json = {
-          patient: patientUuid,
+          patient: this.patientUuid,
           encounterType: 'd7151f82-c1f3-4152-a605-2f9ea7414a79',
           encounterProviders: [{
             provider: providerUuid,
             encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
           }],
-          visit: visitUuid,
+          visit: this.visitUuid,
           encounterDatetime: myDate
         };
         this.service.postEncounter(json)
         .subscribe(response => {
           if (response) {
-            this.visitService.fetchVisitDetails(visitUuid)
+            this.visitService.fetchVisitDetails(this.visitUuid)
             .subscribe(visitDetails => { saveToStorage('visitNoteProvider', visitDetails.encounters[0]); });
             this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, {
-              duration: 4000
-            });
+            this.snackbar.open(`Visit Note Created`, null, {duration: 4000});
+            const currentVisit = this.allVisit.findIndex((visit: any) => this.visitUuid === visit.visitId);
+            if (currentVisit === this.allVisit.length) {
+              this.noVisit = true;
+            }
+            this.allVisit.splice(currentVisit, 1);
+            saveToStorage('allAwaitingConsult', this.allVisit);
           } else {
             this.snackbar.open(`Visit Note Not Created`, null, {duration: 4000});
           }
@@ -94,8 +117,6 @@ constructor(private service: EncounterService,
 
   sign() {
     const myDate = new Date(Date.now() - 30000);
-    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
-    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
     // const userDetails = getFromStorage('user');
     const providerDetails = getFromStorage('provider');
     // if (userDetails && providerDetails) {
@@ -114,13 +135,13 @@ constructor(private service: EncounterService,
               }
             });
             const json = {
-              patient: patientUuid,
+              patient: this.patientUuid,
               encounterType: 'bd1fbfaa-f5fb-4ebd-b75c-564506fc309e',
               encounterProviders: [{
                 provider: providerUuid,
                 encounterRole: '73bbb069-9781-4afc-a9d1-54b6b2270e03'
                 }],
-              visit: visitUuid,
+              visit: this.visitUuid,
               encounterDatetime: myDate,
               obs: [{
                 concept: '7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e',
