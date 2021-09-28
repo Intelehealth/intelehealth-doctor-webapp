@@ -181,7 +181,7 @@ export class NavbarComponent implements OnInit {
     } else {
       // tslint:disable-next-line: max-line-length
       const term = search.findInput;
-      const url = `${this.baseURL}/person?q=${term}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      const url = `${this.baseURL}/patient?q=${term}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe(
         (response) => {
           this.values = [];
@@ -192,14 +192,10 @@ export class NavbarComponent implements OnInit {
               }
             }
           });
-          if (this.values.length === 0) {
-            this.searchPatientId(term);
-          } else {
-            this.dialog.open(FindPatientComponent, {
-              width: "90%",
-              data: { value: this.values },
-            });
-          }
+          this.dialog.open(FindPatientComponent, {
+            width: "90%",
+            data: { value: this.values },
+          });
         },
         (err) => {
           if (err.error instanceof Error) {

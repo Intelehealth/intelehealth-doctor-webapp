@@ -304,7 +304,7 @@ export class VcComponent implements OnInit, OnDestroy {
     this.setSpiner = true;
     setTimeout(() => {
       this.setSpiner = false;
-    }, 3000);
+    }, 2000);
   }
 
   doCall() {
