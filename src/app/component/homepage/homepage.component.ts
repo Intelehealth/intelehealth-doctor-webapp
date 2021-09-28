@@ -135,37 +135,39 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   visitCategory(active) {
     const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Patient Exit Survey") ||
-        this.checkVisit(encounters, "Visit Complete") ||
+    let encounter;
+    if ((encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+        (encounter =this.checkVisit(encounters, "Visit Complete")) ||
         active.stopDatetime != null) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active, encounter);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")&&
+    } else if ((encounter = this.checkVisit(encounters, "Visit Note"))&&
                active.stopDatetime == null) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
-    } else if (this.checkVisit(encounters, "Flagged")) {
+    } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active);
+        const values = this.assignValueToProperty(active,encounter);
         this.flagVisit.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
     } else if (
-      this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")&&
+      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
+      (encounter = this.checkVisit(encounters, "Vitals"))&&
       active.stopDatetime == null
     ) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active,encounter);
       this.waitingVisit.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
     }
   }
 
-  assignValueToProperty(active) {
+  assignValueToProperty(active, encounter) {
+    if (!encounter) encounter = active.encounters[0];
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -176,7 +178,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.status =
     active.stopDatetime != null
       ? "Visit Complete"
-      : active.encounters[0].encounterType.display;
+      : encounter?.encounterType.display;
     this.value.provider =
       active.encounters[0].encounterProviders[0].provider.display.split(
         "- "
