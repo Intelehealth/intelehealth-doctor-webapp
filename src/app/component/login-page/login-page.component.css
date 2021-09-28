@@ -34,5 +34,19 @@
       font-size: 1.1rem;
     }
   
+.hih-logo{
+  max-height: 70px;
+}
 
-
+@media screen and (device-aspect-ratio: 40/71) {
+  .hih-logo{
+    max-height: 50px;
+  }
+  .ih-logo1{
+    margin-top: 5px;
+    margin-bottom: 0px !important;
+  }
+  .in-logo{
+    max-height: 75px;
+  }
+}
