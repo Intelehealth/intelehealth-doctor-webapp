@@ -46,6 +46,10 @@ export class SocketService {
     });
   }
 
+  public close() {
+    this.socket.close();
+  }
+
   async showNotification({ title, body, timestamp = Date.now() }) {
     if ("Notification" in window === true) {
       if ("granted" === (await Notification.requestPermission())) {

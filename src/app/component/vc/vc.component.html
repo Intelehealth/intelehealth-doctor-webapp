@@ -3,6 +3,10 @@
   <div #localContainer class="local-container col-xs-6">
     <video #localVideo autoplay class="localVideo"></video>
   </div>
+  <div *ngIf="setSpiner" class="loader">
+    <label for="loader">Connecting...</label>
+    <mat-spinner [diameter]="70"></mat-spinner>
+  </div>
 
   <div class="button-tab p-3 w-100 position-absolute">
     <div class="container d-flex">

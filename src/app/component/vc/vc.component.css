@@ -74,5 +74,13 @@ i.fa {
 }
 
 @media screen and (max-width: 600px) {
+}
 
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+}
+.loader label {
+  color: lightgray;
 }
