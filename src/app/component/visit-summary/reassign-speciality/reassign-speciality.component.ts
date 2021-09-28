@@ -27,10 +27,10 @@ export class ReassignSpecialityComponent implements OnInit {
   baseURLProvider = `${this.baseURL}/visit/${this.visitUuid}/attribute`;
   specializations = [
     "General Physician",
-    "Dermatologist",
-    "Physiotherapist",
     "Gynecologist",
-    "Pediatrician"
+    "Pediatrician",
+    "Dermatologist",
+    "Ophthalmologist"
   ];
   errorText: string;
 
