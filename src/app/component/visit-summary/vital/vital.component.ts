@@ -74,7 +74,7 @@ vitalsPresent = false;
               });
               if(this.answer.height && this.answer.weight) {
                 this.answer.bmi = localStorage.getItem('selectedLanguage') === 'ru' ? 
-                this.getTranslatedValue((this.answer.weight/((this.answer.height/100)*(this.answer.height/100))).toFixed(2)):
+                this.getTranslatedValue((this.answer.weight.replace(',', '.')/((this.answer.height.replace(',', '.')/100)*(this.answer.height.replace(',', '.')/100))).toFixed(2)):
                 (this.answer.weight/((this.answer.height/100)*(this.answer.height/100))).toFixed(2);
               }
               this.v.push(this.answer);
