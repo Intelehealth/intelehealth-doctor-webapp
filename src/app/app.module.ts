@@ -39,6 +39,7 @@ import { TablesComponent } from "./component/homepage/tables/tables.component";
 import { SignatureComponent } from "./component/my-account/signature/signature.component";
 import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 // Package Import
 import { HttpClientModule } from "@angular/common/http";
@@ -53,37 +54,39 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 
 // Material Design Imports
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { MainComponent } from './component/main/main.component';
-import { VcComponent } from './component/vc/vc.component';
-import { SocketService } from './services/socket.service';
-import { HoverClassDirective } from './directives/hover-class.directive';
-import { ChatComponent } from './component/chat/chat.component';
-import { TestChatComponent } from './component/test-chat/test-chat.component';
+import {
+  MatDialogModule,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatCardModule } from "@angular/material/card";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatListModule } from "@angular/material/list";
+import { MatSelectModule } from "@angular/material/select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
+import { MainComponent } from "./component/main/main.component";
+import { VcComponent } from "./component/vc/vc.component";
+import { SocketService } from "./services/socket.service";
+import { HoverClassDirective } from "./directives/hover-class.directive";
+import { ChatComponent } from "./component/chat/chat.component";
+import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
-
-
 
 @NgModule({
   declarations: [
@@ -125,7 +128,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     ChatComponent,
     TestChatComponent,
     ReassignSpecialityComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
   ],
 
   imports: [
@@ -155,26 +158,65 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    MatSlideToggleModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot([
-      { path: 'login', component: LoginPageComponent },
-      {
-        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
-        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
-        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
-        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
-        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
-        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
-        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-        { path: 'vc/call', component: VcComponent },
-        { path: 'test/chat', component: TestChatComponent },
-        { path: '', redirectTo: 'home', pathMatch: 'full' },
-        ]
-      },
-      { path: '**', component: Page404Component },
-    ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(
+      [
+        { path: "login", component: LoginPageComponent },
+        {
+          path: "",
+          component: MainComponent,
+          children: [
+            {
+              path: "home",
+              component: HomepageComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "findPatient",
+              component: FindPatientComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "myAccount",
+              component: MyAccountComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+            {
+              path: "modals",
+              component: ModalsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "signature",
+              component: SignatureComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "editDetails",
+              component: EditDetailsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "changePassword",
+              component: ChangePasswordComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "visitSummary/:patient_id/:visit_id",
+              component: VisitSummaryComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "vc/call", component: VcComponent },
+            { path: "test/chat", component: TestChatComponent },
+            { path: "", redirectTo: "home", pathMatch: "full" },
+          ],
+        },
+        { path: "**", component: Page404Component },
+      ],
+      { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
+    ),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
@@ -188,10 +230,10 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
-    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
+    { provide: MatDialogRef, useValue: {} },
   ],
   bootstrap: [AppComponent],
 })

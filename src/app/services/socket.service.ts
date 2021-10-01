@@ -1,17 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
+import { io } from "socket.io-client";
 
 @Injectable()
 export class SocketService {
   public socket: any;
   public activeUsers = [];
-  appIcon =
-    false && environment.production
-      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
-      : "/assets/images/intelehealth-logo-reverse.png";
 
   private baseURL = environment.socketURL;
 
@@ -49,10 +45,9 @@ export class SocketService {
   async showNotification({ title, body, timestamp = Date.now() }) {
     if ("Notification" in window === true) {
       if ("granted" === (await Notification.requestPermission())) {
-        const icon = this.appIcon;
         return new Notification(title, {
           body,
-          icon,
+          icon: "assets/images/intelehealth-logo-reverse.png",
           vibrate: [200, 100, 200],
           timestamp: Math.floor(timestamp),
         });
