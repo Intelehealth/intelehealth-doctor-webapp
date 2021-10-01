@@ -53,10 +53,12 @@ export class NavbarComponent implements OnInit {
     { day: "Saturday", startTime: null, endTime: null },
     { day: "Sunday", startTime: null, endTime: null },
   ];
+  /**
+   * Please change it as per server(production/training)
+   */
   readonly VapidKEY =
-    "BG4nDxMHBPV4YtkBZoGjPSOWDPrbyzw-o-vDKaScPhYfAjQs1hclQLwNWKKHYHNut0GZoVyj0jONVZgA5Dzdq0U"; //demo
-  // "BAfolLQ7VpRSmWm6DskG-YyG3jjzq5z0rjKEl5HXLCw2W8CKS9cVmifnCAWnrlJMETgbgjuV1pWKLUf8zlbojH0"; // testing
-
+    "BIdncl9xJ3EPzgJeqk7IO-4Wa4Et3T6HkiV338iScQLurwGzMpIqAQ7u5KNbdR4sNuxL8vwGPtBoTPqZC5rxfEg"; // HIH training
+  // "BGp9OBSU1p8gZy_MP5cYDdtzrqkMe4pFUnJNvUPd5kvJjBcbkyI6qzyKsnTxQ-n4wyxNTXTTegvMIeLxvocEuNI" // HIH Production
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
