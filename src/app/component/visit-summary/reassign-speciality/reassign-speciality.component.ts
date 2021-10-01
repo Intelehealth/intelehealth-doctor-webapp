@@ -29,7 +29,11 @@ export class ReassignSpecialityComponent implements OnInit {
     "Neonatologist",
     "Neuropathologist",
     "Family doctor",
-    "Infectious disease specialist"
+    "Infectious disease specialist",
+    "Neurologist",
+    "Aids Specialist",
+    "General Physician",
+    "Infectionist"
   ];
   errorText: string;
 

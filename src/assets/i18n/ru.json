@@ -216,6 +216,10 @@
     "Neuropathologist":"невропатолог",
     "Family doctor":"семейный врач",
     "Infectious disease specialist":"инфекционист",
+    "Neurologist":"Невролог",
+    "Aids Specialist":"Специалист по СПИДу",
+    "General Physician":"Врач общей практики",
+    "Infectionist":"Инфекционист",
     "messages": {
         "welcome":"Добро пожаловать",
         "loginError":"Имя пользователя и пароль не совпадают",

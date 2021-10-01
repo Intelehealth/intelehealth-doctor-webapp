@@ -216,6 +216,10 @@
     "Neuropathologist":"Neuropathologist",
     "Family doctor":"Family doctor",
     "Infectious disease specialist":"Infectious disease specialist",
+    "Neurologist":"Neurologist",
+    "Aids Specialist":"Aids Specialist",
+    "General Physician":"General Physician",
+    "Infectionist":"Infectionist",
     "messages": {
             "welcome":"Welcome",
             "loginError":"Username & Password doesn't match",

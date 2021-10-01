@@ -21,7 +21,11 @@ export class EditDetailsComponent implements OnInit {
   "Neonatologist",
   "Neuropathologist",
   "Family doctor",
-  "Infectious disease specialist"
+  "Infectious disease specialist",
+  "Neurologist",
+  "Aids Specialist",
+  "General Physician",
+  "Infectionist"
   ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null, Validators.required),
