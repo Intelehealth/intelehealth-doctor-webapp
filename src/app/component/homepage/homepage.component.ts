@@ -117,13 +117,16 @@ export class HomepageComponent implements OnInit {
         if (this.specialization && this.specialization.toLowerCase() == "all") {
           visits1 = pVisits;
         } else {
-          visits1 = pVisits.filter((a) =>
-            a.attributes.length > 0
-              ? a.attributes.find((b) => {
-                return b.value == this.specialization;
-              })
-              : ""
-          );
+          visits1 = pVisits.filter((a) => {
+            if(a.attributes.length > 0) {
+              let splAttributes = a.attributes.filter((a) =>  a.display.includes("Visit Speciality"));              
+              if(splAttributes.length > 1) {
+                return splAttributes.sort((a,b) => a.dateChanged > b.dateChanged)[0].value == this.specialization;
+              } else {
+                return splAttributes[0].value == this.specialization;
+              }
+            }
+          });
         }
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
@@ -214,11 +217,11 @@ export class HomepageComponent implements OnInit {
   }
 
   getFollowUpDateAndExamination(visit) {
-    visit.encounters.forEach((encounter) => {
+    visit?.encounters?.forEach((encounter) => {
       const display = encounter.display;
       if (display.match("Visit Note") !== null) {
         const observations = encounter.obs;
-        observations.forEach((obs) => {
+        observations?.forEach((obs) => {
           if (obs.display.match("Follow up visit") !== null) {
              visit.followUp = obs.value;
           }
@@ -226,7 +229,7 @@ export class HomepageComponent implements OnInit {
       }
       if (display.match("ADULTINITIAL") !== null) {
         const observations = encounter.obs;
-        observations.forEach((obs) => {
+        observations?.forEach((obs) => {
           if (obs.display.match("PHYSICAL EXAMINATION") !== null) {
              let exam = obs.value.split('-');
              visit.examination = exam[exam.length-1]?.trim();
