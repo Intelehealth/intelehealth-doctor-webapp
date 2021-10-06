@@ -377,9 +377,9 @@ export class VisitSummaryComponent implements OnInit {
       case "Marathi": 
                       return `प्रिय ${name} हॅलो साथीला कॉल केल्याबद्दल धन्यवाद. आपली औषधोपचार डाउनलोड करण्यासाठी येथे उपलब्ध आहे ${link}`
       case "Kannada": 
-                      return `ಪ್ರಿಯ ${name}. ಹಲೋ ಸಾಥಿಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮಔಷಧಿ ಚೀಟಿ ಇಲ್ಲಿ ${link}ಡೌನ್ಲೋ`
+                      return `ಪ್ರಿಯ ${name}. ಹಲೋ ಸಾಥಿಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮಔಷಧಿ ಚೀಟಿ ಇಲ್ಲಿ ${link} ಡೌನ್ಲೋ`
       case "Tamil": 
-                      return `அன்புள்ள ${name}. ஹலோ சாத்திய அழைத்ததற்கு நன்றி. உங்களுடைய மருத்துவம் குறிப்பு இங்கே ${link}பதிவிறக - Powered By Sukhibhava`
+                      return `அன்புள்ள ${name}. ஹலோ சாத்திய அழைத்ததற்கு நன்றி. உங்களுடைய மருத்துவம் குறிப்பு இங்கே ${link} பதிவிறக - Powered By Sukhibhava`
       default:        
                       return `प्रिय ${name} हैलो साथी को कॉल करने के लिए धन्यवाद | आपका नुस्खा यहां डाउनलोड करने के लिए उपलब्ध है ${link} - Powered by Sukhibhava`;
     }
