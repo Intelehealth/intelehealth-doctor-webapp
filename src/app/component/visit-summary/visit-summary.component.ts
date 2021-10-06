@@ -346,8 +346,8 @@ export class VisitSummaryComponent implements OnInit {
         this.visitService.shortUrl(link).subscribe((res: { data }) => {
           const hash = res.data.hash;
           const shortLink = this.getLinkFromHash(hash);
-           let smsText: string = this.getSmsText("English", patientInfo.name, shortLink);
-          this.visitService.sendSMS(patientNo.value, smsText).subscribe(
+           let smsText: string = this.getSmsText(language.value, patientInfo.name, shortLink);
+          this.visitService.sendSMS(patientNo.value, language.value, smsText).subscribe(
             (res) => {
               this.openDialog();
             },
@@ -371,18 +371,17 @@ export class VisitSummaryComponent implements OnInit {
 
   getSmsText(language:string, name:string, link) {
     switch(language) {
-      case "English": 
-                      return `Hello Saathi Helpline Project Dear ${name} Your prescription is available to download at ${link} - Powered by Intelehealth`;
+      case "English":
       case "Hindi": 
-                      return `प्रिय ${name} हैलो साथी को कॉल करने के लिए धन्यवाद | आपका नुस्खा यहां डाउनलोड करने के लिए उपलब्ध है ${link}`
+                      return `प्रिय ${name} हैलो साथी को कॉल करने के लिए धन्यवाद | आपका नुस्खा यहां डाउनलोड करने के लिए उपलब्ध है ${link} - Powered by Sukhibhava`;
       case "Marathi": 
-                      return `प्रिय ${name}, "हॅलो साथी" ला कॉल केल्याबद्दल धन्यवाद.आपली औषधोपचार डाउनलोड करण्यासाठी येथे उपलब्ध आहे ${link}`
+                      return `प्रिय ${name} हॅलो साथीला कॉल केल्याबद्दल धन्यवाद. आपली औषधोपचार डाउनलोड करण्यासाठी येथे उपलब्ध आहे ${link}`
       case "Kannada": 
-                      return `ಪ್ರಿಯ ${name}. ಹಲೋ ಸಾಥಿಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮಔಷಧಿ ಚೀಟಿ ಇಲ್ಲಿ ${link} ಡೌನ್ಲೋಡ್ ಮಾಡಬಹುದು.`
+                      return `ಪ್ರಿಯ ${name}. ಹಲೋ ಸಾಥಿಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮಔಷಧಿ ಚೀಟಿ ಇಲ್ಲಿ ${link}ಡೌನ್ಲೋ`
       case "Tamil": 
-                      return `அன்புள்ள ${name}. ஹலோ சாத்திய அழைத்ததற்கு நன்றி. உங்களுடைய மருத்துவம் குறிப்பு இங்கே ${link} பதிவிறக்கம் செய்ய தயாராக உள்ளது`
+                      return `அன்புள்ள ${name}. ஹலோ சாத்திய அழைத்ததற்கு நன்றி. உங்களுடைய மருத்துவம் குறிப்பு இங்கே ${link}பதிவிறக - Powered By Sukhibhava`
       default:        
-                      return `Hello Saathi Helpline Project Dear ${name} Your prescription is available to download at ${link} - Powered by Intelehealth`;
+                      return `प्रिय ${name} हैलो साथी को कॉल करने के लिए धन्यवाद | आपका नुस्खा यहां डाउनलोड करने के लिए उपलब्ध है ${link} - Powered by Sukhibhava`;
     }
   }
 

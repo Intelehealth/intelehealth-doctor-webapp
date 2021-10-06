@@ -60,11 +60,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  sendSMS(patientNo, smsBody): Observable<any> {
+  sendSMS(patientNo, language, smsBody): Observable<any> {
     let url = `${environment.mindmapURL}/mindmap/sendSMS`;
     let body = {
       patientNo: patientNo,
-      smsBody: smsBody
+      smsBody: smsBody,
+      language: language
     }
     return this.http.post(url, body);
   }
