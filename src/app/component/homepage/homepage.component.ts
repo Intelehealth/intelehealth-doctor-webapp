@@ -5,6 +5,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
+import { FormBuilder, FormGroup } from "@angular/forms";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -36,10 +37,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
   specialityAttrType = "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d";
   visitModeAttrType = "443d91e7-3897-4307-a549-787da32e241e";
   currentMode = "";
+  states = [];
+  districts = ["Select State First"];
+  villages = ["Select District First"];
+  state = "";
+  district = "";
+  village = "";
   modes = {
     camp: "Camp Mode",
     remote: "Remote Mode",
   };
+  allLocations: any = [];
+  locationForm: FormGroup;
 
   constructor(
     private sessionService: SessionService,
@@ -47,8 +56,15 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private service: VisitService,
     private snackbar: MatSnackBar,
     private socket: SocketService,
+    private fb: FormBuilder,
     private helper: HelperService
-  ) {}
+  ) {
+    this.locationForm = this.fb.group({
+      state: this.fb.control(""),
+      district: this.fb.control(""),
+      village: this.fb.control(""),
+    });
+  }
 
   ngOnInit() {
     if (getFromStorage("visitNoteProvider")) {
@@ -86,6 +102,72 @@ export class HomepageComponent implements OnInit, OnDestroy {
     if (!this.modes[localStorage.getItem("mode")])
       localStorage.setItem("mode", Object.keys(this.modes)[1]);
     this.currentMode = this.modes[localStorage.mode];
+
+    this.getLocation({ tag: "State" });
+    this.getLocation({}); // for all other locations
+  }
+
+  setLocationIfExists() {
+    this.state = localStorage.state;
+    if (this.state) {
+      this.selectChange(this.state, "state", false);
+    }
+    this.district = localStorage.district;
+    if (this.district) {
+      this.selectChange(this.district, "district", false);
+    }
+    this.village = localStorage.village;
+    if (this.village) {
+      this.selectChange(this.village, "village", false);
+    }
+  }
+
+  getLocation(query) {
+    this.service.getLocations(query).subscribe({
+      next: (res: any) => {
+        if (query?.tag === "State") {
+          this.states = res.results;
+        } else {
+          this.allLocations = res.results;
+          this.setLocationIfExists();
+        }
+      },
+    });
+  }
+
+  getChildLocations(uuid) {
+    this.service.getChildLocations(uuid).subscribe({
+      next: (res: any) => {
+        this.districts = res.childLocations;
+      },
+    });
+  }
+
+  getLocationByName(name) {
+    return this.allLocations.find((l) => l?.display === name);
+  }
+
+  selectChange(value, type, removeItem = true) {
+    if (value) {
+      localStorage.setItem(type, value);
+    }
+
+    const location = this.getLocationByName(value);
+    if (type === "state") {
+      this.districts = location?.childLocations || [];
+      if (removeItem) {
+        localStorage.removeItem("district");
+        localStorage.removeItem("village");
+        this.villages = [];
+      }
+    }
+    if (type === "district") {
+      this.villages = location?.childLocations || [];
+    }
+
+    if (type === "village") {
+      this.showVisits();
+    }
   }
 
   ngOnDestroy() {
@@ -100,7 +182,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.waitingVisit = [];
     this.progressVisit = [];
     this.completedVisit = [];
-    this.visits.forEach((active) => {
+    const isCampMode = this.currentMode === this.modes.camp;
+
+    const visits = isCampMode
+      ? this.visits.filter((l) => l?.location?.display === this.village)
+      : this.visits;
+
+    visits.forEach((active) => {
       if (active.encounters.length > 0) {
         if (active.attributes.length) {
           const { attributes } = active;
@@ -108,10 +196,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
             ({ attributeType }) => attributeType.uuid === this.visitModeAttrType
           );
           if (!visitModeAttribute) return;
-          const filterBy =
-            this.currentMode === this.modes.camp
-              ? ["Live Generalized", "Live Specialized"]
-              : ["Telehealth Generalized", "Telehealth Specialized"];
+          const filterBy = isCampMode
+            ? ["Live Generalized", "Live Specialized"]
+            : ["Telehealth Generalized", "Telehealth Specialized"];
 
           if (filterBy.includes(visitModeAttribute?.value)) {
             const speRequired = attributes.filter(
@@ -138,8 +225,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
       }
       this.value = {};
     });
-    this.helper.refreshTable.next();
     setTimeout(() => {
+      this.helper.refreshTable.next();
       this.setSpiner = false;
     }, 300);
   }

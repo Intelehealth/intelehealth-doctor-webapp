@@ -39,6 +39,8 @@ export class TablesComponent implements OnInit {
 
   refresh() {
     this.dataSource = new MatTableDataSource(this.data);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
     this.table.renderRows();
   }
 

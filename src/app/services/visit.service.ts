@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+import { HelperService } from "./helper.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
-
 export class VisitService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private helper: HelperService) {}
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
@@ -55,5 +54,23 @@ export class VisitService {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
+  }
+
+  getLocations(query?) {
+    return this.http.get(
+      `${this.baseURL}/location${this.helper.toParamString({
+        ...query,
+        v: "custom:(display,uuid,tags:(name),childLocations)",
+      })}`
+    );
+  }
+
+  getChildLocations(uuid, query?) {
+    return this.http.get(
+      `${this.baseURL}/location/${uuid}${this.helper.toParamString({
+        ...query,
+        v: "custom:(uuid,display,childLocations)",
+      })}`
+    );
   }
 }
