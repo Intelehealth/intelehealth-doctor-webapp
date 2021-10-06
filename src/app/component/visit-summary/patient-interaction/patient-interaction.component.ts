@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -47,6 +47,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class PatientInteractionComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   msg: any = [];
   whatsappLink: string;
   phoneNo;
@@ -135,6 +136,7 @@ export class PatientInteractionComponent implements OnInit {
           this.visitService
             .postAttribute(visitId, json)
             .subscribe((response1) => {
+              this.isDataPresent.emit(true);
               this.msg.push({ uuid: response1.uuid, value: response1.value });
             });
         }
@@ -183,6 +185,7 @@ export class PatientInteractionComponent implements OnInit {
   delete(i) {
     this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
       this.msg = [];
+      this.isDataPresent.emit(false);
     });
     if (this.adviceObs.length > 0) {
       this.adviceObs.forEach(({ uuid }) => {

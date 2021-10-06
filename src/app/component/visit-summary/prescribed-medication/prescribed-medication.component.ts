@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
@@ -48,6 +48,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class PrescribedMedicationComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   meds: any = [];
   add = false;
   encounterUuid: string;
@@ -219,7 +220,7 @@ export class PrescribedMedicationComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((response) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+        this.isDataPresent.emit(true);
         this.meds.push({ uuid: response.uuid, value: insertValue });
         this.add = false;
       });
@@ -234,6 +235,9 @@ export class PrescribedMedicationComponent implements OnInit {
     const uuid = this.meds[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.meds.splice(i, 1);
+      if(this.meds.length === 0) {
+        this.isDataPresent.emit(false);
+      }
     });
   }
 }

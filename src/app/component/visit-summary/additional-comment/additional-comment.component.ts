@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -45,6 +45,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class AdditionalCommentComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   comment: any = [];
   encounterUuid: string;
   patientId: string;
@@ -92,7 +93,7 @@ export class AdditionalCommentComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+        this.isDataPresent.emit(true);
         this.comment.push({ uuid: resp.uuid, value: value });
       });
     } else {
@@ -106,6 +107,9 @@ export class AdditionalCommentComponent implements OnInit {
     const uuid = this.comment[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.comment.splice(i, 1);
+      if(this.comment.length === 0) {
+        this.isDataPresent.emit(false);
+      }
     });
   }
 }

@@ -39,19 +39,14 @@ export class VisitSummaryComponent implements OnInit {
   DoctorNotNeeded: any;
   isVisitEnded:boolean = false;
   isFollowUpComplaint:boolean = false;
+  isVisitSummaryChanged:boolean = false
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "67a050c1-35e5-451c-a4ab-fff9d57b0db1",
     "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca",
     "23601d71-50e6-483f-968d-aeef3031346d",
-    "67a050c1-35e5-451c-a4ab-fff9d57b0db1",
-    "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86",
-    "62bff84b-795a-45ad-aae1-80e7f5163a82",
-    "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba",
-    "e1761e85-9b50-48ae-8c4d-e6b7eeeba084",
-    "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
-    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b",
+    "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
   ];
 
   constructor(
@@ -83,16 +78,7 @@ export class VisitSummaryComponent implements OnInit {
 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
-      const ObsData = response.results.filter((a) =>
-        this.conceptIds.includes(a.concept.uuid)
-      );
-      if (ObsData.length > 0) {
-        this.diagnosisService.isVisitSummaryChanged = true;
-      } else {
-        this.diagnosisService.isVisitSummaryChanged = false;
-      }
-    });
+    this.checkMadnatoryTabs();
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       this.visitAttributes= visitDetails;
@@ -128,8 +114,8 @@ export class VisitSummaryComponent implements OnInit {
    
   }
 
-  get isVisitSummaryChanged() {
-    return !this.diagnosisService.isVisitSummaryChanged;
+  getIsDataPresent(isDataPresent) {
+     this.checkMadnatoryTabs();
   }
 
   onStartVisit() {
@@ -188,7 +174,6 @@ export class VisitSummaryComponent implements OnInit {
               duration: 4000,
             });
           }
-          this.diagnosisService.isVisitSummaryChanged = false;
         });
       } else {
         this.authService.logout();
@@ -378,4 +363,21 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
   }
+
+ checkMadnatoryTabs() {
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      const ObsData = response.results.filter((a) => this.conceptIds.includes(a.concept.uuid));
+      this.visitService.getAttribute(this.visitUuid).subscribe((response) => {
+        const result = response.results;
+        var tempMsg = result.filter((pType) => pType.display.includes("Patient Interaction")
+        );
+        if (ObsData.length > 6 && tempMsg.length > 0) {
+          this.isVisitSummaryChanged = false;
+        } else {
+          this.isVisitSummaryChanged = true;
+        }
+      });
+    });
+  }
+
 }

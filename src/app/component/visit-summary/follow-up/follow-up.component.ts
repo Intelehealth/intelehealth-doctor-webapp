@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
@@ -46,6 +46,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class FollowUpComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   minDate = new Date();
   followUp: any = [];
   conceptFollow = "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86";
@@ -98,7 +99,7 @@ export class FollowUpComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+        this.isDataPresent.emit(true);
         this.followUp.push({ uuid: resp.uuid, value: json.value });
       });
     } else {
@@ -112,6 +113,9 @@ export class FollowUpComponent implements OnInit {
     const uuid = this.followUp[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.followUp.splice(i, 1);
+      if(this.followUp.length === 0) {
+        this.isDataPresent.emit(false);
+      }
     });
   }
 }

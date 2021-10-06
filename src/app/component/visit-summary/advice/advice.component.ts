@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
@@ -47,6 +47,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class AdviceComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   advice: any = [];
   advices: any = [];
   conceptAdvice = "67a050c1-35e5-451c-a4ab-fff9d57b0db1";
@@ -118,7 +119,7 @@ export class AdviceComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((response) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+        this.isDataPresent.emit(true);
         this.advice.push({ uuid: response.uuid, value: value });
       });
     } else {
@@ -132,6 +133,9 @@ export class AdviceComponent implements OnInit {
     const uuid = this.advice[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.advice.splice(i, 1);
+      if(this.advice.length === 0) {
+        this.isDataPresent.emit(false);
+      }
     });
   }
 }

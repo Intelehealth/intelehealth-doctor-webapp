@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
@@ -47,6 +47,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class PrescribedTestComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   tests: any = [];
   test = [];
   conceptTest = "23601d71-50e6-483f-968d-aeef3031346d";
@@ -116,7 +117,7 @@ export class PrescribedTestComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.diagnosisService.isVisitSummaryChanged = true;
+        this.isDataPresent.emit(true);
         this.tests.push({ uuid: resp.uuid, value: value });
       });
     } else {
@@ -130,6 +131,9 @@ export class PrescribedTestComponent implements OnInit {
     const uuid = this.tests[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.tests.splice(i, 1);
+      if(this.tests.length === 0) {
+        this.isDataPresent.emit(false);
+      }
     });
   }
 }

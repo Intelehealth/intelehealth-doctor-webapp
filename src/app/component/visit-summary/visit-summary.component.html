@@ -213,31 +213,31 @@ require by speaking with the patient directly.  -->
 
   <div *ngIf="show">
         <mat-card>
-              <app-patient-interaction></app-patient-interaction>
+              <app-patient-interaction (isDataPresent)="getIsDataPresent($event)"></app-patient-interaction>
         </mat-card>
         <br>
         <mat-card>
-              <app-diagnosis></app-diagnosis>
+              <app-diagnosis (isDataPresent)="getIsDataPresent($event)"></app-diagnosis>
         </mat-card>
         <br>
         <mat-card>
-              <app-prescribed-medication></app-prescribed-medication>
+              <app-prescribed-medication (isDataPresent)="getIsDataPresent($event)"></app-prescribed-medication>
         </mat-card>
         <br>
         <mat-card>
-              <app-prescribed-test></app-prescribed-test>
+              <app-prescribed-test (isDataPresent)="getIsDataPresent($event)"></app-prescribed-test>
         </mat-card>
         <br>
         <mat-card>
-              <app-advice></app-advice>
+              <app-advice (isDataPresent)="getIsDataPresent($event)"></app-advice>
         </mat-card>
         <br>
         <mat-card>
-              <app-additional-comment></app-additional-comment>
+              <app-additional-comment (isDataPresent)="getIsDataPresent($event)"></app-additional-comment>
         </mat-card>
         <br>
         <mat-card>
-              <app-follow-up></app-follow-up>
+              <app-follow-up (isDataPresent)="getIsDataPresent($event)"></app-follow-up>
         </mat-card>
         <br>
         <ng-container *ngIf="visitCompletePresent">
