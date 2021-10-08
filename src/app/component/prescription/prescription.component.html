@@ -1,0 +1,187 @@
+<div *ngIf="!noPrescription && !loading" class="pres-content">
+  <div *ngIf="!exporting" class="header mt-1">
+    <div class="print d-flex justify-content-center mt-2">
+      <button (click)="print()">
+        Print
+        <i class="fa fa-print"></i>
+      </button>
+      <button class="ml-2" (click)="download()">
+        Download
+        <i class="fa fa-download"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="prescription" class="container bootstrap snippets bootdey">
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div>
+          <div class="prescription-wrapper">
+            <div class="row">
+              <div class="col-3">
+                <div class="d-flex justify-content-center">
+                  <img
+                    src="assets/images/intelehealth-logo-reverse.png"
+                    class="hih-logo"
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="d-flex justify-content-center">
+                  <label class="gr">ePrescription</label>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="d-flex justify-content-center">
+                  <img
+                    src="assets/images/HIH-Telehealth.png"
+                    alt="HIH-Telehealth"
+                    class="hih-logo"
+                  />
+                </div>
+                <div class="d-flex justify-content-center">
+                  <label>Hand In Hand</label>
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: 2px solid #321a94;" class="details-info">
+              <div class="row">
+                <div class="col-sm-6">
+                  <span class="d-flex"
+                    >Patient Name: &nbsp;&nbsp; <b>{{ data?.name }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Age: &nbsp;&nbsp; <b>{{ data?.age }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Gender: &nbsp;&nbsp; <b>{{ data?.gender }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Address: &nbsp;&nbsp; <b>{{ data?.address }}</b></span
+                  >
+                </div>
+                <div class="col-sm-6 text-right-presc">
+                  <span class="d-flex"
+                    >Date/Time: &nbsp;&nbsp;
+                    <b>{{
+                      data?.visitDate | amDateFormat: "MMMM, Do YYYY / h:mm A"
+                    }}</b></span
+                  >
+                  <span class="d-flex"
+                    >OpenMRS ID: &nbsp;&nbsp; <b>{{ data?.openMRSID }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Weight: &nbsp;&nbsp; <b>{{ data?.weight }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Height: &nbsp;&nbsp; <b>{{ data?.height }}</b></span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: 2px solid #321a94;" class="presc-details">
+              <div class="row">
+                <div class="col-sm-12">
+                  <strong> वजह / Reason for visit: </strong>
+                  <ul>
+                    <li>{{ data?.complaint }}</li>
+                  </ul>
+                </div>
+                <div class="col-sm-12">
+                  <strong> निदान/ Diagnosis: </strong>
+                  <ul>
+                    <li *ngFor="let diag of diagnosis">
+                      {{ diag }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="col-sm-12">
+                  <strong> दवाएं / Medication(s): </strong>
+                  <ul>
+                    <li *ngFor="let med of medications">
+                      {{ med }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="col-sm-12">
+                  <strong>
+                    जांच की सिफारिश / Recommended Investigation(s):
+                  </strong>
+                  <ul>
+                    <li *ngFor="let adv of testsAdvised">
+                      {{ adv }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-sm-12">
+                  <strong> सामान्य सलाह / General Advice: </strong>
+                  <ul>
+                    <li *ngFor="let adv of medicalAdvice">
+                      {{ adv }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-sm-12">
+                  <strong> फिर से संपर्क कि तारीख / Follow Up Date: </strong>
+                  <ul>
+                    <li *ngFor="let flwUp of followupNeeded">
+                      {{ flwUp }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-sm-12">
+                  <strong> टिप्पणियाँ / Notes: </strong>
+                  <ul>
+                    <li *ngFor="let note of notes">
+                      {{ note }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="line-items">
+              <div class="d-flex flex-row justify-content-end">
+                <div class="p-2">
+                  <div>
+                    <b
+                      style="font-size: 50px;font-family:{{
+                        attributes?.fontOfSign
+                      }}"
+                      >{{ attributes?.textOfSign }}</b
+                    >
+                  </div>
+                  <div>{{ data?.doctorName }}</div>
+                  <div>
+                    {{ attributes?.qualification }}({{
+                      attributes?.specialization
+                    }})
+                  </div>
+                  <div>Email:{{ attributes?.emailId }}</div>
+                  <div>
+                    Reg.No: <b>{{ attributes?.registrationNumber }}</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="noPrescription && !loading"
+  class="alert alert-warning m-5"
+  role="alert"
+>
+  No prescription found!
+</div>
+<div *ngIf="loading" class="alert alert-primary m-5" role="alert">
+  Loading.....
+</div>

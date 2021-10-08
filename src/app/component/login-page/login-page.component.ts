@@ -47,7 +47,7 @@ export class LoginPageComponent implements OnInit {
         if (response.authenticated === true) {
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
-              this.authService.sendToken(response.user.sessionId);
+              this.authService.sendToken(response.sessionId);
               saveToStorage("user", response.user);
 
               this.pushNotificationsService

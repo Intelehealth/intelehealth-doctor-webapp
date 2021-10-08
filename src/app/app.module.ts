@@ -52,6 +52,8 @@ import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { MomentModule } from "ngx-moment";
+import { ExportAsModule } from "ngx-export-as";
 
 // Material Design Imports
 import {
@@ -87,6 +89,7 @@ import { ChatComponent } from "./component/chat/chat.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { PrescriptionComponent } from "./component/prescription/prescription.component";
 
 @NgModule({
   declarations: [
@@ -129,6 +132,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     TestChatComponent,
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
+    PrescriptionComponent,
   ],
 
   imports: [
@@ -158,11 +162,17 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    ExportAsModule,
+    MomentModule,
     MatSlideToggleModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [
         { path: "login", component: LoginPageComponent },
+        {
+          path: "prescription/:patientId/:openMrsId",
+          component: PrescriptionComponent,
+        },
         {
           path: "",
           component: MainComponent,

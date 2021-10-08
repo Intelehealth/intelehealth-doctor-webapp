@@ -73,4 +73,14 @@ export class VisitService {
       })}`
     );
   }
+
+  getVisitData(payload) {
+    return this.http.post(
+      `${this.baseURL.replace(
+        "/openmrs/ws/rest/v1",
+        ""
+      )}/prescription/prescription/visitData`,
+      payload
+    );
+  }
 }

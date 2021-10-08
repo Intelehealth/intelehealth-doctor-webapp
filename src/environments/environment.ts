@@ -7,9 +7,9 @@ export const environment = {
   baseURL: "https://trn.digitalhih.net/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://trn.digitalhih.net/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://trn.digitalhih.net/openmrs",
-  mindmapURL: "http://localhost:3004/api",
-  notificationURL: "http://localhost:3004/notification",
-  socketURL: "http://localhost:3004",
+  mindmapURL: "https://trn.digitalhih.net:3004/api",
+  notificationURL: "https://trn.digitalhih.net:3004/notification",
+  socketURL: "https://trn.digitalhih.net:3004",
 };
 
 /*

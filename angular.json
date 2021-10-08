@@ -13,6 +13,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
+                        "allowedCommonJsDependencies": ["util","html2canvas","html2pdf.js","xlsx"],
                         "outputPath": "dist/intelehealth-ui",
                         "index": "src/index.html",
                         "main": "src/main.ts",

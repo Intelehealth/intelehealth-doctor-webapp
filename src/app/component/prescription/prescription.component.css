@@ -1,0 +1,160 @@
+.pres-content .logo a:hover {
+  text-decoration: none;
+  color: #7793c4;
+}
+
+.pres-content .prescription-wrapper {
+  background: #fff;
+  border: 1px solid #cdd3e2;
+  box-shadow: 0px 0px 1px #ccc;
+  padding: 25px 40px 20px;
+  margin-top: 40px;
+  border-radius: 4px;
+}
+
+.pres-content .prescription-wrapper .presc-details span {
+  color: rgb(0 0 0 / 62%);
+  display: block;
+}
+.pres-content .prescription-wrapper .presc-details a {
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.print button {
+  display: inline-block;
+  border: 1px solid #9cb5d6;
+  padding: 5px;
+  border-radius: 5px;
+  color: #708dc0;
+  font-size: 13px;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.print button:hover {
+  text-decoration: none;
+  border-color: #333;
+  color: #333;
+}
+
+.pres-content {
+  background: #eceef4;
+}
+@media (min-width: 1200px) {
+  .pres-content .container {
+    width: 900px;
+  }
+}
+
+.pres-content .logo {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.pres-content .logo a {
+  font-family: Myriad Pro, Lato, Helvetica Neue, Arial;
+  font-size: 36px;
+  letter-spacing: 0.1px;
+  color: #555;
+  font-weight: 300;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.pres-content .prescription-wrapper .info {
+  line-height: 25px;
+  color: #444;
+}
+
+.pres-content .prescription-wrapper .details-info {
+  margin-top: 5px;
+  padding-top: 15px;
+}
+
+.pres-content .prescription-wrapper .details-info span {
+  color: rgb(0 0 0 / 62%);
+}
+label.gr {
+  color: rgb(0 0 0 / 62%);
+}
+
+.pres-content .prescription-wrapper .details-info strong {
+  display: block;
+  color: #444;
+  margin-top: 3px;
+}
+
+@media (max-width: 767px) {
+  .pres-content .prescription-wrapper .details-info .text-right {
+    text-align: left;
+    margin-top: 20px;
+  }
+}
+.pres-content .prescription-wrapper .presc-details {
+  margin-top: 10px;
+  padding-top: 20px;
+  line-height: 22px;
+}
+
+@media (max-width: 767px) {
+  .pres-content .prescription-wrapper .presc-details .text-right {
+    text-align: left;
+    margin-top: 20px;
+  }
+}
+.pres-content .prescription-wrapper .line-items {
+  margin-top: 40px;
+}
+.pres-content .prescription-wrapper .line-items .headers {
+  color: rgb(0 0 0 / 62%);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid #321a94;
+  padding-bottom: 4px;
+}
+.pres-content .prescription-wrapper .line-items .items {
+  margin-top: 8px;
+  border-bottom: 2px solid #321a94;
+  padding-bottom: 8px;
+}
+.pres-content .prescription-wrapper .line-items .items .item {
+  padding: 10px 0;
+  color: #696969;
+  font-size: 15px;
+}
+@media (max-width: 767px) {
+  .pres-content .prescription-wrapper .line-items .items .item {
+    font-size: 13px;
+  }
+}
+.pres-content .prescription-wrapper .line-items .items .item .amount {
+  letter-spacing: 0.1px;
+  color: #84868a;
+  font-size: 16px;
+}
+@media (max-width: 767px) {
+  .pres-content .prescription-wrapper .line-items .items .item .amount {
+    font-size: 13px;
+  }
+}
+
+.pres-content .prescription-wrapper .line-items .total {
+  margin-top: 30px;
+}
+
+.pres-content .prescription-wrapper .line-items .total .extra-notes strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #454545;
+}
+
+.hih-logo {
+  max-height: 50px;
+}
