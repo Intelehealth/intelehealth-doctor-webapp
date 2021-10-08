@@ -12,6 +12,37 @@ export class VisitService {
 
   constructor(private http: HttpClient, private helper: HelperService) {}
 
+  checkVisit(encounters, visitType) {
+    return encounters.find(({ display = "" }) => display.includes(visitType));
+  }
+
+  visitCategory(active) {
+    const { encounters = [] } = active;
+    let type = null;
+    if (
+      this.checkVisit(encounters, "Patient Exit Survey") ||
+      this.checkVisit(encounters, "Visit Complete") ||
+      active.stopDatetime != null
+    ) {
+      type = 1;
+    } else if (
+      this.checkVisit(encounters, "Visit Note") &&
+      active.stopDatetime == null
+    ) {
+      type = 2;
+    } else if (this.checkVisit(encounters, "Flagged")) {
+      if (!this.checkVisit(encounters, "Flagged").voided) {
+        type = 3;
+      }
+    } else if (
+      this.checkVisit(encounters, "ADULTINITIAL") ||
+      (this.checkVisit(encounters, "Vitals") && active.stopDatetime == null)
+    ) {
+      type = 4;
+    }
+    return { type };
+  }
+
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)`;

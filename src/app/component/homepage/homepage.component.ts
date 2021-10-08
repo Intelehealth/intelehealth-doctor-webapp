@@ -250,36 +250,21 @@ export class HomepageComponent implements OnInit, OnDestroy {
     });
   }
 
-  checkVisit(encounters, visitType) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
-  }
-
   visitCategory(active) {
-    const { encounters = [] } = active;
-    if (
-      this.checkVisit(encounters, "Patient Exit Survey") ||
-      this.checkVisit(encounters, "Visit Complete") ||
-      active.stopDatetime != null
-    ) {
-      const values = this.assignValueToProperty(active);
-      this.completedVisit.push(values);
-    } else if (
-      this.checkVisit(encounters, "Visit Note") &&
-      active.stopDatetime == null
-    ) {
-      const values = this.assignValueToProperty(active);
-      this.progressVisit.push(values);
-    } else if (this.checkVisit(encounters, "Flagged")) {
-      if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active);
-        this.flagVisit.push(values);
-      }
-    } else if (
-      this.checkVisit(encounters, "ADULTINITIAL") ||
-      (this.checkVisit(encounters, "Vitals") && active.stopDatetime == null)
-    ) {
-      const values = this.assignValueToProperty(active);
-      this.waitingVisit.push(values);
+    const { type } = this.service.visitCategory(active);
+    switch (type) {
+      case 1:
+        this.completedVisit.push(this.assignValueToProperty(active));
+        break;
+      case 2:
+        this.progressVisit.push(this.assignValueToProperty(active));
+        break;
+      case 3:
+        this.flagVisit.push(this.assignValueToProperty(active));
+        break;
+      case 4:
+        this.waitingVisit.push(this.assignValueToProperty(active));
+        break;
     }
   }
 

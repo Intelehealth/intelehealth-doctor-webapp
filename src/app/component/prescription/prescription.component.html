@@ -45,7 +45,7 @@
               </div>
             </div>
 
-            <div style="border-top: 2px solid #321a94;" class="details-info">
+            <div style="border-top: 2px solid #321a94" class="details-info">
               <div class="row">
                 <div class="col-sm-6">
                   <span class="d-flex"
@@ -81,13 +81,11 @@
               </div>
             </div>
 
-            <div style="border-top: 2px solid #321a94;" class="presc-details">
+            <div style="border-top: 2px solid #321a94" class="presc-details">
               <div class="row">
                 <div class="col-sm-12">
                   <strong> वजह / Reason for visit: </strong>
-                  <ul>
-                    <li>{{ data?.complaint }}</li>
-                  </ul>
+                  <ul [innerHTML]="data?.complaint"></ul>
                 </div>
                 <div class="col-sm-12">
                   <strong> निदान/ Diagnosis: </strong>

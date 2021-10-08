@@ -5,7 +5,7 @@
     <div> <a [routerLink]="['/visitSummary', data.details.patient.uuid, data.details.uuid]">{{data.details.startDatetime | date:"dd-MMM-yyyy"}}</a>
       <span> {{data.observation}} </span> 
       <span class="badge badge-pill badge-success float-right">{{data.visitStatus}}</span>
-      <span class="float-right mr-2 presc" (click)="redirect(data?.details?.uuid,'')"><mat-icon>receipt</mat-icon></span>
+      <span *ngIf="visitType == 1" class="float-right mr-2 presc" (click)="redirect(data?.details?.uuid,'')"><mat-icon>receipt</mat-icon></span>
     </div>
 </div>
 </div>

@@ -12,6 +12,7 @@ export class PastVisitsComponent implements OnInit {
   observation: {};
   visitStatus: String;
   id;
+  visitType;
   recent: any = [];
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +58,8 @@ export class PastVisitsComponent implements OnInit {
             this.recentVisit.visitStatus = "Active";
           }
           this.recent.push(this.recentVisit);
+          const { type } = this.service.visitCategory(visitDetails);
+          this.visitType = type;
         });
       });
     });
