@@ -213,12 +213,10 @@
     "All":"All",
     "Pediatrician":"Pediatrician",
     "Neonatologist":"Neonatologist",
-    "Neuropathologist":"Neuropathologist",
     "Family doctor":"Family doctor",
     "Infectious disease specialist":"Infectious disease specialist",
     "Neurologist":"Neurologist",
     "Aids Specialist":"Aids Specialist",
-    "General Physician":"General Physician",
     "Infectionist":"Infectionist",
     "messages": {
             "welcome":"Welcome",

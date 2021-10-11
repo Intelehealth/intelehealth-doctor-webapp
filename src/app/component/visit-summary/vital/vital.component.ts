@@ -59,7 +59,7 @@ vitalsPresent = false;
                 if (displayObs.match('TEMP') !== null ) {
                   let temp = Number(obs.display.slice(17, obs.display.length));
                   this.answer.temp = localStorage.getItem('selectedLanguage') === 'ru' ?
-                  this.getTranslatedValue(((temp * 9/5) + 32).toFixed(2)): ((temp * 9/5) + 32).toFixed(2); 
+                  this.getTranslatedValue(temp > 0 ? temp.toFixed(2) : 0): (temp> 0 ? temp.toFixed(2) : 0); 
                 }
                 if (displayObs.match('Pulse') !== null ) {
                   this.answer.pulse = localStorage.getItem('selectedLanguage') === 'ru' ? 

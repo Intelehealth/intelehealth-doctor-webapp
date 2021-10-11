@@ -50,6 +50,8 @@ export class PatientInteractionComponent implements OnInit {
   whatsappLink: string;
   telegramLink: string;
   phoneNo;
+  whatsappNo;
+  countryCode = "996"
   patientDetails: any;
   doctorDetails: any = {};
   conceptAdvice = "67a050c1-35e5-451c-a4ab-fff9d57b0db1";
@@ -57,9 +59,13 @@ export class PatientInteractionComponent implements OnInit {
   patientId: string;
   visitId: string;
   adviceObs: any = [];
-
+  countries=[
+    "Kyrgyzstan",
+    "India"
+  ]
   interaction = new FormGroup({
     interaction: new FormControl("", [Validators.required]),
+    country: new FormControl("Kyrgyzstan")
   });
   constructor(
     private diagnosisService: DiagnosisService,
@@ -91,19 +97,24 @@ export class PatientInteractionComponent implements OnInit {
                   this.phoneNo = attribute.value;
                 }
                 if (attribute.display.match("whatsapp") != null) {
-                  const whatsapp = attribute.value;
-                  // tslint:disable-next-line: max-line-length
-                  const text = encodeURI(
-                    `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
-                  );
-                  this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-                  this.telegramLink = `https://telegram.me/share/url?phone=91${whatsapp}&url=${text}`;
+                 this.whatsappNo = attribute.value;
+                  this.setLinks();
                 }
               });
             }
           }
         });
       });
+  }
+
+  setLinks() {
+    // tslint:disable-next-line: max-line-length
+    const text = encodeURI(
+      `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
+    );
+    this.countryCode = this.interaction.value.country === "India" ? "91":"996";
+    this.whatsappLink = `https://wa.me/${this.countryCode}${this.whatsappNo}?text=${text}`;
+    this.telegramLink = `https://telegram.me/share/url?phone=${this.countryCode}${this.whatsappNo}&url=${text}`;
   }
 
   getAttributes() {

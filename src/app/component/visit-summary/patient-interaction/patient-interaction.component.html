@@ -14,6 +14,11 @@
   </div>
   <div id="call-link" *ngIf="whatsappLink || phoneNo || telegramLink">
     {{'Start a call'| translate}}:
+    <select formControlName="country" (change)="setLinks()">
+      <option *ngFor="let count of countries" [ngValue]="count" [selected]="count==='Kyrgyzstan'">
+        {{ count }}
+      </option>
+    </select> 
     <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
     <span *ngIf="telegramLink"><a style='color:#0088cc' class="fab fa-telegram" href="{{ telegramLink }}" target="_blank"></a></span>
     <span *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
