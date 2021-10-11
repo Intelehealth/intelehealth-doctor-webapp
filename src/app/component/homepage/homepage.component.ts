@@ -8,6 +8,12 @@ import { HelperService } from "src/app/services/helper.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
+export const modes = {
+  camp: "Camp Mode",
+  remote: "Remote Mode",
+};
+
+export const modeStrKey = "mode";
 export interface VisitData {
   id: string;
   name: string;
@@ -43,10 +49,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   state = "";
   district = "";
   village = "";
-  modes = {
-    camp: "Camp Mode",
-    remote: "Remote Mode",
-  };
+  modes = modes;
   allLocations: any = [];
   locationForm: FormGroup;
 
@@ -99,8 +102,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.playNotify();
     });
 
-    if (!this.modes[localStorage.getItem("mode")])
-      localStorage.setItem("mode", Object.keys(this.modes)[1]);
+    if (!this.modes[localStorage.getItem(modeStrKey)])
+      localStorage.setItem(modeStrKey, Object.keys(this.modes)[1]);
     this.currentMode = this.modes[localStorage.mode];
 
     this.getLocation({ tag: "State" });
@@ -295,8 +298,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   toggleMode(e) {
     const idx = e.checked ? 0 : 1;
-    localStorage.setItem("mode", Object.keys(this.modes)[idx]);
-    this.currentMode = this.modes[localStorage.getItem("mode")];
+    localStorage.setItem(modeStrKey, Object.keys(this.modes)[idx]);
+    this.currentMode = this.modes[localStorage.getItem(modeStrKey)];
     this.showVisits();
   }
 }

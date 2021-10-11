@@ -71,10 +71,10 @@
       <br>
 
       <div *ngIf="show">
-            <mat-card>
+            <mat-card *ngIf="isLiveMode">
                   <app-patient-interaction></app-patient-interaction>
             </mat-card>
-            <br>
+            <br *ngIf="isLiveMode">
             <mat-card>
                   <app-additional-comment></app-additional-comment>
             </mat-card>
@@ -119,6 +119,6 @@
 <app-chat></app-chat>
 <div class="vc-button" (click)="openVcModal()">
   <span>
-    <img [src]="videoIcon" />
+    <img src="assets/svgs/video-w.svg" />
   </span>
 </div>

@@ -7,7 +7,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
-import { environment } from "src/environments/environment";
+import { modes, modeStrKey } from "../homepage/homepage.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -28,10 +28,8 @@ export class VisitSummaryComponent implements OnInit {
   doctorValue;
   patientUuid = "";
   visitUuid = "";
-  isVisitEnded:boolean = false;
-  videoIcon = environment.production
-    ? "../../../intelehealth/assets/svgs/video-w.svg"
-    : "../../../assets/svgs/video-w.svg";
+  isVisitEnded: boolean = false;
+  isLiveMode = null;
 
   constructor(
     private service: EncounterService,
@@ -49,6 +47,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLiveMode = this.currentMode() === modes.remote;
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
@@ -87,6 +86,10 @@ export class VisitSummaryComponent implements OnInit {
           this.isVisitEnded = true;
         }
       });
+  }
+
+  currentMode() {
+    return modes[localStorage.getItem(modeStrKey)];
   }
 
   onStartVisit() {
