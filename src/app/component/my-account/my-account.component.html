@@ -20,7 +20,7 @@
             <tr>
               <th>Gender :</th>
               <td *ngIf="providerDetails.person">
-                {{ providerDetails.person.gender }}
+                {{ providerDetails.person.gender === 'M' ? 'MIM': providerDetails.person.gender === 'F'? 'Female' : providerDetails.person.gender}}
               </td>
             </tr>
             <tr>
