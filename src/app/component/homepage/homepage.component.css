@@ -48,3 +48,10 @@ img{
 .my-float {
   margin-top: 16px;
 }
+.text-right {
+  float: right;
+  font-weight: bold;
+  font-size: 1rem;
+  color:black;
+  border: 1px solid white;
+} 
