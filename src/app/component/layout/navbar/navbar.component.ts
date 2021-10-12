@@ -8,7 +8,8 @@ import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
-declare var getFromStorage: any;
+import { PushNotificationsService } from "src/app/services/push-notification.service";
+declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
   selector: "app-navbar",
@@ -38,6 +39,10 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
 
+  readonly VapidKEY =
+  "BNoBPMTLB1juNTJMiQa8LLMYQW9m1456EA9wTivJufaDgOu0jLQ2UkR9Dl4f_fWam8dxK-bWInNkKJ9L-oNfKz0"; // MSF Training
+  //"BIWPsR9rM0wmZxNDcoXzL8-yDm-iCXu6L-atyFaCiA9ekoZR8d5iE5Mqf_zZOBkoAVMWUVHOv5PDao0p2rt4McQ"; // MSF Production
+
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
   });
@@ -51,6 +56,7 @@ export class NavbarComponent implements OnInit {
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
+    public notificationService: PushNotificationsService
   ) {}
 
   ngOnInit() {
@@ -75,6 +81,13 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
+    setTimeout(() => {
+      this.subscribeNotification(true);
+    }, 1000);
+
+    if (this.swPush.isEnabled) {
+      this.notificationService.notificationHandler();
+    }
   }
 
   openDoc() {
@@ -85,7 +98,21 @@ export class NavbarComponent implements OnInit {
    * Remove session and navigates to login screen
    */
   logout() {
-    this.authService.logout();
+    this.unsubscribeNotification();
+    setTimeout(() => {
+      this.authService.logout();
+    }, 0);
+  }
+
+  unsubscribeNotification() {
+    this.swPush.unsubscribe();
+    localStorage.removeItem("subscribed");
+    this.notificationService
+      .unsubscribeNotification({
+        user_uuid: this.user.uuid,
+        finger_print: this.authService.fingerPrint,
+      })
+      .subscribe();
   }
 
   /**
@@ -100,10 +127,10 @@ export class NavbarComponent implements OnInit {
    */
   search() {
     const search = this.searchForm.value;
-    if (search.findInput.length < 3) {
+    if (search.findInput === null || search.findInput.length < 3) {
       this.dialog.open(FindPatientComponent, {
         width: "50%",
-        data: { value: "Please Enter min 3 characters" },
+        data: { value: "Please enter min 3 characters" },
       });
     } else {
       // tslint:disable-next-line: max-line-length
@@ -148,5 +175,61 @@ export class NavbarComponent implements OnInit {
     } catch (error) {
       return {};
     }
+  }
+
+  subscribeNotification(reSubscribe = false) {
+    if (this.swUpdate.isEnabled) {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VapidKEY,
+        })
+        .then((sub) => {
+          const providerDetails = getFromStorage("provider");
+          if (providerDetails) {
+            const attributes = providerDetails.attributes;
+            attributes.forEach((element) => {
+              if (
+                element.attributeType.uuid ===
+                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                !element.voided
+              ) {
+                this.notificationService
+                  .postSubscription(
+                    sub,
+                    element.value,
+                    providerDetails.person.display,
+                    this.user.uuid,
+                    this.authService.fingerPrint
+                  )
+                  .subscribe((response) => {
+                    if (response) {
+                      if (!reSubscribe) {
+                        this.snackbar.open(
+                          `Notification Subscribed Successfully`,
+                          null,
+                          { duration: 4000 }
+                        );
+                      }
+                      saveToStorage("subscribed", true);
+                      this.subscribeAccess = true;
+                    }
+                  });
+              }
+            });
+          }
+        });
+    }
+  }
+  public toggleIcon() {
+    this.notificationMenu = !this.notificationMenu;
+    if (this.notificationMenu) {
+      localStorage.setItem("showNotification", "1");
+    } else {
+      localStorage.setItem("showNotification", "0");
+    }
+  }
+
+  get snoozeTimeout() {
+    return this.notificationService.snoozeTimeout;
   }
 }

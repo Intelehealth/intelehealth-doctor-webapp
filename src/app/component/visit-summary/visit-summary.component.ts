@@ -8,6 +8,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
 
 declare var getFromStorage: any,
   saveToStorage: any,
@@ -58,7 +59,8 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private diagnosisService: DiagnosisService,
-    private confirmDialogService: ConfirmDialogService
+    private confirmDialogService: ConfirmDialogService,
+    private pushNotificationService: PushNotificationsService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -164,9 +166,9 @@ export class VisitSummaryComponent implements OnInit {
                   },
                   skipFlag: true,
                 };
-                // if(!this.pushNotificationService.snoozeTimeout){
-                //   this.pushNotificationService.postNotification(payload).subscribe();
-                // }
+                if(!this.pushNotificationService.snoozeTimeout){
+                   this.pushNotificationService.postNotification(payload).subscribe();
+               }
               }
             });
           } else {

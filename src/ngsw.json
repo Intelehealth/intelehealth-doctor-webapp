@@ -60,7 +60,10 @@
   "dataGroups": [
     {
       "name": "api-performance",
-      "patterns": ["\\/assets\\/i18n\\/.*", "\\/api\\/.*"],
+      "patterns": [
+        "\\/assets\\/i18n\\/.*",
+        "\\/api\\/.*"
+      ],
       "strategy": "performance",
       "maxSize": 100,
       "maxAge": 259200000,
@@ -71,7 +74,9 @@
     },
     {
       "name": "api-freshness",
-      "patterns": ["\\/openmrs\\/ws\\/rest\\/v1\\/visit"],
+      "patterns": [
+        "\\/openmrs\\/ws\\/rest\\/v1\\/visit"
+      ],
       "strategy": "freshness",
       "maxSize": 1000,
       "maxAge": 0,

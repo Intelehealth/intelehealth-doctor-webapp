@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormControl } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
@@ -8,6 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { EncounterService } from "src/app/services/encounter.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmDialogService } from "../confirm-dialog/confirm-dialog.service";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
 declare var getFromStorage: any, saveToStorage: any;
 @Component({
   selector: "app-reassign-speciality",
@@ -39,7 +39,8 @@ export class ReassignSpecialityComponent implements OnInit {
     private http: HttpClient,
     private dialogService: ConfirmDialogService,
     private EncounterService: EncounterService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private pushNotificationService: PushNotificationsService,
   ) {}
 
   ngOnInit(): void {
@@ -124,6 +125,9 @@ export class ReassignSpecialityComponent implements OnInit {
                           },
                           skipFlag: false,
                         };
+                        this.pushNotificationService
+                        .postNotification(payload)
+                        .subscribe();
                       }
                     });
                   }
