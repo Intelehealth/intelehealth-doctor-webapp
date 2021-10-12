@@ -5,7 +5,7 @@
             <div class="card text-white" style="background: #dd3c62">
                 <div class="card-body">
                     <div class="text-left">
-                        PRIORITY VISITS<span style="float: right">{{ flagPatientNo }}</span>
+                        PRIORITY VISITS<span class="text-right badge badge-light">{{ flagPatientNo }}</span>
                     </div>
                 </div>
             </div>
@@ -14,7 +14,7 @@
             <div class="card text-white" style="background: #f6b825">
                 <div class="card-body">
                     <div class="text-left">
-                        AWAITING CONSULT<span style="float: right">{{
+                        AWAITING CONSULT<span class="text-right badge badge-light">{{
                             activePatient
                             }}</span>
                     </div>
@@ -25,7 +25,7 @@
             <div class="card text-white" style="background: #17a2b8">
                 <div class="card-body">
                     <div class="text-left">
-                        VISITS IN PROGRESS<span style="float: right">{{
+                        VISITS IN PROGRESS<span class="text-right badge badge-light">{{
                             visitNoteNo
                             }}</span>
                     </div>
@@ -36,7 +36,7 @@
             <div class="card text-white" style="background: #4fca8b">
                 <div class="card-body">
                     <div class="text-left">
-                        COMPLETED VISITS<span style="float: right">{{
+                        COMPLETED VISITS<span class="text-right badge badge-light">{{
                             completeVisitNo
                             }}</span>
                     </div>
@@ -50,7 +50,7 @@
         <mat-expansion-panel [expanded]="flagVisit.length > 0" id="flagged-table">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <h5>PRIORITY VISITS</h5>
+                    <h5>PRIORITY VISITS <b>({{flagPatientNo}})</b></h5>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="flagVisit.length > 0">
@@ -59,10 +59,10 @@
         </mat-expansion-panel>
 
         <!-- Queue Visit table -->
-        <mat-expansion-panel [expanded]="true" id="queued-table">
+        <mat-expansion-panel [expanded]="waitingVisit.length > 0" id="queued-table">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <h5>AWAITING CONSULT</h5>
+                    <h5>AWAITING CONSULT <b>({{activePatient}})</b></h5>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="waitingVisit.length > 0">
@@ -74,7 +74,7 @@
         <mat-expansion-panel [expanded]="progressVisit.length > 0" id="visit-in-progress">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <h5>VISITS IN PROGRESS</h5>
+                    <h5>VISITS IN PROGRESS <b>({{visitNoteNo}})</b></h5>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="progressVisit.length > 0">
@@ -86,7 +86,7 @@
         <mat-expansion-panel [expanded]="completedVisit.length > 0" id="visit-complete">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <h5>COMPLETED VISITS</h5>
+                    <h5>COMPLETED VISITS <b>({{completeVisitNo}})</b></h5>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <ng-container *ngIf="completedVisit.length > 0">
