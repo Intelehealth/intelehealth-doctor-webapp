@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
 declare const getFromStorage: Function;
 @Component({
@@ -43,7 +44,8 @@ export class VcComponent implements OnInit {
     public socketService: SocketService,
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<VcComponent>,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private chatService: ChatService
   ) {}
 
   close() {
@@ -64,6 +66,14 @@ export class VcComponent implements OnInit {
     this.snackbar.open(message, null, opts);
   }
 
+  get userUuid() {
+    return this.chatService.user.uuid;
+  }
+
+  get userName() {
+    return this.chatService.user.display;
+  }
+
   ngOnInit(): void {
     this.room = this.data.patientUuid;
     const patientVisitProvider = getFromStorage("patientVisitProvider");
@@ -74,6 +84,8 @@ export class VcComponent implements OnInit {
       patientVisitProvider && patientVisitProvider.provider
         ? patientVisitProvider.provider
         : this.nurseId;
+
+    localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
 
     this.socketService.initSocket(true);
     this.initSocketEvents();
