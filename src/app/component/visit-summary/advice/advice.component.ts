@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-advice',
@@ -81,9 +81,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptAdvice,
@@ -96,14 +94,16 @@ export class AdviceComponent implements OnInit {
         .subscribe(response => {
           this.advice.push({ uuid: response.uuid, value: value });
         });
-    } else { this.translationService.getTranslation('Another doctor is viewing this case'); }
+    }
   }
 
   delete(i) {
+    if (this.diagnosisService.isSameDoctor()) {
     const uuid = this.advice[i].uuid;
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
         this.advice.splice(i, 1);
       });
+    } 
   }
 }

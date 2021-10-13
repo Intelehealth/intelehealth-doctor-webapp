@@ -8,7 +8,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
 import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -179,9 +179,7 @@ export class PrescribedMedicationComponent implements OnInit {
     } else {
       insertValue = `${insertValue}`;
     }
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptMed,
@@ -195,15 +193,17 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.push({ uuid: response.uuid, value: insertValue });
           this.add = false;
         });
-    } else { this.translationService.getTranslation('Another doctor is viewing this case'); }
+    }
   }
 
   delete(i) {
+    if (this.diagnosisService.isSameDoctor()) {
     const uuid = this.meds[i].uuid;
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
         this.meds.splice(i, 1);
       });
+    }
   }
 
 }

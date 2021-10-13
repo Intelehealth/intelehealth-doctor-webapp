@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-prescribed-test',
@@ -80,9 +80,7 @@ testForm = new FormGroup({
     const date = new Date();
     const form = this.testForm.value;
     const value = form.test;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptTest,
@@ -95,15 +93,17 @@ testForm = new FormGroup({
       .subscribe(resp => {
         this.tests.push({uuid: resp.uuid, value: value});
       });
-    } else {this.translationService.getTranslation('Another doctor is viewing this case'); }
+    }
   }
 
   delete(i) {
-    const uuid = this.tests[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-    .subscribe(res => {
-      this.tests.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.tests[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+      .subscribe(res => {
+        this.tests.splice(i, 1);
+      });
+    } 
   }
 }
 

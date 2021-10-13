@@ -4,8 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-diagnosis',
@@ -42,7 +41,6 @@ diagnosisForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private translationService: TranslationService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -69,9 +67,7 @@ diagnosisForm = new FormGroup({
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptDiagnosis,
@@ -85,14 +81,16 @@ diagnosisForm = new FormGroup({
         this.diagnosisList = [];
         this.diagnosis.push({uuid: resp.uuid, value: json.value});
       });
-    } else {this.translationService.getTranslation('Another doctor is viewing this case'); }
+    }
   }
 
   delete(i) {
+    if (this.diagnosisService.isSameDoctor()) {
     const uuid = this.diagnosis[i].uuid;
     this.diagnosisService.deleteObs(uuid)
     .subscribe(res => {
       this.diagnosis.splice(i, 1);
     });
+   }
   }
 }
