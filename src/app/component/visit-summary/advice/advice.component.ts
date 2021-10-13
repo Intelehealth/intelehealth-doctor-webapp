@@ -12,10 +12,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
-  getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: "app-advice",
@@ -63,9 +60,8 @@ export class AdviceComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -75,8 +71,8 @@ export class AdviceComponent implements OnInit {
         term.length < 1
           ? []
           : this.advices
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -107,9 +103,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptAdvice,
@@ -122,20 +116,18 @@ export class AdviceComponent implements OnInit {
         this.isDataPresent.emit(true);
         this.advice.push({ uuid: response.uuid, value: value });
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.advice[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.advice.splice(i, 1);
-      if(this.advice.length === 0) {
-        this.isDataPresent.emit(false);
-      }
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.advice[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.advice.splice(i, 1);
+        if (this.advice.length === 0) {
+          this.isDataPresent.emit(false);
+        }
+      });
+    }
   }
 }

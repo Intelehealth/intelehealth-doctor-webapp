@@ -13,10 +13,7 @@ import {
   keyframes,
 } from "@angular/animations";
 import medicines from "./medicines";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
-  getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: "app-prescribed-medication",
@@ -78,9 +75,8 @@ export class PrescribedMedicationComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   searchPrescription = (text$: Observable<string>) =>
     text$.pipe(
@@ -90,8 +86,8 @@ export class PrescribedMedicationComponent implements OnInit {
         term.length < 1
           ? []
           : this.conceptPrescription
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -103,8 +99,8 @@ export class PrescribedMedicationComponent implements OnInit {
         term.length < 1
           ? []
           : this.conceptfrequency
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -116,8 +112,8 @@ export class PrescribedMedicationComponent implements OnInit {
         term.length < 1
           ? []
           : this.conceptAdministration
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -129,8 +125,8 @@ export class PrescribedMedicationComponent implements OnInit {
         term.length < 1
           ? []
           : this.conceptDose
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -142,8 +138,8 @@ export class PrescribedMedicationComponent implements OnInit {
         term.length < 1
           ? []
           : this.conceptDurationUnit
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -208,9 +204,7 @@ export class PrescribedMedicationComponent implements OnInit {
     } else {
       insertValue = `${insertValue}`;
     }
-    const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptMed,
@@ -224,20 +218,18 @@ export class PrescribedMedicationComponent implements OnInit {
         this.meds.push({ uuid: response.uuid, value: insertValue });
         this.add = false;
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.meds[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.meds.splice(i, 1);
-      if(this.meds.length === 0) {
-        this.isDataPresent.emit(false);
-      }
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.meds[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.meds.splice(i, 1);
+        if (this.meds.length === 0) {
+          this.isDataPresent.emit(false);
+        }
+      });
+    }
   }
 }
