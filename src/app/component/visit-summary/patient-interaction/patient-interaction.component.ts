@@ -13,8 +13,7 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { ConfirmDialogService } from "../confirm-dialog/confirm-dialog.service";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -68,7 +67,7 @@ export class PatientInteractionComponent implements OnInit {
     private route: ActivatedRoute,
     private encounterService: EncounterService,
     private confirmDialogService: ConfirmDialogService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.visitId = this.route.snapshot.params["visit_id"];
@@ -80,22 +79,22 @@ export class PatientInteractionComponent implements OnInit {
 
   fetchVisitDetails() {
     this.visitService.patientInfo(this.patientId)
-    .subscribe(info => {
-      info.person['attributes'].forEach(attri => {
-        if (attri.attributeType.display.match('Telephone Number')) {
-          info['telephone'] = attri.value;
-        }
-      });
-        if ( info['telephone'] != null) {
-          this.phoneNo =  info['telephone'];
-          const whatsapp =  info['telephone'];
+      .subscribe(info => {
+        info.person['attributes'].forEach(attri => {
+          if (attri.attributeType.display.match('Telephone Number')) {
+            info['telephone'] = attri.value;
+          }
+        });
+        if (info['telephone'] != null) {
+          this.phoneNo = info['telephone'];
+          const whatsapp = info['telephone'];
           // tslint:disable-next-line: max-line-length
           const text = encodeURI(
-          `Hello I'm calling for patient ${info.person.display} OpenMRS ID ${info.identifiers[0].identifier}`                  );
+            `Hello I'm calling for patient ${info.person.display} OpenMRS ID ${info.identifiers[0].identifier}`);
           this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-          }
-     });     
-}
+        }
+      });
+  }
 
   getAttributes() {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
@@ -122,8 +121,7 @@ export class PatientInteractionComponent implements OnInit {
     const formValue = this.interaction.value;
     const value = formValue.interaction;
     const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.visitService.getAttribute(visitId).subscribe((response) => {
         const result = response.results;
         if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
@@ -173,21 +171,19 @@ export class PatientInteractionComponent implements OnInit {
           });
         }
       }
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
-      this.msg = [];
-    });
-    if (this.adviceObs.length > 0) {
-      this.adviceObs.forEach(({ uuid }) => {
-        this.diagnosisService.deleteObs(uuid).subscribe();
+    if (this.diagnosisService.isSameDoctor()) {
+      this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
+        this.msg = [];
       });
+      if (this.adviceObs.length > 0) {
+        this.adviceObs.forEach(({ uuid }) => {
+          this.diagnosisService.deleteObs(uuid).subscribe();
+        });
+      }
     }
   }
 
@@ -201,17 +197,17 @@ export class PatientInteractionComponent implements OnInit {
     });
     if (doctorsMobileNo) {
       this.visitService.startCall(patientMobileNo, doctorsMobileNo)
-      .subscribe(()=> {
-            this.openDialog("Calling to patient")
-      }, () => {
-            this.openDialog("Unable to connect this call, please try again")
-      });
+        .subscribe(() => {
+          this.openDialog("Calling to patient")
+        }, () => {
+          this.openDialog("Unable to connect this call, please try again")
+        });
     } else {
-      this.snackbar.open('To perform call, please update your phone no in MyAccount section', null, { duration: 4000 }); 
+      this.snackbar.open('To perform call, please update your phone no in MyAccount section', null, { duration: 4000 });
     }
   }
 
-  openDialog(msg:string) {
+  openDialog(msg: string) {
     this.confirmDialogService.openConfirmDialog(msg, true)
       .afterClosed().subscribe();
   }

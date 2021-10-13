@@ -11,10 +11,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
-  getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: "app-follow-up",
@@ -62,10 +59,9 @@ export class FollowUpComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private datepipe: DatePipe
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
@@ -86,9 +82,7 @@ export class FollowUpComponent implements OnInit {
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, "dd-MM-yyyy");
     const advice = form.advice;
-    const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptFollow,
@@ -101,17 +95,15 @@ export class FollowUpComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = true;
         this.followUp.push({ uuid: resp.uuid, value: json.value });
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.followUp[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.followUp.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.followUp[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.followUp.splice(i, 1);
+      });
+    }
   }
 }
