@@ -20,9 +20,7 @@ export class EditDetailsComponent implements OnInit {
   "Pediatrician",
   "Neonatologist",
   "Family doctor",
-  "Infectious disease specialist",
   "Neurologist",
-  "Aids Specialist",
   "Infectionist"
   ];
   editForm = new FormGroup({
