@@ -7,8 +7,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
-import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -59,7 +58,6 @@ export class PrescribedMedicationComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute,
 ) { }
 
@@ -176,9 +174,7 @@ export class PrescribedMedicationComponent implements OnInit {
     } else {
       insertValue = `${insertValue}`;
     }
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptMed,
@@ -192,15 +188,17 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.push({ uuid: response.uuid, value: insertValue });
           this.add = false;
         });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+    }
   }
 
   delete(i) {
-    const uuid = this.meds[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-      .subscribe(res => {
-        this.meds.splice(i, 1);
-      });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.meds[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+        .subscribe(res => {
+          this.meds.splice(i, 1);
+        });
+    }
   }
 
 }

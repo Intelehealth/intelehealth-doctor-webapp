@@ -10,10 +10,8 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -63,7 +61,6 @@ export class PatientInteractionComponent implements OnInit {
   constructor(
     private diagnosisService: DiagnosisService,
     private visitService: VisitService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private encounterService: EncounterService
   ) {}
@@ -129,8 +126,7 @@ export class PatientInteractionComponent implements OnInit {
     const formValue = this.interaction.value;
     const value = formValue.interaction;
     const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.visitService.getAttribute(visitId).subscribe((response) => {
         const result = response.results;
         if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
@@ -180,21 +176,19 @@ export class PatientInteractionComponent implements OnInit {
           });
         }
       }
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
-      this.msg = [];
-    });
-    if (this.adviceObs.length > 0) {
-      this.adviceObs.forEach(({ uuid }) => {
-        this.diagnosisService.deleteObs(uuid).subscribe();
+    if (this.diagnosisService.isSameDoctor()) {
+      this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
+        this.msg = [];
       });
-    }
+      if (this.adviceObs.length > 0) {
+        this.adviceObs.forEach(({ uuid }) => {
+          this.diagnosisService.deleteObs(uuid).subscribe();
+        });
+      }
+    }  
   }
 }
