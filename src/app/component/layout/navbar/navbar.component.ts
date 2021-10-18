@@ -57,8 +57,8 @@ export class NavbarComponent implements OnInit {
 
   search() {
     const search = this.searchForm.value;
-    if (search.findInput.length < 3) {
-      this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
+    if (search.findInput === null || search.findInput.length < 3) {
+      this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please enter min 3 characters' } });
     } else {
       // tslint:disable-next-line: max-line-length
       const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;

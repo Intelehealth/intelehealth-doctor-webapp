@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { VcComponent } from '../../vc/vc.component';
 import { environment } from 'src/environments/environment';
 import { ConfirmDialogService } from '../reassign-speciality/confirm-dialog/confirm-dialog.service';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -52,6 +53,7 @@ export class PatientInteractionComponent implements OnInit {
     private encounterService: EncounterService,
     private dialog: MatDialog,
     private dialogService: ConfirmDialogService,
+    private diagnosisService: DiagnosisService
     ) { }
 
   ngOnInit() {
@@ -89,8 +91,7 @@ export class PatientInteractionComponent implements OnInit {
     const formValue = this.interaction.value;
     const value = formValue.interaction;
     const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.visitService.getAttribute(visitId)
         .subscribe(response => {
           const result = response.results;
@@ -139,15 +140,17 @@ export class PatientInteractionComponent implements OnInit {
             .subscribe(response => { });
         }
       }
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+    }
   }
 
   delete(i) {
-    const visitId = this.route.snapshot.params['visit_id'];
-    this.visitService.deleteAttribute(visitId, i)
-      .subscribe(res => {
-        this.msg = [];
-      });
+    if (this.diagnosisService.isSameDoctor()) {
+      const visitId = this.route.snapshot.params['visit_id'];
+      this.visitService.deleteAttribute(visitId, i)
+        .subscribe(res => {
+          this.msg = [];
+        });
+      }
   }
 
   openVcModal() {

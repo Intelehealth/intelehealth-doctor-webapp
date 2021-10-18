@@ -12,9 +12,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -64,7 +62,6 @@ export class AdviceComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute
   ) {
     try {
@@ -127,9 +124,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    const providerDetails = getFromStorage("provider");
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptAdvice,
@@ -141,17 +136,15 @@ export class AdviceComponent implements OnInit {
       this.service.postObs(json).subscribe((response) => {
         this.advice.push({ uuid: response.uuid, value: value });
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.advice[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.advice.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.advice[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.advice.splice(i, 1);
+      });
+    }
   }
 }
