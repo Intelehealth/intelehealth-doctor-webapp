@@ -7,6 +7,7 @@ import { SessionService } from "src/app/services/session.service";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
+import { VisitService } from "src/app/services/visit.service";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -27,10 +28,13 @@ export class LoginPageComponent implements OnInit {
     private snackbar: MatSnackBar,
     private authService: AuthService,
     private pushNotificationsService: PushNotificationsService,
+    private service: VisitService,
     private dialog: MatDialog
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.service.clearVisits();
+  }
 
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;

@@ -30,7 +30,10 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
     this.visitId = this.route.snapshot.paramMap.get("visit_id");
-    localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+    const params = new URLSearchParams();
+    params.append("userId", this.userUuid);
+    params.append("name", this.userName);
+    localStorage.socketQuery = params.toString();
     this.updateMessages();
     this.socket.initSocket(true);
     this.socket.onEvent("updateMessage").subscribe((data) => {
