@@ -280,10 +280,13 @@ export class HomepageComponent implements OnInit {
     active.stopDatetime != null
       ? "Visit Complete"
       : active.encounters[0]?.encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
+    this.value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split(
       "- "
     )[1];
-    this.value.lastSeen = active.encounters[0].encounterDatetime;
+    this.value.lastSeen = active.encounters[0]?.encounterDatetime;
+     if(this.value.provider === undefined) {
+    this.value.status = "Invalid visit";
+     }
     return this.value;
   }
 
