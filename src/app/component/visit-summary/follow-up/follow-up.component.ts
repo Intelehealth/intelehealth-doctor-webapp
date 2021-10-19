@@ -5,8 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-follow-up',
@@ -43,7 +42,6 @@ followForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private snackbar: MatSnackBar,
               private route: ActivatedRoute,
               private datepipe: DatePipe) { }
 
@@ -65,9 +63,7 @@ followForm = new FormGroup({
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
     const advice = form.advice;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptFollow,
@@ -80,15 +76,17 @@ followForm = new FormGroup({
       .subscribe(resp => {
         this.followUp.push({uuid: resp.uuid, value: json.value});
       });
-    } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+    }
   }
 
   delete(i) {
-    const uuid = this.followUp[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-    .subscribe(res => {
-      this.followUp.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.followUp[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+      .subscribe(() => {
+        this.followUp.splice(i, 1);
+      });
+    } 
   }
 
 }

@@ -6,8 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-advice',
@@ -43,7 +42,6 @@ export class AdviceComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute) { }
 
   search = (text$: Observable<string>) =>
@@ -81,9 +79,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptAdvice,
@@ -96,14 +92,16 @@ export class AdviceComponent implements OnInit {
         .subscribe(response => {
           this.advice.push({ uuid: response.uuid, value: value });
         });
-    } else { this.snackbar.open('Another doctor is viewing this case', null, { duration: 4000 }); }
+    }
   }
 
   delete(i) {
-    const uuid = this.advice[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-      .subscribe(res => {
-        this.advice.splice(i, 1);
-      });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.advice[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+        .subscribe(() => {
+          this.advice.splice(i, 1);
+        });
+    }    
   }
 }

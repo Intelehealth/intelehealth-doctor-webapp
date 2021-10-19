@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { MatSnackBar } from "@angular/material/snack-bar";
+declare var getEncounterProviderUUID: any,
+  getFromStorage: any;
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +16,7 @@ export class DiagnosisService {
   public isVisitSummaryChanged = false
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,  private snackbar: MatSnackBar) { }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -51,4 +55,16 @@ export class DiagnosisService {
       })
     );
   }
+
+  isSameDoctor() {
+    const providerDetails = getFromStorage("provider");
+    const providerUuid = providerDetails.uuid;
+    if (providerDetails && providerUuid === getEncounterProviderUUID()) { 
+      return true;
+    } else {
+      this.snackbar.open("Another doctor is viewing this case", null, {
+        duration: 4000,
+      });
+    }
+  } 
 }

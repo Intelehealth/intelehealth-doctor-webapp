@@ -4,8 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-additional-comment',
@@ -39,7 +38,6 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private snackbar: MatSnackBar,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -59,9 +57,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     const date = new Date();
     const form = this.commentForm.value;
     const value = form.comment;
-    const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid ===  getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptComment,
@@ -74,15 +70,16 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       .subscribe(resp => {
       this.comment.push({uuid: resp.uuid, value: value});
     });
-  } else {this.snackbar.open('Another doctor is viewing this case', null, {duration: 4000}); }
+  }
 }
 
   delete(i) {
-    const uuid = this.comment[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-    .subscribe(res => {
-      this.comment.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.comment[i].uuid;
+      this.diagnosisService.deleteObs(uuid)
+      .subscribe(() => {
+        this.comment.splice(i, 1);
+      });
+    }
   }
-
 }
