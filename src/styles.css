@@ -26,6 +26,26 @@
   src: url(assets/fonts/Almondita.ttf) format("opentype");
 }
 
+@font-face {
+  font-family: RobotoItalic;
+  src: url(assets/fonts/Roboto-ThinItalic.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: Caveat;
+  src: url(assets/fonts/Caveat-VariableFont_wght.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: Cormorant;
+  src: url(assets/fonts/CormorantInfant-MediumItalic.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: Pacifico;
+  src: url(assets/fonts/Pacifico-Regular.ttf) format("opentype");
+}
+
 body {
   background-color: #87C6ED;
   margin: 0;

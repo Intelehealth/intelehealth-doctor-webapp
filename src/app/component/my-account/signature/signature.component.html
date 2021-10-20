@@ -13,7 +13,7 @@
   </div>
   <div class="sign">
     <input type="radio" value="1" formControlName="signature" /><span
-      style="font-family: arty; font-size: 50px; top: -20px"
+      class="sign1" [style.font-family]="getFontfamily(1)"
     >
       {{ name }}</span
     >
@@ -21,7 +21,7 @@
   <br />
   <div class="sign">
     <input type="radio" value="2" formControlName="signature" /><span
-      style="font-family: asem; font-size: 50px; top: -25px"
+    class="sign1" [style.font-family]="getFontfamily(2)"
     >
       {{ name }}</span
     >
@@ -29,7 +29,7 @@
   <br />
   <div class="sign">
     <input type="radio" value="3" formControlName="signature" /><span
-      style="font-family: youthness; font-size: 50px; top: -20px"
+    class="sign1" [style.font-family]="getFontfamily(3)"
     >
       {{ name }}</span
     >
@@ -37,7 +37,7 @@
   <br />
   <div class="sign">
     <input type="radio" value="4" formControlName="signature" /><span
-      style="font-family: almondita; font-size: 30px; top: -10px"
+    class="sign1" [style.font-family]="getFontfamily(4)"
     >
       {{ name }}</span
     >

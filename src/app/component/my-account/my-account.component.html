@@ -67,7 +67,7 @@
             <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
               <th>{{ 'Signature'| translate }} :</th>
               <td *ngIf="providerDetails.textOfSign" [class]="providerDetails?.fontOfSign?.value"
-                [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 50px">
+                [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 30px">
                 {{ providerDetails?.textOfSign?.value }}
               </td>
               <td *ngIf="

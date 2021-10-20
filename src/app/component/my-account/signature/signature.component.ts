@@ -44,21 +44,33 @@ export class SignatureComponent implements OnInit {
     const signatureValue = formValue.signature;
     const signText = formValue.text;
     if (signatureValue === "1") {
-      this.signature(signText, "arty");
+      this.signature(signText, this.getFontfamily(1));
     }
     if (signatureValue === "2") {
-      this.signature(signText, "asem");
+      this.signature(signText, this.getFontfamily(2));
     }
     if (signatureValue === "3") {
-      this.signature(signText, "youthness");
+      this.signature(signText, this.getFontfamily(3));
     }
     if (signatureValue === "4") {
-      this.signature(signText, "almondita");
+      this.signature(signText, this.getFontfamily(4));
     }
   }
 
 
-
+  getFontfamily(value) {
+    console.log("getFontfamily", value)
+    switch (value) {
+      case 1:
+        return localStorage.getItem('selectedLanguage') === 'ru'? "RobotoItalic" : "arty";
+      case 2:
+        return localStorage.getItem('selectedLanguage') === 'ru'? "Caveat" : "asem";
+      case 3:
+        return localStorage.getItem('selectedLanguage') === 'ru'? "Cormorant" : "youthness";
+      case 4:
+          return localStorage.getItem('selectedLanguage') === 'ru'? "Pacifico": "almondita";  
+    }
+  }
 
 signature = (text: string, font: string) => {
   const userDetails = getFromStorage('user');
