@@ -204,21 +204,25 @@ export class HomepageComponent implements OnInit, OnDestroy {
             : ["Telehealth Generalized", "Telehealth Specialized"];
 
           if (filterBy.includes(visitModeAttribute?.value)) {
-            const speRequired = attributes.filter(
-              ({ attributeType }) =>
-                attributeType.uuid === this.specialityAttrType
-            );
-            if (speRequired.length) {
-              speRequired.forEach((spe, index) => {
-                if (spe.value === this.specialization) {
-                  if (index === 0) {
-                    this.visitCategory(active);
+            if (this.specialization === "All") {
+              this.visitCategory(active);
+            } else {
+              const speRequired = attributes.filter(
+                ({ attributeType }) =>
+                  attributeType.uuid === this.specialityAttrType
+              );
+              if (speRequired.length) {
+                speRequired.forEach((spe, index) => {
+                  if (spe.value === this.specialization) {
+                    if (index === 0) {
+                      this.visitCategory(active);
+                    }
+                    if (index === 1 && spe[0] !== spe[1]) {
+                      this.visitCategory(active);
+                    }
                   }
-                  if (index === 1 && spe[0] !== spe[1]) {
-                    this.visitCategory(active);
-                  }
-                }
-              });
+                });
+              }
             }
           }
         }
