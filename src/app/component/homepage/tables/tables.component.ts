@@ -4,7 +4,6 @@ import { MatSort } from "@angular/material/sort";
 import { MatTable } from "@angular/material/table";
 import { MatTableDataSource } from "@angular/material/table";
 import { HelperService } from "src/app/services/helper.service";
-
 @Component({
   selector: "app-tables",
   templateUrl: "./tables.component.html",
@@ -26,15 +25,26 @@ export class TablesComponent implements OnInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild(MatSort) sort: MatSort;
   @Input() data;
+  @Input() dataFor;
   constructor(private helper: HelperService) {}
 
   ngOnInit() {
+    this.setPrescription();
     this.dataSource = new MatTableDataSource(this.data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.helper.refreshTable.subscribe(() => {
       this.refresh();
     });
+  }
+
+  setPrescription() {
+    if (this.dataFor === "completedVisit") {
+      this.displayColumns.push("prescription");
+      this.data.forEach((e) => {
+        e.prescription = `#/prescription/${e.visitId}/${e.id}`;
+      });
+    }
   }
 
   refresh() {
@@ -50,5 +60,9 @@ export class TablesComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  redirect(link) {
+    window.open(link, "_blank");
   }
 }

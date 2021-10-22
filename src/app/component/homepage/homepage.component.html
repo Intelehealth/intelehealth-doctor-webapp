@@ -4,7 +4,7 @@
     <span class="text-right badge badge-light">
       <mat-slide-toggle
         (change)="toggleMode($event)"
-        [checked]="(modes?.camp == currentMode)"
+        [checked]="modes?.camp == currentMode"
         >{{ currentMode }}</mat-slide-toggle
       >
       <ng-container *ngIf="modes?.camp === currentMode">
@@ -153,7 +153,10 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-container *ngIf="completedVisit.length > 0">
-        <app-tables [data]="completedVisit"></app-tables>
+        <app-tables
+          [dataFor]="'completedVisit'"
+          [data]="completedVisit"
+        ></app-tables>
       </ng-container>
     </mat-expansion-panel>
   </mat-accordion>
