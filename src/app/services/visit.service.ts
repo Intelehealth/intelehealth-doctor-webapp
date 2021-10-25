@@ -83,7 +83,7 @@ export class VisitService {
 
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage,stateProvince),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
   }
 

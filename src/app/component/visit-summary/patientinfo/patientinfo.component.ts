@@ -16,7 +16,7 @@ export class PatientinfoComponent implements OnInit {
   image: string;
   patientInfo = [];
   patientIdentifier: string;
-  info = {};
+  info: any = {};
   profileImagePresent = false;
 
   constructor(
@@ -33,6 +33,7 @@ export class PatientinfoComponent implements OnInit {
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
+      console.log('this.info: ', this.info);
       localStorage.setItem("patientName", this.info["display"]);
 
       this.patientIdentifier = info.identifiers[0].identifier;
@@ -41,6 +42,8 @@ export class PatientinfoComponent implements OnInit {
           this.info["telephone"] = attri.value;
         } else if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
+        } else if (attri.attributeType.display.includes("Health District")) {
+          this.info.district = attri.value;
         }
       });
       this.patientInfo.push(this.info);
