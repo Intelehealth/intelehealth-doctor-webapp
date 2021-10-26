@@ -16,6 +16,7 @@ export class PastVisitsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private service: VisitService) {}
 
   ngOnInit() {
+
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.service.recentVisits(patientUuid).subscribe((response) => {
       const visits = response.results;
@@ -54,5 +55,10 @@ export class PastVisitsComponent implements OnInit {
         });
       });
     });
+  }
+
+  showData(visitID){
+    console.log('visitID:', visitID);
+    
   }
 }

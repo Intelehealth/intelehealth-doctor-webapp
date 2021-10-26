@@ -20,7 +20,7 @@
       <td mat-cell *matCellDef="let row">
         <a
           id="patient-id"
-          [routerLink]="['/visitSummary', row.patientId, row.visitId]"
+          [routerLink]="['/pastVisit', row.patientId, row.visitId]"
         >
           {{ row.id }}
         </a>

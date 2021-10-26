@@ -1,20 +1,39 @@
-<div id="past-visits">
-  <h4><i class="fas fa-hospital"></i> Past Case</h4>
-  <hr />
-  <div *ngFor="let data of recent">
-    <div>
-      <a
+<div class="container">
+  <mat-accordion class="example-headers-align" [multi]="true">
+    <mat-expansion-panel [expanded]="data.visitStatus=='Active'" (click)="showData(data.details.uuid, e)"
+      *ngFor="let data of recent" id="flagged-table" class="mt-2">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <!-- <a
         [routerLink]="[
           '/visitSummary',
           data.details.patient.uuid,
           data.details.uuid
         ]"
         >{{ data.details.startDatetime | date: "dd-MMM-yyyy" }}</a
-      >
-      <span> {{ data.observation }} </span>
-      <span class="badge badge-pill badge-success float-right">{{
-        data.visitStatus
-      }}</span>
-    </div>
+      > -->
+          {{ data.details.startDatetime | date: "dd-MMM-yyyy" }}
+          <span> {{ data.observation }} </span>
+          <span class="badge badge-pill badge-success float-right ml-auto">{{
+            data.visitStatus
+            }}</span>
+          <!-- <h5>ALL CASES <b>({{allVisitData.length }})</b> </h5> -->
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container>
+        <app-visit-summary [visitUUID]="data.details.uuid"></app-visit-summary>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <br>
+  <mat-card>
+    <app-additional-documents></app-additional-documents>
+  </mat-card>
+  <br>
+  <div class="text-center mt-2">
+    <button class="mr-1" id="sign-button" mat-raised-button color="primary">PRINT</button>
+    <button id="sign-button" mat-raised-button color="primary">SHARE</button>
   </div>
 </div>
+
+

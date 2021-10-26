@@ -9,9 +9,9 @@
         <app-patientinfo></app-patientinfo>
   </mat-card>
   <br>
-  <mat-card>
+  <!-- <mat-card>
         <app-past-visits (chiefComplaint)="getChiefComplaint($event)"></app-past-visits>
-  </mat-card>
+  </mat-card> -->
   <br>
   <mat-card>
         <app-current-visit></app-current-visit>
@@ -43,11 +43,11 @@
   <mat-card>
         <app-physical-examination></app-physical-examination>
   </mat-card>
-  <br>
+  <!-- <br>
   <mat-card>
         <app-additional-documents></app-additional-documents>
   </mat-card>
-  <br>
+  <br> -->
   <!-- <mat-card *ngIf="!visitNotePresent">
     <app-reassign-speciality></app-reassign-speciality>
   </mat-card> -->
@@ -69,14 +69,14 @@
   <br>
 
 
-  <div class="text-center" *ngIf="!show" [hidden]="userRole" >
+  <!-- <div class="text-center" *ngIf="!show" [hidden]="userRole" >
         <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="!caseNote">Start Case
               Note</button>
-  </div>
+  </div> -->
 
   <br>
 
-  <div *ngIf="show">
+  <div>
         <mat-card>
               <app-patient-interaction></app-patient-interaction>
         </mat-card>
@@ -114,10 +114,10 @@
               <br>
         </ng-container>
 
-        <div class="text-center">
+        <!-- <div class="text-center">
               <button (click)="sign()" [hidden]="userRole"  id="sign-button" mat-raised-button color="primary"
                     [disabled]="visitCompletePresent || isVisitSummaryChanged || isVisitEnded">Sign and Submit</button>
-        </div>
+        </div> -->
   </div>
 </div>
 

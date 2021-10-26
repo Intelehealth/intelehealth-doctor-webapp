@@ -1,5 +1,5 @@
 import { VisitService } from "../../services/visit.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -19,6 +19,7 @@ declare var getFromStorage: any,
   styleUrls: ["./visit-summary.component.css"],
 })
 export class VisitSummaryComponent implements OnInit {
+  @Input() visitUUID;
   baseURL = environment.baseURL;
 
   show = false;
@@ -82,7 +83,7 @@ export class VisitSummaryComponent implements OnInit {
     this.userRole =
       hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
 
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.visitUuid = this.visitUUID;
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
       const ObsData = response.results.filter((a) =>
@@ -94,8 +95,9 @@ export class VisitSummaryComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = false;
       }
     });
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    const visitUuid = this.visitUUID;
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      console.log('visitDetails: ', visitDetails);
       this.visitAttributes= visitDetails;
       this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
       const providerDetails = getFromStorage("provider");

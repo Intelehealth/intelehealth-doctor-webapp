@@ -166,6 +166,8 @@ import { ResolutionFeedbackComponent } from './component/visit-summary/resolutio
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'pastVisit/:patient_id/:visit_id', component: PastVisitsComponent, canActivate: [AuthGuard] },
+
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },

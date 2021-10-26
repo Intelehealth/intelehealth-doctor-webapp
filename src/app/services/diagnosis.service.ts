@@ -47,7 +47,7 @@ export class DiagnosisService {
         'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
       })
     }
-    const url = `https://testhelpline.intelehealth.org/pullimage/${patientId}/${obsUuid}`;
+    const url = `https://training.vikalpindia.org/pullimage/${patientId}/${obsUuid}`;
     return this.http.get(url, header);
   }
 
