@@ -1,46 +1,50 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="setSpiner ? 'spin' : ''">
-  <div class="d-flex justify-content-start">
-    <span class="text-right badge badge-light">
+  <div class="row home-mode">
+    <div class="col-sm-3 pl-4">
       <mat-slide-toggle
         (change)="toggleMode($event)"
         [checked]="modes?.camp == currentMode"
         >{{ currentMode }}</mat-slide-toggle
       >
-      <ng-container *ngIf="modes?.camp === currentMode">
-        <mat-select
-          placeholder="States"
-          [(ngModel)]="state"
-          (selectionChange)="selectChange($event?.value, 'state')"
+    </div>
+    <div class="col-sm-3 pl-4" *ngIf="modes?.camp === currentMode">
+      <mat-select
+        placeholder="States"
+        [(ngModel)]="state"
+        (selectionChange)="selectChange($event?.value, 'state')"
+      >
+        <mat-option *ngFor="let state of states" [value]="state?.display">{{
+          state?.display
+        }}</mat-option>
+      </mat-select>
+    </div>
+    <div class="col-sm-3 pl-4" *ngIf="modes?.camp === currentMode">
+      <mat-select
+        placeholder="District"
+        [(ngModel)]="district"
+        (selectionChange)="selectChange($event?.value, 'district')"
+      >
+        <mat-option
+          *ngFor="let district of districts"
+          [value]="district?.display"
+          >{{ district?.display }}</mat-option
         >
-          <mat-option *ngFor="let state of states" [value]="state?.display">{{
-            state?.display
-          }}</mat-option>
-        </mat-select>
-        <mat-select
-          placeholder="District"
-          [(ngModel)]="district"
-          (selectionChange)="selectChange($event?.value, 'district')"
+      </mat-select>
+    </div>
+    <div class="col-sm-3 pl-4" *ngIf="modes?.camp === currentMode">
+      <mat-select
+        placeholder="Village"
+        [(ngModel)]="village"
+        (selectionChange)="selectChange($event?.value, 'village')"
+      >
+        <mat-option
+          *ngFor="let village of villages"
+          [value]="village?.display"
+          >{{ village?.display }}</mat-option
         >
-          <mat-option
-            *ngFor="let district of districts"
-            [value]="district?.display"
-            >{{ district?.display }}</mat-option
-          >
-        </mat-select>
-        <mat-select
-          placeholder="Village"
-          [(ngModel)]="village"
-          (selectionChange)="selectChange($event?.value, 'village')"
-        >
-          <mat-option
-            *ngFor="let village of villages"
-            [value]="village?.display"
-            >{{ village?.display }}</mat-option
-          >
-        </mat-select>
-      </ng-container>
-    </span>
+      </mat-select>
+    </div>
   </div>
 
   <div class="modal-body row">

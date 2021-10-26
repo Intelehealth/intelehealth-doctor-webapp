@@ -33,7 +33,6 @@ export class PatientinfoComponent implements OnInit {
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
-      console.log('this.info: ', this.info);
       localStorage.setItem("patientName", this.info["display"]);
 
       this.patientIdentifier = info.identifiers[0].identifier;
