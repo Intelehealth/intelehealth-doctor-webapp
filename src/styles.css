@@ -107,6 +107,12 @@ body.font-lato td {
   font-size: 20px;
 }
 
-.home-mode .mat-select-placeholder{
+.home-mode .mat-select-placeholder {
   color: black !important;
+}
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -276,13 +276,15 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   assignValueToProperty(active) {
+    const preferredAddress = active?.patient?.person?.preferredAddress;
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
-    this.value.location = active.location.display;
+    this.value.state = preferredAddress?.stateProvince;
+    this.value.village = preferredAddress?.cityVillage;
     this.value.status =
       active.stopDatetime != null
         ? "Visit Complete"
