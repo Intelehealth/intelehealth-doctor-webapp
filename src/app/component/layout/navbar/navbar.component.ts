@@ -35,12 +35,13 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
+
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
-        if (role.uuid === 'f99470e3-82a9-43cc-b3ee-e66c249f320a') {
+        if (role.display === "Organizational: System Administrator") {
           this.systemAccess = true;
-        } if (role.uuid === 'f99470e3-82a9-43cc-b3ee-e66c249f320a' || role.uuid === '04902b9c-4acd-4fbf-ab37-6d9a81fd98fe') {
+        } if (role.display === "Project Manager" || role.display === "Reporting module" || role.display === "Organizational: System Administrator" ) {
           this.reportAccess = true;
         }
       });
