@@ -6,6 +6,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any;
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-follow-up',
@@ -34,6 +35,8 @@ export class FollowUpComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   errorText: string;
+  managerRoleAccess= false;
+
 
   followForm = new FormGroup({
     date: new FormControl('', [Validators.required]),
@@ -46,6 +49,16 @@ export class FollowUpComponent implements OnInit {
     private datepipe: DatePipe) { }
 
   ngOnInit() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
+
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)

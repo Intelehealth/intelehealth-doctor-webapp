@@ -54,6 +54,7 @@ export class AdviceComponent implements OnInit {
   errorText: string;
   state = "";
   district = "";
+  managerRoleAccess = false;
 
   adviceForm = new FormGroup({
     advice: new FormControl("", [Validators.required]),
@@ -98,6 +99,15 @@ export class AdviceComponent implements OnInit {
     );
 
   ngOnInit() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
     const adviceUuid = "0308000d-77a2-46e0-a6fa-a8c1dcbc3141";
     this.diagnosisService.concept(adviceUuid).subscribe((res) => {
       const result = res.answers;

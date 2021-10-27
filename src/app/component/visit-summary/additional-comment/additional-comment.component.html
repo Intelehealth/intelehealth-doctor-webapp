@@ -5,7 +5,7 @@
     <mat-form-field class="example-full-width">
         <textarea matInput placeholder="Notes (not shared with the patient)" formControlName='comment'></textarea>
     </mat-form-field>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>Add Note</button>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || managerRoleAccess'>Add Note</button>
 </div>
 </form>
 <br>
@@ -13,7 +13,7 @@
     <ul class="list-unstyled">
         <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
             <div class="doctor-value">{{comment.value}} </div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        <i (click)="delete(i)" *ngIf="!managerRoleAccess" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </mat-list>
     </ul>
 </ng-container>

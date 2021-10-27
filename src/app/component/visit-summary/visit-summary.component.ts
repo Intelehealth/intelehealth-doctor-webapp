@@ -32,6 +32,7 @@ export class VisitSummaryComponent implements OnInit {
   visitUuid: string;
   isVisitEnded = false;
   patientUuid: string;
+  managerRoleAccess = false;
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
@@ -56,6 +57,17 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
+
+    const userDetails = getFromStorage('user');
+
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService

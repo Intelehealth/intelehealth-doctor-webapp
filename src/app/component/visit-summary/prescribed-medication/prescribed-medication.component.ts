@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-declare var getEncounterUUID: any;
+declare var getEncounterUUID: any; 
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -38,6 +39,7 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptfrequency = [];
   conceptAdministration = [];
   conceptDurationUnit = [];
+  managerRoleAccess = false;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
 
   medForm = new FormGroup({
@@ -99,6 +101,17 @@ export class PrescribedMedicationComponent implements OnInit {
     )
 
   ngOnInit() {
+
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
+
     const prescriptionUuid = 'c25ea0e9-6522-417f-97ec-6e4b7a615254';
     this.diagnosisService.concept(prescriptionUuid)
       .subscribe(res => {

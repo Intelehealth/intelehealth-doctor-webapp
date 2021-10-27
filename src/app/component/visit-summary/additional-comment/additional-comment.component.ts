@@ -5,6 +5,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any;
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-additional-comment',
@@ -30,6 +31,7 @@ export class AdditionalCommentComponent implements OnInit {
   encounterUuid: string;
   patientId: string;
   visitUuid: string;
+  managerRoleAccess= false;
   conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   commentForm = new FormGroup({
@@ -41,6 +43,15 @@ export class AdditionalCommentComponent implements OnInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptComment)

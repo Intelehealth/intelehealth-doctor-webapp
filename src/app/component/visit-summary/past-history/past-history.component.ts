@@ -22,7 +22,7 @@ export class PastHistoryComponent implements OnInit {
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
     this.diagnosisService.getObs(patientUuid, this.conceptPastHistory)
     .subscribe(response => {
-      this.pastHistory = JSON.parse(response.results[0].value);     
+      this.pastHistory = response.results['length'] > 0 ? JSON.parse(response.results[0].value) : '';     
     });
   }
 }

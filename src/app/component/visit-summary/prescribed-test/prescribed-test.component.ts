@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any;
+declare var getFromStorage: any;
+
 
 @Component({
   selector: 'app-prescribed-test',
@@ -35,6 +37,7 @@ export class PrescribedTestComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   errorText: string;
+  managerRoleAccess = false;
 
   testForm = new FormGroup({
     test: new FormControl('', [Validators.required])
@@ -54,6 +57,15 @@ export class PrescribedTestComponent implements OnInit {
     )
 
   ngOnInit() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
     const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
     this.diagnosisService.concept(testUuid)
       .subscribe(res => {

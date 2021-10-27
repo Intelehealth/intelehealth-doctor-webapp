@@ -39,6 +39,7 @@ export class PatientInteractionComponent implements OnInit {
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   encounterUuid: string;
   patientUuid = "";
+  managerRoleAccess=false;
   videoIcon = environment.production
   ? "../../../intelehealth/assets/svgs/video-w.svg"
   : "../../../assets/svgs/video-w.svg";
@@ -57,6 +58,17 @@ export class PatientInteractionComponent implements OnInit {
     ) { }
 
   ngOnInit() {
+
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.display === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
+
     const visitId = this.route.snapshot.params['visit_id'];
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const uuid = this.route.snapshot.paramMap.get('patient_id');

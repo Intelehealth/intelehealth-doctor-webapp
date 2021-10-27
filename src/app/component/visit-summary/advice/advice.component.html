@@ -6,7 +6,7 @@
           <input matInput placeholder="Advice or referal for patient" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
       &nbsp;&nbsp;
-      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
+      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid || managerRoleAccess'>Add Advice</button>
   </form>
 </div>
 <ng-container *ngIf="advice.length > 0">
@@ -14,7 +14,7 @@
   <ul class="list-unstyled">
   <mat-list [@moveInLeft] *ngFor='let advice of advice, index as i' class="alert alert-primary">
     <div class="doctor-value">{{advice.value}}</div>
-    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!managerRoleAccess">delete</i>
   </mat-list>
   </ul>
 </div>
