@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
 
   readonly VapidKEY =
   "BNoBPMTLB1juNTJMiQa8LLMYQW9m1456EA9wTivJufaDgOu0jLQ2UkR9Dl4f_fWam8dxK-bWInNkKJ9L-oNfKz0"; // MSF Training
-  //"BIWPsR9rM0wmZxNDcoXzL8-yDm-iCXu6L-atyFaCiA9ekoZR8d5iE5Mqf_zZOBkoAVMWUVHOv5PDao0p2rt4McQ"; // MSF Production
+  //"BCJhdvNt47tq93OpcNQ8OV7A7xcaU1hd8m-fhJ9TgoEy9meNV60ikx12XD3WrbXiacbQVB1OwEdAXGIFYN0YrjU"; // MSF Production
 
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
