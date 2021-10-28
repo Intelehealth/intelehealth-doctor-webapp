@@ -60,7 +60,7 @@ diagnosisForm = new FormGroup({
     console.log('event: ', event);
     this.diagnosisService.getDiagnosisList(event.target.value)
     .subscribe(response => {
-      this.diagnosisList = response;
+      this.diagnosisList = response?.sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare);
     });
   }
 
