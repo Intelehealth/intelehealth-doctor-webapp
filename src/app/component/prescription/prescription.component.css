@@ -7,7 +7,7 @@
   background: #fff;
   border: 1px solid #cdd3e2;
   box-shadow: 0px 0px 1px #ccc;
-  padding: 25px 40px 20px;
+  padding: 20px 25px 20px;
   margin-top: 40px;
   border-radius: 4px;
 }
@@ -44,11 +44,6 @@
 .pres-content {
   background: #eceef4;
 }
-@media (min-width: 1200px) {
-  .pres-content .container {
-    width: 900px;
-  }
-}
 
 .pres-content .logo {
   text-align: center;
@@ -74,8 +69,7 @@
 }
 
 .pres-content .prescription-wrapper .details-info {
-  margin-top: 5px;
-  padding-top: 15px;
+  padding-top: 5px;
 }
 
 .pres-content .prescription-wrapper .details-info span {
@@ -91,24 +85,12 @@ label.gr {
   margin-top: 3px;
 }
 
-@media (max-width: 767px) {
-  .pres-content .prescription-wrapper .details-info .text-right {
-    text-align: left;
-    margin-top: 20px;
-  }
-}
 .pres-content .prescription-wrapper .presc-details {
   margin-top: 10px;
-  padding-top: 20px;
+  padding-top: 10px;
   line-height: 22px;
 }
 
-@media (max-width: 767px) {
-  .pres-content .prescription-wrapper .presc-details .text-right {
-    text-align: left;
-    margin-top: 20px;
-  }
-}
 .pres-content .prescription-wrapper .line-items {
   margin-top: 40px;
 }
@@ -129,20 +111,11 @@ label.gr {
   color: #696969;
   font-size: 15px;
 }
-@media (max-width: 767px) {
-  .pres-content .prescription-wrapper .line-items .items .item {
-    font-size: 13px;
-  }
-}
+
 .pres-content .prescription-wrapper .line-items .items .item .amount {
   letter-spacing: 0.1px;
   color: #84868a;
   font-size: 16px;
-}
-@media (max-width: 767px) {
-  .pres-content .prescription-wrapper .line-items .items .item .amount {
-    font-size: 13px;
-  }
 }
 
 .pres-content .prescription-wrapper .line-items .total {
@@ -155,6 +128,76 @@ label.gr {
   color: #454545;
 }
 
+@media (min-width: 1200px) {
+  .pres-content .container {
+    width: 900px;
+  }
+}
+
 .hih-logo {
-  max-height: 50px;
+  max-height: 40px;
+}
+.sign {
+  font-size: 40px;
+}
+ul {
+  margin-bottom: 5px !important;
+}
+/* ------------- */
+
+@media (max-width: 767px) {
+  .pres-content .prescription-wrapper .details-info .text-right {
+    text-align: left;
+    margin-top: 20px;
+  }
+  .pres-content .prescription-wrapper .presc-details .text-right {
+    text-align: left;
+    margin-top: 20px;
+  }
+  .pres-content .prescription-wrapper .line-items .items .item {
+    font-size: 13px;
+  }
+  .pres-content .prescription-wrapper .line-items .items .item .amount {
+    font-size: 13px;
+  }
+
+  label,
+  div {
+    font-size: 12px;
+  }
+  img {
+    max-height: 40px !important;
+  }
+
+  .pres-content .prescription-wrapper {
+    padding: 25px 30px 20px;
+  }
+
+  .hih.ih {
+    margin-left: 25px !important;
+  }
+  .sign {
+    font-size: 35px;
+  }
+}
+
+/* ------------- */
+
+@media (max-width: 411px) {
+  label,
+  div {
+    font-size: 12px;
+  }
+  img {
+    max-height: 33px !important;
+  }
+  .hih-lbl {
+    font-size: 9px;
+  }
+  .gr {
+    font-size: 15px;
+  }
+  .sign {
+    font-size: 25px;
+  }
 }
