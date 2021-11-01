@@ -30,6 +30,7 @@ export class VisitSummaryComponent implements OnInit {
   visitUuid = "";
   isVisitEnded: boolean = false;
   isLiveMode = null;
+  isProjectManager = false;
 
   constructor(
     private service: EncounterService,
@@ -44,6 +45,21 @@ export class VisitSummaryComponent implements OnInit {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
     };
+  }
+
+  getUserRoles() {
+    try {
+      return getFromStorage("user")?.roles || [];
+    } catch (error) {
+      console.log("error:12 ", error);
+      return [];
+    }
+  }
+
+  checkAndSetPermissions() {
+    this.isProjectManager = this.getUserRoles().find((r) =>
+      r.name.toLowerCase().includes("manager")
+    );
   }
 
   ngOnInit() {
@@ -85,6 +101,7 @@ export class VisitSummaryComponent implements OnInit {
         if (visitDetails.stopDatetime !== null) {
           this.isVisitEnded = true;
         }
+        this.checkAndSetPermissions();
       });
   }
 

@@ -64,7 +64,7 @@
 
 
       <div class="text-center" *ngIf="!show">
-            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"[disabled]="isVisitEnded">Start Visit
+            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"[disabled]="isVisitEnded || isProjectManager">Start Visit
                   Note</button>
       </div>
 
