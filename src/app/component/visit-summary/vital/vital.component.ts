@@ -55,6 +55,15 @@ vitalsPresent = false;
                 if (displayObs.match('Respiratory rate') !== null ) {
                   this.answer.respiratoryRate = Number(obs.display.slice(18, obs.display.length));
                 }
+                if (displayObs.includes('HGB') !== null ) {
+                  this.answer.hgb = obs.value;
+                }
+                if (displayObs.includes('Blood Group') !== null ) {
+                  this.answer.group = obs.value;
+                }
+                if (displayObs.includes('Sugar Level') !== null ) {
+                  this.answer.sugarLevel = obs.value;
+                }
               });
               this.v.push(this.answer);
             });

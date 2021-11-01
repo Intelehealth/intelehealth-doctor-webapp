@@ -18,8 +18,13 @@
       <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
       <th>HR:</th>
       <td>{{item.pulse}}</td>
-      <th>RR:</th>
       <td>{{item.respiratoryRate}}</td>
+      <th>Hemoglobin:</th>
+      <td><span *ngIf="item.hgb">{{item.hgb}}</span></td>
+      <th>Blood Group:</th>
+      <td><span *ngIf="item.group">{{item.group}}</span></td>
+      <th>Sugar Level:</th>
+      <td><span *ngIf="item.sugarLevel">{{item.sugarLevel}}</span></td>
     </tr>
   </table>
 </div>
