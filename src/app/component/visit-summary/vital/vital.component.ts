@@ -22,6 +22,7 @@ vitalsPresent = false;
       .subscribe(visits => {
         visits.encounters.forEach(visit => {
           const display = visit.display;
+          console.log('display: ', display);
           if (visit.display.match('Vitals') !== null ) {
             this.vitalsPresent = true;
             this.answer.date = display.split(' ')[1];
@@ -31,37 +32,37 @@ vitalsPresent = false;
               const vital = vitals.obs;
               vital.forEach(obs => {
                 const displayObs = obs.display;
-                if (displayObs.match('SYSTOLIC') !== null ) {
+                if (displayObs.includes('SYSTOLIC')) {
                   this.answer.sbp = Number(obs.display.slice(25, obs.display.length));
                 }
-                if (displayObs.match('DIASTOLIC') !== null ) {
+                if (displayObs.includes('DIASTOLIC')) {
                   this.answer.dbp = Number(obs.display.slice(26, obs.display.length));
                 }
-                if (displayObs.match('Weight') !== null ) {
+                if (displayObs.includes('Weight')) {
                   this.answer.weight = Number(obs.display.slice(13, obs.display.length));
                 }
-                if (displayObs.match('Height') !== null ) {
+                if (displayObs.includes('Height')) {
                   this.answer.height = Number(obs.display.slice(13, obs.display.length));
                 }
-                if (displayObs.match('BLOOD OXYGEN SATURATION') !== null ) {
+                if (displayObs.includes('BLOOD OXYGEN SATURATION')) {
                   this.answer.sp02 = Number(obs.display.slice(25, obs.display.length));
                 }
-                if (displayObs.match('TEMP') !== null ) {
+                if (displayObs.includes('TEMP')) {
                   this.answer.temp = Number(obs.display.slice(17, obs.display.length));
                 }
-                if (displayObs.match('Pulse') !== null ) {
+                if (displayObs.includes('Pulse')) {
                   this.answer.pulse = Number(obs.display.slice(7, obs.display.length));
                 }
-                if (displayObs.match('Respiratory rate') !== null ) {
+                if (displayObs.includes('Respiratory rate')) {
                   this.answer.respiratoryRate = Number(obs.display.slice(18, obs.display.length));
                 }
-                if (displayObs.includes('HGB') !== null ) {
+                if (displayObs.includes('HGB')) {
                   this.answer.hgb = obs.value;
                 }
-                if (displayObs.includes('Blood Group') !== null ) {
+                if (displayObs.includes('Blood Group')) {
                   this.answer.group = obs.value;
                 }
-                if (displayObs.includes('Sugar Level') !== null ) {
+                if (displayObs.includes('Sugar Level')) {
                   this.answer.sugarLevel = obs.value;
                 }
               });

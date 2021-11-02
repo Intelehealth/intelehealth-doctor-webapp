@@ -1,67 +1,103 @@
-import { Component, OnInit } from '@angular/core';
-import { EncounterService } from 'src/app/services/encounter.service';
-import { ActivatedRoute } from '@angular/router';
-import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
-import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { Component, OnInit } from "@angular/core";
+import { EncounterService } from "src/app/services/encounter.service";
+import { ActivatedRoute } from "@angular/router";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { Validators, FormGroup, FormControl } from "@angular/forms";
+import {
+  transition,
+  trigger,
+  style,
+  animate,
+  keyframes,
+} from "@angular/animations";
+import { Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, map, skip } from "rxjs/operators";
 declare var getEncounterUUID: any;
 
 @Component({
-  selector: 'app-diagnosis',
-  templateUrl: './diagnosis.component.html',
-  styleUrls: ['./diagnosis.component.css'],
+  selector: "app-diagnosis",
+  templateUrl: "./diagnosis.component.html",
+  styleUrls: ["./diagnosis.component.css"],
   animations: [
-    trigger('moveInLeft', [
-       transition('void=> *', [style({transform: 'translateX(300px)'}),
-         animate(200, keyframes ([
-          style({transform: 'translateX(300px)'}),
-          style({transform: 'translateX(0)'})
-           ]))]),
-    transition('*=>void', [style({transform: 'translateX(0px)'}),
-         animate(100, keyframes([
-          style({transform: 'translateX(0px)'}),
-          style({transform: 'translateX(300px)'})
-        ]))])
-     ])
- ]
+    trigger("moveInLeft", [
+      transition("void=> *", [
+        style({ transform: "translateX(300px)" }),
+        animate(
+          200,
+          keyframes([
+            style({ transform: "translateX(300px)" }),
+            style({ transform: "translateX(0)" }),
+          ])
+        ),
+      ]),
+      transition("*=>void", [
+        style({ transform: "translateX(0px)" }),
+        animate(
+          100,
+          keyframes([
+            style({ transform: "translateX(0px)" }),
+            style({ transform: "translateX(300px)" }),
+          ])
+        ),
+      ]),
+    ]),
+  ],
 })
 export class DiagnosisComponent implements OnInit {
-diagnosis: any = [];
-diagnosisList = [];
-conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
-patientId: string;
-visitUuid: string;
-encounterUuid: string;
+  diagnosis: any = [];
+  diagnosisList = [];
+  conceptDiagnosis = "537bb20d-d09d-4f88-930b-cc45c7d662df";
+  patientId: string;
+  visitUuid: string;
+  encounterUuid: string;
 
-diagnosisForm = new FormGroup({
-  text: new FormControl('', [Validators.required]),
-  type: new FormControl('', [Validators.required]),
-  confirm: new FormControl('', [Validators.required])
-});
+  diagnosisForm = new FormGroup({
+    text: new FormControl("", [Validators.required]),
+    type: new FormControl("", [Validators.required]),
+    confirm: new FormControl("", [Validators.required]),
+  });
 
-  constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute) { }
+  constructor(
+    private service: EncounterService,
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosis.push(obs);
-        }
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.patientId = this.route.snapshot.params["patient_id"];
+    this.diagnosisService
+      .getObs(this.patientId, this.conceptDiagnosis)
+      .subscribe((response) => {
+        response.results.forEach((obs) => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            this.diagnosis.push(obs);
+          }
+        });
       });
-    });
+    this.searchInit();
   }
 
-  search(event) {
-    console.log('event: ', event);
-    this.diagnosisService.getDiagnosisList(event.target.value)
-    .subscribe(response => {
-      this.diagnosisList = response;
-    });
+  // search(event) {
+  //   console.log('event: ', event);
+  //   this.diagnosisService.getDiagnosisList(event.target.value)
+  //   .subscribe(response => {
+  //     this.diagnosisList = response;
+  //   });
+  // }
+
+  searchInit() {
+    return this.diagnosisForm.controls.text.valueChanges
+      .pipe(
+        skip(1), // skip initial value
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe((term) => {
+        this.diagnosisService.getDiagnosisList(term).subscribe((response) => {
+          this.diagnosisList = response;
+        });
+      });
   }
 
   onSubmit() {
@@ -74,23 +110,21 @@ diagnosisForm = new FormGroup({
         person: this.patientId,
         obsDatetime: date,
         value: `${value.text}:${value.type} & ${value.confirm}`,
-        encounter: this.encounterUuid
+        encounter: this.encounterUuid,
       };
-      this.service.postObs(json)
-      .subscribe(resp => {
+      this.service.postObs(json).subscribe((resp) => {
         this.diagnosisList = [];
-        this.diagnosis.push({uuid: resp.uuid, value: json.value});
+        this.diagnosis.push({ uuid: resp.uuid, value: json.value });
       });
     }
   }
 
   delete(i) {
-    if(this.diagnosisService.isSameDoctor()) {
-    const uuid = this.diagnosis[i].uuid;
-    this.diagnosisService.deleteObs(uuid)
-    .subscribe(res => {
-      this.diagnosis.splice(i, 1);
-    });
-   }
- }
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.diagnosis[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.diagnosis.splice(i, 1);
+      });
+    }
+  }
 }
