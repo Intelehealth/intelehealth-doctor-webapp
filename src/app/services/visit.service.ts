@@ -60,9 +60,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  fetchVisitDetails(uuid): Observable<any> {
+  fetchVisitDetails(uuid, query?: any): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)))`;
+    const defaultQuery =
+      "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)))";
+    const v = query ? query : defaultQuery;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -111,6 +114,15 @@ export class VisitService {
         "/openmrs/ws/rest/v1",
         ""
       )}/prescription/prescription/visitData`,
+      payload
+    );
+  }
+
+  setVisitAttribute(targetVisitUuid, payload: any, existedMedProvider?: any) {
+    return this.http.post(
+      `${this.baseURL}/visit/${targetVisitUuid}/attribute${
+        existedMedProvider?.uuid ? `/${existedMedProvider?.uuid}` : ""
+      }`,
       payload
     );
   }

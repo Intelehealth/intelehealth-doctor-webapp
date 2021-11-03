@@ -55,12 +55,16 @@
 
     <ng-container matColumnDef="state">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>State</th>
-      <td class="text-ellipsis" mat-cell *matCellDef="let row">{{ row.state }}</td>
+      <td class="text-ellipsis" mat-cell *matCellDef="let row">
+        {{ row.state }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="village">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Village</th>
-      <td class="text-ellipsis" mat-cell *matCellDef="let row">{{ row.village }}</td>
+      <td class="text-ellipsis" mat-cell *matCellDef="let row">
+        {{ row.village }}
+      </td>
     </ng-container>
 
     <!-- Status column -->
@@ -104,6 +108,17 @@
           class="presc"
           src="assets/svgs/presc1.svg"
         />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="medicineProvided">
+      <th mat-header-cell *matHeaderCellDef class="px-2">Medicine Given</th>
+      <td class="text-center" mat-cell *matCellDef="let row">
+        <mat-checkbox
+          [checked]="row?.medicineProvided?.value"
+          (change)="setMedicineProvided(row, $event.checked)"
+        >
+        </mat-checkbox>
       </td>
     </ng-container>
 

@@ -9,6 +9,11 @@
         Download
         <i class="fa fa-download"></i>
       </button>
+      <mat-chip-list *ngIf="medicineProvided" class="ml-2">
+        <mat-chip class="chip"
+          >Medicine Given<mat-icon class="ml-2">done_all</mat-icon></mat-chip
+        >
+      </mat-chip-list>
     </div>
   </div>
 

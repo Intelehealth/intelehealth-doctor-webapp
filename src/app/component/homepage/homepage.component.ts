@@ -294,6 +294,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         "- "
       )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
+    this.value.attributes = active?.attributes || [];
     return this.value;
   }
 

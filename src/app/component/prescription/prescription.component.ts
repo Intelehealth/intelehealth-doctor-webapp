@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
 import { VisitService } from "src/app/services/visit.service";
+import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
 
 @Component({
   selector: "app-prescription",
@@ -13,7 +14,7 @@ export class PrescriptionComponent implements OnInit {
     type: "pdf",
     elementIdOrContent: "prescription",
   };
-  private patientId;
+  private visitId;
   private openMrsId;
   date = new Date();
   exporting = false;
@@ -22,24 +23,43 @@ export class PrescriptionComponent implements OnInit {
   drAttributesList: any;
   noPrescription = false;
   loading = true;
+  medicineProvided = false;
 
   constructor(
     private route: ActivatedRoute,
     private exportAsService: ExportAsService,
     private visitService: VisitService
   ) {
-    this.patientId = this.route.snapshot.paramMap.get("patientId");
+    this.visitId = this.route.snapshot.paramMap.get("visitId");
     this.openMrsId = this.route.snapshot.paramMap.get("openMrsId");
   }
 
   ngOnInit(): void {
     this.getPrescriptionData();
+    this.getVisitDetails();
+  }
+
+  getVisitDetails() {
+    this.visitService
+      .fetchVisitDetails(this.visitId, "custom:(attributes)")
+      .subscribe({
+        next: (res: any) => {
+          if (res.attributes?.length) {
+            if (res.attributes?.length > 0) {
+              const medProvided = res.attributes.find(
+                (a: any) => a?.attributeType?.uuid === medicineProvidedAttrType
+              );
+              this.medicineProvided = medProvided?.value || false;
+            }
+          }
+        },
+      });
   }
 
   getPrescriptionData() {
     this.visitService
       .getVisitData({
-        visitId: this.patientId,
+        visitId: this.visitId,
         patientId: this.openMrsId,
       })
       .subscribe({

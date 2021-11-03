@@ -40,6 +40,8 @@ import { SignatureComponent } from "./component/my-account/signature/signature.c
 import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatChipsModule } from "@angular/material/chips";
 
 // Package Import
 import { HttpClientModule } from "@angular/common/http";
@@ -165,12 +167,14 @@ import { PrescriptionComponent } from "./component/prescription/prescription.com
     ExportAsModule,
     MomentModule,
     MatSlideToggleModule,
+    MatCheckboxModule,
+    MatChipsModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [
         { path: "login", component: LoginPageComponent },
         {
-          path: "prescription/:patientId/:openMrsId",
+          path: "prescription/:visitId/:openMrsId",
           component: PrescriptionComponent,
         },
         {

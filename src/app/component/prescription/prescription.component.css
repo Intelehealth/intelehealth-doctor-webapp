@@ -201,3 +201,9 @@ ul {
     font-size: 25px;
   }
 }
+
+.chip {
+  background-color: #eceef4;
+  color: #321a94;
+  border: 1px solid #321a94;
+}
