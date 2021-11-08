@@ -27,3 +27,11 @@ mat-spinner {
 mat-form-field {
   margin-right: 12px;
 }
+
+.text-right {
+  float: right;
+  font-weight: bold;
+  font-size: 1rem;
+  color:black;
+  border: 1px solid white;
+}

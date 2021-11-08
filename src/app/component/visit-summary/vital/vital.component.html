@@ -11,9 +11,9 @@
         >
       </td>
       <th>Height:</th>
-      <td>{{ item.height }} cm</td>
+      <td><span *ngIf="item.height">{{item.height}} cm</span></td>
       <th>Weight:</th>
-      <td>{{ item.weight }} kg</td>
+      <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
       <th>BMI:</th>
       <td>
         {{
@@ -22,9 +22,9 @@
         }}
       </td>
       <th>SP02:</th>
-      <td>{{ item.sp02 }} %</td>
+      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
       <th>BP:</th>
-      <td>{{ item.sbp }}/{{ item.dbp }}</td>
+      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
       <th>HR:</th>
       <td>{{ item.pulse }}</td>
       <th>RR:</th>
