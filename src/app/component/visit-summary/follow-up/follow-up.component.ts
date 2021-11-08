@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
@@ -46,6 +46,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class FollowUpComponent implements OnInit {
+  @Input() visit_Id;
   minDate = new Date();
   followUp: any = [];
   conceptFollow = "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86";
@@ -68,13 +69,13 @@ export class FollowUpComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    // this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService
       .getObs(this.patientId, this.conceptFollow)
       .subscribe((response) => {
         response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visit_Id) {
             this.followUp.push(obs);
           }
         });

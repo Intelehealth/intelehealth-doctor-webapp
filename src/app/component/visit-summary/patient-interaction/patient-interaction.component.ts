@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -47,6 +47,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class PatientInteractionComponent implements OnInit {
+  @Input() visit_Id;
   msg: any = [];
   whatsappLink: string;
   phoneNo;
@@ -71,7 +72,7 @@ export class PatientInteractionComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.visitId = this.route.snapshot.params["visit_id"];
+    // this.visitId = this.route.snapshot.params["visit_id"];
     this.patientId = this.route.snapshot.params["patient_id"];
     this.fetchVisitDetails();
     this.getAttributes();
@@ -98,7 +99,7 @@ export class PatientInteractionComponent implements OnInit {
 }
 
   getAttributes() {
-    this.visitService.getAttribute(this.visitId).subscribe((response) => {
+    this.visitService.getAttribute(this.visit_Id).subscribe((response) => {
       const result = response.results;
       var tempMsg = result.filter((pType) =>
         ["Yes", "No"].includes(pType.value)
@@ -124,7 +125,7 @@ export class PatientInteractionComponent implements OnInit {
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
-      this.visitService.getAttribute(visitId).subscribe((response) => {
+      this.visitService.getAttribute(this.visit_Id).subscribe((response) => {
         const result = response.results;
         if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
         } else {
@@ -133,7 +134,7 @@ export class PatientInteractionComponent implements OnInit {
             value: value,
           };
           this.visitService
-            .postAttribute(visitId, json)
+            .postAttribute(this.visit_Id, json)
             .subscribe((response1) => {
               this.msg.push({ uuid: response1.uuid, value: response1.value });
             });
@@ -181,7 +182,7 @@ export class PatientInteractionComponent implements OnInit {
   }
 
   delete(i) {
-    this.visitService.deleteAttribute(this.visitId, i).subscribe((res) => {
+    this.visitService.deleteAttribute(this.visit_Id, i).subscribe((res) => {
       this.msg = [];
     });
     if (this.adviceObs.length > 0) {

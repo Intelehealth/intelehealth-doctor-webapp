@@ -1,6 +1,6 @@
 <div class="container">
   <mat-accordion class="example-headers-align" [multi]="true">
-    <mat-expansion-panel [expanded]="data.visitStatus=='Active'" (click)="showData(data.details.uuid, e)"
+    <mat-expansion-panel [expanded]="data.visitStatus=='Active'"
       *ngFor="let data of recent" id="flagged-table" class="mt-2">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -31,7 +31,7 @@
   </mat-card>
   <br>
   <div class="text-center mt-2">
-    <button class="mr-1" id="sign-button" mat-raised-button color="primary">PRINT</button>
+    <button class="mr-1" id="sign-button" mat-raised-button color="primary" (click)=print(patientUuid)>PRINT</button>
     <button id="sign-button" mat-raised-button color="primary">SHARE</button>
   </div>
 </div>

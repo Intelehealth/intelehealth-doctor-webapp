@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 
@@ -8,6 +8,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
   styleUrls: ["./presenting-complaints.component.css"],
 })
 export class PresentingComplaintsComponent implements OnInit {
+  @Input() visit_Id;
   complaint: any = [];
   complaintPresent = false;
   conceptComplaint = "3edb0e09-9135-481e-b8f0-07a26fa9a5ce";
@@ -24,7 +25,7 @@ export class PresentingComplaintsComponent implements OnInit {
       .getObs(patientUuid, this.conceptComplaint)
       .subscribe((response) => {
         response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === visitUuid) {
+          if (obs.encounter.visit.uuid === this.visit_Id) {
             this.complaint.push(obs);
           }
         });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute } from "@angular/router";
 
@@ -8,6 +8,8 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./current-visit.component.css"],
 })
 export class CurrentVisitComponent implements OnInit {
+  @Input() visit_Id;
+
   visitDetail;
   providerName: string;
   clinicName: string;
@@ -17,8 +19,8 @@ export class CurrentVisitComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const visitId = this.route.snapshot.params["visit_id"];
-    this.visitService.fetchVisitDetails(visitId).subscribe((visitDetail) => {
+    // const visitId = this.route.snapshot.params["visit_id"];
+    this.visitService.fetchVisitDetails(this.visit_Id).subscribe((visitDetail) => {
       this.visitDetail = visitDetail;
       this.clinicName = visitDetail.display.split("@ ")[1].split(" -")[0];
       visitDetail.encounters.forEach((encounter) => {

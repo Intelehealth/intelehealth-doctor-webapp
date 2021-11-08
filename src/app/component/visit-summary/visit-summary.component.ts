@@ -83,7 +83,7 @@ export class VisitSummaryComponent implements OnInit {
     this.userRole =
       hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
 
-    this.visitUuid = this.visitUUID;
+    // this.visitUuid = this.visitUUID;
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
       const ObsData = response.results.filter((a) =>
@@ -95,9 +95,8 @@ export class VisitSummaryComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = false;
       }
     });
-    const visitUuid = this.visitUUID;
-    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-      console.log('visitDetails: ', visitDetails);
+    // const visitUuid = this.visitUUID;
+    this.visitService.fetchVisitDetails(this.visitUUID).subscribe((visitDetails) => {
       this.visitAttributes= visitDetails;
       this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
       const providerDetails = getFromStorage("provider");
@@ -139,7 +138,7 @@ export class VisitSummaryComponent implements OnInit {
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    // const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     if (!this.visitNotePresent) {
       this.caseNote = true;
       const userDetails = getFromStorage("user");
@@ -156,13 +155,13 @@ export class VisitSummaryComponent implements OnInit {
               encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
             },
           ],
-          visit: visitUuid,
+          visit: this.visitUUID,
           encounterDatetime: myDate,
         };
         this.service.postEncounter(json).subscribe((response) => {
           if (response) {
             this.visitService
-              .fetchVisitDetails(visitUuid)
+              .fetchVisitDetails(this.visitUUID)
               .subscribe((visitDetails) => {
                 saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
               });
@@ -201,7 +200,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   sign() {
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    // this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
       if (response) {
@@ -218,8 +217,8 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   updateVisit() {
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+    // this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUUID}`;
 
     const myDate = new Date(Date.now() - 30000);
     const json = {
@@ -233,8 +232,8 @@ export class VisitSummaryComponent implements OnInit {
   signandsubmit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+    // const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUUID}`;
 
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
@@ -262,7 +261,7 @@ export class VisitSummaryComponent implements OnInit {
                   encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
                 },
               ],
-              visit: visitUuid,
+              visit: this.visitUUID,
               encounterDatetime: myDate,
               obs: [
                 {

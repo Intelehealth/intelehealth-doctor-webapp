@@ -80,6 +80,7 @@ import { MainComponent } from './component/main/main.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { RedirectComponent } from "./component/redirect/redirect.component";
 import { ResolutionFeedbackComponent } from './component/visit-summary/resolution-feedback/resolution-feedback.component';
+import { PrescriptionComponent } from './component/prescription/prescription.component';
 
 
 
@@ -122,7 +123,8 @@ import { ResolutionFeedbackComponent } from './component/visit-summary/resolutio
     MainComponent,
     ConfirmDialogComponent,
     ReassignSpecialityComponent,
-    ResolutionFeedbackComponent
+    ResolutionFeedbackComponent,
+    PrescriptionComponent
   ],
 
   imports: [
@@ -155,6 +157,10 @@ import { ResolutionFeedbackComponent } from './component/visit-summary/resolutio
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'l/:hash', component: RedirectComponent },
+      {
+        path: "prescription/:patientId",
+        component: PrescriptionComponent,
+      },
       { path: '', component: MainComponent, children:[
         { path: '', component: LoginPageComponent },
         { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
@@ -166,7 +172,7 @@ import { ResolutionFeedbackComponent } from './component/visit-summary/resolutio
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-        { path: 'pastVisit/:patient_id/:visit_id', component: PastVisitsComponent, canActivate: [AuthGuard] },
+        { path: 'pastVisit/:patient_id', component: PastVisitsComponent, canActivate: [AuthGuard] },
 
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]

@@ -1,5 +1,5 @@
 import { DiagnosisService } from "src/app/services/diagnosis.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { environment } from "../../../../environments/environment";
 
@@ -9,6 +9,8 @@ import { environment } from "../../../../environments/environment";
   styleUrls: ["./physical-examination.component.css"],
 })
 export class PhysicalExaminationComponent implements OnInit {
+  @Input() visit_Id;
+
   baseURL = environment.baseURL;
   images: any = [];
   physicalExamPresent = false;
@@ -28,7 +30,7 @@ export class PhysicalExaminationComponent implements OnInit {
         response.results.forEach((obs) => {
           if (
             obs.encounter !== null &&
-            obs.encounter.visit.uuid === visitUuid
+            obs.encounter.visit.uuid === this.visit_Id
           ) {
             this.physicalExamPresent = true;
             const data = {

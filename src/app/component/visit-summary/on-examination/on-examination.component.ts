@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 
@@ -8,6 +8,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
   styleUrls: ["./on-examination.component.css"],
 })
 export class OnExaminationComponent implements OnInit {
+  @Input() visit_Id;
   onExam: any = [];
   onExamPresent = false;
   conceptOnExam = "e1761e85-9b50-48ae-8c4d-e6b7eeeba084";
@@ -24,7 +25,7 @@ export class OnExaminationComponent implements OnInit {
       .getObs(patientUuid, this.conceptOnExam)
       .subscribe((response) => {
         response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === visitUuid) {
+          if (obs.encounter.visit.uuid === this.visit_Id) {
             this.onExam.push(obs);
           }
         });

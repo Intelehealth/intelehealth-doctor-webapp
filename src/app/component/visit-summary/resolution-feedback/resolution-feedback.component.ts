@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
@@ -8,6 +8,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
   styleUrls: ['./resolution-feedback.component.css']
 })
 export class ResolutionFeedbackComponent implements OnInit {
+  @Input() visit_Id;
   resolutions: any = [];
   resolutionPresent = false;
   conceptResolutionFeedback = "dd24755d-4e7f-4175-b0d6-49f193c853c3";
@@ -25,7 +26,7 @@ export class ResolutionFeedbackComponent implements OnInit {
       .getObs(patientUuid, this.conceptResolutionFeedback)
       .subscribe((response) => {
         response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === visitUuid) {
+          if (obs.encounter.visit.uuid === this.visit_Id) {
             this.resolutions.push(obs);
           }
         });

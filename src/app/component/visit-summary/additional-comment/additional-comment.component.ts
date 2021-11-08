@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -45,6 +45,7 @@ declare var getEncounterProviderUUID: any,
   ],
 })
 export class AdditionalCommentComponent implements OnInit {
+  @Input() visit_Id;
   comment: any = [];
   encounterUuid: string;
   patientId: string;
@@ -69,7 +70,7 @@ export class AdditionalCommentComponent implements OnInit {
       .getObs(this.patientId, this.conceptComment)
       .subscribe((response) => {
         response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visit_Id) {
             this.comment.push(obs);
           }
         });

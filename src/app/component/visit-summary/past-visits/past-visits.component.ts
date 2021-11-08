@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-past-visits",
@@ -13,12 +13,16 @@ export class PastVisitsComponent implements OnInit {
   observation: {};
   visitStatus: String;
   recent: any = [];
-  constructor(private route: ActivatedRoute, private service: VisitService) {}
+  patientUuid: any;
+  constructor(private route: ActivatedRoute, 
+    private service: VisitService, 
+    private router: Router,
+    ) {}
 
   ngOnInit() {
 
-    const patientUuid = this.route.snapshot.paramMap.get("patient_id");
-    this.service.recentVisits(patientUuid).subscribe((response) => {
+   this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
+    this.service.recentVisits(this.patientUuid).subscribe((response) => {
       const visits = response.results;
       visits.forEach((visit) => {
         this.service.fetchVisitDetails(visit.uuid).subscribe((visitDetails) => {
@@ -57,8 +61,7 @@ export class PastVisitsComponent implements OnInit {
     });
   }
 
-  showData(visitID){
-    console.log('visitID:', visitID);
-    
+  print(patientUuid){
+    this.router.navigateByUrl(`/prescription/${patientUuid}`)
   }
 }

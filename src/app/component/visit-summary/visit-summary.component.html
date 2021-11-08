@@ -14,15 +14,15 @@
   </mat-card> -->
   <br>
   <mat-card>
-        <app-current-visit></app-current-visit>
+        <app-current-visit [visit_Id]="visitUUID"></app-current-visit>
   </mat-card>
   <br>
   <mat-card>
-        <app-presenting-complaints></app-presenting-complaints>
+        <app-presenting-complaints [visit_Id]="visitUUID"></app-presenting-complaints>
   </mat-card>
   <br>
   <mat-card *ngIf="!isFollowUpComplaint">
-        <app-resolution-feedback ></app-resolution-feedback>
+        <app-resolution-feedback [visit_Id]="visitUUID"></app-resolution-feedback>
   </mat-card>
   <br>
   <!-- <mat-card>
@@ -37,11 +37,11 @@
   </mat-card>
   <br> -->
   <mat-card>
-        <app-on-examination></app-on-examination>
+        <app-on-examination [visit_Id]="visitUUID"></app-on-examination>
   </mat-card>
   <br>
   <mat-card>
-        <app-physical-examination></app-physical-examination>
+        <app-physical-examination [visit_Id]="visitUUID"></app-physical-examination>
   </mat-card>
   <!-- <br>
   <mat-card>
@@ -78,7 +78,7 @@
 
   <div>
         <mat-card>
-              <app-patient-interaction></app-patient-interaction>
+              <app-patient-interaction [visit_Id]="visitUUID"></app-patient-interaction>
         </mat-card>
         <br>
         <!-- <mat-card>
@@ -94,15 +94,15 @@
         </mat-card>
         <br> -->
         <mat-card>
-              <app-advice></app-advice>
+              <app-advice [visit_Id]="visitUUID"></app-advice>
         </mat-card>
         <br>
         <mat-card>
-              <app-additional-comment></app-additional-comment>
+              <app-additional-comment [visit_Id]="visitUUID"></app-additional-comment>
         </mat-card>
         <br>
         <mat-card>
-              <app-follow-up></app-follow-up>
+              <app-follow-up [visit_Id]="visitUUID"></app-follow-up>
         </mat-card>
         <br>
         <ng-container *ngIf="visitCompletePresent">
