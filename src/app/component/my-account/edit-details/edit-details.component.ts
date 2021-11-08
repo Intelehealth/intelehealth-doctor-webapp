@@ -88,7 +88,7 @@ export class EditDetailsComponent implements OnInit {
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {
-      const URL = `${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
+      const URL = `${this.baseURL}/person/${this.data.person.uuid}`;
       const json = {
         gender: value.gender,
       };

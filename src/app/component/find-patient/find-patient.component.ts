@@ -10,8 +10,7 @@ import { Router } from "@angular/router";
 })
 export class FindPatientComponent implements OnInit {
   values: any;
-  msg = "Sorry no Patient Found..";
-
+  msg = "Sorry! Patient Not Found.";
   constructor(
     public dialog: MatDialogRef<FindPatientComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
