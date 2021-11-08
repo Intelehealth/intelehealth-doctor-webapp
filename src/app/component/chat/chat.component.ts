@@ -103,9 +103,6 @@ export class ChatComponent implements OnInit {
   }
 
   playNotify() {
-    const src = environment.production
-      ? "../../../../intelehealth/assets/notification.mp3"
-      : "../../../../assets/notification.mp3";
-    new Audio(src).play();
+    new Audio("assets/notification.mp3").play();
   }
 }

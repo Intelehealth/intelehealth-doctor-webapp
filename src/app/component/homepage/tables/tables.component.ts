@@ -42,6 +42,7 @@ export class TablesComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.helper.refreshTable.subscribe(() => {
+      this.setPrescription();
       this.refresh();
     });
   }
@@ -50,6 +51,7 @@ export class TablesComponent implements OnInit {
     if (this.dataFor === "completedVisit") {
       this.displayColumns.push("prescription");
       this.displayColumns.push("medicineProvided");
+      this.displayColumns = [...new Set(this.displayColumns)];
       this.data.forEach((e) => {
         e.prescription = `#/prescription/${e.visitId}/${e.id}`;
         if (e.attributes?.length > 0) {

@@ -299,8 +299,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   playNotify() {
-    const audioUrl = "../../../../intelehealth/assets/notification.mp3";
-    new Audio(audioUrl).play();
+    new Audio("assets/notification.mp3").play();
   }
 
   toggleMode(e) {
