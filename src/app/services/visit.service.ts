@@ -84,4 +84,14 @@ export class VisitService {
     return this.http.post(url, body);
   }
 
+  getVisitData(payload) {
+    return this.http.post(
+      `${this.baseURL.replace(
+        "/openmrs/ws/rest/v1",
+        ""
+      )}/prescription/prescription/visitData`,
+      payload
+    );
+  }
+
 }
