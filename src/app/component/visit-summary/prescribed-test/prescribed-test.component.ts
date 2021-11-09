@@ -61,7 +61,7 @@ export class PrescribedTestComponent implements OnInit {
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
-        if (role.display === "Project Manager") {
+        if (role.name === "Project Manager") {
           this.managerRoleAccess = true;
         }
       });

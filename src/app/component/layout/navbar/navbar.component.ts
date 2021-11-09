@@ -39,9 +39,9 @@ export class NavbarComponent implements OnInit {
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
-        if (role.display === "Organizational: System Administrator") {
+        if (role.name === "Organizational: System Administrator") {
           this.systemAccess = true;
-        } if (role.display === "Project Manager" || role.display === "Reporting module" || role.display === "Organizational: System Administrator" ) {
+        } if (role.name === "Project Manager" || role.name === "Reporting module" || role.name === "Organizational: System Administrator" ) {
           this.reportAccess = true;
         }
       });
