@@ -36,20 +36,6 @@ export class AdditionalDocumentsComponent implements OnInit {
             imageName: data1.data[0].imageName
           };
           this.images.push(data);
-          // if (
-          //   obs.encounter !== null &&
-          //   obs.encounter.visit.uuid === visitUuid
-          // ) {
-          //   this.additionalDocumentPresent = true;
-
-          //   const data1: any = await this.diagnosisService.getImageName(patientUuid, obs.uuid).toPromise();
-
-          //   const data = {
-          //     image: `${this.baseURL}/obs/${obs.uuid}/value`,
-          //     imageName: data1.data[0].imageName
-          //   };
-          //   this.images.push(data);
-          // }
         });
       });
   }

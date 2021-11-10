@@ -49,13 +49,15 @@
                   <span class="d-flex">Age: &nbsp;&nbsp; <b>{{ info.age }}</b></span>
                   <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ info.gender }}</b></span>
                   <span class="d-flex">State: &nbsp;&nbsp; <b>{{state}}</b></span>
-                  <span class="d-flex">District: &nbsp;&nbsp; <b>{{info?.preferredAddress.cityVillage}}</b></span>
+                  <span class="d-flex">District: &nbsp;&nbsp; <b>{{info?.preferredAddress?.cityVillage}}</b></span>
                   <span class="d-flex">Contact Info: &nbsp;&nbsp; <b>{{info.telephone}}</b></span>
                   <span class="d-flex">Caste: &nbsp;&nbsp; <b>{{ info.Caste }}</b></span>
                   <span class="d-flex">Occupation: &nbsp;&nbsp; <b>{{ info.occupation }}</b></span>
                   <span class="d-flex">Landmark: &nbsp;&nbsp; <b>{{ info.Landmark }}</b></span>
-                  <span class="d-flex">Survivor marriage type: &nbsp;&nbsp; <b>{{ info.Survivor_marriage_type }}</b></span>
-                  <span class="d-flex">Survivor Maritual Status: &nbsp;&nbsp; <b>{{ info.Survivor_maritual_status }}</b></span>
+                  <span class="d-flex">Survivor marriage type: &nbsp;&nbsp; <b>{{ info.Survivor_marriage_type
+                      }}</b></span>
+                  <span class="d-flex">Survivor Maritual Status: &nbsp;&nbsp; <b>{{ info.Survivor_maritual_status
+                      }}</b></span>
                   <span class="d-flex">Survivor Living With: &nbsp;&nbsp; <b>{{ info.Survivor_living_with }}</b></span>
                   <span class="d-flex">Marriage age: &nbsp;&nbsp; <b>{{ info.Marriage_age }}</b></span>
                   <span class="d-flex">Maritual Status: &nbsp;&nbsp; <b>{{ info.maritualStatus }}</b></span>
@@ -67,108 +69,47 @@
                     <b>Visit Date</b></span>
                   <span class="d-flex">OpenMRS ID: &nbsp;&nbsp; <b>{{patientIdentifier}}</b></span>
                   <span class="d-flex">Education: &nbsp;&nbsp; <b>{{ info.Education }}</b></span>
-                  <span class="d-flex">Telephone No for survivor: &nbsp;&nbsp; <b>{{ info.Telephone_number_for_survivor }}</b></span>
+                  <span class="d-flex">Telephone No for survivor: &nbsp;&nbsp; <b>{{ info.Telephone_number_for_survivor
+                      }}</b></span>
                   <span class="d-flex">Case Reffered By: &nbsp;&nbsp; <b>{{ info.caseRefferedBy }}</b></span>
-                  <span class="d-flex">Am Speaking with survivor: &nbsp;&nbsp; <b>{{ info.amSpeakingWithSurvivor }}</b></span>
+                  <span class="d-flex">Am Speaking with survivor: &nbsp;&nbsp; <b>{{ info.amSpeakingWithSurvivor
+                      }}</b></span>
                   <span class="d-flex">Called by: &nbsp;&nbsp; <b>{{ info.SWD }}</b></span>
                   <span class="d-flex">Contact Type: &nbsp;&nbsp; <b>{{ info.contactType }}</b></span>
                   <span class="d-flex">Husband Occupation: &nbsp;&nbsp; <b>{{ info.husbandOccupation }}</b></span>
                   <span class="d-flex">Income: &nbsp;&nbsp; <b>{{ info.income }}</b></span>
                   <span class="d-flex">Husband Income: &nbsp;&nbsp; <b>{{ info.husbandIncome }}</b></span>
-                  <span class="d-flex">Maternal home address: &nbsp;&nbsp; <b>{{ info.Maternal_home_address }}</b></span>
-                  <span class="d-flex">Maternal phone number: &nbsp;&nbsp; <b>{{ info.Maternal_phone_number }}</b></span>
+                  <span class="d-flex">Maternal home address: &nbsp;&nbsp; <b>{{ info.Maternal_home_address
+                      }}</b></span>
+                  <span class="d-flex">Maternal phone number: &nbsp;&nbsp; <b>{{ info.Maternal_phone_number
+                      }}</b></span>
                   <span class="d-flex">Address of in-laws: &nbsp;&nbsp; <b>{{ info.Address_of_in_laws }}</b></span>
-                  <span class="d-flex">Emergency Phone Number: &nbsp;&nbsp; <b>{{ info.Emergency_Phone_Number }}</b></span>
+                  <span class="d-flex">Emergency Phone Number: &nbsp;&nbsp; <b>{{ info.Emergency_Phone_Number
+                      }}</b></span>
                 </div>
               </div>
             </div>
-
-            <div style="border-top: 2px solid #321a94" class="presc-details">
+        
+            <div style="border-top: 2px solid #321a94" class="presc-details" *ngFor="let visit of visitData">
               <div class="row">
                 <div class="col-sm-12">
-                  <strong> वजह / Reason for visit: </strong>
-                  <ul></ul>
+                  <strong> Presenting Complaints: </strong>
+                  <table class="table table-responsive borderless" *ngFor="let complaint of visit.complaints">
+                    <tr>
+                      <div [innerHTML]="complaint.value"></div>
+                    </tr>
+                  </table>
                 </div>
+                
                 <div class="col-sm-12">
-                  <strong> निदान/ Diagnosis: </strong>
-                  <ul>
-                    <li>
-                      Diagnosis
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="col-sm-12">
-                  <strong> दवाएं / Medication(s): </strong>
-                  <ul>
-                    <li>
-                      Med
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="col-sm-12">
-                  <strong>
-                    जांच की सिफारिश / Recommended Investigation(s):
-                  </strong>
-                  <ul>
-                    <li *ngFor="let adv of testsAdvised">
-                      Advise
-                    </li>
-                  </ul>
-                </div>
-                <div class="col-sm-12">
-                  <strong> सामान्य सलाह / General Advice: </strong>
-                  <ul>
-                    <li>
-                      Advice
-                    </li>
-                  </ul>
-                </div>
-                <div class="col-sm-12">
-                  <strong> फिर से संपर्क कि तारीख / Follow Up Date: </strong>
-                  <ul>
-                    <li *ngFor="let flwUp of followupNeeded">
-                      Follow Up
-                    </li>
-                  </ul>
-                </div>
-                <div class="col-sm-12">
-                  <strong> टिप्पणियाँ / Notes: </strong>
-                  <ul>
-                    <li *ngFor="let note of notes">
-                      {{ note }}
-                    </li>
-                  </ul>
-                </div>
-                <!-- <div class="col-sm-12">
-                  <strong>Additional Documents: </strong>
-                  <ul>
-                    <li *ngFor="let image of images" class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                      <span style="margin-left: 70px;">{{image.imageName}}</span><br>
-                      <a href="{{ image.image }}"><img src="{{ image.image }}"
-                          [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
-                    </li>
-                  </ul>
-                </div> -->
-              </div>
-            </div>
-
-            <div *ngIf="additionalDocumentPresent">
-              <strong> Additional Documents: </strong>
-              <div class="row">
-                <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
-                  <span style="margin-left: 70px;">{{image.imageName}}</span><br>
-                  <a href="{{ image.image }}"
-                    ><img
-                      src="{{ image.image }}"
-                      [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }"
-                      alt=""
-                  /></a>
+                  <strong> On Examination: </strong>
+                  <table class="table table-responsive borderless" *ngFor="let exam of visit.examination" >
+                    <tr>
+                      <div [innerHTML]="exam.value"></div>
+                    </tr>
+                  </table>
                 </div>
               </div>
-            </div>
-
             <div class="line-items">
               <div class="d-flex flex-row justify-content-end">
                 <div class="p-2">
@@ -188,10 +129,24 @@
               </div>
             </div>
           </div>
+
+          <div style="border-top: 2px solid #321a94" class="presc-details" >
+
+            <strong> Additional Documents: </strong>
+            <div class="row">
+              <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
+                <span style="margin-left: 70px;">{{image.imageName}}</span><br>
+                <a href="{{ image.image }}"><img src="{{ image.image }}"
+                    [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <!-- <div class="alert alert-warning m-5" role="alert">

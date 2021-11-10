@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -10,6 +10,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./prescription.component.css']
 })
 export class PrescriptionComponent implements OnInit {
+  @Input() visitUUID;
+
   // exportAsConfig: ExportAsConfig = {
   //   type: "pdf",
   //   elementIdOrContent: "prescription",
@@ -31,7 +33,9 @@ export class PrescriptionComponent implements OnInit {
   additionalDocumentPresent = false;
   imageNameData = [];
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
-
+  complaints= [];
+  examination = [];
+  visitData = [];
   patientIdentifier: string;
   info = {};
   personAttributes = {};
@@ -44,17 +48,14 @@ export class PrescriptionComponent implements OnInit {
     private visitService: VisitService) { }
 
   ngOnInit(): void {
-    
     this.patientId= this.route.snapshot.paramMap.get("patientId");
-    // this.getPrescriptionData();
-    // this.getVisitDetails();
     this.getAdditionalDocuments();
     this.getPatientDetails();
+    this.getObsData();
   }
   
   getPatientDetails(){
     this.visitService.patientInfo(this.patientId).subscribe((info) => {
-      console.log('info: ', info);
       this.info = info.person;
       this.state = info.person.preferredAddress.stateProvince
       this.patientIdentifier = info.identifiers[0].identifier;
@@ -135,6 +136,25 @@ export class PrescriptionComponent implements OnInit {
     });
   }
   
+  getObsData(){
+
+    this.diagnosisService.getObsAll(this.patientId).subscribe((resp)=>{
+      var visitIds = [];
+      (resp.results.forEach((c)=>{
+        if(visitIds.indexOf(c.encounter.visit.uuid) === -1){
+          visitIds.push(c.encounter.visit.uuid)
+        }
+      }))
+      
+      for (const visitId of visitIds) {
+      let data = {
+        examination: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
+        complaints : resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "3edb0e09-9135-481e-b8f0-07a26fa9a5ce")
+      }
+      this.visitData.push(data);        
+      }
+    })
+  }
   
   getAdditionalDocuments(){
     // this.patientId = this.route.snapshot.paramMap.get("patientId");
@@ -154,71 +174,6 @@ export class PrescriptionComponent implements OnInit {
     });
   }
 
-  // getPrescriptionData() {
-  //   this.visitService
-  //     .getVisitData({
-  //       // visitId: this.visitId,
-  //       patientId: this.patientId,
-  //     })
-  //     .subscribe({
-  //       next: (resp) => this.processData({resp}),
-  //       error: (err) => {
-  //         console.log("err: ", err);
-  //       },
-  //       complete: () => {
-  //         // this.loading = false;
-  //       },
-  //     });
-  // }
-
-  // medications: any = [];
-  // diagnosis: any = [];
-  // testsAdvised: any = [];
-  // medicalAdvice: any = [];
-  // followupNeeded: any = [];
-  // notes: any = [];
-
-  // processData(resp) {
-  //   console.log('resp: ', resp);
-  //   this.data = resp;
-  //   console.log('this.data: ', this.data);
-  //   try {
-  //     if (this.data?.doctorAttributes?.split) {
-  //       this.drAttributesList = this.data?.doctorAttributes?.split("|");
-  //       this.drAttributesList.forEach((attr) => {
-  //         const [key, val] = attr.split(":");
-  //         this.attributes[key] = val;
-  //       });
-  //     }
-  //     if (this.data?.medication?.split) {
-  //       this.medications = this.data?.medication?.split(";").filter((i) => i);
-  //     }
-  //     if (this.data?.diagnosis?.split) {
-  //       this.diagnosis = this.data?.diagnosis?.split(";").filter((i) => i);
-  //     }
-  //     if (this.data?.testsAdvised?.split) {
-  //       this.testsAdvised = this.data?.testsAdvised
-  //         ?.split(";")
-  //         .filter((i) => i);
-  //     }
-  //     if (this.data?.medicalAdvice?.split) {
-  //       this.medicalAdvice = this.data?.medicalAdvice
-  //         ?.split(";")
-  //         .filter((i) => i)
-  //         .filter((i) => i !== " ");
-  //     }
-  //     if (this.data?.followupNeeded?.split) {
-  //       this.followupNeeded = this.data?.followupNeeded
-  //         ?.split(";")
-  //         .filter((i) => i);
-  //     }
-  //     if (this.data?.notes?.split) {
-  //       this.notes = this.data?.notes?.split(";").filter((i) => i);
-  //     }
-  //   } catch (error) {
-  //     console.log("error: ", error);
-  //   }
-  // }
   print() {
     window.print();
   }
