@@ -3,11 +3,10 @@
 </div>
 <div [class.active]="classFlag" class="chat card container col-md-3">
   <div class="card-header" (click)="chatClose()">
-    <h6>Chat</h6>
+    <h6>Chat &nbsp;{{ isOnline ? "" : "(you are offline)" }}</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
-    <mat-spinner class="spinner" *ngIf="loading" [diameter]="70"></mat-spinner>
     <div
       class="user-message-container"
       [class.user]="chat.fromUser == userUuid"
@@ -29,6 +28,7 @@
         </div>
       </div>
     </div>
+    <mat-spinner class="spinner" *ngIf="loading" [diameter]="70"></mat-spinner>
     <div class="no-history" *ngIf="!loading && !chats?.length">
       No chat history found.
     </div>
@@ -37,23 +37,28 @@
     <div class="input-group mb-3">
       <input
         #chatInput
+        [disabled]="!isOnline"
         type="text"
         class="form-control"
         placeholder="message"
         name="message"
         aria-label="Recipient's username"
         [(ngModel)]="message"
-        (keydown)="onPressEnter($event)"
+        (keydown)="isOnline && onPressEnter($event)"
       />
       <div class="input-group-append">
         <button
+          [disabled]="!isOnline"
           class="btn btn-primary btn-pill"
           type="submit"
-          (click)="sendMessage($event)"
+          (click)="isOnline && sendMessage($event)"
         >
           <i class="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
       </div>
+      <span class="msg" *ngIf="!isOnline"
+        >You can't send message as you are not online.</span
+      >
     </div>
   </div>
 </div>

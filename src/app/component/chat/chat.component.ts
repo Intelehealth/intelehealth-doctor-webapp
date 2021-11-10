@@ -1,9 +1,15 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
 
-declare const getFromStorage;
+declare const getFromStorage, navigator: any;
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
@@ -21,12 +27,24 @@ export class ChatComponent implements OnInit {
   patientId = null;
   visitId = null;
   loading = true;
+  isOnline = navigator.onLine;
 
   constructor(
     private chatService: ChatService,
     private route: ActivatedRoute,
     private socket: SocketService
   ) {}
+
+  @HostListener("window:online", ["$event"])
+  online() {
+    console.log("online");
+    this.isOnline = true;
+  }
+  @HostListener("window:offline", ["$event"])
+  offline() {
+    console.log("offline");
+    this.isOnline = false;
+  }
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
@@ -61,13 +79,22 @@ export class ChatComponent implements OnInit {
 
   sendMessage(event) {
     if (this.toUser && this.patientId && this.chatElem.value) {
+      this.loading = true;
       this.chatService
         .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
           visitId: this.visitId,
           patientName: localStorage.patientName,
         })
-        .subscribe((res) => {
-          this.updateMessages();
+        .subscribe({
+          next: (res) => {
+            this.updateMessages();
+          },
+          error: () => {
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          },
         });
     }
     this.chatElem.value = "";
