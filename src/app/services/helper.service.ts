@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 export class HelperService {
   constructor() {}
   public refreshTable = new Subject();
+  public updateData = new Subject();
 
   toParamString(paramObj) {
     if (paramObj) {

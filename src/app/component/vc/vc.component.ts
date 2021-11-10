@@ -49,6 +49,7 @@ export class VcComponent implements OnInit {
   ) {}
 
   close() {
+    this.chatService.popUpCloseEmitter.next({ type: "videoCall" });
     this.dialogRef.close();
   }
 

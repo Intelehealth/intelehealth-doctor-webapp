@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
-import { environment } from "src/environments/environment";
+
 declare const getFromStorage;
 @Component({
   selector: "app-chat",
@@ -20,6 +20,7 @@ export class ChatComponent implements OnInit {
   message;
   patientId = null;
   visitId = null;
+  loading = true;
 
   constructor(
     private chatService: ChatService,
@@ -31,8 +32,15 @@ export class ChatComponent implements OnInit {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
     this.visitId = this.route.snapshot.paramMap.get("visit_id");
     localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+    this.initSocket();
+    this.chatService.popUpCloseEmitter.subscribe((data: any) => {
+      if (data && data.type === "videoCall") this.initSocket();
+    });
+  }
+
+  initSocket(force = true) {
     this.updateMessages();
-    this.socket.initSocket(true);
+    this.socket.initSocket(force);
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
       this.playNotify();
@@ -66,12 +74,20 @@ export class ChatComponent implements OnInit {
   }
 
   updateMessages() {
-    this.chatService
-      .getPatientMessages(this.toUser, this.patientId)
-      .subscribe((res: { data }) => {
+    this.chatService.getPatientMessages(this.toUser, this.patientId).subscribe({
+      next: (res: { data }) => {
         this.chats = res.data;
+        this.loading = false;
         this.scroll();
-      });
+      },
+      error: (err) => {
+        console.log("err:>>>> ", err);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   onPressEnter(e) {
@@ -82,7 +98,7 @@ export class ChatComponent implements OnInit {
 
   chatLaunch() {
     this.classFlag = true;
-    this.scroll();
+    this.initSocket();
   }
   chatClose() {
     this.classFlag = false;

@@ -31,6 +31,7 @@ export class TablesComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @Input() data;
   @Input() dataFor;
+  @Input() visits;
   constructor(
     private helper: HelperService,
     private visitService: VisitService
@@ -76,7 +77,19 @@ export class TablesComponent implements OnInit {
       .subscribe((res: any) => {
         if (!row?.medicineProvided) {
           row.medicineProvided = res;
+          let visit = this.visits.find((v) => v.visitId === row.visitId);
+          visit.medicineProvided = res;
+          let dataVisit = this.data.find((v) => v.visitId === row.visitId);
+          dataVisit.medicineProvided = res;
+        } else {
+          this.data.find(
+            (v) => v.visitId === row.visitId
+          ).medicineProvided.value = value;
+          this.data.find(
+            (v) => v.visitId === row.visitId
+          ).medicineProvided.value = value;
         }
+        this.refresh();
       });
   }
 

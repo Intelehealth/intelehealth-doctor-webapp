@@ -7,12 +7,16 @@
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
+    <mat-spinner class="spinner" *ngIf="loading" [diameter]="70"></mat-spinner>
     <div
       class="user-message-container"
       [class.user]="chat.fromUser == userUuid"
       *ngFor="let chat of chats"
     >
-      <div class="user-message" [class.incoming-message]="chat.fromUser != userUuid">
+      <div
+        class="user-message"
+        [class.incoming-message]="chat.fromUser != userUuid"
+      >
         <p>{{ chat?.message }}</p>
         <div
           class="message-header-container"
@@ -25,7 +29,9 @@
         </div>
       </div>
     </div>
-    <div class="no-history" *ngIf="!chats?.length">No chat history found.</div>
+    <div class="no-history" *ngIf="!loading && !chats?.length">
+      No chat history found.
+    </div>
   </div>
   <div class="message-form card-footer">
     <div class="input-group mb-3">

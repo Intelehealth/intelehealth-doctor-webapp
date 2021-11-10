@@ -106,3 +106,7 @@
     width: 100%;
   }
 }
+
+.spinner {
+  margin: 0 auto;
+}
