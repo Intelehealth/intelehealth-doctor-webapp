@@ -28,16 +28,28 @@ export class DiagnosisService {
   }
 
   getObs(patientId, conceptId): Observable<any> {
+    var header = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
+      })
+    }
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
-    return this.http.get(url);
+    return this.http.get(url, header);
   }
   
 
   getObsAll(patientId): Observable<any> {
+    var header = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
+      })
+    }
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,concept:(uuid),encounter:(visit:(uuid)))`;
-    return this.http.get(url);
+    return this.http.get(url, header);
 
   }
   getImageName(patientId, obsUuid){

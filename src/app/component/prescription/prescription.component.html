@@ -1,14 +1,14 @@
-<div *ngIf="!noPrescription && !loading" class="pres-content">
-  <div *ngIf="!exporting" class="header mt-1">
+<div class="pres-content">
+  <div  class="header mt-1">
     <div class="print d-flex justify-content-center mt-2">
       <button (click)="print()">
         Print
         <i class="fa fa-print"></i>
       </button>
-      <button class="ml-2" (click)="download()">
+      <!-- <button class="ml-2" (click)="download()">
         Download
         <i class="fa fa-download"></i>
-      </button>
+      </button> -->
       <!-- <mat-chip-list *ngIf="medicineProvided" class="ml-2">
         <mat-chip class="chip">Medicine Given<mat-icon class="ml-2">done_all</mat-icon>
         </mat-chip>
@@ -20,8 +20,8 @@
     <div class="row mt-3">
       <div class="col-md-12">
         <div>
-          <div class="prescription-wrapper">
-            <div class="row">
+          <div class="prescription-wrapper" >
+            <div class="row" *ngFor="let info of patientInfo">
               <div class="col-3">
                 <div class="d-flex justify-content-center">
                   <img src="assets/images/intelehealth-logo-reverse1.png" class="hih-logo ih" />
@@ -45,42 +45,42 @@
             <div style="border-top: 2px solid #321a94" class="details-info">
               <u><strong> Survivor Details: </strong></u><br>
               <div class="row">
-                <div class="col-sm-6">
-                  <span class="d-flex">Survivor Name: &nbsp;&nbsp; <b>{{ info.display }}</b></span>
-                  <span class="d-flex">Age: &nbsp;&nbsp; <b>{{ info.age }}</b></span>
-                  <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ info.gender }}</b></span>
+                <div class="col-sm-6" *ngFor="let info of patientInfo" >
+                  <span class="d-flex">Survivor Name: &nbsp;&nbsp; <b>{{ info?.display }}</b></span>
+                  <span class="d-flex">Age: &nbsp;&nbsp; <b>{{ info?.age }}</b></span>
+                  <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ info?.gender }}</b></span>
                   <span class="d-flex">State: &nbsp;&nbsp; <b>{{state}}</b></span>
                   <span class="d-flex">District: &nbsp;&nbsp; <b>{{info?.preferredAddress?.cityVillage}}</b></span>
-                  <span class="d-flex">Contact Info: &nbsp;&nbsp; <b>{{info.telephone}}</b></span>
-                  <span class="d-flex">Caste: &nbsp;&nbsp; <b>{{ info.Caste }}</b></span>
-                  <span class="d-flex">Occupation: &nbsp;&nbsp; <b>{{ info.occupation }}</b></span>
-                  <span class="d-flex">Landmark: &nbsp;&nbsp; <b>{{ info.Landmark }}</b></span>
-                  <span class="d-flex">Survivor marriage type: &nbsp;&nbsp; <b>{{ info.Survivor_marriage_type
+                  <span class="d-flex">Contact Info: &nbsp;&nbsp; <b>{{info?.telephone}}</b></span>
+                  <span class="d-flex">Caste: &nbsp;&nbsp; <b>{{ info?.Caste }}</b></span>
+                  <span class="d-flex">Occupation: &nbsp;&nbsp; <b>{{ info?.occupation }}</b></span>
+                  <span class="d-flex">Landmark: &nbsp;&nbsp; <b>{{ info?.Landmark }}</b></span>
+                  <span class="d-flex">Survivor marriage type: &nbsp;&nbsp; <b>{{ info?.Survivor_marriage_type
                       }}</b></span>
-                  <span class="d-flex">Survivor Maritual Status: &nbsp;&nbsp; <b>{{ info.Survivor_maritual_status
+                  <span class="d-flex">Survivor Maritual Status: &nbsp;&nbsp; <b>{{ info?.Survivor_maritual_status
                       }}</b></span>
-                  <span class="d-flex">Survivor Living With: &nbsp;&nbsp; <b>{{ info.Survivor_living_with }}</b></span>
-                  <span class="d-flex">Marriage age: &nbsp;&nbsp; <b>{{ info.Marriage_age }}</b></span>
-                  <span class="d-flex">Maritual Status: &nbsp;&nbsp; <b>{{ info.maritualStatus }}</b></span>
-                  <span class="d-flex">Children Status: &nbsp;&nbsp; <b>{{ info.Children_Status }}</b></span>
-                  <span class="d-flex">No. of Children: &nbsp;&nbsp; <b>{{ info.No_of_Childrens }}</b></span>
+                  <span class="d-flex">Survivor Living With: &nbsp;&nbsp; <b>{{ info?.Survivor_living_with }}</b></span>
+                  <span class="d-flex">Marriage age: &nbsp;&nbsp; <b>{{ info?.Marriage_age }}</b></span>
+                  <span class="d-flex">Maritual Status: &nbsp;&nbsp; <b>{{ info?.maritualStatus }}</b></span>
+                  <span class="d-flex">Children Status: &nbsp;&nbsp; <b>{{ info?.Children_Status }}</b></span>
+                  <span class="d-flex">No. of Children: &nbsp;&nbsp; <b>{{ info?.No_of_Childrens }}</b></span>
                 </div>
-                <div class="col-sm-6 text-right-presc">
+                <div class="col-sm-6 text-right-presc" *ngFor="let info of patientInfo">
                   <span class="d-flex">Date/Time: &nbsp;&nbsp;
                     <b>Visit Date</b></span>
                   <span class="d-flex">OpenMRS ID: &nbsp;&nbsp; <b>{{patientIdentifier}}</b></span>
-                  <span class="d-flex">Education: &nbsp;&nbsp; <b>{{ info.Education }}</b></span>
-                  <span class="d-flex">Telephone No for survivor: &nbsp;&nbsp; <b>{{ info.Telephone_number_for_survivor
+                  <span class="d-flex">Education: &nbsp;&nbsp; <b>{{ info?.Education }}</b></span>
+                  <span class="d-flex">Telephone No for survivor: &nbsp;&nbsp; <b>{{ info?.Telephone_number_for_survivor
                       }}</b></span>
-                  <span class="d-flex">Case Reffered By: &nbsp;&nbsp; <b>{{ info.caseRefferedBy }}</b></span>
-                  <span class="d-flex">Am Speaking with survivor: &nbsp;&nbsp; <b>{{ info.amSpeakingWithSurvivor
+                  <span class="d-flex">Case Reffered By: &nbsp;&nbsp; <b>{{ info?.caseRefferedBy }}</b></span>
+                  <span class="d-flex">Am Speaking with survivor: &nbsp;&nbsp; <b>{{ info?.amSpeakingWithSurvivor
                       }}</b></span>
-                  <span class="d-flex">Called by: &nbsp;&nbsp; <b>{{ info.SWD }}</b></span>
-                  <span class="d-flex">Contact Type: &nbsp;&nbsp; <b>{{ info.contactType }}</b></span>
-                  <span class="d-flex">Husband Occupation: &nbsp;&nbsp; <b>{{ info.husbandOccupation }}</b></span>
-                  <span class="d-flex">Income: &nbsp;&nbsp; <b>{{ info.income }}</b></span>
-                  <span class="d-flex">Husband Income: &nbsp;&nbsp; <b>{{ info.husbandIncome }}</b></span>
-                  <span class="d-flex">Maternal home address: &nbsp;&nbsp; <b>{{ info.Maternal_home_address
+                  <span class="d-flex">Called by: &nbsp;&nbsp; <b>{{ info?.SWD }}</b></span>
+                  <span class="d-flex">Contact Type: &nbsp;&nbsp; <b>{{ info?.contactType }}</b></span>
+                  <span class="d-flex">Husband Occupation: &nbsp;&nbsp; <b>{{ info?.husbandOccupation }}</b></span>
+                  <span class="d-flex">Income: &nbsp;&nbsp; <b>{{ info?.income }}</b></span>
+                  <span class="d-flex">Husband Income: &nbsp;&nbsp; <b>{{ info?.husbandIncome }}</b></span>
+                  <span class="d-flex">Maternal home address: &nbsp;&nbsp; <b>{{ info?.Maternal_home_address
                       }}</b></span>
                   <span class="d-flex">Maternal phone number: &nbsp;&nbsp; <b>{{ info.Maternal_phone_number
                       }}</b></span>
@@ -133,14 +133,14 @@
 
             <div style="border-top: 2px solid #321a94" class="presc-details">
 
-              <u><strong> Additional Documents: </strong></u>
+              <u><strong> Documents: </strong></u>
               <div class="row">
                 <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
                   <span style="margin-left: 70px;">{{image.imageName}}</span><br>
                   <a href="{{ image.image }}"><img src="{{ image.image }}"
                       [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
                 </div>
-                <div *ngIf="!additionalDocumentPresent">No Additional Documents available!</div>
+                <div *ngIf="!additionalDocumentPresent" class="ml-3">No Documents available!</div>
 
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 
@@ -55,6 +55,12 @@ export class VisitService {
   }
 
   patientInfo(id): Observable<any> {
+    var header = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
+      })
+    }
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(stateProvince,cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);

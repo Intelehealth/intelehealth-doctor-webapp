@@ -27,7 +27,7 @@ export class PrescriptionComponent implements OnInit {
   // noPrescription = false;
   // loading = true;
   // medicineProvided = false;
-
+  patientInfo = [];
   baseURL = environment.baseURL;
   images: any = [];
   additionalDocumentPresent = false;
@@ -133,6 +133,7 @@ export class PrescriptionComponent implements OnInit {
           this.info["maritualStatus"] = attri.value;
         }
       })
+      this.patientInfo.push(this.info);
     });
   }
 
