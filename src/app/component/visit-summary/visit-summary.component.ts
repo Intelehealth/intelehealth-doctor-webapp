@@ -90,7 +90,6 @@ export class VisitSummaryComponent implements OnInit {
       const ObsData = response.results.filter((a) =>
       this.conceptIds.includes(a.concept.uuid)
       );
-      console.log('ObsData: ', ObsData);
       if (ObsData.length > 0) {
         this.diagnosisService.isVisitSummaryChanged = true;
       } else {
