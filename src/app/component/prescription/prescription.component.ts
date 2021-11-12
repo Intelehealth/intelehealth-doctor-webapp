@@ -42,18 +42,18 @@ export class PrescriptionComponent implements OnInit {
   state: string;
 
 
-  constructor( private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
     // private exportAsService: ExportAsService,
     private diagnosisService: DiagnosisService,
     private visitService: VisitService) { }
 
   ngOnInit(): void {
-    this.patientId= this.route.snapshot.paramMap.get("patientId");
+    this.patientId = this.route.snapshot.paramMap.get("patientId");
     this.getAdditionalDocuments();
     this.getPatientDetails();
     this.getObsData();
   }
-  
+
   getPatientDetails(){
     this.visitService.patientInfo(this.patientId).subscribe((info) => {
       this.info = info.person;
@@ -62,22 +62,22 @@ export class PrescriptionComponent implements OnInit {
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("Caste")) {
           this.info["Caste"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("Landmark")) {
           this.info["Landmark"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("Survivor marriage type")) {
           this.info["Survivor_marriage_type"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("Marriage age")) {
           this.info["Marriage_age"] = attri.value;
-        } 
+        }
         if (attri.attributeType.display.match("Education")) {
           this.info["Education"] = attri.value;
         }
@@ -135,7 +135,7 @@ export class PrescriptionComponent implements OnInit {
       })
     });
   }
-  
+
   getObsData(){
 
     this.diagnosisService.getObsAll(this.patientId).subscribe((resp)=>{
@@ -145,33 +145,33 @@ export class PrescriptionComponent implements OnInit {
           visitIds.push(c.encounter.visit.uuid)
         }
       }))
-      
+
       for (const visitId of visitIds) {
-      let data = {
-        examination: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
-        complaints : resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "3edb0e09-9135-481e-b8f0-07a26fa9a5ce")
-      }
-      this.visitData.push(data);        
+        let data = {
+          examination: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
+          complaints: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "3edb0e09-9135-481e-b8f0-07a26fa9a5ce")
+        }
+        this.visitData.push(data);
       }
     })
   }
-  
+
   getAdditionalDocuments(){
     // this.patientId = this.route.snapshot.paramMap.get("patientId");
     this.diagnosisService
-    .getObs(this.patientId, this.conceptAdditionlDocument)
-    .subscribe((response) => {
-      response.results.forEach(async (obs) => {
-        this.additionalDocumentPresent = true;
-        const data1: any = await this.diagnosisService.getImageName(this.patientId, obs.uuid).toPromise();
-        const data = {
-          image: `${this.baseURL}/obs/${obs.uuid}/value`,
-          imageName: data1.data[0].imageName
-        };
-        this.images.push(data);
-        
+      .getObs(this.patientId, this.conceptAdditionlDocument)
+      .subscribe((response) => {
+        response.results.forEach(async (obs) => {
+          this.additionalDocumentPresent = true;
+          const data1: any = await this.diagnosisService.getImageName(this.patientId, obs.uuid).toPromise();
+          const data = {
+            image: `${this.baseURL}/obs/${obs.uuid}/value`,
+            imageName: data1.data[0].imageName
+          };
+          this.images.push(data);
+
+        });
       });
-    });
   }
 
   print() {

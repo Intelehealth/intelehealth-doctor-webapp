@@ -54,6 +54,7 @@ export class VisitSummaryComponent implements OnInit {
     "e1761e85-9b50-48ae-8c4d-e6b7eeeba084",
     "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
     "d63ae965-47fb-40e8-8f08-1f46a8a60b2b",
+    "0d3336f1-df6c-48ab-a7a3-c93b1054b7b7"
   ];
 
   constructor(
@@ -87,8 +88,9 @@ export class VisitSummaryComponent implements OnInit {
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
       const ObsData = response.results.filter((a) =>
-        this.conceptIds.includes(a.concept.uuid)
+      this.conceptIds.includes(a.concept.uuid)
       );
+      console.log('ObsData: ', ObsData);
       if (ObsData.length > 0) {
         this.diagnosisService.isVisitSummaryChanged = true;
       } else {

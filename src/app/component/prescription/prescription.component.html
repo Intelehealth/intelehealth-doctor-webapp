@@ -9,10 +9,10 @@
         Download
         <i class="fa fa-download"></i>
       </button>
-      <mat-chip-list *ngIf="medicineProvided" class="ml-2">
+      <!-- <mat-chip-list *ngIf="medicineProvided" class="ml-2">
         <mat-chip class="chip">Medicine Given<mat-icon class="ml-2">done_all</mat-icon>
         </mat-chip>
-      </mat-chip-list>
+      </mat-chip-list> -->
     </div>
   </div>
 
@@ -37,15 +37,16 @@
                   <img src="assets/images/vikalp.png" alt="Ibis Vikalp" class="hih-logo" />
                 </div>
                 <div class="d-flex justify-content-center">
-                  <label class="hih-lbl">Ibis Vikal</label>
+                  <label class="hih-lbl text-center">Ibis Vikalp</label>
                 </div>
               </div>
             </div>
 
             <div style="border-top: 2px solid #321a94" class="details-info">
+              <u><strong> Survivor Details: </strong></u><br>
               <div class="row">
                 <div class="col-sm-6">
-                  <span class="d-flex">Patient Name: &nbsp;&nbsp; <b>{{ info.display }}</b></span>
+                  <span class="d-flex">Survivor Name: &nbsp;&nbsp; <b>{{ info.display }}</b></span>
                   <span class="d-flex">Age: &nbsp;&nbsp; <b>{{ info.age }}</b></span>
                   <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ info.gender }}</b></span>
                   <span class="d-flex">State: &nbsp;&nbsp; <b>{{state}}</b></span>
@@ -89,64 +90,65 @@
                 </div>
               </div>
             </div>
-        
+
             <div style="border-top: 2px solid #321a94" class="presc-details" *ngFor="let visit of visitData">
               <div class="row">
                 <div class="col-sm-12">
-                  <strong> Presenting Complaints: </strong>
+                  <u><strong> Presenting Complaints: </strong></u>
                   <table class="table table-responsive borderless" *ngFor="let complaint of visit.complaints">
                     <tr>
                       <div [innerHTML]="complaint.value"></div>
                     </tr>
                   </table>
-                </div>
-                
+                </div><br><br>
+
                 <div class="col-sm-12">
-                  <strong> On Examination: </strong>
-                  <table class="table table-responsive borderless" *ngFor="let exam of visit.examination" >
+                  <u><strong> On Examination: </strong></u>
+                  <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">
                     <tr>
                       <div [innerHTML]="exam.value"></div>
                     </tr>
                   </table>
                 </div>
               </div>
-            <div class="line-items">
-              <div class="d-flex flex-row justify-content-end">
-                <div class="p-2">
-                  <div>
-                    <b class="sign"></b>
-                  </div>
-                  <div>Doctor Name</div>
-                  <div>
-                    Qualification | Specialization
+              <div class="line-items">
+                <div class="d-flex flex-row justify-content-end">
+                  <div class="p-2">
+                    <div>
+                      <b class="sign"></b>
+                    </div>
+                    <div>Doctor Name</div>
+                    <div>
+                      Qualification | Specialization
 
-                  </div>
-                  <div>Email: Email Id</div>
-                  <div>
-                    Reg.No: <b>Reg No</b>
+                    </div>
+                    <div>Email: Email Id</div>
+                    <div>
+                      Reg.No: <b>Reg No</b>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div style="border-top: 2px solid #321a94" class="presc-details" >
+            <div style="border-top: 2px solid #321a94" class="presc-details">
 
-            <strong> Additional Documents: </strong>
-            <div class="row">
-              <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
-                <span style="margin-left: 70px;">{{image.imageName}}</span><br>
-                <a href="{{ image.image }}"><img src="{{ image.image }}"
-                    [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
+              <u><strong> Additional Documents: </strong></u>
+              <div class="row">
+                <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
+                  <span style="margin-left: 70px;">{{image.imageName}}</span><br>
+                  <a href="{{ image.image }}"><img src="{{ image.image }}"
+                      [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
+                </div>
+                <div *ngIf="!additionalDocumentPresent">No Additional Documents available!</div>
+
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <!-- <div class="alert alert-warning m-5" role="alert">

@@ -1,6 +1,6 @@
 <div class="container">
   <mat-accordion class="example-headers-align" [multi]="true">
-    <mat-expansion-panel [expanded]="data.visitStatus=='Active'"
+    <mat-expansion-panel [expanded]="data.visitStatus=='Active' || visits.length <= 1"
       *ngFor="let data of recent" id="flagged-table" class="mt-2">
       <mat-expansion-panel-header>
         <mat-panel-title>

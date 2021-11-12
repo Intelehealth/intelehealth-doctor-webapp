@@ -14,17 +14,17 @@ export class PastVisitsComponent implements OnInit {
   visitStatus: String;
   recent: any = [];
   patientUuid: any;
+  visits: any;
   constructor(private route: ActivatedRoute, 
     private service: VisitService, 
     private router: Router,
     ) {}
 
   ngOnInit() {
-
    this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.service.recentVisits(this.patientUuid).subscribe((response) => {
-      const visits = response.results;
-      visits.forEach((visit) => {
+      this.visits = response.results;
+      this.visits.forEach((visit) => {
         this.service.fetchVisitDetails(visit.uuid).subscribe((visitDetails) => {
           this.recentVisit = [];
           this.recentVisit.details = visitDetails;
