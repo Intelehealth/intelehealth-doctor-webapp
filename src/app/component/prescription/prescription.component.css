@@ -133,7 +133,9 @@
       width: 900px;
     }
   }
-  
+  .ih {
+    margin-top: 10px;
+  }
   .hih-logo {
     max-height: 40px;
   }
@@ -143,6 +145,10 @@
   ul {
     margin-bottom: 5px !important;
   }
+
+ .pname {
+  margin-left:380px;
+ }
   /* ------------- */
   
   @media (max-width: 767px) {
@@ -173,7 +179,7 @@
       padding: 25px 30px 20px;
     }
   
-    .hih.ih {
+    .ih {
       margin-left: 25px !important;
     }
     .sign {
@@ -213,4 +219,15 @@
     background-color: #eceef4;
     color: #321a94;
     border: 1px solid #321a94;
+  }
+   
+  .no-print {
+      margin-left: 380px;
+  }
+  @media print
+  {    
+      .no-print, .no-print *
+      {
+        margin-left: 450px !important;
+      }
   }

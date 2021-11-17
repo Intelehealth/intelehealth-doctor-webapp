@@ -33,7 +33,7 @@ export class PrescriptionComponent implements OnInit {
   additionalDocumentPresent = false;
   imageNameData = [];
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
-  complaints= [];
+  complaints = [];
   examination = [];
   visitData = [];
   patientIdentifier: string;
@@ -54,7 +54,7 @@ export class PrescriptionComponent implements OnInit {
     this.getObsData();
   }
 
-  getPatientDetails(){
+  getPatientDetails() {
     this.visitService.patientInfo(this.patientId).subscribe((info) => {
       this.info = info.person;
       this.state = info.person.preferredAddress.stateProvince
@@ -90,9 +90,9 @@ export class PrescriptionComponent implements OnInit {
         if (attri.attributeType.display.match("Am speaking with survivor")) {
           this.info["amSpeakingWithSurvivor"] = attri.value;
         }
-        if (attri.attributeType.display.match("Son/wife/daughter")) {
-          this.info["SWD"] = attri.value;
-        }
+        // if (attri.attributeType.display.match("Son/wife/daughter")) {
+        //   this.info["SWD"] = attri.value;
+        // }
         if (attri.attributeType.display.match("Contact type")) {
           this.info["contactType"] = attri.value;
         }
@@ -137,27 +137,50 @@ export class PrescriptionComponent implements OnInit {
     });
   }
 
-  getObsData(){
+  getObsData() {
 
-    this.diagnosisService.getObsAll(this.patientId).subscribe((resp)=>{
+    this.diagnosisService.getObsAll(this.patientId).subscribe((resp) => {
       var visitIds = [];
-      (resp.results.forEach((c)=>{
-        if(visitIds.indexOf(c.encounter.visit.uuid) === -1){
+      (resp.results.forEach((c) => {
+        if (visitIds.indexOf(c.encounter.visit.uuid) === -1) {
           visitIds.push(c.encounter.visit.uuid)
         }
       }))
 
-      for (const visitId of visitIds) {
-        let data = {
-          examination: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
-          complaints: resp.results.filter((e)=>e.encounter.visit.uuid == visitId && e.concept.uuid=== "3edb0e09-9135-481e-b8f0-07a26fa9a5ce")
-        }
-        this.visitData.push(data);
-      }
+      this.getDetails(visitIds, resp);
     })
   }
 
-  getAdditionalDocuments(){
+  async getDetails(visitIds: any[], resp: any) {
+    for (const visitId of visitIds) {
+      await this.visitService.fetchVisitDetails(visitId).subscribe((res) => {
+        let qualification, specialization,registrationNumber;
+        let providers = res?.encounters.find(({ display = "" }) => display.includes("ADULTINITIAL"))?.encounterProviders;
+        providers[0].provider.attributes.forEach((attri) => {
+          if (attri.attributeType.display.match("qualification")) {
+             qualification = attri.value;
+          }
+          if (attri.attributeType.display.match("specialization")) {
+             specialization = attri.value;
+          }
+          if (attri.attributeType.display.match("registrationNumber")) {
+             registrationNumber = attri.value;
+          }
+        })
+        let data = {
+          examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
+          complaints: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce"),
+          providerName: providers[0].display,
+          qual: qualification,
+          specialization:specialization,
+          regNo: registrationNumber
+        };
+        this.visitData.push(data);
+      });
+    }
+  }
+
+  getAdditionalDocuments() {
     // this.patientId = this.route.snapshot.paramMap.get("patientId");
     this.diagnosisService
       .getObs(this.patientId, this.conceptAdditionlDocument)
