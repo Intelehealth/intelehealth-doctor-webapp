@@ -36,7 +36,7 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPrescriptionData();
-    this.getVisitDetails();
+    // this.getVisitDetails();
   }
 
   getVisitDetails() {

@@ -51,15 +51,15 @@ export class TablesComponent implements OnInit {
   setPrescription() {
     if (this.dataFor === "completedVisit") {
       this.displayColumns.push("prescription");
-      this.displayColumns.push("medicineProvided");
+      // this.displayColumns.push("medicineProvided");
       this.displayColumns = [...new Set(this.displayColumns)];
       this.data.forEach((e) => {
         e.prescription = `#/prescription/${e.visitId}/${e.id}`;
-        if (e.attributes?.length > 0) {
-          e.medicineProvided = e.attributes.find(
-            (a: any) => a?.attributeType?.uuid === this.medicineProvidedAttrType
-          );
-        }
+        // if (e.attributes?.length > 0) {
+        //   e.medicineProvided = e.attributes.find(
+        //     (a: any) => a?.attributeType?.uuid === this.medicineProvidedAttrType
+        //   );
+        // }
       });
     }
   }
