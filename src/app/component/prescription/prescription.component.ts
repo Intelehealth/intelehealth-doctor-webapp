@@ -170,10 +170,12 @@ export class PrescriptionComponent implements OnInit {
         let data = {
           examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
           complaints: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce"),
+          resolution:  resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3"),
           providerName: providers[0].display,
           qual: qualification,
           specialization:specialization,
-          regNo: registrationNumber
+          regNo: registrationNumber,
+          visitDate:res?.startDatetime
         };
         this.visitData.push(data);
       });

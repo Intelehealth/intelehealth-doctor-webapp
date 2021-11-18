@@ -25,7 +25,10 @@
             <div class="row" *ngFor="let info of patientInfo">
               <div class="col-3">
                 <div class="d-flex justify-content-center">
-                  <img src="assets/images/intelehealth-logo-reverse1.png" class="hih-logo ih" />
+                  <img src="assets/images/vikalp.png" alt="Ibis Vikalp" class="hih-logo" />
+                </div>
+                <div class="d-flex justify-content-center">
+                  <label class="hih-lbl text-center">Ibis Vikalp</label>
                 </div>
               </div>
               <div class="col-6">
@@ -35,10 +38,7 @@
               </div>
               <div class="col-3">
                 <div class="d-flex justify-content-center">
-                  <img src="assets/images/vikalp.png" alt="Ibis Vikalp" class="hih-logo" />
-                </div>
-                <div class="d-flex justify-content-center">
-                  <label class="hih-lbl text-center">Ibis Vikalp</label>
+                  <img src="assets/images/intelehealth-logo-reverse1.png" class="hih-logo ih" />
                 </div>
               </div>
             </div>
@@ -95,7 +95,7 @@
             <div style="border-top: 2px solid #321a94" class="presc-details" *ngFor="let visit of visitData">
               <div class="row">
                 <div class="col-sm-12">
-                  <u><strong> Presenting Complaints: </strong></u>
+                  <u><strong> Date of Visit:</strong></u>  {{visit.visitDate | date: "dd-MMM-yyyy" }}
                   <table class="table table-responsive borderless" *ngFor="let complaint of visit.complaints">
                     <tr>
                       <div [innerHTML]="complaint.value"></div>
@@ -104,12 +104,21 @@
                 </div><br><br>
 
                 <div class="col-sm-12">
-                  <u><strong> On Examination: </strong></u>
+                  <u><strong>  Resolution & Feedback: </strong></u>
+                  <table class="table table-responsive borderless" *ngFor="let resolution of visit.resolution">
+                    <tr>
+                      <div [innerHTML]="resolution.value"></div>
+                    </tr>
+                  </table>
+                  <table *ngIf="visit.resolution?.length == 0">
+                    No Resolution and Feedback available!
+                  </table>
+                  <!-- <u><strong> On Examination: </strong></u>
                   <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">
                     <tr>
                       <div [innerHTML]="exam.value"></div>
                     </tr>
-                  </table>
+                  </table> -->
                 </div>
               </div>
               <div class="line-items">
