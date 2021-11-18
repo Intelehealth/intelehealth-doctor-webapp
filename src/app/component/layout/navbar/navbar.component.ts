@@ -86,7 +86,8 @@ export class NavbarComponent implements OnInit {
         }
         if (
           role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
-          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97"
+          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97" ||
+          (role.name.includes && role.name.includes("Report"))
         ) {
           this.reportAccess = true;
         }
