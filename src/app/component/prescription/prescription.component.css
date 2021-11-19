@@ -146,6 +146,9 @@
     margin-bottom: 5px !important;
   }
 
+  .no-print {
+    margin-left: 380px;
+}
  .pname {
   margin-left:380px;
  }
@@ -178,13 +181,16 @@
     .pres-content .prescription-wrapper {
       padding: 25px 30px 20px;
     }
-  
+/*   
     .ih {
       margin-left: 25px !important;
-    }
+    } */
     .sign {
       font-size: 35px;
     }
+    .no-print {
+      margin-left: 130px;
+  }
   }
   
   .image1 {
@@ -221,9 +227,6 @@
     border: 1px solid #321a94;
   }
    
-  .no-print {
-      margin-left: 380px;
-  }
   @media print
   {    
       .no-print, .no-print *
