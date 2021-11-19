@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
 import { VisitService } from "src/app/services/visit.service";
-import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
+// import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
 
 @Component({
   selector: "app-prescription",
@@ -36,22 +36,26 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPrescriptionData();
-    // this.getVisitDetails();
+    this.getVisitDetails();
   }
 
   getVisitDetails() {
     this.visitService
-      .fetchVisitDetails(this.visitId, "custom:(attributes)")
+      .fetchVisitDetails(
+        this.visitId,
+        "custom:(attributes,patient:(person:(display)))"
+      )
       .subscribe({
         next: (res: any) => {
-          if (res.attributes?.length) {
-            if (res.attributes?.length > 0) {
-              const medProvided = res.attributes.find(
-                (a: any) => a?.attributeType?.uuid === medicineProvidedAttrType
-              );
-              this.medicineProvided = medProvided?.value || false;
-            }
-          }
+          this.data.fullName = res?.patient?.person?.display;
+          // if (res.attributes?.length) {
+          //   if (res.attributes?.length > 0) {
+          //     const medProvided = res.attributes.find(
+          //       (a: any) => a?.attributeType?.uuid === medicineProvidedAttrType
+          //     );
+          //     this.medicineProvided = medProvided?.value || false;
+          //   }
+          // }
         },
       });
   }

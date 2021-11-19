@@ -1,4 +1,13 @@
-td, th {
-    border: none;
-    white-space: nowrap;
+td,
+th {
+  border: none;
+  white-space: nowrap;
+}
+
+.vital-tr td {
+  padding-left: 0;
+}
+
+.vital-tr th {
+  padding-right: 5px;
 }
