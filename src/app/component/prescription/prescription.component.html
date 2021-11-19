@@ -18,28 +18,24 @@
 
   <div id="prescription" class="container bootstrap snippets bootdey">
     <div class="row mt-3">
-      <div id="prj-name" class="no-print">Ibis Vikalp Helpline</div>
       <div class="col-md-12">
         <div>
           <div class="prescription-wrapper" >
             <div class="row" *ngFor="let info of patientInfo">
               <div class="col-3">
+              </div>
+              <div class="col-6">
                 <div class="d-flex justify-content-center">
                   <img src="assets/images/vikalp.png" alt="Ibis Vikalp" class="hih-logo" />
                 </div>
                 <div class="d-flex justify-content-center">
-                  <label class="hih-lbl text-center">Ibis Vikalp</label>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="d-flex justify-content-center">
-                  <label class="gr"></label>
+                  <label class="hih-lbl text-center">Vikalp Helpline</label>
                 </div>
               </div>
               <div class="col-3">
-                <div class="d-flex justify-content-center">
+                <!-- <div class="d-flex justify-content-center">
                   <img src="assets/images/intelehealth-logo-reverse1.png" class="hih-logo ih" />
-                </div>
+                </div> -->
               </div>
             </div>
 
@@ -128,12 +124,12 @@
                       <b class="sign"></b>
                     </div>
                     <div>{{visit.providerName}}</div>
-                    <div *ngIf="visit.qual || visit.specialization">
-                      {{visit.qual ? visit.qual: 'NA' }} | {{visit.specialization ? visit.specialization : 'NA'}}
+                    <div *ngIf="visit.qual && visit.specialization">
+                      {{visit.qual}} | {{visit.specialization}}
                     </div>
-                    <div> 
+                    <!-- <div *ngIf="visit.regNo"> 
                       Reg.No: <b>{{visit.regNo ? visit.regNo : 'NA'}}</b>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -144,9 +140,9 @@
               <u><strong> Documents: </strong></u>
               <div class="row">
                 <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
-                  <span style="margin-left: 70px;">{{image.imageName}}</span><br>
                   <a href="{{ image.image }}"><img src="{{ image.image }}"
-                      [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a>
+                      [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a><br>
+                    <span style="margin-left: 70px; margin-top: 10px;">{{image.imageName}}</span>
                 </div>
                 <div *ngIf="!additionalDocumentPresent" class="ml-3">No Documents available!</div>
 

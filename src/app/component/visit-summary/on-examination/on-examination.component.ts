@@ -26,8 +26,16 @@ export class OnExaminationComponent implements OnInit {
       .subscribe((response) => {
         response.results.forEach((obs) => {
           if (obs.encounter.visit.uuid === this.visit_Id) {
-            if(!obs.value.includes("</b><br/>•  -")) {
-              this.onExam.push(obs);
+            if(obs.value.toString().startsWith("{")) {
+              let value = JSON.parse(obs.value.toString());
+              obs.value = value["en"];
+              if(!obs.value.includes("</b><br/>•  -")) {
+                this.onExam.push(obs);
+              }
+            } else {
+              if(!obs.value.includes("</b><br/>•  -")) {
+                this.onExam.push(obs);
+              }
             }
           }
         });

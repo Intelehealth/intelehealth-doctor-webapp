@@ -166,10 +166,15 @@ export class PrescriptionComponent implements OnInit {
           if (attri.attributeType.display.match("registrationNumber")) {
              registrationNumber = attri.value;
           }
-        })
+        });
+        let complaints = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce");
+        if(complaints[0].value.toString().startsWith("{")) {
+          let value = JSON.parse(complaints[0].value.toString());
+          complaints[0].value = value["en"]; 
+        }
         let data = {
           examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
-          complaints: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce"),
+          complaints: complaints,
           resolution:  resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3"),
           providerName: providers[0].display,
           qual: qualification,
