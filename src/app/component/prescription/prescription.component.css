@@ -202,6 +202,26 @@ ul {
   }
 }
 
+/* ------------- */
+
+@media (min-width: 320px) and (max-width: 375px) {
+  .prescription-wrapper {
+    padding: 20px !important;
+  }
+  .prescription-wrapper .row .col {
+    padding: 5px;
+  }
+  .hih-logo.ih {
+    max-height: 25px !important;
+  }
+  .gr {
+    font-size: 12px;
+  }
+  .line-items .p-2 {
+    padding-right: 0 !important;
+  }
+}
+
 .chip {
   background-color: #eceef4;
   color: #321a94;
