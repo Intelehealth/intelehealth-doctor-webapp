@@ -27,7 +27,8 @@ export class ReassignSpecialityComponent implements OnInit {
                     "Agent Resolution",
                     "Curiosity Resolution",
                     "Gynecologists (Kannada)",
-                    "Gynecologists (Hindi)"
+                    "Gynecologists (Hindi)",
+                    "Gynecologists (Marathi)"
   ];
   errorText: string;
 

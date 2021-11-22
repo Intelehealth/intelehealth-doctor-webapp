@@ -22,7 +22,8 @@ export class EditDetailsComponent implements OnInit {
                       "Agent Resolution",
                       "Curiosity Resolution",
                       "Gynecologists (Kannada)",
-                      "Gynecologists (Hindi)"
+                      "Gynecologists (Hindi)",
+                      "Gynecologists (Marathi)"
                     ];
   editForm = new FormGroup({
     gender: new FormControl(
