@@ -1,9 +1,15 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
-import { environment } from "src/environments/environment";
-declare const getFromStorage;
+
+declare const getFromStorage, navigator: any;
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
@@ -20,6 +26,8 @@ export class ChatComponent implements OnInit {
   message;
   patientId = null;
   visitId = null;
+  loading = true;
+  isOnline = navigator.onLine;
 
   constructor(
     private chatService: ChatService,
@@ -27,15 +35,30 @@ export class ChatComponent implements OnInit {
     private socket: SocketService
   ) {}
 
+  @HostListener("window:online", ["$event"])
+  online() {
+    console.log("online");
+    this.isOnline = true;
+  }
+  @HostListener("window:offline", ["$event"])
+  offline() {
+    console.log("offline");
+    this.isOnline = false;
+  }
+
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
     this.visitId = this.route.snapshot.paramMap.get("visit_id");
-    const params = new URLSearchParams();
-    params.append("userId", this.userUuid);
-    params.append("name", this.userName);
-    localStorage.socketQuery = params.toString();
+    localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+    this.initSocket();
+    this.chatService.popUpCloseEmitter.subscribe((data: any) => {
+      if (data && data.type === "videoCall") this.initSocket();
+    });
+  }
+
+  initSocket(force = true) {
     this.updateMessages();
-    this.socket.initSocket(true);
+    this.socket.initSocket(force);
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
       this.playNotify();
@@ -56,25 +79,42 @@ export class ChatComponent implements OnInit {
 
   sendMessage(event) {
     if (this.toUser && this.patientId && this.chatElem.value) {
+      this.loading = true;
       this.chatService
         .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
           visitId: this.visitId,
           patientName: localStorage.patientName,
         })
-        .subscribe((res) => {
-          this.updateMessages();
+        .subscribe({
+          next: (res) => {
+            this.updateMessages();
+          },
+          error: () => {
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          },
         });
     }
     this.chatElem.value = "";
   }
 
   updateMessages() {
-    this.chatService
-      .getPatientMessages(this.toUser, this.patientId)
-      .subscribe((res: { data }) => {
+    this.chatService.getPatientMessages(this.toUser, this.patientId).subscribe({
+      next: (res: { data }) => {
         this.chats = res.data;
+        this.loading = false;
         this.scroll();
-      });
+      },
+      error: (err) => {
+        console.log("err:>>>> ", err);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   onPressEnter(e) {
@@ -85,7 +125,7 @@ export class ChatComponent implements OnInit {
 
   chatLaunch() {
     this.classFlag = true;
-    this.scroll();
+    this.initSocket();
   }
   chatClose() {
     this.classFlag = false;
@@ -106,9 +146,6 @@ export class ChatComponent implements OnInit {
   }
 
   playNotify() {
-    const src = environment.production
-      ? "../../../../intelehealth/assets/notification.mp3"
-      : "../../../../assets/notification.mp3";
-    new Audio(src).play();
+    new Audio("assets/notification.mp3").play();
   }
 }

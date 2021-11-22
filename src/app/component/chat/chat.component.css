@@ -24,6 +24,14 @@
   justify-content: space-between;
   background-color: #ddd;
 }
+.input-group.mb-3 {
+  position: relative;
+}
+.msg {
+  position: absolute;
+  bottom: -20px;
+  font-size: 11px;
+}
 .card-header i {
   cursor: pointer;
 }
@@ -105,4 +113,8 @@
     position: absolute;
     width: 100%;
   }
+}
+
+.spinner {
+  margin: 0 auto;
 }
