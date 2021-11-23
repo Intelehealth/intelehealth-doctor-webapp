@@ -40,7 +40,7 @@
             </div>
 
             <div style="border-top: 2px solid #321a94" class="details-info">
-              <u><strong> Survivor Details: </strong></u><br>
+              <u><strong> Survivor Details: </strong></u>
               <div class="row">
                 <div class="col-sm-6" *ngFor="let info of patientInfo" >
                   <span class="d-flex">Survivor Name: &nbsp;&nbsp; <b>{{ info?.display }}</b></span>
@@ -139,10 +139,10 @@
 
               <u><strong> Documents: </strong></u>
               <div class="row">
-                <div *ngFor="let image of images" class="col-md-4 px-0" style="padding: 0px;">
+                <div *ngFor="let image of images" class="col-lg-3 col-md-3 col-sm-3 col-xs-6" style="padding: 0px;">
                   <a href="{{ image.image }}"><img src="{{ image.image }}"
                       [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a><br>
-                    <span style="margin-left: 70px; margin-top: 10px;">{{image.imageName}}</span>
+                    <span  [ngClass]="{ imageName1: images.length > 1, imageName2: images.length == 1 }">{{image.imageName}}</span>
                 </div>
                 <div *ngIf="!additionalDocumentPresent" class="ml-3">No Documents available!</div>
 

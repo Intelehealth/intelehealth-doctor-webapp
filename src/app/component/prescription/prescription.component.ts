@@ -40,6 +40,7 @@ export class PrescriptionComponent implements OnInit {
   info = {};
   personAttributes = {};
   state: string;
+  language = 'en';
 
 
   constructor(private route: ActivatedRoute,
@@ -49,6 +50,7 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patientId");
+    this.language =  this.route.snapshot.paramMap.get("lang");
     this.getAdditionalDocuments();
     this.getPatientDetails();
     this.getObsData();
@@ -168,14 +170,13 @@ export class PrescriptionComponent implements OnInit {
           }
         });
         let complaints = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce");
-        if(complaints[0].value.toString().startsWith("{")) {
-          let value = JSON.parse(complaints[0].value.toString());
-          complaints[0].value = value["en"]; 
-        }
+        let complaint = this.getData(complaints);
+        let resolution = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3");
+        let resolutionData = this.getData(resolution);
         let data = {
           examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
-          complaints: complaints,
-          resolution:  resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3"),
+          complaints: complaint,
+          resolution: resolutionData,
           providerName: providers[0].display,
           qual: qualification,
           specialization:specialization,
@@ -185,6 +186,17 @@ export class PrescriptionComponent implements OnInit {
         this.visitData.push(data);
       });
     }
+  }
+
+  private getData(data: any) {
+    if(this.language === undefined || this.language === null) {
+      this.language ='en';
+    }
+    if (data[0]?.value.toString().startsWith("{")) {
+      let value = JSON.parse(data[0].value.toString());
+      data[0].value = this.language === 'en' ? value["en"] : value['hi'];
+    }  
+    return data;
   }
 
   getAdditionalDocuments() {

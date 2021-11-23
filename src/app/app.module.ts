@@ -158,7 +158,7 @@ import { PrescriptionComponent } from './component/prescription/prescription.com
     RouterModule.forRoot([
       { path: 'l/:hash', component: RedirectComponent },
       {
-        path: "prescription/:patientId",
+        path: "prescription/:patientId/:lang",
         component: PrescriptionComponent,
       },
       { path: '', component: MainComponent, children:[

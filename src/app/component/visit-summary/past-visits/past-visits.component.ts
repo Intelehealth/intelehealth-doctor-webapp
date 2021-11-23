@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: "app-past-visits",
@@ -15,9 +17,13 @@ export class PastVisitsComponent implements OnInit {
   recent: any = [];
   patientUuid: any;
   visits: any;
+  form = new FormGroup({
+    status: new FormControl("en", [Validators.required]),
+  });
   constructor(private route: ActivatedRoute, 
     private service: VisitService, 
     private router: Router,
+    private modalService: NgbModal
     ) {}
 
   ngOnInit() {
@@ -61,7 +67,27 @@ export class PastVisitsComponent implements OnInit {
     });
   }
 
-  print(patientUuid){
-    this.router.navigateByUrl(`/prescription/${patientUuid}`)
+  print(patientUuid, lang){
+    this.router.navigateByUrl(`/prescription/${patientUuid}/${lang}`)
+  }
+
+  open(content) {
+    let ngbModalOptions: NgbModalOptions = {
+      backdrop : 'static',
+      keyboard : false
+  };
+    this.modalService.open(content, ngbModalOptions);
+  }
+
+  checkLang(patientUuid) {
+    const formValue = this.form.value;
+    const value = formValue.status;
+    this.modalService.dismissAll();
+    this.print(patientUuid, value);
+  }
+
+  close() {
+    this.form.reset()
+    this.modalService.dismissAll();
   }
 }
