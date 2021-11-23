@@ -31,8 +31,8 @@
   </mat-card>
   <br>
   <div class="text-center mt-2">
-    <button class="mr-1" id="sign-button" mat-raised-button color="primary" (click)=open(content)>PRINT &nbsp;&nbsp;<i class="fa fa-print" aria-hidden="true"></i></button> &nbsp;&nbsp; 
-    <button id="download-button" mat-raised-button color="primary">SHARE &nbsp;&nbsp;<i class="fa fa-share-alt" aria-hidden="true"></i>
+    <button class="mr-1" id="sign-button" mat-raised-button color="primary" (click)=open(content,false)>PRINT &nbsp;&nbsp;<i class="fa fa-print" aria-hidden="true"></i></button> &nbsp;&nbsp; 
+    <button id="download-button" mat-raised-button color="primary" (click)=open(content,true)>SHARE &nbsp;&nbsp;<i class="fa fa-share-alt" aria-hidden="true"></i>
     </button>
   </div>
 </div>
@@ -53,9 +53,13 @@
       </mat-dialog-content>
   </div>
   <div class="modal-footer">
-    <button mat-raised-button color="primary"  [disabled]="!form.valid" (click)="checkLang(patientUuid)">
+    <button  *ngIf="!isShareOption" mat-raised-button color="primary"  [disabled]="!form.valid" (click)="checkLang(patientUuid)">
       Ok
   </button>
+  <div *ngIf="isShareOption">
+    <a class="fab fa-whatsapp" href="{{getLink(patientUuid,'whatsapp')}}" (click)="modal.close()" target="_blank"></a>
+    <a href="mailto:?subject=Vikalp Helpline - Case Detaills&body={{getLink(patientUuid,'mail')}}" (click)="modal.close()"><i class="fa1 fa fa-envelope" aria-hidden="true"></i></a>
+  </div>
   <button  mat-raised-button color="primary"
       (click)="close()">
       Cancel

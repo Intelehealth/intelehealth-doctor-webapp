@@ -17,17 +17,20 @@ export class PastVisitsComponent implements OnInit {
   recent: any = [];
   patientUuid: any;
   visits: any;
+  isShareOption: boolean = false;
+  mobileNo:number;
   form = new FormGroup({
     status: new FormControl("en", [Validators.required]),
   });
-  constructor(private route: ActivatedRoute, 
-    private service: VisitService, 
+  whatsappLink;
+  constructor(private route: ActivatedRoute,
+    private service: VisitService,
     private router: Router,
     private modalService: NgbModal
-    ) {}
+  ) { }
 
   ngOnInit() {
-   this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
+    this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.service.recentVisits(this.patientUuid).subscribe((response) => {
       this.visits = response.results;
       this.visits.forEach((visit) => {
@@ -60,6 +63,11 @@ export class PastVisitsComponent implements OnInit {
           ) {
             this.recentVisit.visitStatus = "Active";
           }
+          visitDetails.patient.person['attributes'].forEach(attri => {
+            if (attri.attributeType.display.match('Telephone Number')) {
+                this.mobileNo = attri.value;
+            }
+          });
           this.chiefComplaint.emit(this.recentVisit);
           this.recent.push(this.recentVisit);
         });
@@ -67,15 +75,16 @@ export class PastVisitsComponent implements OnInit {
     });
   }
 
-  print(patientUuid, lang){
+  print(patientUuid, lang) {
     this.router.navigateByUrl(`/prescription/${patientUuid}/${lang}`)
   }
 
-  open(content) {
+  open(content, flag) {
+    this.isShareOption = flag;
     let ngbModalOptions: NgbModalOptions = {
-      backdrop : 'static',
-      keyboard : false
-  };
+      backdrop: 'static',
+      keyboard: false
+    };
     this.modalService.open(content, ngbModalOptions);
   }
 
@@ -87,7 +96,20 @@ export class PastVisitsComponent implements OnInit {
   }
 
   close() {
-    this.form.reset()
+    //this.form.reset()
     this.modalService.dismissAll();
+  }
+
+  getLink(patientUuid, linkfor) {
+    let lang = "en";
+    if(this.form.value.status !== null) {
+      lang = this.form.value.status;
+    }
+    const text =encodeURIComponent(`Please find the link to download the case details - https://training.vikalpindia.org/intelehealth/index.html#/prescription/${patientUuid}/${lang}`);
+    if(linkfor === "whatsapp") {
+    return this.whatsappLink = `https://wa.me/91${this.mobileNo}?text=${text}`;
+    } else {
+      return 'Please find the link to download the case details - '+text;
+    }
   }
 }
