@@ -144,7 +144,7 @@ export class PrescriptionComponent implements OnInit {
     this.diagnosisService.getObsAll(this.patientId).subscribe((resp) => {
       var visitIds = [];
       (resp.results.forEach((c) => {
-        if (visitIds.indexOf(c.encounter.visit.uuid) === -1) {
+        if (c?.encounter?.visit && visitIds.indexOf(c?.encounter?.visit.uuid) === -1) {
           visitIds.push(c.encounter.visit.uuid)
         }
       }))
@@ -169,17 +169,17 @@ export class PrescriptionComponent implements OnInit {
              registrationNumber = attri.value;
           }
         });
-        let complaints = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce");
+        let complaints = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce");
         let complaint = this.getData(complaints);
-        let resolution = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3");
+        let resolution = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3");
         let resolutionData = this.getData(resolution);
-        let facilities = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "0d3336f1-df6c-48ab-a7a3-c93b1054b7b7");
+        let facilities = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "0d3336f1-df6c-48ab-a7a3-c93b1054b7b7");
         if(facilities[0]?.value.includes("|")) {
           let value = facilities[0].value.replace("|"," <br><br> ");
           facilities[0].value = value;
         }
         let data = {
-          examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
+          examination: resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
           complaints: complaint,
           resolution: resolutionData,
           facilities: facilities,

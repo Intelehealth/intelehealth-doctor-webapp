@@ -1,4 +1,4 @@
-<h4>Additional Documents</h4>
+<h4>Documents  <button *ngIf="images.length > 0" class="float-right" mat-raised-button color="primary" (click)="download()"><i class="fa fa-download" aria-hidden="true"></i></button></h4>
 <hr />
 <div *ngIf="additionalDocumentPresent">
   <div class="row imagetiles">
@@ -13,4 +13,4 @@
     </div>
   </div>
 </div>
-<div *ngIf="!additionalDocumentPresent">No Additional Documents available!</div>
+<div *ngIf="!additionalDocumentPresent">No Documents available!</div>

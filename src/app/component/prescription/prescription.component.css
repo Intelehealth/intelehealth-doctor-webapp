@@ -247,7 +247,10 @@
     color: #321a94;
     border: 1px solid #321a94;
   }
-   
+  .imagetiles {
+    margin-left: 16px;
+  }
+
   @media print
   {    
       .no-print, .no-print *

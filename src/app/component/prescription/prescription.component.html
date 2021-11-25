@@ -157,7 +157,7 @@
 
               <u><strong> Documents: </strong></u>
               <div class="row">
-                <div *ngFor="let image of images" class="col-lg-3 col-md-3 col-sm-3 col-xs-6" style="padding: 0px;">
+                <div *ngFor="let image of images" class="col-lg-3 col-md-3 col-sm-3 col-xs-6 imagetiles" style="padding: 0px;">
                   <a href="{{ image.image }}"><img src="{{ image.image }}"
                       [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a><br>
                     <span  [ngClass]="{ imageName1: images.length > 1, imageName2: images.length == 1 }">{{image.imageName}}</span>
