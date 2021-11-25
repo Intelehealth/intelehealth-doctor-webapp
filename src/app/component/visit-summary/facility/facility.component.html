@@ -1,0 +1,15 @@
+<h4>Facility Referred</h4>
+<hr />
+<ng-container *ngIf="facilityPresent">
+  <table
+    class="table table-responsive borderless"
+    *ngFor="let facility of facilities"
+  >
+    <tr>
+      <div [innerHTML]="facility.value"></div>
+    </tr>
+  </table>
+</ng-container>
+<ng-container *ngIf="!facilityPresent">
+  No Facility Referred available!
+</ng-container>

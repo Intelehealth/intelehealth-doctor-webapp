@@ -81,6 +81,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { RedirectComponent } from "./component/redirect/redirect.component";
 import { ResolutionFeedbackComponent } from './component/visit-summary/resolution-feedback/resolution-feedback.component';
 import { PrescriptionComponent } from './component/prescription/prescription.component';
+import { FacilityComponent } from "./component/visit-summary/facility/facility.component";
 
 
 
@@ -124,7 +125,8 @@ import { PrescriptionComponent } from './component/prescription/prescription.com
     ConfirmDialogComponent,
     ReassignSpecialityComponent,
     ResolutionFeedbackComponent,
-    PrescriptionComponent
+    PrescriptionComponent,
+    FacilityComponent
   ],
 
   imports: [

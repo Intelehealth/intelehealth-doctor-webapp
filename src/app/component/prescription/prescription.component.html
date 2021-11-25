@@ -108,6 +108,24 @@
                   </table>
                   <table *ngIf="visit.resolution?.length == 0">
                     No Resolution and Feedback available!
+                  </table><br>
+                  <!-- <u><strong> On Examination: </strong></u>
+                  <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">
+                    <tr>
+                      <div [innerHTML]="exam.value"></div>
+                    </tr>
+                  </table> -->
+                </div><br><br>
+
+                <div class="col-sm-12">
+                  <u><strong>  Facility Referred: </strong></u>
+                  <table class="table table-responsive borderless" *ngFor="let facility of visit.facilities">
+                    <tr>
+                      <div [innerHTML]="facility.value"></div>
+                    </tr>
+                  </table>
+                  <table *ngIf="visit.facilities?.length == 0">
+                    No Facility Referred available!<br>
                   </table>
                   <!-- <u><strong> On Examination: </strong></u>
                   <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">

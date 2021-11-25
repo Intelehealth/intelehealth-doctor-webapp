@@ -173,10 +173,16 @@ export class PrescriptionComponent implements OnInit {
         let complaint = this.getData(complaints);
         let resolution = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3");
         let resolutionData = this.getData(resolution);
+        let facilities = resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "0d3336f1-df6c-48ab-a7a3-c93b1054b7b7");
+        if(facilities[0]?.value.includes("|")) {
+          let value = facilities[0].value.replace("|"," <br><br> ");
+          facilities[0].value = value;
+        }
         let data = {
           examination: resp.results.filter((e) => e.encounter.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084"),
           complaints: complaint,
           resolution: resolutionData,
+          facilities: facilities,
           providerName: providers[0].display,
           qual: qualification,
           specialization:specialization,
