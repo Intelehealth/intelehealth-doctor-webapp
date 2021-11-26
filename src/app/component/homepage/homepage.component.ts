@@ -240,6 +240,7 @@ export class HomepageComponent implements OnInit {
     this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
       "- "
     )[1];
+    this.value.dateOfRegsitarion = active.patient.dateCreated;
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }

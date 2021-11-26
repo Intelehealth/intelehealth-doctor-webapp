@@ -13,12 +13,11 @@ export class TablesComponent implements OnInit {
     "id",
     "name",
     "telephone",
-    "gender",
     "age",
-    "location",
     "status",
     "provider",
-    "lastSeen",
+    "dateOfRegsitarion",
+    "lastSeen"
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;

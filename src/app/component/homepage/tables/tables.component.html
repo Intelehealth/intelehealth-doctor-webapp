@@ -16,7 +16,7 @@
   >
     <!-- ID Column -->
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Case ID</th>
       <td mat-cell *matCellDef="let row">
         <a
           id="patient-id"
@@ -38,22 +38,10 @@
       <td mat-cell *matCellDef="let row">{{ row.telephone }}</td>
     </ng-container>
 
-    <!-- Gender Column -->
-    <ng-container matColumnDef="gender">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
-      <td mat-cell *matCellDef="let row">{{ row.gender === 'M' ? 'Male': 'Female'}}</td>
-    </ng-container>
-
     <!-- Date OF Birth Column -->
     <ng-container matColumnDef="age">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
       <td mat-cell *matCellDef="let row">{{ row.age }} Years</td>
-    </ng-container>
-
-    <!-- Location column -->
-    <ng-container matColumnDef="location">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
-      <td mat-cell *matCellDef="let row">{{ row.location }}</td>
     </ng-container>
 
     <!-- Status column -->
@@ -81,9 +69,17 @@
       <td mat-cell *matCellDef="let row">{{ row.provider }}</td>
     </ng-container>
 
+    <!-- Date Of Patient Regsitarion column -->
+    <ng-container matColumnDef="dateOfRegsitarion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Of Regsitarion</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.dateOfRegsitarion | date: "dd-MMM-yyyy, h:mm a" }}
+      </td>
+    </ng-container>
+
     <!-- lastSeen column -->
     <ng-container matColumnDef="lastSeen">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Seen</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Of Last Visit</th>
       <td mat-cell *matCellDef="let row">
         {{ row.lastSeen | date: "dd-MMM-yyyy, h:mm a" }}
       </td>

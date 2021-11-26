@@ -20,6 +20,7 @@ declare var getFromStorage: any,
 })
 export class VisitSummaryComponent implements OnInit {
   @Input() visitUUID;
+  @Input() visitDate;
   baseURL = environment.baseURL;
 
   show = false;

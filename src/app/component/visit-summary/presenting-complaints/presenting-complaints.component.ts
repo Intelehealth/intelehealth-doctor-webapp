@@ -9,6 +9,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 })
 export class PresentingComplaintsComponent implements OnInit {
   @Input() visit_Id;
+  @Input() startVisitDate;
   complaint: any = [];
   complaintPresent = false;
   conceptComplaint = "3edb0e09-9135-481e-b8f0-07a26fa9a5ce";

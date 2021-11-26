@@ -14,7 +14,7 @@
   </mat-card>
   <br>
   <mat-card>
-        <app-presenting-complaints [visit_Id]="visitUUID"></app-presenting-complaints>
+        <app-presenting-complaints [visit_Id]="visitUUID" [startVisitDate]="visitDate"></app-presenting-complaints>
   </mat-card>
   <br>
   <mat-card *ngIf="!isFollowUpComplaint">
@@ -36,10 +36,10 @@
         <app-on-examination [visit_Id]="visitUUID"></app-on-examination>
   </mat-card>
   <br>
-  <mat-card>
+<!--<mat-card>
         <app-physical-examination [visit_Id]="visitUUID"></app-physical-examination>
   </mat-card>
-  <!-- <br>
+ <br>
   <mat-card>
         <app-additional-documents></app-additional-documents>
   </mat-card>
@@ -52,7 +52,7 @@
       <app-facility [visit_Id]="visitUUID"></app-facility>
   </mat-card>
   <br>
-  <mat-card>
+  <!-- <mat-card>
         <small style="color: red">
               <i>
                     <b>Note:</b>
@@ -65,7 +65,7 @@
               </i>
         </small>
   </mat-card>
-  <br>
+  <br> -->
 
 
   <!-- <div class="text-center" *ngIf="!show" [hidden]="userRole" >

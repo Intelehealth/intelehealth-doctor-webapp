@@ -24,7 +24,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-container>
-        <app-visit-summary [visitUUID]="data.details.uuid"></app-visit-summary>
+        <app-visit-summary [visitUUID]="data.details.uuid" [visitDate]="data.details.startDatetime"></app-visit-summary>
       </ng-container>
     </mat-expansion-panel>
   </mat-accordion>

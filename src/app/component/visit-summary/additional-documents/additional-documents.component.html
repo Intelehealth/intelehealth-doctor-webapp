@@ -3,7 +3,7 @@
 <div *ngIf="additionalDocumentPresent">
   <div class="row imagetiles">
     <div *ngFor="let image of images" class="col-lg-3 col-md-3 col-sm-3 col-xs-6" style="padding: 0px;">
-      <span style="margin-left: 70px;">{{image.imageName}}</span><br>
+      <span [style.margin-left]="images.length == 1 ? '22px' : (images.length > 1 ? '65px' : null)">{{image.imageName}}</span><br>
       <a href="{{ image.image }}"
         ><img
           src="{{ image.image }}"
