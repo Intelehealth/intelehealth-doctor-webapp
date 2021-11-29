@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 
@@ -9,6 +9,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 })
 export class OnExaminationComponent implements OnInit {
   @Input() visit_Id;
+  @Output() isExamPresent = new EventEmitter();
   onExam: any = [];
   onExamPresent = false;
   conceptOnExam = "e1761e85-9b50-48ae-8c4d-e6b7eeeba084";
@@ -42,6 +43,7 @@ export class OnExaminationComponent implements OnInit {
         if (this.onExam !== undefined && this.onExam.length > 0) {
           this.onExamPresent = true;
         }
+        this.isExamPresent.emit({"visitId": this.visit_Id, "isPresent": this.onExamPresent});
       });
   }
 }

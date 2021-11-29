@@ -10,13 +10,13 @@ import { MatTableDataSource } from "@angular/material/table";
 })
 export class TablesComponent implements OnInit {
   displayColumns: string[] = [
+    "dateOfRegistration",
     "id",
     "name",
     "telephone",
     "age",
     "status",
     "provider",
-    "dateOfRegsitarion",
     "lastSeen"
   ];
   dataSource;

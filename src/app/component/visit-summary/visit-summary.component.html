@@ -1,14 +1,9 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
-  <mat-card>
-        <app-patientinfo></app-patientinfo>
-  </mat-card>
-  <br>
   <!-- <mat-card>
         <app-past-visits (chiefComplaint)="getChiefComplaint($event)"></app-past-visits>
   </mat-card> -->
-  <br>
   <mat-card>
         <app-current-visit [visit_Id]="visitUUID"></app-current-visit>
   </mat-card>
@@ -32,8 +27,8 @@
         <app-vital></app-vital>
   </mat-card>
   <br> -->
-  <mat-card>
-        <app-on-examination [visit_Id]="visitUUID"></app-on-examination>
+  <mat-card *ngIf="visitUUID == isExam?.visitId && isExam?.isPresent == true">
+        <app-on-examination [visit_Id]="visitUUID" (isExamPresent)="getExamFlag($event)"></app-on-examination>
   </mat-card>
   <br>
 <!--<mat-card>
@@ -47,7 +42,6 @@
   <!-- <mat-card *ngIf="!visitNotePresent">
     <app-reassign-speciality></app-reassign-speciality>
   </mat-card> -->
-  <br>
   <mat-card>
       <app-facility [visit_Id]="visitUUID"></app-facility>
   </mat-card>

@@ -40,8 +40,9 @@ export class VisitSummaryComponent implements OnInit {
   userSpeciality: any;
   userRole: any;
   DoctorNotNeeded: any;
-  isVisitEnded:boolean = false;
-  isFollowUpComplaint:boolean = false;
+  isVisitEnded: boolean = false;
+  isFollowUpComplaint: boolean = false;
+  isExam;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -89,7 +90,7 @@ export class VisitSummaryComponent implements OnInit {
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
       const ObsData = response.results.filter((a) =>
-      this.conceptIds.includes(a.concept.uuid)
+        this.conceptIds.includes(a.concept.uuid)
       );
       if (ObsData.length > 0) {
         this.diagnosisService.isVisitSummaryChanged = true;
@@ -99,18 +100,18 @@ export class VisitSummaryComponent implements OnInit {
     });
     // const visitUuid = this.visitUUID;
     this.visitService.fetchVisitDetails(this.visitUUID).subscribe((visitDetails) => {
-      this.visitAttributes= visitDetails;
-      this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+      this.visitAttributes = visitDetails;
+      this.visitSpeciality = this.visitAttributes.attributes.find(a => a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
       const providerDetails = getFromStorage("provider");
-      this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
-      
+      this.userSpeciality = providerDetails.attributes.find(a => a.attributeType.display == "specialization").value;
+
       //Doctor not need speciality
-      this.DoctorNotNeeded = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value == "Doctor not needed";
+      this.DoctorNotNeeded = providerDetails.attributes.find(a => a.attributeType.display == "specialization").value == "Doctor not needed";
       if (visitDetails.stopDatetime !== null) {
         this.isVisitEnded = true;
       }
       visitDetails.encounters.forEach((visit) => {
-        
+
         if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
@@ -130,7 +131,10 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
     });
-   
+    this.isExam = {
+      "visitId": this.visitUUID,
+      "isPresent": true
+    }
   }
 
   get isVisitSummaryChanged() {
@@ -172,7 +176,7 @@ export class VisitSummaryComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -213,9 +217,13 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   getChiefComplaint(complaint) {
-    if(complaint && complaint.observation.match("Domestic Violence") !== null && complaint.observation.match("Safe abortion") !== null  && complaint.visitStatus ==="Active") {
+    if (complaint && complaint.observation.match("Domestic Violence") !== null && complaint.observation.match("Safe abortion") !== null && complaint.visitStatus === "Active") {
       this.isFollowUpComplaint = true;
     }
+  }
+
+  getExamFlag(flag) {
+    this.isExam = flag;
   }
 
   updateVisit() {
@@ -277,9 +285,9 @@ export class VisitSummaryComponent implements OnInit {
             });
             if (this.isFollowUpComplaint) {
               // this.sendSms(); 
-             } else {
+            } else {
               this.updateVisit();
-            } 
+            }
           } else {
             if (
               window.confirm(

@@ -1,7 +1,11 @@
 <div>
   <h2 style="text-align:center;">Case Summary</h2>
-</div><br>
+</div>
+<br>
 <div class="container">
+  <mat-card>
+    <app-patientinfo></app-patientinfo>
+  </mat-card>
   <mat-accordion class="example-headers-align" [multi]="true">
     <mat-expansion-panel [expanded]="data.visitStatus=='Active' || visits.length <= 1"
       *ngFor="let data of recent" id="flagged-table" class="mt-2">

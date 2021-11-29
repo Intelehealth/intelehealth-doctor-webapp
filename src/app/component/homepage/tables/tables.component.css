@@ -19,12 +19,12 @@ table {
   width: 10%;
 }
 
-.mat-column-gender {
+.mat-column-telephone {
   width: 10%;
 }
 
-.mat-column-location {
-  width: 14%;
+.mat-column-age {
+  width: 10%;
 }
 
 .mat-column-status {
@@ -36,9 +36,12 @@ table {
 }
 
 .mat-column-lastSeen {
-  width: 14%;
+  width: 10%;
 }
 
+.mat-column-dateOfRegistration {
+  width: 10%;
+}
 .mat-cell,
 .mat-header-cell {
   white-space: nowrap;
