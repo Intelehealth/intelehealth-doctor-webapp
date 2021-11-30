@@ -64,7 +64,7 @@
 
 
       <div class="text-center" *ngIf="!show">
-            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="isVisitEnded">{{'Start Visit Note' | translate}}</button>
+            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="visitSpeciality != userSpeciality || isVisitEnded">{{'Start Visit Note' | translate}}</button>
       </div>
 
       <br>
@@ -111,7 +111,7 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent || isVisitEnded">{{ 'Sign and Submit' | translate }}</button>
+                        [disabled]="visitSpeciality != userSpeciality || visitCompletePresent || isVisitEnded">{{ 'Sign and Submit' | translate }}</button>
             </div>
       </div>
 </div>

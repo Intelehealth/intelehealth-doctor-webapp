@@ -37,6 +37,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
+  systemAccess:boolean = false;
 
   constructor(
     private sessionService: SessionService,
@@ -62,6 +63,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
             !element.voided
           ) {
             this.specialization = element.value;
+          }
+        });
+        userDetails["roles"].forEach((role) => {
+          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8") {
+            this.systemAccess = true;
           }
         });
         this.getVisits();
@@ -92,7 +98,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
         const visits = response.results;
         visits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if (active.attributes.length) {
+            if(this.systemAccess) {
+              this.visitCategory(active);
+            }else if (active.attributes.length) {
               const attributes = active.attributes;
               const speRequired = attributes.filter(
                 (attr) =>
@@ -111,8 +119,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   }
                 });
               }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
             }
           }
           this.value = {};

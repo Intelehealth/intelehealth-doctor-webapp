@@ -29,6 +29,8 @@ export class VisitSummaryComponent implements OnInit {
   patientUuid = "";
   visitUuid = "";
   isVisitEnded:boolean = false;
+  visitSpeciality: any;
+  userSpeciality: any;
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
@@ -57,6 +59,9 @@ export class VisitSummaryComponent implements OnInit {
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
+        this.visitSpeciality = visitDetails.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+        const providerDetails = getFromStorage("provider");
+        this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
             saveToStorage("visitNoteProvider", visit);
