@@ -33,6 +33,8 @@ export class PastVisitsComponent implements OnInit {
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.service.recentVisits(this.patientUuid).subscribe((response) => {
       this.visits = response.results;
+      this.visits.reverse();
+      // console.log(' this.visits: ',  this.visits.reverse());
       this.visits.forEach((visit) => {
         this.service.fetchVisitDetails(visit.uuid).subscribe((visitDetails) => {
           this.recentVisit = [];
