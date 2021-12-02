@@ -116,3 +116,7 @@ body.font-lato td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.red-star {
+  color: red;
+}

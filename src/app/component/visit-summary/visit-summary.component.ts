@@ -276,4 +276,11 @@ export class VisitSummaryComponent implements OnInit {
       },
     });
   }
+
+  get mandatoryFieldNotPresent() {
+    return !(
+      Boolean(localStorage.prescribedMedication) &&
+      Boolean(localStorage.adviceOrReferPatient)
+    );
+  }
 }
