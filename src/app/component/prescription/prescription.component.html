@@ -45,7 +45,7 @@
                 <div class="col-sm-6" *ngFor="let info of patientInfo" >
                   <span class="d-flex">Survivor Name: &nbsp;&nbsp; <b>{{ info?.display }}</b></span>
                   <span class="d-flex">Age: &nbsp;&nbsp; <b>{{ info?.age }}</b></span>
-                  <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ info?.gender }}</b></span>
+                  <span class="d-flex">Gender: &nbsp;&nbsp; <b>{{ gender }}</b></span>
                   <span class="d-flex">State: &nbsp;&nbsp; <b>{{state}}</b></span>
                   <span class="d-flex">District: &nbsp;&nbsp; <b>{{info?.preferredAddress?.cityVillage}}</b></span>
                   <span class="d-flex">Contact Info: &nbsp;&nbsp; <b>{{info?.telephone == "_" ? '-' : info?.telephone }}</b></span>

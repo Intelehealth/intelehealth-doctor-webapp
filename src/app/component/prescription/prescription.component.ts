@@ -38,6 +38,7 @@ export class PrescriptionComponent implements OnInit {
   visitData = [];
   patientIdentifier: string;
   info = {};
+  gender: string;
   personAttributes = {};
   state: string;
   language = 'en';
@@ -59,6 +60,7 @@ export class PrescriptionComponent implements OnInit {
   getPatientDetails() {
     this.visitService.patientInfo(this.patientId).subscribe((info) => {
       this.info = info.person;
+      this.gender = this.getPatientData(this.info['gender']);
       this.state = info.person.preferredAddress.stateProvince
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
@@ -66,75 +68,79 @@ export class PrescriptionComponent implements OnInit {
           this.info["telephone"] = attri.value;
         }
         if (attri.attributeType.display.match("Caste")) {
-          this.info["Caste"] = attri.value;
+          this.info["Caste"] = this.getPatientData(attri.value);
         }
+        // if (attri.attributeType.display.match("gender")) {
+        //   this.info["gender"] = this.getPatientData(attri.value);
+        // }
         if (attri.attributeType.display.match("occupation")) {
-          this.info["occupation"] = attri.value;
+          this.info["occupation"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Landmark")) {
-          this.info["Landmark"] = attri.value;
+          this.info["Landmark"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Survivor marriage type")) {
-          this.info["Survivor_marriage_type"] = attri.value;
+          this.info["Survivor_marriage_type"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Marriage age")) {
-          this.info["Marriage_age"] = attri.value;
+          this.info["Marriage_age"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Education")) {
-          this.info["Education"] = attri.value;
+          this.info["Education"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Telephone number for survivor")) {
-          this.info["Telephone_number_for_survivor"] = attri.value;
+          this.info["Telephone_number_for_survivor"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Case reffered by")) {
-          this.info["caseRefferedBy"] = attri.value;
+          this.info["caseRefferedBy"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Am speaking with survivor")) {
-          this.info["amSpeakingWithSurvivor"] = attri.value;
+          this.info["amSpeakingWithSurvivor"] = this.getPatientData(attri.value);
         }
         // if (attri.attributeType.display.match("Son/wife/daughter")) {
         //   this.info["SWD"] = attri.value;
         // }
         if (attri.attributeType.display.match("Contact type")) {
-          this.info["contactType"] = attri.value;
+          this.info["contactType"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Husband Occupation")) {
-          this.info["husbandOccupation"] = attri.value;
+          this.info["husbandOccupation"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display?.startsWith("Income")) {
           this.info["income"] = attri.value;
         }
         if (attri.attributeType.display?.startsWith("Husband's Income")) {
-          this.info["husbandIncome"] = attri.value;
+          this.info["husbandIncome"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Survivor maritual status")) {
-          this.info["Survivor_maritual_status"] = attri.value;
+          this.info["Survivor_maritual_status"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Children Status")) {
-          this.info["Children_Status"] = attri.value;
+          this.info["Children_Status"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Maternal home address")) {
-          this.info["Maternal_home_address"] = attri.value;
+          this.info["Maternal_home_address"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Maternal phone number")) {
-          this.info["Maternal_phone_number"] = attri.value;
+          this.info["Maternal_phone_number"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Address of in-laws")) {
-          this.info["Address_of_in_laws"] = attri.value;
+          this.info["Address_of_in_laws"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Emergency Phone Number")) {
-          this.info["Emergency_Phone_Number"] = attri.value;
+          this.info["Emergency_Phone_Number"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("No. of Childrens")) {
-          this.info["No_of_Childrens"] = attri.value;
+          this.info["No_of_Childrens"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Survivor living with")) {
-          this.info["Survivor_living_with"] = attri.value;
+          this.info["Survivor_living_with"] = this.getPatientData(attri.value);
         }
         if (attri.attributeType.display.match("Maritual Status")) {
-          this.info["maritualStatus"] = attri.value;
+          this.info["maritualStatus"] = this.getPatientData(attri.value);
         }
       })
+    
       this.patientInfo.push(this.info);
     });
   }
@@ -201,6 +207,19 @@ export class PrescriptionComponent implements OnInit {
     if (data[0]?.value.toString().startsWith("{")) {
       let value = JSON.parse(data[0].value.toString());
       data[0].value = this.language === 'en' ? value["en"] : value['hi'];
+    }  
+    return data;
+  }
+
+
+
+  private getPatientData(data: any) {
+    if(this.language === undefined || this.language === null) {
+      this.language ='en';
+    }
+    if (data.toString().startsWith("{")) {
+      let value = JSON.parse(data.toString());
+      data = this.language === 'en' ? value["en"] : value['hi'];
     }  
     return data;
   }
