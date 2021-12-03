@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: 'https://sceh.visilant.org/openmrs/ws/rest/v1',
-  baseURLCoreApp : 'https://sceh.visilant.org/openmrs/coreapps/diagnoses',
-  baseURLLegacy: 'https://sceh.visilant.org/openmrs',
+  baseURL: 'https://testing.visilant.org/openmrs/ws/rest/v1',
+  baseURLCoreApp : 'https://testing.visilant.org/openmrs/coreapps/diagnoses',
+  baseURLLegacy: 'https://testing.visilant.org/openmrs',
   mindmapURL: 'https://localhost:3004/api'
 };
 
