@@ -28,7 +28,7 @@ export class FacilityComponent implements OnInit {
         response.results.forEach((obs) => {
           if (obs.encounter.visit.uuid === this.visit_Id) {
             if(obs.value.includes("|")) {
-              let value = obs.value.replace("|"," <br><br> ");
+              let value = obs.value.replaceAll("|"," <br><br> ");
               obs.value = value;
             }
             this.facilities.push(obs);
