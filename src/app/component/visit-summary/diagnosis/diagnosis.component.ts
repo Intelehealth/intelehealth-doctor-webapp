@@ -5,7 +5,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any, checkReview: any;
 
 @Component({
   selector: 'app-diagnosis',
@@ -34,11 +34,32 @@ export class DiagnosisComponent implements OnInit {
   // conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
   conceptLeftEyeDiagnosis: String = '1796244d-e936-4ab8-ac8a-c9bcfa476570';
   conceptRightEyeDiagnosis: String = '58cae684-1509-4fd5-b256-5ca980ec6bb4';
+  conceptLeftEyeDiagnosisReview1: String = 'd72f7295-f1e1-436f-bac4-5ad88b6dc6cb';
+  conceptRightEyeDiagnosisReview1: String = 'f7d5d646-bb4e-4f26-970d-0df61b3b138f';
+  conceptLeftEyeDiagnosisReview2: String = '7323ebb4-9ac2-4bd7-8ef5-3988d7bf6f7c';
+  conceptRightEyeDiagnosisReview2: String = '7633430a-fef7-4d6b-ba47-238bafa68024';
   patientId: string;
   visitUuid: string;
   encounterUuid: string;
   showLeftEyeOtherInput: Boolean = false;
   showRightEyeOtherInput: Boolean = false;
+
+  diagnosisConcept = [
+    {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
+    {concept: this.conceptRightEyeDiagnosis , name: 'rightDiagnosis'}
+  ];
+
+  diagnosisConceptReview1 = [
+    {concept: this.conceptLeftEyeDiagnosisReview1, name: 'leftDiagnosis'},
+    {concept: this.conceptRightEyeDiagnosisReview1 , name: 'rightDiagnosis'}
+  ];
+
+  diagnosisConceptReview2 = [
+    {concept: this.conceptLeftEyeDiagnosisReview2, name: 'leftDiagnosis'},
+    {concept: this.conceptRightEyeDiagnosisReview2 , name: 'rightDiagnosis'}
+  ];
+
+  rightConcept: string;
 
   diagnosisForm = new FormGroup({
     lefteye: new FormControl(''),
@@ -55,10 +76,9 @@ export class DiagnosisComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    [
-      {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
-      {concept: this.conceptRightEyeDiagnosis , name: 'rightDiagnosis'}
-    ].forEach(each => {
+    const reviewVisit = checkReview(this.visitUuid);
+    this.rightConcept = reviewVisit?.reviewType === 1 ? 'diagnosisConceptReview1' : reviewVisit?.reviewType === 2 ? 'diagnosisConceptReview2' : 'diagnosisConcept';
+    this[this.rightConcept].forEach(each => {
       this.diagnosisService.getObs(this.patientId, each.concept)
       .subscribe(response => {
         response.results.forEach(obs => {
@@ -105,7 +125,7 @@ export class DiagnosisComponent implements OnInit {
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: side === 'right' ? this.conceptRightEyeDiagnosis : this.conceptLeftEyeDiagnosis,
+        concept: side === 'right' ? this[this.rightConcept][1].concept : this[this.rightConcept][0].concept,
         person: this.patientId,
         obsDatetime: date,
         value: side === 'right' ? value.righteye : value.lefteye,

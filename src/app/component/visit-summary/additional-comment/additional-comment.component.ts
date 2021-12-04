@@ -5,7 +5,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
-declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
+declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any, checkReview: any;
 
 @Component({
   selector: 'app-additional-comment',
@@ -32,6 +32,10 @@ export class AdditionalCommentComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  conceptCommentReview1 = '0b5a806d-d40f-47ae-af2a-b1c0b31a3042';
+  conceptCommentReview2 = '3685ce27-b556-4e56-9f5b-c44fa8141e6c';
+
+  rightConcept: string;
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])
@@ -45,7 +49,9 @@ export class AdditionalCommentComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
-    this.diagnosisService.getObs(this.patientId, this.conceptComment)
+    const reviewVisit = checkReview(this.visitUuid);
+    this.rightConcept = reviewVisit?.reviewType === 1 ? 'conceptCommentReview1' : reviewVisit?.reviewType === 2 ? 'conceptCommentReview2' : 'conceptComment';
+    this.diagnosisService.getObs(this.patientId, this[this.rightConcept])
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
@@ -64,7 +70,7 @@ export class AdditionalCommentComponent implements OnInit {
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: this.conceptComment,
+        concept: this[this.rightConcept],
         person: this.patientId,
         obsDatetime: date,
         value: value,
