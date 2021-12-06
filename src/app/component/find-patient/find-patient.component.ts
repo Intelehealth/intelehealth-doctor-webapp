@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class FindPatientComponent implements OnInit {
   values: any;
   msg = "Sorry no Case Found..";
+  gender: string;
 
   constructor(
     public dialog: MatDialogRef<FindPatientComponent>,
@@ -25,6 +26,7 @@ export class FindPatientComponent implements OnInit {
       this.msg = this.data.value;
     } else {
       this.values = this.data.value;
+      this.gender = this.getPatientInfo(this.values[0].person.gender);
     }
   }
 
@@ -37,5 +39,16 @@ export class FindPatientComponent implements OnInit {
       ]);
       this.dialog.close();
     });
+  }
+
+  getPatientInfo(attriValue) {
+    let value;
+    if (attriValue.toString().startsWith("{")) {
+      let value1 = JSON.parse(attriValue.toString());
+      value = value1["en"];
+    } else {
+      value = attriValue
+    }
+    return value;
   }
 }
