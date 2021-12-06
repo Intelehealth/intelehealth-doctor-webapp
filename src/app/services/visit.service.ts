@@ -2,18 +2,27 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { VisitData } from "../component/homepage/homepage.component";
+import { HelperService } from "./helper.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
   private baseURL = environment.baseURL;
+  public allVisits: VisitData[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private helper: HelperService) {}
 
-  getVisits(): Observable<any> {
-    // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit?includeInactive=true&v=custom:(uuid,patient:(uuid,identifiers:(identifier),dateCreated,person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)`;
+  getVisits(params): Observable<any> {
+    const query = {
+      ...{
+        includeInactive: true,
+        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),dateCreated,person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)",
+      },
+      ...params,
+    };
+    const url = `${this.baseURL}/visit${this.helper.toParamString(query)}`;
     return this.http.get(url);
   }
 
@@ -57,10 +66,10 @@ export class VisitService {
   patientInfo(id): Observable<any> {
     var header = {
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': 'Basic ' + btoa('intelehealthUser:IHUser#1')
-      })
-    }
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa("intelehealthUser:IHUser#1"),
+      }),
+    };
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(stateProvince,cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
@@ -70,8 +79,8 @@ export class VisitService {
     let url = `${environment.mindmapURL}/mindmap/sendSMS`;
     let body = {
       patientNo: patientNo,
-      smsBody: smsBody
-    }
+      smsBody: smsBody,
+    };
     return this.http.post(url, body);
   }
 
@@ -100,4 +109,9 @@ export class VisitService {
     );
   }
 
+  getVisitCounts(speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
+    );
+  }
 }

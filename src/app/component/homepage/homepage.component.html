@@ -1,37 +1,54 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="setSpiner ? 'spin' : ''">
-    <div class="modal-body row">
-        <div class="col-sm-3" style="padding: 3px">
-            <div class="card text-white" style="background: #dd3c62">
-                <div class="card-body">
-                    <div class="text-left">
-                        ALL CASES<span style="margin-left: 50%; border-radius: .25rem;;
-                        background: #f1f1f1;
-                        padding: 7px;
-                        color: black;" ><b>{{ allVisitData.length }}</b></span>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-body row">
+    <div class="col-sm-3" style="padding: 3px">
+      <div class="card text-white" style="background: #dd3c62">
+        <div class="card-body">
+          <div class="text-left">
+            ALL CASES<span
+              style="
+                margin-left: 50%;
+                border-radius: 0.25rem;
+                background: #f1f1f1;
+                padding: 7px;
+                color: black;
+              "
+              ><b>{{ allVisitCount }}</b></span
+            >
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- PRIORITY Visit -->
-    <mat-accordion class="example-headers-align" [multi]="true">
-        <mat-expansion-panel [expanded]="allVisitData.length > 0" id="flagged-table">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <h5>ALL CASES <b>({{allVisitData.length }})</b> </h5>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <ng-container *ngIf="allVisitData.length > 0">
-                <app-tables [data]="allVisitData"></app-tables>
-            </ng-container>
-        </mat-expansion-panel>
-    </mat-accordion>
+  <!-- PRIORITY Visit -->
+  <mat-accordion class="example-headers-align" [multi]="true">
+    <mat-expansion-panel
+      [expanded]="allVisitCount > 0"
+      id="flagged-table"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h5>
+            ALL CASES <b>({{ allVisitCount }})</b>
+          </h5>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="allVisitCount > 0">
+        <app-tables
+          [visitCounts]="allVisitCount"
+          (tableEmitter)="tableChange($event)"
+          [data]="service.allVisits"
+          (emptyRow)="loadNextSlot($event)"
+          [allVisitsLoaded]="allVisitsLoaded"
+        ></app-tables>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
 
-<a class="whats-app" href="{{whatsappLink}}" target="_blank">
-    <span>
-        <img [src]="whatsappIco" />
-    </span>
+<a class="whats-app" href="{{ whatsappLink }}" target="_blank">
+  <span>
+    <img [src]="whatsappIco" />
+  </span>
 </a>
