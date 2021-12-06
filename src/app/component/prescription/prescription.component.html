@@ -66,8 +66,6 @@
                   <span class="d-flex">{{ language ==='en' ? 'No. of Children:': 'बच्चों की संख्या:'}}&nbsp;&nbsp; <b>{{ info?.No_of_Childrens == "_" ? '-' : info?.No_of_Childrens }}</b></span>
                 </div>
                 <div class="col-sm-6 text-right-presc" *ngFor="let info of patientInfo">
-                  <span class="d-flex">{{ language ==='en' ? 'Date/Time:': 'दिनांक समय:'}}&nbsp;&nbsp;
-                    <b>Visit Date</b></span>
                   <span class="d-flex">{{ language ==='en' ? 'OpenMRS ID:': 'OpenMRS ID:'}}&nbsp;&nbsp; <b>{{patientIdentifier == "_" ? '-' : patientIdentifier}}</b></span>
                   <span class="d-flex">{{ language ==='en' ? 'Education:': 'शिक्षा:'}}&nbsp;&nbsp; <b>{{ info?.Education == "_" ? '-' : info?.Education }}</b></span>
                   <span class="d-flex">{{ language ==='en' ? 'Telephone No for survivor:': 'उत्तरजीवी के लिए टेलीफोन नंबर:'}}&nbsp;&nbsp; <b>{{ info?.Telephone_number_for_survivor == "_" ? '-' :
@@ -191,7 +189,7 @@
                       [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt="" /></a><br>
                     <span [ngClass]="{ imageName1: images.length > 1, imageName2: images.length == 1 }">{{image.imageName}}</span>
                 </div>
-                <div *ngIf="!additionalDocumentPresent" class="ml-3">No Documents available!</div>
+                <div *ngIf="!additionalDocumentPresent" class="ml-3">{{language ==='en' ? 'No Documents available!' : 'कोई दस्तावेज उपलब्ध नहीं है!'}}</div>
 
               </div>
             </div>
