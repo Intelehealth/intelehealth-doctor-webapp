@@ -82,8 +82,8 @@ export class HomepageComponent implements OnInit {
               const values = this.assignValueToProperty(active, sameProvider ? 'Visit Note' : 'ADULTINITIAL', sameProvider);
               if (sameProvider) {
                 this.review2.push({ ...values, seen: true });
-                this.progressVisit.push(values);
-                visitNoteLength += 1;
+                this.completedVisit.push(values);
+                completeVisitLength += 1;
               } else {
                 const review1: any = this.processReview(active.encounters[1]);
                 const newValues = this.assignValueToProperty(active, review1 ? 'Visit Note' : 'ADULTINITIAL', review1);
@@ -130,8 +130,8 @@ export class HomepageComponent implements OnInit {
               if (sameProvider) {
                 const review1Values = this.assignValueToProperty(active, 'Visit Note', sameProvider);
                 this.review1.push({ ...review1Values, seen: true });
-                this.progressVisit.push(review1Values);
-                visitNoteLength += 1;
+                this.completedVisit.push(review1Values);
+                completeVisitLength += 1;
               } else {
                 const visitComplete = active.encounters.filter(enc => enc.display.match('Visit Complete'));
                 const visitNote = active.encounters.filter(enc => enc.display.match('Visit Note'));
