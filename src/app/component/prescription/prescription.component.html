@@ -45,47 +45,47 @@
 
               <div class="row">
                 <div class="col-sm-6" *ngFor="let info of patientInfo" >
-                  <span class="d-flex">{{ "language" ==='en' ? 'Survivor Name:' : 'उत्तरजीवी का नाम:' }} &nbsp;&nbsp; <b>{{ info?.display }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Age:' : 'उम्र:'}}&nbsp;&nbsp; <b>{{ info?.age }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Gender:': 'लिंग:'}} &nbsp;&nbsp; <b>{{ gender }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'State:':'राज्य:' }}&nbsp;&nbsp; <b>{{state}}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'District:': 'जिला:'}} &nbsp;&nbsp; <b>{{info?.preferredAddress?.cityVillage}}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Contact Info:':'संपर्क सूचना:' }}&nbsp;&nbsp; <b>{{info?.telephone == "_" ? '-' : info?.telephone }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Caste:': 'जाति:'}}&nbsp;&nbsp; <b>{{ info?.Caste == "_" ? '-' : info?.Caste}}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Occupation:': 'पेशा:' }}&nbsp;&nbsp; <b>{{ info?.occupation == "_" ? '-' : info?.occupation }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Landmark:' : 'सीमाचिह्न:'}}&nbsp;&nbsp; <b>{{ info?.Landmark == "_" ? '-' : info?.Landmark}}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Survivor marriage type:': 'उत्तरजीवी विवाह प्रकार:'}}&nbsp;&nbsp; <b>{{ info?.Survivor_marriage_type == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Survivor Name:' : 'उत्तरजीवी का नाम:' }} &nbsp;&nbsp; <b>{{ info?.display }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Age:' : 'उम्र:'}}&nbsp;&nbsp; <b>{{ info?.age }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Gender:': 'लिंग:'}} &nbsp;&nbsp; <b>{{ gender }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'State:':'राज्य:' }}&nbsp;&nbsp; <b>{{state}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'District:': 'जिला:'}} &nbsp;&nbsp; <b>{{info?.preferredAddress?.cityVillage}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Contact Info:':'संपर्क सूचना:' }}&nbsp;&nbsp; <b>{{info?.telephone == "_" ? '-' : info?.telephone }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Caste:': 'जाति:'}}&nbsp;&nbsp; <b>{{ info?.Caste == "_" ? '-' : info?.Caste}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Occupation:': 'पेशा:' }}&nbsp;&nbsp; <b>{{ info?.occupation == "_" ? '-' : info?.occupation }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Landmark:' : 'सीमाचिह्न:'}}&nbsp;&nbsp; <b>{{ info?.Landmark == "_" ? '-' : info?.Landmark}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Survivor marriage type:': 'उत्तरजीवी विवाह प्रकार:'}}&nbsp;&nbsp; <b>{{ info?.Survivor_marriage_type == "_" ? '-' :
                     info?.Survivor_marriage_type }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Survivor Maritual Status:': 'उत्तरजीवी वैवाहिक स्थिति:' }}&nbsp;&nbsp; <b>{{ info?.Survivor_maritual_status == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Survivor Maritual Status:': 'उत्तरजीवी वैवाहिक स्थिति:' }}&nbsp;&nbsp; <b>{{ info?.Survivor_maritual_status == "_" ? '-' :
                     info?.Survivor_maritual_status }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Survivor Living With:': 'उत्तरजीवी के साथ रहना:' }}&nbsp;&nbsp; <b>{{ info?.Survivor_living_with == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Survivor Living With:': 'उत्तरजीवी के साथ रहना:' }}&nbsp;&nbsp; <b>{{ info?.Survivor_living_with == "_" ? '-' :
                     info?.Survivor_living_with }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Marriage age:': 'शादी की उम्र:' }}&nbsp;&nbsp; <b>{{ info?.Marriage_age == "_" ? '-' : info?.Marriage_age }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Maritual Status:': 'वैवाहिक स्थिति:'}}&nbsp;&nbsp; <b>{{ info?.maritualStatus == "_" ? '-' : info?.maritualStatus }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Children Status:': 'बच्चों की स्थिति:' }}&nbsp;&nbsp; <b>{{ info?.Children_Status == "_" ? '-' : info?.Children_Status }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'No. of Children:': 'बच्चों की संख्या:'}}&nbsp;&nbsp; <b>{{ info?.No_of_Childrens == "_" ? '-' : info?.No_of_Childrens }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Marriage age:': 'शादी की उम्र:' }}&nbsp;&nbsp; <b>{{ info?.Marriage_age == "_" ? '-' : info?.Marriage_age }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Maritual Status:': 'वैवाहिक स्थिति:'}}&nbsp;&nbsp; <b>{{ info?.maritualStatus == "_" ? '-' : info?.maritualStatus }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Children Status:': 'बच्चों की स्थिति:' }}&nbsp;&nbsp; <b>{{ info?.Children_Status == "_" ? '-' : info?.Children_Status }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'No. of Children:': 'बच्चों की संख्या:'}}&nbsp;&nbsp; <b>{{ info?.No_of_Childrens == "_" ? '-' : info?.No_of_Childrens }}</b></span>
                 </div>
                 <div class="col-sm-6 text-right-presc" *ngFor="let info of patientInfo">
-                  <span class="d-flex">{{ "language" ==='en' ? 'Date/Time:': 'दिनांक समय:'}}&nbsp;&nbsp;
+                  <span class="d-flex">{{ language ==='en' ? 'Date/Time:': 'दिनांक समय:'}}&nbsp;&nbsp;
                     <b>Visit Date</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'OpenMRS ID:': 'OpenMRS ID:'}}&nbsp;&nbsp; <b>{{patientIdentifier == "_" ? '-' : patientIdentifier}}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Education:': 'शिक्षा:'}}&nbsp;&nbsp; <b>{{ info?.Education == "_" ? '-' : info?.Education }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Telephone No for survivor:': 'उत्तरजीवी के लिए टेलीफोन नंबर:'}}&nbsp;&nbsp; <b>{{ info?.Telephone_number_for_survivor == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'OpenMRS ID:': 'OpenMRS ID:'}}&nbsp;&nbsp; <b>{{patientIdentifier == "_" ? '-' : patientIdentifier}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Education:': 'शिक्षा:'}}&nbsp;&nbsp; <b>{{ info?.Education == "_" ? '-' : info?.Education }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Telephone No for survivor:': 'उत्तरजीवी के लिए टेलीफोन नंबर:'}}&nbsp;&nbsp; <b>{{ info?.Telephone_number_for_survivor == "_" ? '-' :
                     info?.Telephone_number_for_survivor }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Case Reffered By:': 'मामला संदर्भित द्वारा:'}}&nbsp;&nbsp; <b>{{ info?.caseRefferedBy == "_" ? '-' : info?.caseRefferedBy }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Case informed :': 'मले की जानकारी द्वारा :'}}&nbsp;&nbsp; <b>{{ info?.amSpeakingWithSurvivor == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Case Reffered By:': 'मामला संदर्भित द्वारा:'}}&nbsp;&nbsp; <b>{{ info?.caseRefferedBy == "_" ? '-' : info?.caseRefferedBy }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Case informed :': 'मले की जानकारी द्वारा :'}}&nbsp;&nbsp; <b>{{ info?.amSpeakingWithSurvivor == "_" ? '-' :
                     info?.amSpeakingWithSurvivor }}</b></span>
                   <!-- <span class="d-flex">Called by: &nbsp;&nbsp; <b>{{ info?.SWD }}</b></span> -->
-                  <span class="d-flex">{{ "language" ==='en' ? 'Contact Type:': 'संपर्क प्रकार:'}}&nbsp;&nbsp; <b>{{ info?.contactType == "_" ? '-' : info?.contactType }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Husband Occupation:': 'पति व्यवसाय:'}}&nbsp;&nbsp; <b>{{ info?.husbandOccupation == "_" ? '-' : info?.husbandOccupation }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Income:': 'आय:'}}&nbsp;&nbsp; <b>{{ info?.income == "_" ? '-' : info?.income }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Husband Income:': 'पति आय:'}}&nbsp;&nbsp; <b>{{ info?.husbandIncome == "_" ? '-' : info?.husbandIncome }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Maternal home address:': 'मायके का घर का पता:' }}&nbsp;&nbsp; <b>{{ info?.Maternal_home_address == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Contact Type:': 'संपर्क प्रकार:'}}&nbsp;&nbsp; <b>{{ info?.contactType == "_" ? '-' : info?.contactType }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Husband Occupation:': 'पति व्यवसाय:'}}&nbsp;&nbsp; <b>{{ info?.husbandOccupation == "_" ? '-' : info?.husbandOccupation }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Income:': 'आय:'}}&nbsp;&nbsp; <b>{{ info?.income == "_" ? '-' : info?.income }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Husband Income:': 'पति आय:'}}&nbsp;&nbsp; <b>{{ info?.husbandIncome == "_" ? '-' : info?.husbandIncome }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Maternal home address:': 'मायके का घर का पता:' }}&nbsp;&nbsp; <b>{{ info?.Maternal_home_address == "_" ? '-' :
                     info?.Maternal_home_address }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Maternal phone number:': 'मायके का फोन नंबर:'}}&nbsp;&nbsp; <b>{{ info.Maternal_phone_number == "_" ? '-' :
+                  <span class="d-flex">{{ language ==='en' ? 'Maternal phone number:': 'मायके का फोन नंबर:'}}&nbsp;&nbsp; <b>{{ info.Maternal_phone_number == "_" ? '-' :
                     info.Maternal_phone_number }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Address of in-laws:': 'ससुराल का पता:'}}&nbsp;&nbsp; <b>{{ info.Address_of_in_laws == "_" ? '-' : info.Address_of_in_laws }}</b></span>
-                  <span class="d-flex">{{ "language" ==='en' ? 'Emergency Phone Number:': 'आपातकालीन फोन नंबर:'}}&nbsp;&nbsp; <b>{{ info.Emergency_Phone_Number == "_" ? '-' :info.Emergency_Phone_Number}}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Address of in-laws:': 'ससुराल का पता:'}}&nbsp;&nbsp; <b>{{ info.Address_of_in_laws == "_" ? '-' : info.Address_of_in_laws }}</b></span>
+                  <span class="d-flex">{{ language ==='en' ? 'Emergency Phone Number:': 'आपातकालीन फोन नंबर:'}}&nbsp;&nbsp; <b>{{ info.Emergency_Phone_Number == "_" ? '-' :info.Emergency_Phone_Number}}</b></span>
                 </div>
               </div>
             </div>
@@ -99,6 +99,26 @@
                       <div [innerHTML]="complaint.value"></div>
                     </tr>
                   </table>
+                </div><br><br>
+
+                <div class="col-sm-12">
+                  <!-- <u *ngIf="language ==='en'"><strong>  Resolution & Feedback: </strong></u>
+                  <u *ngIf="language ==='hi'"><strong>  संकल्प  और  प्रतिक्रिया: </strong></u> -->
+
+                  <table class="table table-responsive borderless" *ngFor="let examination of visit.examinations">
+                    <tr>
+                      <div [innerHTML]="examination.value"></div>
+                    </tr>
+                  </table>
+                  <table *ngIf="visit.resolution?.length == 0">
+                    No Examination available!
+                  </table><br>
+                  <!-- <u><strong> On Examination: </strong></u>
+                  <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">
+                    <tr>
+                      <div [innerHTML]="exam.value"></div>
+                    </tr>
+                  </table> -->
                 </div><br><br>
 
                 <div class="col-sm-12">
@@ -120,6 +140,8 @@
                     </tr>
                   </table> -->
                 </div><br><br>
+
+          
 
                 <div class="col-sm-12">
                   <u *ngIf="language ==='en'"><strong>  Facility Referred: </strong></u>
