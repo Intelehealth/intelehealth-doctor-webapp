@@ -109,11 +109,11 @@
       <app-additional-comment></app-additional-comment>
     </mat-card>
     <br />
-    <mat-card>
+    <!-- <mat-card>
       <app-patient-interaction></app-patient-interaction>
     </mat-card>
-    <br />
-    <ng-container *ngIf="visitCompletePresent">
+    <br /> -->
+    <ng-container *ngIf="visitCompletePresent && !reviewVisit1 && !reviewVisit2">
       <div class="d-flex justify-content-center">
         <mat-card>
           <div [style.font-family]="font" style="font-size: 50px">
@@ -130,7 +130,7 @@
         id="sign-button"
         mat-raised-button
         color="primary"
-        [disabled]="visitCompletePresent"
+        [disabled]="visitCompletePresent && !reviewVisit1 && !reviewVisit2"
       >
         Sign and Submit
       </button>
