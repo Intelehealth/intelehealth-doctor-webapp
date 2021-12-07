@@ -1,15 +1,18 @@
-<h4><i class="fas fa-book-medical"></i> Resolution & Feedback</h4>
-<hr />
-<ng-container *ngIf="resolutionPresent">
-  <table
-    class="table table-responsive borderless"
-    *ngFor="let resolution of resolutions"
-  >
-    <tr>
-      <div [innerHTML]="resolution.value"></div>
-    </tr>
-  </table>
-</ng-container>
-<ng-container *ngIf="!resolutionPresent">
-  No Resolution and Feedback available!
-</ng-container>
+<mat-card *ngIf="resolutionPresent">
+  <ng-container>
+    <h4><i class="fas fa-book-medical"></i> Resolution & Feedback</h4>
+    <hr />
+    <table
+      class="table table-responsive borderless"
+      *ngFor="let resolution of resolutions"
+    >
+      <tr>
+        <div [innerHTML]="resolution.value"></div>
+      </tr>
+    </table>
+  </ng-container>
+  <!-- <ng-container *ngIf="!resolutionPresent">
+    No Resolution and Feedback available!
+  </ng-container> -->
+</mat-card>
+<br />

@@ -6,8 +6,8 @@
     *ngFor="let onExam of onExam"
   >
     <tr>
-      <div [innerHTML]="onExam.value"></div>
+      <div [innerHTML]="onExam"></div>
     </tr>
   </table>
 </ng-container>
-<ng-container *ngIf="!onExamPresent"> No Examination available!</ng-container>
+<!-- <ng-container *ngIf="!onExamPresent"> No Examination available!</ng-container> -->

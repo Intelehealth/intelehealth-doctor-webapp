@@ -7,7 +7,7 @@ export const environment = {
   baseURL: "https://training.vikalpindia.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://training.vikalpindia.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://training.vikalpindia.org/openmrs",
-  mindmapURL: "http://localhost:3004/api",
+  mindmapURL: "https://training.vikalpindia.org:3004/api",
   // notificationURL: 'http://localhost:3004/notification'
 };
 

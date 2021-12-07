@@ -31,11 +31,13 @@ export class OnExaminationComponent implements OnInit {
               let value = JSON.parse(obs.value.toString());
               obs.value = value["en"];
               if(!obs.value.includes("</b><br/>•  -")) {
-                this.onExam.push(obs);
+                const value = obs.value.replace('<b>General exams: </b><br/>• Tele-counseling-<br/>','');
+                value && this.onExam.push(value);
               }
             } else {
               if(!obs.value.includes("</b><br/>•  -")) {
-                this.onExam.push(obs);
+                const value = obs.value.replace('<b>General exams: </b><br/>• Tele-counseling-<br/>','');
+                value && this.onExam.push(value);
               }
             }
           }
