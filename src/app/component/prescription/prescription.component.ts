@@ -176,7 +176,7 @@ export class PrescriptionComponent implements OnInit {
           }
         });
         let examinations = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "e1761e85-9b50-48ae-8c4d-e6b7eeeba084");
-        let examination = this.getData(examinations);
+        let examination = this.getData(examinations, true);
         let complaints = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "3edb0e09-9135-481e-b8f0-07a26fa9a5ce");
         let complaint = this.getData(complaints);
         let resolution = resp.results.filter((e) => e.encounter?.visit.uuid == visitId && e.concept.uuid === "dd24755d-4e7f-4175-b0d6-49f193c853c3");
@@ -204,14 +204,20 @@ export class PrescriptionComponent implements OnInit {
     }
   }
 
-  private getData(data: any) {
+  private getData(data: any, flag ?: boolean) {
     if(this.language === undefined || this.language === null) {
       this.language ='en';
     }
     if (data[0]?.value.toString().startsWith("{")) {
       let value = JSON.parse(data[0].value.toString());
-      data[0].value = this.language === 'en' ? value["en"] : value['hi'];
-    }  
+      if(flag) {
+       data[0].value = this.language === 'en' ? value["en"].replace('<b>General exams: </b><br/>• Tele-counseling-<br/>','').replace('<b>General exams: </b><br/>• Tele-counseling--','') :
+       value["hi"].replace('<b>सामान्य परीक्षा: </b><br/>• टेली-परामर्श-हाँ क्लिक करें<br/>','').replace('<b>सामान्य परीक्षा: </b><br/>• टेली-परामर्श-हाँ क्लिक करें-','');
+      } else 
+      {
+        data[0].value = this.language === 'en' ? value["en"] : value['hi'];
+      }
+    }
     return data;
   }
 

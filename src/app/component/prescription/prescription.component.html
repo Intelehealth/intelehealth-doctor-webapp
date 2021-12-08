@@ -129,9 +129,9 @@
                       <div [innerHTML]="resolution.value"></div>
                     </tr>
                   </table>
-                  <!-- <table *ngIf="visit.resolution?.length == 0">
-                    No Resolution and Feedback available!
-                  </table> -->
+                  <table *ngIf="visit.resolution?.length == 0">
+                    {{language ==='en' ? 'No Resolution and Feedback available!' : 'कोई संकल्प और  प्रतिक्रिया उपलब्ध नहीं है!'}}
+                  </table>
                   <br>
                   <!-- <u><strong> On Examination: </strong></u>
                   <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">
@@ -152,7 +152,7 @@
                     </tr>
                   </table>
                   <table *ngIf="visit.facilities?.length == 0">
-                    No Facility Referred available!<br>
+                    {{language ==='en' ? 'No Facility Referred available!' : 'कोई संदर्भित सुविधा उपलब्ध नहीं है!'}}<br>
                   </table>
                   <!-- <u><strong> On Examination: </strong></u>
                   <table class="table table-responsive borderless" *ngFor="let exam of visit.examination">

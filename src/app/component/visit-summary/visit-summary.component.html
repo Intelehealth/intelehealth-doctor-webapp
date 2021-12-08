@@ -12,8 +12,11 @@
         <app-presenting-complaints [visit_Id]="visitUUID" [startVisitDate]="visitDate"></app-presenting-complaints>
   </mat-card>
   <br>
-  <app-resolution-feedback *ngIf="!isFollowUpComplaint" [visit_Id]="visitUUID"></app-resolution-feedback>
-  <!-- <mat-card>
+  <mat-card *ngIf="!isFollowUpComplaint">
+      <app-resolution-feedback [visit_Id]="visitUUID"></app-resolution-feedback>
+  </mat-card>
+  <br>
+<!-- <mat-card>
         <app-family-history></app-family-history>
   </mat-card> -->
   <!-- <br>
