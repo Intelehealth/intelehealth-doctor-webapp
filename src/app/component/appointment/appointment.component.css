@@ -1,0 +1,27 @@
+.wrap-login100 {
+  /* height: 80vh !important; */
+}
+
+.calendar th {
+  width: 12.5%;
+}
+
+.calendar table,
+th {
+  width: 100%;
+  text-align: center;
+}
+
+.calendar td,
+th {
+  height: 10%;
+  height: 65px;
+}
+
+.border.round {
+  border-radius: 5px;
+}
+
+.active {
+  background: #90ee90c7;
+}

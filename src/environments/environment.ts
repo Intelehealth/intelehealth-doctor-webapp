@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://uniceftraining.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://uniceftraining.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://uniceftraining.intelehealth.org/openmrs",
-  mindmapURL: "https://uniceftraining.intelehealth.org:3004/api",
-  notificationURL: "https://uniceftraining.intelehealth.org:3004/notification",
-  socketURL: "https://uniceftraining.intelehealth.org:3004",
+  baseURL: "https://testing.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://testing.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://testing.intelehealth.org/openmrs",
+  mindmapURL: "https://testing.intelehealth.org:3004/api",
+  notificationURL: "https://testing.intelehealth.org:3004/notification",
+  socketURL: "https://testing.intelehealth.org:3004",
 };
 
 /*
