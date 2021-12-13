@@ -19,4 +19,10 @@ export class AppointmentService {
   getUserAppoitment(userUuid) {
     return this.http.get(`${this.baseURL}/appointment/getSchedule/${userUuid}`);
   }
+
+  getUserSlots(userUuid, fromDate, toDate) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getUserSlots/${userUuid}?fromDate=${fromDate}&toDate=${toDate}`
+    );
+  }
 }

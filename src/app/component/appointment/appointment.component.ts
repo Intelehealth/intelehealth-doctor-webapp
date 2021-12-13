@@ -16,12 +16,11 @@ import { AppointmentService } from "src/app/services/appointment.service";
   templateUrl: "./appointment.component.html",
   styleUrls: ["./appointment.component.css"],
 })
-export class AppointmentComponent implements OnInit, AfterViewInit {
-  @ViewChild("anchorTh") anchorTh: ElementRef;
+export class AppointmentComponent implements OnInit {
   days = [];
-  slotHours = [];
   scheduleForm: FormGroup;
   thTdWidth = 50;
+  userSchedule: any = null;
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
     { day: "Tuesday", startTime: null, endTime: null },
@@ -31,6 +30,7 @@ export class AppointmentComponent implements OnInit, AfterViewInit {
     { day: "Saturday", startTime: null, endTime: null },
     { day: "Sunday", startTime: null, endTime: null },
   ];
+  slotHours = [];
 
   constructor(
     private fb: FormBuilder,
@@ -44,10 +44,45 @@ export class AppointmentComponent implements OnInit, AfterViewInit {
     this.slotHours = this.getHours();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getSchedule();
+  }
 
-  ngAfterViewInit() {
-    this.setCalenderBlockWidth();
+  getSchedule() {
+    this.appointmentService.getUserAppoitment(this.userId).subscribe({
+      next: (res: any) => {
+        this.userSchedule = res.data;
+        this.setSchedule();
+      },
+    });
+  }
+
+  setSchedule() {
+    if (!this.userSchedule) {
+      return;
+    }
+    this.ctl.selectedDays.setValue(
+      this.userSchedule.slotSchedule.map((d) => d.day)
+    );
+    this.userSchedule.slotSchedule.forEach((day) => {
+      this.weekDays.find((d) => d.day === day.day).startTime = day.startTime;
+      this.weekDays.find((d) => d.day === day.day).endTime = day.endTime;
+    });
+  }
+
+  getHours() {
+    const hours = Array.from(
+      {
+        length: 24,
+      },
+      (_, hour) =>
+        moment({
+          hour,
+          minutes: 0,
+        }).format("LT")
+    );
+    hours.splice(0, 9);
+    return hours;
   }
 
   toast({
@@ -62,12 +97,6 @@ export class AppointmentComponent implements OnInit, AfterViewInit {
       verticalPosition,
     };
     this.snackbar.open(message, null, opts);
-  }
-
-  @HostListener("window:resize", ["$event"])
-  setCalenderBlockWidth() {
-    const { nativeElement: th } = this.anchorTh;
-    this.thTdWidth = Math.round(th.getBoundingClientRect().width) - 30;
   }
 
   get todayDay() {
@@ -86,21 +115,6 @@ export class AppointmentComponent implements OnInit, AfterViewInit {
     return this.weekDays.filter((w) => this.val.selectedDays.includes(w.day));
   }
 
-  getHours() {
-    const hours = Array.from(
-      {
-        length: 24,
-      },
-      (_, hour) =>
-        moment({
-          hour,
-          minutes: 0,
-        }).format("LT")
-    );
-    hours.splice(0, 9);
-    return hours;
-  }
-
   getWeekDays() {
     return Array.apply(null, Array(7)).map(function (_, i) {
       return moment(i, "e")
@@ -114,15 +128,40 @@ export class AppointmentComponent implements OnInit, AfterViewInit {
     console.log("this.val: ", this.val);
   }
 
-  saveSchedule() {
-    console.log(this.val, this.slotTimes);
-    this.appointmentService.updateOrCreateAppointment({}).subscribe({
-      next: (res: any) => {
-        console.log("res: ", res);
-        if (res.status) {
-          this.toast({ message: res.message });
-        }
-      },
-    });
+  getSpeciality() {
+    return JSON.parse(localStorage.provider).attributes.find((a) =>
+      a.display.includes("specialization")
+    ).value;
+  }
+
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
+  }
+
+  get drName() {
+    return (
+      JSON.parse(localStorage.user)?.person?.display ||
+      JSON.parse(localStorage.user)?.display
+    );
+  }
+
+  saveSchedule(userUuid?) {
+    const speciality = this.getSpeciality();
+    this.appointmentService
+      .updateOrCreateAppointment({
+        speciality,
+        userUuid: userUuid ? userUuid : this.userId,
+        slotDays: this.slotTimes.map((d) => d.day).join("||"),
+        slotSchedule: this.slotTimes,
+        drName: this.drName,
+      })
+      .subscribe({
+        next: (res: any) => {
+          console.log("res: ", res);
+          if (res.status) {
+            this.toast({ message: res.message });
+          }
+        },
+      });
   }
 }

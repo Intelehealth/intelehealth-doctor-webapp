@@ -1,0 +1,34 @@
+<div class="container bg-white rounded pb-4">
+  <mat-panel-title>
+    <h5 class="pt-3 pl-3">
+      <b>{{ "Appointment View" | translate }}:</b>
+    </h5>
+  </mat-panel-title>
+  <div class="calendar">
+    <table class="border rounded">
+      <thead>
+        <th class="border rounded" #anchorTh></th>
+        <th
+          class="border rounded"
+          [class.active]="todayDay == day.day"
+          *ngFor="let day of weekDays"
+        >
+          {{ day.day }}
+          {{ day.date }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let hour of slotHours">
+          <td class="border rounded">
+            {{ hour }}
+          </td>
+          <td class="border rounded" *ngFor="let day of weekDays" [attr.data]="appointment(day, hour)">
+            <ng-container *ngFor="let apntmnt of day?.appointment">
+              <div class="card" title="{{apntmnt?.title}}" >{{apntmnt?.value}}</div>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

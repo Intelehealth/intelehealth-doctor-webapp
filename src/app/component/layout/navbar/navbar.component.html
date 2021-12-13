@@ -1,84 +1,189 @@
 <div class="container">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark box-radius">
-    <form class="form-inline" [formGroup]="searchForm" (submit)="search()" id="search-patient">
+    <form
+      class="form-inline"
+      [formGroup]="searchForm"
+      (submit)="search()"
+      id="search-patient"
+    >
       <div class="input-group">
         <div class="input-group-prepend">
-          <input type="text" class="form-control" placeholder="{{'findPatient' | translate}}" formControlName="findInput" />
+          <input
+            type="text"
+            class="form-control"
+            placeholder="{{ 'findPatient' | translate }}"
+            formControlName="findInput"
+          />
         </div>
-        <button class="input-group-text" type="submit" matTooltip="{{'Search Patient using ID and Name'|translate}}"
-          matTooltipClass="tooltip-red"><i class="fas fa-search"></i></button>
+        <button
+          class="input-group-text"
+          type="submit"
+          matTooltip="{{ 'Search Patient using ID and Name' | translate }}"
+          matTooltipClass="tooltip-red"
+        >
+          <i class="fas fa-search"></i>
+        </button>
       </div>
     </form>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
-      aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent-4"
+      aria-controls="navbarSupportedContent-4"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">{{'Home'| translate}}</a>
+          <a class="nav-link" routerLink="/home">{{ "Home" | translate }}</a>
         </li>
         <li class="nav-item" *ngIf="!subscribeAccess">
-          <a class="nav-link" (click)="subscribeNotification(false)">{{'Subscribe'| translate}}</a>
+          <a class="nav-link" (click)="subscribeNotification(false)">{{
+            "Subscribe" | translate
+          }}</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/appointment']">{{'Appointment'| translate}}</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+            {{ "Appointment" | translate }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
+            <a class="dropdown-item" [routerLink]="['/appointment', 'schedule']"
+              >{{ "Appointment Schedule" | translate }}
+            </a>
+            <a class="dropdown-item" [routerLink]="['/appointment', 'view']">{{
+              "Appointment View" | translate
+            }}</a>
+          </div>
         </li>
         <li *ngIf="systemAccess" class="nav-item">
-          <a class="nav-link" routerLink="/ayu">{{'Ayu'| translate}}</a>
+          <a class="nav-link" routerLink="/ayu">{{ "Ayu" | translate }}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" (click)="callTour()">{{'Help'| translate}}</a>
+          <a class="nav-link" (click)="callTour()">{{ "Help" | translate }}</a>
         </li>
         <li *ngIf="reportAccess" class="nav-item">
-          <a class="nav-link" href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page">{{'Reports' | translate }}</a>
+          <a
+            class="nav-link"
+            href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page"
+            >{{ "Reports" | translate }}</a
+          >
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown"><i
-              class="fa fa-user"></i> {{ 'Profile' | translate }}
+          <a
+            class="nav-link dropdown-toggle"
+            id="navbarDropdownMenuLink-4"
+            href=""
+            data-toggle="dropdown"
+            ><i class="fa fa-user"></i> {{ "Profile" | translate }}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" routerLink="/myAccount">{{ 'My account' | translate}} </a>
-            <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System administration' | translate}} </a>
-            <a class="dropdown-item" (click)="changePassword()">{{ 'Change password' | translate}}</a>
+            <a class="dropdown-item" routerLink="/myAccount"
+              >{{ "My account" | translate }}
+            </a>
+            <a
+              *ngIf="systemAccess"
+              class="dropdown-item"
+              href="{{ baseURLLegacy }}/admin/index.htm"
+              >{{ "System administration" | translate }}
+            </a>
+            <a class="dropdown-item" (click)="changePassword()">{{
+              "Change password" | translate
+            }}</a>
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle no-arrow" id="navbarDropdownMenuLink-4" data-toggle="dropdown">
-            <i class="fas fa-bell bell-icn" *ngIf="!snoozeTimeout" (click)="toggleIcon()"></i>
-            <i class="fas fa-bell-slash bell-icn" *ngIf="snoozeTimeout" (click)="toggleIcon()"></i>
+          <a
+            class="nav-link dropdown-toggle no-arrow"
+            id="navbarDropdownMenuLink-4"
+            data-toggle="dropdown"
+          >
+            <i
+              class="fas fa-bell bell-icn"
+              *ngIf="!snoozeTimeout"
+              (click)="toggleIcon()"
+            ></i>
+            <i
+              class="fas fa-bell-slash bell-icn"
+              *ngIf="snoozeTimeout"
+              (click)="toggleIcon()"
+            ></i>
           </a>
-          <div [class.d-block]="notificationMenu" class="bell-menu dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" (click)="setNotification('30m')">{{'Do not disturb'| translate}}
-              <i *ngIf="snoozeTimeout && selectedNotification == 'dnd'" class="fa fa-check"></i>
+          <div
+            [class.d-block]="notificationMenu"
+            class="bell-menu dropdown-menu dropdown-menu-right dropdown-cyan"
+          >
+            <a class="dropdown-item" (click)="setNotification('30m')"
+              >{{ "Do not disturb" | translate }}
+              <i
+                *ngIf="snoozeTimeout && selectedNotification == 'dnd'"
+                class="fa fa-check"
+              ></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('30m')">{{'30 minutes'| translate}}
-              <i *ngIf="snoozeTimeout && selectedNotification == '30m'" class="fa fa-check"></i>
+            <a class="dropdown-item" (click)="setNotification('30m')"
+              >{{ "30 minutes" | translate }}
+              <i
+                *ngIf="snoozeTimeout && selectedNotification == '30m'"
+                class="fa fa-check"
+              ></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('1h')">{{'1 hour' | translate}}
-              <i *ngIf="snoozeTimeout && selectedNotification == '1h'" class="fa fa-check"></i></a>
-            <a class="dropdown-item" (click)="setNotification('2h')">{{'2 hours' | translate }}
-              <i *ngIf="snoozeTimeout && selectedNotification == '2h'" class="fa fa-check"></i></a>
-            <a class="dropdown-item" data-toggle="modal" data-target="#customNotification"
-              (click)="setNotification('custom')">{{'Custom' | translate }}
-              <i *ngIf="selectedNotification == 'custom'" class="fa fa-check"></i></a>
+            <a class="dropdown-item" (click)="setNotification('1h')"
+              >{{ "1 hour" | translate }}
+              <i
+                *ngIf="snoozeTimeout && selectedNotification == '1h'"
+                class="fa fa-check"
+              ></i
+            ></a>
+            <a class="dropdown-item" (click)="setNotification('2h')"
+              >{{ "2 hours" | translate }}
+              <i
+                *ngIf="snoozeTimeout && selectedNotification == '2h'"
+                class="fa fa-check"
+              ></i
+            ></a>
+            <a
+              class="dropdown-item"
+              data-toggle="modal"
+              data-target="#customNotification"
+              (click)="setNotification('custom')"
+              >{{ "Custom" | translate }}
+              <i
+                *ngIf="selectedNotification == 'custom'"
+                class="fa fa-check"
+              ></i
+            ></a>
             <hr />
-            <a class="dropdown-item" *ngIf="snoozeTimeout" (click)="setNotification('off')">{{ 'Turn Off' | translate }}
-              <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i></a>
+            <a
+              class="dropdown-item"
+              *ngIf="snoozeTimeout"
+              (click)="setNotification('off')"
+              >{{ "Turn Off" | translate }}
+              <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i
+            ></a>
           </div>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" href="" data-toggle="dropdown">{{'Language'|translate}}
+          <a
+            class="nav-link dropdown-toggle"
+            id="navbarDropdownMenuLink-4"
+            href=""
+            data-toggle="dropdown"
+            >{{ "Language" | translate }}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" (click)="useLanguage('en')">English
+            <a class="dropdown-item" (click)="useLanguage('en')"
+              >English
               <i *ngIf="selectedLanguage == 'en'" class="fa fa-check"></i>
             </a>
-            <a class="dropdown-item" (click)="useLanguage('ru')">Russian
+            <a class="dropdown-item" (click)="useLanguage('ru')"
+              >Russian
               <i *ngIf="selectedLanguage == 'ru'" class="fa fa-check"></i>
             </a>
-           <!-- <a class="dropdown-item" (click)="useLanguage('KG')">Kyrgyz
+            <!-- <a class="dropdown-item" (click)="useLanguage('KG')">Kyrgyz
               <i *ngIf="selectedLanguage == 'KG'" class="fa fa-check"></i>
             </a> --->
           </div>
@@ -86,7 +191,7 @@
         <li *ngIf="reportAccess" class="nav-item"></li>
         <li class="nav-item">
           <button class="btn btn-primary" id="logout-link" (click)="logout()">
-            {{ 'Log out' | translate }}
+            {{ "Log out" | translate }}
           </button>
         </li>
       </ul>
@@ -95,21 +200,40 @@
 </div>
 <br />
 
-<div class="modal" id="customNotification" tabindex="-1" role="dialog" #closeBtn>
+<div
+  class="modal"
+  id="customNotification"
+  tabindex="-1"
+  role="dialog"
+  #closeBtn
+>
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ 'Custom Notifications:' | translate}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title">{{ "Custom Notifications:" | translate }}</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <ul>
           <li *ngFor="let day of weekDays" class="d-flex">
-            <label class="py-2 col-2">{{(day.day) | translate}}</label>
-            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" type="time" />
-            <input class="form-control col-4" [(ngModel)]="day.endTime" type="time" />
+            <label class="py-2 col-2">{{ day.day | translate }}</label>
+            <input
+              class="form-control col-4 mx-4"
+              [(ngModel)]="day.startTime"
+              type="time"
+            />
+            <input
+              class="form-control col-4"
+              [(ngModel)]="day.endTime"
+              type="time"
+            />
           </li>
         </ul>
       </div>
@@ -117,11 +241,13 @@
       <span *ngIf="error.isError" class="danger">
         {{ error.errorMessage }}
       </span>
-      
+
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">{{'Save changes'| translate }}</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">
+          {{ "Save changes" | translate }}
+        </button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          {{ 'Close' | translate}}
+          {{ "Close" | translate }}
         </button>
       </div>
     </div>

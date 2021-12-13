@@ -94,6 +94,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { MatPaginationIntlService } from "./services/mat-pagination.service";
 import { AppointmentComponent } from "./component/appointment/appointment.component";
+import { CalendarComponent } from "./component/calendar/calendar.component";
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "assets/i18n/", ".json");
@@ -141,6 +142,7 @@ export function TranslationLoaderFactory(http: HttpClient) {
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     AppointmentComponent,
+    CalendarComponent,
   ],
 
   imports: [
@@ -220,7 +222,13 @@ export function TranslationLoaderFactory(http: HttpClient) {
               canActivate: [AuthGuard],
             },
             { path: "vc/call", component: VcComponent },
-            { path: "appointment", component: AppointmentComponent },
+            { path: "appointment/schedule", component: AppointmentComponent },
+            { path: "appointment/view", component: CalendarComponent },
+            {
+              path: "appointment",
+              redirectTo: "appointment/view",
+              pathMatch: "full",
+            },
             { path: "test/chat", component: TestChatComponent },
             { path: "", redirectTo: "home", pathMatch: "full" },
           ],
