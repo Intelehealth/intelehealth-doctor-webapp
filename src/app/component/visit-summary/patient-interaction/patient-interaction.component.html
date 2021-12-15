@@ -1,26 +1,26 @@
-<h4><i class="material-icons">contact_phone</i> Patient Interaction</h4>
+<h4><i class="material-icons">contact_phone</i> {{'Patient Interaction'| translate}}</h4>
 <hr />
-<div>Have you spoken with the patient directly?</div>
+<div>{{'Have you spoken with the patient directly' | translate}}?</div>
 <form [formGroup]="interaction" (ngSubmit)="submit()">
   <div id="patient-interaction">
     <br />
     <mat-radio-group aria-label="Select an option" formControlName="interaction">
-      <mat-radio-button value="Yes">Yes </mat-radio-button>
-      <mat-radio-button value="No">No</mat-radio-button>
+      <mat-radio-button value="{{'Yes' | translate}}">{{'Yes' |translate}} </mat-radio-button>
+      <mat-radio-button value="{{'No' | translate}}">{{'No'|translate}}</mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">
-      Submit
+      {{'Submit'|translate}}
     </button>
   </div>
   <div id="call-link" *ngIf="whatsappLink || phoneNo">
-    Start a call:
+    {{'Start a call'| translate}}:
     <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
     <span *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
   </div>
   <div id="call-link" *ngIf="!whatsappLink && !phoneNo">
-    Please provide health worker's contact number at
-    <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to
-    proceed with the call or message
+    {{'Please provide health workers contact number at'|translate}}
+    <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> {{'to'| translate}}
+    {{'proceed with the call or message'|translate}}
     <br />
   </div>
 

@@ -1,24 +1,24 @@
-<h4><i class="fas fa-heartbeat"></i> Vitals</h4>
+<h4><i class="fas fa-heartbeat"></i> {{'Vitals'|translate}}</h4>
 <hr>
-<div *ngIf='!vitalsPresent'>No Data</div>
+<div *ngIf='!vitalsPresent'>{{'No Data'|translate}}</div>
 <div *ngIf='vitalsPresent'>
   <table class="table table-responsive">
     <tr *ngFor='let item of v'>
-      <th>Temp:</th>
-      <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>
-      <th>Height:</th>
-      <td>{{item.height}} cm</td>
-      <th>Weight:</th>
-      <td>{{item.weight}} kg</td>
-      <th>BMI:</th>
-      <td>{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>
-      <th>SP02:</th>
-      <td>{{item.sp02}} %</td>
-      <th>BP:</th>
-      <td>{{item.sbp}}/{{item.dbp}}</td>
-      <th>HR:</th>
+      <th>{{'Temp'|translate}}:</th>
+      <td><span *ngIf="item.temp"> {{ item.temp }} F</span></td>
+      <th>{{'Height'|translate}}:</th>
+      <td><span *ngIf="item.height">{{item.height}} cm</span></td>
+      <th>{{'Weight'|translate}}:</th>
+      <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
+      <th>{{'BMI'|translate}}:</th>
+      <td>{{item.bmi}}</td>
+      <th>{{'SP02'|translate}}:</th>
+      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
+      <th>{{'BP'|translate}}:</th>
+      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
+      <th>{{'HR'|translate}}:</th>
       <td>{{item.pulse}}</td>
-      <th>RR:</th>
+      <th>{{'RR'|translate}}:</th>
       <td>{{item.respiratoryRate}}</td>
     </tr>
   </table>

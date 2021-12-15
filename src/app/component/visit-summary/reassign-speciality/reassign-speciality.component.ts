@@ -10,6 +10,7 @@ import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { EncounterService } from "src/app/services/encounter.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslateService } from "@ngx-translate/core";
 declare var getFromStorage: any,
   saveToStorage: any;
 @Component({
@@ -45,7 +46,8 @@ export class ReassignSpecialityComponent implements OnInit {
     private dialogService: ConfirmDialogService,
     private pushNotificationService: PushNotificationsService,
     private EncounterService: EncounterService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private translationService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -72,8 +74,8 @@ export class ReassignSpecialityComponent implements OnInit {
             };
             this.http.post(URL, json).subscribe((response) => {
               this.router.navigate(["/home"]);
-              this.snackbar.open(`Patient is reassigned to ${value.specialization} successfully.`, null, {
-                duration: 4000,
+              this.translationService.get('messages.reassignedSuccessfully', {value: value.specialization}).subscribe((res: string) => {
+                this.snackbar.open(res,null, {duration: 4000});
               });
               //* Send Notification
               const myDate = new Date(Date.now() - 30000);

@@ -5,6 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -43,6 +44,7 @@ followForm = new FormGroup({
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute,
+              private translationService: TranslationService,
               private datepipe: DatePipe) { }
 
   ngOnInit() {

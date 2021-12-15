@@ -1,11 +1,11 @@
-<h4>Setup your Signature <a style="float: right;cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
+<h4>{{ 'Setup your Signature'| translate }} <a style="float: right;cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
 <br>
 <form [formGroup]="addSignatureForm">
   <div class="input-group">
     <mat-form-field class="example-full-width">
       <input
         matInput
-        placeholder="Enter Text"
+        placeholder="{{ 'Enter Text' | translate }}"
         [(ngModel)]="name"
         formControlName="text"
       />
@@ -43,5 +43,5 @@
     >
   </div>
   <br />
-  <button mat-raised-button color="primary" (click)="onSubmit()">Select</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()">{{ 'Select' |translate }}</button>
 </form>

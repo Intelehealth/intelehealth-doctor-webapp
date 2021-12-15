@@ -6,6 +6,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Observable } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -42,6 +43,7 @@ testForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
+              private translationService: TranslationService,
               private route: ActivatedRoute) { }
 
 
@@ -59,7 +61,7 @@ testForm = new FormGroup({
     .subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.test.push(ans.display);
+        this.test.push(this.translationService.getDropdownTranslation('tests', ans.display));
       });
     });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');

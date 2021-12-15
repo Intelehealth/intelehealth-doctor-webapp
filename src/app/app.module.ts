@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -83,8 +83,12 @@ import { ChatComponent } from './component/chat/chat.component';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 
-
+export function TranslationLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -157,6 +161,9 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     HttpClientModule,
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
+    TranslateModule.forRoot({
+      loader: {provide: TranslateLoader, useFactory: TranslationLoaderFactory, deps: [HttpClient]}
+    }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
       {

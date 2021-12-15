@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -42,6 +43,7 @@ export class AdviceComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
+    private translationService: TranslationService,
     private route: ActivatedRoute) { }
 
   search = (text$: Observable<string>) =>
@@ -58,7 +60,7 @@ export class AdviceComponent implements OnInit {
       .subscribe(res => {
         const result = res.answers;
         result.forEach(ans => {
-          this.advices.push(ans.display);
+          this.advices.push(this.translationService.getDropdownTranslation('advice', ans.display));
         });
       });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');

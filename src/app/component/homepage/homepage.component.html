@@ -5,7 +5,7 @@
       <div class="card text-white" style="background: #dd3c62">
         <div class="card-body">
           <div class="text-left">
-            PRIORITY VISITS<span
+            {{'PRIORITY VISITS'| translate }}<span
               class="text-right badge badge-light count-label"
               >{{ flagPatientNo }}</span
             >
@@ -17,7 +17,7 @@
       <div class="card text-white" style="background: #f6b825">
         <div class="card-body">
           <div class="text-left">
-            AWAITING CONSULT<span
+            {{'AWAITING CONSULT'|translate}}<span
               class="text-right badge badge-light count-label"
               >{{ activePatient }}</span
             >
@@ -29,7 +29,7 @@
       <div class="card text-white" style="background: #17a2b8">
         <div class="card-body">
           <div class="text-left">
-            VISITS IN PROGRESS<span
+            {{'VISITS IN PROGRESS'| translate}}<span
               class="text-right badge badge-light count-label"
               >{{ visitNoteNo }}</span
             >
@@ -41,7 +41,7 @@
       <div class="card text-white" style="background: #4fca8b">
         <div class="card-body">
           <div class="text-left">
-            COMPLETED VISITS<span
+            {{'COMPLETED VISITS'| translate }}<span
               class="text-right badge badge-light count-label"
               >{{ completeVisitNo }}</span
             >
@@ -57,7 +57,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
-            PRIORITY VISITS
+            {{'PRIORITY VISITS'| translate }}
             <b>({{ flagPatientNo }})</b>
           </h5>
         </mat-panel-title>
@@ -79,7 +79,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
-            AWAITING CONSULT
+            {{'AWAITING CONSULT'|translate}}
             <b>({{ activePatient }})</b>
           </h5>
         </mat-panel-title>
@@ -101,7 +101,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
-            VISITS IN PROGRESS
+            {{'VISITS IN PROGRESS'| translate}}
             <b>({{ visitNoteNo }})</b>
           </h5>
         </mat-panel-title>
@@ -123,7 +123,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
-            COMPLETED VISITS
+            {{'COMPLETED VISITS'| translate }}
             <b>({{ completeVisitNo }})</b>
           </h5>
         </mat-panel-title>

@@ -11,6 +11,7 @@ import {
   keyframes,
 } from "@angular/animations";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any,
   getEncounterUUID: any;
 
@@ -62,7 +63,8 @@ export class PatientInteractionComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private visitService: VisitService,
     private route: ActivatedRoute,
-    private encounterService: EncounterService
+    private encounterService: EncounterService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit() {
@@ -177,6 +179,8 @@ export class PatientInteractionComponent implements OnInit {
           });
         }
       }
+    }else {
+      this.translationService.getTranslation("Another doctor is viewing this case");
     }
   }
 

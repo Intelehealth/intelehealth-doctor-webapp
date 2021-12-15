@@ -5,6 +5,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -44,7 +45,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private snackbar: MatSnackBar,
     private socket: SocketService,
     private helper: HelperService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit() {
@@ -80,6 +82,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       });
       this.playNotify();
     });
+    this.translationService.getSelectedLanguage();
   }
 
   ngOnDestroy() {
@@ -144,9 +147,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
       },
       (err) => {
         if (err.error instanceof Error) {
-          this.snackbar.open("Client-side error", null, { duration: 4000 });
+          this.translationService.getTranslation("Client-side error");
         } else {
-          this.snackbar.open("Server-side error", null, { duration: 4000 });
+          this.translationService.getTranslation("Server-side error");
         }
       }
     );

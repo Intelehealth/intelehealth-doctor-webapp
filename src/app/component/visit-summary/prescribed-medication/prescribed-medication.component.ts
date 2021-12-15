@@ -7,6 +7,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
+import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -59,6 +60,7 @@ export class PrescribedMedicationComponent implements OnInit {
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
+    private translationService: TranslationService
 ) { }
 
   searchPrescription = (text$: Observable<string>) =>

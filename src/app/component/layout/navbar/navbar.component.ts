@@ -16,6 +16,7 @@ import { FindPatientComponent } from "../../find-patient/find-patient.component"
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
+import { TranslateService } from "@ngx-translate/core";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -43,6 +44,8 @@ export class NavbarComponent implements OnInit {
   endTimeData: any;
   showData: any;
   error: any = { isError: false, errorMessage: "" };
+  langs = ['en', 'hi', 'ru'];
+  selectedLanguage:string = 'en';
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -70,10 +73,18 @@ export class NavbarComponent implements OnInit {
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
-    public notificationService: PushNotificationsService
+    public notificationService: PushNotificationsService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit() {
+    let browserlang = this.translateService.getBrowserLang();
+    if (this.langs.indexOf(browserlang) > -1) {
+      this.translateService.setDefaultLang(browserlang);
+      this.selectedLanguage = browserlang;
+    } else {
+      this.translateService.setDefaultLang('en');
+    }
     const userDetails = getFromStorage("user");
     this.subscribeAccess = getFromStorage("subscribed") || false;
     if (userDetails) {
@@ -125,6 +136,11 @@ export class NavbarComponent implements OnInit {
     setTimeout(() => {
       this.authService.logout();
     }, 0);
+  }
+
+   useLanguage(lang: string): void {
+    this.translateService.setDefaultLang(lang);
+    this.selectedLanguage = lang;
   }
 
   unsubscribeNotification() {
