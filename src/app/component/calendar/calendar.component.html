@@ -11,9 +11,8 @@
         <th
           class="border rounded"
           [class.active]="todayDay == day.day"
-          *ngFor="let day of weekDays"
-        >
-          {{ day.day }}
+          *ngFor="let day of weekDays">
+          {{ (day.day) | translate }} <br>
           {{ day.date }}
         </th>
       </thead>
@@ -24,7 +23,11 @@
           </td>
           <td class="border rounded" *ngFor="let day of weekDays" [attr.data]="appointment(day, hour)">
             <ng-container *ngFor="let apntmnt of day?.appointment">
-              <div class="card" title="{{apntmnt?.title}}" >{{apntmnt?.value}}</div>
+              <div class="card" title="{{apntmnt?.title}}">
+                <a class="nav-link" [routerLink]="['/visitSummary',apntmnt?.patientId, apntmnt?.visitUuid]">
+                  {{apntmnt?.value}} 
+                </a>
+              </div>
             </ng-container>
           </td>
         </tr>

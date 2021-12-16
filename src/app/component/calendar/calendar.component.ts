@@ -79,7 +79,7 @@ export class CalendarComponent implements OnInit {
     const _day = day.day;
     const _date = day.date;
     const halfTime = moment(time, "LT").add(30, "minutes").format("LT");
-    console.log("halfTime: ", halfTime);
+    //console.log("halfTime: ", halfTime);
     day.appointment = this.drSlots
       .filter(
         (d) =>
@@ -90,6 +90,8 @@ export class CalendarComponent implements OnInit {
       .map((d) => ({
         title: `${d.patientName}(${d.openMrsId}) ${d.slotDuration} ${d.slotDurationUnit}`,
         value: d.openMrsId,
+        patientId: d.patientId,
+        visitUuid: d.visitUuid
       }));
     if (day.appointment.length)
       console.log("day.appointment: ", day.appointment);

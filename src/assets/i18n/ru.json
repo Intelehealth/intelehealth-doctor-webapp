@@ -248,7 +248,10 @@
     "Visit Complete": "Посещение завершено",
     "Another doctor is viewing this case": "Другой врач просматривает этот случай",
     "Your signature is not setup! If you click Ok you would be redirected. Cancel will load this website ": "Ваша подпись не настроена! Если вы нажмете «ОК», вы будете перенаправлены. Отмена загрузки веб-сайта",
-    "reassignedSuccessfully": "Пациент успешно переведен к {{value}}."
+    "reassignedSuccessfully": "Пациент успешно переведен к {{value}}.",
+    "Appointment updated successfully":"Встреча успешно обновлена",
+    "Appointment created successfully":"Встреча успешно создана",
+    "Incorrect date range - fromDate should be greater or equal to toDate day":"Неправильный диапазон дат - от Date должно быть больше или равно Date day"
   },
   "helpMsg1": "Добро пожаловать на портал Доктора. Менее чем за 1 минуту мы покажем вам, как поставить диагноз, лекарства, анализы и посоветовать пациенту.",
   "helpMsg2": "Нажмите здесь, чтобы отредактировать свой профиль или изменить пароль",
@@ -5559,5 +5562,8 @@
   "Covid complications": "Covid осложнения",
   "Appointment": "назначение",
   "Appointment Schedule": "назначение график",
-  "Select Days": "назначение график"
+  "Appointment View":"назначение Вид",
+  "Select Days": "назначение график",
+  "Start Time":"Начальное время",
+  "End Time":"Время окончания"
 }

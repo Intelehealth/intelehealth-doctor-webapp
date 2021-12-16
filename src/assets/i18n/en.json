@@ -248,7 +248,10 @@
     "Visit Complete": "Visit Complete",
     "Another doctor is viewing this case": "Another doctor is viewing this case",
     "Your signature is not setup! If you click Ok you would be redirected. Cancel will load this website ": "Your signature is not setup! If you click Ok you would be redirected. Cancel will load this website ",
-    "reassignedSuccessfully": "Patient is reassigned to {{value}} successfully."
+    "reassignedSuccessfully": "Patient is reassigned to {{value}} successfully.",
+    "Appointment updated successfully":"Appointment updated successfully",
+    "Appointment created successfully":"Appointment created successfully",
+    "Incorrect date range - fromDate should be greater or equal to toDate day":"Incorrect date range - fromDate should be greater or equal to toDate day"
   },
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
   "helpMsg2": "Click here to edit your profile or change your password.",
@@ -5557,7 +5560,10 @@
   "Covid follow up": "Covid follow up",
   "Long Covid": "Long Covid",
   "Covid complications": "Covid complications",
-  "Appointment": "Appointmet",
+  "Appointment": "Appointment",
   "Appointment Schedule": "Appointment Schedule",
-  "Select Days": "Select Days"
+  "Appointment View":"Appointment View",
+  "Select Days": "Select Days",
+  "Start Time":"Start Time",
+  "End Time":"End Time"
 }

@@ -16,7 +16,7 @@
           multiple
         >
           <mat-option *ngFor="let day of days" [value]="day">
-            {{ day }}
+            {{ (day) | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>

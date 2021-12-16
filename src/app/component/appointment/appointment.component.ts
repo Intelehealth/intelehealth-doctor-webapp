@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
+import { TranslationService } from "src/app/services/translation.service";
 
 @Component({
   selector: "app-appointment",
@@ -35,7 +36,8 @@ export class AppointmentComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private translationService: TranslationService
   ) {
     this.days = this.getWeekDays();
     this.scheduleForm = this.fb.group({
@@ -159,7 +161,8 @@ export class AppointmentComponent implements OnInit {
         next: (res: any) => {
           console.log("res: ", res);
           if (res.status) {
-            this.toast({ message: res.message });
+            this.translationService.getTranslation(res.message);
+            //this.toast({ message: res.message });
           }
         },
       });
