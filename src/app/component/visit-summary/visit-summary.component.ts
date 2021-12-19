@@ -12,18 +12,19 @@ declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: a
   styleUrls: ['./visit-summary.component.css']
 })
 export class VisitSummaryComponent implements OnInit {
-show = false;
-text: string;
-font: string;
-visitNotePresent = false;
-visitCompletePresent = false;
-setSpiner = true;
-doctorDetails; doctorValue;
-allVisit: Array<{}> = getFromStorage('allAwaitingConsult');
-visitUuid: String = '';
-patientUuid: String = '';
-next: any;
-noVisit: Boolean = false;
+  show = false;
+  text: string;
+  font: string;
+  visitNotePresent = false;
+  visitCompletePresent = false;
+  setSpiner = true;
+  doctorDetails; doctorValue;
+  allVisit: Array<{}> = getFromStorage('allAwaitingConsult');
+  visitUuid: String = '';
+  patientUuid: String = '';
+  next: any;
+  noVisit: Boolean = false;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
 constructor(private service: EncounterService,
             private visitService: VisitService,

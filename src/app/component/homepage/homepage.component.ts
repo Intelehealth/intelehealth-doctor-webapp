@@ -19,6 +19,17 @@ export interface VisitData {
   provider: string;
 }
 
+interface ReferralVisit {
+  visitId: string;
+  patientId: string;
+  urgent: Boolean;
+  id: string;
+  name: string;
+  gender: string;
+  dueDate: Date;
+  status: string;
+  lastCalled: Date;
+}
 
 @Component({
   selector: 'app-homepage',
@@ -28,6 +39,8 @@ export interface VisitData {
 
 export class HomepageComponent implements OnInit {
   value: any = {};
+  referralCallValues: ReferralVisit[] = [];
+  referralHospitalValues: ReferralVisit[] = [];
   activePatient: number;
   flagPatientNo: number;
   visitNoteNo: number;
@@ -37,27 +50,36 @@ export class HomepageComponent implements OnInit {
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private sessionService: SessionService,
-              private authService: AuthService,
-              private service: VisitService,
-              private snackbar: MatSnackBar) { }
+    private authService: AuthService,
+    private service: VisitService,
+    private snackbar: MatSnackBar) { }
 
   ngOnInit() {
-    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
+    if (getFromStorage('visitNoteProvider')) { deleteFromStorage('visitNoteProvider'); }
     const userDetails = getFromStorage('user');
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid)
-      .subscribe(provider => {
-        saveToStorage('provider', provider.results[0]);
-        // const attributes = provider.results[0].attributes;
-        // attributes.forEach(element => {
-        //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
-        //     this.specialization = element.value;
-        //   }
-        // });
-      });
-    } else {this.authService.logout(); }
+        .subscribe(provider => {
+          saveToStorage('provider', provider.results[0]);
+          // const attributes = provider.results[0].attributes;
+          // attributes.forEach(element => {
+          //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
+          //     this.specialization = element.value;
+          //   }
+          // });
+        });
+    } else { this.authService.logout(); }
+    if (this.coordinator) {
+      this.getReferralVisits();
+    } else {
+      this.getVisits();
+    }
+  }
+
+  getVisits() {
     this.service.getVisits()
       .subscribe(response => {
         const visits = response.results;
@@ -114,6 +136,50 @@ export class HomepageComponent implements OnInit {
     this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split('- ')[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
+  }
+
+  getReferralVisits() {
+    this.service.getReferralVisits()
+      .subscribe(async response => {
+        if (response) {
+          console.log(response);
+          await this.assignValueToReferralProperty(response.awaitingCall, 'referralCallValues');
+          await this.assignValueToReferralProperty(response.awaitingHospital, 'referralHospitalValues');
+          this.setSpiner = false;
+        }
+      });
+  }
+
+  addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  assignValueToReferralProperty(visits, variable) {
+    const data = [];
+    return new Promise((resolve, reject) => {
+      if (visits.length) {
+        visits.forEach((visit, index) => {
+          this[variable].push({
+            visitId: visit.uuid,
+            patientId: visit.patient.uuid,
+            urgent: visit.urgent || false,
+            id: visit.patient.identifiers[0].identifier,
+            name: visit.patient.person.display,
+            gender: visit.patient.person.gender,
+            dueDate: this.addDays(visit.referralDate, 3),
+            status: visit.status || 'Need Callback',
+            lastCalled: new Date()
+          });
+          if (visits.length === index + 1) {
+            resolve(data);
+          }
+        });
+      } else {
+        resolve(data);
+      }
+    });
   }
 
 }

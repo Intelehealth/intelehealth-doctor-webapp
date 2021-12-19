@@ -71,6 +71,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ReferralComponent } from './component/visit-summary/referral/referral.component';
+import { CoOrdinatorComponent } from './component/homepage/tables/co-ordinator-table/co-ordinator.component';
+import { PastCallsComponent } from './component/visit-summary/past-calls/past-calls.component';
+import { UpdateStatusComponent } from './component/visit-summary/update-status/update-status.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +110,9 @@ import { ReferralComponent } from './component/visit-summary/referral/referral.c
     CurrentVisitComponent,
     ModalsComponent,
     ReferralComponent,
+    CoOrdinatorComponent,
+    PastCallsComponent,
+    UpdateStatusComponent,
   ],
   imports: [
     BrowserModule,
