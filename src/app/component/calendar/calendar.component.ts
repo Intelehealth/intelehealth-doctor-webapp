@@ -1,99 +1,184 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { CalendarView, CalendarEventAction, CalendarEventTimesChangedEvent } from "angular-calendar";
+import { CalendarEvent } from 'calendar-utils';
+import { isSameMonth, isSameDay, startOfDay, endOfDay, addMinutes } from "date-fns";
 import * as moment from "moment";
+import { Subject } from "rxjs";
 import { AppointmentService } from "src/app/services/appointment.service";
+
+const colors: any = {
+  red: {
+    primary: '#ad2121',
+    secondary: '#FAE3E3'
+  },
+  blue: {
+    primary: '#1e90ff',
+    secondary: '#D1E8FF'
+  },
+  yellow: {
+    primary: '#e3bc08',
+    secondary: '#FDF1BA'
+  }
+};
 
 @Component({
   selector: "app-calendar",
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./calendar.component.html",
   styleUrls: ["./calendar.component.css"],
 })
-export class CalendarComponent implements OnInit {
-  weekDays: any = [];
-  slotHours = [];
+export class CalendarComponent implements OnInit{
+  private yesterday: Date;
+  @ViewChild('modalContent') modalContent: TemplateRef<any>;
+  view: CalendarView = CalendarView.Month;
+  CalendarView = CalendarView;
+  viewDate: Date = new Date();
   drSlots = [];
-  fromDate;
-  toDate;
+  modalData: {
+    date: Date,
+    events: CalendarEvent[];
+  };
+  refresh: Subject<any> = new Subject();
+  events: CalendarEvent[];
+  activeDayIsOpen: boolean = false;
+  previousButtonClicks = 0; nextButtonClicks = 0;
+  previousDate: Date; nextDate:Date;
 
-  constructor(private appointmentService: AppointmentService) {
-    this.fromDate = moment().format("DD/MM/YYYY");
-    this.toDate = moment().add(6, "days").format("DD/MM/YYYY");
-
-    this.weekDays = this.getWeekdays();
-    this.slotHours = this.getHours();
+  constructor(private modal: NgbModal,
+     private appointmentService: AppointmentService,
+     private router: Router) {
   }
 
-  getWeekdays() {
-    const date = moment();
-    const days = Array.from({
-      length: 7,
-    }).map((_) => {
-      const data = {
-        day: date.format("dddd"),
-        date: date.format("DD/MM/YYYY"),
+  private initializeEvents(slot) {
+    let array :CalendarEvent[] = [];
+    for(let i=0; i< slot.length; i++) {
+     let event1 = {
+        title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
+        color: colors.yellow,
+        start: moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(),
+        end: addMinutes(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(), slot[i].slotDuration),
+        patientId:slot[i].patientId,
+        visitUuid:slot[i].visitUuid,
+        name:slot[i].patientName,
+        openMrsId:slot[i].openMrsId,
+        slotTime:slot[i].slotTime
       };
-      date.add(1, "days");
-      return data;
+      array.push(event1);
+    };
+    this.events = Object.assign([],array);
+    this.refresh.next();
+    console.log("events", this.events)
+  }
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    console.log('dayclicked', events, this.viewDate)
+    if (isSameMonth(date, this.viewDate)) {
+      this.viewDate = date;
+      if (
+        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
+        events.length === 0
+      ) {
+        //this.activeDayIsOpen = false;
+      } else {
+        this.modalData = {date, events};
+        this.modal.open(this.modalContent);
+        //this.activeDayIsOpen = true;
+      }
+    }
+  }
+
+  eventTimesChanged({
+    event,
+    newStart,
+    newEnd
+  }: CalendarEventTimesChangedEvent): void {
+    this.events = this.events.map(iEvent => {
+      if (iEvent === event) {
+        return {
+          ...event,
+          start: newStart,
+          end: newEnd
+        };
+      }
+      return iEvent;
     });
-    return days;
+    this.handleEvent('Dropped or resized', event);
+  }
+
+  handleEvent(action: string, event): void {
+    this.router.navigate(['/visitSummary', event.patientId, event.visitUuid]);
+  }
+
+  deleteEvent(eventToDelete: CalendarEvent) {
+    this.events = this.events.filter(event => event !== eventToDelete);
+  }
+
+  setView(view: CalendarView) {
+    this.view = view;
+    this.getData();
+  }
+
+  closeOpenMonthViewDay(selectedMonth) {
+    this.activeDayIsOpen = false;
+    if(selectedMonth === 'Previous') {
+      this.previousButtonClicks++;
+      this.nextButtonClicks = 0;
+      let startOfMonth = moment(this.nextDate).subtract(this.previousButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(this.nextDate).subtract(this.previousButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
+      this.previousDate = new Date(startOfMonth);
+      //console.log("Previous startOfMonth",startOfMonth,endOfMonth,this.previousDate)
+      this.getDrSlots(startOfMonth, endOfMonth);
+    } else if(selectedMonth === 'Next') {
+      this.nextButtonClicks++;
+      this.previousButtonClicks = 0;
+      let startOfMonth = moment(this.previousDate).add(this.nextButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(this.previousDate).add(this.nextButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
+      this.nextDate = new Date(startOfMonth);
+      //console.log("Next startOfMonth",startOfMonth,endOfMonth, this.nextDate)
+      this.getDrSlots(startOfMonth, endOfMonth);
+    } else {
+      this.previousButtonClicks = 0;
+      this.nextButtonClicks = 0;
+      this.previousDate = new Date();
+      this.nextDate = new Date();
+      //console.log("Previous",this.previousButtonClicks, this.previousDate)
+      //console.log("Next",this.nextButtonClicks,this.nextDate)
+    }
+  }
+  
+  getData() {
+    let dates = this.getDates(this.view);
+    this.viewDate = new Date(dates.startOfMonth);
+    this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
 
   ngOnInit(): void {
-    this.getDrSlots();
+    let dates = this.getDates('month');
+    this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
 
-  getDrSlots() {
+ getDates(view) {
+  let startOfMonth = moment().startOf(view).format('YYYY-MM-DD hh:mm');
+  let endOfMonth   = moment().endOf(view).format('YYYY-MM-DD hh:mm');
+  console.log({startOfMonth, endOfMonth})
+  return {startOfMonth, endOfMonth};
+ }
+
+  getDrSlots(fromDate, toDate) {
     this.appointmentService
-      .getUserSlots(this.userId, this.fromDate, this.toDate)
+      .getUserSlots(this.userId, moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"))
       .subscribe({
         next: (res: any) => {
           this.drSlots = res.data;
           console.log("this.drSlots: ", this.drSlots);
+          this.initializeEvents(this.drSlots);
         },
       });
   }
 
   get userId() {
     return JSON.parse(localStorage.user).uuid;
-  }
-
-  getHours() {
-    const hours = Array.from(
-      {
-        length: 24,
-      },
-      (_, hour) =>
-        moment({
-          hour,
-          minutes: 0,
-        }).format("LT")
-    );
-    hours.splice(0, 9);
-    return hours;
-  }
-
-  get todayDay() {
-    return moment().format("dddd");
-  }
-
-  appointment(day, time) {
-    const _day = day.day;
-    const _date = day.date;
-    const halfTime = moment(time, "LT").add(30, "minutes").format("LT");
-    //console.log("halfTime: ", halfTime);
-    day.appointment = this.drSlots
-      .filter(
-        (d) =>
-          d.slotDay === _day &&
-          (d.slotTime === time || d.slotTime === halfTime) &&
-          d.slotDate === _date
-      )
-      .map((d) => ({
-        title: `${d.patientName}(${d.openMrsId}) ${d.slotDuration} ${d.slotDurationUnit}`,
-        value: d.openMrsId,
-        patientId: d.patientId,
-        visitUuid: d.visitUuid
-      }));
-    if (day.appointment.length)
-      console.log("day.appointment: ", day.appointment);
   }
 }

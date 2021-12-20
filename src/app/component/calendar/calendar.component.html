@@ -1,37 +1,124 @@
-<div class="container bg-white rounded pb-4">
-  <mat-panel-title>
-    <h5 class="pt-3 pl-3">
-      <b>{{ "Appointment View" | translate }}:</b>
-    </h5>
-  </mat-panel-title>
-  <div class="calendar">
-    <table class="border rounded">
-      <thead>
-        <th class="border rounded" #anchorTh></th>
-        <th
-          class="border rounded"
-          [class.active]="todayDay == day.day"
-          *ngFor="let day of weekDays">
-          {{ (day.day) | translate }} <br>
-          {{ day.date }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let hour of slotHours">
-          <td class="border rounded">
-            {{ hour }}
-          </td>
-          <td class="border rounded" *ngFor="let day of weekDays" [attr.data]="appointment(day, hour)">
-            <ng-container *ngFor="let apntmnt of day?.appointment">
-              <div class="card" title="{{apntmnt?.title}}">
-                <a class="nav-link" [routerLink]="['/visitSummary',apntmnt?.patientId, apntmnt?.visitUuid]">
-                  {{apntmnt?.value}} 
-                </a>
-              </div>
-            </ng-container>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div class="row text-center">
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        mwlCalendarPreviousView
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="closeOpenMonthViewDay('Previous')"
+      >
+       {{ 'Previous'| translate }}
+      </div>
+      <div
+        class="btn btn-outline-secondary"
+        mwlCalendarToday
+        [(viewDate)]="viewDate"
+        (viewDateChange)="closeOpenMonthViewDay('Today')"
+      >
+        {{'Today' |translate }}
+      </div>
+      <div
+        class="btn btn-primary"
+        mwlCalendarNextView
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="closeOpenMonthViewDay('Next')"
+      >
+       {{'Next' | translate}} 
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+  </div>
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        (click)="setView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month"
+      >
+        {{ 'Month' | translate }}
+      </div>
+      <div
+        class="btn btn-primary"
+        (click)="setView(CalendarView.Week)"
+        [class.active]="view === CalendarView.Week"
+      >
+        {{ 'Week' | translate }}
+      </div>
+      <div
+        class="btn btn-primary"
+        (click)="setView(CalendarView.Day)"
+        [class.active]="view === CalendarView.Day"
+      >
+        {{'Day' | translate}}
+      </div>
+    </div>
   </div>
 </div>
+<br />
+<div class="calendar-view" [ngSwitch]="view">
+  <mwl-calendar-month-view
+    *ngSwitchCase="CalendarView.Month"
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    [activeDayIsOpen]="activeDayIsOpen"
+    (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+  >
+  </mwl-calendar-month-view>
+  <mwl-calendar-week-view
+    *ngSwitchCase="CalendarView.Week"
+    [dayStartHour]="9" 
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+  >
+  </mwl-calendar-week-view>
+  <mwl-calendar-day-view
+    *ngSwitchCase="CalendarView.Day"
+    [dayStartHour]="9" 
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+  >
+  </mwl-calendar-day-view>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div class="modal-title">
+    <h5 style="text-align: center;">{{'Appointment Details'|translate}} <br>
+       {{modalData.date| date: 'dd-MMM-yyyy'}}</h5>
+  </div>
+  <div class="modal-body">
+      <table class="table">
+        <thead>
+          <tr>           
+            <th>{{'Name'|translate}}</th> 
+            <th>{{'OpenMRS ID'|translate}}</th>
+            <th>{{'Start Time'|translate}}</th>
+          </tr>
+     </thead>
+     <tbody>
+          <tr *ngFor="let e1 of modalData?.events">           
+            <td><a [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]" (click)="close()">{{ e1.name }}</a></td>
+            <td>{{ e1.openMrsId }}</td>
+            <td>{{ e1.slotTime }}</td>
+          </tr>
+     </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button"  mat-raised-button color="primary" (click)="close()">
+      {{'Ok' | translate}}
+    </button> 
+  </div>
+</ng-template>

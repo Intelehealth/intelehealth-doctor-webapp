@@ -5565,5 +5565,12 @@
   "Appointment View":"Appointment View",
   "Select Days": "Select Days",
   "Start Time":"Start Time",
-  "End Time":"End Time"
+  "End Time":"End Time",
+  "Previous":"Previous",
+  "Today":"Today",
+  "Month":"Month",
+  "Week":"Week",
+  "Day":"Day",
+  "Appointment Details":"Appointment Details",
+  "Ok":"Ok"
 }

@@ -95,6 +95,8 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { MatPaginationIntlService } from "./services/mat-pagination.service";
 import { AppointmentComponent } from "./component/appointment/appointment.component";
 import { CalendarComponent } from "./component/calendar/calendar.component";
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "assets/i18n/", ".json");
@@ -248,6 +250,10 @@ export function TranslationLoaderFactory(http: HttpClient) {
         useFactory: TranslationLoaderFactory,
         deps: [HttpClient],
       },
+    }),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
     }),
   ],
   providers: [

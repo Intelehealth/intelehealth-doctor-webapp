@@ -1,4 +1,4 @@
-.calendar th {
+/* .calendar th {
   width: 12.5%;
 }
 
@@ -24,4 +24,21 @@ th {
 
 .card {
   background: lightblue;
+} */
+.calendar-view {
+  padding-left: 200px;
+  padding-right: 200px;
 }
+.text-center {
+  padding-left: 91px;
+  padding-right: 80px;
+}
+.cal-month-view .cal-cell-row {
+  padding-left: 15px;
+  padding-right: 15px;
+ }
+
+.cal-month-view .cal-open-day-events {
+  padding: -15px;
+ }
+ 
