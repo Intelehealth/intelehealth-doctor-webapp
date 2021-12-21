@@ -2,39 +2,40 @@
 <div class="modal-body row">
         <div class="col-md-6">
           <table class="table table-borderless table-sm">
-                <tbody *ngFor="let info of patientInfo">
-                    <tr>
+                <tbody *ngIf="patientInfo">
+                    <tr *ngIf="!showDetails"> 
                         <th scope="row">Name</th>
-                        <td>{{info.display}}</td>
+                        <td>{{patientInfo.display}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!showDetails">
                         <th scope="row">OpenMRS ID</th>
-                        <td>{{patientIdentifier}}</td>
+                        <td>{{patientInfo.patientIdentifier}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Sex</th>
-                        <td>{{info.gender}}</td>
+                        <td>{{patientInfo.gender}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">DOB</th>
-                        <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
+                        <td>{{patientInfo.birthdate | date: 'dd-MMM-yyy'}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Village</th>
-                        <td>{{info.preferredAddress.cityVillage}}</td>
+                        <td>{{patientInfo.preferredAddress.cityVillage}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Contact Info</th>
-                        <td *ngIf="info.telephone">{{info.telephone}}</td>
+                        <td *ngIf="patientInfo.telephone && !editMobile">{{patientInfo.telephone}} <i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick('edit', patientInfo.telephone)">edit</i></td>
+                        <td *ngIf="editMobile"><input matInput type="number" value={{newPhone}} (keyup)="onChange($event.target.value)" style="width: 200px"><i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick()">done</i></td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Occupation</th>
-                        <td *ngIf="info.occupation">{{info.occupation}}</td>
+                        <td *ngIf="patientInfo.occupation">{{patientInfo.occupation}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" *ngIf="!coordinator">
           <div *ngIf="profileImagePresent" style="text-align: center">
                 <img [src]= image width="40%" height="200">
             </div>

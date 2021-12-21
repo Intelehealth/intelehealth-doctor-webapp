@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
@@ -34,11 +34,16 @@ export class DiagnosisComponent implements OnInit {
   // conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
   conceptLeftEyeDiagnosis: String = '1796244d-e936-4ab8-ac8a-c9bcfa476570';
   conceptRightEyeDiagnosis: String = '58cae684-1509-4fd5-b256-5ca980ec6bb4';
+  conceptCoordinatorLeftEyeDiagnosis: String = 'e91cda51-caed-4f95-8a94-97135b5a865d';
+  conceptCoordinatorRightEyeDiagnosis: String = 'b30f2a76-e216-48cf-aa6d-d50e6cca917f';
   patientId: string;
   visitUuid: string;
   encounterUuid: string;
   showLeftEyeOtherInput: Boolean = false;
   showRightEyeOtherInput: Boolean = false;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
+  @Input() showDetails;
+  @Input() data;
 
   diagnosisForm = new FormGroup({
     lefteye: new FormControl(''),
@@ -54,7 +59,7 @@ export class DiagnosisComponent implements OnInit {
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.patientId = this.route.snapshot.params['patient_id'];
+    this.patientId = this.route.snapshot.params['patient_id'] || this.data.patientId;
     [
       {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
       {concept: this.conceptRightEyeDiagnosis , name: 'rightDiagnosis'}
@@ -101,11 +106,11 @@ export class DiagnosisComponent implements OnInit {
     value.lefteye = value.lefteye === 'Other' ? value.leftEyeOtherValue : value.lefteye;
     value.righteye = value.righteye === 'Other' ? value.rightEyeOtherValue : value.righteye;
     const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (providerDetails && providerDetails.uuid === getEncounterProviderUUID() || this.showDetails) {
       this.encounterUuid = getEncounterUUID();
       const json = {
-        concept: side === 'right' ? this.conceptRightEyeDiagnosis : this.conceptLeftEyeDiagnosis,
+        // tslint:disable-next-line: max-line-length
+        concept: side === 'right' ? this.showDetails ? this.conceptCoordinatorRightEyeDiagnosis : this.conceptRightEyeDiagnosis : this.showDetails ? this.conceptCoordinatorLeftEyeDiagnosis : this.conceptLeftEyeDiagnosis,
         person: this.patientId,
         obsDatetime: date,
         value: side === 'right' ? value.righteye : value.lefteye,

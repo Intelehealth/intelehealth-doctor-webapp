@@ -126,7 +126,7 @@ export class AyuComponent implements OnInit {
   }
 
   editMindmap(index): void {
-    console.log(index, this.mindmapData[index].name)
+    console.log(index, this.mindmapData[index].name);
   }
 
   deleteMindmap(name): void {

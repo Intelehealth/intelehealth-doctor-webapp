@@ -1,29 +1,31 @@
 <h4><i class="material-icons">contact_phone</i> Referral</h4>
 <hr>
 <div>
-    <div class="same-section">
-        <label>Does this patient need a referral?</label>
-        <mat-checkbox class="example-margin" [(ngModel)]="referral" [disabled]="referral" (change)="onChangeHandler('referral', $event.checked)">Yes</mat-checkbox>
-        <br/>
-    </div>
-    <div *ngIf="referral">
-        <h5>Referral Reason</h5>
-        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralReasonObs?.value" [disabled]="referralReasonObs?.value" (change)="onChangeHandler('referralReason', $event.value)">
-            <mat-radio-button class="radio-button" value="Cataract">Cataract</mat-radio-button>
-            <mat-radio-button class="radio-button" value="Specialty Care">Specialty Care</mat-radio-button>
-        </mat-radio-group>
-    </div>
-    <div *ngIf="referral">
-        <h5>Referral Location</h5>
-        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralLocationObs?.value" [disabled]="referralLocationObs?.value" (change)="onChangeHandler('referralLocation', $event.value)">
-            <mat-radio-button class="radio-button" value="Eye Camp">Eye Camp</mat-radio-button>
-            <mat-radio-button class="radio-button" value="Vision Center">Vision Center</mat-radio-button>
-            <mat-radio-button class="radio-button" value="Base Hospital">Base Hospital</mat-radio-button>
-        </mat-radio-group>
-    </div>
-    <div class="same-section">
-        <label>Is referral urgent?</label>
-        <mat-checkbox class="example-margin" [(ngModel)]="urgent" [disabled]="urgent" (change)="onChangeHandler('urgent', $event.checked)">Yes</mat-checkbox>
+    <div *ngIf="!coordinator">
+        <div class="same-section">
+            <label>Does this patient need a referral?</label>
+            <mat-checkbox class="example-margin" [(ngModel)]="referral" [disabled]="referral" (change)="onChangeHandler('referral', $event.checked)">Yes</mat-checkbox>
+            <br/>
+        </div>
+        <div *ngIf="referral">
+            <h5>Referral Reason</h5>
+            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralReasonObs?.value" [disabled]="referralReasonObs?.value" (change)="onChangeHandler('referralReason', $event.value)">
+                <mat-radio-button class="radio-button" value="Cataract">Cataract</mat-radio-button>
+                <mat-radio-button class="radio-button" value="Specialty Care">Specialty Care</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div *ngIf="referral">
+            <h5>Referral Location</h5>
+            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralLocationObs?.value" [disabled]="referralLocationObs?.value" (change)="onChangeHandler('referralLocation', $event.value)">
+                <mat-radio-button class="radio-button" value="Eye Camp">Eye Camp</mat-radio-button>
+                <mat-radio-button class="radio-button" value="Vision Center">Vision Center</mat-radio-button>
+                <mat-radio-button class="radio-button" value="Base Hospital">Base Hospital</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div class="same-section">
+            <label>Is referral urgent?</label>
+            <mat-checkbox class="example-margin" [(ngModel)]="urgent" [disabled]="urgent" (change)="onChangeHandler('urgent', $event.checked)">Yes</mat-checkbox>
+        </div>
     </div>
     <ng-container *ngIf="referral">
         <ul class="list-unstyled">

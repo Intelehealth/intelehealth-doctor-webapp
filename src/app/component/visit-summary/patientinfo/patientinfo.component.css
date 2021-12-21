@@ -1,0 +1,13 @@
+.patient-modal {
+    position: absolute;;
+    z-index: 9999999;
+    background: white;
+    top: 50%;
+    left: 40%;
+}
+
+.modal-overlay {
+    height: 100%;
+    width: 100%;
+    opacity: 0.5 !important;
+}

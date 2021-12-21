@@ -31,10 +31,9 @@ export class PastCallsComponent implements OnInit {
         allStatus.results.forEach(status => {
           this.allStatus.push({
             date: status.obsDatetime,
-            value: status.value,
-            note: ''
+            value: JSON.parse(status.value).status,
+            note: JSON.parse(status.value).comment
           });
-          console.log(status);
         });
       }
     });

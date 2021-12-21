@@ -1,0 +1,11 @@
+<div>
+    <h4><span style="float: right;cursor: pointer;" (click)="close()">&times;</span></h4>
+</div>
+<br>
+<div>
+    <app-diagnosis [showDetails]=true [data]="data"></app-diagnosis>
+</div>
+<br />
+<div style="text-align: right;">
+    <button type="reset" (click)="close()" mat-raised-button color="primary">Close</button>
+</div>

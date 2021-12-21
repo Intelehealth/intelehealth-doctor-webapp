@@ -32,6 +32,7 @@ export class AdditionalCommentComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])

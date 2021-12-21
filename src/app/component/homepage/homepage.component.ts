@@ -19,6 +19,11 @@ export interface VisitData {
   provider: string;
 }
 
+interface ReferralHomepage {
+  awaitingCall: Array<{}>;
+  awaitingHospital: Array<{}>;
+}
+
 interface ReferralVisit {
   visitId: string;
   patientId: string;
@@ -39,6 +44,7 @@ interface ReferralVisit {
 
 export class HomepageComponent implements OnInit {
   value: any = {};
+  referralVisit: ReferralHomepage = { awaitingCall : [], awaitingHospital: []};
   referralCallValues: ReferralVisit[] = [];
   referralHospitalValues: ReferralVisit[] = [];
   activePatient: number;
@@ -77,6 +83,17 @@ export class HomepageComponent implements OnInit {
     } else {
       this.getVisits();
     }
+  }
+
+  onChange(event) {
+    if (event) {
+      this.coordinator = true;
+      this.getReferralVisits();
+    } else {
+      this.coordinator = false;
+      this.getVisits();
+    }
+    saveToStorage('coordinator', event);
   }
 
   getVisits() {
@@ -140,11 +157,42 @@ export class HomepageComponent implements OnInit {
 
   getReferralVisits() {
     this.service.getReferralVisits()
-      .subscribe(async response => {
-        if (response) {
-          console.log(response);
-          await this.assignValueToReferralProperty(response.awaitingCall, 'referralCallValues');
-          await this.assignValueToReferralProperty(response.awaitingHospital, 'referralHospitalValues');
+      .subscribe(async visits => {
+        if (visits) {
+          visits.results.forEach(visit => {
+            if (visit.encounters.length > 1) {
+              const visitNote = visit.encounters.filter(enc => enc.display.match('Visit Note'));
+              if (visitNote.length) {
+                visitNote.forEach((encounter, index) => {
+                  const referral = encounter.obs.filter(ob => ob.display.match('Referral'));
+                  if (referral.length) {
+                    const data = visit;
+                    data.referralDate = referral[0].obsDatetime;
+                    const coOrdinatorStatus = visitNote[index].obs.filter(ob => ob.display.match('co-ordinator status'));
+                    if (visitNote[index].obs.some(ob => ob.display.match('Urgent Referral'))) {
+                      data.urgent = true;
+                    }
+                    if (coOrdinatorStatus.length) {
+                      data.status = JSON.parse(coOrdinatorStatus[0].value).status;
+                      if (data.status === 'Will come to hospital') {
+                        data.referralDate = coOrdinatorStatus[0].obsDatetime;
+                        data.lastCalled = coOrdinatorStatus[0].obsDatetime;
+                        this.referralVisit.awaitingHospital.push(data);
+                      } else if (data.status === 'Patient need a callback') {
+                        data.referralDate = coOrdinatorStatus[0].obsDatetime;
+                        data.lastCalled = coOrdinatorStatus[0].obsDatetime;
+                        this.referralVisit.awaitingCall.push(visit);
+                      }
+                    } else {
+                      this.referralVisit.awaitingCall.push(visit);
+                    }
+                  }
+                });
+              }
+            }
+          });
+          await this.assignValueToReferralProperty(this.referralVisit.awaitingCall, 'referralCallValues');
+          await this.assignValueToReferralProperty(this.referralVisit.awaitingHospital, 'referralHospitalValues');
           this.setSpiner = false;
         }
       });
@@ -161,18 +209,19 @@ export class HomepageComponent implements OnInit {
     return new Promise((resolve, reject) => {
       if (visits.length) {
         visits.forEach((visit, index) => {
-          this[variable].push({
+          data.push({
             visitId: visit.uuid,
             patientId: visit.patient.uuid,
             urgent: visit.urgent || false,
             id: visit.patient.identifiers[0].identifier,
             name: visit.patient.person.display,
             gender: visit.patient.person.gender,
-            dueDate: this.addDays(visit.referralDate, 3),
+            dueDate: this.addDays(visit.referralDate, variable === 'referralHospitalValues' ? 14 : 3),
             status: visit.status || 'Need Callback',
-            lastCalled: new Date()
+            lastCalled: visit.lastCalled
           });
           if (visits.length === index + 1) {
+            this[variable] = data;
             resolve(data);
           }
         });

@@ -41,6 +41,7 @@ export class ReferralComponent implements OnInit {
   ReferralReasonConcept: String = 'de7740d4-1f5c-4c0d-834a-b8de7b5b5458';
   referralReasonObs: object = {};
   referralReason: string;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,

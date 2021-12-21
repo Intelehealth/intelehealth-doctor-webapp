@@ -104,51 +104,65 @@
             <br />
             <mat-card>
                   <app-diagnosis></app-diagnosis>
+                  <br *ngIf="coordinator"/>
+                  <app-additional-comment *ngIf="coordinator"></app-additional-comment>
             </mat-card>
+            <div *ngIf="!coordinator">
+                  <br />
+                  <mat-card >
+                        <app-additional-comment></app-additional-comment>
+                  </mat-card>
+            </div>
             <br />
-            <mat-card>
-                  <app-additional-comment></app-additional-comment>
-            </mat-card>
-            <br />
-            <mat-card>
-                  <app-past-calls></app-past-calls>
-            </mat-card>
-            <br />
-            <mat-card>
-                  <app-update-status></app-update-status>
-            </mat-card>
+            <div *ngIf="coordinator">
+                  <mat-card>
+                        <app-patientinfo [showDetails]=true></app-patientinfo>
+                  </mat-card>
+                  <br />
+            </div>
+            <div *ngIf="coordinator">
+                  <mat-card>
+                        <app-past-calls></app-past-calls>
+                  </mat-card>
+                  <br />
+                  <mat-card>
+                        <app-update-status></app-update-status>
+                  </mat-card>
+            </div>
             <br />
             <!-- <mat-card>
                   <app-patient-interaction></app-patient-interaction>
             </mat-card> -->
             <br />
-            <ng-container *ngIf="visitCompletePresent">
-                  <div class="d-flex justify-content-center">
-                  <mat-card>
-                  <div [style.font-family]="font" style="font-size: 50px">
-                        {{ text }}
+            <div *ngIf="!coordinator">
+                  <ng-container *ngIf="visitCompletePresent">
+                        <div class="d-flex justify-content-center">
+                        <mat-card>
+                        <div [style.font-family]="font" style="font-size: 50px">
+                              {{ text }}
+                        </div>
+                        </mat-card>
+                        </div>
+                        <br />
+                  </ng-container>
+            
+                  <div class="text-center">
+                        <button
+                        (click)="sign()"
+                        id="sign-button"
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="visitCompletePresent"
+                        >
+                        Sign and Submit
+                        </button>
                   </div>
-                  </mat-card>
+                  <div *ngIf="visitCompletePresent && !noVisit && next?.patientId" class="text-right">
+                        <button mat-raised-button color="primary" [routerLink]="['/visitSummary', next.patientId, next.visitId]">Next Visit</button>
                   </div>
-                  <br />
-            </ng-container>
-
-            <div class="text-center">
-                  <button
-                  (click)="sign()"
-                  id="sign-button"
-                  mat-raised-button
-                  color="primary"
-                  [disabled]="visitCompletePresent"
-                  >
-                  Sign and Submit
-                  </button>
-            </div>
-            <div *ngIf="visitCompletePresent && !noVisit && next?.patientId" class="text-right">
-                  <button mat-raised-button color="primary" [routerLink]="['/visitSummary', next.patientId, next.visitId]">Next Visit</button>
-            </div>
-            <div *ngIf="visitCompletePresent && noVisit" class="text-right">
-                  <i>There are no visits awaiting consult</i>
+                  <div *ngIf="visitCompletePresent && noVisit" class="text-right">
+                        <i>There are no visits awaiting consult</i>
+                  </div>
             </div>
       </div>
 </div>

@@ -1,4 +1,4 @@
-<h4><i class="material-icons">perm_identity</i> Update Status</h4>
+<h4><i class="material-icons">add_task</i> Update Status</h4>
 <hr>
 <div>
     <form [formGroup]="coordinatorStatus" class="flex">
@@ -15,6 +15,10 @@
                 <mat-option value="No further contact">No further contact</mat-option>
                 <mat-option value="Patient need a callback">Patient need a callback</mat-option>
             </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <textarea matInput placeholder="Notes" formControlName='comment'></textarea>
         </mat-form-field>
         <div style="width: 150px;">
             <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!coordinatorStatus.valid">Submit</button>

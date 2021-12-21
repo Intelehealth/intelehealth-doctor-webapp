@@ -1,5 +1,16 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="setSpiner ? 'spin' : ''">
+  <section class="example-section">
+    Doctor
+    <mat-slide-toggle
+        (change)="onChange($event.checked)"
+        class="example-margin"
+        [color]="color"
+        [checked]="coordinator"
+        >
+      Coordinator
+    </mat-slide-toggle>
+  </section>
   <div *ngIf='!coordinator'>
     <div class="modal-body row">
       <div class="col-sm-3" style="padding: 3px">
@@ -122,27 +133,28 @@
         </div>
       </div>
     </div>
+
+
+    <mat-accordion class="example-headers-align" [multi]="true">
+      <!-- awaiting call -->
+      <mat-expansion-panel [expanded]="referralCallValues.length" id="referral-table">
+        <mat-expansion-panel-header>
+          <mat-panel-title><h5>AWAITING CALL</h5></mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngIf="referralCallValues.length > 0">
+          <app-co-ordinator-table [data]="referralCallValues"></app-co-ordinator-table>
+        </ng-container>
+      </mat-expansion-panel>
+
+      <!-- awaiting hospital visits -->
+      <mat-expansion-panel [expanded]="referralHospitalValues.length > 0" id="referral-hospital-table">
+        <mat-expansion-panel-header>
+          <mat-panel-title><h5>AWAITING HOSPITAL VISITS</h5></mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngIf="referralHospitalValues.length > 0">
+          <app-co-ordinator-table [data]="referralHospitalValues"></app-co-ordinator-table>
+        </ng-container>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
-
-  <mat-accordion class="example-headers-align" [multi]="true">
-    <!-- awaiting call -->
-    <mat-expansion-panel [expanded]="referralCallValues.length" id="referral-table">
-      <mat-expansion-panel-header>
-        <mat-panel-title><h5>AWAITING CALL</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="referralCallValues.length > 0">
-        <app-co-ordinator-table [data]="referralCallValues"></app-co-ordinator-table>
-      </ng-container>
-    </mat-expansion-panel>
-
-    <!-- awaiting hospital visits -->
-    <mat-expansion-panel [expanded]="referralHospitalValues.length > 0" id="referral-hospital-table">
-      <mat-expansion-panel-header>
-        <mat-panel-title><h5>AWAITING HOSPITAL VISITS</h5></mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-container *ngIf="referralHospitalValues.length > 0">
-        <app-co-ordinator-table [data]="referralHospitalValues"></app-co-ordinator-table>
-      </ng-container>
-    </mat-expansion-panel>
-  </mat-accordion>
 </div>

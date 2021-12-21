@@ -8,7 +8,7 @@
         <!-- Urgent Column -->
         <ng-container matColumnDef="urgent">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Urgent </th>
-            <td mat-cell *matCellDef="let row">{{row.urgent}}</td>
+            <td mat-cell *matCellDef="let row"><span *ngIf=row.urgent class="material-icons" style="color: red;">error</span></td>
         </ng-container>
 
       <!-- ID Column -->
