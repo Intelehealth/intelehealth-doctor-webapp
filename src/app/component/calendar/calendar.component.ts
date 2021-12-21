@@ -63,8 +63,8 @@ export class CalendarComponent implements OnInit{
      let event1 = {
         title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
         color: colors.yellow,
-        start: new Date(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate()),
-        end: new Date(addMinutes(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(), slot[i].slotDuration)),
+        start: new Date(moment(slot[i].slotDate.concat(moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")),"DD/MM/YYYY hh:mm:ss").toDate()),
+        end: new Date(addMinutes(moment(slot[i].slotDate.concat(moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")),"DD/MM/YYYY hh:mm:ss").toDate(), slot[i].slotDuration)),
         patientId:slot[i].patientId,
         visitUuid:slot[i].visitUuid,
         name:slot[i].patientName,
@@ -151,7 +151,7 @@ export class CalendarComponent implements OnInit{
   
   getData() {
     let dates = this.getDates(this.view);
-    this.viewDate = new Date(dates.startOfMonth);
+   // this.viewDate = new Date(dates.startOfMonth);
     this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
 
@@ -162,8 +162,8 @@ export class CalendarComponent implements OnInit{
   }
 
  getDates(view) {
-  let startOfMonth = moment().startOf(view).format('YYYY-MM-DD hh:mm');
-  let endOfMonth   = moment().endOf(view).format('YYYY-MM-DD hh:mm');
+  let startOfMonth = moment(this.viewDate).startOf(view).format('YYYY-MM-DD hh:mm');
+  let endOfMonth   = moment(this.viewDate).endOf(view).format('YYYY-MM-DD hh:mm');
   //console.log({startOfMonth, endOfMonth})
   return {startOfMonth, endOfMonth};
  }

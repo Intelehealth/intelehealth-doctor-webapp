@@ -1,6 +1,7 @@
-<div class="row" [ngClass]="{'text-center' : selectedLang === 'en' , 'text-center-ru': selectedLang === 'ru'}">
+<div  class="container wrap-login100">
+<div class="row">
   <div class="col-md-4">
-    <div class="btn-group">
+    <div class="btn-group" style="float: left;">
       <div
         class="btn btn-primary"
         mwlCalendarPreviousView
@@ -29,11 +30,11 @@
       </div>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-4" style="text-align: center;">
     <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):selectedLang }}</h3>
   </div>
   <div class="col-md-4">
-    <div class="btn-group">
+    <div class="btn-group" style="float: right;">
       <div
         class="btn btn-primary"
         (click)="setView(CalendarView.Month)"
@@ -95,11 +96,13 @@
   >
   </mwl-calendar-day-view>
 </div>
+</div>
 
 <ng-template #modalContent let-close="close" data-target="static">
+ <div class="content-container"> 
   <div class="modal-title"><br>
     <h5 style="text-align: center;">{{'Appointment Details'|translate}} <br>
-       {{modalData.date| date: 'dd-MMM-yyyy'}}</h5>
+       {{ modalData.date | calendarDate:('day' + 'ViewTitle'):selectedLang }}</h5>
   </div>
   <div class="modal-body">
       <table class="table">
@@ -121,7 +124,8 @@
   </div>
   <div class="modal-footer center">
     <button  type="button" mat-raised-button color="primary" (click)="close()">
-      {{'Ok' | translate}}
+      {{'Close' | translate}}
     </button> 
   </div>
+</div> 
 </ng-template>
