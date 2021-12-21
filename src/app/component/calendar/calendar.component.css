@@ -33,6 +33,11 @@ th {
   padding-left: 91px;
   padding-right: 80px;
 }
+
+.text-center-ru {
+  padding-left: 203px;
+}
+
 .cal-month-view .cal-cell-row {
   padding-left: 15px;
   padding-right: 15px;
@@ -42,3 +47,9 @@ th {
   padding: -15px;
  }
  
+ .center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

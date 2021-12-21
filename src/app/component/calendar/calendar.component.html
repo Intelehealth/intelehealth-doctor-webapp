@@ -1,4 +1,4 @@
-<div class="row text-center">
+<div class="row" [ngClass]="{'text-center' : selectedLang === 'en' , 'text-center-ru': selectedLang === 'ru'}">
   <div class="col-md-4">
     <div class="btn-group">
       <div
@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):selectedLang }}</h3>
   </div>
   <div class="col-md-4">
     <div class="btn-group">
@@ -65,6 +65,7 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
+    [locale]="selectedLang"
     [activeDayIsOpen]="activeDayIsOpen"
     (dayClicked)="dayClicked($event.day)"
     (eventClicked)="handleEvent('Clicked', $event.event)"
@@ -77,6 +78,7 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
+    [locale]="selectedLang"
     (eventClicked)="handleEvent('Clicked', $event.event)"
     (eventTimesChanged)="eventTimesChanged($event)"
   >
@@ -87,14 +89,15 @@
     [viewDate]="viewDate"
     [events]="events"
     [refresh]="refresh"
+    [locale]="selectedLang"
     (eventClicked)="handleEvent('Clicked', $event.event)"
     (eventTimesChanged)="eventTimesChanged($event)"
   >
   </mwl-calendar-day-view>
 </div>
 
-<ng-template #modalContent let-close="close">
-  <div class="modal-title">
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="modal-title"><br>
     <h5 style="text-align: center;">{{'Appointment Details'|translate}} <br>
        {{modalData.date| date: 'dd-MMM-yyyy'}}</h5>
   </div>
@@ -116,8 +119,8 @@
      </tbody>
     </table>
   </div>
-  <div class="modal-footer">
-    <button type="button"  mat-raised-button color="primary" (click)="close()">
+  <div class="modal-footer center">
+    <button  type="button" mat-raised-button color="primary" (click)="close()">
       {{'Ok' | translate}}
     </button> 
   </div>

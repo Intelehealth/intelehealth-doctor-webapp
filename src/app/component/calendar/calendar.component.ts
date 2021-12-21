@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { CalendarView, CalendarEventAction, CalendarEventTimesChangedEvent } from "angular-calendar";
+import { CalendarView, CalendarDateFormatter, CalendarEventTimesChangedEvent } from "angular-calendar";
 import { CalendarEvent } from 'calendar-utils';
-import { isSameMonth, isSameDay, startOfDay, endOfDay, addMinutes } from "date-fns";
+import { isSameMonth, isSameDay, addMinutes } from "date-fns";
 import * as moment from "moment";
 import { Subject } from "rxjs";
 import { AppointmentService } from "src/app/services/appointment.service";
@@ -28,6 +28,11 @@ const colors: any = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./calendar.component.html",
   styleUrls: ["./calendar.component.css"],
+  providers: [
+    {
+      provide: CalendarDateFormatter
+    }
+  ]
 })
 export class CalendarComponent implements OnInit{
   private yesterday: Date;
@@ -45,6 +50,7 @@ export class CalendarComponent implements OnInit{
   activeDayIsOpen: boolean = false;
   previousButtonClicks = 0; nextButtonClicks = 0;
   previousDate: Date; nextDate:Date;
+  selectedLang: string = 'en';
 
   constructor(private modal: NgbModal,
      private appointmentService: AppointmentService,
@@ -57,8 +63,8 @@ export class CalendarComponent implements OnInit{
      let event1 = {
         title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
         color: colors.yellow,
-        start: moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(),
-        end: addMinutes(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(), slot[i].slotDuration),
+        start: new Date(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate()),
+        end: new Date(addMinutes(moment(slot[i].slotDate.concat(slot[i].slotTime.substring(0,5)),"DD/MM/YYYY hh:mm:ss").toDate(), slot[i].slotDuration)),
         patientId:slot[i].patientId,
         visitUuid:slot[i].visitUuid,
         name:slot[i].patientName,
@@ -73,7 +79,6 @@ export class CalendarComponent implements OnInit{
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    console.log('dayclicked', events, this.viewDate)
     if (isSameMonth(date, this.viewDate)) {
       this.viewDate = date;
       if (
@@ -109,10 +114,6 @@ export class CalendarComponent implements OnInit{
 
   handleEvent(action: string, event): void {
     this.router.navigate(['/visitSummary', event.patientId, event.visitUuid]);
-  }
-
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter(event => event !== eventToDelete);
   }
 
   setView(view: CalendarView) {
@@ -155,6 +156,7 @@ export class CalendarComponent implements OnInit{
   }
 
   ngOnInit(): void {
+   this.selectedLang = localStorage.getItem('selectedLanguage');
     let dates = this.getDates('month');
     this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
@@ -162,7 +164,7 @@ export class CalendarComponent implements OnInit{
  getDates(view) {
   let startOfMonth = moment().startOf(view).format('YYYY-MM-DD hh:mm');
   let endOfMonth   = moment().endOf(view).format('YYYY-MM-DD hh:mm');
-  console.log({startOfMonth, endOfMonth})
+  //console.log({startOfMonth, endOfMonth})
   return {startOfMonth, endOfMonth};
  }
 
@@ -172,7 +174,7 @@ export class CalendarComponent implements OnInit{
       .subscribe({
         next: (res: any) => {
           this.drSlots = res.data;
-          console.log("this.drSlots: ", this.drSlots);
+        //  console.log("this.drSlots: ", this.drSlots);
           this.initializeEvents(this.drSlots);
         },
       });

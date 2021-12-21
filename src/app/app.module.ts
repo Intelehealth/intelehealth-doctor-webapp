@@ -5,8 +5,10 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
+  registerLocaleData,
 } from "@angular/common";
-
+import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 // Component Import
 import { AppComponent } from "./app.component";
 import { HomepageComponent } from "./component/homepage/homepage.component";
@@ -101,6 +103,9 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "assets/i18n/", ".json");
 }
+
+registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 @NgModule({
   declarations: [
