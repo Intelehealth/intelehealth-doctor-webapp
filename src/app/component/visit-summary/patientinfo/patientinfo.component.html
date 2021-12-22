@@ -29,7 +29,7 @@
                         <td *ngIf="editMobile"><input matInput type="number" value={{newPhone}} (keyup)="onChange($event.target.value)" style="width: 200px"><i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick()">done</i></td>
                     </tr>
                     <tr *ngIf="!coordinator || showDetails">
-                        <th scope="row">Occupation</th>
+                        <th scope="row">Attender Phone Number</th>
                         <td *ngIf="patientInfo.occupation">{{patientInfo.occupation}}</td>
                     </tr>
                 </tbody>

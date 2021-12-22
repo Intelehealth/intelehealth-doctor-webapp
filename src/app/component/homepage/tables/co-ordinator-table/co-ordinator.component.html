@@ -14,7 +14,7 @@
       <!-- ID Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
-        <td mat-cell *matCellDef="let row"><a id="patient-id" [routerLink]="['/visitSummary', row.patientId, row.visitId]">
+        <td mat-cell *matCellDef="let row"><a id="patient-id" (click)="addEvent(dataSource)" [routerLink]="['/visitSummary', row.patientId, row.visitId]">
             {{row.id}} </a></td>
       </ng-container>
   

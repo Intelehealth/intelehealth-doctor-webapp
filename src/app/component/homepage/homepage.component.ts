@@ -179,12 +179,15 @@ export class HomepageComponent implements OnInit {
                         data.lastCalled = coOrdinatorStatus[0].obsDatetime;
                         this.referralVisit.awaitingHospital.push(data);
                       } else if (data.status === 'Patient need a callback') {
+                        try {
+                          data.dueDate = JSON.parse(coOrdinatorStatus[0].value).date;
+                        } catch (e) {}
                         data.referralDate = coOrdinatorStatus[0].obsDatetime;
                         data.lastCalled = coOrdinatorStatus[0].obsDatetime;
-                        this.referralVisit.awaitingCall.push(visit);
+                        this.referralVisit.awaitingCall.push(data);
                       }
                     } else {
-                      this.referralVisit.awaitingCall.push(visit);
+                      this.referralVisit.awaitingCall.push(data);
                     }
                   }
                 });
@@ -216,7 +219,7 @@ export class HomepageComponent implements OnInit {
             id: visit.patient.identifiers[0].identifier,
             name: visit.patient.person.display,
             gender: visit.patient.person.gender,
-            dueDate: this.addDays(visit.referralDate, variable === 'referralHospitalValues' ? 14 : 3),
+            dueDate: visit.dueDate ? visit.dueDate : this.addDays(visit.referralDate, variable === 'referralHospitalValues' ? 14 : 3),
             status: visit.status || 'Need Callback',
             lastCalled: visit.lastCalled
           });

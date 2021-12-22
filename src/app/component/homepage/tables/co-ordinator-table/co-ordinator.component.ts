@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+declare var saveToStorage: any;
 
 @Component({
   selector: 'app-co-ordinator-table',
@@ -29,5 +30,9 @@ export class CoOrdinatorComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  addEvent(data) {
+    saveToStorage('referral', data.data);
   }
 }

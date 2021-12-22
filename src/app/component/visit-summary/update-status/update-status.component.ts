@@ -49,6 +49,8 @@ export class UpdateStatusComponent implements OnInit {
     };
     if (status === 'Patient came to hospital') {
       this.addDiagnosis(json);
+    } if (status === 'Patient need a callback') {
+      this.addDateTime(json);
     } else {
       this.saveStatus(json);
     }
@@ -57,6 +59,20 @@ export class UpdateStatusComponent implements OnInit {
   saveStatus(payload) {
     this.service.postObs(payload)
     .subscribe(resp => {});
+  }
+
+  addDateTime(payload) {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      width: '30%'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      const newValues = {
+        ...payload,
+        value: JSON.stringify({...JSON.parse(payload.value), date: result})
+      };
+      this.saveStatus(newValues);
+    });
   }
 
   addDiagnosis(payload) {

@@ -20,6 +20,7 @@ export class VisitSummaryComponent implements OnInit {
   setSpiner = true;
   doctorDetails; doctorValue;
   allVisit: Array<{}> = getFromStorage('allAwaitingConsult');
+  allReferralVisit: Array<{}> = getFromStorage('referral');
   visitUuid: String = '';
   patientUuid: String = '';
   next: any;
@@ -61,16 +62,16 @@ constructor(private service: EncounterService,
         }
       });
     });
-    this.nextVisitButton();
+    this.nextVisitButton(this.coordinator ? this.allReferralVisit : this.allVisit);
   }
 
-  nextVisitButton() {
-    if (this.allVisit.length > 1) {
-      const currentVisit = this.allVisit.findIndex((visit: any) => this.visitUuid === visit.visitId);
+  nextVisitButton(visitData) {
+    if (visitData.length) {
+      const currentVisit = visitData.findIndex((visit: any) => this.visitUuid === visit.visitId);
       if (currentVisit !== -1) {
         this.next = {
-          patientId : this.allVisit[currentVisit + 1]['patientId'],
-          visitId: this.allVisit[currentVisit + 1]['visitId']
+          patientId : visitData[currentVisit + 1]['patientId'],
+          visitId: visitData[currentVisit + 1]['visitId']
         };
       }
     } else {

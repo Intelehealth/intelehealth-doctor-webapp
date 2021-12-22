@@ -85,10 +85,10 @@
   <div *ngIf="coordinator">
     <ul>
       <li *ngIf="leftDiagnosis.length">
-        <div>Left Eyes: <span *ngFor="let diagnosis of leftDiagnosis">{{diagnosis.value}}</span></div>
+        <div>Left Eyes: <span *ngFor="let diagnosis of leftDiagnosis"> {{diagnosis.value }} </span></div>
       </li>
       <li *ngIf="rightDiagnosis.length">
-        <div>Right Eyes: <span *ngFor="let diagnosis of rightDiagnosis">{{diagnosis.value}}</span></div>
+        <div>Right Eyes: <span *ngFor="let diagnosis of rightDiagnosis"> {{ diagnosis.value }} </span></div>
       </li>
     </ul>
   </div>

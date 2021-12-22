@@ -2,7 +2,14 @@
     <h4><span style="float: right;cursor: pointer;" (click)="close()">&times;</span></h4>
 </div>
 <br>
-<div>
+<div *ngIf="!showDiagnosis">
+    <mat-form-field class="flex-items">
+        <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" (dateChange)=onChange($event.target.value)>
+        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+        <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+    </mat-form-field>
+</div>
+<div *ngIf="showDiagnosis">
     <app-diagnosis [showDetails]=true [data]="data"></app-diagnosis>
 </div>
 <br />

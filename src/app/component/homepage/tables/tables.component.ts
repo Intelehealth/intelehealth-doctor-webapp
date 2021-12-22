@@ -29,5 +29,4 @@ export class TablesComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-
 }
