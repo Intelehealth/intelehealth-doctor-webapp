@@ -251,7 +251,9 @@
     "reassignedSuccessfully": "Patient is reassigned to {{value}} successfully.",
     "Appointment updated successfully":"Appointment updated successfully",
     "Appointment created successfully":"Appointment created successfully",
-    "Incorrect date range - fromDate should be greater or equal to toDate day":"Incorrect date range - fromDate should be greater or equal to toDate day"
+    "Incorrect date range - fromDate should be greater or equal to toDate day":"Incorrect date range - fromDate should be greater or equal to toDate day",
+    "Select Day Message":"Please select days and time for schedule",
+    "Check Time Message": "Time cannot be empty and start time should be less than end time"
   },
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
   "helpMsg2": "Click here to edit your profile or change your password.",

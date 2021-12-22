@@ -148,23 +148,42 @@ export class AppointmentComponent implements OnInit {
   }
 
   saveSchedule(userUuid?) {
-    const speciality = this.getSpeciality();
-    this.appointmentService
-      .updateOrCreateAppointment({
-        speciality,
-        userUuid: userUuid ? userUuid : this.userId,
-        slotDays: this.slotTimes.map((d) => d.day).join("||"),
-        slotSchedule: this.slotTimes,
-        drName: this.drName,
-      })
-      .subscribe({
-        next: (res: any) => {
-          console.log("res: ", res);
-          if (res.status) {
-            this.translationService.getTranslation(res.message);
-            //this.toast({ message: res.message });
-          }
-        },
-      });
+    if (this.scheduleForm?.value?.selectedDays.length > 0) {
+      if (this.validateTimeSlots()) {
+        const speciality = this.getSpeciality();
+        this.appointmentService
+          .updateOrCreateAppointment({
+            speciality,
+            userUuid: userUuid ? userUuid : this.userId,
+            slotDays: this.slotTimes.map((d) => d.day).join("||"),
+            slotSchedule: this.slotTimes,
+            drName: this.drName,
+          })
+          .subscribe({
+            next: (res: any) => {
+              console.log("res: ", res);
+              if (res.status) {
+                this.translationService.getTranslation(res.message);
+                //this.toast({ message: res.message });
+              }
+            },
+          });
+      } else {
+        this.translationService.getTranslation('Check Time Message');
+      }
+    } else {
+      this.translationService.getTranslation('Select Day Message');
+    }
+  }
+
+  validateTimeSlots() {
+    for (let t1 of this.slotTimes) {
+      if (t1.startTime == null || t1.endTime == null) {
+        return false
+      } else if (moment(t1.startTime, ["h:mm A"]).format("HH:mm:ss") > moment(t1.endTime, ["h:mm A"]).format("HH:mm:ss")) {
+        return false
+      }
+    }
+    return true;
   }
 }

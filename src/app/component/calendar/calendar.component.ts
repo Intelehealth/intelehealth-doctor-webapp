@@ -71,8 +71,10 @@ export class CalendarComponent implements OnInit{
         openMrsId:slot[i].openMrsId,
         slotTime:slot[i].slotTime
       };
+      event1['isTimeOver'] = event1.start < new Date();
       array.push(event1);
     };
+    array.sort((a,b) => a.start.getTime() - b.start.getTime());
     this.events = Object.assign([],array);
     this.refresh.next();
     console.log("events", this.events)
@@ -113,7 +115,9 @@ export class CalendarComponent implements OnInit{
   }
 
   handleEvent(action: string, event): void {
-    this.router.navigate(['/visitSummary', event.patientId, event.visitUuid]);
+    if(event.start > new Date()) {
+      this.router.navigate(['/visitSummary', event.patientId, event.visitUuid]);
+    }
   }
 
   setView(view: CalendarView) {
@@ -144,6 +148,9 @@ export class CalendarComponent implements OnInit{
       this.nextButtonClicks = 0;
       this.previousDate = new Date();
       this.nextDate = new Date();
+      let startOfMonth = moment(new Date()).add(this.nextButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(new Date()).add(this.nextButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
+      this.getDrSlots(startOfMonth, endOfMonth);
       //console.log("Previous",this.previousButtonClicks, this.previousDate)
       //console.log("Next",this.nextButtonClicks,this.nextDate)
     }

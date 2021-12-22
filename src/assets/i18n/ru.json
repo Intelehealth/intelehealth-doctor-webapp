@@ -251,7 +251,9 @@
     "reassignedSuccessfully": "Пациент успешно переведен к {{value}}.",
     "Appointment updated successfully":"Запись на прием к врачу успешно обновлена",
     "Appointment created successfully":"Запись на прием к врачу создана успешно",
-    "Incorrect date range - fromDate should be greater or equal to toDate day":"Неверный диапазон дат -"
+    "Incorrect date range - fromDate should be greater or equal to toDate day":"Неверный диапазон дат -",
+    "Select Day Message":"Пожалуйста, выберите дни и время для расписания",
+    "Check Time Message": "Время не может быть пустым, а время начала должно быть меньше времени окончания" 
   },
   "helpMsg1": "Добро пожаловать на портал Доктора. Менее чем за 1 минуту мы покажем вам, как поставить диагноз, лекарства, анализы и посоветовать пациенту.",
   "helpMsg2": "Нажмите здесь, чтобы отредактировать свой профиль или изменить пароль",

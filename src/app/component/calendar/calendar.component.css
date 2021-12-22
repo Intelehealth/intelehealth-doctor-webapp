@@ -53,3 +53,9 @@ th {
   align-items: center;
   cursor: pointer;
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #212529;
+}

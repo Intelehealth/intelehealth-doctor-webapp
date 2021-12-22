@@ -114,12 +114,13 @@
           </tr>
      </thead>
      <tbody>
-          <tr *ngFor="let e1 of modalData?.events">           
-            <td><a [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]" (click)="close()">{{ e1.name }}</a></td>
-            <td>{{ e1.openMrsId }}</td>
-            <td>{{ e1.slotTime }}</td>
-          </tr>
-     </tbody>
+      <tr *ngFor="let e1 of modalData?.events">
+        <td><a [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+            [class.disabled]="e1.isTimeOver ? true : null" (click)="close()">{{ e1.name }}</a></td>
+        <td>{{ e1.openMrsId }}</td>
+        <td>{{ e1.slotTime }}</td>
+      </tr>
+    </tbody>
     </table>
   </div>
   <div class="modal-footer center">
