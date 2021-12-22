@@ -10,12 +10,19 @@
     </div>
     </form>
     <br>
+
+    <ng-container *ngIf="comment.length > 0">
+        <ul class="list-unstyled">
+            <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
+                <div class="doctor-value">{{comment.value}} </div>
+                <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+            </mat-list>
+        </ul>
+    </ng-container>
 </div>
-<ng-container *ngIf="comment.length > 0">
-    <ul class="list-unstyled">
-        <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
-            <div class="doctor-value">{{comment.value}} </div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-        </mat-list>
+
+<div *ngIf="coordinator">
+    <ul *ngFor="let comment of comment">
+        <li>{{comment.value}}</li>
     </ul>
-</ng-container>
+</div>

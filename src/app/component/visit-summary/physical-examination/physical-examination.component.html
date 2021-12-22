@@ -5,6 +5,11 @@
         <a href={{image.image}}>
             <img src= {{image.image}} class="grid-img">
         </a>
+        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="image.efficient">
+            <mat-radio-button class="radio-button" value="poor" (change)="onChangeHandler(image.id, 'poor')">Poor</mat-radio-button>
+            <mat-radio-button class="radio-button" value="acceptable" (change)="onChangeHandler(image.id, 'acceptable')">Acceptable</mat-radio-button>
+            <mat-radio-button class="radio-button" value="optimal" (change)="onChangeHandler(image.id, 'optimal')">Optimal</mat-radio-button>
+        </mat-radio-group>
     </div>
 </div>
 <div *ngIf="!physicalExamPresent">
