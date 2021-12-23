@@ -48,8 +48,6 @@ export class CalendarComponent implements OnInit{
   refresh: Subject<any> = new Subject();
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
-  previousButtonClicks = 0; nextButtonClicks = 0;
-  previousDate: Date; nextDate:Date;
   selectedLang: string = 'en';
 
   constructor(private modal: NgbModal,
@@ -82,7 +80,7 @@ export class CalendarComponent implements OnInit{
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
-      this.viewDate = date;
+    //  this.viewDate = date;
       if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
         events.length === 0
@@ -128,37 +126,22 @@ export class CalendarComponent implements OnInit{
   closeOpenMonthViewDay(selectedMonth) {
     this.activeDayIsOpen = false;
     if(selectedMonth === 'Previous') {
-      this.previousButtonClicks++;
-      this.nextButtonClicks = 0;
-      let startOfMonth = moment(this.nextDate).subtract(this.previousButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
-      let endOfMonth   = moment(this.nextDate).subtract(this.previousButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
-      this.previousDate = new Date(startOfMonth);
-      //console.log("Previous startOfMonth",startOfMonth,endOfMonth,this.previousDate)
+      let startOfMonth = moment(this.viewDate).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(this.viewDate).endOf(this.view).format('YYYY-MM-DD hh:mm');
       this.getDrSlots(startOfMonth, endOfMonth);
     } else if(selectedMonth === 'Next') {
-      this.nextButtonClicks++;
-      this.previousButtonClicks = 0;
-      let startOfMonth = moment(this.previousDate).add(this.nextButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
-      let endOfMonth   = moment(this.previousDate).add(this.nextButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
-      this.nextDate = new Date(startOfMonth);
-      //console.log("Next startOfMonth",startOfMonth,endOfMonth, this.nextDate)
+      let startOfMonth = moment(this.viewDate).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(this.viewDate).endOf(this.view).format('YYYY-MM-DD hh:mm');
       this.getDrSlots(startOfMonth, endOfMonth);
     } else {
-      this.previousButtonClicks = 0;
-      this.nextButtonClicks = 0;
-      this.previousDate = new Date();
-      this.nextDate = new Date();
-      let startOfMonth = moment(new Date()).add(this.nextButtonClicks,this.view).startOf(this.view).format('YYYY-MM-DD hh:mm');
-      let endOfMonth   = moment(new Date()).add(this.nextButtonClicks,this.view).endOf(this.view).format('YYYY-MM-DD hh:mm');
+      let startOfMonth = moment(new Date()).startOf(this.view).format('YYYY-MM-DD hh:mm');
+      let endOfMonth   = moment(new Date()).endOf(this.view).format('YYYY-MM-DD hh:mm');
       this.getDrSlots(startOfMonth, endOfMonth);
-      //console.log("Previous",this.previousButtonClicks, this.previousDate)
-      //console.log("Next",this.nextButtonClicks,this.nextDate)
     }
   }
   
   getData() {
     let dates = this.getDates(this.view);
-   // this.viewDate = new Date(dates.startOfMonth);
     this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
 
