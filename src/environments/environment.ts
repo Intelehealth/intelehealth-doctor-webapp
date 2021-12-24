@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  baseURL: 'https://myteledoc.intelehealth.org/openmrs/ws/rest/v1',
-  baseURLCoreApp : 'https://myteledoc.intelehealth.org/openmrs/coreapps/diagnoses',
-  baseURLLegacy: 'https://myteledoc.intelehealth.org/openmrs',
+  baseURL: 'https://testing.visilant.org/openmrs/ws/rest/v1',
+  baseURLCoreApp : 'https://testing.visilant.org/openmrs/coreapps/diagnoses',
+  baseURLLegacy: 'https://testing.visilant.org/openmrs',
   mindmapURL: 'http://localhost:3004/api',
   notificationURL: 'http://localhost:3004/notification'
 };

@@ -26,24 +26,14 @@ export class MindmapService {
     return this.http.get(url);
   }
 
-  addLicenseKey(key): Observable<any> {
-    const url = `${this.baseURL}/mindmap/addkey`;
-    return this.http.post(url, key);
-  }
-
-  editExpiryDate(key, data): Observable<any> {
-    const url = `${this.baseURL}/mindmap/${key}`;
-    return this.http.post(url, data);
+  addUpdateLicenseKey(payload): Observable<any> {
+    const url = `${this.baseURL}/mindmap/addUpdatekey`;
+    return this.http.post(url, payload);
   }
 
   updateImage(key, imageName, value): Observable<any> {
     const url = `${this.baseURL}/mindmap/${key}/${imageName}`;
     return this.http.put(url, value);
-  }
-
-  uploadImage(data): Observable<any> {
-    const url = `${this.baseURL}/mindmap/image`;
-    return this.http.post(url, data);
   }
 
   deleteMindmap(key, data): Observable<any> {

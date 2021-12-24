@@ -1,12 +1,13 @@
 <div class="container">
   <mat-card>
     <div class="upload">
-      <div><b>Select licence Key: </b> &nbsp;&nbsp;
+      <div>
+        <b>Select licence Key: </b> &nbsp;&nbsp;
         <mat-form-field>
           <mat-label>MindMap Key</mat-label>
           <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
-            <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keys">
-              {{ mindmap.keys }}
+            <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
+              {{ mindmap.keyName }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -47,7 +48,7 @@
             <!-- Last Updated Column -->
             <ng-container matColumnDef="lastUpdate">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Update </th>
-              <td mat-cell *matCellDef="let row">{{row.last_update | date: 'dd-MMM-yyyy'}} </td>
+              <td mat-cell *matCellDef="let row">{{row.updatedAt | date: 'dd-MMM-yyyy'}} </td>
             </ng-container>
 
             <!-- Action Column -->
@@ -71,22 +72,40 @@
       <br>
       <div class="image-card" *ngIf="image">
         <div>Images associated with this licence key.</div>
-        <br>
-        <div><img src={{image.image_file}} alt=""/></div>
-        <br>
-        <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
-        <br>
-        <br>
+        <br />
+        <div><img src={{image}} alt=""/></div>
+        <br />
+        <button mat-raised-button color="primary" (click)="uploadDocument()">
+          Browse Image
+        </button>
+        <br />
+        <br />
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpdate()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button
+            mat-button
+            color="primary"
+            (click)="imageUpload()"
+            class="submit"
+          >
+            <mat-icon>file_upload</mat-icon>Upload
+          </button>
         </div>
       </div>
-      <div class="image-card" *ngIf="selectedKey && image === undefined">
-        <button mat-raised-button color="primary" (click)="uploadDocument()">Browse Image</button>
-        <br>
-        <br>
+      <div class="image-card" *ngIf="selectedKey && !image">
+        <button mat-raised-button color="primary" (click)="uploadDocument()">
+          Browse Image
+        </button>
+        <br />
+        <br />
         <div class="image-card">
-          <button mat-button color="primary" (click)="imageUpload()" class="submit"><mat-icon>file_upload</mat-icon>Upload</button>
+          <button
+            mat-button
+            color="primary"
+            (click)="imageUpload()"
+            class="submit"
+          >
+            <mat-icon>file_upload</mat-icon>Upload
+          </button>
         </div>
       </div>
     </div>
@@ -95,8 +114,6 @@
 <input
   type="file"
   id="fileUpload"
-  style="display:none;"
+  style="display: none"
   (change)="fileHandler($event)"
 />
-
-
