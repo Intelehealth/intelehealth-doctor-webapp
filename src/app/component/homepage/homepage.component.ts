@@ -235,12 +235,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.tableChange({ loadMore: true, refresh: () => {} });
     }
   }
-
+  getPhoneNumber(attributes) {
+    let phoneObj = attributes.find(({ display = "" }) =>
+      display.includes("Telephone Number")
+    );
+    return phoneObj ? phoneObj.value : "NA";
+  }
   assignValueToProperty(active, encounter) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
+    this.value.telephone = this.getPhoneNumber(active.patient.attributes);
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
