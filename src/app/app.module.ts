@@ -42,6 +42,7 @@ import { TablesComponent } from "./component/homepage/tables/tables.component";
 import { SignatureComponent } from "./component/my-account/signature/signature.component";
 import { CurrentVisitComponent } from "./component/visit-summary/current-visit/current-visit.component";
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
+import {MatChipsModule} from '@angular/material/chips';
 
 // Package Import
 import { HttpClient, HttpClientModule } from "@angular/common/http";
@@ -179,6 +180,7 @@ registerLocaleData(localeEn);
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    MatChipsModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [

@@ -25,4 +25,17 @@ export class AppointmentService {
       `${this.baseURL}/appointment/getUserSlots/${userUuid}?fromDate=${fromDate}&toDate=${toDate}`
     );
   }
+
+  getAppointmentSlots(fromDate, toDate, speciality) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getAppointmentSlots?fromDate=${fromDate}&toDate=${toDate}&speciality=${speciality}`
+    );
+  }
+
+  rescheduleAppointment(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/rescheduleAppointment`,
+      payload
+    );
+  }
 }

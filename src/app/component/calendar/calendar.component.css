@@ -59,3 +59,9 @@ a.disabled {
   cursor: default;
   color: #212529;
 }
+.d-grid{
+  display: grid !important;
+}
+.active{
+  background: #87c6ed;
+}

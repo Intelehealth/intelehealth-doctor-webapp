@@ -1,132 +1,211 @@
-<div  class="container wrap-login100">
-<div class="row">
-  <div class="col-md-4">
-    <div class="btn-group" style="float: left;">
-      <div
-        class="btn btn-primary"
-        mwlCalendarPreviousView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay('Previous')"
-      >
-       {{ 'Previous'| translate }}
+<div class="container wrap-login100">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="btn-group" style="float: left">
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay('Previous')"
+        >
+          {{ "Previous" | translate }}
+        </div>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay('Today')"
+        >
+          {{ "Today" | translate }}
+        </div>
+        <div
+          class="btn btn-primary"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay('Next')"
+        >
+          {{ "Next" | translate }}
+        </div>
       </div>
-      <div
-        class="btn btn-outline-secondary"
-        mwlCalendarToday
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay('Today')"
-      >
-        {{'Today' |translate }}
-      </div>
-      <div
-        class="btn btn-primary"
-        mwlCalendarNextView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay('Next')"
-      >
-       {{'Next' | translate}} 
+    </div>
+    <div class="col-md-4" style="text-align: center">
+      <h3>{{ viewDate | calendarDate: view + "ViewTitle":selectedLang }}</h3>
+    </div>
+    <div class="col-md-4">
+      <div class="btn-group" style="float: right">
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
+        >
+          {{ "Month" | translate }}
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Week)"
+          [class.active]="view === CalendarView.Week"
+        >
+          {{ "Week" | translate }}
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
+        >
+          {{ "Day" | translate }}
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-md-4" style="text-align: center;">
-    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):selectedLang }}</h3>
+  <br />
+  <div class="calendar-view" [ngSwitch]="view">
+    <mwl-calendar-month-view
+      *ngSwitchCase="CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [locale]="selectedLang"
+      [activeDayIsOpen]="activeDayIsOpen"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      *ngSwitchCase="CalendarView.Week"
+      [dayStartHour]="9"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [locale]="selectedLang"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [dayStartHour]="9"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [locale]="selectedLang"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-day-view>
   </div>
-  <div class="col-md-4">
-    <div class="btn-group" style="float: right;">
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Month)"
-        [class.active]="view === CalendarView.Month"
-      >
-        {{ 'Month' | translate }}
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Week)"
-        [class.active]="view === CalendarView.Week"
-      >
-        {{ 'Week' | translate }}
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Day)"
-        [class.active]="view === CalendarView.Day"
-      >
-        {{'Day' | translate}}
-      </div>
-    </div>
-  </div>
-</div>
-<br />
-<div class="calendar-view" [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="CalendarView.Month"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [locale]="selectedLang"
-    [activeDayIsOpen]="activeDayIsOpen"
-    (dayClicked)="dayClicked($event.day)"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-month-view>
-  <mwl-calendar-week-view
-    *ngSwitchCase="CalendarView.Week"
-    [dayStartHour]="9" 
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [locale]="selectedLang"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-week-view>
-  <mwl-calendar-day-view
-    *ngSwitchCase="CalendarView.Day"
-    [dayStartHour]="9" 
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [locale]="selectedLang"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
-  </mwl-calendar-day-view>
-</div>
 </div>
 
 <ng-template #modalContent let-close="close" data-target="static">
- <div class="content-container"> 
-  <div class="modal-title"><br>
-    <h5 style="text-align: center;">{{'Appointment Details'|translate}} <br>
-       {{ modalData.date | calendarDate:('day' + 'ViewTitle'):selectedLang }}</h5>
-  </div>
-  <div class="modal-body">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">
+        {{ "Appointment Details" | translate }} <br />
+        {{ modalData.date | calendarDate: "day" + "ViewTitle":selectedLang }}
+      </h5>
+    </div>
+    <div class="modal-body">
       <table class="table">
         <thead>
-          <tr>           
-            <th>{{'Name'|translate}}</th> 
-            <th>{{'OpenMRS ID'|translate}}</th>
-            <th>{{'Start Time'|translate}}</th>
+          <tr>
+            <th>{{ "Name" | translate }}</th>
+            <th>{{ "OpenMRS ID" | translate }}</th>
+            <th>{{ "Start Time" | translate }}</th>
+            <th>{{ "Action" | translate }}</th>
           </tr>
-     </thead>
-     <tbody>
-      <tr *ngFor="let e1 of modalData?.events">
-        <td><a [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
-            [class.disabled]="e1.isTimeOver ? true : null" (click)="close()">{{ e1.name }}</a></td>
-        <td>{{ e1.openMrsId }}</td>
-        <td>{{ e1.slotTime }}</td>
-      </tr>
-    </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e1 of modalData?.events">
+            <td>
+              <a
+                [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+                [class.disabled]="e1.isTimeOver ? true : null"
+                (click)="close()"
+                >{{ e1.patientName }}</a
+              >
+            </td>
+            <td>{{ e1.openMrsId }}</td>
+            <td>{{ e1.slotTime }}</td>
+            <td>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="rescheduleClick(e1)"
+              >
+                {{ "Reschedule" | translate }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer center">
+      <button type="button" mat-raised-button color="primary" (click)="close()">
+        {{ "Close" | translate }}
+      </button>
+    </div>
   </div>
-  <div class="modal-footer center">
-    <button  type="button" mat-raised-button color="primary" (click)="close()">
-      {{'Close' | translate}}
-    </button> 
+</ng-template>
+
+<ng-template #rescheduleModal let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">
+        {{ "Reschedule Appointment" | translate }}
+      </h5>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="row">
+          <div class="col-5">
+            <input
+              class="form-control"
+              cha
+              disabled
+              type="text"
+              [value]="selectedSchedule?.speciality"
+            />
+          </div>
+          <div class="col-7">
+            <input
+              class="form-control"
+              (change)="changeCalender($event)"
+              type="date"
+              [value]="todaysDate"
+            />
+          </div>
+          <div class="col-12 mt-4">
+            <mat-chip-list>
+              <mat-chip
+                class="p-4"
+                [class.active]="i == selectedSlotIdx"
+                *ngFor="let slot of slots;index as i;"
+                (click)="selectSlot(i)"
+              >
+                <div class="d-grid">
+                  <span>{{ slot?.slotTime }}</span>
+                  <span>{{ slot?.slotTime }}</span>
+                </div>
+              </mat-chip>
+            </mat-chip-list>
+            <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
+              No slots avalable for the day, try changing dates.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer center">
+      <button type="button" mat-raised-button color="primary" [disabled]="!slots[selectedSlotIdx]" (click)="reschedule()">
+        {{ "Reschedule" | translate }}
+      </button>
+      <button type="button" mat-raised-button color="primary" (click)="close()">
+        {{ "Close" | translate }}
+      </button>
+    </div>
   </div>
-</div> 
 </ng-template>
