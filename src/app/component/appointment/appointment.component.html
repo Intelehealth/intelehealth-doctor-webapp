@@ -1,70 +1,143 @@
 <div class="container">
-  <div class="wrap-login100 bg-white rounded pb-5">
-    <mat-panel-title>
-      <h5 class="pt-3 pl-3">
-        <b>{{ "Appointment Schedule" | translate }}:</b>
-      </h5>
-    </mat-panel-title>
-    <div class="container" [formGroup]="scheduleForm">
-      <mat-form-field class="mt-2 w-100" appearance="fill">
-        <mat-label>
-          <h5>{{ "Select Days" | translate }}</h5>
-        </mat-label>
-        <mat-select
-          (openedChange)="daysChange()"
-          formControlName="selectedDays"
-          multiple
-        >
-          <mat-option *ngFor="let day of days" [value]="day">
-            {{ (day) | translate }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="container">
-      <ul>
-        <li *ngFor="let day of slotTimes" class="d-flex">
-          <label class="col-2 p-4">{{ day.day | translate }}</label>
-          <div class="col-10">
-            <div class="row">
-              <div class="col-6">
-                <mat-form-field class="mt-2 w-100" appearance="fill">
-                  <mat-label>
-                    <h5>{{ "Start Time" | translate }}</h5>
-                  </mat-label>
-                  <mat-select [(ngModel)]="day.startTime">
-                    <mat-option *ngFor="let hour of slotHours" [value]="hour">
-                      {{ hour }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col-6">
-                <mat-form-field class="mt-2 w-100" appearance="fill">
-                  <mat-label>
-                    <h5>{{ "End Time" | translate }}</h5>
-                  </mat-label>
-                  <mat-select [(ngModel)]="day.endTime">
-                    <mat-option *ngFor="let hour of slotHours" [value]="hour">
-                      {{ hour }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
+  <div class="wrap-login100">
+    <div class="container wrap-login100">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="btn-group" style="float: left;">
+            <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Previous')">
+              {{ 'Previous'| translate }}
+            </div>
+            <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Today')">
+              {{'Today' |translate }}
+            </div>
+            <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Next')">
+              {{'Next' | translate}}
             </div>
           </div>
-        </li>
-      </ul>
-      <div style="float: right">
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          (click)="saveSchedule()"
-        >
-          {{ "Save" | translate }}
-        </button>
+        </div>
+        <div class="col-md-4" style="text-align: center;">
+          <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):selectedLang }}</h3>
+        </div>
+        <div class="col-md-4">
+          <button style="float: right;" class="btn btn-primary" (click)="addSchedule()">
+            {{'Add Schedule for Month' | translate}}
+          </button>
+        </div>
+      </div>
+      <br />
+      <div class="calendar-view" [ngSwitch]="view">
+        <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+          [refresh]="refresh" [locale]="selectedLang" [activeDayIsOpen]="activeDayIsOpen"
+          (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)">
+        </mwl-calendar-month-view>
+        <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [dayStartHour]="9" [viewDate]="viewDate"
+          [events]="events" [refresh]="refresh" [locale]="selectedLang"
+          (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+        </mwl-calendar-week-view>
+        <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [dayStartHour]="9" [viewDate]="viewDate"
+          [events]="events" [refresh]="refresh" [locale]="selectedLang"
+          (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+        </mwl-calendar-day-view>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title"><br>
+      <h5 style="text-align: center;">{{'Appointment Schedule'|translate}}</h5>
+    </div>
+    <hr>
+    <div class="modal-body" [formGroup]="scheduleForm">
+      <div class="row">
+        <div class="col-6">
+          <mat-label>
+            <h5>{{ "Start Time" | translate }}</h5>
+          </mat-label>
+          <select formControlName="startTime">
+            <option value=null disabled selected>Select Time</option>
+            <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <mat-label>
+            <h5>{{ "End Time" | translate }}</h5>
+          </mat-label>
+          <select formControlName="endTime">
+            <option value=null disabled selected>Select Time</option>
+            <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+          </select>
+        </div>
+      </div>
+      <div *ngFor="let data of types">
+        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
+        {{data.day}} <br>
+      </div>
+      <div *ngFor="let data of weekDays">
+        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
+        {{data.day}} <br>
+      </div>
+      <div *ngFor="let data of weekends">
+        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
+        {{data.day}} <br>
+      </div>
+    </div>
+    <div class="modal-footer center">
+      <button mat-raised-button color="primary" (click)="submit(); close()">
+        {{'Save' | translate}}
+      </button>
+      <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">
+        {{'Clear' | translate}}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #schedule let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">
+        {{ "Schedule" | translate }} <br />
+        {{ modalData.date | calendarDate: "day" + "ViewTitle":selectedLang }}
+      </h5>
+    </div>
+    <hr/>
+    <div class="modal-body">
+        <div class="row" *ngFor="let e1 of modalData?.events">
+          <div class="col-6">
+            <mat-label>
+              <h5>{{ "Start Time" | translate }}</h5>
+            </mat-label>
+            <select [(ngModel)]="e1.startTime">
+              <option [value]="hour" *ngFor="let hour of slotHours" >{{hour}}</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <mat-label>
+              <h5>{{ "End Time" | translate }}</h5>
+            </mat-label>
+            <select [(ngModel)]="e1.endTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+            </select>
+          </div>
+          <div class="col-sm-12 text-center">
+            <button type="button" mat-raised-button color="primary" (click)="cancel(e1);close()">
+              {{ "Cancel" | translate }}
+            </button> 
+            <button type="button" mat-raised-button color="primary" (click)="update(e1);close()">
+              {{ "Save" | translate }}
+            </button>
+            <button type="button" mat-raised-button color="danger"  (click)="close()">
+              {{ "Close" | translate }}
+            </button>
+          </div>
+        </div>
+    </div>
+  </div>
+</ng-template>
