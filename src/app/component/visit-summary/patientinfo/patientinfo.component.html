@@ -3,7 +3,7 @@
         <div class="col-md-6">
           <table class="table table-borderless table-sm">
                 <tbody *ngIf="patientInfo">
-                    <tr *ngIf="!showDetails"> 
+                    <tr *ngIf="!coordinator || showDetails"> 
                         <th scope="row">Name</th>
                         <td>{{patientInfo.display}}</td>
                     </tr>
@@ -31,6 +31,10 @@
                     <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Attender Phone Number</th>
                         <td *ngIf="patientInfo.occupation">{{patientInfo.occupation}}</td>
+                    </tr>
+                    <tr *ngIf="!coordinator || showDetails">
+                        <th scope="row">CHW</th>
+                        <td *ngIf="patientInfo.healthWorker">{{patientInfo.healthWorker}}</td>
                     </tr>
                 </tbody>
             </table>

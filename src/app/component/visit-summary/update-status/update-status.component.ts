@@ -47,7 +47,7 @@ export class UpdateStatusComponent implements OnInit {
       value: JSON.stringify({status, comment}),
       encounter: this.encounterUuid
     };
-    if (status === 'Patient came to hospital') {
+    if (status === 'Patient came to Aravind') {
       this.addDiagnosis(json);
     } if (status === 'Patient need a callback') {
       this.addDateTime(json);
@@ -78,7 +78,8 @@ export class UpdateStatusComponent implements OnInit {
   addDiagnosis(payload) {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: { patientId: this.patientUuid },
-      width: '60%'
+      width: '60%',
+      height: '80%'
     });
 
     dialogRef.afterClosed().subscribe(result => {

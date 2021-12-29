@@ -50,6 +50,9 @@ constructor(private service: EncounterService,
           this.visitNotePresent = true;
           this.show = true;
         }
+        if (visit.display.match('ADULTINITIAL') || visit.display.match('Vitals')) {
+          saveToStorage('healthWorkerDetails', visit);
+        }
         if (visit.display.match('Visit Complete') !== null) {
           this.visitCompletePresent = true;
           visit.encounterProviders[0].provider.attributes.forEach(element => {

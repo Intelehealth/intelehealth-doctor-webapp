@@ -22,6 +22,7 @@ export interface VisitData {
 interface ReferralHomepage {
   awaitingCall: Array<{}>;
   awaitingHospital: Array<{}>;
+  totalVisistInHospial: number;
 }
 
 interface ReferralVisit {
@@ -44,7 +45,7 @@ interface ReferralVisit {
 
 export class HomepageComponent implements OnInit {
   value: any = {};
-  referralVisit: ReferralHomepage = { awaitingCall : [], awaitingHospital: []};
+  referralVisit: ReferralHomepage = { awaitingCall : [], awaitingHospital: [], totalVisistInHospial: 0};
   referralCallValues: ReferralVisit[] = [];
   referralHospitalValues: ReferralVisit[] = [];
   activePatient: number;
@@ -173,7 +174,9 @@ export class HomepageComponent implements OnInit {
                       data.urgent = true;
                     }
                     if (coOrdinatorStatus.length) {
-                      data.status = JSON.parse(coOrdinatorStatus[0].value).status;
+                      // tslint:disable-next-line: max-line-length
+                      const latestUpdate = coOrdinatorStatus.sort((a: any, b: any) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+                      data.status = JSON.parse(latestUpdate[0].value).status;
                       if (data.status === 'Will come to hospital') {
                         data.referralDate = coOrdinatorStatus[0].obsDatetime;
                         data.lastCalled = coOrdinatorStatus[0].obsDatetime;
@@ -185,6 +188,8 @@ export class HomepageComponent implements OnInit {
                         data.referralDate = coOrdinatorStatus[0].obsDatetime;
                         data.lastCalled = coOrdinatorStatus[0].obsDatetime;
                         this.referralVisit.awaitingCall.push(data);
+                      } else if (data.status === 'Patient came to Aravind') {
+                        this.referralVisit.totalVisistInHospial += 1;
                       }
                     } else {
                       this.referralVisit.awaitingCall.push(data);

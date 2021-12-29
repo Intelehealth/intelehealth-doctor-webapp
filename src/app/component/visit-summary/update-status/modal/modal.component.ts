@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -8,7 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class ModalComponent implements OnInit {
   showDiagnosis: Boolean = false;
-  minDate = new Date(new Date().setDate(new Date().getDate() + 7));
+  minDate = new Date(new Date().setDate(new Date().getDate() + 2));
+  date = new FormControl(this.minDate);
   newDate;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,

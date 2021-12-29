@@ -4,12 +4,12 @@
 <br>
 <div *ngIf="!showDiagnosis">
     <mat-form-field class="flex-items">
-        <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" (dateChange)=onChange($event.target.value)>
+        <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" (dateChange)=onChange($event.target.value) [formControl]="date">
         <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
         <mat-datepicker #dp3 disabled="false"></mat-datepicker>
     </mat-form-field>
 </div>
-<div *ngIf="showDiagnosis">
+<div *ngIf="showDiagnosis" class="modal-diagnosis">
     <app-diagnosis [showDetails]=true [data]="data"></app-diagnosis>
 </div>
 <br />

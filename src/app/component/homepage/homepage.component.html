@@ -110,7 +110,7 @@
 
   <div *ngIf='coordinator'>
     <div class="modal-body row">
-      <div class="col-sm-6" style="padding: 3px">
+      <div class="col-sm-4" style="padding: 3px">
         <div class="card text-white" style="background: #dd3c62">
           <div class="card-body">
             <div class="text-left">
@@ -121,12 +121,23 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-6" style="padding: 3px">
+      <div class="col-sm-4" style="padding: 3px">
         <div class="card text-white" style="background: #f6b825">
           <div class="card-body">
             <div class="text-left">
               AWAITING HOSPITAL VISITS<span style="float: right">{{
                 referralHospitalValues.length
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4" style="padding: 3px">
+        <div class="card text-white" style="background: #17a2b8">
+          <div class="card-body">
+            <div class="text-left">
+              PATIENT CAME TO HOSPITAL<span style="float: right">{{
+                referralVisit.totalVisistInHospial
               }}</span>
             </div>
           </div>

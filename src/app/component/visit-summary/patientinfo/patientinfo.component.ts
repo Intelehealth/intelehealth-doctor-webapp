@@ -55,6 +55,12 @@ export class PatientinfoComponent implements OnInit {
           this.info['occupation'] = attri.value;
         }
       });
+      if (this.coordinator) {
+        const visitProvider = getFromStorage('healthWorkerDetails');
+        if (visitProvider && !this.info['healthWorker']) {
+          this.info['healthWorker'] = visitProvider.encounterProviders[0].display.split(':')[0];
+        }
+      }
       this.patientInfo = this.info;
     });
   }

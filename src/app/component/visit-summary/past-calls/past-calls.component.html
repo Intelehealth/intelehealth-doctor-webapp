@@ -1,22 +1,24 @@
 <h4><i class="material-icons">phone</i> Past Calls</h4>
 <hr>
-<div>
-    <div class="calls-flex">
-        <h5>Date</h5>
-        <h5>Status</h5>
-        <h5>Notes</h5>
-    </div>
-    <div *ngFor="let status of allStatus">
-        <div class="calls-flex">
-            <div>
+<table width="60%">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let status of allStatus">
+            <td>
                 {{status.date | date: 'dd-MMM-yyyy'}}
-            </div>
-            <div>
+            </td>
+            <td>
                 {{status.value}}
-            </div>
-            <div>
+            </td>
+            <td>
                 {{status.note}}
-            </div>
-        </div>
-    </div>
-</div>
+            </td>
+        </tr>
+    </tbody>
+</table>
