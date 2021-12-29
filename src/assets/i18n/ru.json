@@ -5576,5 +5576,11 @@
   "Appointment Details":"Детали встречи",
   "Ok":"В порядке",
   "Reschedule":"перенести график",
-  "Reschedule Appointment":"перенести график Детали"
+  "Reschedule Appointment":"перенести график Детали",
+  "Add Schedule for Month":"Добавить расписание на месяц",
+  "All Days":"Все дни",
+  "Week Day":"День недели",
+  "Clear":"Прозрачный",
+  "Cancel":"Отмена",
+  "Schedule":"Расписание"
 }

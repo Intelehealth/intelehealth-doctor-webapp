@@ -252,7 +252,7 @@
     "Appointment updated successfully":"Appointment updated successfully",
     "Appointment created successfully":"Appointment created successfully",
     "Incorrect date range - fromDate should be greater or equal to toDate day":"Incorrect date range - fromDate should be greater or equal to toDate day",
-    "Select Day Message":"Please select days and time for schedule",
+    "Select Day Message":"Please select days for schedule",
     "Check Time Message": "Time cannot be empty and start time should be less than end time"
   },
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
@@ -5576,5 +5576,11 @@
   "Appointment Details":"Appointment Details",
   "Ok":"Ok",
   "Reschedule":"Reschedule",
-  "Reschedule Appointment":"Reschedule Appointment"
+  "Reschedule Appointment":"Reschedule Appointment",
+  "Add Schedule for Month":"Add Schedule for Month",
+  "All Days":"All Days",
+  "Week Day":"Week Day",
+  "Clear":"Clear",
+  "Cancel":"Cancel",
+  "Schedule":"Schedule"
 }

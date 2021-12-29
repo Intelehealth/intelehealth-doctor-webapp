@@ -50,45 +50,62 @@
 <ng-template #modalContent let-close="close" data-target="static">
   <div class="content-container">
     <div class="modal-title"><br>
-      <h5 style="text-align: center;">{{'Appointment Schedule'|translate}}</h5>
+      <h5 style="text-align: center;">{{'Appointment Schedule'|translate}}
+        <span style="float: right;cursor: pointer; font-size: 31px;
+        margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
+      </h5>
     </div>
     <hr>
-    <div class="modal-body" [formGroup]="scheduleForm">
-      <div class="row">
-        <div class="col-6">
-          <mat-label>
-            <h5>{{ "Start Time" | translate }}</h5>
-          </mat-label>
-          <select formControlName="startTime">
-            <option value=null disabled selected>Select Time</option>
-            <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-          </select>
-        </div>
-        <div class="col-6">
-          <mat-label>
-            <h5>{{ "End Time" | translate }}</h5>
-          </mat-label>
-          <select formControlName="endTime">
-            <option value=null disabled selected>Select Time</option>
-            <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-          </select>
-        </div>
-      </div>
-      <div *ngFor="let data of types">
-        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
-        {{data.day}} <br>
-      </div>
-      <div *ngFor="let data of weekDays">
-        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
-        {{data.day}} <br>
-      </div>
-      <div *ngFor="let data of weekends">
-        <input type="checkbox" [(ngModel)]="data.checked" formControlName="selectedDay" (change)="set(data)">
-        {{data.day}} <br>
-      </div>
+    <div class="modal-body">
+      <table>
+        <tr [formGroup]="scheduleForm">
+          <td>
+            <mat-label>
+              <h5>{{ "Start Time" | translate }}</h5>
+            </mat-label>
+            <select formControlName="startTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+            </select>
+          </td>
+          <td>
+            <mat-label>
+              <h5>{{ "End Time" | translate }}</h5>
+            </mat-label>
+            <select formControlName="endTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <table class="table">
+        <tr *ngFor="let t1 of types">
+          <td>
+            <input id="check1" type="checkbox" [(ngModel)]="t1.checked" (change)="set(t1)">
+          </td>
+          <td>{{(t1.day) | translate}}</td>
+        </tr>
+      </table>
+      <table class="table">
+        <tr *ngFor="let w1 of weekDays">
+          <td>
+            <input id="check2" type="checkbox" [(ngModel)]="w1.checked" (change)="set(w1)">
+          </td>
+          <td>{{(w1.day) | translate}}</td>
+        </tr>
+      </table>
+      <table class="table">
+        <tr *ngFor="let w2 of weekends">
+          <td>
+            <input id="check3" type="checkbox" [(ngModel)]="w2.checked" (change)="set(w2)">
+          </td>
+          <td>{{(w2.day) | translate}}</td>
+        </tr>
+      </table>
     </div>
+    <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
     <div class="modal-footer center">
-      <button mat-raised-button color="primary" (click)="submit(); close()">
+      <button mat-raised-button color="primary" (click)="submit()">
         {{'Save' | translate}}
       </button>
       <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">
@@ -105,17 +122,20 @@
       <h5 style="text-align: center">
         {{ "Schedule" | translate }} <br />
         {{ modalData.date | calendarDate: "day" + "ViewTitle":selectedLang }}
+        <span style="float: right;cursor: pointer; font-size: 31px;
+        margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
       </h5>
     </div>
-    <hr/>
+    <hr />
     <div class="modal-body">
-        <div class="row" *ngFor="let e1 of modalData?.events">
+      <div *ngFor="let e1 of modalData?.events">
+        <div class="row">
           <div class="col-6">
             <mat-label>
               <h5>{{ "Start Time" | translate }}</h5>
             </mat-label>
             <select [(ngModel)]="e1.startTime">
-              <option [value]="hour" *ngFor="let hour of slotHours" >{{hour}}</option>
+              <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
           <div class="col-6">
@@ -126,18 +146,19 @@
               <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
-          <div class="col-sm-12 text-center">
-            <button type="button" mat-raised-button color="primary" (click)="cancel(e1);close()">
-              {{ "Cancel" | translate }}
-            </button> 
-            <button type="button" mat-raised-button color="primary" (click)="update(e1);close()">
-              {{ "Save" | translate }}
-            </button>
-            <button type="button" mat-raised-button color="danger"  (click)="close()">
-              {{ "Close" | translate }}
-            </button>
-          </div>
         </div>
+        <hr />
+        <div class="col-sm-12 text-center">
+          <button type="button" class="btn btn-primary center1" [disabled]="e1.isTimeOver"
+            (click)="update(e1, 'cancel');close()">
+            {{ "Cancel" | translate }}
+          </button>
+          <button type="button" class="btn btn-primary center1" [disabled]="e1.isTimeOver"
+            (click)="update(e1, 'update');close()">
+            {{ "Save" | translate }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>

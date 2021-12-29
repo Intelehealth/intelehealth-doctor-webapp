@@ -4,3 +4,22 @@
   align-items: center;
   cursor: pointer;
 }
+
+.center1 {
+  margin-right: 10px;
+}
+
+table, th, td {
+  width: 100%;
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+td {
+  width: 50%;
+}
+.msg {
+ color: red;
+ font-weight: bold;
+ font-size: 1rem;
+ margin-left: 7px;
+}
