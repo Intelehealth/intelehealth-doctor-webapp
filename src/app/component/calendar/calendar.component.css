@@ -46,7 +46,7 @@ th {
 .cal-month-view .cal-open-day-events {
   padding: -15px;
  }*/
- 
+
 .center {
   display: flex;
   justify-content: center;
@@ -59,9 +59,11 @@ a.disabled {
   cursor: default;
   color: #212529;
 }
-.d-grid{
+.d-grid {
   display: grid !important;
+  width: 100px;
+  text-align: center;
 }
-.active{
+.active {
   background: #87c6ed;
 }

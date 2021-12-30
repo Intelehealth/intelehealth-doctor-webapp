@@ -1,17 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
-
 export class VisitService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
@@ -30,9 +28,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  fetchVisitDetails(uuid): Observable<any> {
+  fetchVisitDetails(
+    uuid,
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+  ): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 

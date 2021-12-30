@@ -130,3 +130,6 @@ body.font-lato td {
 .cal-month-view .cal-open-day-events {
   padding: 0px;
 }
+.cdk-overlay-container{
+  z-index: 1060;
+}

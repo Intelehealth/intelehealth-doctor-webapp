@@ -306,7 +306,7 @@ export class AppointmentComponent implements OnInit {
     this.selectedDays = [];
   }
 
-  closeOpenMonthViewDay() {
+  closeOpenMonthViewDay(type?) {
     this.getSchedule();
   }
 
