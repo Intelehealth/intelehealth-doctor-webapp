@@ -1,10 +1,10 @@
+import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import {
-  Component,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from "@ngx-translate/core";
@@ -34,24 +34,24 @@ const colors: any = {
   styleUrls: ["./appointment.component.css"],
 })
 export class AppointmentComponent implements OnInit {
-  @ViewChild('modalContent') modalContent: TemplateRef<any>;
-  @ViewChild('schedule') schedule: TemplateRef<any>;
+  @ViewChild("modalContent") modalContent: TemplateRef<any>;
+  @ViewChild("schedule") schedule: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
-  selectedLang: string = 'en';
+  selectedLang: string = "en";
   selectedDays = [];
   scheduleForm = new FormGroup({
-    startTime: new FormControl('9:00 AM', [Validators.required]),
-    endTime: new FormControl('6:00 PM', [Validators.required])
+    startTime: new FormControl("9:00 AM", [Validators.required]),
+    endTime: new FormControl("6:00 PM", [Validators.required]),
   });
   userSchedule: any = Object;
-  type: string = 'month';
+  type: string = "month";
   types: any = [
     { day: "All Days", startTime: null, endTime: null, checked: false },
-    { day: "Week Day", startTime: null, endTime: null, checked: false }
+    { day: "Week Day", startTime: null, endTime: null, checked: false },
   ];
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null, checked: false },
@@ -62,9 +62,10 @@ export class AppointmentComponent implements OnInit {
   ];
   weekends: any = [
     { day: "Saturday", startTime: null, endTime: null, checked: false },
-    { day: "Sunday", startTime: null, endTime: null, checked: false }
+    { day: "Sunday", startTime: null, endTime: null, checked: false },
   ];
-  slotHours = []; errorMsg: string = null;
+  slotHours = [];
+  errorMsg: string = null;
   modalData: {
     date: Date;
     events: CalendarEvent[];
@@ -75,11 +76,11 @@ export class AppointmentComponent implements OnInit {
     private snackbar: MatSnackBar,
     private translationService: TranslationService,
     private modal: NgbModal,
-    private translateService: TranslateService,
-  ) { }
+    private translateService: TranslateService
+  ) {}
 
   ngOnInit(): void {
-    this.selectedLang = localStorage.getItem('selectedLanguage');
+    this.selectedLang = localStorage.getItem("selectedLanguage");
     this.getSchedule();
     this.slotHours = this.getHours();
   }
@@ -92,13 +93,19 @@ export class AppointmentComponent implements OnInit {
         } else {
           this.userSchedule.slotSchedule = [];
         }
-        this.initializeEvents(this.userSchedule.slotSchedule)
+        this.initializeEvents(this.userSchedule.slotSchedule);
       },
     });
   }
 
   private initializeEvents(slots) {
-    let slot = slots.reverse().filter((set => f => !set.has(new Date(f.date).getTime()) && set.add(new Date(f.date).getTime()))(new Set));
+    let slot = slots.reverse().filter(
+      (
+        (set) => (f) =>
+          !set.has(new Date(f.date).getTime()) &&
+          set.add(new Date(f.date).getTime())
+      )(new Set())
+    );
     let array: CalendarEvent[] = [];
     for (let i = 0; i < slot.length; i++) {
       let event1 = {
@@ -107,14 +114,13 @@ export class AppointmentComponent implements OnInit {
         start: new Date(slot[i].date),
         startTime: slot[i].startTime,
         endTime: slot[i].endTime,
-        day: slot[i].day
+        day: slot[i].day,
       };
       event1["isTimeOver"] = event1.start < new Date();
       array.push(event1);
     }
     array.sort((a, b) => a.start.getTime() - b.start.getTime());
     this.events = Object.assign([], array);
-    console.log("events", this.events);
   }
 
   getHours() {
@@ -165,9 +171,12 @@ export class AppointmentComponent implements OnInit {
 
   validateTimeSlots(t1) {
     if (t1.startTime == null || t1.endTime == null) {
-      return false
-    } else if (moment(t1.startTime, ["h:mm A"]).format("HH:mm:ss") > moment(t1.endTime, ["h:mm A"]).format("HH:mm:ss")) {
-      return false
+      return false;
+    } else if (
+      moment(t1.startTime, ["h:mm A"]).format("HH:mm:ss") >
+      moment(t1.endTime, ["h:mm A"]).format("HH:mm:ss")
+    ) {
+      return false;
     }
     return true;
   }
@@ -181,36 +190,58 @@ export class AppointmentComponent implements OnInit {
   set(type) {
     this.errorMsg = null;
     if (type.day === "All Days") {
-      this.type = 'month';
-      this.weekDays.forEach(element => type.checked === true ? (element.checked = true) : (element.checked = false));
-      this.weekends.forEach(element => type.checked === true ? (element.checked = true) : (element.checked = false));
+      this.type = "month";
+      this.weekDays.forEach((element) =>
+        type.checked === true
+          ? (element.checked = true)
+          : (element.checked = false)
+      );
+      this.weekends.forEach((element) =>
+        type.checked === true
+          ? (element.checked = true)
+          : (element.checked = false)
+      );
     } else if (type.day === "Week Day") {
-      this.type = 'week';
-      this.weekDays.forEach(element => type.checked === true ? (element.checked = true) : (element.checked = false));
+      this.type = "week";
+      this.weekDays.forEach((element) =>
+        type.checked === true
+          ? (element.checked = true)
+          : (element.checked = false)
+      );
     } else {
-      this.type = 'week';
+      this.type = "week";
     }
-    this.selectedDays = this.weekDays.filter((day) => day.checked).concat(this.weekends.filter((day) => day.checked))
+    this.selectedDays = this.weekDays
+      .filter((day) => day.checked)
+      .concat(this.weekends.filter((day) => day.checked));
   }
 
   getSlotSchedule(selectedDays) {
     let schedules = [];
-    for (let d of selectedDays) {
-      var day = moment(this.viewDate).startOf('month').day(d.day);
-      if (day.date() > 7) day.add(7, 'd');
-      var month = day.month();
-      while (month === day.month()) {
-        day.add(7, 'd');
+    const start = moment(this.viewDate).startOf("month");
+    const end = moment(this.viewDate).endOf("month");
+    let currentDay = moment(start.format());
+    const days = selectedDays.map((d) => d.day);
+    while (currentDay < end) {
+      const day = currentDay.format("dddd");
+      if (days.includes(day)) {
         schedules.push({
-          day: d.day,
+          day,
           endTime: this.scheduleForm.value.endTime,
           startTime: this.scheduleForm.value.startTime,
-          date: day.toString()
+          date: currentDay.format(),
         });
       }
+      currentDay.add(1, "day");
     }
-    let existing = this.userSchedule.slotSchedule;
-    let current = existing.concat(schedules)
+    let existingToKeep = [];
+    this.userSchedule.slotSchedule.forEach((s) => {
+      const date = moment(s.date);
+      if (!date.isSame(start) && !date.isBetween(start, end)) {
+        existingToKeep.push(s);
+      }
+    });
+    let current = existingToKeep.concat(schedules);
     return current;
   }
 
@@ -218,30 +249,36 @@ export class AppointmentComponent implements OnInit {
     if (this.validateTimeSlots(this.scheduleForm.value)) {
       if (this.selectedDays.length > 0) {
         const speciality = this.getSpeciality();
-        let body = this.getJson(speciality)
+        let body = this.getJson(speciality);
         this.saveSchedule(body);
         this.modal.dismissAll();
         this.errorMsg = null;
       } else {
-        this.error('Select Day Message');
+        this.error("Select Day Message");
       }
     } else {
-      this.error('Check Time Message');
+      this.error("Check Time Message");
     }
   }
 
-  private saveSchedule(body: { speciality: any; type: string; userUuid: any; slotDays: any; slotSchedule: any[]; drName: any; }) {
-    console.log("body", body)
-    this.appointmentService
-      .updateOrCreateAppointment(body).subscribe({
-        next: (res: any) => {
-          if (res.status) {
-            this.userSchedule = body;
-            this.initializeEvents(body.slotSchedule);
-            this.translationService.getTranslation(res.message);
-          }
-        },
-      });
+  private saveSchedule(body: {
+    speciality: any;
+    type: string;
+    userUuid: any;
+    slotDays: any;
+    slotSchedule: any[];
+    drName: any;
+  }) {
+    console.log("body", body);
+    this.appointmentService.updateOrCreateAppointment(body).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.userSchedule = body;
+          this.initializeEvents(body.slotSchedule);
+          this.translationService.getTranslation(res.message);
+        }
+      },
+    });
   }
 
   private getJson(speciality: any) {
@@ -256,13 +293,13 @@ export class AppointmentComponent implements OnInit {
   }
 
   clear() {
-    this.weekDays.forEach(element => {
+    this.weekDays.forEach((element) => {
       element.checked = false;
     });
-    this.weekends.forEach(element => {
+    this.weekends.forEach((element) => {
       element.checked = false;
     });
-    this.types.forEach(element => {
+    this.types.forEach((element) => {
       element.checked = false;
     });
     this.errorMsg = null;
@@ -283,10 +320,18 @@ export class AppointmentComponent implements OnInit {
   update(selectedDay, operation) {
     let array = this.userSchedule.slotSchedule;
     array.forEach((element, index) => {
-      if (operation === 'cancel' && new Date(element.date).getTime() === new Date(selectedDay.start).getTime()) {
+      if (
+        operation === "cancel" &&
+        new Date(element.date).getTime() ===
+          new Date(selectedDay.start).getTime()
+      ) {
         array.splice(index, 1);
       }
-      if (operation === 'update' && new Date(element.date).getTime() === new Date(selectedDay.start).getTime()) {
+      if (
+        operation === "update" &&
+        new Date(element.date).getTime() ===
+          new Date(selectedDay.start).getTime()
+      ) {
         element.startTime = selectedDay.startTime;
         element.endTime = selectedDay.endTime;
       }
@@ -298,7 +343,7 @@ export class AppointmentComponent implements OnInit {
       userUuid: this.userSchedule.userUuid,
       slotDays: this.userSchedule.slotDays,
       slotSchedule: this.userSchedule.slotSchedule,
-      drName: this.userSchedule.drName
+      drName: this.userSchedule.drName,
     };
     this.saveSchedule(body);
   }
@@ -308,5 +353,4 @@ export class AppointmentComponent implements OnInit {
       this.errorMsg = res;
     });
   }
-
 }
