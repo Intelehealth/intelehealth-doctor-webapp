@@ -41,7 +41,6 @@ export class AppointmentComponent implements OnInit {
   viewDate: Date = new Date();
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
-  selectedLang: string = "en";
   selectedDays = [];
   scheduleForm = new FormGroup({
     startTime: new FormControl("9:00 AM", [Validators.required]),
@@ -80,13 +79,20 @@ export class AppointmentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.selectedLang = localStorage.getItem("selectedLanguage");
     this.getSchedule();
     this.slotHours = this.getHours();
   }
 
-  getSchedule() {
-    this.appointmentService.getUserAppoitment(this.userId).subscribe({
+  get locale() {
+    return localStorage.getItem("selectedLanguage");
+  }
+
+  get viewDateLabel() {
+    return moment(this.viewDate).locale(this.locale).format("MMMM YYYY");
+  }
+
+  getSchedule(year = moment(this.viewDate).format("YYYY")) {
+    this.appointmentService.getUserAppoitment(this.userId, year).subscribe({
       next: (res: any) => {
         if (res && res.data) {
           this.userSchedule = res.data;
@@ -191,38 +197,44 @@ export class AppointmentComponent implements OnInit {
     this.errorMsg = null;
     if (type.day === "All Days") {
       this.type = "month";
-      this.weekDays.forEach((element) =>
-        type.checked === true
-          ? (element.checked = true)
-          : (element.checked = false)
-      );
-      this.weekends.forEach((element) =>
-        type.checked === true
-          ? (element.checked = true)
-          : (element.checked = false)
-      );
+      this.weekDays.forEach((element) => (element.checked = !!type.checked));
+      this.weekends.forEach((element) => (element.checked = !!type.checked));
+      this.types.forEach((element) => (element.checked = !!type.checked));
     } else if (type.day === "Week Day") {
+      this.weekDays.forEach((element) => (element.checked = !!type.checked));
       this.type = "week";
-      this.weekDays.forEach((element) =>
-        type.checked === true
-          ? (element.checked = true)
-          : (element.checked = false)
-      );
     } else {
       this.type = "week";
     }
     this.selectedDays = this.weekDays
       .filter((day) => day.checked)
       .concat(this.weekends.filter((day) => day.checked));
+    let weekDayCheck = true;
+    let allDayCheck = true;
+    this.weekDays.forEach((day) => {
+      if (!day.checked) {
+        weekDayCheck = false;
+        allDayCheck = false;
+      }
+    });
+    this.weekends.forEach((day) => {
+      if (!day.checked) {
+        allDayCheck = false;
+      }
+    });
+    let [allDay, weekDay] = this.types;
+    weekDay.checked = weekDayCheck;
+    allDay.checked = allDayCheck;
   }
 
   getSlotSchedule(selectedDays) {
     let schedules = [];
     const start = moment(this.viewDate).startOf("month");
     const end = moment(this.viewDate).endOf("month");
+    const todaysDate = moment(moment().format("LL"), "LL");
     let currentDay = moment(start.format());
     const days = selectedDays.map((d) => d.day);
-    while (currentDay < end) {
+    while (currentDay < end && currentDay > todaysDate) {
       const day = currentDay.format("dddd");
       if (days.includes(day)) {
         schedules.push({
@@ -235,22 +247,38 @@ export class AppointmentComponent implements OnInit {
       currentDay.add(1, "day");
     }
     let existingToKeep = [];
-    this.userSchedule.slotSchedule.forEach((s) => {
+    const { slotSchedule = [] } = this.userSchedule;
+    slotSchedule.forEach((s) => {
       const date = moment(s.date);
-      if (!date.isSame(start) && !date.isBetween(start, end)) {
-        existingToKeep.push(s);
+      let slotToPush = s;
+      if (
+        !date.isSame(end) &&
+        !date.isSame(start) &&
+        (!date.isBetween(start, end) || date <= todaysDate)
+      ) {
+        existingToKeep.push(slotToPush);
       }
     });
-    let current = existingToKeep.concat(schedules);
-    return current;
+    return existingToKeep.concat(schedules);
   }
 
   submit() {
+    const lastDayOfMonthStart = moment().endOf("month").startOf("day");
+    const lastDayOfMonthEnd = moment().endOf("month").endOf("day");
+    if (
+      moment(this.viewDate).isBetween(lastDayOfMonthStart, lastDayOfMonthEnd)
+    ) {
+      this.toast({
+        message: `You can't create/update past and schedule`,
+      });
+      return;
+    }
     if (this.validateTimeSlots(this.scheduleForm.value)) {
       if (this.selectedDays.length > 0) {
         const speciality = this.getSpeciality();
         let body = this.getJson(speciality);
         this.saveSchedule(body);
+        this.getSchedule();
         this.modal.dismissAll();
         this.errorMsg = null;
       } else {
@@ -269,12 +297,10 @@ export class AppointmentComponent implements OnInit {
     slotSchedule: any[];
     drName: any;
   }) {
-    console.log("body", body);
     this.appointmentService.updateOrCreateAppointment(body).subscribe({
       next: (res: any) => {
         if (res.status) {
-          this.userSchedule = body;
-          this.initializeEvents(body.slotSchedule);
+          this.getSchedule();
           this.translationService.getTranslation(res.message);
         }
       },
@@ -289,6 +315,7 @@ export class AppointmentComponent implements OnInit {
       slotDays: this.selectedDays.map((d) => d.day).join("||"),
       slotSchedule: this.getSlotSchedule(this.selectedDays),
       drName: this.drName,
+      year: moment(this.viewDate).format("YYYY"),
     };
   }
 
@@ -344,6 +371,7 @@ export class AppointmentComponent implements OnInit {
       slotDays: this.userSchedule.slotDays,
       slotSchedule: this.userSchedule.slotSchedule,
       drName: this.userSchedule.drName,
+      year: moment(this.viewDate).format("YYYY"),
     };
     this.saveSchedule(body);
   }

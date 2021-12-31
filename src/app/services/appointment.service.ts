@@ -16,8 +16,10 @@ export class AppointmentService {
     );
   }
 
-  getUserAppoitment(userUuid) {
-    return this.http.get(`${this.baseURL}/appointment/getSchedule/${userUuid}`);
+  getUserAppoitment(userUuid, year) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getSchedule/${userUuid}?year=${year}`
+    );
   }
 
   getUserSlots(userUuid, fromDate, toDate) {

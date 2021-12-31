@@ -113,7 +113,6 @@ export class CalendarComponent implements OnInit {
     array.sort((a, b) => a.start.getTime() - b.start.getTime());
     this.events = Object.assign([], array);
     this.refresh.next();
-    console.log("events", this.events);
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -208,7 +207,7 @@ export class CalendarComponent implements OnInit {
     let endOfMonth = moment(this.viewDate)
       .endOf(view)
       .format("YYYY-MM-DD hh:mm");
-    //console.log({startOfMonth, endOfMonth})
+    //
     return { startOfMonth, endOfMonth };
   }
 
@@ -222,7 +221,6 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.drSlots = res.data;
-          //  console.log("this.drSlots: ", this.drSlots);
           this.initializeEvents(this.drSlots);
         },
       });
@@ -239,7 +237,6 @@ export class CalendarComponent implements OnInit {
   todaysDate = moment().format("YYYY-MM-DD");
   slots = [];
   rescheduleClick(schedule) {
-    console.log("schedule: ", schedule);
     this.vService
       .fetchVisitDetails(
         schedule.visitUuid,
@@ -257,8 +254,9 @@ export class CalendarComponent implements OnInit {
           const message = `Visit is already completed, it can't be rescheduled.`;
           this.toast({ message });
         } else {
-          this.getAppointmentSlots();
           this.selectedSchedule = schedule;
+          const e = { target: { value: moment().format("YYYY-MM-DD") } };
+          this.changeCalender(e);
           this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
         }
       });
@@ -271,7 +269,6 @@ export class CalendarComponent implements OnInit {
 
   selectSlot(slot) {
     this.selectedSlotIdx = slot;
-    console.log("slot: ", slot);
   }
 
   reschedule() {
@@ -279,19 +276,17 @@ export class CalendarComponent implements OnInit {
       ...this.slots[this.selectedSlotIdx],
       ...this.selectedSchedule,
     };
-    console.log("payload: ", payload);
 
-    // this.appointmentService
-    //   .rescheduleAppointment(payload)
-    //   .subscribe((res: any) => {
-    //     console.log("res: ", res);
-    //     const message = res.message || "Appointment rescheduled successfully!";
-    //     this.toast({ message });
-    //     this.rescheduleModalRef.close();
-    //     this.detailModalRef.close();
-    //     this.selectedSlotIdx = null;
-    //     this.ngOnInit();
-    //   });
+    this.appointmentService
+      .rescheduleAppointment(payload)
+      .subscribe((res: any) => {
+        const message = res.message || "Appointment rescheduled successfully!";
+        this.toast({ message });
+        this.rescheduleModalRef.close();
+        this.detailModalRef.close();
+        this.selectedSlotIdx = null;
+        this.ngOnInit();
+      });
   }
 
   getAppointmentSlots(
@@ -307,7 +302,6 @@ export class CalendarComponent implements OnInit {
       )
       .subscribe((res: any) => {
         this.slots = res.dates;
-        console.log("this.slots: ", this.slots);
       });
   }
 

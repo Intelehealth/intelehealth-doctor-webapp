@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="col-md-4" style="text-align: center;">
-          <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):selectedLang }}</h3>
+          <h3>{{viewDateLabel}}</h3>
         </div>
         <div class="col-md-4">
           <button style="float: right;" class="btn btn-primary" (click)="addSchedule()">
@@ -30,16 +30,16 @@
       <br />
       <div class="calendar-view" [ngSwitch]="view">
         <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
-          [refresh]="refresh" [locale]="selectedLang" [activeDayIsOpen]="activeDayIsOpen"
+          [refresh]="refresh" [locale]="locale" [activeDayIsOpen]="activeDayIsOpen"
           (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
           (eventTimesChanged)="eventTimesChanged($event)">
         </mwl-calendar-month-view>
         <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [dayStartHour]="9" [viewDate]="viewDate"
-          [events]="events" [refresh]="refresh" [locale]="selectedLang"
+          [events]="events" [refresh]="refresh" [locale]="locale"
           (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
         </mwl-calendar-week-view>
         <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [dayStartHour]="9" [viewDate]="viewDate"
-          [events]="events" [refresh]="refresh" [locale]="selectedLang"
+          [events]="events" [refresh]="refresh" [locale]="locale"
           (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
         </mwl-calendar-day-view>
       </div>
@@ -121,7 +121,7 @@
       <br />
       <h5 style="text-align: center">
         {{ "Schedule" | translate }} <br />
-        {{ modalData.date | calendarDate: "day" + "ViewTitle":selectedLang }}
+        {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
         <span style="float: right;cursor: pointer; font-size: 31px;
         margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
       </h5>
@@ -134,7 +134,7 @@
             <mat-label>
               <h5>{{ "Start Time" | translate }}</h5>
             </mat-label>
-            <select [(ngModel)]="e1.startTime">
+            <select [disabled]="e1.isTimeOver" [(ngModel)]="e1.startTime">
               <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
@@ -142,12 +142,15 @@
             <mat-label>
               <h5>{{ "End Time" | translate }}</h5>
             </mat-label>
-            <select [(ngModel)]="e1.endTime">
+            <select [disabled]="e1.isTimeOver" [(ngModel)]="e1.endTime">
               <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
         </div>
         <hr />
+        <div *ngIf="e1.isTimeOver" class="alert alert-warning mt-4">
+          You can not modify past schedule.
+        </div>
         <div class="col-sm-12 text-center">
           <button type="button" class="btn btn-primary center1" [disabled]="e1.isTimeOver"
             (click)="update(e1, 'cancel');close()">
