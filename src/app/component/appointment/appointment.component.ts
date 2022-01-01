@@ -349,16 +349,12 @@ export class AppointmentComponent implements OnInit {
       return;
     }
     if (this.validateTimeSlots(this.scheduleForm.value)) {
-      if (this.selectedDays.length > 0) {
-        const speciality = this.getSpeciality();
-        let body = this.getJson(speciality);
-        this.saveSchedule(body);
-        this.getSchedule();
-        this.modal.dismissAll();
-        this.errorMsg = null;
-      } else {
-        this.error("Select Day Message");
-      }
+      const speciality = this.getSpeciality();
+      let body = this.getJson(speciality);
+      this.saveSchedule(body);
+      this.getSchedule();
+      this.modal.dismissAll();
+      this.errorMsg = null;
     } else {
       this.error("Check Time Message");
     }
