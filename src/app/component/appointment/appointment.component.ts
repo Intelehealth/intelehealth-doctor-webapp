@@ -70,7 +70,6 @@ export class AppointmentComponent implements OnInit {
     events: CalendarEvent[];
   };
   constructor(
-    private fb: FormBuilder,
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
     private translationService: TranslationService,
@@ -81,6 +80,26 @@ export class AppointmentComponent implements OnInit {
   ngOnInit(): void {
     this.getSchedule();
     this.slotHours = this.getHours();
+  }
+
+  checkDaysFromSchedule() {
+    try {
+      if (this.userSchedule.slotDays) {
+        const slotDays = this.userSchedule.slotDays.split("||");
+        slotDays.forEach((day) => {
+          const weekIdx = this.weekDays.findIndex((d) => d.day === day);
+          const weekndIdx = this.weekends.findIndex((d) => d.day === day);
+          if (weekIdx != -1) {
+            this.weekDays[weekIdx].checked = true;
+          }
+          if (weekndIdx != -1) {
+            this.weekends[weekndIdx].checked = true;
+          }
+        });
+      }
+    } catch (error) {
+      console.log("error: ", error);
+    }
   }
 
   get locale() {
@@ -127,9 +146,10 @@ export class AppointmentComponent implements OnInit {
     }
     array.sort((a, b) => a.start.getTime() - b.start.getTime());
     this.events = Object.assign([], array);
+    this.checkDaysFromSchedule();
   }
 
-  getHours() {
+  getHours(returnAll = true, date?) {
     const hours = Array.from(
       {
         length: 24,
@@ -141,7 +161,12 @@ export class AppointmentComponent implements OnInit {
         }).format("LT")
     );
     hours.splice(0, 9);
-    return hours;
+    if (this.isToday(date) && !returnAll) {
+      const hrs = hours.filter((h) => moment(h, "LT").isAfter(moment()));
+      return hrs;
+    } else {
+      return hours;
+    }
   }
 
   toast({
@@ -188,8 +213,8 @@ export class AppointmentComponent implements OnInit {
   }
 
   addSchedule() {
-    this.clear();
     this.selectedDays = [];
+    this.slotHours = this.getHours(true);
     this.modal.open(this.modalContent);
   }
 
@@ -234,15 +259,17 @@ export class AppointmentComponent implements OnInit {
     const todaysDate = moment(moment().format("LL"), "LL");
     let currentDay = moment(start.format());
     const days = selectedDays.map((d) => d.day);
-    while (currentDay < end && currentDay > todaysDate) {
-      const day = currentDay.format("dddd");
-      if (days.includes(day)) {
-        schedules.push({
-          day,
-          endTime: this.scheduleForm.value.endTime,
-          startTime: this.scheduleForm.value.startTime,
-          date: currentDay.format(),
-        });
+    while (currentDay < end) {
+      if (currentDay > todaysDate) {
+        const day = currentDay.format("dddd");
+        if (days.includes(day)) {
+          schedules.push({
+            day,
+            endTime: this.scheduleForm.value.endTime,
+            startTime: this.scheduleForm.value.startTime,
+            date: currentDay.format(),
+          });
+        }
       }
       currentDay.add(1, "day");
     }
@@ -262,12 +289,23 @@ export class AppointmentComponent implements OnInit {
     return existingToKeep.concat(schedules);
   }
 
-  submit() {
+  isToday(date = this.viewDate) {
+    const start = moment().startOf("day");
+    const end = moment().endOf("day");
+    return moment(date).isBetween(start, end);
+  }
+
+  isPast() {
     const lastDayOfMonthStart = moment().endOf("month").startOf("day");
     const lastDayOfMonthEnd = moment().endOf("month").endOf("day");
-    if (
-      moment(this.viewDate).isBetween(lastDayOfMonthStart, lastDayOfMonthEnd)
-    ) {
+    return moment(this.viewDate).isBetween(
+      lastDayOfMonthStart,
+      lastDayOfMonthEnd
+    );
+  }
+
+  submit() {
+    if (this.isPast()) {
       this.toast({
         message: `You can't create/update past and schedule`,
       });
@@ -340,6 +378,7 @@ export class AppointmentComponent implements OnInit {
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (events.length !== 0) {
       this.modalData = { date, events };
+      this.slotHours = this.getHours(false, date);
       this.modal.open(this.schedule);
     }
   }
