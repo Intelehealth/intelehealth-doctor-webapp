@@ -84,6 +84,8 @@ export class AppointmentComponent implements OnInit {
 
   checkDaysFromSchedule() {
     try {
+      this.weekDays.forEach((day) => (day.checked = false));
+      this.weekends.forEach((day) => (day.checked = false));
       if (this.userSchedule.slotDays) {
         const slotDays = this.userSchedule.slotDays.split("||");
         slotDays.forEach((day) => {
@@ -215,6 +217,7 @@ export class AppointmentComponent implements OnInit {
   addSchedule() {
     this.selectedDays = [];
     this.slotHours = this.getHours(true);
+    this.checkDaysFromSchedule();
     this.modal.open(this.modalContent);
   }
 
