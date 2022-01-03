@@ -99,7 +99,7 @@
 </div>
 
 <ng-template #modalContent let-close="close" data-target="static">
-  <div class="content-container">
+  <div class="modal-content">
     <div class="modal-title">
       <br />
       <h5 style="text-align: center">
@@ -119,18 +119,20 @@
         </thead>
         <tbody>
           <tr *ngFor="let e1 of modalData?.events">
-            <td>
-              <a
-                [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
-                [class.disabled]="e1.isTimeOver ? true : null"
-                (click)="close()"
-                >{{ e1.patientName }}</a
-              >
-            </td>
+            <td>{{ e1.patientName }}</td>
             <td>{{ e1.openMrsId }}</td>
             <td>{{ e1.slotTime }}</td>
             <td>
               <button
+              mat-raised-button
+              color="primary"
+              [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+              (click)="close()"
+            >
+              {{ "View" | translate }}
+            </button> 
+              <button
+              style="float: right;"
                 mat-raised-button
                 color="primary"
                 (click)="rescheduleClick(e1)"

@@ -54,11 +54,11 @@ th {
   cursor: pointer;
 }
 
-a.disabled {
+/* a.disabled {
   pointer-events: none;
   cursor: default;
   color: #212529;
-}
+} */
 .d-grid {
   display: grid !important;
   width: 100px;
@@ -66,4 +66,12 @@ a.disabled {
 }
 .active {
   background: #87c6ed;
+}
+.modal-content {
+  width: 150%;
+}
+
+table,
+th, td {
+  text-align: center;
 }
