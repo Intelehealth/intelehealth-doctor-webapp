@@ -143,7 +143,12 @@ export class AppointmentComponent implements OnInit {
         endTime: slot[i].endTime,
         day: slot[i].day,
       };
-      event1["isTimeOver"] = event1.start < new Date();
+      const isToday = this.isToday(event1.start);
+      if (isToday || moment().startOf("day").isSame(moment(event1.start))) {
+        event1["isTimeOver"] = false;
+      } else {
+        event1["isTimeOver"] = event1.start < new Date();
+      }
       array.push(event1);
     }
     array.sort((a, b) => a.start.getTime() - b.start.getTime());
