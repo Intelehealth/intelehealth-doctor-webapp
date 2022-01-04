@@ -149,10 +149,12 @@ export class CalendarComponent implements OnInit {
     this.handleEvent("Dropped or resized", event);
   }
 
-  handleEvent(action: string, event): void {
-    if (event.start > new Date()) {
-      this.router.navigate(["/visitSummary", event.patientId, event.visitUuid]);
-    }
+  handleEvent(action: string, event: CalendarEvent): void {
+    let events = [];
+    events.push(event);
+    let date =  new Date(event.start);
+    this.modalData = {date, events };
+    this.detailModalRef = this.modal.open(this.modalContent);
   }
 
   setView(view: CalendarView) {
@@ -318,4 +320,9 @@ export class CalendarComponent implements OnInit {
     };
     this.snackbar.open(message, null, opts);
   }
+
+  get locale() {
+    return localStorage.getItem("selectedLanguage");
+  }
+
 }

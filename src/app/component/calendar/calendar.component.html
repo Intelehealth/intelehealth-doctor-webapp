@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="col-md-4" style="text-align: center">
-      <h3>{{ viewDate | calendarDate: view + "ViewTitle":selectedLang }}</h3>
+      <h3>{{ viewDate | calendarDate: view + "ViewTitle":locale }}</h3>
     </div>
     <div class="col-md-4">
       <div class="btn-group" style="float: right">
@@ -66,7 +66,7 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="selectedLang"
+      [locale]="locale"
       [activeDayIsOpen]="activeDayIsOpen"
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
@@ -79,7 +79,7 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="selectedLang"
+      [locale]="locale"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -90,7 +90,7 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="selectedLang"
+      [locale]="locale"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -104,7 +104,7 @@
       <br />
       <h5 style="text-align: center">
         {{ "Appointment Details" | translate }} <br />
-        {{ modalData.date | calendarDate: "day" + "ViewTitle":selectedLang }}
+        {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
       </h5>
     </div>
     <div class="modal-body">
