@@ -144,7 +144,7 @@ export class AppointmentComponent implements OnInit {
         day: slot[i].day,
       };
       const isToday = this.isToday(event1.start);
-      if (isToday || moment().startOf("day").isSame(moment(event1.start))) {
+      if (isToday) {
         event1["isTimeOver"] = false;
       } else {
         event1["isTimeOver"] = event1.start < new Date();
@@ -300,7 +300,10 @@ export class AppointmentComponent implements OnInit {
   isToday(date = this.viewDate) {
     const start = moment().startOf("day");
     const end = moment().endOf("day");
-    return moment(date).isBetween(start, end);
+    return (
+      moment().startOf("day").isSame(moment(date)) ||
+      moment(date).isBetween(start, end)
+    );
   }
 
   isPast() {
