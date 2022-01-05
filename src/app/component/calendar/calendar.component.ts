@@ -19,6 +19,7 @@ import { isSameMonth, isSameDay, addMinutes } from "date-fns";
 import * as moment from "moment";
 import { Subject } from "rxjs";
 import { AppointmentService } from "src/app/services/appointment.service";
+import { TranslationService } from "src/app/services/translation.service";
 import { VisitService } from "src/app/services/visit.service";
 
 const colors: any = {
@@ -69,7 +70,7 @@ export class CalendarComponent implements OnInit {
     private modal: NgbModal,
     private appointmentService: AppointmentService,
     private vService: VisitService,
-    private router: Router,
+    private translationService: TranslationService,
     private snackbar: MatSnackBar
   ) {}
 
@@ -309,6 +310,21 @@ export class CalendarComponent implements OnInit {
       });
   }
 
+  cancelAppointment(schedule) {
+    const payload = {
+      "id": schedule.appointmentId,
+      "visitUuid": schedule.visitUuid
+    };
+    this.appointmentService
+      .cancelAppointment(payload)
+      .subscribe((res: any) => {
+        const message = res.message || "Appointment cancelled successfully!";
+        this.toast({ message });
+        this.detailModalRef.close();
+        this.ngOnInit();
+      });
+  }
+
   toast({
     message,
     duration = 5000,
@@ -320,7 +336,8 @@ export class CalendarComponent implements OnInit {
       horizontalPosition,
       verticalPosition,
     };
-    this.snackbar.open(message, null, opts);
+    this.translationService.getTranslation(message);
+    //this.snackbar.open(message, null, opts);
   }
 
   get locale() {

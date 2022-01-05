@@ -40,4 +40,11 @@ export class AppointmentService {
       payload
     );
   }
+
+  cancelAppointment(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/cancelAppointment`,
+      payload
+    );
+  }
 }

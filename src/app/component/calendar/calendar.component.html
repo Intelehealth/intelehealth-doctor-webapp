@@ -125,6 +125,7 @@
             <td>
               <button
               mat-raised-button
+              style="float: left;"
               color="primary"
               [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
               (click)="close()"
@@ -132,12 +133,19 @@
               {{ "View" | translate }}
             </button> 
               <button
-              style="float: right;"
                 mat-raised-button
                 color="primary"
                 (click)="rescheduleClick(e1)"
               >
                 {{ "Reschedule" | translate }}
+              </button>
+              <button
+                style="float: right;"
+                mat-raised-button
+                color="primary"
+                (click)="cancelAppointment(e1)"
+              >
+              {{ "Cancel" | translate }}
               </button>
             </td>
           </tr>
@@ -169,7 +177,7 @@
               cha
               disabled
               type="text"
-              [value]="selectedSchedule?.speciality"
+              [value]="(selectedSchedule?.speciality) | translate"
             />
           </div>
           <div class="col-7">
@@ -200,7 +208,7 @@
               </mat-chip>
             </mat-chip-list>
             <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
-              No slots avalable for the day, try changing dates.
+              {{ 'No slots avalable for the day, try changing dates.' | translate }}
             </div>
           </div>
         </div>
