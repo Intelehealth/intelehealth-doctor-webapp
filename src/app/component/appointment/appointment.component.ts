@@ -99,6 +99,22 @@ export class AppointmentComponent implements OnInit {
           }
         });
       }
+      let weekDayCheck = true;
+      let allDayCheck = true;
+      this.weekDays.forEach((day) => {
+        if (!day.checked) {
+          weekDayCheck = false;
+          allDayCheck = false;
+        }
+      });
+      this.weekends.forEach((day) => {
+        if (!day.checked) {
+          allDayCheck = false;
+        }
+      });
+      let [allDay, weekDay] = this.types;
+      weekDay.checked = weekDayCheck;
+      allDay.checked = allDayCheck;
     } catch (error) {
       console.log("error: ", error);
     }
