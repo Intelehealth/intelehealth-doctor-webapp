@@ -16,9 +16,9 @@ export class AppointmentService {
     );
   }
 
-  getUserAppoitment(userUuid, year) {
+  getUserAppoitment(userUuid, year, month) {
     return this.http.get(
-      `${this.baseURL}/appointment/getSchedule/${userUuid}?year=${year}`
+      `${this.baseURL}/appointment/getSchedule/${userUuid}?year=${year}&month=${month}`
     );
   }
 

@@ -112,17 +112,24 @@ export class AppointmentComponent implements OnInit {
     return moment(this.viewDate).locale(this.locale).format("MMMM YYYY");
   }
 
-  getSchedule(year = moment(this.viewDate).format("YYYY")) {
-    this.appointmentService.getUserAppoitment(this.userId, year).subscribe({
-      next: (res: any) => {
-        if (res && res.data) {
-          this.userSchedule = res.data;
-        } else {
-          this.userSchedule.slotSchedule = [];
-        }
-        this.initializeEvents(this.userSchedule.slotSchedule);
-      },
-    });
+  getSchedule(
+    year = moment(this.viewDate).format("YYYY"),
+    month = moment(this.viewDate).format("MMMM")
+  ) {
+    this.appointmentService
+      .getUserAppoitment(this.userId, year, month)
+      .subscribe({
+        next: (res: any) => {
+          if (res && res.data) {
+            this.userSchedule = res.data;
+          } else {
+            this.userSchedule = {
+              slotSchedule: [],
+            };
+          }
+          this.initializeEvents(this.userSchedule.slotSchedule);
+        },
+      });
   }
 
   private initializeEvents(slots) {
@@ -365,6 +372,7 @@ export class AppointmentComponent implements OnInit {
       slotSchedule: this.getSlotSchedule(this.selectedDays),
       drName: this.drName,
       year: moment(this.viewDate).format("YYYY"),
+      month: moment(this.viewDate).format("MMMM"),
     };
   }
 
@@ -422,6 +430,7 @@ export class AppointmentComponent implements OnInit {
       slotSchedule: this.userSchedule.slotSchedule,
       drName: this.userSchedule.drName,
       year: moment(this.viewDate).format("YYYY"),
+      month: moment(this.viewDate).format("MMMM"),
     };
     this.saveSchedule(body);
   }
