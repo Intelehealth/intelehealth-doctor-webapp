@@ -213,6 +213,8 @@
   "Neurologist": "Neurologist",
   "Aids Specialist": "Aids Specialist",
   "Infectionist": "Infectionist",
+  "Are you sure to cancel this appointment?":"Are you sure to cancel this appointment?",
+  "Are you sure to cancel this schedule?":"Are you sure to cancel this schedule?",
   "messages": {
     "welcome": "Welcome",
     "loginError": "Username & Password doesn't match",

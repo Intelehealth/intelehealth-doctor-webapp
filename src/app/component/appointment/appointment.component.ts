@@ -12,6 +12,7 @@ import { CalendarEvent, CalendarView } from "angular-calendar";
 import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
 import { TranslationService } from "src/app/services/translation.service";
+import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
 
 const colors: any = {
   red: {
@@ -69,12 +70,14 @@ export class AppointmentComponent implements OnInit {
     date: Date;
     events: CalendarEvent[];
   };
+  scheduleModalRef=null;
   constructor(
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
     private translationService: TranslationService,
     private modal: NgbModal,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private dialogService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -377,6 +380,7 @@ export class AppointmentComponent implements OnInit {
         }
       },
     });
+    this.scheduleModalRef.close();
   }
 
   private getJson(speciality: any) {
@@ -414,7 +418,7 @@ export class AppointmentComponent implements OnInit {
     if (events.length !== 0) {
       this.modalData = { date, events };
       this.slotHours = this.getHours(false, date);
-      this.modal.open(this.schedule);
+      this.scheduleModalRef = this.modal.open(this.schedule);
     }
   }
 
@@ -448,7 +452,16 @@ export class AppointmentComponent implements OnInit {
       year: moment(this.viewDate).format("YYYY"),
       month: moment(this.viewDate).format("MMMM"),
     };
-    this.saveSchedule(body);
+    if(operation === "cancel") {
+      this.dialogService.openConfirmDialog("Are you sure to cancel this schedule?")
+      .afterClosed().subscribe(res => {
+        if (res) {
+          this.saveSchedule(body);
+        }
+      });
+    } else {
+      this.saveSchedule(body);
+    }
   }
 
   private error(msg) {

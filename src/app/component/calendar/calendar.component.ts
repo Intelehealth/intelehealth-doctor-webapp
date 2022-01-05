@@ -5,9 +5,6 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {
   CalendarView,
@@ -21,6 +18,7 @@ import { Subject } from "rxjs";
 import { AppointmentService } from "src/app/services/appointment.service";
 import { TranslationService } from "src/app/services/translation.service";
 import { VisitService } from "src/app/services/visit.service";
+import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
 
 const colors: any = {
   red: {
@@ -71,8 +69,8 @@ export class CalendarComponent implements OnInit {
     private appointmentService: AppointmentService,
     private vService: VisitService,
     private translationService: TranslationService,
-    private snackbar: MatSnackBar
-  ) {}
+    private dialogService: ConfirmDialogService,
+  ) { }
 
   private initializeEvents(slot) {
     let array: CalendarEvent[] = [];
@@ -311,17 +309,22 @@ export class CalendarComponent implements OnInit {
   }
 
   cancelAppointment(schedule) {
-    const payload = {
-      "id": schedule.appointmentId,
-      "visitUuid": schedule.visitUuid
-    };
-    this.appointmentService
-      .cancelAppointment(payload)
-      .subscribe((res: any) => {
-        const message = res.message || "Appointment cancelled successfully!";
-        this.toast({ message });
-        this.detailModalRef.close();
-        this.ngOnInit();
+    this.dialogService.openConfirmDialog("Are you sure to cancel this appointment?")
+      .afterClosed().subscribe(res => {
+        if (res) {
+          const payload = {
+            "id": schedule.appointmentId,
+            "visitUuid": schedule.visitUuid
+          };
+          this.appointmentService
+            .cancelAppointment(payload)
+            .subscribe((res: any) => {
+              const message = res.message || "Appointment cancelled successfully!";
+              this.toast({ message });
+              this.detailModalRef.close();
+              this.ngOnInit();
+            });
+        }
       });
   }
 

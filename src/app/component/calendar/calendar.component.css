@@ -68,7 +68,8 @@ th {
   background: #87c6ed;
 }
 .modal-content {
-  width: 170%;
+  width: 160%;
+  right: 140px;
 }
 
 table,

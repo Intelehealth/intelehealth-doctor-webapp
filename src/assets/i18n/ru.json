@@ -213,6 +213,8 @@
   "Neurologist": "Невролог",
   "Aids Specialist": "Специалист по СПИДу",
   "Infectionist": "Инфекционист",
+  "Are you sure to cancel this appointment?":"Вы уверены, что отмените встречу?",
+  "Are you sure to cancel this schedule?":"Вы уверены, что отмените это расписание?",
   "messages": {
     "welcome": "Добро пожаловать",
     "loginError": "Имя пользователя и пароль не совпадают",
