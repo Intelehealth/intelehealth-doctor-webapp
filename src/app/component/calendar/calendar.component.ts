@@ -63,6 +63,7 @@ export class CalendarComponent implements OnInit {
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
   selectedLang: string = "en";
+  setSpiner = false;
 
   constructor(
     private modal: NgbModal,
@@ -209,7 +210,6 @@ export class CalendarComponent implements OnInit {
     let endOfMonth = moment(this.viewDate)
       .endOf(view)
       .format("YYYY-MM-DD hh:mm");
-    //
     return { startOfMonth, endOfMonth };
   }
 
@@ -275,8 +275,8 @@ export class CalendarComponent implements OnInit {
 
   reschedule() {
     const payload = {
-      ...this.slots[this.selectedSlotIdx],
       ...this.selectedSchedule,
+      ...this.slots[this.selectedSlotIdx]
     };
 
     this.appointmentService
@@ -296,6 +296,7 @@ export class CalendarComponent implements OnInit {
     toDate = this.todaysDate,
     speciality = this.selectedSchedule?.speciality
   ) {
+    this.setSpiner = true;
     this.appointmentService
       .getAppointmentSlots(
         moment(fromDate).format("DD/MM/YYYY"),
@@ -304,6 +305,7 @@ export class CalendarComponent implements OnInit {
       )
       .subscribe((res: any) => {
         this.slots = res.dates;
+        this.setSpiner = false;
       });
   }
 
