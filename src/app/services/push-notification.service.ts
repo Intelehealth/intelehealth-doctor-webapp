@@ -9,7 +9,7 @@ export class PushNotificationsService {
   private baseURL = environment.notificationURL;
   public snoozeTimeout = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
   //Notification functionality
   postSubscription(
     sub: PushSubscription,
@@ -24,6 +24,7 @@ export class PushNotificationsService {
       providerName,
       user_uuid,
       finger_print,
+      locale: localStorage.selectedLanguage,
     });
   }
 
@@ -41,7 +42,8 @@ export class PushNotificationsService {
       `${environment.mindmapURL}/mindmap/snooze_notification`,
       {
         user_uuid: JSON.parse(localStorage.user).uuid,
-        snooze_for, custom
+        snooze_for,
+        custom,
       }
     );
   }
@@ -52,7 +54,6 @@ export class PushNotificationsService {
       `${environment.mindmapURL}/mindmap/user_settings/${uuid}`
     );
   }
-
 
   changePassword(json) {
     return this.http.post(`${this.baseURL}/changePassword`, json);
