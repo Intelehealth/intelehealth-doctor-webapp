@@ -57,8 +57,8 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-    "BPahLgBCajrPyOkLGQuFf5sEtuX1pXRckn6bmW5nNrxy-5QM9uJ6JPM5sp_wuaJl1jNOylgcUxLJdOJtGIGEreo"; // Unicef training 
-    //"BCGfng5flfhjlqR_imzFXwHGeEMBA6AzFVAex7sPLDbsMCn_IMKtQmI9TDnmP6raxmPcBcnoKO_AHKaLtctsIjg"; //Unicef Production
+    "BPahLgBCajrPyOkLGQuFf5sEtuX1pXRckn6bmW5nNrxy-5QM9uJ6JPM5sp_wuaJl1jNOylgcUxLJdOJtGIGEreo"; // Unicef training
+  //"BCGfng5flfhjlqR_imzFXwHGeEMBA6AzFVAex7sPLDbsMCn_IMKtQmI9TDnmP6raxmPcBcnoKO_AHKaLtctsIjg"; //Unicef Production
 
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
@@ -340,5 +340,6 @@ export class NavbarComponent implements OnInit {
     this.translateService.use(lang);
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
+    this.subscribeNotification(true);
   }
 }
