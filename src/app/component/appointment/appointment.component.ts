@@ -70,7 +70,7 @@ export class AppointmentComponent implements OnInit {
     date: Date;
     events: CalendarEvent[];
   };
-  scheduleModalRef=null;
+  scheduleModalRef = null;
   constructor(
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
@@ -249,7 +249,7 @@ export class AppointmentComponent implements OnInit {
     this.selectedDays = [];
     this.slotHours = this.getHours(true);
     this.checkDaysFromSchedule();
-    this.modal.open(this.modalContent);
+    this.scheduleModalRef = this.modal.open(this.modalContent);
   }
 
   set(type) {
@@ -418,7 +418,7 @@ export class AppointmentComponent implements OnInit {
     if (events.length !== 0) {
       this.modalData = { date, events };
       this.slotHours = this.getHours(false, date);
-      this.scheduleModalRef = this.modal.open(this.schedule);
+      this.modal.open(this.schedule);
     }
   }
 
@@ -452,13 +452,15 @@ export class AppointmentComponent implements OnInit {
       year: moment(this.viewDate).format("YYYY"),
       month: moment(this.viewDate).format("MMMM"),
     };
-    if(operation === "cancel") {
-      this.dialogService.openConfirmDialog("Are you sure to cancel this schedule?")
-      .afterClosed().subscribe(res => {
-        if (res) {
-          this.saveSchedule(body);
-        }
-      });
+    if (operation === "cancel") {
+      this.dialogService
+        .openConfirmDialog("Are you sure to cancel this schedule?")
+        .afterClosed()
+        .subscribe((res) => {
+          if (res) {
+            this.saveSchedule(body);
+          }
+        });
     } else {
       this.saveSchedule(body);
     }

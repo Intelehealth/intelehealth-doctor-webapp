@@ -254,7 +254,7 @@
     "Appointment updated successfully":"Appointment updated successfully",
     "Appointment created successfully":"Appointment created successfully",
     "Incorrect date range - fromDate should be greater or equal to toDate day":"Incorrect date range - fromDate should be greater or equal to toDate day",
-    "Select Day Message":"Please select days for schedule",
+    "Select Day Message":"Please select/update days for schedule",
     "Check Time Message": "Time cannot be empty and start time should be less than end time",
     "Appointment rescheduled successfully!":"Appointment rescheduled successfully!",
     "Appointment cancelled successfully!":"Appointment cancelled successfully!",
