@@ -209,10 +209,12 @@ export class HomepageComponent implements OnInit {
   }
   
   getFollowUpVisits(visit) {
+    if(visit.stopDatetime === null) {
     this.getFollowUpDateAndExamination(visit);
     if(visit.followUp && this.isTodayFollowUp(visit.followUp, visit.examination)) {
     this.followUpVisit.push(this.assignValueToProperty(visit));
     this.followUpVisitNo += 1;
+     }
     }
   }
 
