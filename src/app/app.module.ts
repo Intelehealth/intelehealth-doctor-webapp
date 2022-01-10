@@ -37,6 +37,8 @@ import { CurrentVisitComponent } from './component/visit-summary/current-visit/c
 import { ModalsComponent } from './component/ayu/modals/modals.component';
 import { ReassignSpecialityComponent } from './component/visit-summary/reassign-speciality/reassign-speciality.component';
 import { ConfirmDialogComponent } from './component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component';
+import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
+import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 
 
 
@@ -60,6 +62,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 // Material Design Imports
 // import {
@@ -94,6 +98,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { MatChipsModule } from '@angular/material/chips';
 import { ChatComponent } from './component/chat/chat.component';
 import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
@@ -145,7 +150,9 @@ import { PastHistoryComponent } from './component/visit-summary/past-history/pas
     ChatComponent,
     VcComponent,
     TestChatComponent,
-    PastHistoryComponent
+    PastHistoryComponent,
+    AppointmentViewComponent,
+    AppointmentScheduleComponent
   ],
   imports: [
     BrowserModule,
@@ -172,6 +179,7 @@ import { PastHistoryComponent } from './component/visit-summary/past-history/pas
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatChipsModule,
     NgbModule,
     HttpClientModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
@@ -189,12 +197,18 @@ import { PastHistoryComponent } from './component/visit-summary/past-history/pas
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
         { path: 'test/chat', component: TestChatComponent },
+        { path: "appointment/schedule", component: AppointmentScheduleComponent },
+        { path: "appointment/view", component: AppointmentViewComponent },
       ] },
       { path: '**', component: Page404Component }
     ], { scrollPositionRestoration: 'enabled' }),
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
+    }),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
     }),
   ],
   providers: [
