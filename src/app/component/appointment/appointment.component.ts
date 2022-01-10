@@ -42,6 +42,7 @@ export class AppointmentComponent implements OnInit {
   viewDate: Date = new Date();
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
+  unChanged: boolean = true;
   selectedDays = [];
   scheduleForm = new FormGroup({
     startTime: new FormControl("9:00 AM", [Validators.required]),
@@ -152,6 +153,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   private initializeEvents(slots) {
+    this.unChanged = true;
     let slot = slots.reverse().filter(
       (
         (set) => (f) =>
@@ -253,6 +255,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   set(type) {
+    this.unChanged = false;
     this.errorMsg = null;
     if (type.day === "All Days") {
       this.type = "month";
@@ -349,6 +352,14 @@ export class AppointmentComponent implements OnInit {
       return;
     }
     if (this.validateTimeSlots(this.scheduleForm.value)) {
+      if (this.unChanged && this.selectedDays.length <= 0) {
+        if (this.userSchedule?.slotSchedule?.length > 0) {
+          this.selectedDays = this.userSchedule?.slotSchedule;
+        } else {
+          this.error("Select Day Message");
+          return;
+        }
+      }
       const speciality = this.getSpeciality();
       let body = this.getJson(speciality);
       this.saveSchedule(body);
@@ -404,6 +415,7 @@ export class AppointmentComponent implements OnInit {
     });
     this.errorMsg = null;
     this.selectedDays = [];
+    this.unChanged = false;
   }
 
   closeOpenMonthViewDay(type?) {
