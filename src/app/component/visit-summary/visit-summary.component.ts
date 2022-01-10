@@ -368,7 +368,7 @@ export class VisitSummaryComponent implements OnInit {
 
  checkMadnatoryTabs() {
     this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
-      const ObsData = response.results.filter((a) => this.conceptIds.includes(a.concept.uuid));
+      const ObsData = response.results.filter((a) => this.conceptIds.includes(a.concept.uuid) && this.visitUuid === a.encounter.visit.uuid);
       this.visitService.getAttribute(this.visitUuid).subscribe((response) => {
         const result = response.results;
         var tempMsg = result.filter((pType) => pType.display.includes("Patient Interaction")
