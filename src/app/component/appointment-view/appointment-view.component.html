@@ -1,0 +1,226 @@
+<div class="container wrap-login100">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="btn-group" style="float: left">
+          <div
+            class="btn btn-primary"
+            mwlCalendarPreviousView
+            [view]="view"
+            [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay('Previous')"
+          >
+            Previous
+          </div>
+          <div
+            class="btn btn-outline-secondary"
+            mwlCalendarToday
+            [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay('Today')"
+          >
+            Today
+          </div>
+          <div
+            class="btn btn-primary"
+            mwlCalendarNextView
+            [view]="view"
+            [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay('Next')"
+          >
+            Next
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+        <h3>{{ viewDate }}</h3>
+      </div>
+      <div class="col-md-4">
+        <div class="btn-group" style="float: right">
+          <div
+            class="btn btn-primary"
+            (click)="setView(CalendarView.Month)"
+            [class.active]="view === CalendarView.Month"
+          >
+            Month
+          </div>
+          <div
+            class="btn btn-primary"
+            (click)="setView(CalendarView.Week)"
+            [class.active]="view === CalendarView.Week"
+          >
+            Week
+          </div>
+          <div
+            class="btn btn-primary"
+            (click)="setView(CalendarView.Day)"
+            [class.active]="view === CalendarView.Day"
+          >
+            Day
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="calendar-view" [ngSwitch]="view">
+      <mwl-calendar-month-view
+        *ngSwitchCase="CalendarView.Month"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [locale]="locale"
+        [activeDayIsOpen]="activeDayIsOpen"
+        (dayClicked)="dayClicked($event.day)"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-month-view>
+      <mwl-calendar-week-view
+        *ngSwitchCase="CalendarView.Week"
+        [dayStartHour]="9"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [locale]="locale"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-week-view>
+      <mwl-calendar-day-view
+        *ngSwitchCase="CalendarView.Day"
+        [dayStartHour]="9"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh"
+        [locale]="locale"
+        (eventClicked)="handleEvent('Clicked', $event.event)"
+        (eventTimesChanged)="eventTimesChanged($event)"
+      >
+      </mwl-calendar-day-view>
+    </div>
+  </div>
+  
+  <ng-template #modalContent let-close="close" data-target="static">
+    <div class="modal-content">
+      <div class="modal-title">
+        <br />
+        <h5 style="text-align: center">
+            Appointment Details <br />
+          {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
+        </h5>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>OpenMRS ID</th>
+              <th>Start Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e1 of modalData?.events">
+              <td>{{ e1.patientName }}</td>
+              <td>{{ e1.openMrsId }}</td>
+              <td>{{ e1.slotTime }}</td>
+              <td>
+                <button
+                mat-raised-button
+                style="float: left;"
+                color="primary"
+                [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+                (click)="close()"
+              >
+                View
+              </button> 
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="rescheduleClick(e1)"
+                >
+                  Reschedule
+                </button>
+                <button
+                  style="float: right;"
+                  mat-raised-button
+                  color="primary"
+                  (click)="cancelAppointment(e1)"
+                >
+                Cancel
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" mat-raised-button color="primary" (click)="close()">
+            Close
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #rescheduleModal let-close="close" data-target="static">
+    <div class="content-container">
+      <div class="modal-title">
+        <br />
+        <h5 style="text-align: center">
+          Reschedule Appointment
+        </h5>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="row">
+            <div class="col-5">
+              <input
+                class="form-control"
+                cha
+                disabled
+                type="text"
+                [value]="selectedSchedule?.speciality"
+              />
+            </div>
+            <div class="col-7">
+              <input
+                class="form-control"
+                (change)="changeCalender($event)"
+                type="date"
+                [value]="todaysDate"
+              />
+            </div>
+            <div class="col-12 mt-4" *ngIf="setSpiner">
+              <div class="loader">
+                <mat-spinner [diameter]="30"></mat-spinner>
+              </div>
+            </div>
+            <div class="col-12 mt-4" *ngIf="!setSpiner">
+              <mat-chip-list>
+                <mat-chip
+                  class="p-4"
+                  [class.active]="i == selectedSlotIdx"
+                  *ngFor="let slot of slots;index as i;"
+                  (click)="selectSlot(i)"
+                >
+                  <div class="d-grid">
+                    <span>{{ slot?.slotTime }}</span>
+                    <span>{{ slot?.slotDuration }} {{slot?.slotDurationUnit | slice:0:3}}s</span>
+                  </div>
+                </mat-chip>
+              </mat-chip-list>
+              <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
+                No slots avalable for the day, try changing dates.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer center">
+        <button type="button" mat-raised-button color="primary" [disabled]="!slots[selectedSlotIdx]" (click)="reschedule()">
+          Reschedule
+        </button>
+        <button type="button" mat-raised-button color="primary" (click)="close()">
+         Close"
+        </button>
+      </div>
+    </div>
+  </ng-template>

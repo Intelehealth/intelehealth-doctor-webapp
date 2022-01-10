@@ -1,0 +1,23 @@
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  .d-grid {
+    display: grid !important;
+    width: 100px;
+    text-align: center;
+  }
+  .active {
+    background: #87c6ed;
+  }
+  .modal-content {
+    width: 160%;
+    right: 140px;
+  }
+  
+  table,
+  th, td {
+    text-align: center;
+  }

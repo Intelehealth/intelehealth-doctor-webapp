@@ -52,6 +52,8 @@ import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 // Material Design Imports
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -83,6 +85,8 @@ import { ChatComponent } from './component/chat/chat.component';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
+import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 
 
 
@@ -171,6 +175,8 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
+        { path: "appointment/schedule", component: AppointmentScheduleComponent },
+        { path: "appointment/view", component: AppointmentViewComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },
@@ -180,6 +186,10 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
+    }),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
     }),
   ],
   providers: [
