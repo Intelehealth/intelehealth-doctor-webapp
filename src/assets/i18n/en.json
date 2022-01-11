@@ -215,6 +215,7 @@
   "Infectionist": "Infectionist",
   "Are you sure to cancel this appointment?":"Are you sure to cancel this appointment?",
   "Are you sure to cancel this schedule?":"Are you sure to cancel this schedule?",
+  "Remote Prescription":"Remote Prescription",
   "messages": {
     "welcome": "Welcome",
     "loginError": "Username & Password doesn't match",
@@ -260,7 +261,8 @@
     "Appointment cancelled successfully!":"Appointment cancelled successfully!",
     "Visit is already completed, it can't be rescheduled.":"Visit is already completed, it can't be rescheduled.",
     "You can not cancel past appointments!": "You can not cancel past appointments!",
-    "Appointment not found!":"Appointment not found!"
+    "Appointment not found!":"Appointment not found!",
+    "Prescription added for review":"Prescription added for review"
   },
   "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",

@@ -148,7 +148,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
       const values = this.assignValueToProperty(active, encounter);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    } else if ((encounter = this.checkVisit(encounters, "Visit Note"))&&
+    } else if ((this.checkVisit(encounters, "Visit Note") ||
+             this.checkVisit(encounters, "Remote Prescription")) && 
                active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);

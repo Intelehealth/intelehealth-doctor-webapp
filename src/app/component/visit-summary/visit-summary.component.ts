@@ -22,7 +22,7 @@ export class VisitSummaryComponent implements OnInit {
   text: string;
   font: string;
   visitNotePresent = false;
-  visitCompletePresent = false;
+  remotePrescriptionPresent = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -68,8 +68,8 @@ export class VisitSummaryComponent implements OnInit {
             this.visitNotePresent = true;
             this.show = true;
           }
-          if (visit.display.match("Visit Complete") !== null) {
-            this.visitCompletePresent = true;
+          if (visit.display.match("Remote Prescription") !== null || visit.display.match("Visit Complete") !== null) {
+            this.remotePrescriptionPresent = true;
             visit.encounterProviders[0].provider.attributes.forEach(
               (element) => {
                 if (element.attributeType.display === "textOfSign") {
@@ -177,7 +177,7 @@ export class VisitSummaryComponent implements OnInit {
             });
             const json = {
               patient: this.patientUuid,
-              encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
+              encounterType: "a85f96d1-1246-4263-bfd0-00780c27a018",
               encounterProviders: [
                 {
                   provider: providerUuid,
@@ -194,9 +194,9 @@ export class VisitSummaryComponent implements OnInit {
               ],
             };
             this.service.postEncounter(json).subscribe((post) => {
-              this.visitCompletePresent = true;
+              this.remotePrescriptionPresent = true;
               this.router.navigateByUrl("/home");
-              this.translationService.getTranslation("Visit Complete");
+              this.translationService.getTranslation("Prescription added for review");
             });
           } else {
             if (

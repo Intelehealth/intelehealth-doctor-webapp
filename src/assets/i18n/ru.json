@@ -215,6 +215,7 @@
   "Infectionist": "Инфекционист",
   "Are you sure to cancel this appointment?":"Вы уверены, что отмените встречу?",
   "Are you sure to cancel this schedule?":"Вы уверены, что отмените это расписание?",
+  "Remote Prescription":"Удаленное назначение",
   "messages": {
     "welcome": "Добро пожаловать",
     "loginError": "Имя пользователя и пароль не совпадают",
@@ -260,7 +261,8 @@
     "Appointment cancelled successfully!":"Встреча успешно отменена!",
     "Visit is already completed, it can't be rescheduled.":"Визит уже завершен, его нельзя перенести.",
     "You can not cancel past appointments!":"Вы не можете отменить прошлые встречи!",
-    "Appointment not found!":"Назначение не найдено!"
+    "Appointment not found!":"Назначение не найдено!",
+    "Prescription added for review":"Рецепт добавлен на рассмотрение"
   },
   "No slots avalable for the day, try changing dates.":"В течение дня свободных мест нет, попробуйте изменить даты.",
   "helpMsg1": "Добро пожаловать на портал Доктора. Менее чем за 1 минуту мы покажем вам, как поставить диагноз, лекарства, анализы и посоветовать пациенту.",
