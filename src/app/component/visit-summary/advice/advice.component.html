@@ -1,9 +1,9 @@
-<h4><i class="fas fa-comment-medical"></i> Advice or Refer Patient<span class="red-star">*</span></h4>
+<h4><i class="fas fa-comment-medical"></i> Advice <span class="red-star">*</span></h4>
 <hr>
 <div id="advice-form">
   <form [formGroup]='adviceForm'>
       <mat-form-field class="w-100">
-          <input matInput placeholder="Advice or Refer Patient" [ngbTypeahead]="search" formControlName='advice'>
+          <input matInput placeholder="Advice" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
       <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
   </form>

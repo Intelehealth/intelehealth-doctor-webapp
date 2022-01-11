@@ -92,6 +92,7 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { PrescriptionComponent } from "./component/prescription/prescription.component";
+import { ReferPatientComponent } from './component/visit-summary/refer-patient/refer-patient.component';
 
 @NgModule({
   declarations: [
@@ -135,6 +136,7 @@ import { PrescriptionComponent } from "./component/prescription/prescription.com
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     PrescriptionComponent,
+    ReferPatientComponent,
   ],
 
   imports: [
