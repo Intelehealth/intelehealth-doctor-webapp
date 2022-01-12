@@ -130,11 +130,14 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     ChatComponent,
     TestChatComponent,
     ReassignSpecialityComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AppointmentViewComponent,
+    AppointmentScheduleComponent
   ],
 
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

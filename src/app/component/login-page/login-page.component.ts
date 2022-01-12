@@ -33,6 +33,7 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    localStorage.setItem("selectedLanguage", "en");
     this.service.clearVisits();
   }
 
