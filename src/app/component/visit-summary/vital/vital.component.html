@@ -29,6 +29,16 @@
       <td>{{ item.pulse }}</td>
       <th>RR:</th>
       <td>{{ item.respiratoryRate }}</td>
+      <th>Hemoglobin:</th>
+      <td><span *ngIf="item.hgb">{{item.hgb}}</span></td>
+      <th>Blood Group:</th>
+      <td><span *ngIf="item.group">{{item.group}}</span></td>
+      <th>Sugar Level(Fasting/After Meal):</th>
+      <td *ngIf="item.sugarLevelAfterMeal||item.sugarLevelFasting">
+        <span>{{item?.sugarLevelFasting||'NA'}}</span>/<span>{{item.sugarLevelAfterMeal||'NA'}}</span>
+      </td>
+      <th>Sugar Level - Random:</th>
+      <td><span *ngIf="item.sugarLevelRandom">{{item.sugarLevelRandom}}</span></td>
     </tr>
   </table>
 </div>

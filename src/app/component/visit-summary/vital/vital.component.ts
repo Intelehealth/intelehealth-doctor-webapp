@@ -71,6 +71,21 @@ export class VitalComponent implements OnInit {
                   obs.display.slice(18, obs.display.length)
                 );
               }
+              if (displayObs.includes("HGB")) {
+                this.answer.hgb = obs.value;
+              }
+              if (displayObs.includes("Blood group")) {
+                this.answer.group = obs.value;
+              }
+              if (displayObs.includes("sugar fasting")) {
+                this.answer.sugarLevelFasting = obs.value;
+              }
+              if (displayObs.includes("sugar after meal")) {
+                this.answer.sugarLevelAfterMeal = obs.value;
+              }
+              if (displayObs.includes("sugar random")) {
+                this.answer.sugarLevelRandom = obs.value;
+              }
             });
             this.v.push(this.answer);
           });
