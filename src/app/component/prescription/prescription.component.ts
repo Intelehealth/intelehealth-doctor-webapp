@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { VisitService } from "src/app/services/visit.service";
 // import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
 
@@ -24,10 +25,19 @@ export class PrescriptionComponent implements OnInit {
   noPrescription = false;
   loading = true;
   medicineProvided = false;
+  medications: any = [];
+  diagnosis: any = [];
+  testsAdvised: any = [];
+  medicalAdvice: any = [];
+  followupNeeded: any = [];
+  notes: any = [];
+  references: any = [];
+  conceptReferPatient = "5f0d1049-4fd6-497e-88c4-ae13a34ae241";
 
   constructor(
     private route: ActivatedRoute,
     private exportAsService: ExportAsService,
+    private diagnosisService: DiagnosisService,
     private visitService: VisitService
   ) {
     this.visitId = this.route.snapshot.paramMap.get("visitId");
@@ -39,15 +49,29 @@ export class PrescriptionComponent implements OnInit {
     this.getVisitDetails();
   }
 
+  getReferData() {
+    this.diagnosisService
+      .getObs(this.data.uuid, this.conceptReferPatient)
+      .subscribe((response) => {
+        response.results.forEach((obs) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visitId) {
+            this.references.push(obs);
+          }
+        });
+      });
+  }
+
   getVisitDetails() {
     this.visitService
       .fetchVisitDetails(
         this.visitId,
-        "custom:(attributes,patient:(person:(display)))"
+        "custom:(attributes,patient:(uuid,person:(display)))"
       )
       .subscribe({
         next: (res: any) => {
           this.data.fullName = res?.patient?.person?.display;
+          this.data.uuid = res?.patient?.uuid;
+          this.getReferData();
           // if (res.attributes?.length) {
           //   if (res.attributes?.length > 0) {
           //     const medProvided = res.attributes.find(
@@ -77,15 +101,9 @@ export class PrescriptionComponent implements OnInit {
       });
   }
 
-  medications: any = [];
-  diagnosis: any = [];
-  testsAdvised: any = [];
-  medicalAdvice: any = [];
-  followupNeeded: any = [];
-  notes: any = [];
-
   processData(resp) {
     this.data = resp;
+    console.log("this.data: ", this.data);
     try {
       if (this.data?.doctorAttributes?.split) {
         this.drAttributesList = this.data?.doctorAttributes?.split("|");

@@ -144,6 +144,15 @@
                     </li>
                   </ul>
                 </div>
+                
+                <div *ngIf="references?.length" class="col-sm-12">
+                  <strong> मरीज़ सौंपना / Refer Patient: </strong>
+                  <ul>
+                    <li *ngFor="let refer of references">
+                      {{ refer?.value }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
 
