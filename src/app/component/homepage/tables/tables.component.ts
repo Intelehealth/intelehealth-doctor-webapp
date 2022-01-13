@@ -3,6 +3,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTable } from "@angular/material/table";
 import { MatTableDataSource } from "@angular/material/table";
+import { EncounterService } from "src/app/services/encounter.service";
 import { HelperService } from "src/app/services/helper.service";
 import { VisitService } from "src/app/services/visit.service";
 
@@ -34,7 +35,8 @@ export class TablesComponent implements OnInit {
   @Input() visits;
   constructor(
     private helper: HelperService,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private encounterService: EncounterService
   ) {}
 
   ngOnInit() {
@@ -44,6 +46,7 @@ export class TablesComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.helper.refreshTable.subscribe(() => {
       this.setPrescription();
+      this.setVitals();
       this.refresh();
     });
   }
@@ -60,6 +63,23 @@ export class TablesComponent implements OnInit {
         //     (a: any) => a?.attributeType?.uuid === this.medicineProvidedAttrType
         //   );
         // }
+      });
+    }
+  }
+
+  setVitals() {
+    if (this.dataFor === "flagVisit" || this.dataFor === "waitingVisit") {
+      this.displayColumns.push("vitals");
+      this.displayColumns = [...new Set(this.displayColumns)];
+      this.data.forEach((e) => {
+        if(e.encounteruuid) {
+        this.encounterService.vitals(e.encounteruuid).subscribe((vitals) => {
+          const vital = vitals.obs;
+          vital.length === 13 ? e.isVitalPresent = true : e.isVitalPresent =false; 
+        });
+      } else {
+        e.isVitalPresent = false;
+      }
       });
     }
   }

@@ -122,6 +122,16 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="vitals">
+      <th mat-header-cell *matHeaderCellDef>Vitals</th>
+      <td class="text-center" mat-cell *matCellDef="let row">
+        <i
+          *ngIf="row?.isVitalPresent"
+          class="fas fa-heartbeat"
+        ></i>
+      </td>
+    </ng-container>
+  
     <tr
       mat-header-row
       *matHeaderRowDef="displayColumns"

@@ -295,6 +295,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     this.value.attributes = active?.attributes || [];
+    this.value.encounteruuid = this.getVitals(active);
     return this.value;
   }
 
@@ -307,5 +308,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     localStorage.setItem(modeStrKey, Object.keys(this.modes)[idx]);
     this.currentMode = this.modes[localStorage.getItem(modeStrKey)];
     this.showVisits();
+  }
+
+  getVitals(visit) {
+    let vitals = this.service.checkVisit(visit.encounters, "Vitals");
+    return vitals?.uuid;
   }
 }
