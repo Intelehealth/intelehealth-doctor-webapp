@@ -317,7 +317,7 @@ export class AppointmentComponent implements OnInit {
             day,
             endTime: this.scheduleForm.value.endTime,
             startTime: this.scheduleForm.value.startTime,
-            date: currentDay.format(),
+            date: currentDay.format('YYYY-MM-DD HH:mm:ss'),
           });
         }
       }
