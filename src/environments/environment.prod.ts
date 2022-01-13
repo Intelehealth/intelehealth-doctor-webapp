@@ -4,5 +4,5 @@ export const environment = {
   baseURLCoreApp : `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
-  azureImage: 'https://testing.visilant.org:3006/api/v1/image'
+  azureImage: `${window.location.protocol}//${window.location.hostname}:3006/api/v1`
 };

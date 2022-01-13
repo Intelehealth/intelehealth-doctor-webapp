@@ -39,8 +39,10 @@ export class PatientinfoComponent implements OnInit {
     const uuid = this.route.snapshot.paramMap.get('patient_id');
     this.service.fetchProfileImage(uuid)
     .subscribe(response => {
-      this.profileImagePresent = true;
-      this.image = `${this.baseURL}/personimage/${uuid}`;
+      if (response) {
+        this.profileImagePresent = true;
+        this.image = `${this.baseURL}/personimage/${uuid}`;
+      }
     });
     this.visitService.patientInfo(uuid)
     .subscribe(info => {

@@ -3,7 +3,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-
+declare var saveToStorage: any;
 
 @Component({
   selector: 'app-physical-examination',
@@ -27,6 +27,7 @@ export class PhysicalExaminationComponent implements OnInit {
     .subscribe(response => {
       if (response.data.length) {
         this.physicalExamPresent = true;
+        saveToStorage('physicalImages', response.data);
         response.data.forEach(image => {
           const data = {
             image: image.image_path,

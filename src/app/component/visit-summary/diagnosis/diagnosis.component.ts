@@ -1,3 +1,4 @@
+import { ImagesService } from 'src/app/services/images.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
@@ -5,6 +6,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { v4 as uuidv4 } from 'uuid';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any;
 
 @Component({
@@ -53,6 +55,7 @@ export class DiagnosisComponent implements OnInit {
   });
 
   constructor(private service: EncounterService,
+    private imageService: ImagesService,
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute) { }
@@ -118,6 +121,23 @@ export class DiagnosisComponent implements OnInit {
       };
       this.service.postObs(json)
         .subscribe(resp => {
+          const allImages = getFromStorage('physicalImages');
+          const filteredImage = allImages.filter(image => image.type === side);
+          if (filteredImage.length) {
+            const payload = {
+              id: uuidv4(),
+              diagnosis: json.value,
+              created_by: providerDetails.person.display,
+              images: []
+            };
+            filteredImage.forEach(im => {
+              payload.images.push({
+                ...im,
+                diagnosis_id: payload.id
+              });
+            });
+            this.imageService.saveDiagnosis(payload).subscribe(resposne => {console.log(resposne)});
+          }
           this.diagnosisList = [];
           this[side === 'right' ? 'rightDiagnosis' : 'leftDiagnosis'].push({ uuid: resp.uuid, value: json.value });
         });
