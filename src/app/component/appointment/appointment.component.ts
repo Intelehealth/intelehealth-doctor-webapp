@@ -44,9 +44,13 @@ export class AppointmentComponent implements OnInit {
   activeDayIsOpen: boolean = false;
   unChanged: boolean = true;
   selectedDays = [];
+  slot = {
+    startTime: "9:00 AM",
+    endTime: "6:00 PM",
+  };
   scheduleForm = new FormGroup({
-    startTime: new FormControl("9:00 AM", [Validators.required]),
-    endTime: new FormControl("6:00 PM", [Validators.required]),
+    startTime: new FormControl(this.slot.startTime, [Validators.required]),
+    endTime: new FormControl(this.slot.endTime, [Validators.required]),
   });
   userSchedule: any = Object;
   type: string = "month";
@@ -182,6 +186,15 @@ export class AppointmentComponent implements OnInit {
     array.sort((a, b) => a.start.getTime() - b.start.getTime());
     this.events = Object.assign([], array);
     this.checkDaysFromSchedule();
+    const { startTime, endTime } = this.userSchedule?.slotSchedule?.length
+      ? this.userSchedule?.slotSchedule[0]
+      : this.slot;
+    this.ctr.startTime.setValue(startTime);
+    this.ctr.endTime.setValue(endTime);
+  }
+
+  get ctr() {
+    return this.scheduleForm.controls;
   }
 
   getHours(returnAll = true, date?) {
