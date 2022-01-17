@@ -74,8 +74,18 @@ export class TablesComponent implements OnInit {
       this.data.forEach((e) => {
         if(e.encounteruuid) {
         this.encounterService.vitals(e.encounteruuid).subscribe((vitals) => {
-          const vital = vitals.obs;
-          vital.length === 13 ? e.isVitalPresent = true : e.isVitalPresent =false; 
+          const vital = vitals.obs;         
+          const bloodGroup = vital.filter(a=>a.concept.name.display === 'Blood Group' && a.value)
+          const SugarLF = vital.filter(a=>a.concept.name.display === 'Sugar Level - Fasting' && a.value)
+          const SugarAM = vital.filter(a=>a.concept.name.display === 'Sugar Level - After Meal' && a.value)
+          const hemoglobin = vital.filter(a=>a.concept.name.display === 'HGB' && a.value)
+
+          if(bloodGroup.length >0 && SugarLF.length >0 && SugarAM.length >0 && hemoglobin.length > 0){
+            e.isVitalPresent = true
+          }else{
+            e.isVitalPresent =false;
+          }
+          // (bloodGroup && SugarLF && SugarAM && hemoglobin) ? e.isVitalPresent = true : e.isVitalPresent =false; 
         });
       } else {
         e.isVitalPresent = false;

@@ -17,7 +17,7 @@ export class EncounterService {
   }
 
   vitals(uuid): Observable<any> {
-    const url = `${this.baseURL}/encounter/${uuid}?v=custom:(display,uuid,obs:(display,value))`;
+    const url = `${this.baseURL}/encounter/${uuid}?v=custom:(display,uuid,obs:(display,value,concept:(name)))`;
     return this.http.get(url);
   }
 
