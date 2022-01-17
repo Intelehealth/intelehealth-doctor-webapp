@@ -75,6 +75,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatChipsModule } from '@angular/material/chips';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
@@ -160,6 +161,7 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatChipsModule,
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,

@@ -21,3 +21,9 @@
   th, td {
     text-align: center;
   }
+
+  .loader {
+    position: inherit;
+    top: 10%;
+    left: 45%;
+  }

@@ -73,6 +73,7 @@ export class AppointmentScheduleComponent implements OnInit {
     events: CalendarEvent[];
   };
   scheduleModalRef = null;
+  unChanged: boolean = true;
   constructor(
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
@@ -152,6 +153,7 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   private initializeEvents(slots) {
+    this.unChanged = true;
     let slot = slots.reverse().filter(
       (
         (set) => (f) =>
@@ -262,6 +264,7 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   set(type) {
+    this.unChanged = false;
     this.errorMsg = null;
     if (type.day === "All Days") {
       this.type = "month";
@@ -358,6 +361,14 @@ export class AppointmentScheduleComponent implements OnInit {
       return;
     }
     if (this.validateTimeSlots(this.scheduleForm.value)) {
+      if (this.unChanged && this.selectedDays.length <= 0) {
+        if (this.userSchedule?.slotSchedule?.length > 0) {
+          this.selectedDays = this.userSchedule?.slotSchedule;
+        } else {
+          this.error("Please select/update days for schedule");
+          return;
+        }
+      }
       const speciality = this.getSpeciality();
       let body = this.getJson(speciality);
       this.saveSchedule(body);
@@ -365,7 +376,7 @@ export class AppointmentScheduleComponent implements OnInit {
       this.modal.dismissAll();
       this.errorMsg = null;
     } else {
-      this.error("Check Time Message");
+      this.error("Time cannot be empty and start time should be less than end time");
     }
   }
 
@@ -387,6 +398,7 @@ export class AppointmentScheduleComponent implements OnInit {
         }
       },
     });
+    this.modal.dismissAll();
     this.scheduleModalRef.close();
   }
 
@@ -415,6 +427,7 @@ export class AppointmentScheduleComponent implements OnInit {
     });
     this.errorMsg = null;
     this.selectedDays = [];
+    this.unChanged = false;
   }
 
   closeOpenMonthViewDay(type?) {
