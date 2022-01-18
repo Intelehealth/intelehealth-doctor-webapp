@@ -90,7 +90,7 @@ export class AppointmentScheduleComponent implements OnInit {
     try {
       this.weekDays.forEach((day) => (day.checked = false));
       this.weekends.forEach((day) => (day.checked = false));
-      if (this.userSchedule.slotDays) {
+      if (this.userSchedule.slotDays && this.userSchedule.slotSchedule.length > 0) {
         const slotDays = this.userSchedule.slotDays.split("||");
         slotDays.forEach((day) => {
           const weekIdx = this.weekDays.findIndex((d) => d.day === day);
