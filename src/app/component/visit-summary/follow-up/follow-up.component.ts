@@ -7,6 +7,7 @@ import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any;
 
+export const conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86'
 @Component({
   selector: 'app-follow-up',
   templateUrl: './follow-up.component.html',
@@ -29,7 +30,7 @@ declare var getEncounterUUID: any;
 export class FollowUpComponent implements OnInit {
 minDate = new Date();
 followUp: any = [];
-conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
+conceptFollow = conceptFollow;
 encounterUuid: string;
 patientId: string;
 visitUuid: string;

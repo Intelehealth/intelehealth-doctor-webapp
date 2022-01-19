@@ -8,9 +8,13 @@ import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { modes, modeStrKey } from "../homepage/homepage.component";
+import { conceptFollow } from "./follow-up/follow-up.component";
+import { DatePipe } from "@angular/common";
+import * as moment from "moment";
 declare var getFromStorage: any,
   saveToStorage: any,
-  getEncounterProviderUUID: any;
+  getEncounterProviderUUID: any,
+  getEncounterUUID: any;
 
 @Component({
   selector: "app-visit-summary",
@@ -31,6 +35,7 @@ export class VisitSummaryComponent implements OnInit {
   isVisitEnded: boolean = false;
   isLiveMode = null;
   isProjectManager = false;
+  referenceExists = false;
 
   constructor(
     private service: EncounterService,
@@ -209,6 +214,7 @@ export class VisitSummaryComponent implements OnInit {
                 },
               ],
             };
+            this.checkReferenceAndCreateFollowup();
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
               this.router.navigateByUrl("/home");
@@ -282,5 +288,27 @@ export class VisitSummaryComponent implements OnInit {
       Boolean(localStorage.prescribedMedication) &&
       Boolean(localStorage.adviceOrReferPatient)
     );
+  }
+
+  referenceExist(reference = []) {
+    if (reference.length) {
+      this.referenceExists = true;
+    } else {
+      this.referenceExists = false;
+    }
+  }
+
+  checkReferenceAndCreateFollowup() {
+    if (this.referenceExists) {
+      const laterDate = moment().add(7, "days").format("DD-MM-YYYY");
+      const payload = {
+        concept: conceptFollow,
+        person: this.patientUuid,
+        obsDatetime: new Date(),
+        value: `${laterDate}, tag: Referral`,
+        encounter: getEncounterUUID(),
+      };
+      this.service.postObs(payload).subscribe();
+    }
   }
 }

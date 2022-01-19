@@ -5,7 +5,7 @@ import {
   transition,
   trigger,
 } from "@angular/animations";
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
@@ -49,8 +49,7 @@ export class ReferPatientComponent implements OnInit {
   visitUuid: string;
   patientId: string;
   errorText: string;
-  @Input() isReferPatient: boolean = false;
-
+  @Output() referenceExist = new EventEmitter<any>();
   referPatientForm = new FormGroup({
     referPatient: new FormControl("", [Validators.required]),
   });
@@ -83,6 +82,7 @@ export class ReferPatientComponent implements OnInit {
             }
           }
         });
+        this.referenceExist.emit(this.referPatient);
       });
   }
 
@@ -102,6 +102,7 @@ export class ReferPatientComponent implements OnInit {
       this.service.postObs(json).subscribe((response) => {
         this.referPatient.push({ uuid: response.uuid, value: value });
         localStorage.referPatient = 1;
+        this.referenceExist.emit(this.referPatient);
       });
     }
   }
@@ -113,6 +114,7 @@ export class ReferPatientComponent implements OnInit {
         this.referPatient.splice(i, 1);
         if (!this.referPatient.length) {
           localStorage.removeItem("referPatient");
+          this.referenceExist.emit(this.referPatient);
         }
       });
     }
