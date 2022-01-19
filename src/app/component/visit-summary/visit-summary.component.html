@@ -100,7 +100,7 @@
             <br>
         
             <br>
-            <ng-container *ngIf="visitCompletePresent && text">
+            <ng-container *ngIf="remotePrescriptionPresent && text">
                   <div class="d-flex justify-content-center">
                         <mat-card>
                               <div [style.font-family]="font" style="font-size: 30px">{{text}}</div>
@@ -111,8 +111,8 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitSpeciality != userSpeciality || isVisitEnded || visitCompletePresent">
-                        {{ 'Sign and Submit' | translate }}</button>
+                        [disabled]="visitSpeciality != userSpeciality || isVisitEnded || remotePrescriptionPresent">
+                        {{ 'Remote Prescription' | translate }}</button>
             </div>
       </div>
 </div>
