@@ -52,6 +52,8 @@ import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 // Material Design Imports
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -73,6 +75,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatChipsModule } from '@angular/material/chips';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
@@ -85,6 +88,8 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
+import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -130,11 +135,14 @@ export function TranslationLoaderFactory(http: HttpClient) {
     ChatComponent,
     TestChatComponent,
     ReassignSpecialityComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AppointmentViewComponent,
+    AppointmentScheduleComponent
   ],
 
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -157,6 +165,7 @@ export function TranslationLoaderFactory(http: HttpClient) {
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatChipsModule,
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
@@ -178,6 +187,8 @@ export function TranslationLoaderFactory(http: HttpClient) {
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
+        { path: "appointment/schedule", component: AppointmentScheduleComponent },
+        { path: "appointment/view", component: AppointmentViewComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },
@@ -187,6 +198,10 @@ export function TranslationLoaderFactory(http: HttpClient) {
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
+    }),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
     }),
   ],
   providers: [

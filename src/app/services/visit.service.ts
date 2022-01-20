@@ -21,7 +21,7 @@ export class VisitService {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
       },
       ...params,
     };
@@ -47,9 +47,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  fetchVisitDetails(uuid): Observable<any> {
+  fetchVisitDetails(
+    uuid,
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+  ): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit/${uuid}?v=custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)))`;
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
   }
 
