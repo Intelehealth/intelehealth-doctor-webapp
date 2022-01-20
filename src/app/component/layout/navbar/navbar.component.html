@@ -5,7 +5,7 @@
         <div class="input-group-prepend">
           <input type="text" class="form-control" placeholder="{{'findPatient' | translate}}" formControlName="findInput" />
         </div>
-        <button class="input-group-text" type="submit" matTooltip="Search Patient using ID and Name"
+        <button class="input-group-text" type="submit" matTooltip="{{'Search Patient using ID and Name'| translate }}"
           matTooltipClass="tooltip-red"><i class="fas fa-search"></i></button>
       </div>
     </form>
@@ -24,14 +24,14 @@
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown">
-            Appointment
+            {{ 'Appointment' | translate }}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" [routerLink]="['/appointment', 'schedule']">
-              Appointment Schedule
+              {{ 'Appointment Schedule' | translate }}
             </a>
             <a class="dropdown-item" [routerLink]="['/appointment', 'view']">
-              Appointment View
+              {{ 'Appointment View' | translate }}
             </a>
           </div>
         </li>
@@ -81,18 +81,18 @@
             <a class="dropdown-item" (click)="setNotification('30m')">{{'Do not disturb' | translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == 'dnd'" class="fa fa-check"></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('30m')">30 minutes
+            <a class="dropdown-item" (click)="setNotification('30m')">{{ '30 minutes' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '30m'" class="fa fa-check"></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('1h')">1 hour
+            <a class="dropdown-item" (click)="setNotification('1h')">{{ '1 hour' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '1h'" class="fa fa-check"></i></a>
-            <a class="dropdown-item" (click)="setNotification('2h')">2 hours
+            <a class="dropdown-item" (click)="setNotification('2h')">{{ '2 hours' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '2h'" class="fa fa-check"></i></a>
             <a class="dropdown-item" data-toggle="modal" data-target="#customNotification"
               (click)="setNotification('custom')">{{'Custom' | translate}}
               <i *ngIf="selectedNotification == 'custom'" class="fa fa-check"></i></a>
             <hr />
-            <a class="dropdown-item" *ngIf="snoozeTimeout" (click)="setNotification('off')">Turn Off
+            <a class="dropdown-item" *ngIf="snoozeTimeout" (click)="setNotification('off')">{{ 'Turn Off' |translate}}
               <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i></a>
           </div>
         </li>
@@ -112,7 +112,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Custom Notifications:</h5>
+        <h5 class="modal-title">{{'Custom Notifications:' |translate}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -120,7 +120,7 @@
       <div class="modal-body">
         <ul>
           <li *ngFor="let day of weekDays" class="d-flex">
-            <label class="py-2 col-2">{{day.day}}</label>
+            <label class="py-2 col-2">{{(day.day) | translate }}</label>
             <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" type="time" />
             <input class="form-control col-4" [(ngModel)]="day.endTime" type="time" />
           </li>
@@ -128,13 +128,13 @@
       </div>
 
       <span *ngIf="error.isError" class="danger">
-        {{ error.errorMessage }}
+        {{ (error.errorMessage) | translate }}
       </span>
       
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Save changes</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">{{'Save changes' |translate}}</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          Close
+          {{'Close' |translate}}
         </button>
       </div>
     </div>

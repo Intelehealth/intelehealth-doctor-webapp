@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { ChangePasswordComponent } from "../../change-password/change-password.component";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
@@ -17,6 +16,7 @@ import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { TranslateService } from "@ngx-translate/core";
+import { TranslationService } from "src/app/services/translation.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -69,21 +69,28 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
-    private snackbar: MatSnackBar,
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
     public notificationService: PushNotificationsService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit() {
-    let browserlang = this.translateService.getBrowserLang();
-    if (this.langs.indexOf(browserlang) > -1) {
-      this.translateService.setDefaultLang(browserlang);
-      this.selectedLanguage = browserlang;
+    if (localStorage.getItem("selectedLanguage")) {
+      this.translateService.setDefaultLang(
+        localStorage.getItem("selectedLanguage")
+      );
+      this.selectedLanguage = localStorage.getItem("selectedLanguage");
     } else {
-      this.translateService.setDefaultLang('en');
+      let browserlang = this.translateService.getBrowserLang();
+      if (this.langs.indexOf(browserlang) > -1) {
+        this.translateService.setDefaultLang(browserlang);
+        this.selectedLanguage = browserlang;
+      } else {
+        this.translateService.setDefaultLang("en");
+      }
     }
     const userDetails = getFromStorage("user");
     this.subscribeAccess = getFromStorage("subscribed") || false;
@@ -141,6 +148,8 @@ export class NavbarComponent implements OnInit {
    useLanguage(lang: string): void {
     this.translateService.setDefaultLang(lang);
     this.selectedLanguage = lang;
+    localStorage.setItem("selectedLanguage", this.selectedLanguage);
+    this.subscribeNotification(true);
   }
 
   unsubscribeNotification() {
@@ -163,7 +172,7 @@ export class NavbarComponent implements OnInit {
     if (search.findInput === null || search.findInput.length < 3) {
       this.dialog.open(FindPatientComponent, {
         width: "50%",
-        data: { value: "Please enter min 3 characters" },
+        data: { value: "Please Enter min 3 characters" },
       });
     } else {
       // tslint:disable-next-line: max-line-length
@@ -185,9 +194,9 @@ export class NavbarComponent implements OnInit {
         },
         (err) => {
           if (err.error instanceof Error) {
-            this.snackbar.open("Client-side error", null, { duration: 2000 });
+            this.translationService.getTranslation("Client-side error");
           } else {
-            this.snackbar.open("Server-side error", null, { duration: 2000 });
+            this.translationService.getTranslation("Server-side error");
           }
         }
       );
@@ -234,10 +243,8 @@ export class NavbarComponent implements OnInit {
                   .subscribe((response) => {
                     if (response) {
                       if (!reSubscribe) {
-                        this.snackbar.open(
+                        this.translationService.getTranslation(
                           `Notification Subscribed Successfully`,
-                          null,
-                          { duration: 4000 }
                         );
                       }
                       saveToStorage("subscribed", true);
@@ -282,7 +289,7 @@ export class NavbarComponent implements OnInit {
         .subscribe((response) => {
           this.closeModal();
 
-          this.snackbar.open("Snoozed Successfully!", null, { duration: 4000 });
+          this.translationService.getTranslation("Snoozed Successfully!");
         });
     }
   }
