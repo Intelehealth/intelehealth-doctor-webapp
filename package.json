@@ -26,6 +26,8 @@
     "@angular/service-worker": "~13.0.0-next.6",
     "@fingerprintjs/fingerprintjs": "^3.0.5",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
+    "@ngx-translate/core": "^13.0.0",
+    "@ngx-translate/http-loader": "^6.0.0",
     "@types/intro.js": "^2.4.7",
     "angular-calendar": "^0.28.28",
     "angular-user-idle": "^2.2.2",
