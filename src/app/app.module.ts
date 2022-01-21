@@ -1,7 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import {
-  CommonModule,
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,

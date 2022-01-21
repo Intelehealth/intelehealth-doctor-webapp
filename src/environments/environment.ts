@@ -9,7 +9,7 @@ export const environment = {
     "https://afitraining.ekalarogya.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://afitraining.ekalarogya.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
-  // notificationURL: 'http://localhost:3004/notification'
+  notificationURL: "http://localhost:3004/notification",
 };
 
 /*
