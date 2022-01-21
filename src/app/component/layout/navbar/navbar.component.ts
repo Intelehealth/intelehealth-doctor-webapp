@@ -168,46 +168,44 @@ export class NavbarComponent implements OnInit {
   }
 
   subscribeNotification(reSubscribe = false) {
-    if (this.swUpdate.isEnabled) {
-      this.swPush
-        .requestSubscription({
-          serverPublicKey: this.VapidKEY,
-        })
-        .then((sub) => {
-          const providerDetails = getFromStorage("provider");
-          if (providerDetails) {
-            const attributes = providerDetails.attributes;
-            attributes.forEach((element) => {
-              if (
-                element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-                !element.voided
-              ) {
-                this.notificationService
-                  .postSubscription(
-                    sub,
-                    element.value,
-                    providerDetails.person.display,
-                    this.user.uuid,
-                    this.authService.fingerPrint
-                  )
-                  .subscribe((response) => {
-                    if (response) {
-                      if (!reSubscribe) {
-                        this.snackbar.open(
-                          `Notification Subscribed Successfully`,
-                          null,
-                          { duration: 4000 }
-                        );
-                      }
-                      saveToStorage("subscribed", true);
-                      this.subscribeAccess = true;
+    this.swPush
+      .requestSubscription({
+        serverPublicKey: this.VapidKEY,
+      })
+      .then((sub) => {
+        const providerDetails = getFromStorage("provider");
+        if (providerDetails) {
+          const attributes = providerDetails.attributes;
+          attributes.forEach((element) => {
+            if (
+              element.attributeType.uuid ===
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              !element.voided
+            ) {
+              this.notificationService
+                .postSubscription(
+                  sub,
+                  element.value,
+                  providerDetails.person.display,
+                  this.user.uuid,
+                  this.authService.fingerPrint
+                )
+                .subscribe((response) => {
+                  if (response) {
+                    if (!reSubscribe) {
+                      this.snackbar.open(
+                        `Notification Subscribed Successfully`,
+                        null,
+                        { duration: 4000 }
+                      );
                     }
-                  });
-              }
-            });
-          }
-        });
-    }
+                    saveToStorage("subscribed", true);
+                    this.subscribeAccess = true;
+                  }
+                });
+            }
+          });
+        }
+      });
   }
 }
