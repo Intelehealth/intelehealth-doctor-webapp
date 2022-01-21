@@ -6,15 +6,15 @@
             <div class="btn-group" style="float: left;">
               <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay('Previous')">
-                Previous 
+                {{ 'Previous'| translate }}
               </div>
               <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay('Today')">
-                Today
+                {{'Today' |translate }}
               </div>
               <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay('Next')">
-                 Next
+                {{'Next' | translate}}
               </div>
             </div>
           </div>
@@ -23,7 +23,7 @@
           </div>
           <div class="col-md-4">
             <button style="float: right;" class="btn btn-primary" (click)="addSchedule()">
-              Add Schedule for Month
+              {{'Add Schedule for Month' | translate}}
             </button>
           </div>
         </div>
@@ -50,7 +50,7 @@
   <ng-template #modalContent let-close="close" data-target="static">
     <div class="content-container">
       <div class="modal-title"><br>
-        <h5 style="text-align: center;">Appointment Schedule
+        <h5 style="text-align: center;">{{'Appointment Schedule'|translate}}
           <span style="float: right;cursor: pointer; font-size: 31px;
           margin-top: -16px;margin-right: 10px;" (click)="close(); errorMsg=null">&times;</span>
         </h5>
@@ -61,7 +61,7 @@
           <tr [formGroup]="scheduleForm">
             <td>
               <mat-label>
-                <h5>Start Time</h5>
+                <h5>{{ "Start Time" | translate }}</h5>
               </mat-label>
               <select formControlName="startTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
@@ -69,7 +69,7 @@
             </td>
             <td>
               <mat-label>
-                <h5>End Time</h5>
+                <h5>{{ "End Time" | translate }}</h5>
               </mat-label>
               <select formControlName="endTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
@@ -83,7 +83,7 @@
             <td>
               <input id="check1" type="checkbox" [(ngModel)]="t1.checked" (change)="set(t1)">
             </td>
-            <td>{{t1.day}}</td>
+            <td>{{(t1.day) | translate}}</td>
           </tr>
         </table>
         <table class="table">
@@ -91,7 +91,7 @@
             <td>
               <input id="check2" type="checkbox" [(ngModel)]="w1.checked" (change)="set(w1)">
             </td>
-            <td>{{ w1.day }}</td>
+            <td>{{(w1.day) | translate}}</td>
           </tr>
         </table>
         <table class="table">
@@ -99,17 +99,17 @@
             <td>
               <input id="check3" type="checkbox" [(ngModel)]="w2.checked" (change)="set(w2)">
             </td>
-            <td>{{ w2.day }}</td>
+            <td>{{(w2.day) | translate}}</td>
           </tr>
         </table>
       </div>
       <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
       <div class="modal-footer center">
         <button mat-raised-button color="primary" (click)="submit()">
-          Save
+          {{'Save' | translate}}
         </button>
         <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">
-          Clear
+          {{'Clear' | translate}}
         </button>
       </div>
     </div>
@@ -120,7 +120,7 @@
       <div class="modal-title">
         <br />
         <h5 style="text-align: center">
-          Schedule <br />
+          {{ "Schedule" | translate }}  <br />
           {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
           <span style="float: right;cursor: pointer; font-size: 31px;
           margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
@@ -132,7 +132,7 @@
           <div class="row">
             <div class="col-6">
               <mat-label>
-                <h5>Start Time</h5>
+                <h5>{{ "Start Time" | translate }}</h5>
               </mat-label>
               <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.startTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
@@ -140,7 +140,7 @@
             </div>
             <div class="col-6">
               <mat-label>
-                <h5>End Time</h5>
+                <h5>{{ "End Time" | translate }}</h5>
               </mat-label>
               <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.endTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
@@ -149,16 +149,16 @@
           </div>
           <hr />
           <div *ngIf="e1?.isTimeOver" class="alert alert-warning mt-4">
-            You can not modify past schedule.
+            {{'You can not modify past schedule.' | translate}}
           </div>
           <div class="col-sm-12 text-center">
             <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
               (click)="update(e1, 'cancel')">
-               Cancel
+              {{ "Cancel" | translate }}
             </button>
             <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
               (click)="update(e1, 'update')">
-               Save
+              {{ "Save" | translate }}
             </button>
           </div>
         </div>

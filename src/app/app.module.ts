@@ -5,7 +5,10 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
+  registerLocaleData,
 } from "@angular/common";
+import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 
 // Component Import
 import { AppComponent } from "./app.component";
@@ -95,6 +98,9 @@ import { MatPaginationIntlService } from "./services/mat-pagination.service";
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
+
+registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 @NgModule({
   declarations: [

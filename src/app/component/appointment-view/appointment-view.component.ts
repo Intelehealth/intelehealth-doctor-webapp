@@ -5,7 +5,6 @@ import {
     TemplateRef,
     ViewChild,
   } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
   import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
   import {
     CalendarView,
@@ -17,6 +16,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   import * as moment from "moment";
   import { Subject } from "rxjs";
   import { AppointmentService } from "src/app/services/appointment.service";
+  import { TranslationService } from "src/app/services/translation.service";
   import { VisitService } from "src/app/services/visit.service";
   import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
   
@@ -60,7 +60,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     refresh: Subject<any> = new Subject();
     events: CalendarEvent[];
     activeDayIsOpen: boolean = false;
-    selectedLang: string = "en";
     setSpiner = false;
   
     constructor(
@@ -68,7 +67,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       private appointmentService: AppointmentService,
       private vService: VisitService,
       private dialogService: ConfirmDialogService,
-      private snackbar: MatSnackBar
+      private translationService: TranslationService
     ) { }
   
     private initializeEvents(slot) {
@@ -196,7 +195,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     }
   
     ngOnInit(): void {
-      this.selectedLang = localStorage.getItem("selectedLanguage");
       let dates = this.getDates("month");
       this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
     }
@@ -338,8 +336,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
         horizontalPosition,
         verticalPosition,
       };
-     // this.translationService.getTranslation(message);
-      this.snackbar.open(message, null, opts);
+      this.translationService.getTranslation(message);
     }
   
     get locale() {

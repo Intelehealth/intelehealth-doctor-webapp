@@ -9,7 +9,7 @@
             [(viewDate)]="viewDate"
             (viewDateChange)="closeOpenMonthViewDay('Previous')"
           >
-            Previous
+          {{ "Previous" | translate }}
           </div>
           <div
             class="btn btn-outline-secondary"
@@ -17,7 +17,7 @@
             [(viewDate)]="viewDate"
             (viewDateChange)="closeOpenMonthViewDay('Today')"
           >
-            Today
+          {{ "Today" | translate }}
           </div>
           <div
             class="btn btn-primary"
@@ -26,7 +26,7 @@
             [(viewDate)]="viewDate"
             (viewDateChange)="closeOpenMonthViewDay('Next')"
           >
-            Next
+          {{ "Next" | translate }}
           </div>
         </div>
       </div>
@@ -40,21 +40,21 @@
             (click)="setView(CalendarView.Month)"
             [class.active]="view === CalendarView.Month"
           >
-            Month
+          {{ "Month" | translate }}
           </div>
           <div
             class="btn btn-primary"
             (click)="setView(CalendarView.Week)"
             [class.active]="view === CalendarView.Week"
           >
-            Week
+          {{ "Week" | translate }}
           </div>
           <div
             class="btn btn-primary"
             (click)="setView(CalendarView.Day)"
             [class.active]="view === CalendarView.Day"
           >
-            Day
+          {{ "Day" | translate }}
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@
       <div class="modal-title">
         <br />
         <h5 style="text-align: center">
-            Appointment Details <br />
+          {{ "Appointment Details" | translate }} <br />
           {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
         </h5>
       </div>
@@ -111,10 +111,10 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>OpenMRS ID</th>
-              <th>Start Time</th>
-              <th>Action</th>
+              <th>{{ "Name" | translate }}</th>
+              <th>{{ "OpenMRS ID" | translate }}</th>
+              <th>{{ "Start Time" | translate }}</th>
+              <th>{{ "Action" | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -130,14 +130,14 @@
                 [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
                 (click)="close()"
               >
-                View
+              {{ "View" | translate }}
               </button> 
                 <button
                   mat-raised-button
                   color="primary"
                   (click)="rescheduleClick(e1)"
                 >
-                  Reschedule
+                {{ "Reschedule" | translate }}
                 </button>
                 <button
                   style="float: right;"
@@ -145,7 +145,7 @@
                   color="primary"
                   (click)="cancelAppointment(e1)"
                 >
-                Cancel
+                {{ "Cancel" | translate }}
                 </button>
               </td>
             </tr>
@@ -154,7 +154,7 @@
       </div>
       <div class="modal-footer center">
         <button type="button" mat-raised-button color="primary" (click)="close()">
-            Close
+          {{ "Close" | translate }}
         </button>
       </div>
     </div>
@@ -165,7 +165,7 @@
       <div class="modal-title">
         <br />
         <h5 style="text-align: center">
-          Reschedule Appointment
+          {{ "Reschedule Appointment" | translate }}
         </h5>
       </div>
       <div class="modal-body">
@@ -176,7 +176,7 @@
                 class="form-control"
                 disabled
                 type="text"
-                [value]="selectedSchedule?.speciality"
+                [value]="(selectedSchedule?.speciality) | translate"
               />
             </div>
             <div class="col-7">
@@ -207,7 +207,7 @@
                 </mat-chip>
               </mat-chip-list>
               <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
-                No slots avalable for the day, try changing dates.
+                {{ 'No slots avalable for the day, try changing dates.' | translate }}
               </div>
             </div>
           </div>
@@ -215,10 +215,10 @@
       </div>
       <div class="modal-footer center">
         <button type="button" mat-raised-button color="primary" [disabled]="!slots[selectedSlotIdx]" (click)="reschedule()">
-          Reschedule
+          {{ "Reschedule" | translate }}
         </button>
         <button type="button" mat-raised-button color="primary" (click)="close()">
-         Close
+          {{ "Close" | translate }}
         </button>
       </div>
     </div>

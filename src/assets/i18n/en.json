@@ -236,6 +236,8 @@
     "Are you sure to cancel this appointment?":"Are you sure to cancel this appointment?",
     "Are you sure to cancel this schedule?":"Are you sure to cancel this schedule?",
     "End Date can't before start time": "End Date can't before start time",
+    "You can not modify past schedule.":"You can not modify past schedule.",
+    "Health Scheme Card":"Health Scheme Card",
     "messages": {
       "welcome": "Welcome",
       "loginError": "Username & Password doesn't match",

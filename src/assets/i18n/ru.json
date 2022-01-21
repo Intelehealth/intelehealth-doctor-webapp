@@ -236,6 +236,8 @@
     "Are you sure to cancel this appointment?":"Вы уверены, что отмените встречу?",
     "Are you sure to cancel this schedule?":"Вы уверены, что отмените это расписание?",
     "End Date can't before start time": "Дата окончания не может быть раньше времени начала",
+    "You can not modify past schedule.":"Вы не можете изменить прошлое расписание.",
+    "Health Scheme Card":"Карта программы здравоохранения",
     "messages": {
       "welcome": "Добро пожаловать",
       "loginError": "Имя пользователя и пароль не совпадают",

@@ -1,15 +1,16 @@
 import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import {
-  FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { TranslateService } from "@ngx-translate/core";
 import { CalendarEvent, CalendarView } from "angular-calendar";
 import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
+import { TranslationService } from "src/app/services/translation.service";
 import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
 
 const colors: any = {
@@ -78,7 +79,9 @@ export class AppointmentScheduleComponent implements OnInit {
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
     private modal: NgbModal,
-    private dialogService: ConfirmDialogService
+    private dialogService: ConfirmDialogService,
+    private translateService: TranslateService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
@@ -365,7 +368,7 @@ export class AppointmentScheduleComponent implements OnInit {
         if (this.userSchedule?.slotSchedule?.length > 0) {
           this.selectedDays = this.userSchedule?.slotSchedule;
         } else {
-          this.error("Please select/update days for schedule");
+          this.error("Select Day Message");
           return;
         }
       }
@@ -376,7 +379,7 @@ export class AppointmentScheduleComponent implements OnInit {
       this.modal.dismissAll();
       this.errorMsg = null;
     } else {
-      this.error("Time cannot be empty and start time should be less than end time");
+      this.error("Check Time Message");
     }
   }
 
@@ -392,9 +395,7 @@ export class AppointmentScheduleComponent implements OnInit {
       next: (res: any) => {
         if (res.status) {
           this.getSchedule();
-          this.toast({
-            message: res.message,
-          });
+          this.translationService.getTranslation(res.message);
         }
       },
     });
@@ -487,6 +488,8 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   private error(msg) {
-      this.errorMsg = msg;
+    this.translateService.get(`messages.${msg}`).subscribe((res: string) => {
+      this.errorMsg = res;
+    });
   }
 }
