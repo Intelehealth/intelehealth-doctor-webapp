@@ -146,7 +146,7 @@ export class NavbarComponent implements OnInit {
   }
 
    useLanguage(lang: string): void {
-    this.translateService.setDefaultLang(lang);
+    this.translateService.use(lang);
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
     this.subscribeNotification(true);
