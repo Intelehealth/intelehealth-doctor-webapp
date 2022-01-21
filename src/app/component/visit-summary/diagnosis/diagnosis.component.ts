@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import { TranslationService } from 'src/app/services/translation.service';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -42,7 +41,6 @@ diagnosisForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private translationService: TranslationService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -59,10 +57,9 @@ diagnosisForm = new FormGroup({
   }
 
   search(event) {
-    console.log('event: ', event);
     this.diagnosisService.getDiagnosisList(event.target.value)
     .subscribe(response => {
-      this.diagnosisList = response;
+      this.diagnosisList = response?.sort((a, b)=> {return a.name.localeCompare(b.name)});
     });
   }
 

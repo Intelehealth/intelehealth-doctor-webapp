@@ -26,7 +26,7 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
           this.familyHistory.push(obs);
         }
       });
-      if (this.familyHistory !== undefined) {
+      if (this.familyHistory !== undefined && this.familyHistory.length > 0) {
         this.familyHistoryPresent = true;
       }
     });

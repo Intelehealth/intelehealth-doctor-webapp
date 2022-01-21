@@ -41,7 +41,7 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptAdministration = [];
   conceptDurationUnit = [];
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
-  
+
 
   medForm = new FormGroup({
     med: new FormControl('', [Validators.required]),
@@ -68,7 +68,7 @@ export class PrescribedMedicationComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptPrescription.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.conceptPrescription.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   searchFrequency = (text$: Observable<string>) =>
@@ -76,7 +76,7 @@ export class PrescribedMedicationComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptfrequency.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.conceptfrequency.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   searchAdministration = (text$: Observable<string>) =>
@@ -84,7 +84,7 @@ export class PrescribedMedicationComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptAdministration.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.conceptAdministration.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   searchDose = (text$: Observable<string>) =>
@@ -92,7 +92,7 @@ export class PrescribedMedicationComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptDose.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.conceptDose.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   durationUnit = (text$: Observable<string>) =>
@@ -100,7 +100,7 @@ export class PrescribedMedicationComponent implements OnInit {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.conceptDurationUnit.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        : this.conceptDurationUnit.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   ngOnInit() {
@@ -113,13 +113,16 @@ export class PrescribedMedicationComponent implements OnInit {
     //     this.conceptPrescription.push(ans.display);
     //   });
     // });
-    this.conceptPrescription = this.conceptPrescription.concat(medicines)
+    medicines.forEach(med => {
+      this.conceptPrescription.push(this.translationService.getDropdownTranslation('medicines', med));
+    });
+    //this.conceptPrescription = this.conceptPrescription.concat(medicines)
     const doseUnit = '162384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     this.diagnosisService.concept(doseUnit)
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptDose.push(ans.display);
+          this.conceptDose.push(this.translationService.getDropdownTranslation('units',ans.display));
         });
       });
     const frequency = '9847b24f-8434-4ade-8978-157184c435d2';
@@ -127,7 +130,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptfrequency.push(ans.display);
+          this.conceptfrequency.push(this.translationService.getDropdownTranslation('frequency',ans.display));
         });
       });
     const RouteOfAdministration = '162394AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -135,7 +138,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptAdministration.push(ans.display);
+          this.conceptAdministration.push(this.translationService.getDropdownTranslation('route',ans.display));
         });
       });
     const conceptDurationUnit = '1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -143,7 +146,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptDurationUnit.push(ans.display);
+          this.conceptDurationUnit.push(this.translationService.getDropdownTranslation('durationUnit',ans.display));
         });
       });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -200,7 +203,7 @@ export class PrescribedMedicationComponent implements OnInit {
         .subscribe(() => {
           this.meds.splice(i, 1);
         });
-      }    
+    }
   }
 
 }

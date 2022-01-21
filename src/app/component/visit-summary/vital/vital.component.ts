@@ -32,34 +32,60 @@ vitalsPresent = false;
               vital.forEach(obs => {
                 const displayObs = obs.display;
                 if (displayObs.match('SYSTOLIC') !== null ) {
-                  this.answer.sbp = Number(obs.display.slice(25, obs.display.length));
+                  this.answer.sbp = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(25, obs.display.length))) :
+                  Number(obs.display.slice(25, obs.display.length));
                 }
                 if (displayObs.match('DIASTOLIC') !== null ) {
-                  this.answer.dbp = Number(obs.display.slice(26, obs.display.length));
+                  this.answer.dbp = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(26, obs.display.length))) :
+                  Number(obs.display.slice(26, obs.display.length));
                 }
                 if (displayObs.match('Weight') !== null ) {
-                  this.answer.weight = Number(obs.display.slice(13, obs.display.length));
+                  this.answer.weight = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(13, obs.display.length))):
+                  Number(obs.display.slice(13, obs.display.length));
                 }
                 if (displayObs.match('Height') !== null ) {
-                  this.answer.height = Number(obs.display.slice(13, obs.display.length));
+                  this.answer.height = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(13, obs.display.length))) :
+                  Number(obs.display.slice(13, obs.display.length));
                 }
                 if (displayObs.match('BLOOD OXYGEN SATURATION') !== null ) {
-                  this.answer.sp02 = Number(obs.display.slice(25, obs.display.length));
+                  this.answer.sp02 = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(25, obs.display.length))) :
+                  Number(obs.display.slice(25, obs.display.length));
                 }
                 if (displayObs.match('TEMP') !== null ) {
-                  this.answer.temp = Number(obs.display.slice(17, obs.display.length));
+                  let temp = Number(obs.display.slice(17, obs.display.length));
+                  this.answer.temp = localStorage.getItem('selectedLanguage') === 'ru' ?
+                  this.getTranslatedValue(temp > 0 ? temp.toFixed(2) : 0): (temp> 0 ? temp.toFixed(2) : 0); 
                 }
                 if (displayObs.match('Pulse') !== null ) {
-                  this.answer.pulse = Number(obs.display.slice(7, obs.display.length));
+                  this.answer.pulse = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(7, obs.display.length))) :
+                  Number(obs.display.slice(7, obs.display.length));
                 }
                 if (displayObs.match('Respiratory rate') !== null ) {
-                  this.answer.respiratoryRate = Number(obs.display.slice(18, obs.display.length));
+                  this.answer.respiratoryRate =  localStorage.getItem('selectedLanguage') === 'ru' ? 
+                  this.getTranslatedValue(Number(obs.display.slice(18, obs.display.length))) :
+                  Number(obs.display.slice(18, obs.display.length));
                 }
               });
+              if(this.answer.height && this.answer.weight) {
+                this.answer.bmi = localStorage.getItem('selectedLanguage') === 'ru' ? 
+                this.getTranslatedValue((this.answer.weight.replace(',', '.')/((this.answer.height.replace(',', '.')/100)*(this.answer.height.replace(',', '.')/100))).toFixed(2)):
+                (this.answer.weight/((this.answer.height/100)*(this.answer.height/100))).toFixed(2);
+              }
               this.v.push(this.answer);
             });
           }
         });
       });
-}
+  }
+
+  getTranslatedValue(value) {
+    return value.toString().replace(/\./g, ',')
+  }
+
 }

@@ -1,4 +1,4 @@
-<h4><i class="fas fa-pills"></i> {{'Recommended Medication'|translate}}</h4>
+<h4><i class="fas fa-pills"></i> {{'Prescribed Medication'|translate}}</h4>
 <hr>
 <div>
   <form [formGroup]="medForm">
@@ -46,7 +46,7 @@
           </div>
         </div>
     <br>
-    <textarea class="form-control" placeholder="{'Additional instruction not covered above'|translate}}" formControlName="additional"></textarea>
+    <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}" formControlName="additional"></textarea>
     <br>
     <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>{{'Add Meds'|translate}}</button>
   </div>
