@@ -35,6 +35,12 @@ const colors: any = {
   },
 };
 
+export const reasons = [
+  "Doctor Not available",
+  "Patient Not Available",
+  "Other",
+];
+
 @Component({
   selector: "app-calendar",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,14 +69,16 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean = false;
   selectedLang: string = "en";
   setSpiner = false;
-
+  selectedReason = "";
+  otherReason = "";
+  reasons = reasons;
   constructor(
     private modal: NgbModal,
     private appointmentService: AppointmentService,
     private vService: VisitService,
     private translationService: TranslationService,
-    private dialogService: ConfirmDialogService,
-  ) { }
+    private dialogService: ConfirmDialogService
+  ) {}
 
   private initializeEvents(slot) {
     let array: CalendarEvent[] = [];
@@ -152,8 +160,8 @@ export class CalendarComponent implements OnInit {
   handleEvent(action: string, event: CalendarEvent): void {
     let events = [];
     events.push(event);
-    let date =  new Date(event.start);
-    this.modalData = {date, events };
+    let date = new Date(event.start);
+    this.modalData = { date, events };
     this.detailModalRef = this.modal.open(this.modalContent);
   }
 
@@ -238,29 +246,33 @@ export class CalendarComponent implements OnInit {
   todaysDate = moment().format("YYYY-MM-DD");
   slots = [];
   rescheduleClick(schedule) {
-    this.vService
-      .fetchVisitDetails(
-        schedule.visitUuid,
-        "custom:(uuid,encounters:(display,uuid,display))"
-      )
-      .subscribe((res) => {
-        const len = res.encounters.filter((e) => {
-          return (
-            e.display.includes("Patient Exit Survey") ||
-            e.display.includes("Visit Complete")
-          );
-        }).length;
-        const isCompleted = Boolean(len);
-        if (isCompleted) {
-          const message = `Visit is already completed, it can't be rescheduled.`;
-          this.toast({ message });
-        } else {
-          this.selectedSchedule = schedule;
-          const e = { target: { value: moment().format("YYYY-MM-DD") } };
-          this.changeCalender(e);
-          this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
-        }
-      });
+    this.selectedSchedule = schedule;
+    const e = { target: { value: moment().format("YYYY-MM-DD") } };
+    this.changeCalender(e);
+    this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
+    // this.vService
+    //   .fetchVisitDetails(
+    //     schedule.visitUuid,
+    //     "custom:(uuid,encounters:(display,uuid,display))"
+    //   )
+    //   .subscribe((res) => {
+    //     const len = res.encounters.filter((e) => {
+    //       return (
+    //         e.display.includes("Patient Exit Survey") ||
+    //         e.display.includes("Visit Complete")
+    //       );
+    //     }).length;
+    //     const isCompleted = Boolean(len);
+    //     if (isCompleted) {
+    //       const message = `Visit is already completed, it can't be rescheduled.`;
+    //       this.toast({ message });
+    //     } else {
+    //       this.selectedSchedule = schedule;
+    //       const e = { target: { value: moment().format("YYYY-MM-DD") } };
+    //       this.changeCalender(e);
+    //       this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
+    //     }
+    //   });
   }
 
   changeCalender(e) {
@@ -275,7 +287,8 @@ export class CalendarComponent implements OnInit {
   reschedule() {
     const payload = {
       ...this.selectedSchedule,
-      ...this.slots[this.selectedSlotIdx]
+      ...this.slots[this.selectedSlotIdx],
+      reason: this.reason,
     };
 
     this.appointmentService
@@ -309,17 +322,25 @@ export class CalendarComponent implements OnInit {
   }
 
   cancelAppointment(schedule) {
-    this.dialogService.openConfirmDialog("Are you sure to cancel this appointment?")
-      .afterClosed().subscribe(res => {
+    this.dialogService
+      .openConfirmDialog(
+        "Are you sure to cancel this appointment?",
+        "cancelAppointment"
+      )
+      .afterClosed()
+      .subscribe((res) => {
         if (res) {
           const payload = {
-            "id": schedule.appointmentId,
-            "visitUuid": schedule.visitUuid
+            id: schedule.appointmentId,
+            visitUuid: schedule.visitUuid,
+            reason: localStorage.reason,
+            userId: this.userId,
           };
           this.appointmentService
             .cancelAppointment(payload)
             .subscribe((res: any) => {
-              const message = res.message || "Appointment cancelled successfully!";
+              const message =
+                res.message || "Appointment cancelled successfully!";
               this.toast({ message });
               this.detailModalRef.close();
               this.ngOnInit();
@@ -347,4 +368,14 @@ export class CalendarComponent implements OnInit {
     return localStorage.getItem("selectedLanguage");
   }
 
+  get reason() {
+    let reason;
+    if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+    else reason = this.selectedReason;
+    return reason;
+  }
+
+  get rescheduleDisabled() {
+    return !this.slots[this.selectedSlotIdx] || !this.reason;
+  }
 }
