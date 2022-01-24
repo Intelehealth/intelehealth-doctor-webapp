@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslateService } from "@ngx-translate/core";
 import { SocketService } from "src/app/services/socket.service";
 declare const getFromStorage: Function;
 @Component({
@@ -43,7 +44,8 @@ export class VcComponent implements OnInit {
     public socketService: SocketService,
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<VcComponent>,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   close() {
@@ -94,7 +96,7 @@ export class VcComponent implements OnInit {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
     console.log("Attempted to create or  join room", this.room);
-    this.toast({ message: "Calling....", duration: 8000 });
+    this.toast({ message: this.translate.instant("Calling...."), duration: 8000 });
   }
 
   mute() {
@@ -195,7 +197,7 @@ export class VcComponent implements OnInit {
     });
     this.socketService.onEvent("no answer").subscribe((data) => {
       console.log("no answer: ", data);
-      this.toast({ message: "No answer." });
+      this.toast({ message: this.translate.instant("No answer.") });
       this.close();
     });
   }

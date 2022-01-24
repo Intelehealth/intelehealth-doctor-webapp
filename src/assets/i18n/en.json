@@ -186,6 +186,8 @@
     "HR": "HR",
     "RR": "RR",
     "No chat history found.": "No chat history found.",
+    "You can't send message as you are not online.":"You can't send message as you are not online.",
+    "(you are offline)":"(you are offline)",
     "Chat": "Chat",
     "message": "message",
     "Sorry no Patient Found..": "Sorry! Patient Not Found.",
@@ -238,6 +240,7 @@
     "End Date can't before start time": "End Date can't before start time",
     "You can not modify past schedule.":"You can not modify past schedule.",
     "Health Scheme Card":"Health Scheme Card",
+    "NA":"NA",
     "messages": {
       "welcome": "Welcome",
       "loginError": "Username & Password doesn't match",
@@ -427,7 +430,9 @@
       "GURGLE WITH LUKEWARM SALINE WATER": "GURGLE WITH LUKEWARM SALINE WATER",
       "DO NOT STUDY IN LOW LIGHT": "DO NOT STUDY IN LOW LIGHT",
       "Concept #163113": "Concept #163113",
-      "Concept #163112": "Concept #163112"
+      "Concept #163112": "Concept #163112",
+      "Watch: Wash your hands regularly to protect yourself - <a target=\"_blank\" href=\"https:\/\/www.youtube.com/watch?v=l6s6rXiIun8\">video link</a>":"Watch: Wash your hands regularly to protect yourself - <a target=\"blank\" href=\"https:\/\/www.youtube.com/watch?v=l6s6rXiIun8\">video link</a>",
+      "Watch: Responsible behavior may save you - <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=F1-rkF39uHk\">video link</a>":"Watch: Responsible behavior may save you - <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=F1-rkF39uHk\">video link</a>"
     },
     "medicines": {
       "Albendazole Tablets 400mg": "Albendazole Tablets 400mg",

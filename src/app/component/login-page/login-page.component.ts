@@ -8,6 +8,7 @@ import { PushNotificationsService } from "src/app/services/push-notification.ser
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
+import { TranslateService } from "@ngx-translate/core";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -29,11 +30,18 @@ export class LoginPageComponent implements OnInit {
     private authService: AuthService,
     private pushNotificationsService: PushNotificationsService,
     private service: VisitService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
-    localStorage.setItem("selectedLanguage", "en");
+    if(localStorage.getItem('selectedLanguage')) {
+      this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
+    } else {
+      let browserlang = this.translate.getBrowserLang();
+      this.translate.setDefaultLang(browserlang);
+      localStorage.setItem("selectedLanguage", browserlang);
+    }
     this.service.clearVisits();
   }
 
@@ -71,13 +79,9 @@ export class LoginPageComponent implements OnInit {
               } else {
                 this.router.navigate(["/home"]);
               }
-              this.snackbar.open(
-                `Welcome ${provider.results[0].person.display}`,
-                null,
-                {
-                  duration: 4000,
-                }
-              );
+              this.translate.get('messages.welcome').subscribe((res: string) => {
+                this.snackbar.open(`${res} ${provider.results[0].person.display}`,null, {duration: 2000});
+              });
               saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
@@ -85,8 +89,8 @@ export class LoginPageComponent implements OnInit {
             }
           );
         } else {
-          this.snackbar.open("Username & Password doesn't match", null, {
-            duration: 4000,
+          this.translate.get('messages.loginError').subscribe((res: string) => {
+            this.snackbar.open(res, null, {duration: 4000});
           });
         }
       });

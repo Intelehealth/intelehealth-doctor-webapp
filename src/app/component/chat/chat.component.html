@@ -3,7 +3,7 @@
 </div>
 <div [class.active]="classFlag" class="chat card container col-md-3">
   <div class="card-header" (click)="chatClose()">
-    <h6>Chat &nbsp;{{ isOnline ? "" : "(you are offline)" }}</h6>
+    <h6>{{ "Chat" | translate }} &nbsp;{{ isOnline ? "" : "(you are offline)" | translate }}</h6>
     <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
@@ -30,7 +30,7 @@
     </div>
     <mat-spinner class="spinner" *ngIf="loading" [diameter]="70"></mat-spinner>
     <div class="no-history" *ngIf="!loading && !chats?.length">
-      No chat history found.
+      {{ "No chat history found." | translate }}
     </div>
   </div>
   <div class="message-form card-footer">
@@ -40,7 +40,7 @@
         [disabled]="!isOnline"
         type="text"
         class="form-control"
-        placeholder="message"
+        placeholder="{{ 'message' | translate }}"
         name="message"
         aria-label="Recipient's username"
         [(ngModel)]="message"
@@ -57,7 +57,7 @@
         </button>
       </div>
       <span class="msg" *ngIf="!isOnline"
-        >You can't send message as you are not online.</span
+        >{{ "You can't send message as you are not online." | translate }}</span
       >
     </div>
   </div>

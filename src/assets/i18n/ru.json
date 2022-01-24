@@ -186,6 +186,8 @@
     "HR": "ЧС",
     "RR": "ЧД",
     "No chat history found.": "История чата не найдена.",
+    "You can't send message as you are not online.":"Вы не можете отправить сообщение, так как вы не в сети.",
+    "(you are offline)":"(ты не в сети)",
     "Chat": "Чат",
     "message": "сообщение",
     "Sorry no Patient Found..": "К сожалению, пациент не найден..",
@@ -238,6 +240,7 @@
     "End Date can't before start time": "Дата окончания не может быть раньше времени начала",
     "You can not modify past schedule.":"Вы не можете изменить прошлое расписание.",
     "Health Scheme Card":"Карта программы здравоохранения",
+    "NA":"нет данных",
     "messages": {
       "welcome": "Добро пожаловать",
       "loginError": "Имя пользователя и пароль не совпадают",
@@ -427,7 +430,9 @@
       "GURGLE WITH LUKEWARM SALINE WATER": "ГУРГЛ С СОЛНЕЧНОЙ ВОДОЙ LUKEWARM",
       "DO NOT STUDY IN LOW LIGHT": "НЕ ИССЛЕДУЙТЕ ПРИ СЛАБОЙ ОСВЕЩЕННОСТИ",
       "Concept #163113": "Концепция № 163113",
-      "Concept #163112": "Концепция № 163112"
+      "Concept #163112": "Концепция № 163112",
+      "Watch: Wash your hands regularly to protect yourself - <a target=\"_blank\" href=\"https:\/\/www.youtube.com/watch?v=l6s6rXiIun8\">video link</a>":"Смотрите: регулярно мойте руки, чтобы защитить себя — <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=l6s6rXiIun8\">ссылка на видео</a>",
+      "Watch: Responsible behavior may save you - <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=F1-rkF39uHk\">video link</a>":"Смотреть: ответственное поведение может спасти вас – <a target=\"_blank\" href=\"https://www.youtube.com/watch?v=F1-rkF39uHk\">ссылка на видео</a>"
     },
     "medicines": {
       "Albendazole Tablets 400mg": "Альбендазол 400 мг",

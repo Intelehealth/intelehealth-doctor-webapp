@@ -35,7 +35,7 @@
 
     <ng-container matColumnDef="telephone">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Phone No'| translate}}</th>
-      <td mat-cell *matCellDef="let row">{{ row?.telephone }}</td>
+      <td mat-cell *matCellDef="let row">{{ row?.telephone === 'NA' ? ('NA' | translate) : row?.telephone }}</td>
     </ng-container>
 
     <!-- Gender Column -->
