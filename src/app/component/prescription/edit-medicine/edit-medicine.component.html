@@ -1,0 +1,10 @@
+<div class="col-xs-6">
+    <h3 class="text-center">Medicine</h3>
+    <!-- <form [formGroup]="editMedicine"> -->
+        <div *ngFor="let medicine of medicines">
+            <input type="checkbox" id="medicine" name="vehicle1" [(ngModel)]="medicine.checked">&nbsp;&nbsp;
+            <label for="medicine">{{medicine.name}}</label><br>
+        </div>
+        <button mat-raised-button color="primary" type="submit" (click)="updateMedicine()">UPDATE</button>
+    <!-- </form> -->
+</div>

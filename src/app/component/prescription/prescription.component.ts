@@ -1,8 +1,10 @@
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { VisitService } from "src/app/services/visit.service";
+import { EditMedicineComponent } from "./edit-medicine/edit-medicine.component";
 // import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
 
 @Component({
@@ -38,7 +40,8 @@ export class PrescriptionComponent implements OnInit {
     private route: ActivatedRoute,
     private exportAsService: ExportAsService,
     private diagnosisService: DiagnosisService,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private dialog: MatDialog
   ) {
     this.visitId = this.route.snapshot.paramMap.get("visitId");
     this.openMrsId = this.route.snapshot.paramMap.get("openMrsId");
@@ -59,6 +62,13 @@ export class PrescriptionComponent implements OnInit {
           }
         });
       });
+  }
+
+  editMedicine(){
+    this.dialog.open(EditMedicineComponent, {
+      width: "600px",
+      data: this.medications,
+    });
   }
 
   getVisitDetails() {
@@ -103,7 +113,6 @@ export class PrescriptionComponent implements OnInit {
 
   processData(resp) {
     this.data = resp;
-    console.log("this.data: ", this.data);
     try {
       if (this.data?.doctorAttributes?.split) {
         this.drAttributesList = this.data?.doctorAttributes?.split("|");

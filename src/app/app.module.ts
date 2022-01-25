@@ -93,6 +93,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { PrescriptionComponent } from "./component/prescription/prescription.component";
 import { ReferPatientComponent } from './component/visit-summary/refer-patient/refer-patient.component';
+import { EditMedicineComponent } from './component/prescription/edit-medicine/edit-medicine.component';
 
 @NgModule({
   declarations: [
@@ -137,6 +138,7 @@ import { ReferPatientComponent } from './component/visit-summary/refer-patient/r
     ConfirmDialogComponent,
     PrescriptionComponent,
     ReferPatientComponent,
+    EditMedicineComponent,
   ],
 
   imports: [
