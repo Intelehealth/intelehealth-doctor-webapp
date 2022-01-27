@@ -85,7 +85,10 @@ export class PrescriptionComponent implements OnInit {
   editMedicine() {
     this.dialog.open(EditMedicineComponent, {
       width: "600px",
-      data: this.medications,
+      data: {
+        medications: this.medications,
+        visitId : this.visitId
+      }, 
     });
   }
 
