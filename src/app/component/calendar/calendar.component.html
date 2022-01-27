@@ -124,14 +124,14 @@
             <td>{{ e1.slotTime }}</td>
             <td>
               <button
-              mat-raised-button
-              style="float: left;"
-              color="primary"
-              [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
-              (click)="close()"
-            >
-              {{ "View" | translate }}
-            </button> 
+                mat-raised-button
+                style="float: left"
+                color="primary"
+                [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+                (click)="close()"
+              >
+                {{ "View" | translate }}
+              </button>
               <button
                 mat-raised-button
                 color="primary"
@@ -140,12 +140,12 @@
                 {{ "Reschedule" | translate }}
               </button>
               <button
-                style="float: right;"
+                style="float: right"
                 mat-raised-button
                 color="primary"
                 (click)="cancelAppointment(e1)"
               >
-              {{ "Cancel" | translate }}
+                {{ "Cancel" | translate }}
               </button>
             </td>
           </tr>
@@ -177,7 +177,7 @@
               cha
               disabled
               type="text"
-              [value]="(selectedSchedule?.speciality) | translate"
+              [value]="selectedSchedule?.speciality | translate"
             />
           </div>
           <div class="col-7">
@@ -186,6 +186,25 @@
               (change)="changeCalender($event)"
               type="date"
               [value]="todaysDate"
+            />
+          </div>
+          <div class="col-12" *ngIf="slots?.length">
+            <mat-form-field class="example-full-width w-100">
+              <mat-select
+                placeholder="{{ 'Reason' | translate }}"
+                [(ngModel)]="selectedReason"
+              >
+                <mat-option *ngFor="let rsn of reasons" [value]="rsn">
+                  {{ rsn | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <input
+              type="text"
+              [(ngModel)]="otherReason"
+              *ngIf="selectedReason == reasons[2]"
+              matInput
+              placeholder="{{ 'Specify reason' | translate }}"
             />
           </div>
           <div class="col-12 mt-4" *ngIf="setSpiner">
@@ -198,24 +217,35 @@
               <mat-chip
                 class="p-4"
                 [class.active]="i == selectedSlotIdx"
-                *ngFor="let slot of slots;index as i;"
+                *ngFor="let slot of slots; index as i"
                 (click)="selectSlot(i)"
               >
                 <div class="d-grid">
                   <span>{{ slot?.slotTime }}</span>
-                  <span>{{ slot?.slotDuration }} {{slot?.slotDurationUnit | slice:0:3}}s</span>
+                  <span>
+                    {{ slot?.slotDuration }}
+                    {{ slot?.slotDurationUnit | slice: 0:3 }}s
+                  </span>
                 </div>
               </mat-chip>
             </mat-chip-list>
             <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
-              {{ 'No slots avalable for the day, try changing dates.' | translate }}
+              {{
+                "No slots avalable for the day, try changing dates." | translate
+              }}
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer center">
-      <button type="button" mat-raised-button color="primary" [disabled]="!slots[selectedSlotIdx]" (click)="reschedule()">
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        [disabled]="rescheduleDisabled"
+        (click)="reschedule()"
+      >
         {{ "Reschedule" | translate }}
       </button>
       <button type="button" mat-raised-button color="primary" (click)="close()">

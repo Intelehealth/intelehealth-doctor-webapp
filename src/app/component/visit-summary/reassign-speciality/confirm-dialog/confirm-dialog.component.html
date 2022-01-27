@@ -1,11 +1,46 @@
 <div>
-    <div class="content-container">
-      <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
-      <span class="content-span full-width">{{(data.message) | translate}}</span>
-    </div>
-    <button  mat-raised-button color="danger" id="no-button" [mat-dialog-close]="false">{{'NO'|translate}}</button>
-    <button  mat-raised-button color="primary" id="yes-button" [mat-dialog-close]="true">{{'YES'|translate}}</button>
-    
-    <!-- <button mat-flat-button id="no-button" [mat-dialog-close]="false">NO</button> -->
-    <!-- <button mat-flat-button id="yes-button" [mat-dialog-close]="true">YES</button> -->
+  <div class="content-container">
+    <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
+    <span class="content-span full-width">{{ data.message | translate }}</span>
   </div>
+  <div class="col-12" *ngIf="type === 'cancelAppointment'">
+    <mat-form-field class="example-full-width w-100">
+      <mat-select
+        placeholder="{{ 'Reason' | translate }}*"
+        [(ngModel)]="selectedReason"
+      >
+        <mat-option *ngFor="let rsn of reasons" [value]="rsn">
+          {{ rsn | translate }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <input
+      class="mb-4"
+      type="text"
+      [(ngModel)]="otherReason"
+      *ngIf="selectedReason == reasons[2]"
+      matInput
+      placeholder="{{ 'Specify reason' | translate }}*"
+    />
+  </div>
+  <button
+    mat-raised-button
+    color="danger"
+    id="no-button"
+    [mat-dialog-close]="false"
+  >
+    {{ "NO" | translate }}
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    id="yes-button"
+    [disabled]="disabled"
+    [mat-dialog-close]="true"
+  >
+    {{ "YES" | translate }}
+  </button>
+
+  <!-- <button mat-flat-button id="no-button" [mat-dialog-close]="false">NO</button> -->
+  <!-- <button mat-flat-button id="yes-button" [mat-dialog-close]="true">YES</button> -->
+</div>
