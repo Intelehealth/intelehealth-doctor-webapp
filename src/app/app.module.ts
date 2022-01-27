@@ -44,7 +44,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -92,8 +92,9 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { PrescriptionComponent } from "./component/prescription/prescription.component";
-import { ReferPatientComponent } from './component/visit-summary/refer-patient/refer-patient.component';
-import { EditMedicineComponent } from './component/prescription/edit-medicine/edit-medicine.component';
+import { ReferPatientComponent } from "./component/visit-summary/refer-patient/refer-patient.component";
+import { EditMedicineComponent } from "./component/prescription/edit-medicine/edit-medicine.component";
+import { TokenInterceptor } from "./interceptors/token.interceptor";
 
 @NgModule({
   declarations: [
@@ -252,6 +253,7 @@ import { EditMedicineComponent } from './component/prescription/edit-medicine/ed
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

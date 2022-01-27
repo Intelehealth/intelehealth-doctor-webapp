@@ -10,6 +10,7 @@ export const environment = {
   mindmapURL: "https://trn.digitalhih.net:3004/api",
   notificationURL: "https://trn.digitalhih.net:3004/notification",
   socketURL: "https://trn.digitalhih.net:3004",
+  tempToken: "c3lzbnVyc2U6SUhOdXJzZSMx",
 };
 
 /*

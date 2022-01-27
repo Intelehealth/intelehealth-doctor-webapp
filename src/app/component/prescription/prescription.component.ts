@@ -4,8 +4,9 @@ import { ActivatedRoute } from "@angular/router";
 import { ExportAsConfig, ExportAsService } from "ngx-export-as";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { VisitService } from "src/app/services/visit.service";
+import { environment } from "src/environments/environment";
 import { EditMedicineComponent } from "./edit-medicine/edit-medicine.component";
-// import { medicineProvidedAttrType } from "../homepage/tables/tables.component";
+declare var saveToStorage, deleteFromStorage;
 
 @Component({
   selector: "app-prescription",
@@ -34,6 +35,11 @@ export class PrescriptionComponent implements OnInit {
   followupNeeded: any = [];
   notes: any = [];
   references: any = [];
+  apisLoaded = {
+    getReferData: false,
+    getVisitDetails: false,
+    getPrescriptionData: false,
+  };
   conceptReferPatient = "5f0d1049-4fd6-497e-88c4-ae13a34ae241";
 
   constructor(
@@ -48,8 +54,19 @@ export class PrescriptionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    saveToStorage("session", environment.tempToken);
     this.getPrescriptionData();
     this.getVisitDetails();
+  }
+
+  checkAndRemoveTempToken(api) {
+    if (!this.apisLoaded[api]) this.apisLoaded[api] = true;
+    let allLoaded = true;
+    for (const k in this.apisLoaded) {
+      if (Object.prototype.hasOwnProperty.call(this.apisLoaded, k))
+        if (!this.apisLoaded[k]) allLoaded = false;
+    }
+    if (allLoaded) deleteFromStorage("session");
   }
 
   getReferData() {
@@ -61,10 +78,11 @@ export class PrescriptionComponent implements OnInit {
             this.references.push(obs);
           }
         });
+        this.checkAndRemoveTempToken("getReferData");
       });
   }
 
-  editMedicine(){
+  editMedicine() {
     this.dialog.open(EditMedicineComponent, {
       width: "600px",
       data: this.medications,
@@ -82,14 +100,7 @@ export class PrescriptionComponent implements OnInit {
           this.data.fullName = res?.patient?.person?.display;
           this.data.uuid = res?.patient?.uuid;
           this.getReferData();
-          // if (res.attributes?.length) {
-          //   if (res.attributes?.length > 0) {
-          //     const medProvided = res.attributes.find(
-          //       (a: any) => a?.attributeType?.uuid === medicineProvidedAttrType
-          //     );
-          //     this.medicineProvided = medProvided?.value || false;
-          //   }
-          // }
+          this.checkAndRemoveTempToken("getVisitDetails");
         },
       });
   }
@@ -102,11 +113,9 @@ export class PrescriptionComponent implements OnInit {
       })
       .subscribe({
         next: (resp) => this.processData(resp),
-        error: (err) => {
-          console.log("err: ", err);
-        },
         complete: () => {
           this.loading = false;
+          this.checkAndRemoveTempToken("getPrescriptionData");
         },
       });
   }
