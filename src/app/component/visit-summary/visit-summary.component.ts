@@ -24,6 +24,7 @@ export class VisitSummaryComponent implements OnInit {
   font: string;
   visitNotePresent = false;
   remotePrescriptionPresent = false;
+  visitCompletePresent = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -71,18 +72,12 @@ export class VisitSummaryComponent implements OnInit {
             this.visitNotePresent = true;
             this.show = true;
           }
-          if (visit.display.match("Remote Prescription") !== null || visit.display.match("Visit Complete") !== null) {
-            this.remotePrescriptionPresent = true;
-            visit.encounterProviders[0].provider.attributes.forEach(
-              (element) => {
-                if (element.attributeType.display === "textOfSign") {
-                  this.text = element.value;
-                }
-                if (element.attributeType.display === "fontOfSign") {
-                  this.font = element.value;
-                }
-              }
-            );
+          if (!this.visitCompletePresent && visit.display.match("Remote Prescription") !== null) {
+            this.setSignature(visit);
+          } 
+           if (visit.display.match("Visit Complete") !== null) {
+            this.visitCompletePresent = true;
+            this.setSignature(visit);
           }
           if (
             visit.display.includes("ADULTINITIAL") |
@@ -96,6 +91,20 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
       this.translationService.getSelectedLanguage();
+  }
+
+  private setSignature(visit: any) {
+    this.remotePrescriptionPresent = true;
+    visit.encounterProviders[0].provider.attributes.forEach(
+      (element) => {
+        if (element.attributeType.display === "textOfSign") {
+          this.text = element.value;
+        }
+        if (element.attributeType.display === "fontOfSign") {
+          this.font = element.value;
+        }
+      }
+    );
   }
 
   onStartVisit() {
