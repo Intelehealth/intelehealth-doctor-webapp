@@ -41,7 +41,7 @@ export class PrescriptionComponent implements OnInit {
     getPrescriptionData: false,
   };
   conceptReferPatient = "5f0d1049-4fd6-497e-88c4-ae13a34ae241";
-
+  medicineFilter;
   constructor(
     private route: ActivatedRoute,
     private exportAsService: ExportAsService,
@@ -87,7 +87,8 @@ export class PrescriptionComponent implements OnInit {
       width: "600px",
       data: {
         medications: this.medications,
-        visitId : this.visitId
+        visitId : this.visitId,
+        medicineData : this.medicineFilter
       }, 
     });
   }
@@ -100,6 +101,7 @@ export class PrescriptionComponent implements OnInit {
       )
       .subscribe({
         next: (res: any) => {
+          this.medicineFilter = res.attributes.filter(a=>a.attributeType.uuid === 'bf6483f5-a73a-454a-b459-2d2cf3338330')
           this.data.fullName = res?.patient?.person?.display;
           this.data.uuid = res?.patient?.uuid;
           this.getReferData();
@@ -123,7 +125,7 @@ export class PrescriptionComponent implements OnInit {
       });
   }
 
-  processData(resp) {
+  processData(resp) {    
     this.data = resp;
     try {
       if (this.data?.doctorAttributes?.split) {
