@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { reasons } from "src/app/component/calendar/calendar.component";
 
 @Component({
   selector: "app-confirm-dialog",
@@ -11,7 +10,7 @@ export class ConfirmDialogComponent implements OnInit {
   type;
   selectedReason = "";
   otherReason = "";
-  reasons = reasons;
+  reasons = ["Doctor Not available", "Patient Not Available", "Other"];
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ConfirmDialogComponent>

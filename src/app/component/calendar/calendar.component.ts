@@ -35,12 +35,6 @@ const colors: any = {
   },
 };
 
-export const reasons = [
-  "Doctor Not available",
-  "Patient Not Available",
-  "Other",
-];
-
 @Component({
   selector: "app-calendar",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +47,6 @@ export const reasons = [
   ],
 })
 export class CalendarComponent implements OnInit {
-  private yesterday: Date;
   @ViewChild("modalContent") modalContent: TemplateRef<any>;
   @ViewChild("rescheduleModal") rescheduleModal: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
@@ -71,7 +64,7 @@ export class CalendarComponent implements OnInit {
   setSpiner = false;
   selectedReason = "";
   otherReason = "";
-  reasons = reasons;
+  reasons = ["Doctor Not available", "Patient Not Available", "Other"];
   constructor(
     private modal: NgbModal,
     private appointmentService: AppointmentService,
@@ -246,33 +239,29 @@ export class CalendarComponent implements OnInit {
   todaysDate = moment().format("YYYY-MM-DD");
   slots = [];
   rescheduleClick(schedule) {
-    this.selectedSchedule = schedule;
-    const e = { target: { value: moment().format("YYYY-MM-DD") } };
-    this.changeCalender(e);
-    this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
-    // this.vService
-    //   .fetchVisitDetails(
-    //     schedule.visitUuid,
-    //     "custom:(uuid,encounters:(display,uuid,display))"
-    //   )
-    //   .subscribe((res) => {
-    //     const len = res.encounters.filter((e) => {
-    //       return (
-    //         e.display.includes("Patient Exit Survey") ||
-    //         e.display.includes("Visit Complete")
-    //       );
-    //     }).length;
-    //     const isCompleted = Boolean(len);
-    //     if (isCompleted) {
-    //       const message = `Visit is already completed, it can't be rescheduled.`;
-    //       this.toast({ message });
-    //     } else {
-    //       this.selectedSchedule = schedule;
-    //       const e = { target: { value: moment().format("YYYY-MM-DD") } };
-    //       this.changeCalender(e);
-    //       this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
-    //     }
-    //   });
+    this.vService
+      .fetchVisitDetails(
+        schedule.visitUuid,
+        "custom:(uuid,encounters:(display,uuid,display))"
+      )
+      .subscribe((res) => {
+        const len = res.encounters.filter((e) => {
+          return (
+            e.display.includes("Patient Exit Survey") ||
+            e.display.includes("Visit Complete")
+          );
+        }).length;
+        const isCompleted = Boolean(len);
+        if (isCompleted) {
+          const message = `Visit is already completed, it can't be rescheduled.`;
+          this.toast({ message });
+        } else {
+          this.selectedSchedule = schedule;
+          const e = { target: { value: moment().format("YYYY-MM-DD") } };
+          this.changeCalender(e);
+          this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
+        }
+      });
   }
 
   changeCalender(e) {
@@ -334,7 +323,7 @@ export class CalendarComponent implements OnInit {
             id: schedule.appointmentId,
             visitUuid: schedule.visitUuid,
             reason: localStorage.reason,
-            userId: this.userId,
+            hwUUID: this.userId,
           };
           this.appointmentService
             .cancelAppointment(payload)
