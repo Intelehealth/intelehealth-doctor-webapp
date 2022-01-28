@@ -133,3 +133,9 @@ body.font-lato td {
 .cdk-overlay-container{
   z-index: 1060;
 }
+
+ngb-typeahead-window {
+  max-height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

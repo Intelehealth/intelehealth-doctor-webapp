@@ -7,47 +7,90 @@
             <app-patientinfo></app-patientinfo>
       </mat-card>
       <br>
-      <mat-card>
-            <app-past-visits></app-past-visits>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-current-visit></app-current-visit>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-presenting-complaints></app-presenting-complaints>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-family-history></app-family-history>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-past-medical-history></app-past-medical-history>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-vital></app-vital>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-on-examination></app-on-examination>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-physical-examination></app-physical-examination>
-      </mat-card>
-      <br>
-      <mat-card>
-            <app-additional-documents></app-additional-documents>
-      </mat-card>
+      <mat-tab-group>
+            <mat-tab *ngIf="!visitNotePresent">
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fa fa-sync-alt"></i> {{'Refer to Specialist'| translate}}
+                  </ng-template>
+                  <mat-card >
+                        <app-reassign-speciality></app-reassign-speciality>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab>
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-comment"></i> {{'Presenting Complaints'|translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-presenting-complaints></app-presenting-complaints>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab>
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-stethoscope"></i>{{ 'On Examination'| translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-on-examination></app-on-examination>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab *ngIf="isVitalPresent">
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-heartbeat"></i> {{'Vitals'|translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-vital (isDataPresent)="getIsVitalDataPresent($event)"></app-vital>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab>
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-hospital"></i> {{'Past Visits'| translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-past-visits></app-past-visits>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab>
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-clinic-medical"></i> {{ 'Current Visit'|translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-current-visit></app-current-visit>
+                  </mat-card>
+            </mat-tab>   
+            <mat-tab *ngIf="isFamilyHistoryPresent">
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-users"></i> {{'Family History' | translate }}
+                  </ng-template>
+                  <mat-card>
+                        <app-family-history (isDataPresent)="getIsFamilyDataPresent($event)"></app-family-history>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab *ngIf="isPastMedicalPresent">
+                  <ng-template mat-tab-label>
+                        <i class="name-spacing fas fa-book-medical"></i> {{'Past Medical History'|translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-past-medical-history (isDataPresent)="getIsMedicalDataPresent($event)"></app-past-medical-history>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab *ngIf="isPhyscExamPresent">
+                  <ng-template mat-tab-label>
+                        {{'Physical Examination'|translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-physical-examination (isDataPresent)="getIsExamDataPresent($event)"></app-physical-examination>
+                  </mat-card>
+            </mat-tab>
+            <mat-tab *ngIf="isAdditionalDocPresent">
+                  <ng-template mat-tab-label>
+                        {{'Additional Documents'| translate}}
+                  </ng-template>
+                  <mat-card>
+                        <app-additional-documents (isDataPresent)="getIsAdditionalDataPresent($event)"></app-additional-documents>
+                  </mat-card>
+            </mat-tab>
+      </mat-tab-group>            
       <br>
       <mat-card *ngIf="!visitNotePresent">
-        <app-reassign-speciality></app-reassign-speciality>
-      </mat-card>
-      <br>
-      <mat-card>
             <small style="color: red">
                   <i>
                         <b>{{ 'Note' | translate }}:</b>
@@ -66,39 +109,66 @@
       <div class="text-center" *ngIf="!show">
             <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="visitSpeciality != userSpeciality || isVisitEnded">{{'Start Visit Note' | translate}}</button>
       </div>
-
-      <br>
-
       <div *ngIf="show">
-            <mat-card>
-                  <app-patient-interaction></app-patient-interaction>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-diagnosis></app-diagnosis>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-prescribed-medication></app-prescribed-medication>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-prescribed-test></app-prescribed-test>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-advice></app-advice>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-additional-comment></app-additional-comment>
-            </mat-card>
-            <br>
-            <mat-card>
-                  <app-follow-up></app-follow-up>
-            </mat-card>
-            <br>
-        
+                  <h2 style="text-align:center;">{{ 'Remote Prescription'| translate }}</h2>
+            <mat-tab-group>
+                  <mat-tab>
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing material-icons">contact_phone</i>{{'Patient Interaction'| translate}}
+                        </ng-template>
+                        <mat-card> 
+                              <app-patient-interaction></app-patient-interaction>
+                         </mat-card>     
+                   </mat-tab>
+                  <mat-tab>
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-diagnoses"></i>{{ 'Diagnosis' | translate }}
+                        </ng-template>
+                        <mat-card>
+                              <app-diagnosis></app-diagnosis>
+                        </mat-card>
+                   </mat-tab>
+                  <mat-tab> 
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-pills"></i>{{'Recommended Medication'|translate}}
+                        </ng-template>
+                        <mat-card>
+                              <app-prescribed-medication></app-prescribed-medication>
+                        </mat-card>
+                  </mat-tab>
+                  <mat-tab> 
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-vials"></i>{{'Recommended Tests'|translate}}
+                        </ng-template>
+                        <mat-card>
+                              <app-prescribed-test></app-prescribed-test>
+                        </mat-card>
+                  </mat-tab>
+                  <mat-tab> 
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-comment-medical"></i>{{'Advice or Refer Patient' | translate }}
+                        </ng-template>
+                        <mat-card>
+                              <app-advice></app-advice>
+                        </mat-card>
+                  </mat-tab>
+                  <mat-tab> 
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-notes-medical"></i>{{'Notes'|translate}}
+                        </ng-template>
+                        <mat-card>
+                              <app-additional-comment></app-additional-comment>
+                        </mat-card>
+                  </mat-tab>
+                  <mat-tab> 
+                        <ng-template mat-tab-label>
+                              <i class="name-spacing fas fa-book"></i>{{'Follow Up'|translate}}
+                        </ng-template>
+                        <mat-card>
+                              <app-follow-up></app-follow-up>
+                        </mat-card>
+                  </mat-tab>
+            </mat-tab-group>
             <br>
             <ng-container *ngIf="remotePrescriptionPresent && text">
                   <div class="d-flex justify-content-center">
@@ -116,9 +186,33 @@
             </div>
       </div>
 </div>
-<app-chat></app-chat>
-<div class="vc-button" (click)="openVcModal()">
-  <span>
-    <img [src]="videoIcon" />
-  </span>
-</div>
+      <!-- <div class="align-right bottom1">
+            <i class="fas fa-hospital fa-lg" matTooltip=" {{'Past Visits'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom2">
+            <i class="fas fa-clinic-medical fa-lg" matTooltip=" {{'Current Visit'| translate}}" aria-hidden="true"></i> 
+      </div>
+      <div class="align-right bottom3">
+            <i class="fas fa-users fa-lg" matTooltip=" {{'Family History'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom4">
+            <i class="fas fa-book-medical fa-lg" matTooltip=" {{'Past Medical History'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom5">
+            <i class="fas fa-heartbeat fa-lg"  matTooltip=" {{'Vitals'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom6">
+            <i class="fa fa-image fa-lg"  matTooltip=" {{'Additional Documents'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom7">
+            <i class="fas fa-images fa-lg"  matTooltip=" {{'Physical Examination'| translate}}" aria-hidden="true"></i>
+      </div>
+      <div class="align-right bottom8">
+            <i class="fas fa-info-circle fa-lg"  matTooltip=" {{'Note'| translate}}" aria-hidden="true"></i>
+      </div> -->
+      <app-chat></app-chat>
+      <div class="vc-button" (click)="openVcModal()">
+        <span>
+          <img [src]="videoIcon" />
+        </span>
+      </div>

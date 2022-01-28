@@ -1,49 +1,45 @@
 <h4><i class="fas fa-info-circle"></i> {{'Patient Information'| translate}}</h4>
 <div class="modal-body row">
-    <div class="col-md-6">
-        <table class="table table-borderless table-sm">
-            <tbody *ngFor="let info of patientInfo">
-                <tr>
-                    <th scope="row">{{'Name'|translate}}</th>
-                    <td>{{info.display}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'OpenMRS ID'|translate}}</th>
-                    <td>{{patientIdentifier}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Sex'|translate}}</th>
-                    <td>{{ info.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Age'|translate}}</th>
-                    <td>{{info.age}} {{'Years'| translate}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Village'|translate}}</th>
-                    <td>{{info.preferredAddress.cityVillage}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Contact Info'|translate}}</th>
-                    <td *ngIf="info.telephone">{{info.telephone}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Occupation'|translate}}</th>
-                    <td *ngIf="info.occupation">{{info.occupation}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Citizen ID'|translate}}</th>
-                    <td *ngIf="info.citizenId">{{info.citizenId}}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="col-md-4">
+        <div *ngIf="profileImagePresent">
+            <img [src]=image width="30%" height="30%" alt="">
+        </div>
+        <div *ngIf="!profileImagePresent">
+            <img src="assets/dummy profile image.jpg" width="30%" height="30%" alt="">
+        </div>
     </div>
-    <div class="col-md-6">
-        <div *ngIf="profileImagePresent" style="text-align: center">
-            <img [src]=image width="40%" height="200" alt="">
-        </div>
-        <div *ngIf="!profileImagePresent" style="text-align: center">
-            <img src="assets/dummy profile image.jpg" width="40%" height="40%" alt="">
-        </div>
+    <div class="col-md-4">
+        <b>{{patientInfo[0]?.display}}</b>
+        <br>
+        {{ patientInfo[0]?.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }} , {{patientInfo[0]?.age}}
+        {{'Years'| translate}}
+        <br>
+        {{patientInfo[0]?.telephone}}
+    </div>
+    <div class="col-md-4">
+        <table>
+            <tr>
+                <th scope="row">{{'OpenMRS ID'|translate}}: </th>
+                <td>{{patientIdentifier}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{'Sex'|translate}}: </th>
+                <td>{{ patientInfo[0]?.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
+            </tr>
+
+            <tr>
+                <th scope="row">{{'Village'|translate}}: </th>
+                <td>{{patientInfo[0]?.preferredAddress.cityVillage}}</td>
+            </tr>
+
+            <tr>
+                <th scope="row">{{'Occupation'|translate}}: </th>
+                <td *ngIf="patientInfo[0]?.occupation">{{patientInfo[0]?.occupation}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{'Citizen ID'|translate}}: </th>
+                <td *ngIf="patientInfo[0]?.citizenId">{{patientInfo[0].citizenId}}</td>
+            </tr>
+        </table>
     </div>
 </div>

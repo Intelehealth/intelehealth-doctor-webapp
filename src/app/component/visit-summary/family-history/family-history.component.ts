@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
@@ -9,6 +9,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
   styleUrls: ['./family-history.component.css']
 })
 export class FamilyHistoryComponent implements OnInit {
+@Output() isDataPresent = new EventEmitter<boolean>();
 familyHistory: any = [];
 familyHistoryPresent = false;
 conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
@@ -28,6 +29,9 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
       });
       if (this.familyHistory !== undefined && this.familyHistory.length > 0) {
         this.familyHistoryPresent = true;
+        this.isDataPresent.emit(true);
+      } else {
+        this.isDataPresent.emit(false);
       }
     });
   }

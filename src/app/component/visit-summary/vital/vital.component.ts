@@ -1,5 +1,5 @@
 import { VisitService } from 'src/app/services/visit.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 
@@ -9,6 +9,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
   styleUrls: ['./vital.component.css']
 })
 export class VitalComponent implements OnInit {
+@Output() isDataPresent = new EventEmitter<boolean>();
 answer: any = [];
 v: any = [];
 vitalsPresent = false;
@@ -72,6 +73,12 @@ vitalsPresent = false;
                   Number(obs.display.slice(18, obs.display.length));
                 }
               });
+              if(this.answer.sbp || this.answer.dbp ||  this.answer.weight || this.answer.height || this.answer.sp02 ||
+                this.answer.pulse || this.answer.respiratoryRate) {
+                this.isDataPresent.emit(true);
+              } else {
+                this.isDataPresent.emit(false);
+              }
               if(this.answer.height && this.answer.weight) {
                 this.answer.bmi = localStorage.getItem('selectedLanguage') === 'ru' ? 
                 this.getTranslatedValue((this.answer.weight.replace(',', '.')/((this.answer.height.replace(',', '.')/100)*(this.answer.height.replace(',', '.')/100))).toFixed(2)):

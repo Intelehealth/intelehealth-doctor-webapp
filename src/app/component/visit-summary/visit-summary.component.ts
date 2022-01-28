@@ -1,6 +1,6 @@
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
@@ -16,6 +16,7 @@ declare var getFromStorage: any,
   selector: "app-visit-summary",
   templateUrl: "./visit-summary.component.html",
   styleUrls: ["./visit-summary.component.css"],
+  encapsulation : ViewEncapsulation.None
 })
 export class VisitSummaryComponent implements OnInit {
   show = false;
@@ -34,7 +35,9 @@ export class VisitSummaryComponent implements OnInit {
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
-
+  isFamilyHistoryPresent = true; isPastMedicalPresent = true;
+  isPhyscExamPresent = true; isAdditionalDocPresent = true;
+  isVitalPresent = true;
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
@@ -257,5 +260,25 @@ export class VisitSummaryComponent implements OnInit {
         patientUuid: this.patientUuid,
       },
     });
+  }
+
+  getIsFamilyDataPresent(isDataPresent) {
+    isDataPresent ? this.isFamilyHistoryPresent = isDataPresent : this.isFamilyHistoryPresent = false;
+  }
+
+  getIsMedicalDataPresent(isDataPresent) {
+    isDataPresent ? this.isPastMedicalPresent = isDataPresent :  this.isPastMedicalPresent = false;
+  }
+  
+  getIsExamDataPresent(isDataPresent) {
+    isDataPresent ?  this.isPhyscExamPresent = isDataPresent : this.isPhyscExamPresent= false;
+  }
+
+  getIsAdditionalDataPresent(isDataPresent) {
+    isDataPresent ? this.isAdditionalDocPresent = isDataPresent : this.isAdditionalDocPresent= false;
+  }
+
+  getIsVitalDataPresent(isDataPresent) {
+    isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent= false;
   }
 }

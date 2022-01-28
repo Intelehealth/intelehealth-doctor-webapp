@@ -28,3 +28,48 @@ mat-spinner {
     width: 30px;
   }
   
+  .align-right {
+    position: fixed;
+    right: 30px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: rgb(237, 239, 241);
+    padding: 15px;
+    cursor: pointer;
+  }
+ 
+ .bottom1 {
+  bottom: 570px;
+ } 
+ .bottom2 {
+  bottom: 510px;
+ } 
+ .bottom3 {
+  bottom: 450px;
+ } 
+ .bottom4 {
+  bottom: 390px;
+ } 
+ .bottom5 {
+  bottom: 330px;
+ } 
+ .bottom6{
+  bottom: 270px;
+ } 
+ .bottom7 {
+  bottom: 210px;
+ } 
+ .bottom8 {
+  bottom: 150px;
+ } 
+
+.name-spacing {
+  padding-right: 7px
+}
+.mat-tab-label-active{
+  background-color: white;
+  opacity: 1 !important;
+  color: black;
+}
+
