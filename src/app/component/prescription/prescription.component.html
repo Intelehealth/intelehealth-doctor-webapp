@@ -9,7 +9,7 @@
         Download
         <i class="fa fa-download"></i>
       </button>
-      <button class="ml-2" (click)= 'editMedicine()'>
+      <button *ngIf="user?.uuid && user.roles" class="ml-2" (click)= 'editMedicine()'>
         Medicine Given
         <i class="fa fa-user-md"></i>
       </button>

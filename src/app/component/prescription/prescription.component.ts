@@ -87,9 +87,9 @@ export class PrescriptionComponent implements OnInit {
       width: "600px",
       data: {
         medications: this.medications,
-        visitId : this.visitId,
-        medicineData : this.medicineFilter
-      }, 
+        visitId: this.visitId,
+        medicineData: this.medicineFilter,
+      },
     });
   }
 
@@ -101,7 +101,10 @@ export class PrescriptionComponent implements OnInit {
       )
       .subscribe({
         next: (res: any) => {
-          this.medicineFilter = res.attributes.filter(a=>a.attributeType.uuid === 'bf6483f5-a73a-454a-b459-2d2cf3338330')
+          this.medicineFilter = res.attributes.filter(
+            (a) =>
+              a.attributeType.uuid === "bf6483f5-a73a-454a-b459-2d2cf3338330"
+          );
           this.data.fullName = res?.patient?.person?.display;
           this.data.uuid = res?.patient?.uuid;
           this.getReferData();
@@ -125,7 +128,7 @@ export class PrescriptionComponent implements OnInit {
       });
   }
 
-  processData(resp) {    
+  processData(resp) {
     this.data = resp;
     try {
       if (this.data?.doctorAttributes?.split) {
@@ -180,5 +183,13 @@ export class PrescriptionComponent implements OnInit {
           },
         });
     }, 1000);
+  }
+
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return false;
+    }
   }
 }
