@@ -3,14 +3,11 @@ import { ImagesService } from "src/app/services/images.service";
 import { ActivatedRoute } from "@angular/router";
 import { VisitService } from "src/app/services/visit.service";
 import { environment } from "../../../../environments/environment";
-import * as moment from "moment";
-import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "app-patientinfo",
   templateUrl: "./patientinfo.component.html",
-  styleUrls: ["./patientinfo.component.css"],
-  providers: [DatePipe],
+  styleUrls: ["./patientinfo.component.css"]
 })
 export class PatientinfoComponent implements OnInit {
   baseURL = environment.baseURL;
@@ -23,8 +20,7 @@ export class PatientinfoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    private service: ImagesService,
-    private datePipe: DatePipe
+    private service: ImagesService
   ) {}
 
   ngOnInit() {
@@ -38,6 +34,7 @@ export class PatientinfoComponent implements OnInit {
       localStorage.setItem("patientName", this.info["display"]);
 
       this.patientIdentifier = info.identifiers[0].identifier;
+      this.info['age1'] = this.visitService.getAge(info.person.birthdate)
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;

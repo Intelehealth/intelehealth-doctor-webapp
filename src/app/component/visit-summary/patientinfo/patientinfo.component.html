@@ -1,27 +1,35 @@
 <h4><i class="fas fa-info-circle"></i> {{'Patient Information'| translate}}</h4>
 <div class="modal-body row">
-    <div class="col-md-4">
+    <div class="col-md-2">
         <div *ngIf="profileImagePresent">
-            <img [src]=image width="30%" height="30%" alt="">
+            <img [src]=image width="60%" height="60%" alt="">
         </div>
         <div *ngIf="!profileImagePresent">
-            <img src="assets/dummy profile image.jpg" width="30%" height="30%" alt="">
+            <img src="assets/dummy profile image.jpg" width="60%" height="60%" alt="">
         </div>
     </div>
-    <div class="col-md-4">
-        <b>{{patientInfo[0]?.display}}</b>
-        <br>
-        {{ patientInfo[0]?.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }} , {{patientInfo[0]?.age}}
-        {{'Years'| translate}}
-        <br>
-        {{patientInfo[0]?.telephone}}
-    </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <table>
+            <tr>
+                <th scope="row">{{'Name'|translate}}: </th>
+                <td>{{patientInfo[0]?.display}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{'Age'|translate}}: </th>
+                <td> {{patientInfo[0]?.age1}}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{'Contact Info'|translate}}: </th>
+                <td> {{patientInfo[0]?.telephone}}</td>
+            </tr>
             <tr>
                 <th scope="row">{{'OpenMRS ID'|translate}}: </th>
                 <td>{{patientIdentifier}}</td>
             </tr>
+        </table>    
+    </div>
+    <div class="col-md-4">
+        <table>
             <tr>
                 <th scope="row">{{'Sex'|translate}}: </th>
                 <td>{{ patientInfo[0]?.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>

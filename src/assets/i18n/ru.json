@@ -216,6 +216,9 @@
   "Are you sure to cancel this appointment?":"Вы уверены, что отмените встречу?",
   "Are you sure to cancel this schedule?":"Вы уверены, что отмените это расписание?",
   "Remote Prescription":"Удаленное назначение",
+  "years": "лет",
+  "months":"месяц(-а)",
+  "days": "дней",
   "messages": {
     "welcome": "Добро пожаловать",
     "loginError": "Имя пользователя и пароль не совпадают",

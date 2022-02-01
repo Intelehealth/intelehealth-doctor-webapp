@@ -216,6 +216,9 @@
   "Are you sure to cancel this appointment?":"Are you sure to cancel this appointment?",
   "Are you sure to cancel this schedule?":"Are you sure to cancel this schedule?",
   "Remote Prescription":"Remote Prescription",
+  "years": "years",
+  "months":"months",
+  "days":"days",
   "messages": {
     "welcome": "Welcome",
     "loginError": "Username & Password doesn't match",

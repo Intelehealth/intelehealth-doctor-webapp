@@ -2,6 +2,10 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { TranslateService } from "@ngx-translate/core";
+import { DatePipe } from "@angular/common";
+import * as moment from "moment";
+
 
 @Injectable({
   providedIn: "root",
@@ -9,7 +13,9 @@ import { environment } from "../../environments/environment";
 export class VisitService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private datePipe: DatePipe,
+    private translate: TranslateService) {}
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length
@@ -56,5 +62,30 @@ export class VisitService {
     // tslint:disable-next-line: max-line-length
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
+  }
+
+  getAge(dateString) {
+    let age: any = {};
+    let  now: any;
+     //------sol 1 ---------------
+     var mydate = dateString.replace(
+       /^(\d{2})\/(\d{2})\/(\d{4})$/,
+       "$3, $2, $1"
+     );
+ 
+     now = new Date();
+     var todayDate = this.datePipe.transform(now, "yyyy, MM, dd");
+ 
+     var a = moment(todayDate);
+     var b = moment(mydate);
+     var diffDuration = moment.duration(a.diff(b));
+     var ageString =
+       diffDuration.years() + " " +
+       this.translate.instant("years") +" - " +
+       diffDuration.months() + " "+
+       this.translate.instant("months") + " - " +
+       diffDuration.days() + " "+
+       this.translate.instant("days");
+     return ageString;
   }
 }
