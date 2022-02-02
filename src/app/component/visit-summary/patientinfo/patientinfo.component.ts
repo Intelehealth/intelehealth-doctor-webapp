@@ -34,7 +34,6 @@ export class PatientinfoComponent implements OnInit {
       localStorage.setItem("patientName", this.info["display"]);
 
       this.patientIdentifier = info.identifiers[0].identifier;
-      this.info['age1'] = this.visitService.getAge(info.person.birthdate)
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
@@ -46,5 +45,9 @@ export class PatientinfoComponent implements OnInit {
       });
       this.patientInfo.push(this.info);
     });
+  }
+
+  getAge(dateString) {
+    return this.visitService.getAge(dateString);
   }
 }

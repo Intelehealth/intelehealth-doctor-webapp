@@ -27,7 +27,7 @@
     <!-- Date OF Birth Column -->
     <ng-container matColumnDef="age">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Age'| translate}} </th>
-      <td mat-cell *matCellDef="let row"> {{row.age}} </td>
+      <td mat-cell *matCellDef="let row"> {{getAge(row.age)}} </td>
     </ng-container>
 
     <!-- Location column -->

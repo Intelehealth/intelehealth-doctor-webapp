@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
+import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
   selector: 'app-tables',
@@ -14,7 +15,7 @@ export class TablesComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @Input() data;
-  constructor() { }
+  constructor(private service: VisitService) { }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource(this.data);
@@ -28,6 +29,10 @@ export class TablesComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  getAge(dateString) {
+    return this.service.getAge(dateString);
   }
 
 }

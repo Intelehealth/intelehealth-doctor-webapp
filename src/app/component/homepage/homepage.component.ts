@@ -180,7 +180,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
-    this.value.age = this.service.getAge(active.patient.person.birthdate);
+    this.value.age = active.patient.person.birthdate;
     this.value.location = active.location.display;
     this.value.status =
     active.stopDatetime != null
