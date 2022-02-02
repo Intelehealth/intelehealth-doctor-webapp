@@ -34,7 +34,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       secondary: "#FDF1BA",
     },
   };
-  
+
   @Component({
     selector: "app-appointment-view",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,7 +62,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     activeDayIsOpen: boolean = false;
     selectedLang: string = "en";
     setSpiner = false;
-  
+    selectedReason = "";
+    otherReason = "";
+    reasons = ["Doctor Not available", "Patient Not Available", "Other"];
     constructor(
       private modal: NgbModal,
       private appointmentService: AppointmentService,
@@ -151,8 +153,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     handleEvent(action: string, event: CalendarEvent): void {
       let events = [];
       events.push(event);
-      let date =  new Date(event.start);
-      this.modalData = {date, events };
+      let date = new Date(event.start);
+      this.modalData = { date, events };
       this.detailModalRef = this.modal.open(this.modalContent);
     }
   
@@ -274,7 +276,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     reschedule() {
       const payload = {
         ...this.selectedSchedule,
-        ...this.slots[this.selectedSlotIdx]
+        ...this.slots[this.selectedSlotIdx],
+        reason: this.reason,
       };
   
       this.appointmentService
@@ -308,17 +311,25 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     }
   
     cancelAppointment(schedule) {
-      this.dialogService.openConfirmDialog("Are you sure to cancel this appointment?")
-        .afterClosed().subscribe(res => {
+      this.dialogService
+        .openConfirmDialog(
+          "Are you sure to cancel this appointment?",
+          "cancelAppointment"
+        )
+        .afterClosed()
+        .subscribe((res) => {
           if (res) {
             const payload = {
-              "id": schedule.appointmentId,
-              "visitUuid": schedule.visitUuid
+              id: schedule.appointmentId,
+              visitUuid: schedule.visitUuid,
+              reason: localStorage.reason,
+              hwUUID: this.userId,
             };
             this.appointmentService
               .cancelAppointment(payload)
               .subscribe((res: any) => {
-                const message = res.message || "Appointment cancelled successfully!";
+                const message =
+                  res.message || "Appointment cancelled successfully!";
                 this.toast({ message });
                 this.detailModalRef.close();
                 this.ngOnInit();
@@ -346,4 +357,14 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       return localStorage.getItem("selectedLanguage");
     }
   
+    get reason() {
+      let reason;
+      if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+      else reason = this.selectedReason;
+      return reason;
+    }
+  
+    get rescheduleDisabled() {
+      return !this.slots[this.selectedSlotIdx] || !this.reason;
+    }
   }

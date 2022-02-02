@@ -195,7 +195,7 @@ export class PatientInteractionComponent implements OnInit {
   }
 
   openDialog(msg:string) {
-    this.dialogService.openConfirmDialog(msg, true)
+    this.dialogService.openConfirmDialog(msg, "info")
       .afterClosed().subscribe();
   }
 }

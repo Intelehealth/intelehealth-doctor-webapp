@@ -28,6 +28,7 @@ export class LoginPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    localStorage.setItem("selectedLanguage", "en");
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
       this.router.navigateByUrl("/home");
