@@ -10,7 +10,7 @@ export class ConfirmDialogComponent implements OnInit {
   type;
   selectedReason = "";
   otherReason = "";
-  reasons = ["Doctor Not available", "Patient Not Available", "Other"];
+  reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ConfirmDialogComponent>
