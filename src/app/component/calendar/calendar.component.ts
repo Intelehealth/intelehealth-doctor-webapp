@@ -64,7 +64,7 @@ export class CalendarComponent implements OnInit {
   setSpiner = false;
   selectedReason = "";
   otherReason = "";
-  reasons = ["Doctor Not available", "Patient Not Available", "Other"];
+  reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
   constructor(
     private modal: NgbModal,
     private appointmentService: AppointmentService,

@@ -5595,5 +5595,8 @@
   "Week Day":"Week Day",
   "Clear":"Clear",
   "Cancel":"Cancel",
-  "Schedule":"Schedule"
+  "Schedule":"Schedule",
+  "Doctor Not Available":"Doctor Not Available",
+  "Patient Not Available":"Patient Not Available",
+  "Other":"Other"
 }

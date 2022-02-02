@@ -5595,5 +5595,8 @@
   "Week Day":"День недели",
   "Clear":"Прозрачный",
   "Cancel":"Отмена",
-  "Schedule":"Расписание"
+  "Schedule":"Расписание",
+  "Doctor Not Available":"Врач недоступен",
+  "Patient Not Available":"Пациент недоступен",
+  "Other":"Другое"
 }
