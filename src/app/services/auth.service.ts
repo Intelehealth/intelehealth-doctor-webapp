@@ -2,6 +2,7 @@ import { SessionService } from './session.service';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 declare var deleteFromStorage: any;
 
@@ -13,6 +14,7 @@ export class AuthService {
   constructor(private myRoute: Router,
               private sessionService: SessionService,
               private cookieService: CookieService) { }
+  public fingerPrint;            
 
   sendToken(token) {
     this.cookieService.set('JSESSIONID', token);
@@ -40,5 +42,13 @@ export class AuthService {
         this.myRoute.navigate(['/']);
     });
     });
+  }
+
+  getFingerPrint() {
+    (async () => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      this.fingerPrint = result.visitorId;
+    })();
   }
 }

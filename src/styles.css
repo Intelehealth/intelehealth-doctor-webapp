@@ -116,3 +116,10 @@ body.font-lato td {
   text-align: center;
   font-size: 20px;
 }
+
+.cal-month-view .cal-open-day-events {
+  padding: 0px;
+}
+.cdk-overlay-container{
+  z-index: 1060;
+}

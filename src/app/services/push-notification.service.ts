@@ -24,6 +24,7 @@ export class PushNotificationsService {
       providerName,
       user_uuid,
       finger_print,
+      locale: localStorage.selectedLanguage,
     });
   }
 
@@ -41,7 +42,8 @@ export class PushNotificationsService {
       `${environment.mindmapURL}/mindmap/snooze_notification`,
       {
         user_uuid: JSON.parse(localStorage.user).uuid,
-        snooze_for, custom
+        snooze_for,
+        custom,
       }
     );
   }

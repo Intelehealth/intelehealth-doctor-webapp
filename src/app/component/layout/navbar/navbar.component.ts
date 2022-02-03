@@ -7,7 +7,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
 import { environment } from '../../../../environments/environment';
-declare var getFromStorage: any;
+import { SwPush, SwUpdate } from "@angular/service-worker";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
+declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
   selector: 'app-navbar',
@@ -20,6 +22,11 @@ export class NavbarComponent implements OnInit {
   systemAccess = false;
   reportAccess = false;
   values: any = [];
+  subscribeAccess = false;
+
+  readonly VapidKEY =
+  "BMtnHsFSrIqN6HpWWHd1w7pjkuPcpPqAT_DIOo-B9L6BwpTgXUk-HtlRiWECDy2-N8RYCeqm8O8N_WUWX9V_578"; // SS training
+  //"BNJYiUVbYJre8_1XP5aSD9BhpyJ-gBcpXgRyWXgM5MbF4P5evFFuU3sNC_fuk3hg33q8NDKUV-qYPWY7BeTJp0Y"; //SS Production
 
   searchForm = new FormGroup({
     findInput: new FormControl('', [Validators.required])
@@ -31,11 +38,14 @@ export class NavbarComponent implements OnInit {
   constructor(private authService: AuthService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private http: HttpClient) { }
+    private http: HttpClient,
+    public swUpdate: SwUpdate,
+    public swPush: SwPush,
+    public notificationService: PushNotificationsService) { }
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
-
+    this.subscribeAccess = getFromStorage("subscribed") || false;
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
@@ -45,11 +55,24 @@ export class NavbarComponent implements OnInit {
           this.reportAccess = true;
         }
       });
-    } else { this.authService.logout(); }
+    } else { 
+      this.logout();
+    }
+    this.authService.getFingerPrint();
+    setTimeout(() => {
+      this.subscribeNotification(true);
+    }, 1000);
+    if (this.swPush.isEnabled) {
+      this.notificationService.notificationHandler();
+    }
   }
 
   logout() {
     this.authService.logout();
+    this.unsubscribeNotification();
+    setTimeout(() => {
+      this.authService.logout();
+    }, 0);
   }
 
   changePassword() {
@@ -87,5 +110,64 @@ export class NavbarComponent implements OnInit {
 
   callTour() {
     this.messageEvent.emit();
+  }
+
+  subscribeNotification(reSubscribe = false) {
+    if (this.swUpdate.isEnabled) {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VapidKEY,
+        })
+        .then((sub) => {
+          const providerDetails = getFromStorage("provider");
+          if (providerDetails) {
+            const attributes = providerDetails.attributes;
+            attributes.forEach((element) => {
+              if (
+                element.attributeType.uuid ===
+                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                !element.voided
+              ) {
+                this.notificationService
+                  .postSubscription(
+                    sub,
+                    element.value,
+                    providerDetails.person.display,
+                    this.user.uuid,
+                    this.authService.fingerPrint
+                  )
+                  .subscribe((response) => {
+                    if (response) {
+                      if (!reSubscribe) {
+                        this.snackbar.open('"Notification Subscribed Successfully"', null, { duration: 2000 });
+                      }
+                      saveToStorage("subscribed", true);
+                      this.subscribeAccess = true;
+                    }
+                  });
+              }
+            });
+          }
+        });
+    }
+  }
+  
+ unsubscribeNotification() {
+    this.swPush.unsubscribe();
+    localStorage.removeItem("subscribed");
+    this.notificationService
+      .unsubscribeNotification({
+        user_uuid: this.user.uuid,
+        finger_print: this.authService.fingerPrint,
+      })
+      .subscribe();
+  }
+
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return {};
+    }
   }
 }

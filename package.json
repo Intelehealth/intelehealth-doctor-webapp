@@ -24,6 +24,7 @@
         "@angular/pwa": "^0.1000.6",
         "@angular/router": "~10.0.11",
         "@angular/service-worker": "~10.0.11",
+        "@fingerprintjs/fingerprintjs": "^3.0.5",
         "@ng-bootstrap/ng-bootstrap": "^7.0.0",
         "@types/intro.js": "^2.4.7",
         "angular-user-idle": "^2.2.4",
