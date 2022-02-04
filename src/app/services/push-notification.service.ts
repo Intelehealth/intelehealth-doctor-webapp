@@ -16,7 +16,8 @@ export class PushNotificationsService {
     speciality,
     providerName,
     user_uuid,
-    finger_print
+    finger_print,
+    location?
   ) {
     return this.http.post(`${this.baseURL}/subscribe`, {
       sub,
@@ -24,6 +25,7 @@ export class PushNotificationsService {
       providerName,
       user_uuid,
       finger_print,
+      location,
     });
   }
 
