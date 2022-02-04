@@ -1,4 +1,35 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
+<div class="container">
+  <div class="modal-body row">
+  <div class="col-sm-4" style="padding: 3px">
+    <div class="card text-white" style="background: #f6b825">
+      <div class="card-body">
+        <div class="text-left">
+          AWAITING CONSULATATION<span class="text-right badge badge-light">100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4" style="padding: 3px">
+    <div class="card text-white" style="background: #4fca8b">
+      <div class="card-body">
+        <div class="text-left">
+          COMPLETED CONSULATATION<span class="text-right badge badge-light">40</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4" style="padding: 3px">
+    <div class="card text-white" style="background: #17a2b8">
+      <div class="card-body">
+        <div class="text-left">
+          TAT OF ONESELF<span class="text-right badge badge-light">60</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
 <ng-container *ngIf="!setSpiner">
   <div class="container">
     <div class="wrap-login100">
