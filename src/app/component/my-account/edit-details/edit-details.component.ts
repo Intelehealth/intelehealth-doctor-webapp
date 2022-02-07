@@ -52,9 +52,9 @@ export class EditDetailsComponent implements OnInit {
     qualification: new FormControl(
       this.data.qualification ? this.data.qualification.value : null
     ),
-    specialization: new FormControl(
-      this.data.specialization ? this.data.specialization.value : null
-    ),
+    specialization: new FormControl([
+      this.data.specialization ? this.data.specialization : []
+    ]),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
     ),
@@ -64,6 +64,7 @@ export class EditDetailsComponent implements OnInit {
   name = "Enter text";
   userDetails: any;
   providerDetails: any;
+  selected = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -76,6 +77,9 @@ export class EditDetailsComponent implements OnInit {
   ngOnInit() {
     this.userDetails = getFromStorage("user");
     this.providerDetails = getFromStorage("provider");
+    this.data.specialization.forEach(element => {
+      this.selected.push(element.value);
+    });
   }
 
   get attributes() {
@@ -174,14 +178,26 @@ export class EditDetailsComponent implements OnInit {
     }
 
     if (value.specialization !== null) {
-      const URL = this.data.specialization
-        ? `${this.baseURLProvider}/${this.data.specialization.uuid}`
-        : this.baseURLProvider;
-      const json = {
-        attributeType: "ed1715f5-93e2-404e-b3c9-2a2d9600f062",
-        value: value.specialization,
-      };
-      this.http.post(URL, json).subscribe((response) => {});
+      value.specialization.forEach(selected => {
+        let selectedSpeciality = this.data.specialization.find((m) => m.value.includes(selected));
+        let URL: string;
+        if (!selectedSpeciality) {
+          URL = this.baseURLProvider;
+          const json = {
+            attributeType: "ed1715f5-93e2-404e-b3c9-2a2d9600f062",
+            value: selected,
+            voided: false
+          };
+          this.http.post(URL, json).subscribe((response) => {});
+        }
+      });
+      let deletedSpeciality = this.data.specialization.filter(x => !value.specialization.includes(x.value));
+      if (deletedSpeciality && deletedSpeciality.length > 0) {
+        deletedSpeciality.forEach(element => {
+          let url = `${this.baseURLProvider}/${element.uuid}`
+          this.http.delete(url).subscribe((response) => {});
+        });
+      }
     }
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);

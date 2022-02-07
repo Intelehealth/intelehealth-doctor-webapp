@@ -19,6 +19,7 @@ export class MyAccountComponent implements OnInit {
 
   name = 'Enter text';
   providerDetails = null;
+  selectedSpeciality = [];
 
   constructor(private sessionService: SessionService,
     private http: HttpClient,
@@ -30,10 +31,21 @@ export class MyAccountComponent implements OnInit {
       .subscribe(provider => {
         this.providerDetails = provider.results[0];
         const attributes = provider.results[0].attributes;
+        let specialization = [];
         attributes.forEach(element => {
-          this.providerDetails[element.attributeType.display] = { value: element.value, uuid: element.uuid };
+          if (element.attributeType.uuid ===
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062") {
+            if (!element.voided)
+              specialization.push({ value: element.value, uuid: element.uuid })
+            this.providerDetails[element.attributeType.display] = specialization;
+          } else {
+            this.providerDetails[element.attributeType.display] = { value: element.value, uuid: element.uuid };
+          }
         });
         this.setSpiner = false;
+        this.providerDetails.specialization.forEach(element => {
+          this.selectedSpeciality.push(element.value);
+        });
       });
   }
 

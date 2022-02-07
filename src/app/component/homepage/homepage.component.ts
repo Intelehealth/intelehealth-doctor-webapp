@@ -30,7 +30,7 @@ export class HomepageComponent implements OnInit {
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
-  specialization: string;
+  specialization = [];
 
   constructor(
     private sessionService: SessionService,
@@ -54,7 +54,7 @@ export class HomepageComponent implements OnInit {
               "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
-            this.specialization = element.value;
+            this.specialization.push(element.value);
           }
         });
       });
@@ -69,13 +69,13 @@ export class HomepageComponent implements OnInit {
       (response) => {
         let visits1 = [];
         const result = response.results;
-        if (this.specialization && this.specialization.toLowerCase() == "all") {
+        if (this.specialization && this.specialization.includes("All")) {
           visits1 = result;
         } else {
           visits1 = result.filter((a) =>
             a.attributes.length > 0
               ? a.attributes.find((b) => {
-                  return b.value == this.specialization;
+                 return this.specialization.includes(b.value);
                 })
               : ""
           );

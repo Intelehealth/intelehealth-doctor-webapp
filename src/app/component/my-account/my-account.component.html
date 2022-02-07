@@ -34,7 +34,8 @@
                                 </tr>
                                 <tr>
                                     <th>Specialization :</th>
-                                    <td *ngIf='providerDetails.specialization'>{{providerDetails.specialization.value}}</td>
+                                    <td *ngIf='providerDetails.specialization' class="truncate-cell" 
+                                    [matTooltipClass]="{ 'tool-tip': true }" [matTooltip]="selectedSpeciality">{{ selectedSpeciality}}</td>
                                 </tr>
                                 <tr>
                                     <th>Registration No. :</th>
