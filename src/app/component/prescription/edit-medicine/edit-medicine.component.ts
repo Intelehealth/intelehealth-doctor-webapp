@@ -12,7 +12,6 @@ declare var saveToStorage, deleteFromStorage;
 export class EditMedicineComponent implements OnInit {
   medicines = [];
   visitIdd;
-  medicineUpdated = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -23,57 +22,53 @@ export class EditMedicineComponent implements OnInit {
 
   ngOnInit(): void {
     this.visitIdd = this.data.visitId;
-    const { medications = [], medicineData = [] } = this.data;
+    const { medications = [], medicineData } = this.data;
+    const medValue = medicineData?.value || "";
+    const medData = medValue.split(",");
     medications.forEach((medication) => {
-      const [med] = medication.split(":");
-      const attr = medicineData.find((m) => m.value.includes(med));
+      let [med] = medication.split(":");
+      if (med.charAt(0) == " ") med = med.replace(" ", "");
+      const checked = medData.includes(med) ? true : false;
       let medicine: any = {
         name: med,
-        checked: true,
+        checked,
       };
-      if (attr) {
-        medicine.value = attr.value;
-        medicine.uuid = attr.uuid;
-        const [_, checked] = attr.value.split("||");
-        medicine.checked = JSON.parse(checked);
-      }
       this.medicines.push(medicine);
     });
   }
 
   updateMedicine() {
     saveToStorage("session", environment.tempToken);
-    this.medicines.forEach((med) => {
-      const payload = {
-        attributeType: "bf6483f5-a73a-454a-b459-2d2cf3338330",
-        value: `${med.name}||${med.checked}`,
-      };
-      if (med.uuid) {
-        this.visitService
-          .setVisitAttribute(this.visitIdd, payload, med)
-          .subscribe((response) => {
-            this.medicineUpdated.push(true);
-            this.checkAndClosePopup();
-          });
-      } else {
-        this.visitService
-          .setVisitAttribute(this.visitIdd, payload)
-          .subscribe((response) => {
-            this.medicineUpdated.push(true);
-            this.checkAndClosePopup();
-          });
-      }
-    });
+    const uuid = this.data?.medicineData?.uuid;
+    const value = this.medicines
+      .filter((m) => m?.checked)
+      .map((m) => m?.name)
+      .join();
+    const payload = {
+      attributeType: "ba1e259f-8911-439d-abde-fb6c24c1e3c2",
+      value,
+    };
+    if (uuid) {
+      this.visitService
+        .setVisitAttribute(this.visitIdd, payload, { uuid })
+        .subscribe((response) => {
+          this.close();
+        });
+    } else {
+      this.visitService
+        .setVisitAttribute(this.visitIdd, payload)
+        .subscribe((response) => {
+          this.close();
+        });
+    }
   }
 
-  checkAndClosePopup() {
-    if (this.medicineUpdated?.length >= this.data?.medications?.length) {
-      this.snackbar.open("Medicine Updated Successfully", null, {
-        duration: 4000,
-      });
-      this.dialogRef.close();
-      deleteFromStorage("session");
-      location.reload();
-    }
+  close() {
+    this.snackbar.open("Medicine Updated Successfully", null, {
+      duration: 4000,
+    });
+    this.dialogRef.close();
+    deleteFromStorage("session");
+    location.reload();
   }
 }

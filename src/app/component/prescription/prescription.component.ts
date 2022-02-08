@@ -101,9 +101,9 @@ export class PrescriptionComponent implements OnInit {
       )
       .subscribe({
         next: (res: any) => {
-          this.medicineFilter = res.attributes.filter(
+          this.medicineFilter = res.attributes.find(
             (a) =>
-              a.attributeType.uuid === "bf6483f5-a73a-454a-b459-2d2cf3338330"
+              a.attributeType.uuid === "ba1e259f-8911-439d-abde-fb6c24c1e3c2"
           );
           this.data.fullName = res?.patient?.person?.display;
           this.data.uuid = res?.patient?.uuid;

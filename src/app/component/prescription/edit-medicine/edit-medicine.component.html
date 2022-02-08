@@ -3,7 +3,7 @@
     <!-- <form [formGroup]="editMedicine"> -->
         <div class="d-flex" *ngFor="let medicine of medicines">
             <input type="checkbox" id="medicine" name="vehicle1" [(ngModel)]="medicine.checked">&nbsp;&nbsp;
-            <label for="medicine">{{medicine.name}}</label><br>
+            <label  for="medicine">{{medicine.name}}</label><br>
         </div>
         <button mat-raised-button color="primary" type="submit" (click)="updateMedicine()">UPDATE</button>
     <!-- </form> -->
