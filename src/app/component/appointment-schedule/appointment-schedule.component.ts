@@ -264,6 +264,7 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   set(type) {
+    this.unChanged = false;
     this.errorMsg = null;
     if (type.day === "All Days") {
       this.type = "month";
