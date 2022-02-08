@@ -176,6 +176,10 @@ export class NavbarComponent implements OnInit {
         const providerDetails = getFromStorage("provider");
         if (providerDetails) {
           const attributes = providerDetails.attributes;
+          const location = attributes.find((a) => {
+            const display = a?.display || "";
+            return display.toLowerCase().includes("visitstate");
+          });
           attributes.forEach((element) => {
             if (
               element.attributeType.uuid ===
@@ -188,7 +192,8 @@ export class NavbarComponent implements OnInit {
                   element.value,
                   providerDetails.person.display,
                   this.user.uuid,
-                  this.authService.fingerPrint
+                  this.authService.fingerPrint,
+                  location?.value
                 )
                 .subscribe((response) => {
                   if (response) {
