@@ -21,6 +21,8 @@ export class MyAccountComponent implements OnInit {
 
   name = "Enter text";
   visitState = "NA";
+  completed = [];
+  awaiting = [];
   providerDetails = null;
   userDetails: any;
   speciality: string;
@@ -30,6 +32,7 @@ export class MyAccountComponent implements OnInit {
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   value: any = {};
+  providerId: any;
 
   constructor(
     private sessionService: SessionService,
@@ -37,11 +40,12 @@ export class MyAccountComponent implements OnInit {
     private dialog: MatDialog,
     private service: VisitService,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.setSpiner = true;
     this.userDetails = getFromStorage("user");
+
     this.sessionService
       .provider(this.userDetails.uuid)
       .subscribe((provider) => {
@@ -87,47 +91,63 @@ export class MyAccountComponent implements OnInit {
   }
 
 
-  getVisitsData(){
+  getVisitsData() {
+    this.providerId = getFromStorage("provider");
     this.service.getVisits().subscribe(
       (response) => {
         const visits = response.results;
-        let stateVisits = [];
-        if (this.visitState && this.visitState !== "All") {
-          stateVisits = visits.filter(({ attributes }) => {
-            const visitState = this.getStateFromVisit(attributes);
-            return this.visitState === visitState;
-          });
-        } else if (this.visitState === "All") {
-          stateVisits = visits;
-        }
-        stateVisits.forEach((active) => {
-          if (active.encounters.length > 0) {
-            if (active.attributes.length) {
-              const attributes = active.attributes;
-              const speRequired = attributes.filter(
-                (attr) =>
-                  attr.attributeType.uuid ===
-                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-              );
-              if (speRequired.length) {
-                speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
-                    if (index === 0) {
-                      this.visitCategory(active);
-                    }
-                    if (index === 1 && spe[0] !== spe[1]) {
-                      this.visitCategory(active);
-                    }
-                  }
-                });
-              }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
-            }
+
+        const stateVisits = visits.filter((v) => {
+          let flag = false;
+          const loc = v.attributes.find(
+            (a) =>
+              a.attributeType.uuid === "0e798578-96c1-450b-9927-52e45485b151"
+          );
+          if ((this.visitState === 'All') || loc && (loc.value === this.visitState || loc.value === "All")) {
+            flag = true;
           }
-          this.value = {};
+          return flag;
         });
-        this.setSpiner = false;
+        const visitNoEnc = stateVisits.filter((v) => v.encounters.length > 0);
+        let filteredVisits = visitNoEnc;
+        if (this.specialization !== "General Physician")
+          filteredVisits = stateVisits.filter((v) => v.attributes.length > 0);
+        const specialityVisits = filteredVisits.filter((v) => {
+          let flag = false;
+          const spec = v.attributes.find(
+            (a) => a.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+          );
+          if (spec && spec.value === this.specialization) flag = true;
+          return flag;
+        });
+        this.awaiting = [];
+        this.completed = [];
+        specialityVisits.forEach((visit) => {
+          let cachedVisit;
+          if (this.checkVisit(visit.encounters, "Visit Complete")) {
+            visit.encounters.forEach((encounterType, index) => {
+              if (encounterType?.display.includes('Visit Complete')) {
+                
+                // encounter - visit completed - encounter provider 
+                if (this.providerId.uuid === encounterType.encounterProviders[0].provider.uuid) {
+                  this.completed.push(visit);
+                }
+              }
+            });
+          } else if (this.checkVisit(visit.encounters, "Visit Note")) {
+          } else if ((cachedVisit = this.checkVisit(visit.encounters, "Flagged"))) {
+            // if (!cachedVisit.voided) priority.push(visit);
+          } else if (
+            this.checkVisit(visit.encounters, "ADULTINITIAL") ||
+            this.checkVisit(visit.encounters, "Vitals")
+          ) {
+            const attemptOne = [];
+           
+            this.awaiting.push(visit);
+            // encounter - visit note - encounter provider 
+          }
+        });
+
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -139,36 +159,14 @@ export class MyAccountComponent implements OnInit {
     );
   }
 
- /**
-   * Check for encounter as per visit type passed
-   * @param encounters Array
-   * @param visitType String
-   * @returns Object | null
-   */
+  /**
+    * Check for encounter as per visit type passed
+    * @param encounters Array
+    * @param visitType String
+    * @returns Object | null
+    */
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
-  }
-
-  visitCategory(active) {
-    const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Visit Complete")) {
-      // const values = this.assignValueToProperty(active);
-
-      // this.completedVisit.push(values);
-      // this.completeVisitNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")) {
-     
-    } else if (this.checkVisit(encounters, "Flagged")) {
-      if (!this.checkVisit(encounters, "Flagged").voided) {
-       
-      }
-    } else if (
-      this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")
-    ) {
-      this.activePatient += 1;
-      GlobalConstants.visits.push(active);
-    }
   }
 
   /**
@@ -180,7 +178,7 @@ export class MyAccountComponent implements OnInit {
     const json = {
       names: value,
     };
-    this.http.post(URL, json).subscribe((response) => {});
+    this.http.post(URL, json).subscribe((response) => { });
   }
 
   /**
