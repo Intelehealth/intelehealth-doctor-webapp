@@ -7,7 +7,7 @@ import { EditDetailsComponent } from "./edit-details/edit-details.component";
 import { environment } from "../../../environments/environment";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { GlobalConstants } from "src/app/js/global-constants";
+import * as moment from "moment";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -18,11 +18,12 @@ declare var getFromStorage: any, saveToStorage: any;
 export class MyAccountComponent implements OnInit {
   baseURL = environment.baseURL;
   setSpiner: boolean = true;
-
+  tat = 0;
   name = "Enter text";
   visitState = "NA";
   completed = [];
   awaiting = [];
+  turnAround = [];
   providerDetails = null;
   userDetails: any;
   speciality: string;
@@ -32,6 +33,8 @@ export class MyAccountComponent implements OnInit {
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   value: any = {};
+  visitnoteTime;
+  visitcompleteTime;
   providerId: any;
 
   constructor(
@@ -122,13 +125,26 @@ export class MyAccountComponent implements OnInit {
         });
         this.awaiting = [];
         this.completed = [];
+        this.turnAround = [];
         specialityVisits.forEach((visit) => {
+          visit.encounters.forEach((encounterType, index) => {
+            let visitnoteTime
+            if (encounterType?.display.includes('Visit Note')) {
+              this.visitnoteTime = encounterType.encounterDatetime
+            }
+            if (encounterType?.display.includes('Visit Complete')) {
+              this.visitcompleteTime = encounterType.encounterDatetime
+            }
+            var diffDuration = moment(this.visitcompleteTime).diff(this.visitnoteTime);
+            var asMinutes = moment(diffDuration).minutes();
+            this.turnAround.push(asMinutes);
+          });
+          this.tat = this.turnAround.reduce((val, acc) => val + acc)
+          this.tat = +Math.ceil(this.tat / this.turnAround.length);
           let cachedVisit;
           if (this.checkVisit(visit.encounters, "Visit Complete")) {
             visit.encounters.forEach((encounterType, index) => {
               if (encounterType?.display.includes('Visit Complete')) {
-                
-                // encounter - visit completed - encounter provider 
                 if (this.providerId.uuid === encounterType.encounterProviders[0].provider.uuid) {
                   this.completed.push(visit);
                 }
@@ -136,15 +152,11 @@ export class MyAccountComponent implements OnInit {
             });
           } else if (this.checkVisit(visit.encounters, "Visit Note")) {
           } else if ((cachedVisit = this.checkVisit(visit.encounters, "Flagged"))) {
-            // if (!cachedVisit.voided) priority.push(visit);
           } else if (
             this.checkVisit(visit.encounters, "ADULTINITIAL") ||
             this.checkVisit(visit.encounters, "Vitals")
           ) {
-            const attemptOne = [];
-           
             this.awaiting.push(visit);
-            // encounter - visit note - encounter provider 
           }
         });
 
