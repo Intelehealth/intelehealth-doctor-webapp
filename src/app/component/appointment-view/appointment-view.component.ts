@@ -239,6 +239,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     todaysDate = moment().format("YYYY-MM-DD");
     slots = [];
     rescheduleClick(schedule) {
+      this.selectedReason = '';
       this.vService
         .fetchVisitDetails(
           schedule.visitUuid,
