@@ -23,7 +23,8 @@ export class EditDetailsComponent implements OnInit {
     "Pediatrician",
     "Dermatologist",
     "Ophthalmologist",
-    "Pathologist"
+    "Pathologist",
+    "Follow Up"
   ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null, Validators.required),
