@@ -13,7 +13,7 @@
       <mat-form-field class="example-full-width">
         <textarea matInput placeholder="{{'Follow up remark'|translate}}" formControlName='advice'></textarea>
       </mat-form-field>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid" [hidden]='followUp.length > 0'>{{'Schedule a follow up'|translate}}</button>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid || isManagerRole" [hidden]='followUp.length > 0'>{{'Schedule a follow up'|translate}}</button>
 </div>
 {{errorText}}
 </form>
@@ -21,7 +21,7 @@
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">
         <div class="doctor-value">{{followUp.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        <i (click)="delete(i)" [class.disabled]="isManagerRole" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
     </mat-list>
     </ul>
     <p>*{{'please delete current schedule to schedule a new follow up.'| translate}}</p>

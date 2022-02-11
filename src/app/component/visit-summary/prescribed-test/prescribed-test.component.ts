@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -29,6 +29,7 @@ declare var getEncounterUUID: any;
  ]
 })
 export class PrescribedTestComponent implements OnInit {
+@Input() isManagerRole : boolean;  
 tests: any = [];
 test =  [];
 conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';

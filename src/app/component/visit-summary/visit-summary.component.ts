@@ -39,6 +39,7 @@ export class VisitSummaryComponent implements OnInit {
   isFamilyHistoryPresent = true; isPastMedicalPresent = true;
   isPhyscExamPresent = true; isAdditionalDocPresent = true;
   isVitalPresent = true;
+  isManagerRole = false;
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
@@ -58,6 +59,7 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
+    this.checkProviderRole(); 
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService
@@ -91,6 +93,19 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
       this.translationService.getSelectedLanguage();
+  }
+
+  private checkProviderRole() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+        role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
+          this.isManagerRole = true;
+        }
+      });
+    }
   }
 
   private setSignature(visit: any) {

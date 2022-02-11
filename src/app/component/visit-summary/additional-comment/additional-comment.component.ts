@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -26,6 +26,7 @@ declare var getEncounterUUID: any;
  ]
 })
 export class AdditionalCommentComponent implements OnInit {
+@Input() isManagerRole : boolean;
 comment: any = [];
 encounterUuid: string;
 patientId: string;

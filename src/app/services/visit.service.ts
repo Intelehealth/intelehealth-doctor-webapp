@@ -65,18 +65,12 @@ export class VisitService {
   }
 
   getAge(dateString) {
-    let age: any = {};
-    let  now: any;
      //------sol 1 ---------------
-     var mydate = dateString.replace(
+     var mydate = dateString?.replace(
        /^(\d{2})\/(\d{2})\/(\d{4})$/,
        "$3, $2, $1"
      );
- 
-     now = new Date();
-     var todayDate = this.datePipe.transform(now, "yyyy, MM, dd");
- 
-     var a = moment(todayDate);
+     var a = moment();
      var b = moment(mydate);
      var diffDuration = moment.duration(a.diff(b));
      var ageString =

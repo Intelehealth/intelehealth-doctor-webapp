@@ -139,3 +139,9 @@ ngb-typeahead-window {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #212529;
+}

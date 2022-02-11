@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -30,6 +30,7 @@ declare var getEncounterUUID: any;
   ]
 })
 export class PrescribedMedicationComponent implements OnInit {
+  @Input() isManagerRole : boolean;
   meds: any = [];
   add = false;
   encounterUuid: string;

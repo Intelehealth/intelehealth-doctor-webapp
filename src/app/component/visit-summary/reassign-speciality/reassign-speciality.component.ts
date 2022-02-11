@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit, Inject, Input } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormControl } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
@@ -17,6 +17,7 @@ declare var getFromStorage: any,
   styleUrls: ["./reassign-speciality.component.css"],
 })
 export class ReassignSpecialityComponent implements OnInit {
+  @Input() isManagerRole : boolean;
   type = "N";
   patientDetails: any;
   visitUuid = this.route.snapshot.paramMap.get("visit_id");
