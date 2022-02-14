@@ -8,8 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
-import { PushNotificationsService } from "src/app/services/push-notification.service";
-declare var getFromStorage: any, saveToStorage: any;
+declare var getFromStorage: any;
 
 @Component({
   selector: "app-navbar",
@@ -26,6 +25,9 @@ export class NavbarComponent implements OnInit {
   showBellIcon = false;
   selectedNotification = "";
   values: any = [];
+  pdfUrl = 'https://helpline.ekalarogya.org/intelehealth/assets/COVID19_Management_Algorithm_22042021_v1.pdf';
+  pdfName = 'COVID19_Management_Algorithm';
+
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
     { day: "Tuesday", startTime: null, endTime: null },
@@ -49,7 +51,6 @@ export class NavbarComponent implements OnInit {
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
-    public notificationService: PushNotificationsService
   ) {}
 
   ngOnInit() {
@@ -63,7 +64,9 @@ export class NavbarComponent implements OnInit {
         }
         if (
           role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
-          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97"
+          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97" ||
+          role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+          role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe"
         ) {
           this.reportAccess = true;
         }
@@ -72,6 +75,10 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
+  }
+
+  openDoc() {
+    window.open(this.pdfUrl);  
   }
 
   /**

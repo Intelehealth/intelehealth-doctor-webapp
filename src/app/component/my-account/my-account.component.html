@@ -3,27 +3,18 @@
   <div class="container">
     <div class="wrap-login100">
       <div class="login100-form-title">
-        <img
-          class="login100-form-avatar"
-          src="../../../assets/dummy profile image.jpg"
-          width="25%"
-          alt=""
-        />
+        <img class="login100-form-avatar"
+          src="https://helpline.ekalarogya.org/intelehealth/assets/dummy profile image.jpg" width="25%" alt="" />
         <span *ngIf="providerDetails.person.display">{{
           providerDetails.person.display
-        }}</span>
+          }}</span>
         <span *ngIf="providerDetails.address">{{
           providerDetails.address.value
-        }}</span>
+          }}</span>
       </div>
       <mat-card class="overlap">
         <div>
-          <i
-            class="material-icons"
-            style="float: right; cursor: pointer"
-            (click)="onEdit()"
-            >create</i
-          >
+          <i class="material-icons" style="float: right; cursor: pointer" (click)="onEdit()">create</i>
 
           <table>
             <tr>
@@ -33,7 +24,7 @@
               </td>
             </tr>
             <tr>
-              <th>State :</th>
+              <th>Location :</th>
               <td *ngIf="providerDetails.person">
                 {{ visitState }}
               </td>
@@ -76,25 +67,15 @@
             </tr>
             <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
               <th>Signature :</th>
-              <td
-                *ngIf="providerDetails.textOfSign"
-                [class]="providerDetails?.fontOfSign?.value"
-                [style.font-family]="providerDetails?.fontOfSign?.value"
-                style="font-size: 50px"
-              >
+              <td *ngIf="providerDetails.textOfSign" [class]="providerDetails?.fontOfSign?.value"
+                [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 50px">
                 {{ providerDetails?.textOfSign?.value }}
               </td>
-              <td
-                *ngIf="
+              <td *ngIf="
                   (providerDetails && !providerDetails.textOfSign) ||
                   action === 'add'
-                "
-              >
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="signature('add')"
-                >
+                ">
+                <button mat-raised-button color="primary" (click)="signature('add')">
                   Signature
                 </button>
               </td>

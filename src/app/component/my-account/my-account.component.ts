@@ -27,6 +27,8 @@ export class MyAccountComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+
+    
     this.setSpiner = true;
     this.userDetails = getFromStorage("user");
     this.sessionService

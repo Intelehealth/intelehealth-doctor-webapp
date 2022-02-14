@@ -1,4 +1,3 @@
-import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
 import { Component, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -6,6 +5,10 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { environment } from "../../../environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { ConfirmDialogService } from "./confirm-dialog/confirm-dialog.service";
+
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -16,6 +19,8 @@ declare var getFromStorage: any,
   styleUrls: ["./visit-summary.component.css"],
 })
 export class VisitSummaryComponent implements OnInit {
+  baseURL = environment.baseURL;
+
   show = false;
   text: string;
   font: string;
@@ -27,6 +32,12 @@ export class VisitSummaryComponent implements OnInit {
   diagnosis: any = [];
   patientId: string;
   visitUuid: string;
+  userRole: any;
+  visitAttributes: any;
+  visitSpeciality: any;
+  userSpeciality: any;
+  isVisitEnded:boolean = false;
+  doctorNotNeeded:boolean =false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -39,9 +50,8 @@ export class VisitSummaryComponent implements OnInit {
     "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba",
     "e1761e85-9b50-48ae-8c4d-e6b7eeeba084",
     "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
-    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
+    "d63ae965-47fb-40e8-8f08-1f46a8a60b2b",
   ];
-
 
   constructor(
     private service: EncounterService,
@@ -50,8 +60,9 @@ export class VisitSummaryComponent implements OnInit {
     private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpClient,
     private diagnosisService: DiagnosisService,
-    private pushNotificationService: PushNotificationsService
+    private confirmDialogService: ConfirmDialogService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -62,24 +73,34 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
+    const userDetails = getFromStorage("user");
+    const hideRole = userDetails.roles.filter(
+      (a) => a.name == "Project Manager"
+    );
+    this.userRole =
+      hideRole.length > 0 ? hideRole[0].name == "Project Manager" : "";
 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-      const ObsData = response.results.filter(a=>this.conceptIds.includes(a.concept.uuid))
-      console.log('ObsData: ', ObsData.length);
-      if(ObsData.length>0){
-        this.diagnosisService.isVisitSummaryChanged = true
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      const ObsData = response.results.filter((a) =>
+        this.conceptIds.includes(a.concept.uuid)
+      );
+      if (ObsData.length > 0) {
+        this.diagnosisService.isVisitSummaryChanged = true;
+      } else {
+        this.diagnosisService.isVisitSummaryChanged = false;
       }
-      else{
-        this.diagnosisService.isVisitSummaryChanged = false
-      }
-       
-     });
+    });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      this.visitAttributes= visitDetails;
+      this.visitSpeciality = this.visitAttributes.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+      const providerDetails = getFromStorage("provider");
+      this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
+      //No Doctor Needed speciality
+      this.doctorNotNeeded = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value == "No Doctor Needed";
+
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
@@ -98,6 +119,9 @@ export class VisitSummaryComponent implements OnInit {
           });
         }
       });
+      if (visitDetails.stopDatetime !== null) {
+        this.isVisitEnded = true;
+      }
     });
   }
 
@@ -139,7 +163,7 @@ export class VisitSummaryComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -171,21 +195,33 @@ export class VisitSummaryComponent implements OnInit {
   sign() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-        console.log('response: ', response);
-        if (response) {
-          this.signandsubmit();
-        }
-       
-      });
+    this.diagnosisService.getObsAll(this.patientId).subscribe((response) => {
+      if (response) {
+        this.signandsubmit();
+        // this.updateVisit();
+      }
+    });
+  }
+
+  updateVisit() {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+
+    const myDate = new Date(Date.now() - 30000);
+    const json = {
+      stopDatetime: myDate,
+    };
+    this.http.post(URL, json).subscribe((response) => {
+      this.sendSms();
+    });
   }
 
   signandsubmit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    let URL = `${this.baseURL}/visit/${this.visitUuid}`;
+
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
     if (userDetails && providerDetails) {
@@ -223,8 +259,9 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
-              this.snackbar.open("Visit Complete", null, { duration: 4000 });
             });
+
+            this.updateVisit();
           } else {
             if (
               window.confirm(
@@ -278,4 +315,54 @@ export class VisitSummaryComponent implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  sendSms() {
+    const userDetails = getFromStorage("provider");
+    this.visitService.patientInfo(this.patientId).subscribe((info) => {
+      var patientInfo = {
+        name: info.person.display,
+        age: info.person.age,
+        gender: info.person.gender,
+        providerName: userDetails.person.display,
+      };
+      let patientNo = info.person.attributes.find(
+        (a) => a.attributeType.display == "Telephone Number"
+      );
+        let link = this.getLink(info);
+        this.visitService.shortUrl(link).subscribe((res: { data }) => {
+          const hash = res.data.hash;
+          const shortLink = this.getLinkFromHash(hash);
+          let smsText: string = `Ekal Helpline Project Dear ${patientInfo.name} Your prescription is available to download at ${shortLink} - Powered by Intelehealth`;
+          this.visitService.sendSMS(patientNo.value, smsText).subscribe(
+            (res) => {
+              this.openDialog();
+            },
+            () => {
+              this.snackbar.open(`Error while sending SMS`, null, {
+                duration: 4000,
+              });
+            }
+          );
+        });
+    });
+  }
+
+  getLink(info) {
+    return `${window.location.protocol}//${window.location.hostname}/preApi/i.jsp?v=${this.visitUuid}&pid=${info.identifiers[0].identifier}`;
+  }
+
+  getLinkFromHash(hash) {
+    return `${window.location.protocol}//${window.location.hostname}/intelehealth/#/l/${hash}`;
+  }
+
+  openDialog() {
+    this.confirmDialogService
+      .openConfirmDialog("Prescription is sent to patient")
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.router.navigateByUrl("/home");
+        }
+      });
+  }
 }

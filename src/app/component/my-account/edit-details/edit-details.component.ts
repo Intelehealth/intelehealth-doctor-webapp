@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
@@ -17,30 +17,37 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
-                      "General Physician",
+                      "Allopathy",
                       "Homeopathy",
-                      "Ayurveda"
+                      "Ayurveda and Yog",
+                      "No Doctor Needed"
                     ];
   editForm = new FormGroup({
-    gender: new FormControl(this.data.person ? this.data.person.gender : null),
+    gender: new FormControl(
+      this.data.person ? this.data.person.gender : null, Validators.required),
+
     phoneNumber: new FormControl(
-      this.data.phoneNumber ? this.data.phoneNumber.value : null
+      this.data.phoneNumber ? this.data.phoneNumber.value : null,
+      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
     ),
+
     whatsapp: new FormControl(
-      this.data.whatsapp ? this.data.whatsapp.value : null
+      this.data.whatsapp ? this.data.whatsapp.value : null,
+      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
     ),
+
     emailId: new FormControl(
       this.data.emailId ? this.data.emailId.value : null
     ),
+
     qualification: new FormControl(
-      this.data.qualification ? this.data.qualification.value : null
-    ),
+      this.data.qualification ? this.data.qualification.value : null),
+
     specialization: new FormControl(
-      this.data.specialization ? this.data.specialization.value : null
-    ),
+      this.data.specialization ? this.data.specialization.value : null),
+
     registrationNumber: new FormControl(
-      this.data.registrationNumber ? this.data.registrationNumber.value : null
-    ),
+      this.data.registrationNumber ? this.data.registrationNumber.value : null),
   });
   status = false;
   name = "Enter text";
@@ -92,7 +99,7 @@ export class EditDetailsComponent implements OnInit {
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {
-      const URL = `${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
+      const URL = `${this.baseURL}/person/${this.data.person.uuid}`;
       const json = {
         gender: value.gender,
       };

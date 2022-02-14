@@ -51,7 +51,7 @@ export class AuthService {
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
         this.cookieService.deleteAll();
-        this.myRoute.navigate(["/login"]);
+        this.myRoute.navigate(["/"]);
       });
     });
   }
