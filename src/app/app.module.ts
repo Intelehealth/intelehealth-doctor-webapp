@@ -75,6 +75,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
+import { FeedbackComponent } from './component/visit-summary/feedback/feedback.component';
 
 
 
@@ -113,6 +114,7 @@ import { MainComponent } from './component/main/main.component';
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
+    FeedbackComponent,
   ],
 
   imports: [

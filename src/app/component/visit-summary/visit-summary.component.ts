@@ -21,6 +21,7 @@ export class VisitSummaryComponent implements OnInit {
   font: string;
   visitNotePresent = false;
   visitCompletePresent = false;
+  PatientExitSurveyPresent = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -69,7 +70,6 @@ export class VisitSummaryComponent implements OnInit {
       .getObsAll(this.patientId)
       .subscribe((response) => {
       const ObsData = response.results.filter(a=>this.conceptIds.includes(a.concept.uuid))
-      console.log('ObsData: ', ObsData.length);
       if(ObsData.length>0){
         this.diagnosisService.isVisitSummaryChanged = true
       }
@@ -96,6 +96,9 @@ export class VisitSummaryComponent implements OnInit {
               this.font = element.value;
             }
           });
+        }
+        if (visit.display.match("Patient Exit Survey") !== null) {
+          this.PatientExitSurveyPresent = true;
         }
       });
     });
@@ -174,7 +177,6 @@ export class VisitSummaryComponent implements OnInit {
     this.diagnosisService
       .getObsAll(this.patientId)
       .subscribe((response) => {
-        console.log('response: ', response);
         if (response) {
           this.signandsubmit();
         }

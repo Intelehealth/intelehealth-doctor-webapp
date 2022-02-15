@@ -17,6 +17,12 @@ export class VisitService {
     return this.http.get(url);
   }
 
+  getVisit(uuid): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
+    return this.http.get(url);
+  }
+
   recentVisits(id): Observable<any> {
     const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     return this.http.get(url);
