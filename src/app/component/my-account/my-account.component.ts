@@ -24,6 +24,7 @@ export class MyAccountComponent implements OnInit {
   completed = [];
   awaiting = [];
   turnAround = [];
+  inProgress = []
   providerDetails = null;
   userDetails: any;
   speciality: string;
@@ -125,6 +126,7 @@ export class MyAccountComponent implements OnInit {
         });
         this.awaiting = [];
         this.completed = [];
+        this.inProgress = [];
         this.turnAround = [];
         specialityVisits.forEach((visit) => {
           visit.encounters.forEach((encounterType, index) => {
@@ -151,6 +153,13 @@ export class MyAccountComponent implements OnInit {
               }
             });
           } else if (this.checkVisit(visit.encounters, "Visit Note")) {
+            visit.encounters.forEach((encounterType, index) => {
+              if (encounterType?.display.includes('Visit Note')) {
+                if (this.providerId.uuid === encounterType.encounterProviders[0].provider.uuid) {
+                  this.inProgress.push(visit);
+                }
+              }
+            })
           } else if ((cachedVisit = this.checkVisit(visit.encounters, "Flagged"))) {
           } else if (
             this.checkVisit(visit.encounters, "ADULTINITIAL") ||
