@@ -9,6 +9,7 @@ import { VisitService } from 'src/app/services/visit.service';
 })
 export class FeedbackComponent implements OnInit {
   feedback: string;
+  rating: string;
   visitUuid: string;
   constructor(
     private route: ActivatedRoute,
@@ -17,10 +18,11 @@ export class FeedbackComponent implements OnInit {
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.getVisit(this.visitUuid).subscribe((res)=>{
+    this.visitService.fetchVisitDetails(this.visitUuid).subscribe((res)=>{
      res.encounters.forEach((encounterType, index)=>{
       if (encounterType?.display.includes('Patient Exit Survey')) {
         this.feedback =  encounterType.obs[1].value
+        this.rating = encounterType.obs[0].value
       }
      })
     })
