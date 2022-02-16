@@ -30,10 +30,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
   activePatient = 0;
   flagPatientNo = 0;
   visitNoteNo = 0;
+  remotePatientNo = 0;
   completeVisitNo = 0;
   flagVisit: VisitData[] = [];
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
+  remoteVisits: VisitData[] = [];
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
@@ -150,8 +152,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
       const values = this.assignValueToProperty(active, encounter);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    } else if ((this.checkVisit(encounters, "Visit Note") ||
-    this.checkVisit(encounters, "Remote Prescription")) && 
+    }  else if (this.checkVisit(encounters, "Remote Prescription") && 
+      active.stopDatetime == null) {
+      const values = this.assignValueToProperty(active, encounter);
+      this.remoteVisits.push(values);
+      this.remotePatientNo += 1;
+    } else if (this.checkVisit(encounters, "Visit Note")  && 
       active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);
