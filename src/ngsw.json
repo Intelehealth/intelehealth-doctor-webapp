@@ -60,7 +60,7 @@
   "dataGroups": [
     {
       "name": "api-performance",
-      "patterns": ["\\/assets\\/i18n\\/.*", "\\/api\\/.*"],
+      "patterns": ["\\/assets\\/i18n\\/.*"],
       "strategy": "performance",
       "maxSize": 100,
       "maxAge": 259200000,

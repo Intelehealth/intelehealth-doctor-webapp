@@ -19,7 +19,7 @@ export class MonitoringComponent implements OnInit {
   displayedColumns: string[] = [];
   columns: any = [
     { label: "Name of HW", key: "name" },
-    { label: "Last Login", key: "lastLogin" },
+    { label: "Last Login", key: "lastSyncTimestamp" },
     { label: "Consultation Device", key: "device" },
     { label: "App Version", key: "version" },
     { label: "Average Time Spent(In a day)", key: "avgTimeSpentInADay" },
