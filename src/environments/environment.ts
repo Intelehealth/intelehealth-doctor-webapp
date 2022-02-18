@@ -10,6 +10,7 @@ export const environment = {
   baseURLLegacy: "https://afitraining.ekalarogya.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
   notificationURL: "http://localhost:3004/notification",
+  socketURL: "http://localhost:3004",
 };
 
 /*

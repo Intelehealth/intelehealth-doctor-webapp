@@ -43,7 +43,9 @@
           <a class="nav-link" routerLink="/home">Home</a>
         </li>
         <li class="nav-item" *ngIf="!subscribeAccess">
-          <a class="nav-link" (click)="subscribeNotification(false)">Subscribe</a>
+          <a class="nav-link" (click)="subscribeNotification(false)"
+            >Subscribe</a
+          >
         </li>
         <li *ngIf="systemAccess" class="nav-item">
           <a class="nav-link" routerLink="/ayu">Ayu</a>
@@ -73,6 +75,12 @@
               class="dropdown-item"
               href="{{ baseURLLegacy }}/admin/index.htm"
               >System administration</a
+            >
+            <a
+              *ngIf="systemAccess"
+              class="dropdown-item"
+              routerLink="/monitoring"
+              >Monitoring</a
             >
             <a class="dropdown-item" (click)="changePassword()"
               >Change password</a

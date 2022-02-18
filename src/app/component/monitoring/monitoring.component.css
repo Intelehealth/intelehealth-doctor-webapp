@@ -1,0 +1,11 @@
+.active {
+  background: #00cd00 !important;
+}
+
+.inactive {
+  background: #f93b7f !important;
+}
+
+.no-data {
+  background: white;
+}

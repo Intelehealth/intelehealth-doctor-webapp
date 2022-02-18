@@ -75,6 +75,12 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
+import { MonitoringComponent } from './component/monitoring/monitoring.component';
+import { AdminGuard } from "./admin.guard";
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatChipsModule} from '@angular/material/chips';
+import { SocketService } from "./services/socket.service";
+
 
 
 
@@ -113,6 +119,7 @@ import { MainComponent } from './component/main/main.component';
     CurrentVisitComponent,
     ModalsComponent,
     MainComponent,
+    MonitoringComponent,
   ],
 
   imports: [
@@ -143,6 +150,8 @@ import { MainComponent } from './component/main/main.component';
     HttpClientModule,
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
+    MatTabsModule,
+    MatChipsModule,
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
       {
@@ -154,6 +163,7 @@ import { MainComponent } from './component/main/main.component';
         { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'monitoring', component: MonitoringComponent, canActivate: [AuthGuard, AdminGuard] },
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
@@ -174,6 +184,7 @@ import { MainComponent } from './component/main/main.component';
     MatNativeDateModule,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    SocketService
   ],
   bootstrap: [AppComponent],
 })
