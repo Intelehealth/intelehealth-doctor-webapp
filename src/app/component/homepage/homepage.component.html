@@ -3,7 +3,7 @@
     <mat-tab-group  class="visit" mat-align-tabs="center"  mat-stretch-tabs>
         <mat-tab id="flagged-table">
             <ng-template mat-tab-label>    
-                <p style="color: #dc3545;"class="name">{{'PRIORITY VISITS'| translate }} <b class="name">({{flagPatientNo}})</b></p>
+                <p style="color: #dc3545;"class="name">{{'PRIORITY VISITS'| translate }} <br> <b class="name">({{flagPatientNo}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="flagVisit.length > 0;else no_data">
                 <app-tables [data]="flagVisit"></app-tables>
@@ -11,7 +11,7 @@
         </mat-tab>
         <mat-tab id="queued-table">
             <ng-template mat-tab-label>
-                <p style="color: #F6B825;"class="name">{{'AWAITING CONSULT'|translate}} <b class="name">({{activePatient}})</b></p>
+                <p style="color: #F6B825;"class="name">{{'AWAITING CONSULT'|translate}} <br> <b class="name">({{activePatient}})</b></p>
             </ng-template><br>  
             <ng-container *ngIf="waitingVisit.length > 0;else no_data">
                 <app-tables [data]="waitingVisit"></app-tables>
@@ -19,7 +19,7 @@
         </mat-tab>
         <mat-tab id="visit-in-progress">
             <ng-template mat-tab-label>
-                <p style="color: #17a2b8;"class="name">{{'VISITS IN PROGRESS'| translate}} <b class="name">({{visitNoteNo}})</b></p>
+                <p style="color: #17a2b8;"class="name">{{'VISITS IN PROGRESS'| translate}} <br> <b class="name">({{visitNoteNo}})</b></p>
             </ng-template><br>  
             <ng-container *ngIf="progressVisit.length > 0;else no_data">
                 <app-tables [data]="progressVisit"></app-tables>
@@ -27,7 +27,7 @@
         </mat-tab>
         <mat-tab id="remoteVisits">
             <ng-template mat-tab-label>
-                <p style="color: #007bff;"class="name">{{'PRESCRIPTION GIVEN'| translate }} <b class="name">({{remotePatientNo}})</b></p>
+                <p style="color: #007bff;"class="name">{{'PRESCRIPTION GIVEN'| translate }} <br> <b class="name">({{remotePatientNo}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="remoteVisits.length > 0;else no_data">
                 <app-tables [data]="remoteVisits"></app-tables>
@@ -35,7 +35,7 @@
         </mat-tab>
         <mat-tab id="visit-complete">
             <ng-template mat-tab-label>
-                <p style="color: #28a745;"class="name">{{'COMPLETED VISITS'| translate }} <b class="name">({{completeVisitNo}})</b></p>
+                <p style="color: #28a745;"class="name">{{'COMPLETED VISITS'| translate }} <br> <b class="name">({{completeVisitNo}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="completedVisit.length > 0;else no_data">
                 <app-tables [data]="completedVisit"></app-tables>
