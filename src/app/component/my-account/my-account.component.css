@@ -15,7 +15,7 @@
     align-items: center;
   } */
 
-.wrap-login100 {
+/* .wrap-login100 {
   width: 100%;
   background: #fff;
   overflow: hidden;
@@ -23,7 +23,7 @@
   background: url("../../../assets/images/Doctor-profile-page-background-without-blur.png");
   background-size: 100% 100%;
   border-radius: 10px;
-}
+} */
 
 .login100-form-title {
   width: 100%;
@@ -61,7 +61,12 @@
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto;
+  border: 5px solid white;
+  margin-top: 99px;
+}
+
+tr th i{
+  padding: 10px;
 }
 
 table {
@@ -75,14 +80,13 @@ td {
 }
 
 .overlap {
-  top: -100px;
-  position: relative;
-  /* left: 27%; */
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
   border-radius: 10px;
-  padding-top: 140px;
+}
+
+.banner{
+  position: absolute;
 }
 
 mat-spinner {
@@ -91,6 +95,14 @@ mat-spinner {
   left: 46%;
   top: 42%;
 }
+.shadow{
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+hr{
+	border-top: 1px thin #8c8b8b;
+  width: 200%;
+}
+
 
 @media only screen and (max-width: 768px) {
   .overlap {
@@ -100,16 +112,19 @@ mat-spinner {
     border-radius: 10px;
     padding-top: 140px;
   }
+  .info{
+    margin-left: 93px;
+  }
 
   .wrap-login100 {
     font-size: 14px;
     background: none;
   }
 }
-
+/* 
 .almondita {
   padding-top: 20px;
-}
+} */
 
 .sign {
   height: 50px;
@@ -119,7 +134,7 @@ mat-spinner {
   float: right;
   font-weight: bold;
   font-size: 1rem;
-  color:black;
+  color: black;
   border: 1px solid white;
 }
 
