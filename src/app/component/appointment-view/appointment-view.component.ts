@@ -204,8 +204,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       let dates = this.getDates("month");
       this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
       this.specialization = this.appointmentService.getSpecialty();
-      this.specialization.push({value : "All" });
-      this.selectedSpecialty = "All";
+      this.specialization.push({value : "All Types" });
+      this.specialization.sort((textA,textB)=> (textA.value < textB.value) ? -1 : (textA.value > textB.value) ? 1 : 0);
+      this.selectedSpecialty = "All Types";
     }
   
     getDates(view) {
@@ -360,7 +361,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     }
 
     checkSpecialty() {
-      let schedule = this.selectedSpecialty !== "All" ? 
+      let schedule = this.selectedSpecialty !== "All Types" ? 
       this.allSlots.filter(sp=> sp.speciality === this.selectedSpecialty) : this.allSlots;
       if(schedule) {
         this.drSlots = schedule;

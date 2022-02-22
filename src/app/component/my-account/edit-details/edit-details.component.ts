@@ -80,6 +80,7 @@ export class EditDetailsComponent implements OnInit {
     this.data.specialization.forEach(element => {
       this.selected.push(element.value);
     });
+    this.specializations.sort((a,b)=> (a < b) ? -1 : (a > b) ? 1 : 0);
   }
 
   get attributes() {

@@ -88,6 +88,7 @@ export class AppointmentScheduleComponent implements OnInit {
     this.getSchedule();
     this.slotHours = this.getHours();
     this.specialization = this.appointmentService.getSpecialty();
+    this.specialization.sort((textA,textB)=> (textA.value < textB.value) ? -1 : (textA.value > textB.value) ? 1 : 0);
     this.selectedSpecialty = this.specialization[0]?.value;
   }
 

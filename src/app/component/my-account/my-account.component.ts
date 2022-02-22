@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SignatureComponent } from './signature/signature.component';
 import { EditDetailsComponent } from './edit-details/edit-details.component';
 import { environment } from '../../../environments/environment';
-declare var getFromStorage: any;
+declare var getFromStorage: any, saveToStorage:any;
 
 @Component({
   selector: 'app-my-account',
@@ -30,6 +30,7 @@ export class MyAccountComponent implements OnInit {
     this.sessionService.provider(userDetails.uuid)
       .subscribe(provider => {
         this.providerDetails = provider.results[0];
+        saveToStorage("provider", provider.results[0]);
         const attributes = provider.results[0].attributes;
         let specialization = [];
         attributes.forEach(element => {
@@ -45,6 +46,7 @@ export class MyAccountComponent implements OnInit {
         this.setSpiner = false;
         this.providerDetails.specialization.forEach(element => {
           this.selectedSpeciality.push(element.value);
+          this.selectedSpeciality.sort((a,b)=> (a < b) ? -1 : (a > b) ? 1 : 0)
         });
       });
   }
