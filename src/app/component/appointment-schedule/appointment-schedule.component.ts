@@ -44,12 +44,14 @@ export class AppointmentScheduleComponent implements OnInit {
   slot = {
     startTime: "9:00 AM",
     endTime: "6:00 PM",
+    specialty: ""
   };
   scheduleForm = new FormGroup({
     startTime: new FormControl(this.slot.startTime, [Validators.required]),
     endTime: new FormControl(this.slot.endTime, [Validators.required]),
+    specialty: new FormControl(this.slot.endTime, [Validators.required])
   });
-  userSchedule: any = Object;
+  userSchedule: any = Object; allSchedules: any = [];
   unChanged: boolean = true;
   type: string = "month";
   types: any = [
@@ -69,6 +71,7 @@ export class AppointmentScheduleComponent implements OnInit {
   ];
   slotHours = [];
   errorMsg: string = null;
+  specialization = []; selectedSpecialty:string;
   modalData: {
     date: Date;
     events: CalendarEvent[];
@@ -84,6 +87,8 @@ export class AppointmentScheduleComponent implements OnInit {
   ngOnInit(): void {
     this.getSchedule();
     this.slotHours = this.getHours();
+    this.specialization = this.appointmentService.getSpecialty();
+    this.selectedSpecialty = this.specialization[0]?.value;
   }
 
   checkDaysFromSchedule() {
@@ -141,13 +146,14 @@ export class AppointmentScheduleComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res && res.data) {
-            this.userSchedule = res.data;
+            this.allSchedules = res.data
+            this.checkSpecialty();
           } else {
             this.userSchedule = {
               slotSchedule: [],
             };
+            this.initializeEvents(this.userSchedule.slotSchedule);
           }
-          this.initializeEvents(this.userSchedule.slotSchedule);
         },
       });
   }
@@ -187,6 +193,7 @@ export class AppointmentScheduleComponent implements OnInit {
     : this.slot;
     this.ctr.startTime.setValue(startTime);
     this.ctr.endTime.setValue(endTime);
+    this.ctr.specialty.setValue(this.userSchedule?.speciality)
   }
 
   get ctr() {
@@ -258,6 +265,7 @@ export class AppointmentScheduleComponent implements OnInit {
 
   addSchedule() {
     this.selectedDays = [];
+    this.ctr.specialty.setValue(this.selectedSpecialty)
     this.slotHours = this.getHours(true);
     this.checkDaysFromSchedule();
     this.scheduleModalRef = this.modal.open(this.modalContent);
@@ -369,7 +377,7 @@ export class AppointmentScheduleComponent implements OnInit {
           return;
         }
       }
-      const speciality = this.getSpeciality();
+      const speciality = this.scheduleForm.value.specialty;
       let body = this.getJson(speciality);
       this.saveSchedule(body);
       this.getSchedule();
@@ -484,6 +492,18 @@ export class AppointmentScheduleComponent implements OnInit {
     } else {
       this.saveSchedule(body);
     }
+  }
+
+  checkSpecialty() {
+    let schedule = this.allSchedules.filter(sp=> sp.speciality === this.selectedSpecialty)[0];
+    if(schedule) {
+      this.userSchedule = schedule;
+    } else {
+      this.userSchedule = {
+        slotSchedule: [],
+      };
+    }
+    this.initializeEvents(this.userSchedule.slotSchedule);
   }
 
   private error(msg) {

@@ -53,6 +53,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     CalendarView = CalendarView;
     viewDate: Date = new Date();
     drSlots = [];
+    allSlots = [];
     modalData: {
       date: Date;
       events: CalendarEvent[];
@@ -65,6 +66,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     selectedReason = "";
     otherReason = "";
     reasons = ["Doctor Not available", "Patient Not Available", "Other"];
+    specialization = []; selectedSpecialty:string;;
     constructor(
       private modal: NgbModal,
       private appointmentService: AppointmentService,
@@ -201,6 +203,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       this.selectedLang = localStorage.getItem("selectedLanguage");
       let dates = this.getDates("month");
       this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
+      this.specialization = this.appointmentService.getSpecialty();
+      this.specialization.push({value : "All" });
+      this.selectedSpecialty = "All";
     }
   
     getDates(view) {
@@ -222,8 +227,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
         )
         .subscribe({
           next: (res: any) => {
-            this.drSlots = res.data;
-            this.initializeEvents(this.drSlots);
+            this.allSlots = res.data
+            this.checkSpecialty();
           },
         });
     }
@@ -352,6 +357,17 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       };
      // this.translationService.getTranslation(message);
       this.snackbar.open(message, null, opts);
+    }
+
+    checkSpecialty() {
+      let schedule = this.selectedSpecialty !== "All" ? 
+      this.allSlots.filter(sp=> sp.speciality === this.selectedSpecialty) : this.allSlots;
+      if(schedule) {
+        this.drSlots = schedule;
+      } else {
+        this.drSlots = []
+      }
+      this.initializeEvents(this.drSlots);
     }
   
     get locale() {

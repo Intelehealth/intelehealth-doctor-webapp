@@ -16,6 +16,9 @@
                 (viewDateChange)="closeOpenMonthViewDay('Next')">
                  Next
               </div>
+              <select class="selectSp" [(ngModel)]="selectedSpecialty" (change)="checkSpecialty()">
+              <option [value]="specialty.value" *ngFor="let specialty of specialization">{{specialty.value}}</option>
+            </select>
             </div>
           </div>
           <div class="col-md-4" style="text-align: center;">
@@ -52,7 +55,7 @@
       <div class="modal-title"><br>
         <h5 style="text-align: center;">Appointment Schedule
           <span style="float: right;cursor: pointer; font-size: 31px;
-          margin-top: -16px;margin-right: 10px;" (click)="close();errorMsg=null">&times;</span>
+          margin-top: -16px;margin-right: 10px;" (click)="close();clear()">&times;</span>
         </h5>
       </div>
       <hr>
@@ -73,6 +76,14 @@
               </mat-label>
               <select formControlName="endTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
+              </select>
+            </td>
+            <td>
+              <mat-label>
+                <h5>Specialty</h5>
+              </mat-label>
+              <select formControlName="specialty">
+                <option [value]="specialty.value" *ngFor="let specialty of specialization">{{specialty.value}}</option>
               </select>
             </td>
           </tr>

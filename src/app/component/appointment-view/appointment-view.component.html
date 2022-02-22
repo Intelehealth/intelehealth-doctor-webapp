@@ -28,6 +28,9 @@
           >
             Next
           </div>
+          <select style="margin-left: 10px;" [(ngModel)]="selectedSpecialty" (change)="checkSpecialty()">
+            <option [value]="specialty.value" *ngFor="let specialty of specialization">{{specialty.value}}</option>
+          </select>
         </div>
       </div>
       <div class="col-md-4" style="text-align: center">

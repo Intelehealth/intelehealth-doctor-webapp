@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
+declare var getFromStorage: any;
 
 @Injectable({
   providedIn: "root",
@@ -46,5 +47,18 @@ export class AppointmentService {
       `${this.baseURL}/appointment/cancelAppointment`,
       payload
     );
+  }
+
+ getSpecialty() {
+   let specialization = [];
+    const userDetails = getFromStorage('provider');
+    userDetails.attributes.forEach(element => {
+      if (element.attributeType.uuid ===
+        "ed1715f5-93e2-404e-b3c9-2a2d9600f062") {
+        if (!element.voided)
+          specialization.push({ value: element.value, uuid: element.uuid });
+      }
+    });
+    return specialization;
   }
 }
