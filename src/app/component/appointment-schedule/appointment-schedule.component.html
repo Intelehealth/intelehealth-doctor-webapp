@@ -3,7 +3,7 @@
       <div class="container wrap-login100">
         <div class="row">
           <div class="col-md-5">
-            <div class="btn-group" style="float: left;">
+            <div class="btn-group" style="float: left; cursor: pointer;">
               <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay('Previous')">
                 Previous 
@@ -25,7 +25,7 @@
             <h3>{{viewDateLabel}}</h3>
           </div>
           <div class="col-md-4">
-            <button style="float: right;" class="btn btn-primary" (click)="addSchedule()">
+            <button style="float: right; cursor: pointer;" class="btn btn-primary" (click)="addSchedule()">
               Add Schedule for Month
             </button>
           </div>
@@ -66,7 +66,7 @@
               <mat-label>
                 <h5>Start Time</h5>
               </mat-label>
-              <select formControlName="startTime">
+              <select style="cursor: pointer;" formControlName="startTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
               </select>
             </td>
@@ -74,7 +74,7 @@
               <mat-label>
                 <h5>End Time</h5>
               </mat-label>
-              <select formControlName="endTime">
+              <select style="cursor: pointer;" formControlName="endTime">
                 <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
               </select>
             </td>
@@ -82,9 +82,7 @@
               <mat-label>
                 <h5>Specialty</h5>
               </mat-label>
-              <select formControlName="specialty">
-                <option [value]="specialty.value" *ngFor="let specialty of specialization">{{specialty.value}}</option>
-              </select>
+              <input style="pointer-events: none;" formControlName="specialty">
             </td>
           </tr>
         </table>

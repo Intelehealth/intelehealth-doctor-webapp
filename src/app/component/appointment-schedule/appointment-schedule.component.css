@@ -24,6 +24,11 @@
    margin-left: 7px;
   }
 
-.selectSp {
-  margin-left: 10px;
-}
+  .selectSp {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
