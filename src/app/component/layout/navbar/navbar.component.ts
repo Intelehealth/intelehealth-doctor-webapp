@@ -9,6 +9,8 @@ import { FindPatientComponent } from "../../find-patient/find-patient.component"
 import { environment } from "../../../../environments/environment";
 import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
+import { MonitoringService } from "src/app/services/monitoring.service";
+import { SocketService } from "src/app/services/socket.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -56,7 +58,9 @@ export class NavbarComponent implements OnInit {
     private http: HttpClient,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
-    public notificationService: PushNotificationsService
+    public notificationService: PushNotificationsService,
+    public monitor: MonitoringService,
+    public socket: SocketService
   ) {}
 
   ngOnInit() {
@@ -79,9 +83,20 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
+    this.createUpdateStatus();
     setTimeout(() => {
       this.subscribeNotification(true);
     }, 1000);
+    this.socket.initSocket(true);
+  }
+
+  createUpdateStatus(status = "active") {
+    const payload = {
+      userUuid: this.user?.uuid,
+      status,
+      name: this.user?.person?.display || this.user?.display,
+    };
+    this.monitor.createUpdateStatus(payload).subscribe();
   }
 
   /**
@@ -89,6 +104,7 @@ export class NavbarComponent implements OnInit {
    */
   logout() {
     this.unsubscribeNotification();
+    this.createUpdateStatus("inactive");
     setTimeout(() => {
       this.authService.logout();
     }, 0);
@@ -211,6 +227,7 @@ export class NavbarComponent implements OnInit {
             }
           });
         }
-      });
+      })
+      .catch((err) => {});
   }
 }

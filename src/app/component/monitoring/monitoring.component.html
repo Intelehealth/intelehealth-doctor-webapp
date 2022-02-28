@@ -1,0 +1,96 @@
+<div class="container">
+  <mat-tab-group
+    [(selectedIndex)]="selectedIndexBinding"
+    (focusChange)="tabChange($event)"
+  >
+    mat-align-tabs="center" >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <b> Health Worker</b>&nbsp;
+        <mat-icon>phone_android</mat-icon>
+      </ng-template>
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        #sort0="matSort"
+        matSort
+        class="w-100"
+      >
+        <ng-container
+          *ngFor="let column of columns"
+          [matColumnDef]="column.key"
+        >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ column?.label }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-chip-list *ngIf="column?.key === 'status'">
+              <mat-chip selected [class]="showValue(element, column?.key)">
+                {{ showValue(element, column?.key) | titlecase }}
+              </mat-chip>
+            </mat-chip-list>
+            <ng-container *ngIf="column?.key !== 'status'">
+              {{ showValue(element, column?.key) }}
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      <div *ngIf="!len" class="no-data text-center w-100 p-4">
+        No Data Found.
+      </div>
+      <mat-paginator
+        *ngIf="len && displayedColumns?.length"
+        #page0
+        [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <b>Doctor</b>&nbsp;
+        <mat-icon>medical_services</mat-icon>
+      </ng-template>
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        #sort1="matSort"
+        matSort
+        class="w-100"
+      >
+        <ng-container
+          *ngFor="let column of columns"
+          [matColumnDef]="column.key"
+        >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ column?.label }}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-chip-list *ngIf="column?.key === 'status'">
+              <mat-chip selected [class]="showValue(element, column?.key)">
+                {{ showValue(element, column?.key) | titlecase }}
+              </mat-chip>
+            </mat-chip-list>
+            <ng-container *ngIf="column?.key !== 'status'">
+              {{ showValue(element, column?.key) }}
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      <div *ngIf="!len" class="no-data text-center w-100 p-4">
+        No Data Found.
+      </div>
+      <mat-paginator
+        #page1
+        *ngIf="len && displayedColumns?.length"
+        [pageSizeOptions]="[10, 20, 50]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </mat-tab>
+  </mat-tab-group>
+</div>

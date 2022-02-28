@@ -5,4 +5,5 @@ export const environment = {
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
+  socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
 };
