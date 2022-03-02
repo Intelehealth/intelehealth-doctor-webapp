@@ -16,13 +16,25 @@ export class MonitoringComponent implements OnInit {
   @ViewChild("page1") paginator1: MatPaginator;
   @ViewChild("sort0") sort0: MatSort;
   @ViewChild("sort1") sort1: MatSort;
-  displayedColumns: string[] = [];
-  columns: any = [
+  drDisplayedColumns: string[] = [];
+  hwDisplayedColumns: string[] = [];
+  drColumns: any = [
     { label: "Name of HW", key: "name" },
-    { label: "Last Login", key: "lastSyncTimestamp" },
+    { label: "Last Sync", key: "lastSyncTimestamp" },
     { label: "Consultation Device", key: "device" },
+    { label: "Average Time Spent(In a day)", key: "avgTimeSpentInADay" },
+    { label: "Total Time", key: "totalTime" },
+    { label: "Current Status", key: "status" },
+  ];
+  hwColumns: any = [
+    { label: "Name of HW", key: "name" },
+    { label: "Last Sync", key: "lastSyncTimestamp" },
+    { label: "Consultation Device", key: "device" },
+    { label: "Android Version", key: "androidVersion" },
     { label: "App Version", key: "version" },
     { label: "Average Time Spent(In a day)", key: "avgTimeSpentInADay" },
+    { label: "Total Time", key: "totalTime" },
+    { label: "Last Activity", key: "lastActivity" },
     { label: "Current Status", key: "status" },
   ];
   data: any = [];
@@ -30,7 +42,10 @@ export class MonitoringComponent implements OnInit {
   dataSource;
   selectedIndexBinding;
 
-  constructor(private monitorService: MonitoringService) {}
+  constructor(private monitorService: MonitoringService) {
+    this.hwDisplayedColumns = this.hwColumns.map((c) => c.key);
+    this.drDisplayedColumns = this.drColumns.map((c) => c.key);
+  }
 
   ngOnInit(): void {
     this.getStatuses();
@@ -54,7 +69,6 @@ export class MonitoringComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.paginator = page == 1 ? this.paginator0 : this.paginator1;
       this.dataSource.sort = page === 1 ? this.sort0 : this.sort1;
-      this.displayedColumns = this.columns.map((c) => c.key);
     }, 0);
   }
 
@@ -77,7 +91,7 @@ export class MonitoringComponent implements OnInit {
   }
 
   showValue(obj, key) {
-    if (key === "lastLogin") {
+    if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
       return obj[key];

@@ -17,7 +17,7 @@
         class="w-100"
       >
         <ng-container
-          *ngFor="let column of columns"
+          *ngFor="let column of hwColumns"
           [matColumnDef]="column.key"
         >
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -35,14 +35,14 @@
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="hwDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: hwDisplayedColumns"></tr>
       </table>
       <div *ngIf="!len" class="no-data text-center w-100 p-4">
         No Data Found.
       </div>
       <mat-paginator
-        *ngIf="len && displayedColumns?.length"
+        *ngIf="len && hwDisplayedColumns?.length"
         #page0
         [pageSizeOptions]="[10, 20, 50]"
         showFirstLastButtons
@@ -61,7 +61,7 @@
         class="w-100"
       >
         <ng-container
-          *ngFor="let column of columns"
+          *ngFor="let column of drColumns"
           [matColumnDef]="column.key"
         >
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -79,15 +79,15 @@
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="drDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: drDisplayedColumns"></tr>
       </table>
       <div *ngIf="!len" class="no-data text-center w-100 p-4">
         No Data Found.
       </div>
       <mat-paginator
         #page1
-        *ngIf="len && displayedColumns?.length"
+        *ngIf="len && drDisplayedColumns?.length"
         [pageSizeOptions]="[10, 20, 50]"
         showFirstLastButtons
       ></mat-paginator>
