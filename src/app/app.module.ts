@@ -81,6 +81,7 @@ import { AdminGuard } from "./admin.guard";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 
 @NgModule({
   declarations: [
@@ -151,6 +152,7 @@ import { SocketService } from "./services/socket.service";
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     MatTabsModule,
     MatChipsModule,
+    NgxMaterialTimepickerModule,
     RouterModule.forRoot(
       [
         { path: "login", component: LoginPageComponent },

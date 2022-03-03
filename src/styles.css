@@ -63,3 +63,8 @@ body.font-lato td {
   font-weight: bold;
   background-color: #f44336 !important;
 }
+
+.timepicker-overlay,
+.timepicker-backdrop-overlay {
+  z-index: 1001 !important;
+}

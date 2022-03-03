@@ -11,13 +11,13 @@
       />
     </div>
     <div class="col-6 info" style="margin-top: 231px">
-      <span *ngIf="providerDetails.person.display"
+      <span *ngIf="providerDetails?.person?.display"
         ><b style="font-size: 22px;">{{ providerDetails.person.display }}</b></span
       ><br />
-      <span *ngIf="providerDetails.specialization.value">
+      <span *ngIf="providerDetails?.specialization?.value">
         {{ providerDetails.specialization.value | uppercase }}
       </span><br>
-      <span *ngIf="providerDetails.qualification.value">
+      <span *ngIf="providerDetails?.qualification?.value">
         {{ providerDetails.qualification.value | uppercase}}
       </span>
       <!-- <span *ngIf="providerDetails.address">{{
@@ -139,8 +139,8 @@
             </tr> -->
             <tr>
               <th><img src="assets/Registration-No.png" alt="" class="profileIcon"> Registration No. </th>
-              <td *ngIf="providerDetails.registrationNumber">
-                {{ providerDetails.registrationNumber.value }}
+              <td *ngIf="providerDetails?.registrationNumber">
+                {{ providerDetails?.registrationNumber.value }}
               </td>
             </tr>
             <hr>
@@ -167,6 +167,13 @@
                 >
                   Signature
                 </button>
+              </td>
+            </tr>
+            <tr>
+              <th>&nbsp;<img src="assets/svgs/clock.svg" width="25" class="profileIcon"> Timings </th>
+              <td
+              >
+                {{ providerDetails?.timings?.value }}
               </td>
             </tr>
           </table>
