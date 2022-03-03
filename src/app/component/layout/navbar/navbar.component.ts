@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
       roles.forEach(role => {
         if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8") {
           this.systemAccess = true;
-        } if (role.name === "Project Manager" || role.name === "Reporting module" || role.name === "Organizational: System Administrator" ) {
+        } if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" || role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe" || role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ) {
           this.reportAccess = true;
         }
       });
