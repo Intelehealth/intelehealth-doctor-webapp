@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://demo.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://demo.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://demo.intelehealth.org/openmrs",
-  mindmapURL: "https://demo.intelehealth.org:3004/api",
-  notificationURL: "https://demo.intelehealth.org:3004/notification",
-  socketURL: "https://demo.intelehealth.org:3004",
+  baseURL: "https://as.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://as.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://as.intelehealth.org/openmrs",
+  mindmapURL: "https://as.intelehealth.org:3004/api",
+  notificationURL: "https://as.intelehealth.org:3004/notification",
+  socketURL: "https://as.intelehealth.org:3004",
 };
 
 /*
