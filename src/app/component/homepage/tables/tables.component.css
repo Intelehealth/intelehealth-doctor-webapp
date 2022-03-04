@@ -70,3 +70,7 @@ mat-cell,
   border:1px solid gray;
   max-width: unset !important;
  } 
+
+ .end:hover{
+  color: blue !important;
+ }

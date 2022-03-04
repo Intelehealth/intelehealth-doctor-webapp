@@ -1,0 +1,41 @@
+.container {
+    min-height: 79%;
+  }
+  
+  mat-spinner {
+    position: absolute;
+    z-index: 9999;
+    left: 46%;
+    top: 42%;
+  }
+  
+  .spin {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+  }
+  
+  .example-headers-align .mat-expansion-panel-header-title,
+  .example-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+  }
+  
+  .example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  mat-form-field {
+    margin-right: 12px;
+  }
+  
+  .text-right {
+    float: right;
+    font-weight: bold;
+    font-size: 1rem;
+    color:black;
+    border: 1px solid white;
+  }
+  
+  .text-left{
+    font-size: 0.9rem !important;
+  }

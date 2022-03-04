@@ -76,6 +76,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import { FeedbackComponent } from './component/visit-summary/feedback/feedback.component';
+import { EndedVisitsComponent } from './component/ended-visits/ended-visits.component';
 
 
 
@@ -115,6 +116,7 @@ import { FeedbackComponent } from './component/visit-summary/feedback/feedback.c
     ModalsComponent,
     MainComponent,
     FeedbackComponent,
+    EndedVisitsComponent,
   ],
 
   imports: [
@@ -150,6 +152,7 @@ import { FeedbackComponent } from './component/visit-summary/feedback/feedback.c
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'endVisits', component: EndedVisitsComponent, canActivate: [AuthGuard] },
         { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
         { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
         { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },

@@ -35,3 +35,7 @@ mat-form-field {
   color:black;
   border: 1px solid white;
 }
+
+.text-left{
+  font-size: 0.9rem !important;
+}

@@ -14,17 +14,20 @@ export class FeedbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.fetchVisitDetails(this.visitUuid).subscribe((res)=>{
-     res.encounters.forEach((encounterType, index)=>{
-      if (encounterType?.display.includes('Patient Exit Survey')) {
-        this.feedback =  encounterType.obs[1].value
-        this.rating = encounterType.obs[0].value
-      }
-     })
+    this.visitService.fetchVisitDetails(this.visitUuid).subscribe((res) => {
+      res.encounters.forEach((encounterType, index) => {
+        if (encounterType?.display.includes('Patient Exit Survey')) {
+          let comment = encounterType.obs.filter(a => a.display.startsWith('Comments'));
+          let ratings = encounterType.obs.filter(a => a.display.startsWith('Patient Satisfaction'));
+
+          this.feedback = comment[0]?.value
+          this.rating = ratings[0]?.value
+        }
+      })
     })
   }
 
