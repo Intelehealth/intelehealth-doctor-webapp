@@ -1,0 +1,15 @@
+<mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
+<div class="container" [ngClass]="setSpiner ? 'spin' : ''">
+  <mat-accordion class="example-headers-align" [multi]="true">
+    <mat-expansion-panel [expanded]="endVisits.length > 0" id="flagged-table">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h5>ENDED VISITS <b>({{endedVisitNo}})</b></h5>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="endVisits.length > 0">
+        <app-tables [data]="endVisits"></app-tables>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

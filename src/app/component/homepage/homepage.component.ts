@@ -30,6 +30,7 @@ export class HomepageComponent implements OnInit {
   flagPatientNo = 0;
   visitNoteNo = 0;
   completeVisitNo = 0;
+  endVisitCount: any;
   flagVisit: VisitData[] = [];
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
@@ -47,6 +48,7 @@ export class HomepageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.endVisitCount = getFromStorage("endVisitCount")
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }

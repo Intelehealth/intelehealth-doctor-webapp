@@ -82,6 +82,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
+import { EndedVisitsComponent } from "./component/ended-visits/ended-visits.component";
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
     MainComponent,
     FeedbackComponent,
     MonitoringComponent,
+    EndedVisitsComponent,
   ],
 
   imports: [
@@ -150,69 +152,24 @@ import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
     HttpClientModule,
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    MatTabsModule,
-    MatChipsModule,
-    NgxMaterialTimepickerModule,
-    RouterModule.forRoot(
-      [
-        { path: "login", component: LoginPageComponent },
-        {
-          path: "",
-          component: MainComponent,
-          children: [
-            {
-              path: "home",
-              component: HomepageComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "findPatient",
-              component: FindPatientComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "myAccount",
-              component: MyAccountComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-            {
-              path: "modals",
-              component: ModalsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "signature",
-              component: SignatureComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "editDetails",
-              component: EditDetailsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "changePassword",
-              component: ChangePasswordComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "monitoring",
-              component: MonitoringComponent,
-              canActivate: [AuthGuard, AdminGuard],
-            },
-            {
-              path: "visitSummary/:patient_id/:visit_id",
-              component: VisitSummaryComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "", redirectTo: "home", pathMatch: "full" },
-          ],
-        },
-        { path: "**", component: Page404Component },
-      ],
-      { scrollPositionRestoration: "enabled" }
-    ),
+    RouterModule.forRoot([
+      { path: 'login', component: LoginPageComponent },
+      {
+        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'endVisits', component: EndedVisitsComponent, canActivate: [AuthGuard] },
+        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
+        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: '', redirectTo: 'home', pathMatch: 'full' },
+        ]
+      },
+      { path: '**', component: Page404Component },
+    ], { scrollPositionRestoration: 'enabled' }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
