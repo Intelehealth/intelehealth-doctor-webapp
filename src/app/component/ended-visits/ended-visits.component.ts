@@ -9,6 +9,7 @@ import { VisitService } from 'src/app/services/visit.service';
 export class EndedVisitsComponent implements OnInit {
   endVisits = [];
   endedVisitNo = 0;
+  setSpiner = true;
   constructor(private service: VisitService,
     private cd: ChangeDetectorRef) {
      }
@@ -24,6 +25,7 @@ export class EndedVisitsComponent implements OnInit {
 
            localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
          });
+         this.setSpiner = false;
       })
       
   }
