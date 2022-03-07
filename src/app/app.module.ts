@@ -53,36 +53,38 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 
 // Material Design Imports
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatGridListModule } from "@angular/material/grid-list";
-import { MatCardModule } from "@angular/material/card";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { MatInputModule } from "@angular/material/input";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatNativeDateModule } from "@angular/material/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatRadioModule } from "@angular/material/radio";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatTableModule } from "@angular/material/table";
-import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatSortModule } from "@angular/material/sort";
-import { MatListModule } from "@angular/material/list";
-import { MatSelectModule } from "@angular/material/select";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { ServiceWorkerModule } from "@angular/service-worker";
-import { environment } from "../environments/environment";
-import { MainComponent } from "./component/main/main.component";
-import { FeedbackComponent } from "./component/visit-summary/feedback/feedback.component";
-import { MonitoringComponent } from "./component/monitoring/monitoring.component";
 import { AdminGuard } from "./admin.guard";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { EndedVisitsComponent } from "./component/ended-visits/ended-visits.component";
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { MainComponent } from './component/main/main.component';
+import { FeedbackComponent } from './component/visit-summary/feedback/feedback.component';
+import { EndedVisitsComponent } from './component/ended-visits/ended-visits.component';
+import { MonitoringComponent } from "./component/monitoring/monitoring.component";
+
+
 
 @NgModule({
   declarations: [
@@ -152,24 +154,69 @@ import { EndedVisitsComponent } from "./component/ended-visits/ended-visits.comp
     HttpClientModule,
     NgxSpinnerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot([
-      { path: 'login', component: LoginPageComponent },
-      {
-        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
-        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
-        { path: 'endVisits', component: EndedVisitsComponent, canActivate: [AuthGuard] },
-        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
-        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
-        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
-        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
-        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-        { path: '', redirectTo: 'home', pathMatch: 'full' },
-        ]
-      },
-      { path: '**', component: Page404Component },
-    ], { scrollPositionRestoration: 'enabled' }),
+    MatTabsModule,
+    MatChipsModule,
+    NgxMaterialTimepickerModule,
+    RouterModule.forRoot(
+      [
+        { path: "login", component: LoginPageComponent },
+        {
+          path: "",
+          component: MainComponent,
+          children: [
+            {
+              path: "home",
+              component: HomepageComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "findPatient",
+              component: FindPatientComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "myAccount",
+              component: MyAccountComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+            {
+              path: "modals",
+              component: ModalsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "signature",
+              component: SignatureComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "editDetails",
+              component: EditDetailsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "changePassword",
+              component: ChangePasswordComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "monitoring",
+              component: MonitoringComponent,
+              canActivate: [AuthGuard, AdminGuard],
+            },
+            {
+              path: "visitSummary/:patient_id/:visit_id",
+              component: VisitSummaryComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "", redirectTo: "home", pathMatch: "full" },
+          ],
+        },
+        { path: "**", component: Page404Component },
+      ],
+      { scrollPositionRestoration: "enabled" }
+    ),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
