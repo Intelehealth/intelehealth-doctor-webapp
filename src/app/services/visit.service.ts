@@ -10,6 +10,9 @@ export class VisitService {
   private baseURL = environment.baseURL;
 
   constructor(private http: HttpClient) {}
+  checkVisit(encounters, visitType) {
+    return encounters.find(({ display = "" }) => display.includes(visitType));
+  }
 
   getVisits(): Observable<any> {
     // tslint:disable-next-line:max-line-length

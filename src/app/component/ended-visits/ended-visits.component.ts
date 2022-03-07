@@ -10,24 +10,22 @@ export class EndedVisitsComponent implements OnInit {
   endVisits = [];
   endedVisitNo = 0;
   setSpiner = true;
+  data: any
   constructor(private service: VisitService,
     private cd: ChangeDetectorRef) {
      }
 
   ngOnInit(): void {
       this.service.getEndedVisits().subscribe((res)=>{
-        let data = res.results
-         let visits =  data.filter(a=>a.stopDatetime != null);
+        this.data = res.results
+         let visits =  this.data.filter(a=>a.stopDatetime != null);
          visits.forEach( a => {
            this.endVisits.push(this.assignValueToProperty(a));
            this.endedVisitNo += 1
-           console.log(typeof(this.endedVisitNo));
-
            localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
          });
          this.setSpiner = false;
       })
-      
   }
 
   assignValueToProperty(active) {
@@ -45,7 +43,13 @@ export class EndedVisitsComponent implements OnInit {
     )[1];
     value.lastSeen = active.encounters[0]?.encounterDatetime;
     value.complaints = this.getComplaints(active);
+    value.feedback = this.getComments(active)
     return value;
+  }
+
+  getComments(visit){
+    let feedback = this.service.checkVisit(visit.encounters, "Patient Exit Survey");
+    return feedback?.encounterType?.display;
   }
 
   getComplaints(visitDetails) {

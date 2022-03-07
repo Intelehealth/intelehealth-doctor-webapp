@@ -9,6 +9,7 @@ import { MatTableDataSource } from "@angular/material/table";
   styleUrls: ["./tables.component.css"],
 })
 export class TablesComponent implements OnInit {
+  isFeedback = false;
   displayColumns: string[] = [
     "id",
     "name",
@@ -19,6 +20,7 @@ export class TablesComponent implements OnInit {
     "provider",
     'complaints',
     "lastSeen",
+    "feedback"
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
