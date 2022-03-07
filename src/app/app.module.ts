@@ -196,6 +196,11 @@ import { MonitoringComponent } from "./component/monitoring/monitoring.component
               canActivate: [AuthGuard],
             },
             {
+              path: "endVisits",
+              component: EndedVisitsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
               path: "changePassword",
               component: ChangePasswordComponent,
               canActivate: [AuthGuard],
