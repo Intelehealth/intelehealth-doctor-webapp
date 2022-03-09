@@ -8,6 +8,7 @@ import { environment } from "../../../environments/environment";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import * as moment from "moment";
+import { ImagesService } from "src/app/services/images.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -42,12 +43,14 @@ export class MyAccountComponent implements OnInit {
   url: any = '';
   providerInfo: any;
   personImageURL: any;
+  image: string;
 
   constructor(
     private sessionService: SessionService,
     private http: HttpClient,
     private dialog: MatDialog,
     private service: VisitService,
+    private Imgservice: ImagesService,
     private snackbar: MatSnackBar
   ) { }
 
@@ -83,7 +86,29 @@ export class MyAccountComponent implements OnInit {
         this.getVisitsData();
         this.setSpiner = false;
       });
-      this.personImageURL =`${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
+
+      this.personImageURL = `${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
+      var header = {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa("nurse:Nurse123"),
+        }),
+      };
+      // const URL = this.baseURLProvider
+      // this.http.post(this.personImageURL, header).subscribe((response) => {
+      //   console.log('response: ', response);
+
+      // },(err)=>{
+      //   console.log('err: ', err);
+      // })
+      
+      this.Imgservice.fetchProfileImage(this.providerInfo.person.uuid).subscribe((response) => {
+        console.log('response: ', response);
+        this.personImageURL = `${this.baseURL}/personimage/${this.providerInfo.person.uuid}`;
+      },(err)=>{
+        this.personImageURL = 'assets/dummy profile image.jpg';
+      });
+      // console.log(' this.personImageURL: ',  this.personImageURL);
   }
 
   onSelectFile(event) {
@@ -94,7 +119,7 @@ export class MyAccountComponent implements OnInit {
     
       reader.onload = (event) => { // called once readAsDataURL is completed
         this.url = event.target.result;
-        let imageBolb = this.url.split('image/jpeg;base64,');
+        let imageBolb = this.url.split(',');
         var header = {
           headers: new HttpHeaders({
             "Content-Type": "application/json",
