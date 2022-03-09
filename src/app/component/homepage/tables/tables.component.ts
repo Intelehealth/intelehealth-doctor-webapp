@@ -19,19 +19,22 @@ export class TablesComponent implements OnInit {
     "status",
     "provider",
     'complaints',
-    "lastSeen",
-    "feedback"
+    "lastSeen"
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @Input() data;
+  @Input() dataFor;
   constructor() {}
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource(this.data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    if (this.dataFor === "endVisits") {
+      this.displayColumns.push("feedback");
+    }
   }
 
   /**
