@@ -1,6 +1,6 @@
 import { SessionService } from "src/app/services/session.service";
 import { Component, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "./signature/signature.component";
 import { EditDetailsComponent } from "./edit-details/edit-details.component";
@@ -17,6 +17,8 @@ declare var getFromStorage: any, saveToStorage: any;
 })
 export class MyAccountComponent implements OnInit {
   baseURL = environment.baseURL;
+  baseURLProvider = `${this.baseURL}/personimage`;
+
   setSpiner: boolean = true;
   tat = 0;
   name = "Enter text";
@@ -37,6 +39,9 @@ export class MyAccountComponent implements OnInit {
   visitnoteTime;
   visitcompleteTime;
   providerId: any;
+  url: any = '';
+  providerInfo: any;
+  personImageURL: any;
 
   constructor(
     private sessionService: SessionService,
@@ -49,13 +54,14 @@ export class MyAccountComponent implements OnInit {
   ngOnInit() {
     this.setSpiner = true;
     this.userDetails = getFromStorage("user");
-
+    this.providerInfo = getFromStorage("provider");
     this.sessionService
-      .provider(this.userDetails.uuid)
-      .subscribe((provider) => {
-        this.providerDetails = provider.results[0];
-        saveToStorage("provider", this.providerDetails);
-        const attributes = provider.results[0].attributes;
+    .provider(this.userDetails.uuid)
+    .subscribe((provider) => {
+      const attributes = provider.results[0].attributes;
+      this.providerDetails = provider.results[0];
+      saveToStorage("provider", this.providerDetails);
+        
         attributes.forEach((attribute) => {
           if (
             attribute.attributeType.uuid === this.specializationProviderType &&
@@ -77,8 +83,35 @@ export class MyAccountComponent implements OnInit {
         this.getVisitsData();
         this.setSpiner = false;
       });
+      this.personImageURL =`${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
   }
-  /**
+
+  onSelectFile(event) {
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+    
+      reader.readAsDataURL(event.target.files[0]); // read file as data url
+    
+      reader.onload = (event) => { // called once readAsDataURL is completed
+        this.url = event.target.result;
+        let imageBolb = this.url.split('image/jpeg;base64,');
+        var header = {
+          headers: new HttpHeaders({
+            "Content-Type": "application/json",
+            Authorization: "Basic " + btoa("nurse:Nurse123"),
+          }),
+        };
+        const URL = this.baseURLProvider
+        let json ={
+            person: this.providerDetails.person.uuid,
+            base64EncodedImage: imageBolb[1]
+        }
+        this.http.post(URL, json, header).subscribe((response) => {});
+      }
+    }
+    window.location.reload();
+    }
+  /** 
    * Open edit details modal
    */
   onEdit() {
