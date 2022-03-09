@@ -93,10 +93,10 @@
 
     <ng-container matColumnDef="feedback">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>FeedBack</th>
-      <td mat-cell *matCellDef="let row">
+      <td mat-cell *matCellDef="let row" class="text-center">
         <i
         *ngIf="row.feedback"
-        class="fas fa-comments"
+        class="fas fa-comments " style="font-size: 18px;"
       ></i>
       </td>
     </ng-container>
