@@ -10,8 +10,8 @@
 <form [formGroup]="editForm">
   <mat-form-field class="example-full-width">
     <mat-select placeholder="Gender" formControlName="gender">
-      <mat-option value="M">Male</mat-option>
-      <mat-option value="F">Female</mat-option>
+      <mat-option value="Male">Male</mat-option>
+      <mat-option value="Female">Female</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="example-full-width">
@@ -42,7 +42,7 @@
   </mat-form-field>
   <mat-form-field
     class="example-full-width"
-    *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'"
+    *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'"
   >
     <mat-select placeholder="Specialization" formControlName="specialization">
       <mat-option
@@ -59,10 +59,35 @@
       formControlName="registrationNumber"
     />
   </mat-form-field>
-
+  <div class="row">
+    <div class="col-6">
+      <mat-form-field class="example-full-width">
+        <input
+          matInput
+          [ngxTimepicker]="picker1"
+          placeholder="Start Time"
+          [format]="12"
+          formControlName="startTime"
+        />
+        <ngx-material-timepicker #picker1></ngx-material-timepicker>
+      </mat-form-field>
+    </div>
+    <div class="col-6">
+      <mat-form-field class="example-full-width">
+        <input
+          matInput
+          [ngxTimepicker]="picker2"
+          placeholder="End Time"
+          [format]="12"
+          formControlName="endTime"
+        />
+        <ngx-material-timepicker #picker2></ngx-material-timepicker>
+      </mat-form-field>
+    </div>
+  </div>
   <div
     style="float: left"
-    *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'"
+    *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'"
   >
     <button
       *ngIf="attributes.length != '0' && data?.textOfSign?.uuid"
@@ -80,7 +105,6 @@
       color="primary"
       type="submit"
       (click)="updateDetails()"
-      [disabled]="!editForm.valid"
     >
       Save
     </button>

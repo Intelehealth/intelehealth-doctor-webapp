@@ -78,7 +78,7 @@ import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { RedirectComponent } from "./component/redirect/redirect.component";
-
+import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
 
 
 
@@ -148,6 +148,7 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    NgxMaterialTimepickerModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'l/:hash', component: RedirectComponent },

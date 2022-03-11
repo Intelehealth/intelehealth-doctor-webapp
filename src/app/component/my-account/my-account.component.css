@@ -15,7 +15,7 @@
     align-items: center;
   } */
 
-.wrap-login100 {
+/* .wrap-login100 {
   width: 100%;
   background: #fff;
   overflow: hidden;
@@ -23,7 +23,7 @@
   background: url("../../../assets/images/Doctor-profile-page-background-without-blur.png");
   background-size: 100% 100%;
   border-radius: 10px;
-}
+} */
 
 .login100-form-title {
   width: 100%;
@@ -36,7 +36,7 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  align-items: center;
+  text-align: center;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -61,7 +61,12 @@
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto;
+  border: 5px solid white;
+  margin-top: 99px;
+}
+
+tr th i{
+  padding: 10px;
 }
 
 table {
@@ -75,14 +80,13 @@ td {
 }
 
 .overlap {
-  top: -100px;
-  position: relative;
-  /* left: 27%; */
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
   border-radius: 10px;
-  padding-top: 140px;
+}
+
+.banner{
+  position: absolute;
 }
 
 mat-spinner {
@@ -91,26 +95,167 @@ mat-spinner {
   left: 46%;
   top: 42%;
 }
+.shadow{
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+hr{
+	border-top: 1px thin #8c8b8b;
+  width: 200%;
+}
+
 
 @media only screen and (max-width: 768px) {
   .overlap {
     top: -100px;
     position: relative;
-    left: 8%;
-    width: 85%;
+    width: 96%;
     border-radius: 10px;
     padding-top: 140px;
   }
+  .info{
+    margin-left: 93px;
+  }
 
   .wrap-login100 {
+    font-size: 14px;
     background: none;
   }
 }
-
+/* 
 .almondita {
   padding-top: 20px;
-}
+} */
 
 .sign {
   height: 50px;
 }
+
+.text-right {
+  float: right;
+  font-weight: bold;
+  font-size: 1rem;
+  color: black;
+  border: 1px solid white;
+}
+
+mat-form-field {
+  margin-right: 12px;
+}
+
+.profileImg {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+
+.hoverable{
+  position: relative;
+  display: block;
+  cursor: pointer;
+  height: 200px;
+  width: 200px;
+  border: 5px solid rgb(255, 253, 253);
+  border-radius: 50%;
+}
+.hoverable .hover-text{
+  position: absolute;
+  display: none;
+  top: 50%;
+  left:  50%;
+  transform: translate(-50%,-50%);   
+  z-index: 2;
+}
+.hoverable .background{
+  position: absolute;
+  display: none;
+  top: 0;
+  left:  0;
+  bottom: 0;
+  right: 0;
+  background-color:rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 1;
+}
+.hoverable:hover .hover-text{
+  display: block;
+}
+.hoverable:hover .background{
+  display: block;
+}
+.mt-5{
+  margin-top: 5rem !important;
+}
+
+#fileInput{
+  display: none;
+}
+
+/* .profile-pic img{
+
+    position: absolute;
+    object-fit: cover;
+    width: circleSize;
+    height: circleSize;
+    box-shadow: shadow;
+    border-radius: radius;
+    z-index: 0;
+} */
+/* 
+&:hover -label{
+  .-label {
+    @include object-center;
+    background-color: rgba(0,0,0,.8);
+    z-index: 10000;
+    color: $fontColor;
+    transition: background-color .2s ease-in-out;
+    border-radius: $radius;
+    margin-bottom: 0;
+  }
+} */
+
+/* .profile-pic {
+  color: transparent;
+  transition: all .3s ease;
+  @include object-center;
+  position: relative;
+  transition: all .3s ease;
+  
+  input {
+    display: none;
+  }
+  
+  img {
+    position: absolute;
+    object-fit: cover;
+    width: $circleSize;
+    height: $circleSize;
+    box-shadow: $shadow;
+    border-radius: $radius;
+    z-index: 0;
+  }
+  
+  .-label {
+    cursor: pointer;
+    height: $circleSize;
+    width: $circleSize;
+  }
+  
+  &:hover {
+    .-label {
+      @include object-center;
+      background-color: rgba(0,0,0,.8);
+      z-index: 10000;
+      color: $fontColor;
+      transition: background-color .2s ease-in-out;
+      border-radius: $radius;
+      margin-bottom: 0;
+    }
+  }
+  
+  span {
+    display: inline-flex;
+    padding: .2em;
+    height: 2em;
+  }
+} */

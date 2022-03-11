@@ -1,11 +1,10 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { FormGroup, FormControl } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
-import { Router } from "@angular/router";
 declare var getFromStorage: any;
 
 @Component({
@@ -16,39 +15,8 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
-  specializations = [
-                      "Allopathy",
-                      "Homeopathy",
-                      "Ayurveda and Yog",
-                      "No Doctor Needed"
-                    ];
-  editForm = new FormGroup({
-    gender: new FormControl(
-      this.data.person ? this.data.person.gender : null, Validators.required),
-
-    phoneNumber: new FormControl(
-      this.data.phoneNumber ? this.data.phoneNumber.value : null,
-      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
-    ),
-
-    whatsapp: new FormControl(
-      this.data.whatsapp ? this.data.whatsapp.value : null,
-      [Validators.required, Validators.pattern("^((\\+91-?)|0)?[0-9]{10}$")]
-    ),
-
-    emailId: new FormControl(
-      this.data.emailId ? this.data.emailId.value : null
-    ),
-
-    qualification: new FormControl(
-      this.data.qualification ? this.data.qualification.value : null),
-
-    specialization: new FormControl(
-      this.data.specialization ? this.data.specialization.value : null),
-
-    registrationNumber: new FormControl(
-      this.data.registrationNumber ? this.data.registrationNumber.value : null),
-  });
+  specializations = ["General Physician"];
+  editForm: FormGroup;
   status = false;
   name = "Enter text";
   userDetails: any;
@@ -57,9 +25,39 @@ export class EditDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<EditDetailsComponent>,
     private http: HttpClient,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
+    private dialog: MatDialog
+  ) {
+    const timings =
+      data?.timings?.value && typeof data?.timings?.value === "string"
+        ? data?.timings?.value
+        : "";
+    const [startTime = null, endTime = null] = timings.split(" - ");
+    this.editForm = new FormGroup({
+      gender: new FormControl(
+        this.data.person ? this.data.person.gender : null
+      ),
+      phoneNumber: new FormControl(
+        this.data.phoneNumber ? this.data.phoneNumber.value : null
+      ),
+      whatsapp: new FormControl(
+        this.data.whatsapp ? this.data.whatsapp.value : null
+      ),
+      emailId: new FormControl(
+        this.data.emailId ? this.data.emailId.value : null
+      ),
+      qualification: new FormControl(
+        this.data.qualification ? this.data.qualification.value : null
+      ),
+      specialization: new FormControl(
+        this.data.specialization ? this.data.specialization.value : null
+      ),
+      registrationNumber: new FormControl(
+        this.data.registrationNumber ? this.data.registrationNumber.value : null
+      ),
+      startTime: new FormControl(startTime),
+      endTime: new FormControl(endTime),
+    });
+  }
 
   ngOnInit() {
     this.userDetails = getFromStorage("user");
@@ -171,6 +169,18 @@ export class EditDetailsComponent implements OnInit {
       };
       this.http.post(URL, json).subscribe((response) => {});
     }
+
+    if (value.startTime !== null || value.endTime !== null) {
+      const URL = this.data.timings
+        ? `${this.baseURLProvider}/${this.data.timings.uuid}`
+        : this.baseURLProvider;
+      const json: any = {
+        attributeType: "afe94c6a-2ee3-4635-9556-d28e6441e5a6",
+        value: `${value.startTime} - ${value.endTime}`,
+      };
+      this.http.post(URL, json).subscribe();
+    }
+
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }

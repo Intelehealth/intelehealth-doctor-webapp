@@ -121,3 +121,7 @@ body.font-lato td {
   text-align: center;
   font-size: 20px;
 }
+.timepicker-overlay,
+.timepicker-backdrop-overlay {
+  z-index: 1001 !important;
+}

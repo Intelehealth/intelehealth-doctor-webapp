@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -31,6 +31,7 @@
     "intro.js": "^2.9.3",
     "moment": "^2.24.0",
     "ngx-cookie-service": "^2.1.0",
+    "ngx-material-timepicker": "^5.5.3",
     "ngx-spinner": "^10.0.1",
     "rxjs": "~6.6.2",
     "serialize-javascript": "^2.1.2",
