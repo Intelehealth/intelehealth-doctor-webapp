@@ -87,28 +87,19 @@ export class MyAccountComponent implements OnInit {
         this.setSpiner = false;
       });
 
-      this.personImageURL = `${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
-      var header = {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("nurse:Nurse123"),
-        }),
-      };
-      // const URL = this.baseURLProvider
-      // this.http.post(this.personImageURL, header).subscribe((response) => {
-      //   console.log('response: ', response);
-
-      // },(err)=>{
-      //   console.log('err: ', err);
-      // })
+      // this.personImageURL = `${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
+      // var header = {
+      //   headers: new HttpHeaders({
+      //     "Content-Type": "application/json",
+      //     Authorization: "Basic " + btoa("nurse:Nurse123"),
+      //   }),
+      // };
       
       this.Imgservice.fetchProfileImage(this.providerInfo.person.uuid).subscribe((response) => {
-        console.log('response: ', response);
         this.personImageURL = `${this.baseURL}/personimage/${this.providerInfo.person.uuid}`;
       },(err)=>{
         this.personImageURL = 'assets/dummy profile image.jpg';
       });
-      // console.log(' this.personImageURL: ',  this.personImageURL);
   }
 
   onSelectFile(event) {

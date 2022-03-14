@@ -89,6 +89,13 @@
         <i class="material-icons" style="float: right; cursor: pointer" (click)="onEdit()">create</i>
         <table class="ml-1">
           <tr>
+            <th><img src="assets/about-me.png" alt="" class="profileIcon">About </th>
+            <td *ngIf="providerDetails.aboutMe">
+              {{ providerDetails.aboutMe.value }}
+            </td>
+          </tr>
+          <hr>
+          <tr>
             <th><img src="assets/Gender.png" alt="" class="profileIcon">Gender </th>
             <td *ngIf="providerDetails.person">
               {{ providerDetails.person.gender }}
@@ -157,7 +164,7 @@
               </button>
             </td>
           </tr>
-          <hr>
+          <hr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'">
           <tr>
             <th>&nbsp;<img src="assets/svgs/clock.svg" width="25" class="profileIcon"> Timings </th>
             <td>

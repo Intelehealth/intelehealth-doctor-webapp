@@ -9,6 +9,14 @@
 </h4>
 <form [formGroup]="editForm">
   <mat-form-field class="example-full-width">
+    <input
+      matInput
+      placeholder="About"
+      type="text"
+      formControlName="aboutMe"
+    />
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
     <mat-select placeholder="Gender" formControlName="gender">
       <mat-option value="Male">Male</mat-option>
       <mat-option value="Female">Female</mat-option>
