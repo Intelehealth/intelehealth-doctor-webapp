@@ -8,7 +8,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-container *ngIf="endVisits.length > 0">
-        <app-tables [data]="endVisits"></app-tables>
+        <app-tables [data]="endVisits" [dataFor]="'endVisits'"></app-tables>
       </ng-container>
     </mat-expansion-panel>
   </mat-accordion>
