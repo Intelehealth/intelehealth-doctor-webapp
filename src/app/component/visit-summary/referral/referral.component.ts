@@ -27,20 +27,20 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
 })
 export class ReferralComponent implements OnInit {
   referralConcept: String = '3269f1ca-29ae-4b23-b5b9-9db6c1848eb9';
-  urgentConcept: String = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
+  referralTimeConcept: String = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
   encounterUuid: string;
   patientId: string;
   visitUuid: string;
-  referral: Boolean = false;
-  urgent: Boolean = false;
+  referral: String = '';
+  referralTime: String = '';
   referralObs: object = {};
-  urgentObs: object = {};
-  ReferralLocationConcept: String = '56ed8dca-a028-4108-b42e-6f9fab6f5d9e';
-  referralLocationObs: object = {};
-  referralLocation: string;
-  ReferralReasonConcept: String = 'de7740d4-1f5c-4c0d-834a-b8de7b5b5458';
-  referralReasonObs: object = {};
-  referralReason: string;
+  referralTimeObs: object = {};
+  // ReferralLocationConcept: String = '56ed8dca-a028-4108-b42e-6f9fab6f5d9e';
+  // referralLocationObs: object = {};
+  // referralLocation: string;
+  // ReferralReasonConcept: String = 'de7740d4-1f5c-4c0d-834a-b8de7b5b5458';
+  // referralReasonObs: object = {};
+  // referralReason: string;
   coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private service: EncounterService,
@@ -52,20 +52,18 @@ export class ReferralComponent implements OnInit {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     [{concept: this.referralConcept, name: 'referral'},
-      {concept: this.urgentConcept, name: 'urgent'},
-      {concept: this.ReferralLocationConcept, name: 'referralLocation'},
-      {concept: this.ReferralReasonConcept, name: 'referralReason'}
+      {concept: this.referralTimeConcept, name: 'referralTime'},
+      // {concept: this.ReferralLocationConcept, name: 'referralLocation'},
+      // {concept: this.ReferralReasonConcept, name: 'referralReason'}
     ].forEach(each => {
       this.diagnosisService.getObs(this.patientId, each.concept)
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            if (obs.value === 'true') {
-              this[each.name] = true;
-              this[`${each.name}Obs`] = obs;
-            } else {
-              this[`${each.name}Obs`] = obs;
-            }
+            this[each.name] = obs.value;
+            this[`${each.name}Obs`] = obs;
+            console.log(each.name, obs.value)
+            console.log(this[`${each.name}Obs`])
           }
         });
       });
@@ -84,8 +82,11 @@ export class ReferralComponent implements OnInit {
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
       // tslint:disable-next-line: max-line-length
-      const concept = type === 'referralLocation' ? this.ReferralLocationConcept : type === 'referralReason' ? this.ReferralReasonConcept : type === 'referral' ? this.referralConcept : this.urgentConcept;
-      const value = type === 'referralLocation' ? this.referralLocation : type === 'referralReason' ? this.referralReason : type === 'referral' ? this.referral : this.urgent;
+      // const concept = type === 'referralLocation' ? this.ReferralLocationConcept : type === 'referralReason' ? this.ReferralReasonConcept : type === 'referral' ? this.referralConcept : this.urgentConcept;
+      // tslint:disable-next-line: max-line-length
+      // const value = type === 'referralLocation' ? this.referralLocation : type === 'referralReason' ? this.referralReason : type === 'referral' ? this.referral : this.urgent;
+      const concept = type === 'referral' ? this.referralConcept : this.referralTimeConcept;
+      const value = type === 'referral' ? this.referral : this.referralTime;
       const json = {
         concept,
         person: this.patientId,
