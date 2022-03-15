@@ -1,10 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { CalendarEvent, CalendarView } from "angular-calendar";
@@ -34,6 +29,8 @@ const colors: any = {
 })
 export class AppointmentScheduleComponent implements OnInit {
   @ViewChild("modalContent") modalContent: TemplateRef<any>;
+  @ViewChild("rescheduleModal") rescheduleModal: TemplateRef<any>;
+  @ViewChild("slotModal") slotModal: TemplateRef<any>;
   @ViewChild("schedule") schedule: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
@@ -41,17 +38,19 @@ export class AppointmentScheduleComponent implements OnInit {
   events: CalendarEvent[];
   activeDayIsOpen: boolean = false;
   selectedDays = [];
+  saveScheduleBody: any;
   slot = {
     startTime: "9:00 AM",
     endTime: "6:00 PM",
-    specialty: ""
+    specialty: "",
   };
   scheduleForm = new FormGroup({
     startTime: new FormControl(this.slot.startTime, [Validators.required]),
     endTime: new FormControl(this.slot.endTime, [Validators.required]),
-    specialty: new FormControl(this.slot.endTime, [Validators.required])
+    specialty: new FormControl(this.slot.endTime, [Validators.required]),
   });
-  userSchedule: any = Object; allSchedules: any = [];
+  userSchedule: any = Object;
+  allSchedules: any = [];
   unChanged: boolean = true;
   type: string = "month";
   types: any = [
@@ -71,12 +70,22 @@ export class AppointmentScheduleComponent implements OnInit {
   ];
   slotHours = [];
   errorMsg: string = null;
-  specialization = []; selectedSpecialty:string;
+  specialization = [];
+  selectedSpecialty: string;
   modalData: {
     date: Date;
     events: CalendarEvent[];
   };
+  reschedule = [];
+  slots = [];
   scheduleModalRef = null;
+  rescheduleModalRef = null;
+  slotModalRef = null;
+  selectedSchedule: any = {};
+  todaysDate = moment().format("YYYY-MM-DD");
+  reasons = ["Doctor Not available", "Patient Not Available", "Other"];
+  selectedSlotIdx = null;
+  reason = "";
   constructor(
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
@@ -88,7 +97,9 @@ export class AppointmentScheduleComponent implements OnInit {
     this.getSchedule();
     this.slotHours = this.getHours();
     this.specialization = this.appointmentService.getSpecialty();
-    this.specialization.sort((textA,textB)=> (textA.value < textB.value) ? -1 : (textA.value > textB.value) ? 1 : 0);
+    this.specialization.sort((textA, textB) =>
+      textA.value < textB.value ? -1 : textA.value > textB.value ? 1 : 0
+    );
     this.selectedSpecialty = this.specialization[0]?.value;
   }
 
@@ -96,7 +107,10 @@ export class AppointmentScheduleComponent implements OnInit {
     try {
       this.weekDays.forEach((day) => (day.checked = false));
       this.weekends.forEach((day) => (day.checked = false));
-      if (this.userSchedule.slotDays && this.userSchedule.slotSchedule.length > 0) {
+      if (
+        this.userSchedule.slotDays &&
+        this.userSchedule.slotSchedule.length > 0
+      ) {
         const slotDays = this.userSchedule.slotDays.split("||");
         slotDays.forEach((day) => {
           const weekIdx = this.weekDays.findIndex((d) => d.day === day);
@@ -147,7 +161,7 @@ export class AppointmentScheduleComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res && res.data) {
-            this.allSchedules = res.data
+            this.allSchedules = res.data;
             this.checkSpecialty();
           } else {
             this.userSchedule = {
@@ -190,11 +204,11 @@ export class AppointmentScheduleComponent implements OnInit {
     this.events = Object.assign([], array);
     this.checkDaysFromSchedule();
     const { startTime, endTime } = this.userSchedule?.slotSchedule?.length
-    ? this.userSchedule?.slotSchedule[0]
-    : this.slot;
+      ? this.userSchedule?.slotSchedule[0]
+      : this.slot;
     this.ctr.startTime.setValue(startTime);
     this.ctr.endTime.setValue(endTime);
-    this.ctr.specialty.setValue(this.userSchedule?.speciality)
+    this.ctr.specialty.setValue(this.userSchedule?.speciality);
   }
 
   get ctr() {
@@ -266,7 +280,7 @@ export class AppointmentScheduleComponent implements OnInit {
 
   addSchedule() {
     this.selectedDays = [];
-    this.ctr.specialty.setValue(this.selectedSpecialty)
+    this.ctr.specialty.setValue(this.selectedSpecialty);
     this.slotHours = this.getHours(true);
     this.checkDaysFromSchedule();
     this.scheduleModalRef = this.modal.open(this.modalContent);
@@ -322,7 +336,7 @@ export class AppointmentScheduleComponent implements OnInit {
             day,
             endTime: this.scheduleForm.value.endTime,
             startTime: this.scheduleForm.value.startTime,
-             date: currentDay.format('YYYY-MM-DD HH:mm:ss'),
+            date: currentDay.format("YYYY-MM-DD HH:mm:ss"),
           });
         }
       }
@@ -385,7 +399,9 @@ export class AppointmentScheduleComponent implements OnInit {
       this.modal.dismissAll();
       this.errorMsg = null;
     } else {
-      this.error("Time cannot be empty and start time should be less than end time");
+      this.error(
+        "Time cannot be empty and start time should be less than end time"
+      );
     }
   }
 
@@ -397,18 +413,33 @@ export class AppointmentScheduleComponent implements OnInit {
     slotSchedule: any[];
     drName: any;
   }) {
-    this.appointmentService.updateOrCreateAppointment(body).subscribe({
-      next: (res: any) => {
-        if (res.status) {
-          this.getSchedule();
-          this.toast({
-            message: res.message,
-          });
-        }
-      },
-    });
-    this.modal.dismissAll();
-    this.scheduleModalRef.close();
+    if (body) this.saveScheduleBody = body;
+    if (this.saveScheduleBody) {
+      this.appointmentService
+        .updateOrCreateAppointment(this.saveScheduleBody)
+        .subscribe({
+          next: (res: any) => {
+            if (res.status) {
+              this.getSchedule();
+              if (res.reschedule) {
+                this.reschedule = res.reschedule;
+                this.rescheduleModalRef = this.modal.open(
+                  this.rescheduleModal,
+                  {
+                    size: "lg",
+                  }
+                );
+              }
+            }
+            res.message &&
+              this.toast({
+                message: res.message,
+              });
+          },
+        });
+      this.modal.dismissAll();
+      this.scheduleModalRef.close();
+    }
   }
 
   private getJson(speciality: any) {
@@ -496,8 +527,10 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   checkSpecialty() {
-    let schedule = this.allSchedules.filter(sp=> sp.speciality === this.selectedSpecialty)[0];
-    if(schedule) {
+    let schedule = this.allSchedules.filter(
+      (sp) => sp.speciality === this.selectedSpecialty
+    )[0];
+    if (schedule) {
       this.userSchedule = schedule;
     } else {
       this.userSchedule = {
@@ -508,6 +541,58 @@ export class AppointmentScheduleComponent implements OnInit {
   }
 
   private error(msg) {
-      this.errorMsg = msg;
+    this.errorMsg = msg;
+  }
+
+  rescheduleClick(schedule) {
+    this.selectedSchedule = schedule;
+    const e = { target: { value: moment().format("YYYY-MM-DD") } };
+    this.changeCalender(e);
+    this.slotModalRef = this.modal.open(this.slotModal);
+  }
+
+  changeCalender(e) {
+    this.todaysDate = e.target.value;
+    this.getAppointmentSlots();
+  }
+
+  getAppointmentSlots(
+    fromDate = this.todaysDate,
+    toDate = this.todaysDate,
+    speciality = this.selectedSchedule?.speciality
+  ) {
+    this.appointmentService
+      .getAppointmentSlots(
+        moment(fromDate).format("DD/MM/YYYY"),
+        moment(toDate).format("DD/MM/YYYY"),
+        speciality
+      )
+      .subscribe((res: any) => {
+        this.slots = res.dates;
+      });
+  }
+
+  Reschedule() {
+    const payload = {
+      ...this.selectedSchedule,
+      ...this.slots[this.selectedSlotIdx],
+      reason: this.reason,
+      appointmentId: this.selectedSchedule?.id,
+    };
+
+    this.appointmentService
+      .rescheduleAppointment(payload)
+      .subscribe((res: any) => {
+        const message = res.message || "Appointment rescheduled successfully!";
+        this.toast({ message });
+        this.selectedSlotIdx = null;
+        // this.rescheduleModalRef.close();
+        // this.modal.dismissAll();
+        this.saveSchedule(this.saveScheduleBody);
+      });
+  }
+
+  selectSlot(slot) {
+    this.selectedSlotIdx = slot;
   }
 }

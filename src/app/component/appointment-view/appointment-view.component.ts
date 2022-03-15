@@ -66,7 +66,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     selectedReason = "";
     otherReason = "";
     reasons = ["Doctor Not available", "Patient Not Available", "Other"];
-    specialization = []; selectedSpecialty:string;;
+    specialization = []; selectedSpecialty:string;
     constructor(
       private modal: NgbModal,
       private appointmentService: AppointmentService,
@@ -246,29 +246,29 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     slots = [];
     rescheduleClick(schedule) {
       this.selectedReason = '';
-      this.vService
-        .fetchVisitDetails(
-          schedule.visitUuid,
-          "custom:(uuid,encounters:(display,uuid,display))"
-        )
-        .subscribe((res) => {
-          const len = res.encounters.filter((e) => {
-            return (
-              e.display.includes("Patient Exit Survey") ||
-              e.display.includes("Visit Complete")
-            );
-          }).length;
-          const isCompleted = Boolean(len);
-          if (isCompleted) {
-            const message = `Visit is already completed, it can't be rescheduled.`;
-            this.toast({ message });
-          } else {
+      // this.vService
+      //   .fetchVisitDetails(
+      //     schedule.visitUuid,
+      //     "custom:(uuid,encounters:(display,uuid,display))"
+      //   )
+      //   .subscribe((res) => {
+      //     const len = res.encounters.filter((e) => {
+      //       return (
+      //         e.display.includes("Patient Exit Survey") ||
+      //         e.display.includes("Visit Complete")
+      //       );
+      //     }).length;
+      //     const isCompleted = Boolean(len);
+      //     if (isCompleted) {
+      //       const message = `Visit is already completed, it can't be rescheduled.`;
+      //       this.toast({ message });
+      //     } else {
             this.selectedSchedule = schedule;
             const e = { target: { value: moment().format("YYYY-MM-DD") } };
             this.changeCalender(e);
             this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
-          }
-        });
+        //   }
+        // });
     }
   
     changeCalender(e) {

@@ -1,176 +1,405 @@
 <div class="container">
-    <div class="wrap-login100">
-      <div class="container wrap-login100">
-        <div class="row">
-          <div class="col-md-5">
-            <div class="btn-group" style="float: left; cursor: pointer;">
-              <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
-                (viewDateChange)="closeOpenMonthViewDay('Previous')">
-                Previous 
-              </div>
-              <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate"
-                (viewDateChange)="closeOpenMonthViewDay('Today')">
-                Today
-              </div>
-              <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
-                (viewDateChange)="closeOpenMonthViewDay('Next')">
-                 Next
-              </div>
-              <select class="selectSp" [(ngModel)]="selectedSpecialty" (change)="checkSpecialty()">
-              <option [value]="specialty.value" *ngFor="let specialty of specialization">{{specialty.value}}</option>
-            </select>
+  <div class="wrap-login100">
+    <div class="container wrap-login100">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="btn-group" style="float: left; cursor: pointer">
+            <div
+              class="btn btn-primary"
+              mwlCalendarPreviousView
+              [view]="view"
+              [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Previous')"
+            >
+              Previous
             </div>
-          </div>
-          <div class="col-md-3" style="text-align: center;">
-            <h3>{{viewDateLabel}}</h3>
-          </div>
-          <div class="col-md-4">
-            <button style="float: right; cursor: pointer;" class="btn btn-primary" (click)="addSchedule()">
-              Add Schedule for Month
-            </button>
+            <div
+              class="btn btn-outline-secondary"
+              mwlCalendarToday
+              [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Today')"
+            >
+              Today
+            </div>
+            <div
+              class="btn btn-primary"
+              mwlCalendarNextView
+              [view]="view"
+              [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay('Next')"
+            >
+              Next
+            </div>
+            <select
+              class="selectSp"
+              [(ngModel)]="selectedSpecialty"
+              (change)="checkSpecialty()"
+            >
+              <option
+                [value]="specialty.value"
+                *ngFor="let specialty of specialization"
+              >
+                {{ specialty.value }}
+              </option>
+            </select>
           </div>
         </div>
-        <br />
-        <div class="calendar-view" [ngSwitch]="view">
-          <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
-            [refresh]="refresh" [locale]="locale" [activeDayIsOpen]="activeDayIsOpen"
-            (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
-            (eventTimesChanged)="eventTimesChanged($event)">
-          </mwl-calendar-month-view>
-          <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [dayStartHour]="9" [viewDate]="viewDate"
-            [events]="events" [refresh]="refresh" [locale]="locale"
-            (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-          </mwl-calendar-week-view>
-          <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [dayStartHour]="9" [viewDate]="viewDate"
-            [events]="events" [refresh]="refresh" [locale]="locale"
-            (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-          </mwl-calendar-day-view>
+        <div class="col-md-3" style="text-align: center">
+          <h3>{{ viewDateLabel }}</h3>
+        </div>
+        <div class="col-md-4">
+          <button
+            style="float: right; cursor: pointer"
+            class="btn btn-primary"
+            (click)="addSchedule()"
+          >
+            Add Schedule for Month
+          </button>
+        </div>
+      </div>
+      <br />
+      <div class="calendar-view" [ngSwitch]="view">
+        <mwl-calendar-month-view
+          *ngSwitchCase="CalendarView.Month"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          [locale]="locale"
+          [activeDayIsOpen]="activeDayIsOpen"
+          (dayClicked)="dayClicked($event.day)"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-month-view>
+        <mwl-calendar-week-view
+          *ngSwitchCase="CalendarView.Week"
+          [dayStartHour]="9"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          [locale]="locale"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-week-view>
+        <mwl-calendar-day-view
+          *ngSwitchCase="CalendarView.Day"
+          [dayStartHour]="9"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          [locale]="locale"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-day-view>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">
+        Appointment Schedule
+        <span
+          style="
+            float: right;
+            cursor: pointer;
+            font-size: 31px;
+            margin-top: -16px;
+            margin-right: 10px;
+          "
+          (click)="close(); clear()"
+          >&times;</span
+        >
+      </h5>
+    </div>
+    <hr />
+    <div class="modal-body">
+      <table>
+        <tr [formGroup]="scheduleForm">
+          <td>
+            <mat-label>
+              <h5>Start Time</h5>
+            </mat-label>
+            <select style="cursor: pointer" formControlName="startTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">
+                {{ hour }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <mat-label>
+              <h5>End Time</h5>
+            </mat-label>
+            <select style="cursor: pointer" formControlName="endTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">
+                {{ hour }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <mat-label>
+              <h5>Specialty</h5>
+            </mat-label>
+            <input style="pointer-events: none" formControlName="specialty" />
+          </td>
+        </tr>
+      </table>
+      <br />
+      <table class="table">
+        <tr *ngFor="let t1 of types">
+          <td>
+            <input
+              id="check1"
+              type="checkbox"
+              [(ngModel)]="t1.checked"
+              (change)="set(t1)"
+            />
+          </td>
+          <td>{{ t1.day }}</td>
+        </tr>
+      </table>
+      <table class="table">
+        <tr *ngFor="let w1 of weekDays">
+          <td>
+            <input
+              id="check2"
+              type="checkbox"
+              [(ngModel)]="w1.checked"
+              (change)="set(w1)"
+            />
+          </td>
+          <td>{{ w1.day }}</td>
+        </tr>
+      </table>
+      <table class="table">
+        <tr *ngFor="let w2 of weekends">
+          <td>
+            <input
+              id="check3"
+              type="checkbox"
+              [(ngModel)]="w2.checked"
+              (change)="set(w2)"
+            />
+          </td>
+          <td>{{ w2.day }}</td>
+        </tr>
+      </table>
+    </div>
+    <p class="msg" *ngIf="errorMsg !== null">{{ errorMsg }}</p>
+    <div class="modal-footer center">
+      <button mat-raised-button color="primary" (click)="submit()">Save</button>
+      <button
+        mat-raised-button
+        color="primary"
+        style="margin-left: 10px"
+        (click)="clear()"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #schedule let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">
+        Schedule <br />
+        {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
+        <span
+          style="
+            float: right;
+            cursor: pointer;
+            font-size: 31px;
+            margin-top: -16px;
+            margin-right: 10px;
+          "
+          (click)="close()"
+          >&times;</span
+        >
+      </h5>
+    </div>
+    <hr />
+    <div class="modal-body">
+      <div *ngFor="let e1 of modalData?.events">
+        <div class="row">
+          <div class="col-6">
+            <mat-label>
+              <h5>Start Time</h5>
+            </mat-label>
+            <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.startTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">
+                {{ hour }}
+              </option>
+            </select>
+          </div>
+          <div class="col-6">
+            <mat-label>
+              <h5>End Time</h5>
+            </mat-label>
+            <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.endTime">
+              <option [value]="hour" *ngFor="let hour of slotHours">
+                {{ hour }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div *ngIf="e1?.isTimeOver" class="alert alert-warning mt-4">
+          You can not modify past schedule.
+        </div>
+        <div class="col-sm-12 text-center">
+          <button
+            type="button"
+            class="btn btn-primary center1"
+            [disabled]="e1?.isTimeOver"
+            (click)="update(e1, 'cancel')"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary center1"
+            [disabled]="e1?.isTimeOver"
+            (click)="update(e1, 'update')"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
   </div>
-  
-  <ng-template #modalContent let-close="close" data-target="static">
-    <div class="content-container">
-      <div class="modal-title"><br>
-        <h5 style="text-align: center;">Appointment Schedule
-          <span style="float: right;cursor: pointer; font-size: 31px;
-          margin-top: -16px;margin-right: 10px;" (click)="close();clear()">&times;</span>
-        </h5>
-      </div>
-      <hr>
-      <div class="modal-body">
-        <table>
-          <tr [formGroup]="scheduleForm">
-            <td>
-              <mat-label>
-                <h5>Start Time</h5>
-              </mat-label>
-              <select style="cursor: pointer;" formControlName="startTime">
-                <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-              </select>
-            </td>
-            <td>
-              <mat-label>
-                <h5>End Time</h5>
-              </mat-label>
-              <select style="cursor: pointer;" formControlName="endTime">
-                <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-              </select>
-            </td>
-            <td>
-              <mat-label>
-                <h5>Specialty</h5>
-              </mat-label>
-              <input style="pointer-events: none;" formControlName="specialty">
-            </td>
-          </tr>
-        </table>
-        <br>
-        <table class="table">
-          <tr *ngFor="let t1 of types">
-            <td>
-              <input id="check1" type="checkbox" [(ngModel)]="t1.checked" (change)="set(t1)">
-            </td>
-            <td>{{t1.day}}</td>
-          </tr>
-        </table>
-        <table class="table">
-          <tr *ngFor="let w1 of weekDays">
-            <td>
-              <input id="check2" type="checkbox" [(ngModel)]="w1.checked" (change)="set(w1)">
-            </td>
-            <td>{{ w1.day }}</td>
-          </tr>
-        </table>
-        <table class="table">
-          <tr *ngFor="let w2 of weekends">
-            <td>
-              <input id="check3" type="checkbox" [(ngModel)]="w2.checked" (change)="set(w2)">
-            </td>
-            <td>{{ w2.day }}</td>
-          </tr>
-        </table>
-      </div>
-      <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
-      <div class="modal-footer center">
-        <button mat-raised-button color="primary" (click)="submit()">
-          Save
-        </button>
-        <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">
-          Clear
-        </button>
-      </div>
+</ng-template>
+<ng-template #rescheduleModal let-close="close" data-target="static">
+  <div class="modal-content">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">Appointment Details</h5>
     </div>
-  </ng-template>
-  
-  <ng-template #schedule let-close="close" data-target="static">
-    <div class="content-container">
-      <div class="modal-title">
-        <br />
-        <h5 style="text-align: center">
-          Schedule <br />
-          {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
-          <span style="float: right;cursor: pointer; font-size: 31px;
-          margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
-        </h5>
-      </div>
-      <hr />
-      <div class="modal-body">
-        <div *ngFor="let e1 of modalData?.events">
-          <div class="row">
-            <div class="col-6">
-              <mat-label>
-                <h5>Start Time</h5>
-              </mat-label>
-              <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.startTime">
-                <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <mat-label>
-                <h5>End Time</h5>
-              </mat-label>
-              <select [disabled]="e1?.isTimeOver" [(ngModel)]="e1.endTime">
-                <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
-              </select>
+    <div class="modal-body app-detail">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>OpenMRS ID</th>
+            <th>Start Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e1 of reschedule">
+            <td>{{ e1.patientName }}</td>
+            <td>{{ e1.openMrsId }}</td>
+            <td>{{ e1.slotTime }}</td>
+            <td>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="rescheduleClick(e1)"
+              >
+                Reschedule
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer center">
+      <button type="button" mat-raised-button color="primary" (click)="close()">
+        Close
+      </button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #slotModal let-close="close" data-target="static">
+  <div class="content-container">
+    <div class="modal-title">
+      <br />
+      <h5 style="text-align: center">Reschedule Appointment</h5>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="row">
+          <div class="col-5">
+            <input
+              class="form-control"
+              disabled
+              type="text"
+              [value]="selectedSchedule?.speciality"
+            />
+          </div>
+          <div class="col-7">
+            <input
+              class="form-control"
+              (change)="changeCalender($event)"
+              type="date"
+              [value]="todaysDate"
+            />
+          </div>
+          <div class="col-12" *ngIf="slots?.length">
+            <mat-form-field class="example-full-width w-100">
+              <mat-select placeholder="Reason" [(ngModel)]="selectedReason">
+                <mat-option *ngFor="let rsn of reasons" [value]="rsn">
+                  {{ rsn }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <input
+              type="text"
+              [(ngModel)]="otherReason"
+              *ngIf="selectedReason == reasons[2]"
+              matInput
+              placeholder="Specify reason"
+            />
+          </div>
+          <div class="col-12 mt-4" *ngIf="setSpiner">
+            <div class="loader">
+              <mat-spinner [diameter]="30"></mat-spinner>
             </div>
           </div>
-          <hr />
-          <div *ngIf="e1?.isTimeOver" class="alert alert-warning mt-4">
-            You can not modify past schedule.
-          </div>
-          <div class="col-sm-12 text-center">
-            <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
-              (click)="update(e1, 'cancel')">
-               Cancel
-            </button>
-            <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
-              (click)="update(e1, 'update')">
-               Save
-            </button>
+          <div class="col-12 mt-4" *ngIf="!setSpiner">
+            <mat-chip-list>
+              <mat-chip
+                class="p-4"
+                [class.active]="i == selectedSlotIdx"
+                *ngFor="let slot of slots; index as i"
+                (click)="selectSlot(i)"
+              >
+                <div class="d-grid">
+                  <span>{{ slot?.slotTime }}</span>
+                  <span
+                    >{{ slot?.slotDuration }}
+                    {{ slot?.slotDurationUnit | slice: 0:3 }}s</span
+                  >
+                </div>
+              </mat-chip>
+            </mat-chip-list>
+            <div class="alert alert-primary mt-4" *ngIf="!slots?.length">
+              No slots avalable for the day, try changing dates.
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </ng-template>
+    <div class="modal-footer center">
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        [disabled]="rescheduleDisabled"
+        (click)="Reschedule()"
+      >
+        Reschedule
+      </button>
+      <button type="button" mat-raised-button color="primary" (click)="close()">
+        Close
+      </button>
+    </div>
+  </div>
+</ng-template>
