@@ -1,0 +1,135 @@
+<div class="container ">
+    <mat-card>
+        <h3>Eye camp sister to Complete:</h3>
+    </mat-card>
+    <br/>
+    <div>
+        <mat-card style="display: flex; justify-content: space-between;">
+            <div>
+                Patient Eye Camp Id:
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of options" [value]="option">
+                      {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </div>
+            <div>
+                Patient Phone Number:
+            </div>
+        </mat-card>
+    </div>
+    <br/>
+    <div class="acuity-pinhole">
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Visual Acuity from Paper Chart</h5>
+                <div class="visual-acuity-wrapper">
+                    <div>
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('referralLocation', $event.value)">
+                            <mat-radio-button class="radio-button" *ngFor="let data of accutiyandpinholeright" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <div>
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('referralLocation', $event.value)">
+                            <mat-radio-button class="radio-button" *ngFor="let data of accutiyandpinholeleft" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div> 
+            </mat-card>
+        </div>
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Pinhole Acuity from Paper Chart</h5>
+                <div class="visual-acuity-wrapper">
+                    <div>
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('referralLocation', $event.value)">
+                            <mat-radio-button class="radio-button" *ngFor="let data of accutiyandpinholeright" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <div>
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('referralLocation', $event.value)">
+                            <mat-radio-button class="radio-button" *ngFor="let data of accutiyandpinholeleft" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+    <br/>
+
+    <mat-card>
+        <h3>Ophthalmologist to Complete:</h3>
+    </mat-card>
+    <br/>
+    <div class="acuity-pinhole">
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Patient Complaint</h5>
+                <div class="visual-acuity-wrapper direction-column">
+                    <div style="display: flex;align-items: baseline;justify-content: space-between;" > 
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('diagnosis', $event.value)">
+                            <mat-radio-button class="radio-button"  *ngFor="let data of patientcomplaintright" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                        <div class="radio-group">
+                            <div class="radio-button" style="margin: 9px;" *ngFor="let data of patientcomplaintright">{{data.value}}</div>
+                        </div> 
+                        <div>
+                            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('diagnosis', $event.value)">
+                                <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintleft" [value]="data.value">{{data.name}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Diagnosis</h5>
+                <div class="visual-acuity-wrapper direction-column">
+                    <div style="display: flex;align-items: baseline;justify-content: space-between;" > 
+                        <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('diagnosis', $event.value)">
+                            <mat-radio-button class="radio-button"  *ngFor="let data of diagnosisright" [value]="data.value">{{data.name}}</mat-radio-button>
+                        </mat-radio-group>
+                        <div class="radio-group">
+                            <div class="radio-button" style="margin: 9px;" *ngFor="let data of diagnosisright">{{data.value}}</div>
+                        </div> 
+                        <div>
+                            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="" (change)="onChangeHandler('diagnosis', $event.value)">
+                                <mat-radio-button class="radio-button" *ngFor="let data of diagnosisleft" [value]="data.value">{{data.name}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+    <br/>
+    <div class="acuity-pinhole">
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Referral</h5>
+                <div class="visual-acuity-wrapper">
+                    <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralEyeCampObs?.value" [disabled]="referralLocationObs?.value" (change)="onChangeHandler('referralEyeCamp', $event.value)">
+                        <mat-radio-button class="radio-button" value="Yes to Base Hospital">Yes to Base Hospital</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Yes to Vision Center">Yes to Vision Center</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Yes to Eye Camp">Yes to Eye Camp</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </mat-card>
+        </div>
+        <div style="width: 49%;">
+            <mat-card>
+                <h5>Referral Timing/Urgency</h5>
+                <h6>If refer:</h6>
+                <div class="visual-acuity-wrapper">
+                    <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralTimeEyeCampObs?.value" [disabled]="referralLocationObs?.value" (change)="onChangeHandler('referralTimeEyeCamp', $event.value)">
+                        <mat-radio-button class="radio-button" value="Refer within 7 days">Refer within 7 days</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Refer in 7-14 days">Refer in 7-14 days</mat-radio-button>
+                        <mat-radio-button class="radio-button" value="Refer in 15+ days">Refer in 15+ days</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

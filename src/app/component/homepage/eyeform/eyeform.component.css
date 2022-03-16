@@ -1,0 +1,32 @@
+.visual-acuity-wrapper {
+    display: flex;
+    font-size: 13px;
+}
+
+.direction-column {
+    flex-direction: column;
+}
+
+.acuity-pinhole {
+    display: flex;
+    justify-content: space-between;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.radio-button {
+    margin: 5px;
+}
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+  
+.example-full-width {
+    width: 100%;
+}

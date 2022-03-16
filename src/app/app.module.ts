@@ -76,6 +76,7 @@ import { CoOrdinatorComponent } from './component/homepage/tables/co-ordinator-t
 import { PastCallsComponent } from './component/visit-summary/past-calls/past-calls.component';
 import { UpdateStatusComponent } from './component/visit-summary/update-status/update-status.component';
 import { ModalComponent } from './component/visit-summary/update-status/modal/modal.component';
+import { EyeformComponent } from './component/homepage/eyeform/eyeform.component';
 
 @NgModule({
   declarations: [
@@ -116,6 +117,7 @@ import { ModalComponent } from './component/visit-summary/update-status/modal/mo
     PastCallsComponent,
     UpdateStatusComponent,
     ModalComponent,
+    EyeformComponent
   ],
   imports: [
     BrowserModule,
@@ -150,6 +152,7 @@ import { ModalComponent } from './component/visit-summary/update-status/modal/mo
     RouterModule.forRoot([
       { path: '', component: LoginPageComponent },
       { path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+      { path: 'eyeform', component: EyeformComponent, canActivate: [AuthGuard] },
       { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
       { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
       { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
