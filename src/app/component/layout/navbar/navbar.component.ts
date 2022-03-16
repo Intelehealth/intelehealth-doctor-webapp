@@ -1,10 +1,10 @@
+import { PersonService } from './../../../services/person.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
 import { environment } from '../../../../environments/environment';
 declare var getFromStorage: any;
@@ -31,7 +31,8 @@ export class NavbarComponent implements OnInit {
   constructor(private authService: AuthService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private http: HttpClient) { }
+    private personService: PersonService,
+    ) { }
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
@@ -61,8 +62,7 @@ export class NavbarComponent implements OnInit {
       this.dialog.open(FindPatientComponent, { width: '50%', data: { value: 'Please Enter min 3 characters' } });
     } else {
       // tslint:disable-next-line: max-line-length
-      const url = `${this.baseURL}/patient?q=${search.findInput}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
-      this.http.get(url)
+      this.personService.getPatient(search.findInput)
         .subscribe(response => {
           this.values = [];
           response['results'].forEach(value => {
