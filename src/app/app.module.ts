@@ -85,6 +85,8 @@ import { EndedVisitsComponent } from './component/ended-visits/ended-visits.comp
 import { MonitoringComponent } from "./component/monitoring/monitoring.component";
 import { VcComponent } from './component/vc/vc.component';
 import { HoverClassDirective } from "./directives/hover-class.directive";
+import { ChatComponent } from './component/chat/chat.component';
+import { ChatService } from "./services/chat.service";
 
 
 
@@ -127,7 +129,8 @@ import { HoverClassDirective } from "./directives/hover-class.directive";
     MonitoringComponent,
     EndedVisitsComponent,
     VcComponent,
-    HoverClassDirective
+    HoverClassDirective,
+    ChatComponent
   ],
 
   imports: [
@@ -245,6 +248,7 @@ import { HoverClassDirective } from "./directives/hover-class.directive";
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     SocketService,
+    ChatService 
   ],
   bootstrap: [AppComponent],
 })
