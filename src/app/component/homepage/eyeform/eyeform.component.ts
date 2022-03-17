@@ -1,6 +1,9 @@
+import { DiagnosisService } from './../../../services/diagnosis.service';
 import { VisitService } from './../../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { FormGroup, FormControl } from '@angular/forms';
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-eyeform',
@@ -9,32 +12,40 @@ import { EncounterService } from 'src/app/services/encounter.service';
 })
 export class EyeformComponent implements OnInit {
   data: Array<any> = [];
-  accutiyandpinholeright: Array<any> = [];
-  accutiyandpinholeleft: Array<any> = [];
+  showSubmitButton: Boolean = false;
+  accuityandpinholeright: Array<any> = [];
+  accuityandpinholeleft: Array<any> = [];
   patientcomplaintright: Array<any> = [];
   patientcomplaintleft: Array<any> = [];
   diagnosisleft: Array<any> = [];
   diagnosisright: Array<any> = [];
   processVisitData: Array<any> = [];
   filterData: Array<any> = [];
+  filterDataPhone: Array<any> = [];
   telConceptId: String = '14d4f066-15f5-102d-96e4-000c29c2a5d7';
   campConceptId: String = '00784346-7f86-43ea-a40b-608d6deacfab';
   selectedPatient: any;
-  encounterUUID: string;
-  eyeCampVisualAcuityConceptRight: String = '6dde4cac-5db7-4e11-905a-3b17cb5cb08e';
-  eyeCampVisualAcuityConceptLeft: String = 'ccb29f96-124c-4380-ab4b-21f8dcf1f2f3';
-  eyeCampPinholeAcuityConceptRight: String = '2ca97364-8945-4a64-985b-b3daad7343e3';
-  eyeCampPinholeAcuityConceptLeft: String = '9c1682db-3e22-4f71-b7dd-bb080e86df55';
-  eyeCampPatientComplaintConceptRight: String = 'ae0a7b44-5bd6-4043-98cd-aa36f5dd8f96';
-  eyeCampPatientComplaintConceptLeft: String = '10552bf7-566f-446f-b4a0-3b3cb78b79f0';
-  eyeCampDiagnosisConcept: String = '6066c8ac-e3dd-445b-8035-c806423e887a';
-  eyeCampDiagnosisConceptLeft: String = '8e0bee1a-37f0-4039-a3a2-903190004264';
-  eyeCampReferralConcept: String = '841e348f-abd2-44e9-b29e-eb75b0e08c57';
-  eyeCampReferralTimingConcept: String = '5deb5f33-41bc-48df-9e20-55502403089c';
+  eyeCampObs: String = '2ca97364-8945-4a64-985b-b3daad7343e3';
+  encounterId: String = '57a72d47-2b0a-4cb9-a1cf-87ab75d406d9';
+
+  eyeCampForm = new FormGroup({
+    accuityLeft: new FormControl(''),
+    accuityRight: new FormControl(''),
+    pinholeLeft: new FormControl(''),
+    pinholeRight: new FormControl(''),
+    complaintLeft: new FormControl(''),
+    complaintRight: new FormControl(''),
+    diagnosisLeft: new FormControl(''),
+    diagnosisRight: new FormControl(''),
+    referral: new FormControl(''),
+    referralTime: new FormControl(''),
+    ophthalmologist: new FormControl('')
+  });
   constructor(
     private visitService: VisitService,
-    private encounterService: EncounterService
-  ) {}
+    private encounterService: EncounterService,
+    private diagnosisService: DiagnosisService
+  ) { }
 
   ngOnInit(): void {
     this.constructVisuityAcuityAndPinholeAcuity();
@@ -43,24 +54,42 @@ export class EyeformComponent implements OnInit {
     this.getAllVisits();
   }
 
-  getAllVisits() {
-    this.visitService.getVisits(true)
-    .subscribe(visits => {
-      visits.results.forEach(visit => {
-        this.processVisitData.push({
-          visit_uuid: visit.uuid,
-          patient_uuid: visit.patient.uuid,
-          patient: visit.patient,
-          phoneno: visit.patient.person.attributes.filter(attri => attri.attributeType.uuid === this.telConceptId)[0] || {},
-          eye_camp_id: visit.patient.person.attributes.filter(attri => attri.attributeType.uuid === this.campConceptId)[0] || {}
-        });
-      });
-      this.filterData = this.processVisitData;
+  processForm(value) {
+    value = JSON.parse(value);
+    this.eyeCampForm.setValue({
+      accuityLeft: value.acuity.left,
+      accuityRight: value.acuity.right,
+      pinholeLeft: value.pinhole.left,
+      pinholeRight: value.pinhole.right,
+      complaintLeft: value.complaint.left,
+      complaintRight: value.complaint.right,
+      diagnosisLeft: value.diagnosis.left,
+      diagnosisRight: value.diagnosis.right,
+      referral: value.referral.value,
+      referralTime: value.referral.time,
+      ophthalmologist: value.ophthalmologist
     });
   }
 
+  getAllVisits() {
+    this.visitService.getVisits(true)
+      .subscribe(visits => {
+        visits.results.forEach(visit => {
+          this.processVisitData.push({
+            visit_uuid: visit.uuid,
+            patient_uuid: visit.patient.uuid,
+            patient: visit.patient,
+            phoneno: visit.patient.person.attributes.filter(attri => attri.attributeType.uuid === this.telConceptId)[0] || {},
+            eye_camp_id: visit.patient.person.attributes.filter(attri => attri.attributeType.uuid === this.campConceptId)[0] || {}
+          });
+        });
+        this.filterData = this.processVisitData;
+        this.filterDataPhone = this.processVisitData;
+      });
+  }
+
   constructVisuityAcuityAndPinholeAcuity() {
-    this.accutiyandpinholeright.push(
+    this.accuityandpinholeright.push(
       { value: '<6/6', name: 'Right eye: <6/6' },
       { value: '6/6', name: 'Right eye: 6/6' },
       { value: '6/9', name: 'Right eye: 6/9' },
@@ -73,7 +102,7 @@ export class EyeformComponent implements OnInit {
       { value: 'Light perception only', name: 'Right eye: Light perception only' },
       { value: 'No light perception', name: 'Right eye: No light perception' }
     );
-    this.accutiyandpinholeleft.push(
+    this.accuityandpinholeleft.push(
       { value: '<6/6', name: 'Left eye: <6/6' },
       { value: '6/6', name: 'Left eye: 6/6' },
       { value: '6/9', name: 'Left eye: 6/9' },
@@ -136,12 +165,22 @@ export class EyeformComponent implements OnInit {
 
   selected(value) {
     const data = this.filterData.filter(uuid => uuid.patient_uuid === value);
-    console.log(data)
     this.selectedPatient = data[0];
     if (this.selectedPatient) {
-      this.visitService.fetchVisitDetails(this.selectedPatient.visit_uuid).subscribe(response => {
-        console.log(response?.encounters)
-        this.encounterUUID = response?.encounters?.filter(en => en.display.match('Visit Note'))[0]?.uuid;
+      this.diagnosisService.getObs(this.selectedPatient.patient_uuid, this.eyeCampObs)
+      .subscribe(response => {
+        if (response.results.length) {
+          response.results.forEach(obs => {
+            if (obs.encounter && obs.encounter.visit.uuid === this.selectedPatient.visit_uuid) {
+              this.showSubmitButton = false;
+              this.processForm(obs.value);
+            } else {
+              this.showSubmitButton = true;
+            }
+          });
+        } else {
+          this.showSubmitButton = true;
+        }
       });
     }
   }
@@ -151,24 +190,61 @@ export class EyeformComponent implements OnInit {
     this.filterData = this.processVisitData.filter(campid => campid.eye_camp_id?.value?.toLowerCase().includes(filterValue));
   }
 
-  onChangeHandler(type, value) {
-    console.log(type, value)
+  _filterPhone(value: string) {
+    const filterValue = value.toLowerCase();
+    this.filterDataPhone = this.processVisitData.filter(phone => phone.phoneno?.value?.toLowerCase().includes(filterValue));
   }
 
-  save(concept, value) {
+  Save() {
+    const value = this.processData(this.eyeCampForm.value);
     const date = new Date();
-    if (this.selectedPatient && this.encounterUUID) {
+    const providerDetails = getFromStorage('provider');
+    const providerUuid = providerDetails.uuid;
+    if (this.selectedPatient?.patient_uuid && providerUuid) {
       const json = {
-        concept,
-        person: this.selectedPatient.patient_uuid,
-        obsDatetime: date,
-        value,
-        encounter: this.encounterUUID
+        patient: this.selectedPatient.patient_uuid,
+        encounterType: this.encounterId,
+        encounterProviders: [{
+          provider: providerUuid,
+          encounterRole: '64538a7f-ca93-47b6-bbdf-06450ca11247'
+          }],
+        visit: this.selectedPatient.visit_uuid,
+        encounterDatetime: date,
+        obs: [{
+          concept: this.eyeCampObs,
+          value: JSON.stringify(value)
+        }],
       };
-      console.log(json)
-      // this.encounterService.postObs(json).subscribe(response => {
-      //   console.log(response);
-      // });
+      this.encounterService.postEncounter(json).subscribe(response => {
+        this.showSubmitButton = false;
+      });
     }
+  }
+
+  processData(data) {
+    const formInfo = {
+      acuity: {
+        left: data.accuityLeft,
+        right: data.accuityRight
+      },
+      pinhole: {
+        left: data.pinholeLeft,
+        right: data.pinholeRight
+      },
+      complaint: {
+        left: data.complaintLeft,
+        right: data.complaintRight
+      },
+      diagnosis: {
+        left: data.diagnosisLeft,
+        right: data.diagnosisRight
+      },
+      referral: {
+        value: data.referral,
+        time: data.referralTime
+      },
+      ophthalmologist: data.ophthalmologist
+    };
+    return formInfo;
   }
 }

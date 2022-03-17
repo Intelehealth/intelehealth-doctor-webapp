@@ -17,8 +17,9 @@ declare var getFromStorage: any;
 export class NavbarComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLLegacy = environment.baseURLLegacy;
-  systemAccess = false;
-  reportAccess = false;
+  systemAccess: Boolean = false;
+  reportAccess: Boolean = false;
+  eyeCampAccess: Boolean = false;
   values: any = [];
 
   searchForm = new FormGroup({
@@ -43,6 +44,8 @@ export class NavbarComponent implements OnInit {
           this.systemAccess = true;
         } if (role.uuid === 'f6de773b-277e-4ce2-9ee6-8622b8a293e8' || role.uuid === 'a5df6aa5-d6e5-4b56-b0e7-315ee0899f97') {
           this.reportAccess = true;
+        } if (role.uuid === '8069c85f-a8bb-4b04-8b31-3f00a30f85d4') {
+          this.eyeCampAccess = true;
         }
       });
     } else { this.authService.logout(); }
