@@ -6,6 +6,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
+import { MatDialog } from "@angular/material/dialog";
+import { VcComponent } from "../vc/vc.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -42,7 +44,7 @@ export class VisitSummaryComponent implements OnInit {
     "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
     "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
   ];
-
+  videoIcon = "assets/svgs/video-w.svg";
 
   constructor(
     private service: EncounterService,
@@ -52,7 +54,8 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private diagnosisService: DiagnosisService,
-    private pushNotificationService: PushNotificationsService
+    private pushNotificationService: PushNotificationsService,
+    private dialog: MatDialog
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -96,6 +99,12 @@ export class VisitSummaryComponent implements OnInit {
               this.font = element.value;
             }
           });
+        }
+        if (
+          visit.display.includes("ADULTINITIAL") |
+          visit.display.includes("Vitals")
+        ) {
+          saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
         }
         if (visit.display.match("Patient Exit Survey") !== null) {
           this.PatientExitSurveyPresent = true;
@@ -280,4 +289,13 @@ export class VisitSummaryComponent implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  openVcModal() {
+    this.dialog.open(VcComponent, {
+      disableClose: true,
+      data: {
+        patientUuid: this.patientId,
+      },
+    });
+  }
 }

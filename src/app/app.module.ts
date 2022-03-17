@@ -83,6 +83,8 @@ import { MainComponent } from './component/main/main.component';
 import { FeedbackComponent } from './component/visit-summary/feedback/feedback.component';
 import { EndedVisitsComponent } from './component/ended-visits/ended-visits.component';
 import { MonitoringComponent } from "./component/monitoring/monitoring.component";
+import { VcComponent } from './component/vc/vc.component';
+import { HoverClassDirective } from "./directives/hover-class.directive";
 
 
 
@@ -124,6 +126,8 @@ import { MonitoringComponent } from "./component/monitoring/monitoring.component
     FeedbackComponent,
     MonitoringComponent,
     EndedVisitsComponent,
+    VcComponent,
+    HoverClassDirective
   ],
 
   imports: [
@@ -214,6 +218,10 @@ import { MonitoringComponent } from "./component/monitoring/monitoring.component
               path: "visitSummary/:patient_id/:visit_id",
               component: VisitSummaryComponent,
               canActivate: [AuthGuard],
+            },
+            { 
+              path: "vc/call",
+              component: VcComponent
             },
             { path: "", redirectTo: "home", pathMatch: "full" },
           ],
