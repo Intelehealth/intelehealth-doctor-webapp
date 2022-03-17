@@ -18,12 +18,12 @@ export class EndedVisitsComponent implements OnInit {
   ngOnInit(): void {
       this.service.getEndedVisits().subscribe((res)=>{
         this.data = res.results
-         let visits =  this.data.filter(a=>a.stopDatetime != null);
-         visits.forEach( a => {
-           this.endVisits.push(this.assignValueToProperty(a));
-           this.endedVisitNo += 1
-           localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
-         });
+        //  let visits =  this.data.filter(a=>a.stopDatetime != null);
+        //  visits.forEach( a => {
+        //    this.endVisits.push(this.assignValueToProperty(a));
+        //    this.endedVisitNo += 1
+        //   //  localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
+        //  });
          this.setSpiner = false;
       })
   }

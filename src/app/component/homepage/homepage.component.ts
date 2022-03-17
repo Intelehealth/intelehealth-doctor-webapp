@@ -30,16 +30,19 @@ export class HomepageComponent implements OnInit {
   flagPatientNo = 0;
   visitNoteNo = 0;
   completeVisitNo = 0;
+  endedVisitNo = 0;
   endVisitCount: any;
   flagVisit: VisitData[] = [];
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
+  endVisits = [];
   setSpiner = true;
   specialization;
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   visitState = null;
+  endVisitData: any;
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -48,7 +51,6 @@ export class HomepageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.endVisitCount = getFromStorage("endVisitCount")
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
@@ -76,6 +78,7 @@ export class HomepageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
+    this.getEndedVisits();
   }
 
   getStateFromVisit(provider) {
@@ -180,6 +183,19 @@ export class HomepageComponent implements OnInit {
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
     }
+  }
+
+  getEndedVisits(){
+    this.service.getEndedVisits().subscribe((res)=>{
+      this.endVisitData = res.results
+       let endvisits =  this.endVisitData.filter(a=>a.stopDatetime != null);
+       endvisits.forEach( a => {
+         this.endVisits.push(this.assignValueToProperty(a));
+         this.endedVisitNo += 1
+         localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
+       });
+       this.setSpiner = false;
+    })
   }
 
   /**

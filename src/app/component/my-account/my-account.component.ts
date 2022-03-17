@@ -146,7 +146,7 @@ export class MyAccountComponent implements OnInit {
 
   getVisitsData() {
     this.providerId = getFromStorage("provider");
-    this.service.getVisits().subscribe(
+    this.service.getEndedVisits().subscribe(
       (response) => {
         const visits = response.results;
 
