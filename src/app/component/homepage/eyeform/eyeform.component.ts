@@ -175,7 +175,7 @@ export class EyeformComponent implements OnInit {
     );
   }
 
-  selected(value, other, type) {
+  selected(value, other = false, type = '') {
     if (other) {
       const showInput = ['patientcomplaintright', 'patientcomplaintleft', 'diagnosisright', 'diagnosisleft'];
       if (showInput.includes(type)) {
