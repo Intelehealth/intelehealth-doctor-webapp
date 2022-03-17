@@ -30,7 +30,7 @@
           <mat-form-field class="example-full-width" appearance="fill">
             <input type="text" placeholder="Patient Phone Number" matInput (keyup)="_filterPhone($event.target.value)"
               [matAutocomplete]="autophone"/>
-            <mat-autocomplete autoActiveFirstOption #autophone="matAutocomplete" (optionSelected)="selected($event.option.value, true)">
+            <mat-autocomplete autoActiveFirstOption #autophone="matAutocomplete" (optionSelected)="selected($event.option.value)">
               <mat-option *ngFor="let option of filterDataPhone" [value]="option?.patient_uuid">
                 <p>
                   {{ option?.phoneno?.value }}
