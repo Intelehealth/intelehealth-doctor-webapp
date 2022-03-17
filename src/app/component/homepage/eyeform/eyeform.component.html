@@ -116,46 +116,31 @@
         <mat-card>
           <h5>Patient Complaint</h5>
           <div class="visual-acuity-wrapper direction-column">
-            <div
-              style="
-                display: flex;
-                align-items: baseline;
-                justify-content: space-between;
-              "
-            >
-              <mat-radio-group
-                aria-label="Select an option"
-                class="radio-group"
-                formControlName="complaintRight"
-              >
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of patientcomplaintright"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <mat-radio-group class="radio-group" formControlName="complaintRight">
+                <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintright"
+                  (change)="selected($event.value, true, 'patientcomplaintright')"
+                  [value]="data.value">{{ data.name }}</mat-radio-button>
               </mat-radio-group>
               <div class="radio-group">
-                <div
-                  class="radio-button"
-                  style="margin: 9px"
-                  *ngFor="let data of patientcomplaintright"
-                >
-                  {{ data.value }}
-                </div>
+                <div class="radio-button" style="margin: 9px" *ngFor="let data of patientcomplaintright">{{ data.value }}</div>
               </div>
               <div>
-                <mat-radio-group
-                  aria-label="Select an option"
-                  class="radio-group"
-                  formControlName="complaintLeft"
-                >
-                  <mat-radio-button
-                    class="radio-button"
+                <mat-radio-group class="radio-group" formControlName="complaintLeft">
+                  <mat-radio-button class="radio-button"
                     *ngFor="let data of patientcomplaintleft"
-                    [value]="data.value">{{ data.name }}</mat-radio-button
-                  >
+                    (change)="selected($event.value, true, 'patientcomplaintleft')"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
+            </div>
+            <div style="display: flex; flex-direction: column;align-self: center;">
+              <mat-form-field  *ngIf="patientcomplaintrightShow">
+                <input matInput placeholder="Complaint Right Other" (change)="onChangeHandler('patientcomplaintrightOther', $event.target.value)">
+              </mat-form-field>
+              <mat-form-field *ngIf="patientcomplaintleftShow">
+                <input matInput placeholder="Complaint Left Other" (change)="onChangeHandler('patientcomplaintleftOther', $event.target.value)">
+              </mat-form-field>
             </div>
           </div>
         </mat-card>
@@ -164,47 +149,31 @@
         <mat-card>
           <h5>Diagnosis</h5>
           <div class="visual-acuity-wrapper direction-column">
-            <div
-              style="
-                display: flex;
-                align-items: baseline;
-                justify-content: space-between;
-              "
-            >
-              <mat-radio-group
-                aria-label="Select an option"
-                class="radio-group"
-                formControlName="diagnosisRight"
-              >
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of diagnosisright"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <mat-radio-group class="radio-group" formControlName="diagnosisRight">
+                <mat-radio-button class="radio-button" *ngFor="let data of diagnosisright"
+                  (change)="selected($event.value, true, 'diagnosisright')" [value]="data.value">{{ data.name }}</mat-radio-button>
               </mat-radio-group>
               <div class="radio-group">
-                <div
-                  class="radio-button"
-                  style="margin: 9px"
-                  *ngFor="let data of diagnosisright"
-                >
+                <div class="radio-button" style="margin: 9px" *ngFor="let data of diagnosisright">
                   {{ data.value }}
                 </div>
               </div>
               <div>
-                <mat-radio-group
-                  aria-label="Select an option"
-                  class="radio-group"
-                  formControlName="diagnosisLeft"
-                >
-                  <mat-radio-button
-                    class="radio-button"
-                    *ngFor="let data of diagnosisleft"
-                    [value]="data.value"
-                    >{{ data.name }}</mat-radio-button
-                  >
+                <mat-radio-group class="radio-group" formControlName="diagnosisLeft">
+                  <mat-radio-button class="radio-button"
+                    *ngFor="let data of diagnosisleft" [value]="data.value"
+                    (change)="selected($event.value, true, 'diagnosisleft')">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
+            </div>
+            <div style="display: flex; flex-direction: column;align-self: center;">
+              <mat-form-field  *ngIf="diagnosisrightShow">
+                <input matInput placeholder="Diagnosis Right Other" (change)="onChangeHandler('diagnosisrightOther', $event.target.value)">
+              </mat-form-field>
+              <mat-form-field *ngIf="diagnosisleftShow">
+                <input matInput placeholder="Diagnosis Left Other" (change)="onChangeHandler('diagnosisleftOther', $event.target.value)">
+              </mat-form-field>
             </div>
           </div>
         </mat-card>

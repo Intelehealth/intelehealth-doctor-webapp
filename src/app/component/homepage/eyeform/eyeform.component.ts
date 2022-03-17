@@ -3,6 +3,7 @@ import { VisitService } from './../../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getFromStorage: any;
 
 @Component({
@@ -28,6 +29,16 @@ export class EyeformComponent implements OnInit {
   eyeCampObs: String = '2ca97364-8945-4a64-985b-b3daad7343e3';
   encounterId: String = '57a72d47-2b0a-4cb9-a1cf-87ab75d406d9';
 
+  patientcomplaintrightShow: Boolean = false;
+  patientcomplaintleftShow: Boolean = false;
+  diagnosisrightShow: Boolean = false;
+  diagnosisleftShow: Boolean = false;
+
+  patientcomplaintrightOther: String = '';
+  patientcomplaintleftOther: String = '';
+  diagnosisrightOther: String = '';
+  diagnosisleftOther: String = '';
+
   eyeCampForm = new FormGroup({
     accuityLeft: new FormControl(''),
     accuityRight: new FormControl(''),
@@ -44,7 +55,8 @@ export class EyeformComponent implements OnInit {
   constructor(
     private visitService: VisitService,
     private encounterService: EncounterService,
-    private diagnosisService: DiagnosisService
+    private diagnosisService: DiagnosisService,
+    private snackbar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
@@ -163,26 +175,37 @@ export class EyeformComponent implements OnInit {
     );
   }
 
-  selected(value) {
-    const data = this.filterData.filter(uuid => uuid.patient_uuid === value);
-    this.selectedPatient = data[0];
-    if (this.selectedPatient) {
-      this.diagnosisService.getObs(this.selectedPatient.patient_uuid, this.eyeCampObs)
-      .subscribe(response => {
-        if (response.results.length) {
-          response.results.forEach(obs => {
-            if (obs.encounter && obs.encounter.visit.uuid === this.selectedPatient.visit_uuid) {
-              this.showSubmitButton = false;
-              this.processForm(obs.value);
-            } else {
-              this.showSubmitButton = true;
-            }
-          });
-        } else {
-          this.showSubmitButton = true;
-        }
-      });
+  selected(value, other, type) {
+    if (other) {
+      const showInput = ['patientcomplaintright', 'patientcomplaintleft', 'diagnosisright', 'diagnosisleft'];
+      if (showInput.includes(type)) {
+        this[`${type}Show`] = true;
+      }
+    } else {
+      const data = this.filterData.filter(uuid => uuid.patient_uuid === value);
+      this.selectedPatient = data[0];
+      if (this.selectedPatient) {
+        this.diagnosisService.getObs(this.selectedPatient.patient_uuid, this.eyeCampObs)
+        .subscribe(response => {
+          if (response.results.length) {
+            response.results.forEach(obs => {
+              if (obs.encounter && obs.encounter.visit.uuid === this.selectedPatient.visit_uuid) {
+                this.showSubmitButton = false;
+                this.processForm(obs.value);
+              } else {
+                this.showSubmitButton = true;
+              }
+            });
+          } else {
+            this.showSubmitButton = true;
+          }
+        });
+      }
     }
+  }
+
+  onChangeHandler(type: string, value: string) {
+    this[type] = value;
   }
 
   _filter(value: string) {
@@ -217,7 +240,10 @@ export class EyeformComponent implements OnInit {
       };
       this.encounterService.postEncounter(json).subscribe(response => {
         this.showSubmitButton = false;
+        this.snackbar.open('Complete', null, {duration: 4000});
       });
+    } else {
+      this.snackbar.open('Patient Not Selected', null, {duration: 4000});
     }
   }
 
@@ -232,12 +258,12 @@ export class EyeformComponent implements OnInit {
         right: data.pinholeRight
       },
       complaint: {
-        left: data.complaintLeft,
-        right: data.complaintRight
+        left: data.complaintLeft === 'Other' ? this.patientcomplaintleftOther : data.complaintLeft,
+        right: data.complaintRight === 'Other' ? this.patientcomplaintrightOther : data.complaintRight
       },
       diagnosis: {
-        left: data.diagnosisLeft,
-        right: data.diagnosisRight
+        left: data.diagnosisLeft === 'Other' ? this.diagnosisleftOther :  data.diagnosisLeft,
+        right: data.diagnosisRight === 'Other' ? this.diagnosisrightOther : data.diagnosisRight
       },
       referral: {
         value: data.referral,
