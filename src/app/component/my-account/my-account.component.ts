@@ -149,7 +149,6 @@ export class MyAccountComponent implements OnInit {
     this.service.getEndedVisits().subscribe(
       (response) => {
         const visits = response.results;
-
         const stateVisits = visits.filter((v) => {
           let flag = false;
           const loc = v.attributes.find(

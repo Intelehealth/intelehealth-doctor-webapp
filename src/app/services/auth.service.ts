@@ -47,6 +47,7 @@ export class AuthService {
     this.sessionService.session().subscribe((res) => {
       this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
         deleteFromStorage("user");
+        deleteFromStorage("endVisitCount");
         deleteFromStorage("provider");
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
