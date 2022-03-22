@@ -29,6 +29,7 @@ export class HomepageComponent implements OnInit {
   waitingVisit: VisitData[] = [];
   progressVisit: VisitData[] = [];
   completedVisit: VisitData[] = [];
+  followUpVisit: VisitData[] = [];
   setSpiner = true;
   specialization = [];
 
@@ -125,6 +126,10 @@ export class HomepageComponent implements OnInit {
     return this.waitingVisit.length;
   }
 
+  get followUpPatientNo() {
+    return this.followUpVisit.length;
+  }
+
   visitCategory(active) {
     if (active.encounters.length > 0) {
       const { encounters = [{}] } = active;
@@ -136,6 +141,7 @@ export class HomepageComponent implements OnInit {
       ) {
         const values = this.assignValueToProperty(active);
         this.completedVisit.push(values);
+        this.getFollowUpVisits(active);
       } else if (
         this.checkVisit(encounters, "Visit Note") &&
         active.stopDatetime == null
@@ -182,5 +188,30 @@ export class HomepageComponent implements OnInit {
       )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
+  }
+
+  getFollowUpVisits(visit) {
+    visit?.encounters?.forEach((encounter) => {
+      const display = encounter.display;
+      if (display.match("Visit Note") !== null) {
+        const observations = encounter.obs;
+        observations?.forEach((obs) => {
+          if (obs.display.match("Follow up visit") !== null) {
+             visit.followUp = obs.value;
+          }
+        });
+      }
+    });
+    if(visit.followUp && this.isTodayFollowUp(visit.followUp)) {
+      this.followUpVisit.push(this.assignValueToProperty(visit));
+    }
+  }
+
+  isTodayFollowUp(followUp) {
+    let date = followUp.split(',')[0];
+    let followUpDate = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
+    if(followUpDate.setHours(0,0,0,0) === new Date().setHours(0,0,0,0)) {
+      return true;
+    }
   }
 }

@@ -4,28 +4,35 @@
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #DD3C62;">
         <div class="card-body">
-          <div class="text-left">PRIORITY VISITS<span class="text-right badge badge-light">{{flagPatientNo}}</span></div>
+          <div>PRIORITY VISITS<span class="text-right badge badge-light">{{flagPatientNo}}</span></div>
         </div>
       </div>
     </div>
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #F6B825;">
         <div class="card-body">
-          <div class="text-left">AWAITING CONSULT<span class="text-right badge badge-light">{{activePatient}}</span></div>
+          <div>AWAITING CONSULT<span class="text-right badge badge-light">{{activePatient}}</span></div>
         </div>
       </div>
     </div>
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #17a2b8;">
         <div class="card-body">
-          <div class="text-left">VISITS IN PROGRESS<span class="text-right badge badge-light">{{visitNoteNo}}</span></div>
+          <div>VISITS IN PROGRESS<span class="text-right badge badge-light">{{visitNoteNo}}</span></div>
         </div>
       </div>
     </div>
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #4FCA8B;">
         <div class="card-body">
-          <div class="text-left">COMPLETED VISITS<span class="text-right badge badge-light">{{completeVisitNo}}</span></div>
+          <div> COMPLETED VISITS <span class="text-right badge badge-light">{{completeVisitNo}}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3" style="padding: 3px">
+      <div class="card text-white" style="background: #411aac;">
+        <div class="card-body">
+          <div> FOLLOW UP VISITS  <span class="text-right badge badge-light">{{followUpPatientNo}}</span></div>
         </div>
       </div>
     </div>
@@ -71,5 +78,15 @@
         <app-tables [data]="completedVisit"></app-tables>
       </ng-container>
     </mat-expansion-panel>
+
+      <!-- FollowUp Visit -->
+      <mat-expansion-panel [expanded]="followUpVisit.length > 0" id="follow-Up">
+        <mat-expansion-panel-header>
+            <mat-panel-title><h5>FOLLOW UP VISITS <b>({{followUpPatientNo}})</b> </h5></mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngIf="followUpVisit.length > 0">
+          <app-tables [data]="followUpVisit"></app-tables>
+        </ng-container>
+      </mat-expansion-panel>
   </mat-accordion>
 </div>
