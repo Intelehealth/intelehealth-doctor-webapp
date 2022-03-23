@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 
@@ -8,6 +8,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
   styleUrls: ['./past-medical-history.component.css']
 })
 export class PastMedicalHistoryComponent implements OnInit {
+@Output() isDataPresent = new EventEmitter<boolean>();
 pastMedical: any = [];
 pastMedicalHistoryPresent = false;
 conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
@@ -27,6 +28,9 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
       });
       if (this.pastMedical !== undefined && this.pastMedical.length > 0) {
         this.pastMedicalHistoryPresent = true;
+        this.isDataPresent.emit(true);
+      } else {
+        this.isDataPresent.emit(false);
       }
     });
 }

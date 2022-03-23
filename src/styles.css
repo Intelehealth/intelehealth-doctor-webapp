@@ -28,7 +28,7 @@
 }
 
   body {
-    background-color: #f1f4f6;
+    background-color: #b6bde2;
     margin: 0;
   }
 
@@ -122,4 +122,16 @@ body.font-lato td {
 }
 .cdk-overlay-container{
   z-index: 1060;
+}
+
+ngb-typeahead-window {
+  max-height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #212529;
 }

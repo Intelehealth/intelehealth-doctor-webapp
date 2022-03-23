@@ -1,6 +1,8 @@
 <mat-form-field>
   <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+  <mat-icon matSuffix>search</mat-icon>
 </mat-form-field>
+
 
 <div class="mat-elevation-z8">
   <table class="table-responsive" mat-table [dataSource]="dataSource" #sortCol4="matSort" matSort>

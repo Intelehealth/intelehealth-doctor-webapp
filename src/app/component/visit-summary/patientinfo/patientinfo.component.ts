@@ -17,7 +17,7 @@ export class PatientinfoComponent implements OnInit {
   baseURL = environment.baseURL;
   patientInfo = [];
   patientIdentifier: string;
-  info = {};
+  info;
   image: string;
   personAge: any;
   yearAge: any;
@@ -73,7 +73,7 @@ export class PatientinfoComponent implements OnInit {
             this.info['positiveDate'] = attri.value;
           }
         });
-        this.patientInfo.push(this.info);
+       // this.patientInfo.push(this.info);
       });
   }
 

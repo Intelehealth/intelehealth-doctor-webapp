@@ -1,5 +1,5 @@
-<h4><i class="fa fa-sync-alt"></i> Refer to Specialist</h4>
-<hr>
+<!-- <h4><i class="fa fa-sync-alt"></i> Refer to Specialist</h4>
+<hr> -->
 <div>
     Do you want to assign this visit to another specialty?
 </div>
@@ -19,7 +19,7 @@
         </mat-select>
     </mat-form-field>
     <br>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary">Re-Assign</button>
+<button type="reset" [disabled]="isManagerRole" (click)="Submit()" mat-raised-button color="primary">Re-Assign</button>
 </div>
 {{errorText}}
 </form>

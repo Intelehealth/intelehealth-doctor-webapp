@@ -7,3 +7,8 @@
   .example-full-width {
     width: 100%;
   }
+
+ ::ng-deep .mat-datepicker-content .mat-calendar{
+    width: unset !important;
+    height: unset !important;
+}

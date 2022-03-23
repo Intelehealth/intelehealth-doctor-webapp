@@ -1,5 +1,5 @@
-<h4><i class="fas fa-heartbeat"></i> Vitals</h4>
-<hr>
+<!-- <h4><i class="fas fa-heartbeat"></i> Vitals</h4>
+<hr> -->
 <div *ngIf='!vitalsPresent'>No Data</div>
 <div *ngIf='vitalsPresent'>
   <table class="table table-responsive">
@@ -13,9 +13,9 @@
       <th>BMI:</th>
       <td>{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td> -->
       <th>SP02:</th>
-      <td>{{item.sp02}} %</td>
+      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
       <th>BP:</th>
-      <td>{{item.sbp}}/{{item.dbp}}</td>
+      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
       <th>HR:</th>
       <td>{{item.pulse}}</td>
       <th>RR:</th>

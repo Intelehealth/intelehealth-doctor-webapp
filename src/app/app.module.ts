@@ -99,6 +99,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTabsModule } from "@angular/material/tabs";
 import { ChatComponent } from './component/chat/chat.component';
 import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
@@ -180,6 +181,7 @@ import { PastHistoryComponent } from './component/visit-summary/past-history/pas
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatChipsModule,
+    MatTabsModule,
     NgbModule,
     HttpClientModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),

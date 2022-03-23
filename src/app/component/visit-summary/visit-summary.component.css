@@ -27,3 +27,14 @@ mat-spinner {
     height: 30px;
     width: 30px;
   }
+
+  .name-spacing {
+    padding-right: 7px
+  }
+
+  ::ng-deep .mat-tab-label-active{
+    background-color: white;
+    opacity: 1 !important;
+    color: black;
+  }
+  

@@ -36,6 +36,9 @@ export class VisitSummaryComponent implements OnInit {
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
+  isVitalPresent = true; isPastMedicalPresent = true;
+  isFamilyHistoryPresent= true; isPhyscExamPresent = true;
+  isAdditionalDocPresent = true;
 
   constructor(
     private service: EncounterService,
@@ -128,6 +131,7 @@ export class VisitSummaryComponent implements OnInit {
               saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
             });
           this.show = true;
+          this.visitNotePresent = true;
           this.snackbar.open(`Visit Note Created`, null, {
             duration: 4000,
           });
@@ -314,5 +318,25 @@ export class VisitSummaryComponent implements OnInit {
           this.router.navigateByUrl("/home");
         }
       });
+  }
+
+  getIsFamilyDataPresent(isDataPresent) {
+    isDataPresent ? this.isFamilyHistoryPresent = isDataPresent : this.isFamilyHistoryPresent = false;
+  }
+
+  getIsMedicalDataPresent(isDataPresent) {
+    isDataPresent ? this.isPastMedicalPresent = isDataPresent :  this.isPastMedicalPresent = false;
+  }
+  
+  getIsExamDataPresent(isDataPresent) {
+    isDataPresent ?  this.isPhyscExamPresent = isDataPresent : this.isPhyscExamPresent= false;
+  }
+
+  getIsAdditionalDataPresent(isDataPresent) {
+    isDataPresent ? this.isAdditionalDocPresent = isDataPresent : this.isAdditionalDocPresent= false;
+  }
+
+  getIsVitalDataPresent(isDataPresent) {
+    isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent= false;
   }
 }

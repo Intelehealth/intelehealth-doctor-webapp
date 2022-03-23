@@ -5,3 +5,13 @@
 .image2 {
     width: 25%
 }
+
+table {
+    width: 100%;
+}
+th {
+  width: 40%;
+}
+td {
+  width: 60%;
+}

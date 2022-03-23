@@ -1,13 +1,13 @@
-<h4><i class="fas fa-comment-medical"></i> Advice</h4>
-<hr>
+<!-- <h4><i class="fas fa-comment-medical"></i> Advice</h4>
+<hr> -->
 <div id="advice-form">
   <form [formGroup]='adviceForm'>
-      <mat-form-field class="example-full-width">
-          <input matInput placeholder="Advice or referal for patient" [ngbTypeahead]="search" formControlName='advice'>
+      <mat-form-field class="w-100">
+          <input matInput placeholder="Advice" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
-      &nbsp;&nbsp;
       <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid || managerRoleAccess'>Add Advice</button>
   </form>
+  <br>
 </div>
 <ng-container *ngIf="advice.length > 0">
   <div>

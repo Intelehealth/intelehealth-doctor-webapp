@@ -1,14 +1,14 @@
-<h4><i class="fas fa-vials"></i> Prescribed Test</h4>
-<hr>
+<!-- <h4><i class="fas fa-vials"></i> Prescribed Test</h4>
+<hr> -->
 <div id="test-form">
     <form [formGroup]='testForm' >
-        <mat-form-field class="example-full-width">
+        <mat-form-field class="w-100">
             <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
-        &nbsp;&nbsp;
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
         <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || managerRoleAccess'>Add Test</button>
       </form>
+      <br>
 </div>
 <ng-container *ngIf="tests.length > 0">
     <ul class="list-unstyled">

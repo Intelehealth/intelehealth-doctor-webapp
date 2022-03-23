@@ -36,3 +36,33 @@ mat-form-field {
   color:black;
   border: 1px solid white;
 } 
+
+.name {
+  color: black;
+  font-weight: bold;
+  margin-top: 15px;
+ }
+ 
+ ::ng-deep .visit .mat-tab-header {
+  background-color: white;
+  border-bottom: none;
+ }
+ 
+ ::ng-deep .visit .mat-tab-label {
+   border: 2px solid;
+ }
+ 
+ ::ng-deep .visit .mat-tab-label-active{
+   background-color: lightgray;
+   opacity: 1 !important;
+   border-style: solid;
+   border-width: 2px;
+ }
+ 
+ .center {
+   margin-top: 50px;
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 50%;
+ }

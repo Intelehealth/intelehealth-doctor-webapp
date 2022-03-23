@@ -1,80 +1,78 @@
 <h4><i class="fas fa-info-circle"></i> Patient Information</h4>
 <div class="modal-body row">
-    <div class="col-md-6">
-        <table class="table table-borderless table-sm">
-            <tbody *ngFor="let info of patientInfo">
+    <div class="col-md-2">
+        <div *ngIf="profileImagePresent" style="text-align: center">
+            <img [src]=image width="60%" height="60" alt="">
+        </div>
+        <div *ngIf="!profileImagePresent" style="text-align: center">
+            <img src="assets/dummy profile image.jpg" width="60%" height="60%" alt="">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <table>
+            <tbody>
                 <tr>
-                    <th scope="row">Name</th>
-                    <td>{{info.display}}</td>
+                    <th scope="row">Name: </th>
+                    <td>{{info?.display}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">OpenMRS ID</th>
+                    <th scope="row">OpenMRS ID: </th>
                     <td>{{patientIdentifier}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Sex</th>
-                    <td>{{info.gender}}</td>
+                    <th scope="row">Sex: </th>
+                    <td>{{info?.gender === 'M' ? 'Male' : 'Female'}}</td>
                 </tr>
                 <!-- <tr>
                         <th scope="row">DOB</th>
                         <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
                     </tr> -->
                 <tr>
-                    <th scope="row">Age</th>
-                    <td>{{ info.age }} Years </td>
+                    <th scope="row">Age: </th>
+                    <td>{{ info?.age }} Years </td>
                 </tr>
                 <tr>
-                    <th scope="row">State</th>
-                    <td>{{info?.preferredAddress?.stateProvince}}</td>
+                    <th scope="row">Date of Positive: </th>
+                    <td *ngIf="info?.positiveDate">{{info?.positiveDate | date: 'dd-MMM-yyy'}}</td>
                 </tr>
-                <tr>
-                    <th scope="row">District</th>
-                    <td>{{info?.preferredAddress.cityVillage}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Block</th>
-                    <td *ngIf="info.education">{{info.education}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Date of Positive</th>
-                    <td *ngIf="info.positiveDate">{{info.positiveDate | date: 'dd-MMM-yyy'}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Pincode</th>
-                    <td>{{info?.preferredAddress?.postalCode}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Contact Info</th>
-                    <td *ngIf="info.telephone">{{info.telephone}}</td>
-                </tr>
-                <tr scope="row">
-                    <th scope="row">Patient Documents</th>
-                   
-                </tr>
-                <tr class="row" *ngIf="patientDocumentPresent" style="margin-top: 15px;">
-                    <!-- <div class="row"> -->
-                        <div *ngFor="let image of images" class="col">
-                            <a href={{image.image}}><img src={{image.image}}
-                                    [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}"></a>
-                        </div>
-                    <!-- </div> -->
-                </tr>
-                <!-- <tr>
-                        <th scope="row"  *ngIf="patientDocumentPresent" >Patient Documents</th>
-                        <td *ngFor="let image of images" class="col">
-                            <a href={{image.image}}><img src={{image.image}}
-                                [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}"></a>
-                        </td>
-                    </tr> -->
             </tbody>
         </table>
     </div>
-    <div class="col-md-6">
-        <div *ngIf="profileImagePresent" style="text-align: center">
-            <img [src]=image width="40%" height="200" alt="">
-        </div>
-        <div *ngIf="!profileImagePresent" style="text-align: center">
-            <img src="assets/dummy profile image.jpg" width="40%" height="40%" alt="">
-        </div>
+    <div class="col-md-6"> 
+        <table>
+            <tbody>
+                <tr>
+                    <th scope="row">State:</th>
+                    <td>{{info?.preferredAddress?.stateProvince}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">District:</th>
+                    <td>{{info?.preferredAddress?.cityVillage}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Block:</th>
+                    <td *ngIf="info?.education">{{info?.education}}</td>
+                </tr>            
+                <tr>
+                    <th scope="row">Pincode:</th>
+                    <td>{{info?.preferredAddress?.postalCode}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Contact Info:</th>
+                    <td *ngIf="info?.telephone">{{info?.telephone}}</td>
+                </tr>
+                <tr scope="row">
+                    <th scope="row">Patient Documents:</th>
+                   
+                </tr>
+                <tr>
+                    <th scope="row"  *ngIf="patientDocumentPresent">Patient Documents:</th>
+                    <td *ngFor="let image of images" class="col">
+                        <a href={{image.image}}><img src={{image.image}}
+                            [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}"></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
