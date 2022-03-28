@@ -1,0 +1,84 @@
+/* .calendar th {
+  width: 12.5%;
+}
+
+.calendar table,
+th {
+  width: 100%;
+  text-align: center;
+}
+
+.calendar td,
+th {
+  height: 10%;
+  height: 64px;
+}
+
+.border.round {
+  border-radius: 5px;
+}
+
+.active {
+  background: #90ee90c7;
+}
+
+.card {
+  background: lightblue;
+} 
+.calendar-view {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+.text-center {
+  padding-left: 91px;
+  padding-right: 80px;
+}
+
+.text-center-ru {
+  padding-left: 203px;
+}
+
+.cal-month-view .cal-cell-row {
+  padding-left: 15px;
+  padding-right: 15px;
+ }
+
+.cal-month-view .cal-open-day-events {
+  padding: -15px;
+ }*/
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* a.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #212529;
+} */
+.d-grid {
+  display: grid !important;
+  width: 100px;
+  text-align: center;
+}
+.active {
+  background: #87c6ed;
+}
+.modal-content {
+  width: 160%;
+  right: 140px;
+}
+
+table,
+th, td {
+  text-align: center;
+}
+
+.loader {
+  position: inherit;
+  top: 10%;
+  left: 45%;
+}

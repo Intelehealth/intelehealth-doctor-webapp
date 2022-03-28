@@ -1,0 +1,26 @@
+<h4><i class="fa fa-sync-alt"></i> {{'Refer to Specialist'| translate}}</h4>
+<hr>
+<div>
+    {{ 'Do you want to assign this visit to another specialty?'|translate}}'
+</div>
+<div>
+    <div id="patient-interaction">
+        <br>
+        <mat-radio-group name="type" aria-label="Select an option" [(ngModel)]="type">
+            <mat-radio-button name="type"  (change)="type = 'N'"  [value]="'Y'">{{'Yes'|translate}} </mat-radio-button>
+            <mat-radio-button name="type"  (change)="type = 'Y'" [value]="'N'">{{'No'|translate}}</mat-radio-button>
+        </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp; 
+    </div>
+<form [formGroup]='updateSpeciality'>
+<div id="followup-button" *ngIf="type == 'Y'">
+    <mat-form-field class="example-full-width"  >
+        <mat-select placeholder="{{'Specialization'|translate}}" formControlName="specialization">
+            <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{(specialization) | translate}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <br>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary">{{'Re-Assign'|translate}}</button>
+</div>
+{{errorText}}
+</form>
+</div>

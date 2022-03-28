@@ -4,6 +4,7 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
+  CommonModule,
 } from "@angular/common";
 
 // Component Import
@@ -58,41 +59,49 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { MainComponent } from './component/main/main.component';
-import { FeedbackComponent } from './component/visit-summary/feedback/feedback.component';
-import { EndedVisitsComponent } from './component/ended-visits/ended-visits.component';
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatCardModule } from "@angular/material/card";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatListModule } from "@angular/material/list";
+import { MatSelectModule } from "@angular/material/select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
+import { MainComponent } from "./component/main/main.component";
+import { FeedbackComponent } from "./component/visit-summary/feedback/feedback.component";
+import { EndedVisitsComponent } from "./component/ended-visits/ended-visits.component";
 import { MonitoringComponent } from "./component/monitoring/monitoring.component";
-import { VcComponent } from './component/vc/vc.component';
+import { VcComponent } from "./component/vc/vc.component";
 import { HoverClassDirective } from "./directives/hover-class.directive";
-import { ChatComponent } from './component/chat/chat.component';
+import { ChatComponent } from "./component/chat/chat.component";
 import { ChatService } from "./services/chat.service";
-
-
+import { CalendarComponent } from "./component/calendar/calendar.component";
+import { AppointmentComponent } from "./component/appointment/appointment.component";
+import { CalendarModule, DateAdapter } from "angular-calendar";
+import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
+import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 
 @NgModule({
   declarations: [
     AppComponent,
+    CalendarComponent,
+    AppointmentComponent,
+    ConfirmDialogComponent,
+    ReassignSpecialityComponent,
     HomepageComponent,
     VisitSummaryComponent,
     FamilyHistoryComponent,
@@ -130,11 +139,12 @@ import { ChatService } from "./services/chat.service";
     EndedVisitsComponent,
     VcComponent,
     HoverClassDirective,
-    ChatComponent
+    ChatComponent,
   ],
 
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -164,6 +174,10 @@ import { ChatService } from "./services/chat.service";
     MatTabsModule,
     MatChipsModule,
     NgxMaterialTimepickerModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
     RouterModule.forRoot(
       [
         { path: "login", component: LoginPageComponent },
@@ -222,9 +236,16 @@ import { ChatService } from "./services/chat.service";
               component: VisitSummaryComponent,
               canActivate: [AuthGuard],
             },
-            { 
+            { path: "appointment/schedule", component: AppointmentComponent },
+            { path: "appointment/view", component: CalendarComponent },
+            {
+              path: "appointment",
+              redirectTo: "appointment/view",
+              pathMatch: "full",
+            },
+            {
               path: "vc/call",
-              component: VcComponent
+              component: VcComponent,
             },
             { path: "", redirectTo: "home", pathMatch: "full" },
           ],
@@ -248,7 +269,7 @@ import { ChatService } from "./services/chat.service";
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     SocketService,
-    ChatService 
+    ChatService,
   ],
   bootstrap: [AppComponent],
 })

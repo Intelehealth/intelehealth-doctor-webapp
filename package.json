@@ -31,6 +31,8 @@
     "intro.js": "^2.9.3",
     "moment": "^2.24.0",
     "ngx-cookie-service": "^2.1.0",
+    "angular-calendar": "^0.28.28",
+    "date-fns": "^2.27.0",
     "ngx-material-timepicker": "^5.5.3",
     "ngx-spinner": "^10.0.1",
     "rxjs": "~6.6.2",
