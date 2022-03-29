@@ -155,7 +155,7 @@ export class EyeformComponent implements OnInit {
   constructDiagnosis() {
     this.diagnosisright.push(
       { value: 'Normal Eye Exam', name: 'Right eye' },
-      { value: 'Refractive Error/Presbiopia', name: 'Right eye' },
+      { value: 'Refractive Error/Presbyopia', name: 'Right eye' },
       { value: 'Immature Cataract', name: 'Right eye' },
       { value: 'Mature Cataract', name: 'Right eye' },
       { value: 'Inactive Corneal Opacity', name: 'Right eye' },
@@ -165,7 +165,7 @@ export class EyeformComponent implements OnInit {
     );
     this.diagnosisleft.push(
       { value: 'Normal Eye Exam', name: 'Left eye' },
-      { value: 'Refractive Error/Presbiopia', name: 'Left eye' },
+      { value: 'Refractive Error/Presbyopia', name: 'Left eye' },
       { value: 'Immature Cataract', name: 'Left eye' },
       { value: 'Mature Cataract', name: 'Left eye' },
       { value: 'Inactive Corneal Opacity', name: 'Left eye' },
