@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 
@@ -80,5 +80,16 @@ export class VisitService {
     return this.http.post(`${environment.mindmapURL}/mindmap/shortLink`, {
       link,
     });
+  }
+
+  getCallRecordings(phoneNo): Observable<any> {
+    var header = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa("nurse1:Nurse123"),
+      }),
+    };
+    const url = `${environment.recordingURL}/${phoneNo}`;
+    return  this.http.get(url, header);
   }
 }

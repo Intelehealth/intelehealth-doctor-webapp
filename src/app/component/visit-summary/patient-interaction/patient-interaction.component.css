@@ -75,3 +75,7 @@
   position: inherit;
   margin-bottom: 3px;
 }
+
+.center {
+  text-align: center;
+}
