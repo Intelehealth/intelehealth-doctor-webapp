@@ -43,6 +43,7 @@ export class PatientInteractionComponent implements OnInit {
   videoIcon = environment.production
   ? "../../../intelehealth/assets/svgs/video-w.svg"
   : "../../../assets/svgs/video-w.svg";
+  callRecordings = [];
 
   interaction = new FormGroup({
     interaction: new FormControl('', [Validators.required])
@@ -85,6 +86,11 @@ export class PatientInteractionComponent implements OnInit {
             // tslint:disable-next-line: max-line-length
             const text = encodeURI(`Hello I'm calling for patient ${info.person.display} from Swasth Sampark Helpline`);
             this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+            this.visitService.getCallRecordings(this.phoneNo)
+            .subscribe(res => {
+              this.callRecordings = res?.data
+              this.callRecordings.sort((a, b) => new Date(a.CallStartTime).getTime() - new Date(b.CallStartTime).getTime()).reverse();
+            }); 
           }
       });
     this.visitService.getAttribute(visitId)

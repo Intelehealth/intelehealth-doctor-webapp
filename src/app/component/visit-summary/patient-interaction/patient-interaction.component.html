@@ -1,37 +1,50 @@
 <!-- <h4><i class="material-icons">contact_phone</i> Patient Interaction</h4>
 <hr> -->
-<div>
-  Have you spoken with the patient directly?
-</div>
-<form [formGroup]='interaction' (ngSubmit)='submit()'>
-<div id="patient-interaction">
-    <br>
-        <mat-radio-group aria-label="Select an option" formControlName="interaction">
-            <mat-radio-button value="Yes">Yes </mat-radio-button>
-            <mat-radio-button value="No">No</mat-radio-button>
-          </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || managerRoleAccess" [hidden]="msg.length > 0">Submit</button>
-</div>
-<div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
-  <span *ngIf="whatsappLink">
-    <div class="fas vc-button" (click)="openVcModal()">
-      <img [src]="videoIcon" />
+<div class="modal-body row">
+  <div [ngClass]="callRecordings.length > 0 ? 'col-md-6 border-right' : 'col-md-12'"> 
+    <div>
+      Have you spoken with the patient directly?
     </div>
-    <!-- <a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a> -->
-  </span>
-  <span *ngIf="phoneNo"> 
-      <div class="fas fa-phone-volume" (click)= "startCall(phoneNo)">
-      </div>  
-  </span>
-</div>
-<div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
-  Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
-  <br/>
-</div>
-<div *ngFor="let msg of msg">  
-  <div [@moveInLeft] class="alert alert-primary">
-    <div class="doctor-value">{{msg.value}}</div>
-    <i (click)="delete(msg.uuid)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!managerRoleAccess">delete</i>
+    <form [formGroup]='interaction' (ngSubmit)='submit()'>
+      <div id="patient-interaction">
+          <br>
+              <mat-radio-group aria-label="Select an option" formControlName="interaction">
+                  <mat-radio-button value="Yes">Yes </mat-radio-button>
+                  <mat-radio-button value="No">No</mat-radio-button>
+                </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || managerRoleAccess" [hidden]="msg.length > 0">Submit</button>
+      </div>
+      <div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
+        <span *ngIf="whatsappLink">
+          <div class="fas vc-button" (click)="openVcModal()">
+            <img [src]="videoIcon" />
+          </div>
+          <!-- <a class="fab fa-whatsapp" href="{{whatsappLink}}" target="_blank" ></a> -->
+        </span>
+        <span *ngIf="phoneNo"> 
+            <div class="fas fa-phone-volume" (click)= "startCall(phoneNo)">
+            </div>  
+        </span>
+      </div>
+      <div id="call-link" *ngIf="!whatsappLink && !phoneNo"> 
+        Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
+        <br/>
+      </div>
+      <div *ngFor="let msg of msg">
+        <div [@moveInLeft] class="alert alert-primary">
+          <div class="doctor-value">{{msg.value}}</div>
+          <i (click)="delete(msg.uuid)" class="material-icons float-right"
+            style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        </div>
+      </div>
+      </form>
   </div>
+  <div class="col-md-6 center" *ngIf="callRecordings.length > 0"> 
+       <b>Call Recordings</b> <br/> <br/>
+       <div *ngFor='let record of callRecordings'>
+         <div>
+           {{ record.CallStartTime }}  <a class="fa fa-play-circle" style="text-decoration: none; margin-left: 45px;" [href]="record.RecordingURL" ></a>
+         </div>
+       </div>
+   </div>
 </div>
-</form>

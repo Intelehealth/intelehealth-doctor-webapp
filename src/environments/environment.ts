@@ -10,6 +10,7 @@ export const environment = {
   mindmapURL: 'http://localhost:3004/api',
   notificationURL: "http://localhost:3004/notification",
   socketURL: "http://localhost:3004",
+  recordingURL: "https://trainingss.intelehealth.org/recordings"
 };
 
 /*
