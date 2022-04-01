@@ -9,3 +9,21 @@ mat-spinner {
   filter: blur(8px);
   -webkit-filter: blur(8px);
 }
+
+.vc-button {
+  position: fixed;
+  bottom: 90px;
+  right: 30px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: rgb(40 167 69);
+  box-shadow: 3px 3px 3px rgba(218, 215, 215, 0.925);
+  padding: 10px;
+  cursor: pointer;
+}
+.vc-button img {
+  color: white;
+  height: 30px;
+  width: 30px;
+}

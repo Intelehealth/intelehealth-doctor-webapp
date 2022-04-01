@@ -8,7 +8,7 @@ import { environment } from "../../environments/environment";
 export class SocketService {
   public socket: any;
   public activeUsers = [];
-  appIcon = "assets/images/intelehealth-logo-reverse.png";
+  appIcon = "assets/images/intelehealth-logo-reverse1.png";
   private baseURL = environment.socketURL;
 
   constructor(private http: HttpClient) {}
@@ -40,5 +40,23 @@ export class SocketService {
     return new Observable<any>((observer) => {
       this.socket.on(action, (data) => observer.next(data));
     });
+  }
+
+  public close() {
+    this.socket.close();
+  }
+
+  async showNotification({ title, body, timestamp = Date.now() }) {
+    if ("Notification" in window === true) {
+      if ("granted" === (await Notification.requestPermission())) {
+        const icon = this.appIcon;
+        return new Notification(title, {
+          body,
+          icon,
+          vibrate: [200, 100, 200],
+          timestamp: Math.floor(timestamp),
+        });
+      }
+    }
   }
 }

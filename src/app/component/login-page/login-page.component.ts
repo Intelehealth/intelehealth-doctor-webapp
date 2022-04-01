@@ -76,6 +76,7 @@ export class LoginPageComponent implements OnInit {
               this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
                 duration: 4000,
               });
+              saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
               this.router.navigate(["home"]);
