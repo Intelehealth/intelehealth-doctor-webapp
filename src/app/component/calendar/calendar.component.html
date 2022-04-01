@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="col-md-4" style="text-align: center">
-      <h3>{{ viewDate | calendarDate: view + "ViewTitle":locale }}</h3>
+      <h3>{{ viewDate | calendarDate: view }}</h3>
     </div>
     <div class="col-md-4">
       <div class="btn-group" style="float: right">
@@ -66,7 +66,6 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="locale"
       [activeDayIsOpen]="activeDayIsOpen"
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
@@ -79,7 +78,6 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="locale"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -90,7 +88,6 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
-      [locale]="locale"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -103,18 +100,18 @@
     <div class="modal-title">
       <br />
       <h5 style="text-align: center">
-        {{ "Appointment Details" | translate }} <br />
-        {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
+        {{ "Appointment Details" }} <br />
+        {{ modalData.date | calendarDate: "day" }}
       </h5>
     </div>
     <div class="modal-body">
       <table class="table">
         <thead>
           <tr>
-            <th>{{ "Name" | translate }}</th>
-            <th>{{ "OpenMRS ID" | translate }}</th>
-            <th>{{ "Start Time" | translate }}</th>
-            <th>{{ "Action" | translate }}</th>
+            <th>{{ "Name" }}</th>
+            <th>{{ "OpenMRS ID" }}</th>
+            <th>{{ "Start Time" }}</th>
+            <th>{{ "Action" }}</th>
           </tr>
         </thead>
         <tbody>
@@ -130,14 +127,14 @@
                 [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
                 (click)="close()"
               >
-                {{ "View" | translate }}
+                {{ "View" }}
               </button>
               <button
                 mat-raised-button
                 color="primary"
                 (click)="rescheduleClick(e1)"
               >
-                {{ "Reschedule" | translate }}
+                {{ "Reschedule" }}
               </button>
               <button
                 style="float: right"
@@ -145,7 +142,7 @@
                 color="primary"
                 (click)="cancelAppointment(e1)"
               >
-                {{ "Cancel" | translate }}
+                {{ "Cancel" }}
               </button>
             </td>
           </tr>
@@ -154,7 +151,7 @@
     </div>
     <div class="modal-footer center">
       <button type="button" mat-raised-button color="primary" (click)="close()">
-        {{ "Close" | translate }}
+        {{ "Close" }}
       </button>
     </div>
   </div>

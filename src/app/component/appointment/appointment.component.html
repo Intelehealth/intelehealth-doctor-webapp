@@ -52,7 +52,6 @@
           [viewDate]="viewDate"
           [events]="events"
           [refresh]="refresh"
-          [locale]="locale"
           [activeDayIsOpen]="activeDayIsOpen"
           (dayClicked)="dayClicked($event.day)"
           (eventClicked)="handleEvent('Clicked', $event.event)"
@@ -65,7 +64,6 @@
           [viewDate]="viewDate"
           [events]="events"
           [refresh]="refresh"
-          [locale]="locale"
           (eventClicked)="handleEvent('Clicked', $event.event)"
           (eventTimesChanged)="eventTimesChanged($event)"
         >
@@ -76,7 +74,6 @@
           [viewDate]="viewDate"
           [events]="events"
           [refresh]="refresh"
-          [locale]="locale"
           (eventClicked)="handleEvent('Clicked', $event.event)"
           (eventTimesChanged)="eventTimesChanged($event)"
         >
@@ -195,7 +192,7 @@
       <br />
       <h5 style="text-align: center">
         Schedule <br />
-        {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
+        {{ modalData.date | calendarDate: "day" }}
         <span
           style="
             float: right;

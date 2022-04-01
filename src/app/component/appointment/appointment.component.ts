@@ -129,7 +129,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   get viewDateLabel() {
-    return moment(this.viewDate).locale(this.locale).format("MMMM YYYY");
+    return moment(this.viewDate).format("MMMM YYYY");
   }
 
   getSchedule(
@@ -152,7 +152,7 @@ export class AppointmentComponent implements OnInit {
       });
   }
 
-  private initializeEvents(slots) {
+  private initializeEvents(slots: any = []) {
     this.unChanged = true;
     let slot = slots.reverse().filter(
       (

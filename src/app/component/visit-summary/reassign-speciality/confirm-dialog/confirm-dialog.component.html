@@ -1,16 +1,13 @@
 <div>
   <div class="content-container">
     <mat-icon id="close-icon" (click)="closeDialog()">close</mat-icon>
-    <span class="content-span full-width">{{ data.message | translate }}</span>
+    <span class="content-span full-width">{{ data.message }}</span>
   </div>
   <div class="col-12" *ngIf="type === 'cancelAppointment'">
     <mat-form-field class="example-full-width w-100">
-      <mat-select
-        placeholder="{{ 'Reason' | translate }}*"
-        [(ngModel)]="selectedReason"
-      >
+      <mat-select placeholder="{{ 'Reason' }}*" [(ngModel)]="selectedReason">
         <mat-option *ngFor="let rsn of reasons" [value]="rsn">
-          {{ rsn | translate }}
+          {{ rsn }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -20,7 +17,7 @@
       [(ngModel)]="otherReason"
       *ngIf="selectedReason == reasons[2]"
       matInput
-      placeholder="{{ 'Specify reason' | translate }}*"
+      placeholder="{{ 'Specify reason' }}*"
     />
   </div>
   <button
@@ -29,7 +26,7 @@
     id="no-button"
     [mat-dialog-close]="false"
   >
-    {{ "NO" | translate }}
+    {{ "NO" }}
   </button>
   <button
     mat-raised-button
@@ -38,7 +35,7 @@
     [disabled]="disabled"
     [mat-dialog-close]="true"
   >
-    {{ "YES" | translate }}
+    {{ "YES" }}
   </button>
 
   <!-- <button mat-flat-button id="no-button" [mat-dialog-close]="false">NO</button> -->
