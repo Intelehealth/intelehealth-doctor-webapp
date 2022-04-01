@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -32,6 +32,7 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
   ]
 })
 export class PatientInteractionComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   msg: any = [];
   whatsappLink: string;
   phoneNo;
@@ -44,9 +45,16 @@ export class PatientInteractionComponent implements OnInit {
   ? "../../../intelehealth/assets/svgs/video-w.svg"
   : "../../../assets/svgs/video-w.svg";
   callRecordings = [];
+  isNoOptionClicked = false;
+  selectedReason:string;
+  reasons = [
+    'Unable to connect',
+    'Not picked up the call'
+  ]
 
   interaction = new FormGroup({
-    interaction: new FormControl('', [Validators.required])
+    interaction: new FormControl('', [Validators.required]),
+    selectedReason: new FormControl('')
   });
 
   constructor(private visitService: VisitService,
@@ -86,11 +94,7 @@ export class PatientInteractionComponent implements OnInit {
             // tslint:disable-next-line: max-line-length
             const text = encodeURI(`Hello I'm calling for patient ${info.person.display} from Swasth Sampark Helpline`);
             this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
-            this.visitService.getCallRecordings(this.phoneNo)
-            .subscribe(res => {
-              this.callRecordings = res?.data
-              this.callRecordings.sort((a, b) => new Date(a.CallStartTime).getTime() - new Date(b.CallStartTime).getTime()).reverse();
-            }); 
+            this.getRecordings(); 
           }
       });
     this.visitService.getAttribute(visitId)
@@ -98,7 +102,7 @@ export class PatientInteractionComponent implements OnInit {
         const result = response.results;
         if (result.length !== 0) {
           this.msg = result.filter((pType) =>
-          ["Yes", "No"].includes(pType.value)
+          pType.attributeType.uuid === "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc"
         );
         }
       });
@@ -107,7 +111,7 @@ export class PatientInteractionComponent implements OnInit {
   submit() {
     const visitId = this.route.snapshot.params['visit_id'];
     const formValue = this.interaction.value;
-    const value = formValue.interaction;
+    const value = this.isNoOptionClicked ? formValue.interaction+' : '+formValue.selectedReason :  formValue.interaction;
     const providerDetails = getFromStorage('provider');
     if (this.diagnosisService.isSameDoctor()) {
       this.visitService.getAttribute(visitId)
@@ -121,7 +125,11 @@ export class PatientInteractionComponent implements OnInit {
             };
             this.visitService.postAttribute(visitId, json)
               .subscribe(response1 => {
+                this.isDataPresent.emit(true);
                 this.msg.push({ uuid: response1.uuid, value: response1.value });
+                if(formValue.interaction === "Yes") {
+                  this.getRecordings();
+                }
               });
           }
         });
@@ -164,9 +172,11 @@ export class PatientInteractionComponent implements OnInit {
   delete(i) {
     if (this.diagnosisService.isSameDoctor()) {
       const visitId = this.route.snapshot.params['visit_id'];
-      this.visitService.deleteAttribute(visitId, i)
+      const uuid = this.msg[i].uuid;
+      this.visitService.deleteAttribute(visitId, uuid)
         .subscribe(res => {
-          this.msg = [];
+          this.msg.splice(i, 1);
+          this.isDataPresent.emit(false);
         });
       }
   }
@@ -203,5 +213,22 @@ export class PatientInteractionComponent implements OnInit {
   openDialog(msg:string) {
     this.dialogService.openConfirmDialog(msg, "info")
       .afterClosed().subscribe();
+  }
+
+  displayReasons() {
+    this.isNoOptionClicked = true;
+    this.selectedReason = undefined;
+  }
+
+  setReason() {
+    this.selectedReason = this.interaction.value.selectedReason;
+  }
+
+  private getRecordings() {
+    this.visitService.getCallRecordings(this.phoneNo)
+      .subscribe(res => {
+        this.callRecordings = res?.data;
+        this.callRecordings.sort((a, b) => new Date(a.CallStartTime).getTime() - new Date(b.CallStartTime).getTime()).reverse();
+      });
   }
 }

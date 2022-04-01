@@ -122,10 +122,10 @@
       <mat-tab-group>
             <mat-tab>
                   <ng-template mat-tab-label>
-                        <i class="name-spacing material-icons">contact_phone</i>Patient Interaction
+                        <i class="name-spacing material-icons">contact_phone</i>Patient Interaction<span style="color: red;">*</span>
                   </ng-template>
                   <mat-card> 
-                        <app-patient-interaction></app-patient-interaction>
+                        <app-patient-interaction (isDataPresent)="getIsDataPresent($event)"></app-patient-interaction>
                    </mat-card>     
              </mat-tab>
             <mat-tab>
@@ -188,7 +188,8 @@
       </ng-container>
 
       <div class="text-center">
-            <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent || isVisitEnded || managerRoleAccess">Sign and Submit</button>
+            <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent || isVisitEnded 
+            || managerRoleAccess || isVisitSummaryChanged">Sign and Submit</button>
       </div>
 </div>
 </div>

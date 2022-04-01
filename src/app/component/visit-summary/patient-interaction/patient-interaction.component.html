@@ -1,6 +1,6 @@
 <!-- <h4><i class="material-icons">contact_phone</i> Patient Interaction</h4>
 <hr> -->
-<div class="modal-body row">
+<div class="row">
   <div [ngClass]="callRecordings.length > 0 ? 'col-md-6 border-right' : 'col-md-12'"> 
     <div>
       Have you spoken with the patient directly?
@@ -9,10 +9,18 @@
       <div id="patient-interaction">
           <br>
               <mat-radio-group aria-label="Select an option" formControlName="interaction">
-                  <mat-radio-button value="Yes">Yes </mat-radio-button>
-                  <mat-radio-button value="No">No</mat-radio-button>
-                </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || managerRoleAccess" [hidden]="msg.length > 0">Submit</button>
+                  <mat-radio-button value="Yes" (change)="isNoOptionClicked = false">Yes </mat-radio-button>
+                  <mat-radio-button value="No" (change)="displayReasons()">No</mat-radio-button>
+              </mat-radio-group> &nbsp;&nbsp;
+              <select *ngIf="isNoOptionClicked" formControlName ="selectedReason" (change)="setReason()">
+                <option value="" selected disabled>Select reason</option>
+                <option [value]="reason" *ngFor="let reason of reasons">
+                  {{ reason }}
+                </option>
+              </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || managerRoleAccess
+           || (isNoOptionClicked && selectedReason == undefined)" >Submit</button>
       </div>
       <div id="call-link" *ngIf="whatsappLink || phoneNo"> Start a call: 
         <span *ngIf="whatsappLink">
@@ -30,10 +38,10 @@
         Please provide health worker's contact number at <a href="mailto:support@intelehealth.io">support@intelehealth.io</a> to proceed with the call or message 
         <br/>
       </div>
-      <div *ngFor="let msg of msg">
+      <div *ngFor="let msg of msg, index as i">
         <div [@moveInLeft] class="alert alert-primary">
           <div class="doctor-value">{{msg.value}}</div>
-          <i (click)="delete(msg.uuid)" class="material-icons float-right"
+          <i (click)="delete(i)" class="material-icons float-right"
             style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
       </div>

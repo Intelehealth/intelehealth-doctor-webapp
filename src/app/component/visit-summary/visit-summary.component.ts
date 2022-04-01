@@ -39,6 +39,7 @@ export class VisitSummaryComponent implements OnInit {
   isVitalPresent = true; isPastMedicalPresent = true;
   isFamilyHistoryPresent= true; isPhyscExamPresent = true;
   isAdditionalDocPresent = true;
+  isVisitSummaryChanged:boolean = false
 
   constructor(
     private service: EncounterService,
@@ -100,6 +101,7 @@ export class VisitSummaryComponent implements OnInit {
           this.isVisitEnded = true;
         }
       });
+      this.checkMadnatoryTabs();
   }
 
   onStartVisit() {
@@ -338,5 +340,18 @@ export class VisitSummaryComponent implements OnInit {
 
   getIsVitalDataPresent(isDataPresent) {
     isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent= false;
+  }
+
+  getIsDataPresent() {
+    this.checkMadnatoryTabs();
+ }
+
+  checkMadnatoryTabs() {
+    this.visitService.getAttribute(this.visitUuid).subscribe((response) => {
+      const result = response.results;
+      var tempMsg = result.filter((pType) => pType.display.includes("Patient Interaction: Yes")
+      );
+      tempMsg.length > 0 ?  this.isVisitSummaryChanged = false : this.isVisitSummaryChanged = true;
+    });
   }
 }
