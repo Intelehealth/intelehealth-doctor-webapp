@@ -69,7 +69,7 @@ export class NavbarComponent implements OnInit {
     if (userDetails) {
       const roles = userDetails["roles"];
       roles.forEach((role) => {
-        if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8") {
+        if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" || role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
           this.systemAccess = true;
         }
         if (

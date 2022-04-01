@@ -26,6 +26,7 @@ export class VisitSummaryComponent implements OnInit {
   doctorDetails;
   doctorValue;
   diagnosis: any = [];
+  managerRoleAccess = false;
   patientId: string;
   visitUuid: string;
   conceptIds = [
@@ -42,6 +43,7 @@ export class VisitSummaryComponent implements OnInit {
     "3edb0e09-9135-481e-b8f0-07a26fa9a5ce",
     "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
   ];
+  roleAccess: any;
 
 
   constructor(
@@ -63,7 +65,16 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-
+    const userDetails = getFromStorage("user");
+   
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.name === "Project Manager") {
+          this.managerRoleAccess = true;
+        }
+      });
+    } 
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService
@@ -81,7 +92,7 @@ export class VisitSummaryComponent implements OnInit {
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       visitDetails.encounters.forEach((visit) => {
-        if (visit.display.match("Visit Note") !== null) {
+        if (visit.display.match("Visit Note") !== null  ) {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
