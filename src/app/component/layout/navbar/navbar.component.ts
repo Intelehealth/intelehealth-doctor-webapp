@@ -1,3 +1,4 @@
+import { ReportComponent } from './report/report.component';
 import { PersonService } from './../../../services/person.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
@@ -53,6 +54,10 @@ export class NavbarComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  report() {
+    this.dialog.open(ReportComponent, { width: '500px' });
   }
 
   changePassword() {

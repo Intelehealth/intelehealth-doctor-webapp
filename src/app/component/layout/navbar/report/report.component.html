@@ -1,0 +1,29 @@
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">
+      Select Date
+      <a
+        style="float: right; cursor: pointer"
+        (click)="onClose()"
+        class="material-icons"
+        >clear</a
+      >
+    </h4>
+    <br/>
+    <form [formGroup]="reportForm">
+      <mat-form-field appearance="fill">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" formControlName="start" />
+          <input matEndDate placeholder="End date" formControlName="end" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      <mat-dialog-actions align="end">
+        <button mat-raised-button color="primary" (click)="onSubmit()" type="reset" [disabled]="!reportForm.valid">Submit</button>           
+      </mat-dialog-actions>
+      <br/>
+    </form>
+  </div>
+</div>

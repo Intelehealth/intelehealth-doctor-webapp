@@ -54,4 +54,9 @@ export class VisitService {
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(uuid,display,gender,birthdate,preferredAddress:(cityVillage),attributes:(uuid,value,attributeType:(uuid,display))))`;
     return this.http.get(url);
   }
+
+  getVisitReport(from, to): Observable<any> {
+    const url = `${environment.azureImage}/excel/download?from='${from}'&to='${to}'`;
+    return this.http.get(url);
+  }
 }

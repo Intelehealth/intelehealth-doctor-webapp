@@ -190,7 +190,6 @@ export class VisitSummaryComponent implements OnInit {
               this.snackbar.open('Visit Complete', null, { duration: 4000 });
               if (this.next && !this.noVisit) {
                 this.router.navigateByUrl(`/visitSummary/${this.next.patientId}/${this.next.visitId}`);
-
               }
             });
         } else {

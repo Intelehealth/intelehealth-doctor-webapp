@@ -77,6 +77,7 @@ import { PastCallsComponent } from './component/visit-summary/past-calls/past-ca
 import { UpdateStatusComponent } from './component/visit-summary/update-status/update-status.component';
 import { ModalComponent } from './component/visit-summary/update-status/modal/modal.component';
 import { EyeformComponent } from './component/homepage/eyeform/eyeform.component';
+import { ReportComponent } from './component/layout/navbar/report/report.component';
 
 @NgModule({
   declarations: [
@@ -117,7 +118,8 @@ import { EyeformComponent } from './component/homepage/eyeform/eyeform.component
     PastCallsComponent,
     UpdateStatusComponent,
     ModalComponent,
-    EyeformComponent
+    EyeformComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,
@@ -160,6 +162,7 @@ import { EyeformComponent } from './component/homepage/eyeform/eyeform.component
       { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
       { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
       { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+      { path: 'report', component: ReportComponent, canActivate: [AuthGuard] },
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
     ], { scrollPositionRestoration: 'enabled' }),
