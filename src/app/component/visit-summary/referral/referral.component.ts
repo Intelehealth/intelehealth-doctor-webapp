@@ -29,41 +29,26 @@ export class ReferralComponent implements OnInit {
   referralConcept: String = '3269f1ca-29ae-4b23-b5b9-9db6c1848eb9';
   referralConceptReview1: String = '80c7718e-6022-4d06-b7fb-bea36c061e39';
   referralConceptReview2: String = 'd5d22ecb-3cae-4d45-a49f-16848844bf01';
-  urgentConcept: String = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
-  urgentConceptReview1: String = '5c53e6a1-f9ef-48b3-9ebf-e3b9657c0c38';
-  urgentConceptReview2: String = '1655c4eb-e0aa-4e4c-bea9-dbe72619489d';
+  referralTimeConcept: String = 'eb9ffedc-beab-4a3a-b4d4-32344a94214b';
+  referralTimeConceptConceptReview1: String = '5c53e6a1-f9ef-48b3-9ebf-e3b9657c0c38';
+  referralTimeConceptConceptReview2: String = '1655c4eb-e0aa-4e4c-bea9-dbe72619489d';
+
   encounterUuid: string;
   patientId: string;
   visitUuid: string;
-  referral: Boolean = false;
-  urgent: Boolean = false;
+  referral: String;
+  referralTime: String;
   referralObs: object = {};
-  urgentObs: object = {};
-  ReferralLocationConcept: String = '56ed8dca-a028-4108-b42e-6f9fab6f5d9e';
-  ReferralLocationConceptReview1: String = 'ecfb84ea-c164-49bb-81b2-942a09510305';
-  ReferralLocationConceptReview2: String = '43ef7583-4f67-452c-90b8-a27534b0ec4d';
+  referralTimeObs: object = {};
 
-  referralLocationObs: object = {};
-  referralLocation: string;
-  ReferralReasonConcept: String = 'de7740d4-1f5c-4c0d-834a-b8de7b5b5458';
-  ReferralReasonConceptReview1: String = '9c966a56-26c3-4aa3-8d65-7bd86e38db0a';
-  ReferralReasonConceptReview2: String = '12bd2c1a-b0fd-411c-be98-59bcb946e9e4';
-  referralReasonObs: object = {};
-  referralReason: string;
   referralConcepts = [{ concept: this.referralConcept, name: 'referral' },
-  { concept: this.urgentConcept, name: 'urgent' },
-  { concept: this.ReferralLocationConcept, name: 'referralLocation' },
-  { concept: this.ReferralReasonConcept, name: 'referralReason' }
+  { concept: this.referralTimeConcept, name: 'referralTime' }
   ];
   referralConceptsReview1 = [{ concept: this.referralConceptReview1, name: 'referral' },
-  { concept: this.urgentConceptReview1, name: 'urgent' },
-  { concept: this.ReferralLocationConceptReview1, name: 'referralLocation' },
-  { concept: this.ReferralReasonConceptReview1, name: 'referralReason' }
+  { concept: this.referralTimeConceptConceptReview1, name: 'referralTime' }
   ];
   referralConceptsReview2 = [{ concept: this.referralConceptReview2, name: 'referral' },
-  { concept: this.urgentConceptReview2, name: 'urgent' },
-  { concept: this.ReferralLocationConceptReview2, name: 'referralLocation' },
-  { concept: this.ReferralReasonConceptReview2, name: 'referralReason' }
+  { concept: this.referralTimeConceptConceptReview2, name: 'referralTime' }
   ];
   rightConcept: string;
   coordinator: Boolean = getFromStorage('coordinator') || false;
@@ -106,9 +91,8 @@ export class ReferralComponent implements OnInit {
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       this.encounterUuid = getEncounterUUID();
-      // tslint:disable-next-line: max-line-length
-      const concept = type === 'referralLocation' ? this[this.rightConcept][2].concept : type === 'referralReason' ? this[this.rightConcept][3].concept : type === 'referral' ? this[this.rightConcept][0].concept : this[this.rightConcept][1].concept;
-      const value = type === 'referralLocation' ? this.referralLocation : type === 'referralReason' ? this.referralReason : type === 'referral' ? this.referral : this.urgent;
+      const concept = type === 'referral' ? this.referralConcept : this.referralTimeConcept;
+      const value = type === 'referral' ? this.referral : this.referralTime;
       const json = {
         concept,
         person: this.patientId,
@@ -129,10 +113,8 @@ export class ReferralComponent implements OnInit {
   delete(type, uuid) {
     this.diagnosisService.deleteObs(uuid)
       .subscribe(res => {
-        if (type === 'referral' || type === 'urgent') {
+        if (type === 'referral' || type === 'referralTime') {
           this[type] = false;
-          this[`${type}Obs`] = {};
-        } else {
           this[`${type}Obs`] = {};
         }
       });

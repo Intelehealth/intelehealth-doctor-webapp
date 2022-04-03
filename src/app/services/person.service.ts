@@ -16,4 +16,9 @@ export class PersonService {
     const url = `${this.baseURL}/person/${personId}/attribute/${contactId}`;
     return this.http.post(url, value);
   }
+
+  getPatient(search): Observable<any> {
+    const url = `${this.baseURL}/patient?q=${search}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+    return this.http.get(url);
+  }
 }

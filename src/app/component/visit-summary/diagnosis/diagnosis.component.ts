@@ -32,7 +32,7 @@ export class DiagnosisComponent implements OnInit {
   leftDiagnosis: any = [];
   rightDiagnosis: any = [];
   diagnosisList = [];
-  eyeDiagnosisList = ['Immature Cataract', 'Mature Cataract', 'Refractive Error', 'Pterygium', 'Normal'];
+  eyeDiagnosisList = ['Immature Cataract', 'Mature Cataract', 'Refractive Error', 'Pterygium', 'Normal Eye Exam'];
   // conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
   conceptLeftEyeDiagnosis: String = '1796244d-e936-4ab8-ac8a-c9bcfa476570';
   conceptRightEyeDiagnosis: String = '58cae684-1509-4fd5-b256-5ca980ec6bb4';
@@ -100,9 +100,9 @@ export class DiagnosisComponent implements OnInit {
 
   search(event) {
     const searchedTerm = event?.target?.value.toLowerCase();
-    const list = ['Early Cataract', 'Nasal Pterygium', 'Corneal opacity', 'Pseudophakia', 'Conjunctivitis',
-          'Subconjunctival hemorrhage', 'Infectious Keratitis/ Corneal infection', 'Presbyopia',
-          'Corneal infection', 'Adherent Leucoma', 'Glaucoma Screening', 'Diabetic Retinopathy Screening',
+    const list = ['Inactive Corneal Opacity', 'Pseudophakia', 'Conjunctivitis',
+          'Subconjunctival hemorrhage', 'Presbyopia',
+          'Active Corneal Infection', 'Posterior Segment Screening',
           'Posterior Segment Screening', 'Cannot be assessed'];
     this.diagnosisList = list.filter(eye => eye.toLowerCase().includes(searchedTerm));
     // this.diagnosisService.getDiagnosisList(event.target.value)

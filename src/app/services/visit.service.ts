@@ -12,9 +12,9 @@ export class VisitService {
 
   constructor(private http: HttpClient) { }
 
-  getVisits(): Observable<any> {
+  getVisits(deleted = false): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
+    const url = `${this.baseURL}/visit?includeInactive=${deleted}&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate,attributes)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
     return this.http.get(url);
   }
 
