@@ -8,7 +8,7 @@ export const environment = {
   baseURLCoreApp : 'https://testing.visilant.org/openmrs/coreapps/diagnoses',
   baseURLLegacy: 'https://testing.visilant.org/openmrs',
   mindmapURL: 'http://localhost:3004/api',
-  azureImage: 'http://localhost:3006/api/v1'
+  azureImage: 'https://testing.visilant.org:3006/api/v1'
 };
 
 /*

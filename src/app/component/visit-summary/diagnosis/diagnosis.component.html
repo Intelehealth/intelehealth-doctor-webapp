@@ -5,6 +5,43 @@
     <form [formGroup]="diagnosisForm" id="dropdown-diagnosis">
       <div id="primary-confirm" class="flex">
         <div class="section">
+          <h5>Right Eye</h5>
+          <hr />
+          
+            <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="righteye">
+              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideRight')" [value]="disease">{{disease}} </mat-radio-button>
+              <mat-radio-button class="radio-button" value="Other" (change)="onChangeHandler('right')">Other</mat-radio-button>
+            </mat-radio-group>
+            <mat-form-field class="example-full-width" *ngIf="showRightEyeOtherInput">
+              <input matInput placeholder="Other" aria-label="State" 
+              [matAutocomplete]="auto" (keydown)="search($event)" formControlName="rightEyeOtherValue"/>
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let dia of diagnosisList" [value]="dia">
+                  <span>{{ dia }} </span>
+                  <!-- <span> -->
+                    <!-- <b>{{ state.name }}</b></span> -->
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary"
+            [disabled]="!diagnosisForm.valid">Add Right Eye Diagnosis</button>
+            <br />
+          
+          <ng-container *ngIf="rightDiagnosis.length > 0">
+            <br />
+            <div>
+              <ul class="list-unstyled">
+                <mat-list [@moveInLeft] *ngFor="let diagnosis of rightDiagnosis; index as i"
+                  class="alert alert-primary">
+                  <div class="doctor-value">{{ diagnosis.value }}</div>
+                  <i (click)="delete('right', i)" class="material-icons float-right" 
+                  style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
+                </mat-list>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+        <div class="section">
           <h5>Left Eye</h5>
           <hr />
           
@@ -42,53 +79,16 @@
           </ng-container>
 
         </div>
-        <div class="section">
-          <h5>Right Eye</h5>
-          <hr />
-          
-            <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="righteye">
-              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideRight')" [value]="disease">{{disease}} </mat-radio-button>
-              <mat-radio-button class="radio-button" value="Other" (change)="onChangeHandler('right')">Other</mat-radio-button>
-            </mat-radio-group>
-            <mat-form-field class="example-full-width" *ngIf="showRightEyeOtherInput">
-              <input matInput placeholder="Other" aria-label="State" 
-              [matAutocomplete]="auto" (keydown)="search($event)" formControlName="rightEyeOtherValue"/>
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let dia of diagnosisList" [value]="dia">
-                  <span>{{ dia }} </span>
-                  <!-- <span> -->
-                    <!-- <b>{{ state.name }}</b></span> -->
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-            <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary"
-            [disabled]="!diagnosisForm.valid">Add Right Eye Diagnosis</button>
-            <br />
-          
-          <ng-container *ngIf="rightDiagnosis.length > 0">
-            <br />
-            <div>
-              <ul class="list-unstyled">
-                <mat-list [@moveInLeft] *ngFor="let diagnosis of rightDiagnosis; index as i"
-                  class="alert alert-primary">
-                  <div class="doctor-value">{{ diagnosis.value }}</div>
-                  <i (click)="delete('right', i)" class="material-icons float-right" 
-                  style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
-                </mat-list>
-              </ul>
-            </div>
-          </ng-container>
-        </div>
       </div>
     </form>
   </div>
   <div *ngIf="coordinator">
     <ul>
-      <li *ngIf="leftDiagnosis.length">
-        <div>Left Eyes: <span *ngFor="let diagnosis of leftDiagnosis"> {{diagnosis.value }} </span></div>
-      </li>
       <li *ngIf="rightDiagnosis.length">
         <div>Right Eyes: <span *ngFor="let diagnosis of rightDiagnosis"> {{ diagnosis.value }} </span></div>
+      </li>
+      <li *ngIf="leftDiagnosis.length">
+        <div>Left Eyes: <span *ngFor="let diagnosis of leftDiagnosis"> {{diagnosis.value }} </span></div>
       </li>
     </ul>
   </div>

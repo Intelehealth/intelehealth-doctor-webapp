@@ -36,6 +36,8 @@ export class PhysicalExaminationComponent implements OnInit {
           };
           this.images.push(data);
         });
+      } else {
+        saveToStorage('physicalImages', []);
       }
     });
     // this.diagnosisService.getObs(patientUuid, this.conceptPhysicalExamination)
