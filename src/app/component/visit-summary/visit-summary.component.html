@@ -113,13 +113,13 @@
                         color="primary"
                         [disabled]="visitCompletePresent && !reviewVisit1 && !reviewVisit2"
                         >
-                        Sign and Submit
+                        Submit and Next
                         </button>
                   </div>
             </div>
 
             <!-- Next Visist Button -->
-            <div>
+            <!-- <div>
                   <div *ngIf="visitCompletePresent && !noVisit && next?.patientId" class="text-right">
                         <button mat-raised-button color="primary" [routerLink]="['/visitSummary', next.patientId, next.visitId]">Next Visit</button>
                   </div>
@@ -129,7 +129,7 @@
                   <div *ngIf="!visitCompletePresent && !noVisit && next?.patientId" class="text-right">
                         <i>There are no complete visits</i>
                   </div>
-            </div>
+            </div> -->
       
       </div>
 

@@ -188,6 +188,10 @@ export class VisitSummaryComponent implements OnInit {
             .subscribe(post => {
               this.visitCompletePresent = true;
               this.snackbar.open('Visit Complete', null, { duration: 4000 });
+              if (this.next && !this.noVisit) {
+                this.router.navigateByUrl(`/visitSummary/${this.next.patientId}/${this.next.visitId}`);
+
+              }
             });
         } else {
           if (window.confirm('Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website ')) {
