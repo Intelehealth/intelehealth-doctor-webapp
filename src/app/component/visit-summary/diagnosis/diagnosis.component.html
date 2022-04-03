@@ -7,26 +7,25 @@
         <div class="section">
           <h5>Right Eye</h5>
           <hr />
-          
             <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="righteye">
-              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideRight')" [value]="disease">{{disease}} </mat-radio-button>
+              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideRight', 'right')" [value]="disease">{{disease}} </mat-radio-button>
               <mat-radio-button class="radio-button" value="Other" (change)="onChangeHandler('right')">Other</mat-radio-button>
             </mat-radio-group>
             <mat-form-field class="example-full-width" *ngIf="showRightEyeOtherInput">
               <input matInput placeholder="Other" aria-label="State" 
-              [matAutocomplete]="auto" (keydown)="search($event)" formControlName="rightEyeOtherValue"/>
+              [matAutocomplete]="auto" (keydown)="search($event)" (keyup)="onKeyUpHandler($event, 'right')" formControlName="rightEyeOtherValue"/>
               <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let dia of diagnosisList" [value]="dia">
                   <span>{{ dia }} </span>
-                  <!-- <span> -->
-                    <!-- <b>{{ state.name }}</b></span> -->
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-            <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary"
+            <!-- <button type="reset" (click)="onSubmit('right')" mat-raised-button color="primary"
             [disabled]="!diagnosisForm.valid">Add Right Eye Diagnosis</button>
-            <br />
+            <br /> -->
           
+          
+          <!-- display selected values -->
           <ng-container *ngIf="rightDiagnosis.length > 0">
             <br />
             <div>
@@ -44,26 +43,25 @@
         <div class="section">
           <h5>Left Eye</h5>
           <hr />
-          
             <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="lefteye">
-              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideLeft')" [value]="disease">{{disease}} </mat-radio-button>
+              <mat-radio-button class="radio-button" *ngFor="let disease of eyeDiagnosisList" (change)="onChangeHandler('hideLeft', 'left')" [value]="disease">{{disease}} </mat-radio-button>
               <mat-radio-button class="radio-button" value="Other" (change)="onChangeHandler('left')">Other</mat-radio-button>
             </mat-radio-group>
             <mat-form-field class="example-full-width" *ngIf="showLeftEyeOtherInput">
               <input matInput placeholder="Other" aria-label="State" 
-              [matAutocomplete]="auto" (keydown)="search($event)" formControlName="leftEyeOtherValue"/>
+              [matAutocomplete]="auto" (keydown)="search($event)" (keyup)="onKeyUpHandler($event, 'left')" formControlName="leftEyeOtherValue"/>
               <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let dia of diagnosisList" [value]="dia">
                   <span>{{ dia }} </span>
-                  <!-- <span>
-                    <b>{{ state.name }}</b></span> -->
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-            <button type="reset" (click)="onSubmit('left')" mat-raised-button color="primary"
+            <!-- <button type="reset" (click)="onSubmit('left')" mat-raised-button color="primary"
             [disabled]="!diagnosisForm.valid">Add Left Eye Diagnosis</button>
-            <br />
+            <br /> -->
           
+
+          <!-- display selected values -->
           <ng-container *ngIf="leftDiagnosis.length > 0">
             <br />
             <div>
@@ -82,6 +80,8 @@
       </div>
     </form>
   </div>
+
+  <!-- coordinator -->
   <div *ngIf="coordinator">
     <ul>
       <li *ngIf="rightDiagnosis.length">

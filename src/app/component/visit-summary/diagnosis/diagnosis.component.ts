@@ -105,29 +105,37 @@ export class DiagnosisComponent implements OnInit {
           'Active Corneal Infection', 'Posterior Segment Screening',
           'Posterior Segment Screening', 'Cannot be assessed'];
     this.diagnosisList = list.filter(eye => eye.toLowerCase().includes(searchedTerm));
-    // this.diagnosisService.getDiagnosisList(event.target.value)
-    //   .subscribe(response => {
-    //     this.diagnosisList = response;
-    //   });
   }
 
-  onChangeHandler = (type) => {
+  onChangeHandler = (type, side) => {
     if (type === 'right') {
       this.showRightEyeOtherInput = true;
     } else if (type === 'hideLeft') {
       this.showLeftEyeOtherInput = false;
+      setTimeout(() => this.onSubmit(side), 200);
     } else if (type === 'hideRight') {
-        this.showRightEyeOtherInput = false;
+      this.showRightEyeOtherInput = false;
+      setTimeout(() => this.onSubmit(side), 200);
     } else {
       this.showLeftEyeOtherInput = true;
+    }
+  }
+
+  onKeyUpHandler = (event, side) => {
+    if (event.key === 'Enter' || event.keyCode === 13) {
+      const value = this.diagnosisForm.value;
+      if (side === 'left') {
+        this.diagnosisForm.controls.lefteye.setValue(value.leftEyeOtherValue);
+      } else {
+        this.diagnosisForm.controls.righteye.setValue(value.rightEyeOtherValue);
+      }
+      setTimeout(() => this.onSubmit(side), 200);
     }
   }
 
   onSubmit(side) {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    value.lefteye = value.lefteye === 'Other' ? value.leftEyeOtherValue : value.lefteye;
-    value.righteye = value.righteye === 'Other' ? value.rightEyeOtherValue : value.righteye;
     const providerDetails = getFromStorage('provider');
     if (providerDetails && providerDetails.uuid === getEncounterProviderUUID() || this.showDetails) {
       this.encounterUuid = getEncounterUUID();
@@ -140,6 +148,7 @@ export class DiagnosisComponent implements OnInit {
       };
       this.service.postObs(json)
         .subscribe(resp => {
+          this.diagnosisForm.reset();
           const allImages = getFromStorage('physicalImages');
           const filteredImage = allImages.filter(image => image.type === side);
           if (filteredImage.length) {
