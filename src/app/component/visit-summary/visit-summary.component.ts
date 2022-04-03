@@ -94,8 +94,8 @@ export class VisitSummaryComponent implements OnInit {
       const currentVisit = visitData.findIndex((visit: any) => this.visitUuid === visit.visitId);
       if (currentVisit !== -1) {
         this.next = {
-          patientId: this.allVisit[currentVisit + 1]['patientId'],
-          visitId: this.allVisit[currentVisit + 1]['visitId']
+          patientId: visitData[currentVisit + 1]['patientId'],
+          visitId: visitData[currentVisit + 1]['visitId']
         };
       }
     } else {
