@@ -131,19 +131,13 @@ export class DiagnosisComponent implements OnInit {
     const providerDetails = getFromStorage('provider');
     if (providerDetails && providerDetails.uuid === getEncounterProviderUUID() || this.showDetails) {
       this.encounterUuid = getEncounterUUID();
-      let concept1 = side === 'right' ? this[this.rightConcept][1].concept : this[this.rightConcept][0].concept;
-        // tslint:disable-next-line: max-line-length
-      let concept2 = side === 'right' ? this.showDetails ? this.conceptCoordinatorRightEyeDiagnosis : this.conceptRightEyeDiagnosis : this.showDetails ? this.conceptCoordinatorLeftEyeDiagnosis : this.conceptLeftEyeDiagnosis;
-      console.log('concept1', concept1)
-      console.log('concept2',concept2)
       const json = {
-        concept: concept1,
+        concept: side === 'right' ? this.showDetails ? this.conceptCoordinatorRightEyeDiagnosis : this[this.rightConcept][1].concept : this.showDetails ? this.conceptCoordinatorLeftEyeDiagnosis : this[this.rightConcept][0].concept,
         person: this.patientId,
         obsDatetime: date,
         value: side === 'right' ? value.righteye : value.lefteye,
         encounter: this.encounterUuid
       };
-      console.log(json)
       this.service.postObs(json)
         .subscribe(resp => {
           const allImages = getFromStorage('physicalImages');
