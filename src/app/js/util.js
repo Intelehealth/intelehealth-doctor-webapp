@@ -3,7 +3,10 @@ const saveToStorage = (name, value) => {
 }
 
 const getFromStorage = (name) => {
-    return JSON.parse(localStorage.getItem(name));
+    const item = localStorage.getItem(name);
+    if (item !== 'undefined') {
+        return JSON.parse(item);
+    } else return undefined;
 }
 
 const deleteFromStorage = (name) => {

@@ -1,0 +1,14 @@
+.flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-items {
+    width: 25%;
+}
+
+@media only screen and (max-width: 768px) { 
+    .flex-items {
+        width: 100%;
+    }
+}

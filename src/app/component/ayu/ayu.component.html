@@ -5,8 +5,8 @@
         <mat-form-field>
           <mat-label>MindMap Key</mat-label>
           <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
-            <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keys">
-              {{ mindmap.keys }}
+            <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
+              {{ mindmap.keyName }}
             </mat-option>
           </mat-select>
         </mat-form-field>

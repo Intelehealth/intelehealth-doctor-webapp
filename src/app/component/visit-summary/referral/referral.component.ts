@@ -66,6 +66,7 @@ export class ReferralComponent implements OnInit {
   { concept: this.ReferralReasonConceptReview2, name: 'referralReason' }
   ];
   rightConcept: string;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,

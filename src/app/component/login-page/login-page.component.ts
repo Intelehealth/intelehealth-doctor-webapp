@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
-declare var saveToStorage: any;
+declare var saveToStorage: any, deleteFromStorage: any;
 
 @Component({
   selector: 'app-login-page',
@@ -37,6 +37,11 @@ export class LoginPageComponent implements OnInit {
     const base64 = btoa(string);
     this.sessionService.loginSession(base64).subscribe(response => {
       if (response.authenticated === true) {
+        if (response.user.roles.some(role => role.display.match('Coordinator'))) {
+          this.authService.setCoordinator();
+        } else {
+          deleteFromStorage('coordinator');
+        }
         this.router.navigate(['/home']);
         this.authService.sendToken(response.sessionId);
         saveToStorage('user', response.user);

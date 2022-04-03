@@ -36,6 +36,7 @@ export class AdditionalCommentComponent implements OnInit {
   conceptCommentReview2 = '3685ce27-b556-4e56-9f5b-c44fa8141e6c';
 
   rightConcept: string;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])

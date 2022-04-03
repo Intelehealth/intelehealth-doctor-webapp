@@ -11,6 +11,7 @@ declare var getFromStorage: any, saveToStorage: any, getEncounterProviderUUID: a
   templateUrl: './visit-summary.component.html',
   styleUrls: ['./visit-summary.component.css']
 })
+
 export class VisitSummaryComponent implements OnInit {
   show = false;
   text: string;
@@ -22,10 +23,12 @@ export class VisitSummaryComponent implements OnInit {
   setSpiner = true;
   doctorDetails; doctorValue;
   allVisit: Array<{}> = getFromStorage('allAwaitingConsult');
+  allReferralVisit: Array<{}> = getFromStorage('referral');
   visitUuid: String = '';
   patientUuid: String = '';
   next: any;
   noVisit: Boolean = false;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private service: EncounterService,
     private visitService: VisitService,
@@ -68,6 +71,9 @@ export class VisitSummaryComponent implements OnInit {
               saveToStorage('visitNoteProvider', visit);
             }
           }
+          if (visit.display.match('ADULTINITIAL') || visit.display.match('Vitals')) {
+            saveToStorage('healthWorkerDetails', visit);
+          }
           if (visit.display.match('Visit Complete') !== null) {
             this.visitCompletePresent = true;
             visit.encounterProviders[0].provider.attributes.forEach(element => {
@@ -80,12 +86,12 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
       });
-    this.nextVisitButton();
+    this.nextVisitButton(this.coordinator ? this.allReferralVisit : this.allVisit);
   }
 
-  nextVisitButton() {
-    if (this.allVisit.length > 1) {
-      const currentVisit = this.allVisit.findIndex((visit: any) => this.visitUuid === visit.visitId);
+  nextVisitButton(visitData) {
+    if (visitData.length) {
+      const currentVisit = visitData.findIndex((visit: any) => this.visitUuid === visit.visitId);
       if (currentVisit !== -1) {
         this.next = {
           patientId: this.allVisit[currentVisit + 1]['patientId'],
@@ -207,11 +213,8 @@ export class VisitSummaryComponent implements OnInit {
     this.doctorValue = doctor;
   }
 
-
   filterAttributes = (data, text) => {
     return data.filter(attr => attr.attributeType['display'].toLowerCase() === text.toLowerCase());
   }
 
-
 }
-

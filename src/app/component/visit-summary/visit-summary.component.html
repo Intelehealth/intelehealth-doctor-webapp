@@ -8,35 +8,12 @@
     <app-patientinfo></app-patientinfo>
   </mat-card>
   <br />
-  <!--      <mat-card >
-            <app-past-visits></app-past-visits>
-      </mat-card>
-
-<br>
-
-      <mat-card>
-            <app-current-visit></app-current-visit>
-      </mat-card>
-<br>
-      <mat-card>
-            <app-presenting-complaints></app-presenting-complaints>
-      </mat-card>
-      <br />
-   <mat-card>
-            <app-family-history></app-family-history>
-      </mat-card>
-      <br />
--->
+  
   <mat-card>
     <app-past-medical-history></app-past-medical-history>
   </mat-card>
   <br />
-  <!--      <mat-card >
-            <app-vital></app-vital>
-      </mat-card>
-
-<br>
--->
+ 
   <mat-card>
     <app-on-examination></app-on-examination>
   </mat-card>
@@ -78,77 +55,82 @@
     </button>
   </div>
 
-  <!--
-      <mat-card>
-            <app-prescribed-medication></app-prescribed-medication>
-      </mat-card>
-<br>
-      <mat-card>
-            <app-prescribed-test></app-prescribed-test>
-      </mat-card>
-<br>
-
-      <mat-card>
-            <app-advice></app-advice>
-      </mat-card>
-<br>
--->
-
   <br />
-  <div *ngIf="show">
-    <br />
-    <mat-card>
-      <app-referral></app-referral>
-    </mat-card>
-    <br />
-    <mat-card>
-      <app-diagnosis></app-diagnosis>
-    </mat-card>
-    <br />
-    <mat-card>
-      <app-additional-comment></app-additional-comment>
-    </mat-card>
-    <br />
-    <!-- <mat-card>
-      <app-patient-interaction></app-patient-interaction>
-    </mat-card>
-    <br /> -->
-    <ng-container *ngIf="visitCompletePresent && !reviewVisit1 && !reviewVisit2">
-      <div class="d-flex justify-content-center">
-        <mat-card>
-          <div [style.font-family]="font" style="font-size: 50px">
-            {{ text }}
-          </div>
-        </mat-card>
-      </div>
-      <br />
-    </ng-container>
+      <div *ngIf="show">
+            <br />
+            <mat-card>
+                  <app-referral></app-referral>
+            </mat-card>
+            <br />
+            <mat-card>
+                  <app-diagnosis></app-diagnosis>
+                  <br *ngIf="coordinator"/>
+                  <app-additional-comment *ngIf="coordinator"></app-additional-comment>
+            </mat-card>
+            <div *ngIf="!coordinator">
+                  <br />
+                  <mat-card >
+                        <app-additional-comment></app-additional-comment>
+                  </mat-card>
+            </div>
+            <br />
+            <div *ngIf="coordinator">
+                  <mat-card>
+                        <app-patientinfo [showDetails]=true></app-patientinfo>
+                  </mat-card>
+                  <br />
+            </div>
+            <div *ngIf="coordinator">
+                  <mat-card>
+                        <app-past-calls></app-past-calls>
+                  </mat-card>
+                  <br />
+                  <mat-card>
+                        <app-update-status></app-update-status>
+                  </mat-card>
+            </div>
+            <br />
+            <br />
 
-    <div class="text-center">
-      <button
-        (click)="sign()"
-        id="sign-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="visitCompletePresent && !reviewVisit1 && !reviewVisit2"
-      >
-        Sign and Submit
-      </button>
-    </div>
-    <div
-      *ngIf="visitCompletePresent && !noVisit && next?.patientId"
-      class="text-right"
-    >
-      <button
-        mat-raised-button
-        color="primary"
-        [routerLink]="['/visitSummary', next.patientId, next.visitId]"
-      >
-        Next Visit
-      </button>
-    </div>
-    <div *ngIf="visitCompletePresent && noVisit" class="text-right">
-      <i>There are no visits awaiting consult</i>
-    </div>
-  </div>
+            <!-- Submit Button -->
+            <div *ngIf="!coordinator">
+                  <ng-container *ngIf="visitCompletePresent">
+                        <div class="d-flex justify-content-center">
+                        <mat-card>
+                        <div [style.font-family]="font" style="font-size: 50px">
+                              {{ text }}
+                        </div>
+                        </mat-card>
+                        </div>
+                        <br />
+                  </ng-container>
+            
+                  <div class="text-center">
+                        <button
+                        (click)="sign()"
+                        id="sign-button"
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="visitCompletePresent && !reviewVisit1 && !reviewVisit2"
+                        >
+                        Sign and Submit
+                        </button>
+                  </div>
+            </div>
+
+            <!-- Next Visist Button -->
+            <div>
+                  <div *ngIf="visitCompletePresent && !noVisit && next?.patientId" class="text-right">
+                        <button mat-raised-button color="primary" [routerLink]="['/visitSummary', next.patientId, next.visitId]">Next Visit</button>
+                  </div>
+                  <div *ngIf="visitCompletePresent && noVisit" class="text-right">
+                        <i>There are no visits awaiting consult</i>
+                  </div>
+                  <div *ngIf="!visitCompletePresent && !noVisit && next?.patientId" class="text-right">
+                        <i>There are no complete visits</i>
+                  </div>
+            </div>
+      
+      </div>
+
 </div>

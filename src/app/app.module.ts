@@ -70,7 +70,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ReferralComponent } from './component/visit-summary/referral/referral.component';
+import { CoOrdinatorComponent } from './component/homepage/tables/co-ordinator-table/co-ordinator.component';
+import { PastCallsComponent } from './component/visit-summary/past-calls/past-calls.component';
+import { UpdateStatusComponent } from './component/visit-summary/update-status/update-status.component';
+import { ModalComponent } from './component/visit-summary/update-status/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +112,10 @@ import { ReferralComponent } from './component/visit-summary/referral/referral.c
     CurrentVisitComponent,
     ModalsComponent,
     ReferralComponent,
+    CoOrdinatorComponent,
+    PastCallsComponent,
+    UpdateStatusComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -134,6 +143,7 @@ import { ReferralComponent } from './component/visit-summary/referral/referral.c
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatCheckboxModule,
+    MatSlideToggleModule,
     NgbModule,
     HttpClientModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),

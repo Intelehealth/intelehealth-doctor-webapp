@@ -19,6 +19,23 @@ export interface VisitData {
   provider: string;
 }
 
+interface ReferralHomepage {
+  awaitingCall: Array<{}>;
+  awaitingHospital: Array<{}>;
+  totalVisistInHospial: number;
+}
+
+interface ReferralVisit {
+  visitId: string;
+  patientId: string;
+  urgent: Boolean;
+  id: string;
+  name: string;
+  gender: string;
+  dueDate: Date;
+  status: string;
+  lastCalled: Date;
+}
 
 @Component({
   selector: 'app-homepage',
@@ -28,6 +45,9 @@ export interface VisitData {
 
 export class HomepageComponent implements OnInit {
   value: any = {};
+  referralVisit: ReferralHomepage = { awaitingCall : [], awaitingHospital: [], totalVisistInHospial: 0};
+  referralCallValues: ReferralVisit[] = [];
+  referralHospitalValues: ReferralVisit[] = [];
   activePatient: number;
   flagPatientNo: number;
   visitNoteNo: number;
@@ -39,10 +59,11 @@ export class HomepageComponent implements OnInit {
   setSpiner = true;
   review1: VisitData[] = [];
   review2: VisitData[] = [];
+  coordinator: Boolean = getFromStorage('coordinator') || false;
 
   constructor(private sessionService: SessionService,
     private authService: AuthService,
-    private service: VisitService,
+    private visitService: VisitService,
     private snackbar: MatSnackBar) { }
 
   ngOnInit() {
@@ -60,7 +81,26 @@ export class HomepageComponent implements OnInit {
           // });
         });
     } else { this.authService.logout(); }
-    this.service.getVisits()
+    if (this.coordinator) {
+      this.getReferralVisits();
+    } else {
+      this.getVisits();
+    }
+  }
+
+  onChange(event) {
+    if (event) {
+      this.coordinator = true;
+      this.getReferralVisits();
+    } else {
+      this.coordinator = false;
+      this.getVisits();
+    }
+    saveToStorage('coordinator', event);
+  }
+
+  getVisits() {
+    this.visitService.getVisits()
       .subscribe(response => {
         const visits = response.results;
         let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
@@ -232,6 +272,89 @@ export class HomepageComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  getReferralVisits() {
+    this.visitService.getReferralVisits()
+      .subscribe(async visits => {
+        if (visits) {
+          visits.results.forEach(visit => {
+            if (visit.encounters.length > 1) {
+              const visitNote = visit.encounters.filter(enc => enc.display.match('Visit Note'));
+              if (visitNote.length) {
+                visitNote.forEach((encounter, index) => {
+                  const referral = encounter.obs.filter(ob => ob.display.match('Referral'));
+                  if (referral.length) {
+                    const data = visit;
+                    data.referralDate = referral[0].obsDatetime;
+                    const coOrdinatorStatus = visitNote[index].obs.filter(ob => ob.display.match('co-ordinator status'));
+                    if (visitNote[index].obs.some(ob => ob.display.match('Urgent Referral'))) {
+                      data.urgent = true;
+                    }
+                    if (coOrdinatorStatus.length) {
+                      // tslint:disable-next-line: max-line-length
+                      const latestUpdate = coOrdinatorStatus.sort((a: any, b: any) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+                      data.status = JSON.parse(latestUpdate[0].value).status;
+                      if (data.status === 'Will come to hospital') {
+                        data.referralDate = coOrdinatorStatus[0].obsDatetime;
+                        data.lastCalled = coOrdinatorStatus[0].obsDatetime;
+                        this.referralVisit.awaitingHospital.push(data);
+                      } else if (data.status === 'Patient need a callback') {
+                        try {
+                          data.dueDate = JSON.parse(coOrdinatorStatus[0].value).date;
+                        } catch (e) {}
+                        data.referralDate = coOrdinatorStatus[0].obsDatetime;
+                        data.lastCalled = coOrdinatorStatus[0].obsDatetime;
+                        this.referralVisit.awaitingCall.push(data);
+                      } else if (data.status === 'Patient came to Aravind') {
+                        this.referralVisit.totalVisistInHospial += 1;
+                      }
+                    } else {
+                      this.referralVisit.awaitingCall.push(data);
+                    }
+                  }
+                });
+              }
+            }
+          });
+          await this.assignValueToReferralProperty(this.referralVisit.awaitingCall, 'referralCallValues');
+          await this.assignValueToReferralProperty(this.referralVisit.awaitingHospital, 'referralHospitalValues');
+          this.setSpiner = false;
+        }
+      });
+  }
+
+  addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  assignValueToReferralProperty(visits, variable) {
+    const data = [];
+    return new Promise((resolve, reject) => {
+      if (visits.length) {
+        visits.forEach((visit, index) => {
+          data.push({
+            visitId: visit.uuid,
+            patientId: visit.patient.uuid,
+            urgent: visit.urgent || false,
+            id: visit.patient.identifiers[0].identifier,
+            name: visit.patient.person.display,
+            gender: visit.patient.person.gender,
+            dueDate: visit.dueDate ? visit.dueDate : this.addDays(visit.referralDate, variable === 'referralHospitalValues' ? 14 : 3),
+            status: visit.status || 'Need Callback',
+            lastCalled: visit.lastCalled
+          });
+          if (visits.length === index + 1) {
+            this[variable] = data;
+            resolve(data);
+          }
+        });
+      } else {
+        resolve(data);
+      }
+    });
   }
 
 }

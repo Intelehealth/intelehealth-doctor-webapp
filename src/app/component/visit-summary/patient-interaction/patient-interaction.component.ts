@@ -71,6 +71,7 @@ export class PatientInteractionComponent implements OnInit {
     //             if (attribute.display.match('whatsapp') != null) {
     //               const whatsapp = attribute.value;
     //               // tslint:disable-next-line: max-line-length
+    // tslint:disable-next-line: max-line-length
     //               const text = encodeURI(`Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`);
     //               this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
     //             }

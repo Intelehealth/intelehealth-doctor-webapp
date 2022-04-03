@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ImagesService } from 'src/app/services/images.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { v4 as uuidv4 } from 'uuid';
 declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID: any, checkReview: any;
 
 @Component({
@@ -38,11 +40,16 @@ export class DiagnosisComponent implements OnInit {
   conceptRightEyeDiagnosisReview1: String = 'f7d5d646-bb4e-4f26-970d-0df61b3b138f';
   conceptLeftEyeDiagnosisReview2: String = '7323ebb4-9ac2-4bd7-8ef5-3988d7bf6f7c';
   conceptRightEyeDiagnosisReview2: String = '7633430a-fef7-4d6b-ba47-238bafa68024';
+  conceptCoordinatorLeftEyeDiagnosis: String = 'e91cda51-caed-4f95-8a94-97135b5a865d';
+  conceptCoordinatorRightEyeDiagnosis: String = 'b30f2a76-e216-48cf-aa6d-d50e6cca917f';
   patientId: string;
   visitUuid: string;
   encounterUuid: string;
   showLeftEyeOtherInput: Boolean = false;
   showRightEyeOtherInput: Boolean = false;
+  coordinator: Boolean = getFromStorage('coordinator') || false;
+  @Input() showDetails;
+  @Input() data;
 
   diagnosisConcept = [
     {concept: this.conceptLeftEyeDiagnosis, name: 'leftDiagnosis'},
@@ -69,13 +76,14 @@ export class DiagnosisComponent implements OnInit {
   });
 
   constructor(private service: EncounterService,
+    private imageService: ImagesService,
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
-    this.patientId = this.route.snapshot.params['patient_id'];
+    this.patientId = this.route.snapshot.params['patient_id'] || this.data.patientId;
     const reviewVisit = checkReview(this.visitUuid);
     this.rightConcept = reviewVisit?.reviewType === 1 ? 'diagnosisConceptReview1' : reviewVisit?.reviewType === 2 ? 'diagnosisConceptReview2' : 'diagnosisConcept';
     this[this.rightConcept].forEach(each => {
@@ -121,18 +129,40 @@ export class DiagnosisComponent implements OnInit {
     value.lefteye = value.lefteye === 'Other' ? value.leftEyeOtherValue : value.lefteye;
     value.righteye = value.righteye === 'Other' ? value.rightEyeOtherValue : value.righteye;
     const providerDetails = getFromStorage('provider');
-    const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (providerDetails && providerDetails.uuid === getEncounterProviderUUID() || this.showDetails) {
       this.encounterUuid = getEncounterUUID();
+      let concept1 = side === 'right' ? this[this.rightConcept][1].concept : this[this.rightConcept][0].concept;
+        // tslint:disable-next-line: max-line-length
+      let concept2 = side === 'right' ? this.showDetails ? this.conceptCoordinatorRightEyeDiagnosis : this.conceptRightEyeDiagnosis : this.showDetails ? this.conceptCoordinatorLeftEyeDiagnosis : this.conceptLeftEyeDiagnosis;
+      console.log('concept1', concept1)
+      console.log('concept2',concept2)
       const json = {
-        concept: side === 'right' ? this[this.rightConcept][1].concept : this[this.rightConcept][0].concept,
+        concept: concept1,
         person: this.patientId,
         obsDatetime: date,
         value: side === 'right' ? value.righteye : value.lefteye,
         encounter: this.encounterUuid
       };
+      console.log(json)
       this.service.postObs(json)
         .subscribe(resp => {
+          const allImages = getFromStorage('physicalImages');
+          const filteredImage = allImages.filter(image => image.type === side);
+          if (filteredImage.length) {
+            const payload = {
+              id: uuidv4(),
+              diagnosis: json.value,
+              created_by: providerDetails.person.display,
+              images: []
+            };
+            filteredImage.forEach(im => {
+              payload.images.push({
+                ...im,
+                diagnosis_id: payload.id
+              });
+            });
+            this.imageService.saveDiagnosis(payload).subscribe(resposne => {console.log(resposne)});
+          }
           this.diagnosisList = [];
           this[side === 'right' ? 'rightDiagnosis' : 'leftDiagnosis'].push({ uuid: resp.uuid, value: json.value });
         });

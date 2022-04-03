@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
-declare var deleteFromStorage: any;
+declare var deleteFromStorage: any, saveToStorage: any, getFromStorage: any;
 
 @Injectable({
   providedIn: 'root'
@@ -34,9 +34,18 @@ export class AuthService {
         deleteFromStorage('user');
         deleteFromStorage('provider');
         deleteFromStorage('visitNoteProvider');
+        deleteFromStorage('coordinator');
         this.cookieService.deleteAll();
         this.myRoute.navigate(['/']);
+      });
     });
-    });
+  }
+
+  setCoordinator() {
+    saveToStorage('coordinator', true);
+  }
+
+  isCoordinator() {
+    return getFromStorage('coordinator');
   }
 }

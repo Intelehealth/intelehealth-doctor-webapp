@@ -1,0 +1,28 @@
+<h4><i class="material-icons">add_task</i> Update Status</h4>
+<hr>
+<div>
+    <form [formGroup]="coordinatorStatus" class="flex">
+        <mat-form-field class="flex-items">
+            <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" formControlName='date'>
+            <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+            <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field class="flex-items">
+            <mat-select placeholder="Choose a status" formControlName="status">
+                <mat-option value="Patient came to Aravind">Patient came to Aravind</mat-option>
+                <mat-option value="Will come to hospital">Will come to hospital</mat-option>
+                <mat-option value="No further contact">No further contact</mat-option>
+                <mat-option value="Patient need a callback">Patient need a callback</mat-option>
+                <mat-option value="Patient went to different hospital">Patient went to different hospital</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <textarea matInput placeholder="Notes" formControlName='comment'></textarea>
+        </mat-form-field>
+        <div style="width: 150px;">
+            <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!coordinatorStatus.valid">Submit</button>
+        </div>
+    </form>
+</div>

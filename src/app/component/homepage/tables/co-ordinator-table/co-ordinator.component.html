@@ -1,0 +1,61 @@
+<mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+  </mat-form-field>
+  
+  <div class="mat-elevation-z8">
+    <table class="table-responsive" mat-table [dataSource]="dataSource" #sortCol4="matSort" matSort>
+        
+        <!-- Urgent Column -->
+        <ng-container matColumnDef="urgent">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Urgent </th>
+            <td mat-cell *matCellDef="let row"><span *ngIf=row.urgent class="material-icons" style="color: red;">error</span></td>
+        </ng-container>
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID </th>
+        <td mat-cell *matCellDef="let row"><a id="patient-id" (click)="addEvent(dataSource)" [routerLink]="['/visitSummary', row.patientId, row.visitId]">
+            {{row.id}} </a></td>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+        <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+      </ng-container>
+  
+      <!-- Gender Column -->
+      <ng-container matColumnDef="gender">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
+        <td mat-cell *matCellDef="let row"> {{row.gender}} </td>
+      </ng-container>
+  
+      <!-- Date OF Birth Column -->
+      <ng-container matColumnDef="dueDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </th>
+        <td mat-cell *matCellDef="let row"> {{row.dueDate | date: 'dd-MMM-yyyy'}} </td>
+      </ng-container>
+  
+      <!-- Status column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let row">
+          <div class="badge badge-pill"
+            [ngClass]="{'badge-danger': row.status == 'Flagged','badge-warning': row.status == 'ADULTINITIAL' || row.status == 'Vitals', 'badge-success': row.status === 'Visit Complete', 'badge-info': row.status === 'Visit Note'}">
+            {{row.status === 'Flagged' ? 'Priority' : row.status}}</div>
+        </td>
+      </ng-container>
+  
+      <!-- lastCalled column -->
+      <ng-container matColumnDef="lastCalled">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Called </th>
+          <td mat-cell *matCellDef="let row"> {{row.lastCalled | date: 'dd-MMM-yyyy'}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayColumns" id="columns-sorting"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayColumns;">
+      </tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
