@@ -94,6 +94,7 @@ import { CalendarModule, DateAdapter } from "angular-calendar";
 import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
+import { TestChatComponent } from "./component/test-chat/test-chat.component";
 
 @NgModule({
   declarations: [
@@ -140,6 +141,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
     VcComponent,
     HoverClassDirective,
     ChatComponent,
+    TestChatComponent
   ],
 
   imports: [
@@ -243,6 +245,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
               redirectTo: "appointment/view",
               pathMatch: "full",
             },
+            { path: "test/chat", component: TestChatComponent },
             {
               path: "vc/call",
               component: VcComponent,
