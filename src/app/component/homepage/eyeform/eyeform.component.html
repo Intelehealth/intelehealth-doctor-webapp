@@ -119,7 +119,7 @@
             <div style="display: flex; align-items: baseline; justify-content: space-between;">
               <mat-radio-group class="radio-group" formControlName="complaintRight">
                 <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintright"
-                  (change)="selected($event.value, true, 'patientcomplaintright')"
+                  (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintright')"
                   [value]="data.value">{{ data.name }}</mat-radio-button>
               </mat-radio-group>
               <div class="radio-group">
@@ -129,7 +129,7 @@
                 <mat-radio-group class="radio-group" formControlName="complaintLeft">
                   <mat-radio-button class="radio-button"
                     *ngFor="let data of patientcomplaintleft"
-                    (change)="selected($event.value, true, 'patientcomplaintleft')"
+                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintleft')"
                     [value]="data.value">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
@@ -152,7 +152,7 @@
             <div style="display: flex; align-items: baseline; justify-content: space-between;">
               <mat-radio-group class="radio-group" formControlName="diagnosisRight">
                 <mat-radio-button class="radio-button" *ngFor="let data of diagnosisright"
-                  (change)="selected($event.value, true, 'diagnosisright')" [value]="data.value">{{ data.name }}</mat-radio-button>
+                  (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisright')" [value]="data.value">{{ data.name }}</mat-radio-button>
               </mat-radio-group>
               <div class="radio-group">
                 <div class="radio-button" style="margin: 9px" *ngFor="let data of diagnosisright">
@@ -163,7 +163,7 @@
                 <mat-radio-group class="radio-group" formControlName="diagnosisLeft">
                   <mat-radio-button class="radio-button"
                     *ngFor="let data of diagnosisleft" [value]="data.value"
-                    (change)="selected($event.value, true, 'diagnosisleft')">{{ data.name }}</mat-radio-button>
+                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisleft')">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
             </div>
@@ -220,14 +220,11 @@
               class="radio-group"
               formControlName="referralTime"
             >
-              <mat-radio-button class="radio-button" value="Refer within 7 days"
-                >Refer within 7 days</mat-radio-button
+              <mat-radio-button class="radio-button" value="< 3 days"
+                >< 3 days</mat-radio-button
               >
-              <mat-radio-button class="radio-button" value="Refer in 7-14 days"
-                >Refer in 7-14 days</mat-radio-button
-              >
-              <mat-radio-button class="radio-button" value="Refer in 15+ days"
-                >Refer in 15+ days</mat-radio-button
+              <mat-radio-button class="radio-button" value="3+ days"
+                >3+ days</mat-radio-button
               >
             </mat-radio-group>
           </div>

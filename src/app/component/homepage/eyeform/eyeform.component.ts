@@ -182,6 +182,10 @@ export class EyeformComponent implements OnInit {
         this[`${type}Show`] = true;
       }
     } else {
+      this.patientcomplaintrightShow = false;
+      this.patientcomplaintleftShow = false;
+      this.diagnosisrightShow = false;
+      this.diagnosisleftShow = false;
       const data = this.filterData.filter(uuid => uuid.patient_uuid === value);
       this.selectedPatient = data[0];
       if (this.selectedPatient) {
