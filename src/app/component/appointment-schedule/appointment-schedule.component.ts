@@ -82,6 +82,7 @@ export class AppointmentScheduleComponent implements OnInit {
   rescheduleModalRef = null;
   slotModalRef = null;
   selectedSchedule: any = {};
+  selectedDaySlots = [];
   todaysDate = moment().format("YYYY-MM-DD");
   reasons = ["Doctor Not available", "Patient Not Available", "Other"];
   selectedSlotIdx = null;
@@ -91,7 +92,7 @@ export class AppointmentScheduleComponent implements OnInit {
     private snackbar: MatSnackBar,
     private modal: NgbModal,
     private dialogService: ConfirmDialogService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getSchedule();
@@ -175,13 +176,7 @@ export class AppointmentScheduleComponent implements OnInit {
 
   private initializeEvents(slots) {
     this.unChanged = true;
-    let slot = slots.reverse().filter(
-      (
-        (set) => (f) =>
-          !set.has(new Date(f.date).getTime()) &&
-          set.add(new Date(f.date).getTime())
-      )(new Set())
-    );
+    let slot = slots.reverse();
     let array: CalendarEvent[] = [];
     for (let i = 0; i < slot.length; i++) {
       let event1 = {
@@ -191,6 +186,7 @@ export class AppointmentScheduleComponent implements OnInit {
         startTime: slot[i].startTime,
         endTime: slot[i].endTime,
         day: slot[i].day,
+        id: slot[i].id
       };
       const isToday = this.isToday(event1.start);
       if (isToday) {
@@ -337,6 +333,7 @@ export class AppointmentScheduleComponent implements OnInit {
             endTime: this.scheduleForm.value.endTime,
             startTime: this.scheduleForm.value.startTime,
             date: currentDay.format("YYYY-MM-DD HH:mm:ss"),
+            id: this.getUniqueId()
           });
         }
       }
@@ -474,33 +471,85 @@ export class AppointmentScheduleComponent implements OnInit {
     this.getSchedule();
   }
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  dayClicked({ date, events }: { date: Date; events }): void {
+    events.sort((a, b) => (moment(a.startTime, "LT") < moment(b.startTime, "LT")) ? -1 : (moment(a.startTime, "LT") > moment(b.startTime, "LT")) ? 1 : 0);
     if (events.length !== 0) {
       this.modalData = { date, events };
       this.slotHours = this.getHours(false, date);
       this.modal.open(this.schedule);
     }
+    this.selectedDaySlots = [];
   }
 
-  update(selectedDay, operation) {
-    let array = this.userSchedule.slotSchedule;
-    array.forEach((element, index) => {
-      if (
-        operation === "cancel" &&
-        new Date(element.date).getTime() ===
-          new Date(selectedDay.start).getTime()
-      ) {
-        array.splice(index, 1);
-      }
-      if (
-        operation === "update" &&
-        new Date(element.date).getTime() ===
-          new Date(selectedDay.start).getTime()
-      ) {
-        element.startTime = selectedDay.startTime;
-        element.endTime = selectedDay.endTime;
-      }
-    });
+  addSlots(selectedDay) {
+    let newId = this.getUniqueId();
+    this.modalData.events.splice(0,0,{ start: selectedDay.start, title: selectedDay.title, id: newId });
+    let obj = {
+      startTime: selectedDay.startTime,
+      endTime: selectedDay.endTime,
+      day: selectedDay.day,
+      date: moment(selectedDay.start).format("YYYY-MM-DD HH:mm:ss"),
+      id: newId
+    }
+    this.selectedDaySlots.push(obj);
+  }
+
+  deleteSlot(selectedDay) {
+    if (selectedDay.startTime && selectedDay.endTime) {
+      let array = this.userSchedule.slotSchedule;
+      array.forEach((element, index) => {
+        if (element.id === selectedDay.id) {
+          array.splice(index, 1);
+          this.userSchedule.slotSchedule = array;
+          this.dialogService
+            .openConfirmDialog("Are you sure to cancel this schedule?")
+            .afterClosed()
+            .subscribe((res) => {
+              if (res) {
+                let body = this.getBody(array);
+                this.saveSchedule(body);
+              }
+            });
+        }
+      });
+    } else {
+      this.modalData.events.forEach((element, index) => {
+        if (element.id === selectedDay.id) {
+          this.modalData.events.splice(index, 1);
+        }
+      });
+    }
+  }
+
+  saveSlots(slots) {
+    if (this.validateSlotTime(slots)) {
+      let array = this.userSchedule.slotSchedule;
+      slots.forEach(selectedDay => {
+        let element = array.find((a) => a.id === selectedDay.id);
+        if (element && new Date(element.date).getTime() ===
+          new Date(selectedDay.start).getTime() &&
+          element.id === selectedDay.id
+        ) {
+          element.startTime = selectedDay.startTime;
+          element.endTime = selectedDay.endTime;
+        } else {
+          let newSlot = this.selectedDaySlots.find(i => i.id === selectedDay.id);
+          newSlot.startTime = selectedDay.startTime;
+          newSlot.endTime = selectedDay.endTime;
+          array.push(newSlot);
+        }
+      });
+      this.userSchedule.slotSchedule = array;
+      let body = this.getBody(array);
+      this.saveSchedule(body);
+    } else {
+      this.toast({
+        message: "Please check the slot start & end time it cannot be same and between the other slots"
+      });
+    }
+  }
+
+  private getBody(array: any) {
     this.userSchedule.slotSchedule = array;
     let body = {
       speciality: this.userSchedule.speciality,
@@ -512,18 +561,40 @@ export class AppointmentScheduleComponent implements OnInit {
       year: moment(this.viewDate).format("YYYY"),
       month: moment(this.viewDate).format("MMMM"),
     };
-    if (operation === "cancel") {
-      this.dialogService
-        .openConfirmDialog("Are you sure to cancel this schedule?")
-        .afterClosed()
-        .subscribe((res) => {
-          if (res) {
-            this.saveSchedule(body);
+    return body;
+  }
+
+  validateSlotTime(daySchedules) {
+    daySchedules.forEach((element, index) => {
+      if (!element.startTime || !element.endTime) {
+        daySchedules.splice(index, 1);
+      }
+    });
+    let isSameSlotAvailable = [];
+      for (let i = 0; i < daySchedules.length; i++) {
+        if (daySchedules.length === 1 || (i + 1) == (daySchedules.length)) {
+          if (moment(daySchedules[0].startTime, "LT").isSame(moment(daySchedules[0].endTime, "LT")) ||
+            moment(daySchedules[0].startTime, "LT").isAfter(moment(daySchedules[0].endTime, "LT"))) {
+            isSameSlotAvailable.push(daySchedules[0]);
           }
-        });
-    } else {
-      this.saveSchedule(body);
+        } else {
+        let newStart = moment(daySchedules[i].startTime, "LT");
+        let newEnd = moment(daySchedules[i].endTime, "LT");
+        let strt = moment(daySchedules[i + 1].startTime, "LT");
+        let end = moment(daySchedules[i + 1].endTime, "LT");
+        let sameStartEndTime = newStart.isSame(newEnd);
+        let sameStartGreaterEndTime = newStart.isAfter(newEnd);
+        let totalSameToIgnore = strt.isSame(newStart) && end.isSame(newEnd);
+        let endTimeBetween = newEnd.isBetween(strt, end);
+        let startTimeBetween = newStart.isBetween(strt, end);
+        if (sameStartEndTime || sameStartGreaterEndTime || totalSameToIgnore || endTimeBetween || startTimeBetween) {
+          isSameSlotAvailable.push(daySchedules[i]);
+        }
+      }
     }
+    if (isSameSlotAvailable.length > 0) {
+      return false
+    } else return true;
   }
 
   checkSpecialty() {
@@ -595,4 +666,11 @@ export class AppointmentScheduleComponent implements OnInit {
   selectSlot(slot) {
     this.selectedSlotIdx = slot;
   }
+
+  //  Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  getUniqueId() {
+    return Math.random().toString(36).substr(2, 9);
+  };
 }

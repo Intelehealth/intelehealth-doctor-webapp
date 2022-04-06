@@ -54,3 +54,11 @@ input[type="checkbox"] {
   width: 100px;
   text-align: center;
 }
+
+.modal-content {
+  width: 115%;
+}
+
+.disabled {
+  pointer-events: none; 
+}
