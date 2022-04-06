@@ -584,7 +584,7 @@ export class AppointmentScheduleComponent implements OnInit {
         let end = moment(daySchedules[i + 1].endTime, "LT");
         let sameStartEndTime = newStart.isSame(newEnd);
         let sameStartGreaterEndTime = newStart.isAfter(newEnd);
-        let totalSameToIgnore = strt.isSame(newStart) && end.isSame(newEnd);
+        let totalSameToIgnore = strt.isSame(newStart) || end.isSame(newEnd);
         let endTimeBetween = newEnd.isBetween(strt, end);
         let startTimeBetween = newStart.isBetween(strt, end);
         if (sameStartEndTime || sameStartGreaterEndTime || totalSameToIgnore || endTimeBetween || startTimeBetween) {
