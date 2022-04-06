@@ -483,7 +483,7 @@ export class AppointmentScheduleComponent implements OnInit {
 
   addSlots(selectedDay) {
     let newId = this.getUniqueId();
-    this.modalData.events.splice(0,0,{ start: selectedDay.start, title: selectedDay.title, id: newId });
+    this.modalData.events.splice(0,0,{ start: selectedDay.start, title: selectedDay.title, id: newId,  color: colors.yellow });
     let obj = {
       startTime: selectedDay.startTime,
       endTime: selectedDay.endTime,
@@ -673,4 +673,8 @@ export class AppointmentScheduleComponent implements OnInit {
   getUniqueId() {
     return Math.random().toString(36).substr(2, 9);
   };
+
+  clear1() {
+    this.initializeEvents(this.userSchedule.slotSchedule);
+  }
 }
