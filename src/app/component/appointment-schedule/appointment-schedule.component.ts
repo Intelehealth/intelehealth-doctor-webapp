@@ -435,7 +435,7 @@ export class AppointmentScheduleComponent implements OnInit {
           },
         });
       this.modal.dismissAll();
-      this.scheduleModalRef.close();
+      //this.scheduleModalRef.close();
     }
   }
 
