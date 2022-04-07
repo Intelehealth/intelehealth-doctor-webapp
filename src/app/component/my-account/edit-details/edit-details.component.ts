@@ -15,7 +15,7 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
-  specializations = ["General Physician","Ayurveda and Yog","Allopathy","Homeopathy","No Doctor Needed"];
+  specializations = ["Ayurveda and Yog","Allopathy","Homeopathy","No Doctor Needed"];
   editForm: FormGroup;
   status = false;
   name = "Enter text";
