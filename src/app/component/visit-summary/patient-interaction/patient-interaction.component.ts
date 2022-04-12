@@ -48,8 +48,10 @@ export class PatientInteractionComponent implements OnInit {
   isNoOptionClicked = false;
   selectedReason:string;
   reasons = [
-    'Unable to connect',
-    'Not picked up the call'
+    'Not reachable',
+    'Switched off',
+    'Patient did not pick up',
+    'Invalid number'
   ]
 
   interaction = new FormGroup({

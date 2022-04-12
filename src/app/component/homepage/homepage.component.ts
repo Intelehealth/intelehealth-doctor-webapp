@@ -202,16 +202,8 @@ export class HomepageComponent implements OnInit {
         });
       }
     });
-    if(visit.followUp && this.isTodayFollowUp(visit.followUp)) {
+    if(visit.followUp && this.service.isTodayFollowUp(visit.followUp, visit.attributes)) {
       this.followUpVisit.push(this.assignValueToProperty(visit));
-    }
-  }
-
-  isTodayFollowUp(followUp) {
-    let date = followUp.split(',')[0];
-    let followUpDate = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
-    if(followUpDate.setHours(0,0,0,0) === new Date().setHours(0,0,0,0)) {
-      return true;
     }
   }
 }

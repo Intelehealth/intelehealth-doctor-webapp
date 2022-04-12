@@ -92,4 +92,14 @@ export class VisitService {
     const url = `${environment.recordingURL}/${phoneNo}`;
     return  this.http.get(url, header);
   }
+
+  isTodayFollowUp(followUp, attributes) {
+    var followUpValue = attributes.filter((pType) => pType.display.includes("Follow Up: Completed"));
+    let date = followUp.split(',')[0];
+    let followUpDate = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
+    if((followUpValue.length === 0 && followUpDate.setHours(0,0,0,0) < new Date().setHours(0,0,0,0))
+     || followUpDate.setHours(0,0,0,0) === new Date().setHours(0,0,0,0)) {
+      return true;
+    }
+  }
 }

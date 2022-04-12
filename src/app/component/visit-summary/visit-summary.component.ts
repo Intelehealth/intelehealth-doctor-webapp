@@ -39,7 +39,8 @@ export class VisitSummaryComponent implements OnInit {
   isVitalPresent = true; isPastMedicalPresent = true;
   isFamilyHistoryPresent= true; isPhyscExamPresent = true;
   isAdditionalDocPresent = true;
-  isVisitSummaryChanged:boolean = false
+  isVisitSummaryChanged:boolean = false;
+  isFollowupPresent = false; isFollowupCompleted = false;
 
   constructor(
     private service: EncounterService,
@@ -82,6 +83,15 @@ export class VisitSummaryComponent implements OnInit {
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;
             this.show = true;
+            const observations = visit?.obs;
+            observations?.forEach((obs) => {
+              if (obs.display.match("Follow up visit") !== null) {
+                 visit.followUp = obs.value;
+              }
+            });
+            if(visit.followUp && this.visitService.isTodayFollowUp(visit.followUp, visitDetails.attributes)) {
+               this.isFollowupPresent = true;
+            }
           }
           if (visit.display.match("Visit Complete") !== null) {
             this.visitCompletePresent = true;
@@ -352,6 +362,22 @@ export class VisitSummaryComponent implements OnInit {
       var tempMsg = result.filter((pType) => pType.display.includes("Patient Interaction: Yes")
       );
       tempMsg.length > 0 ?  this.isVisitSummaryChanged = false : this.isVisitSummaryChanged = true;
+      var followUp = result.filter((pType) => pType.display.includes("Follow Up: Completed"));
+      followUp.length > 0 ? this.isFollowupCompleted = true : this.isFollowupCompleted = false;
     });
+  }
+
+  followUp() {
+    const json = {
+      'attributeType': '56387bff-e3b6-4cc4-ae45-7c1e12e2040f',
+      'value': 'Completed'
+    };
+    this.visitService.postAttribute(this.visitUuid, json)
+      .subscribe(response1 => {
+        this.isFollowupCompleted = true;
+        this.snackbar.open(`Follow up is completed`, null, {
+          duration: 4000,
+        });
+      });
   }
 }

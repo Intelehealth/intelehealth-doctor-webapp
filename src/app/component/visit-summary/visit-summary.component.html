@@ -115,7 +115,7 @@
 
   
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess">Start Visit Note</button>
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess || isVisitEnded">Start Visit Note</button>
   </div>
   <div *ngIf="show"> 
       <h2 style="text-align:center;">Prescription</h2>
@@ -187,9 +187,12 @@
             <br>
       </ng-container>
 
-      <div class="text-center">
+      <div class="text-center" [hidden]="visitCompletePresent && isFollowupPresent">
             <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent || isVisitEnded 
             || managerRoleAccess || isVisitSummaryChanged">Sign and Submit</button>
+      </div>
+      <div class="text-center" *ngIf="visitCompletePresent && isFollowupPresent">
+            <button (click)="followUp()" id="sign-button" mat-raised-button color="primary" [disabled]="isFollowupCompleted">Followed Up</button>
       </div>
 </div>
 </div>
