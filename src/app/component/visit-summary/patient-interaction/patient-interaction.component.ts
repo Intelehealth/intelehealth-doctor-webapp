@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VisitService } from 'src/app/services/visit.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -32,6 +32,7 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
   ]
 })
 export class PatientInteractionComponent implements OnInit {
+  @Input() isVisitCompleted: boolean;
   @Output() isDataPresent = new EventEmitter<boolean>();
   msg: any = [];
   whatsappLink: string;

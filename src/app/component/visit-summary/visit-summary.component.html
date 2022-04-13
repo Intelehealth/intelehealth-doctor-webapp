@@ -125,7 +125,10 @@
                         <i class="name-spacing material-icons">contact_phone</i>Patient Interaction<span style="color: red;">*</span>
                   </ng-template>
                   <mat-card> 
-                        <app-patient-interaction (isDataPresent)="getIsDataPresent($event)"></app-patient-interaction>
+                        <app-patient-interaction
+                              (isDataPresent)="getIsDataPresent($event)"
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-patient-interaction>
                    </mat-card>     
              </mat-tab>
             <mat-tab>
@@ -133,7 +136,9 @@
                         <i class="name-spacing fas fa-diagnoses"></i>Diagnosis
                   </ng-template>
                   <mat-card>
-                        <app-diagnosis></app-diagnosis>
+                        <app-diagnosis
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-diagnosis>
                   </mat-card>
              </mat-tab>
             <mat-tab> 
@@ -141,7 +146,9 @@
                         <i class="name-spacing fas fa-pills"></i>Prescribed Medication
                   </ng-template>
                   <mat-card>
-                        <app-prescribed-medication></app-prescribed-medication>
+                        <app-prescribed-medication
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-prescribed-medication>
                   </mat-card>
             </mat-tab>
             <mat-tab> 
@@ -149,7 +156,9 @@
                         <i class="name-spacing fas fa-vials"></i>Prescribed Test
                   </ng-template>
                   <mat-card>
-                        <app-prescribed-test></app-prescribed-test>
+                        <app-prescribed-test
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-prescribed-test>
                   </mat-card>
             </mat-tab>
             <mat-tab> 
@@ -157,7 +166,9 @@
                         <i class="name-spacing fas fa-comment-medical"></i>Advice
                   </ng-template>
                   <mat-card>
-                        <app-advice></app-advice>
+                        <app-advice
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-advice>
                   </mat-card>
             </mat-tab>
             <mat-tab> 
@@ -165,7 +176,9 @@
                         <i class="name-spacing fas fa-notes-medical"></i>Notes
                   </ng-template>
                   <mat-card>
-                        <app-additional-comment></app-additional-comment>
+                        <app-additional-comment
+                              [isVisitCompleted]="visitCompletePresent">
+                        </app-additional-comment>
                   </mat-card>
             </mat-tab>
             <mat-tab> 
@@ -173,7 +186,9 @@
                         <i class="name-spacing fas fa-book"></i>Follow Up
                   </ng-template>
                   <mat-card>
-                        <app-follow-up></app-follow-up>
+                        <app-follow-up
+                              [isVisitCompleted]="visitCompletePresent">      
+                        </app-follow-up>
                   </mat-card>
             </mat-tab>
       </mat-tab-group>

@@ -48,15 +48,16 @@
     <br>
     <textarea class="form-control" placeholder="Additional instruction not covered above" formControlName="additional"></textarea>
     <br>
-    <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || managerRoleAccess'>Add Meds</button>
+    <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || managerRoleAccess || isVisitCompleted'>Add Meds</button>
   </div>
 </form>
+<br>
 </div>
 <ng-container *ngIf="meds.length > 0">
     <ul class="list-unstyled">
       <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary">
         <div class="doctor-value">{{meds.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!managerRoleAccess">delete</i>
+        <i (click)="delete(i)" [class.disabled]="isVisitCompleted || managerRoleAccess" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </mat-list>
     </ul>
 </ng-container>

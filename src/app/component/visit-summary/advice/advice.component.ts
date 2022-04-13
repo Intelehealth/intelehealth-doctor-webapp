@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
@@ -45,6 +45,7 @@ declare var getFromStorage: any,
   ],
 })
 export class AdviceComponent implements OnInit {
+  @Input() isVisitCompleted: boolean;
   advice: any = [];
   advices: any = [];
   conceptAdvice = "67a050c1-35e5-451c-a4ab-fff9d57b0db1";

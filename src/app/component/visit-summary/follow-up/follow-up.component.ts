@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -28,6 +28,7 @@ declare var getFromStorage: any;
   ]
 })
 export class FollowUpComponent implements OnInit {
+  @Input() isVisitCompleted: boolean;
   minDate = new Date();
   followUp: any = [];
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
