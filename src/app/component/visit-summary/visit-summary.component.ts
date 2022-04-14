@@ -31,6 +31,7 @@ export class VisitSummaryComponent implements OnInit {
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
+  isManagerRole: boolean = false;
 
   constructor(
     private service: EncounterService,
@@ -51,6 +52,7 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
+    this.checkProviderRole(); 
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService
@@ -251,5 +253,18 @@ export class VisitSummaryComponent implements OnInit {
         patientUuid: this.patientUuid,
       },
     });
+  }
+
+  private checkProviderRole() {
+    const userDetails = getFromStorage('user');
+    if (userDetails) {
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+        role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2") {
+          this.isManagerRole = true;
+        }
+      });
+    }
   }
 }

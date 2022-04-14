@@ -83,7 +83,9 @@ export class NavbarComponent implements OnInit {
         }
         if (
           role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
-          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97"
+          role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97" || 
+          role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+          role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2"
         ) {
           this.reportAccess = true;
         }

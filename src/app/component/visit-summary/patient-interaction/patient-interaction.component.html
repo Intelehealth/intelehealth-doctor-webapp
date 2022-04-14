@@ -8,7 +8,7 @@
       <mat-radio-button value="Yes">Yes </mat-radio-button>
       <mat-radio-button value="No">No</mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">
+    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || isManagerRole" [hidden]="msg.length > 0">
       Submit
     </button>
   </div>
@@ -28,7 +28,7 @@
     <div [@moveInLeft] class="alert alert-primary">
       <div class="doctor-value">{{ msg.value }}</div>
       <i (click)="delete(msg.uuid)" class="material-icons float-right"
-        style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
+      style="color: rgb(235, 30, 30); cursor: pointer" [class.disabled]="isManagerRole">delete</i>
     </div>
   </div>
 </form>

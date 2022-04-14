@@ -19,7 +19,7 @@
         </mat-select>
     </mat-form-field>
     <br>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary">Re-Assign</button>
+<button type="reset" (click)="Submit()" [disabled]="isManagerRole" mat-raised-button color="primary">Re-Assign</button>
 </div>
 {{errorText}}
 </form>

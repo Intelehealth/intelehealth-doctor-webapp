@@ -6,7 +6,7 @@
             <input matInput placeholder="Test" [ngbTypeahead]="search" formControlName='test'>
         </mat-form-field>
         <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>Add Test</button>
+        <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole'>Add Test</button>
       </form>
       <br>
 </div>
@@ -14,7 +14,7 @@
     <ul class="list-unstyled">
       <mat-list [@moveInLeft] *ngFor='let test of tests, index as i' class="alert alert-primary">
         <div class="doctor-value">{{test.value}}</div>
-      <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" [class.disabled]="isManagerRole">delete</i>
       </mat-list>
       </ul>
 </ng-container>

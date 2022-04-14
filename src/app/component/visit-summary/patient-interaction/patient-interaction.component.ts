@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -44,6 +44,7 @@ declare var getFromStorage: any,
   ],
 })
 export class PatientInteractionComponent implements OnInit {
+  @Input() isManagerRole : boolean;
   msg: any = [];
   whatsappLink: string;
   phoneNo;

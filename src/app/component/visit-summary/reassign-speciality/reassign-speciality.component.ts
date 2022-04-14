@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit, Inject, Input } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { FormGroup, FormControl } from "@angular/forms";
@@ -18,6 +18,7 @@ declare var getFromStorage: any,
   styleUrls: ["./reassign-speciality.component.css"],
 })
 export class ReassignSpecialityComponent implements OnInit {
+  @Input() isManagerRole : boolean;
   type = "N";
   patientDetails: any;
   visitUuid = this.route.snapshot.paramMap.get("visit_id");

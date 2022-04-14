@@ -26,7 +26,7 @@
     </section>
     </div>
    <br>
-  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid'>Add Diagnosis</button>
+  <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit" [disabled]='!diagnosisForm.valid || isManagerRole'>Add Diagnosis</button>
 </form>
 </div>
 <ng-container *ngIf="diagnosis.length > 0">
@@ -35,7 +35,7 @@
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let diagnosis of diagnosis, index as i' class="alert alert-primary">
       <div class="doctor-value">{{diagnosis.value}} </div>
-    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+    <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" [class.disabled]="isManagerRole">delete</i>
     </mat-list>
   </ul>
 </div>

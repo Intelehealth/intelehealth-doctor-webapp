@@ -36,6 +36,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   allVisits = [];
   limit = 100;
   allVisitsLoaded = false;
+  systemAccess = false;
 
   constructor(
     private sessionService: SessionService,
@@ -63,6 +64,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
             !element.voided
           ) {
             this.specialization = element.value;
+          }
+        });
+        userDetails["roles"].forEach((role) => {
+          if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+              role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2") {
+            this.systemAccess = true;
           }
         });
         this.getVisits();
@@ -114,7 +121,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
         this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if (active.attributes.length) {
+            if(this.systemAccess) {
+              this.visitCategory(active);
+            }else if (active.attributes.length) {
               const attributes = active.attributes;
               const speRequired = attributes.filter(
                 (attr) =>
