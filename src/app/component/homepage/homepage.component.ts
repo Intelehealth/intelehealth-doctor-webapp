@@ -108,17 +108,19 @@ export class HomepageComponent implements OnInit {
     this.service.getVisits().subscribe(
       (response) => {
         const pVisits = response.results;
+
         const userRoles = this.userDetails.roles.filter(
-          (a) => a.name == "Project Manager"
-        );
-        const visits1 =
+          (a) => a.name == "Project Manager" || a.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8"
+          );
+
+          const visits1 =
           userRoles.length > 0
-            ? pVisits
-            : pVisits.filter((a) =>
-                a.attributes.length > 0
-                  ? a.attributes.find((b) => b.value == this.specialization)
-                  : ""
-              );
+          ? pVisits
+          : pVisits.filter((a) =>
+          a.attributes.length > 0
+          ? a.attributes.find((b) => b.value == this.specialization)
+          : ""
+          );
 
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
@@ -128,7 +130,9 @@ export class HomepageComponent implements OnInit {
           }
           return acc;
         }, []);
+        
         let stateVisits = [];
+       
         if (this.visitState && this.visitState !== "All") {
           stateVisits = visits.filter(({ attributes }) => {
             const visitState = this.getStateFromVisit(attributes);
@@ -137,6 +141,7 @@ export class HomepageComponent implements OnInit {
         } else if (this.visitState === "All") {
           stateVisits = visits;
         }
+
         stateVisits.forEach((active) => {
           if (this.specialization === undefined) {
             this.visitCategory(active);
@@ -150,7 +155,10 @@ export class HomepageComponent implements OnInit {
                   attr.attributeType.uuid ===
                   "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
               );
-              if (speRequired.length) {
+              if(userRoles.length) {
+                this.visitCategory(active)
+              }
+              else if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization) {
                     if (index === 0) {
@@ -162,8 +170,6 @@ export class HomepageComponent implements OnInit {
                   }
                 });
               }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
             }
           }
           this.value = {};
