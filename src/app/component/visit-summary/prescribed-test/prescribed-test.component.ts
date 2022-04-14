@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -31,6 +31,7 @@ declare var getFromStorage: any;
 })
 export class PrescribedTestComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
+  @Output() nextTab = new EventEmitter();
   tests: any = [];
   test = [];
   conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
@@ -115,6 +116,10 @@ export class PrescribedTestComponent implements OnInit {
         this.tests.splice(i, 1);
       });
     }
+  }
+
+  next() {
+    this.nextTab.emit();
   }
 }
 

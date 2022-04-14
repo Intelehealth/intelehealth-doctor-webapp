@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -30,6 +30,7 @@ declare var getFromStorage: any;
 })
 export class PrescribedMedicationComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
+  @Output() nextTab = new EventEmitter();
   meds: any = [];
   add = false;
   encounterUuid: string;
@@ -209,4 +210,7 @@ export class PrescribedMedicationComponent implements OnInit {
     }
   }
 
+  next() {
+    this.nextTab.emit();
+  }
 }

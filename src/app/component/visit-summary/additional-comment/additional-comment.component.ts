@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -28,6 +28,7 @@ declare var getFromStorage: any;
 })
 export class AdditionalCommentComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
+  @Output() nextTab = new EventEmitter();
   comment: any = [];
   encounterUuid: string;
   patientId: string;
@@ -93,5 +94,9 @@ export class AdditionalCommentComponent implements OnInit {
           this.comment.splice(i, 1);
         });
     }
+  }
+
+  next() {
+    this.nextTab.emit();
   }
 }

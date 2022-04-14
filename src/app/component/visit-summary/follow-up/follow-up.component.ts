@@ -1,10 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { VisitService } from 'src/app/services/visit.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterUUID: any;
 declare var getFromStorage: any;
 
@@ -29,6 +31,11 @@ declare var getFromStorage: any;
 })
 export class FollowUpComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
+  @Input() isFollowupPresent:boolean;
+  @Input() isFollowupCompleted:boolean;
+  @Input() isVisitSummaryChanged:boolean;
+  @Output() signAndSubmit = new EventEmitter();
+
   minDate = new Date();
   followUp: any = [];
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
@@ -47,7 +54,9 @@ export class FollowUpComponent implements OnInit {
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
-    private datepipe: DatePipe) { }
+    private datepipe: DatePipe,
+    private visitService: VisitService,
+    private snackbar: MatSnackBar) { }
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
@@ -103,4 +112,21 @@ export class FollowUpComponent implements OnInit {
     }    
   }
 
+  followedUp() {
+    const json = {
+      'attributeType': '56387bff-e3b6-4cc4-ae45-7c1e12e2040f',
+      'value': 'Completed'
+    };
+    this.visitService.postAttribute(this.visitUuid, json)
+      .subscribe(() => {
+        this.isFollowupCompleted = true;
+        this.snackbar.open(`Follow up is completed`, null, {
+          duration: 4000,
+        });
+      });
+  }
+
+  sign() {
+    this.signAndSubmit.emit();
+  }
 }

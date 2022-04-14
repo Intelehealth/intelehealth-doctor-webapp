@@ -46,6 +46,7 @@
         </div>
       </div>
       </form>
+      <br>
   </div>
   <div class="col-md-6 center" *ngIf="callRecordings.length > 0"> 
        <b>Call Recordings</b> <br/> <br/>
@@ -54,5 +55,9 @@
            {{ record.CallStartTime }}  <a class="fa fa-play-circle" style="text-decoration: none; margin-left: 45px;" [href]="record.RecordingURL" ></a>
          </div>
        </div>
+   </div>
+   <br>
+   <div style="position:relative;">
+      <button style="position:absolute;bottom:0;right:15px;"  mat-raised-button color="primary" (click)="next()">Next</button>
    </div>
 </div>

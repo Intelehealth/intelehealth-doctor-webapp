@@ -41,6 +41,7 @@ export class VisitSummaryComponent implements OnInit {
   isAdditionalDocPresent = true;
   isVisitSummaryChanged:boolean = false;
   isFollowupPresent = false; isFollowupCompleted = false;
+  public demo1TabIndex = 0;
 
   constructor(
     private service: EncounterService,
@@ -367,17 +368,8 @@ export class VisitSummaryComponent implements OnInit {
     });
   }
 
-  followUp() {
-    const json = {
-      'attributeType': '56387bff-e3b6-4cc4-ae45-7c1e12e2040f',
-      'value': 'Completed'
-    };
-    this.visitService.postAttribute(this.visitUuid, json)
-      .subscribe(response1 => {
-        this.isFollowupCompleted = true;
-        this.snackbar.open(`Follow up is completed`, null, {
-          duration: 4000,
-        });
-      });
+  nextTabClick() {
+    const tabCount = 7;
+    this.demo1TabIndex = (this.demo1TabIndex + 1) % tabCount;
   }
 }

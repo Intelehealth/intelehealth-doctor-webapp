@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -29,6 +29,7 @@ declare var getFromStorage: any;
 })
 export class DiagnosisComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
+  @Output() nextTab = new EventEmitter();
   diagnosis: any = [];
   diagnosisList = [];
   conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
@@ -104,5 +105,9 @@ export class DiagnosisComponent implements OnInit {
           this.diagnosis.splice(i, 1);
         });
       }
-  }   
+  }
+
+  next() {
+    this.nextTab.emit();
+  }
 }

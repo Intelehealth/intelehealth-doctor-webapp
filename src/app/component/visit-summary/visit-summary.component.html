@@ -119,7 +119,7 @@
   </div>
   <div *ngIf="show"> 
       <h2 style="text-align:center;">Prescription</h2>
-      <mat-tab-group>
+      <mat-tab-group [(selectedIndex)]="demo1TabIndex">
             <mat-tab>
                   <ng-template mat-tab-label>
                         <i class="name-spacing material-icons">contact_phone</i>Patient Interaction<span style="color: red;">*</span>
@@ -127,6 +127,7 @@
                   <mat-card> 
                         <app-patient-interaction
                               (isDataPresent)="getIsDataPresent($event)"
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-patient-interaction>
                    </mat-card>     
@@ -137,6 +138,7 @@
                   </ng-template>
                   <mat-card>
                         <app-diagnosis
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-diagnosis>
                   </mat-card>
@@ -147,6 +149,7 @@
                   </ng-template>
                   <mat-card>
                         <app-prescribed-medication
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-prescribed-medication>
                   </mat-card>
@@ -157,6 +160,7 @@
                   </ng-template>
                   <mat-card>
                         <app-prescribed-test
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-prescribed-test>
                   </mat-card>
@@ -167,6 +171,7 @@
                   </ng-template>
                   <mat-card>
                         <app-advice
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-advice>
                   </mat-card>
@@ -177,6 +182,7 @@
                   </ng-template>
                   <mat-card>
                         <app-additional-comment
+                              (nextTab)="nextTabClick()"
                               [isVisitCompleted]="visitCompletePresent">
                         </app-additional-comment>
                   </mat-card>
@@ -187,7 +193,11 @@
                   </ng-template>
                   <mat-card>
                         <app-follow-up
-                              [isVisitCompleted]="visitCompletePresent">      
+                              [isVisitCompleted]="visitCompletePresent"
+                              [isFollowupPresent]="isFollowupPresent"
+                              [isFollowupCompleted]="isFollowupCompleted"
+                              [isVisitSummaryChanged]="isVisitSummaryChanged"
+                              (signAndSubmit)="sign()">      
                         </app-follow-up>
                   </mat-card>
             </mat-tab>
@@ -201,14 +211,14 @@
             </div>
             <br>
       </ng-container>
-
+<!-- 
       <div class="text-center" [hidden]="visitCompletePresent && isFollowupPresent">
             <button (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="visitCompletePresent || isVisitEnded 
             || managerRoleAccess || isVisitSummaryChanged">Sign and Submit</button>
       </div>
       <div class="text-center" *ngIf="visitCompletePresent && isFollowupPresent">
             <button (click)="followUp()" id="sign-button" mat-raised-button color="primary" [disabled]="isFollowupCompleted">Followed Up</button>
-      </div>
+      </div> -->
 </div>
 </div>
 

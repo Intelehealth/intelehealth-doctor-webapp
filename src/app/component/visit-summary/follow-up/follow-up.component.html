@@ -27,3 +27,9 @@
     <p>*please delete current schedule to schedule a new follow up.</p>
 </ng-container>
 </div>
+<br>
+<div style="position:relative;" class="text-center">
+  <button  style="position:absolute;bottom:0;right:0px;" (click)="sign()" id="sign-button" mat-raised-button color="primary" [disabled]="isVisitCompleted || isVisitEnded 
+  || managerRoleAccess || isVisitSummaryChanged"  [hidden]="isVisitCompleted && isFollowupPresent">Sign and Submit</button>
+  <button  style="position:absolute;bottom:0;right:0px;" *ngIf="isVisitCompleted && isFollowupPresent" (click)="followedUp()" id="sign-button" mat-raised-button color="primary" [disabled]="isFollowupCompleted">Followed Up</button>
+</div>

@@ -34,6 +34,7 @@ declare var getEncounterProviderUUID: any, getFromStorage: any, getEncounterUUID
 export class PatientInteractionComponent implements OnInit {
   @Input() isVisitCompleted: boolean;
   @Output() isDataPresent = new EventEmitter<boolean>();
+  @Output() nextTab = new EventEmitter();
   msg: any = [];
   whatsappLink: string;
   phoneNo;
@@ -225,6 +226,10 @@ export class PatientInteractionComponent implements OnInit {
 
   setReason() {
     this.selectedReason = this.interaction.value.selectedReason;
+  }
+
+  next() {
+    this.nextTab.emit();
   }
 
   private getRecordings() {
