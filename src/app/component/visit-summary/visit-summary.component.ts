@@ -41,6 +41,7 @@ export class VisitSummaryComponent implements OnInit {
   isAdditionalDocPresent = true;
   isVisitSummaryChanged:boolean = false;
   isFollowupPresent = false; isFollowupCompleted = false;
+  isPatientDataPresent = false;
   public demo1TabIndex = 0;
 
   constructor(
@@ -351,6 +352,10 @@ export class VisitSummaryComponent implements OnInit {
 
   getIsVitalDataPresent(isDataPresent) {
     isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent= false;
+  }
+
+  getIsPatientDataPresent(isDataPresent) {
+    !isDataPresent ? this.isPatientDataPresent = true : this.isPatientDataPresent = false;
   }
 
   getIsDataPresent() {

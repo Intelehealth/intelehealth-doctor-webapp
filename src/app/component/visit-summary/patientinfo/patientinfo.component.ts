@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from '../../../../environments/environment';
@@ -14,6 +14,7 @@ import { ImagesService } from 'src/app/services/images.service';
 })
 
 export class PatientinfoComponent implements OnInit {
+  @Output() isDataPresent = new EventEmitter<boolean>();
   baseURL = environment.baseURL;
   patientInfo = [];
   patientIdentifier: string;
@@ -73,6 +74,11 @@ export class PatientinfoComponent implements OnInit {
             this.info['positiveDate'] = attri.value;
           }
         });
+        if(this.info.age && this.info.preferredAddress && this.info.attributes.length >= 1) {
+          this.isDataPresent.emit(true);
+        } else {
+          this.isDataPresent.emit(false);
+        }
        // this.patientInfo.push(this.info);
       });
   }

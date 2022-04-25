@@ -5,7 +5,7 @@
 
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
       <mat-card>
-            <app-patientinfo></app-patientinfo>
+            <app-patientinfo (isDataPresent)="getIsPatientDataPresent($event)"></app-patientinfo>
       </mat-card>
       <br>
       <mat-tab-group>
@@ -115,7 +115,7 @@
 
   
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess || isVisitEnded">Start Visit Note</button>
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess || isVisitEnded || isPatientDataPresent">Start Visit Note</button>
   </div>
   <div *ngIf="show"> 
       <h2 style="text-align:center;">Prescription</h2>
