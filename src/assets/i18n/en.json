@@ -266,7 +266,9 @@
     "Visit is already completed, it can't be rescheduled.":"Visit is already completed, it can't be rescheduled.",
     "You can not cancel past appointments!": "You can not cancel past appointments!",
     "Appointment not found!":"Appointment not found!",
-    "Prescription added for review":"Prescription added for review"
+    "Prescription added for review":"Prescription added for review",
+    "Please check the slot start & end time it cannot be same and between the other slots":
+    "Please check the slot start & end time it cannot be same and between the other slots"
   },
   "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
@@ -5599,5 +5601,7 @@
   "Schedule":"Schedule",
   "Doctor Not Available":"Doctor Not Available",
   "Patient Not Available":"Patient Not Available",
-  "Other":"Other"
+  "Other":"Other",
+  "Add New Schedule":"Add New Schedule",
+  "You can not modify past schedule":"You can not modify past schedule"
 }

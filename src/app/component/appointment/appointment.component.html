@@ -116,21 +116,21 @@
 </ng-template>
 
 <ng-template #schedule let-close="close" data-target="static">
-  <div class="content-container">
+  <div class="modal-content">
     <div class="modal-title">
       <br />
       <h5 style="text-align: center">
         {{ "Schedule" | translate }} <br />
         {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
         <span style="float: right;cursor: pointer; font-size: 31px;
-        margin-top: -16px;margin-right: 10px;" (click)="close()">&times;</span>
+         margin-top: -47px;margin-right: 14px;" (click)="close()">&times;</span>
       </h5>
+      <hr/>
     </div>
-    <hr />
     <div class="modal-body">
-      <div *ngFor="let e1 of modalData?.events">
+      <div *ngFor="let e1 of modalData?.events; index as i">
         <div class="row">
-          <div class="col-6">
+          <div class="col-5">
             <mat-label>
               <h5>{{ "Start Time" | translate }}</h5>
             </mat-label>
@@ -138,7 +138,7 @@
               <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
-          <div class="col-6">
+          <div class="col-5">
             <mat-label>
               <h5>{{ "End Time" | translate }}</h5>
             </mat-label>
@@ -146,22 +146,30 @@
               <option [value]="hour" *ngFor="let hour of slotHours">{{hour}}</option>
             </select>
           </div>
+          <div class="col-2">
+            <span style="float: right;
+              cursor: pointer;
+              font-size: 31px;
+              margin-top: -16px;
+              margin-right: 10px;"
+              [class.disabled]="e1?.isTimeOver" (click)="deleteSlot(modalData?.events[i])">&times;</span>
+          </div>
         </div>
         <hr />
         <div *ngIf="e1?.isTimeOver" class="alert alert-warning mt-4">
-          You can not modify past schedule.
+          {{ 'You can not modify past schedule' | translate }}.
         </div>
-        <div class="col-sm-12 text-center">
-          <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
-            (click)="update(e1, 'cancel')">
-            {{ "Cancel" | translate }}
-          </button>
-          <button type="button" class="btn btn-primary center1" [disabled]="e1?.isTimeOver"
-            (click)="update(e1, 'update')">
+      </div>
+       <div class="center">
+          <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" style="margin-right: 15px;"
+            (click)="saveSlots(modalData?.events)">
             {{ "Save" | translate }}
+          </button>
+          <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary"
+            (click)="addSlots(modalData?.events[0])">
+            {{ 'Add New Schedule' | translate }}
           </button>
         </div>
       </div>
-    </div>
   </div>
 </ng-template>
