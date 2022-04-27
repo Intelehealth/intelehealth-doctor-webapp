@@ -123,7 +123,7 @@
         {{ "Schedule" | translate }} <br />
         {{ modalData.date | calendarDate: "day" + "ViewTitle":locale }}
         <span style="float: right;cursor: pointer; font-size: 31px;
-         margin-top: -47px;margin-right: 14px;" (click)="close()">&times;</span>
+         margin-top: -47px;margin-right: 14px;" (click)="close();clear1()">&times;</span>
       </h5>
       <hr/>
     </div>

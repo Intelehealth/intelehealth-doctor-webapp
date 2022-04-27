@@ -551,6 +551,10 @@ export class AppointmentComponent implements OnInit {
     return Math.random().toString(36).substr(2, 9);
   };
 
+  clear1() {
+    this.initializeEvents(this.userSchedule.slotSchedule);
+  }
+
   private getBody(array: any) {
     this.userSchedule.slotSchedule = array;
     let body = {
