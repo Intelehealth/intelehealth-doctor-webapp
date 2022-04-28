@@ -237,6 +237,7 @@ export class CalendarComponent implements OnInit {
   rescheduleModalRef = null;
   detailModalRef = null;
   todaysDate = moment().format("YYYY-MM-DD");
+  minDate = moment().format("YYYY-MM-DD");
   slots = [];
   rescheduleClick(schedule) {
     this.vService
@@ -351,6 +352,12 @@ export class CalendarComponent implements OnInit {
     };
     this.translationService.getTranslation(message);
     //this.snackbar.open(message, null, opts);
+  }
+
+  clear() {
+    this.selectedSlotIdx = null;
+    this.selectedReason = null;
+    this.otherReason = "";
   }
 
   get locale() {

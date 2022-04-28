@@ -182,6 +182,7 @@
           </div>
           <div class="col-7">
             <input
+              min="{{minDate}}"
               class="form-control"
               (change)="changeCalender($event)"
               type="date"
@@ -248,7 +249,7 @@
       >
         {{ "Reschedule" | translate }}
       </button>
-      <button type="button" mat-raised-button color="primary" (click)="close()">
+      <button type="button" mat-raised-button color="primary" (click)="close(); clear()">
         {{ "Close" | translate }}
       </button>
     </div>
