@@ -126,3 +126,4 @@ export class TestChatComponent implements OnInit {
     new Audio("../../../../intelehealth/assets/notification.mp3").play();
   }
 }
+
