@@ -80,6 +80,7 @@ import { VcComponent } from './component/vc/vc.component';
 import { SocketService } from './services/socket.service';
 import { HoverClassDirective } from './directives/hover-class.directive';
 import { ChatComponent } from './component/chat/chat.component';
+import { MatTabsModule } from "@angular/material/tabs";
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
@@ -153,6 +154,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
+    MatTabsModule,
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,

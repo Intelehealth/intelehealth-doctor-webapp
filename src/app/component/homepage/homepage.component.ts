@@ -5,6 +5,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
+import { GlobalConstants } from "src/app/js/global-constants";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -27,24 +28,25 @@ export interface VisitData {
 })
 export class HomepageComponent implements OnInit, OnDestroy {
   value: any = {};
-  flagPatientNo = 0;
   activePatient = 0;
+  flagPatientNo = 0;
   visitNoteNo = 0;
+  remotePatientNo = 0;
   completeVisitNo = 0;
+  flagVisit: VisitData[] = [];
+  waitingVisit: VisitData[] = [];
+  progressVisit: VisitData[] = [];
+  remoteVisits: VisitData[] = [];
+  completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
-  allVisits = [];
-  limit = 100;
-  allVisitsLoaded = false;
+  systemAccess:boolean = false;
 
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
-    private snackbar: MatSnackBar,
     private socket: SocketService,
-    private helper: HelperService,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -65,8 +67,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
             this.specialization = element.value;
           }
         });
+        userDetails["roles"].forEach((role) => {
+          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" || 
+              role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+              role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
+            this.systemAccess = true;
+          }
+        });
         this.getVisits();
-        this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -87,34 +95,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.socket.socket.close();
   }
 
-  getVisitCounts(speciality) {
-    const getTotal = (data, type) => {
-      const item = data.find(({ Status }: any) => Status === type);
-      return item?.Total || 0;
-    };
-    this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
-      if (data.length) {
-        this.flagPatientNo = getTotal(data, "Priority");
-        this.activePatient = getTotal(data, "Awaiting Consult");
-        this.visitNoteNo = getTotal(data, "Visit In Progress");
-        this.completeVisitNo = getTotal(data, "Completed Visit");
-      }
-    });
-  }
-
-  ngAfterViewChecked() {
-    this.cdr.detectChanges();
-  }
-
-  getVisits(query: any = {}, cb = () => {}) {
-    this.service.getVisits(query).subscribe(
+  getVisits() {
+    this.service.getVisits().subscribe(
       (response) => {
-        response.results.forEach((item) => {
-          this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
-        });
-        this.allVisits.forEach((active) => {
+        console.log('response: ', response);
+        const visits = response.results;
+        visits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if (active.attributes.length) {
+            if(this.systemAccess) {
+              this.visitCategory(active);
+            }else if (active.attributes.length) {
               const attributes = active.attributes;
               const speRequired = attributes.filter(
                 (attr) =>
@@ -124,61 +114,25 @@ export class HomepageComponent implements OnInit, OnDestroy {
               if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization) {
-                    this.visitCategory(active);
+                    if (index === 0) {
+                      this.visitCategory(active);
+                    }
+                    if (index === 1 && spe[0] !== spe[1]) {
+                      this.visitCategory(active);
+                    }
                   }
                 });
               }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
             }
           }
           this.value = {};
         });
-        if (response.results.length === 0) {
-          this.setVisitlengthAsPerLoadedData();
-          this.allVisitsLoaded = true;
-        }
-        this.helper.refreshTable.next();
         this.setSpiner = false;
-        this.isLoadingNextSlot = false;
       },
       (err) => {
-        if (err.error instanceof Error) {
-          this.snackbar.open("Client-side error", null, { duration: 4000 });
-        } else {
-          this.snackbar.open("Server-side error", null, { duration: 4000 });
-        }
+      
       }
     );
-  }
-
-  getLength(arr) {
-    let data = [];
-    arr.forEach((item) => {
-      data = this.helper.getUpdatedValue(data, item, "id");
-    });
-    return data.filter((i) => i).slice().length;
-  }
-
-  setVisitlengthAsPerLoadedData() {
-    this.flagPatientNo = this.getLength(this.flagVisit);
-    this.activePatient = this.getLength(this.waitingVisit);
-    this.visitNoteNo = this.getLength(this.progressVisit);
-    this.completeVisitNo = this.getLength(this.completedVisit);
-  }
-
-  get completedVisit() {
-    return this.service.completedVisit;
-  }
-  get progressVisit() {
-    return this.service.progressVisit;
-  }
-
-  get flagVisit() {
-    return this.service.flagVisit;
-  }
-  get waitingVisit() {
-    return this.service.waitingVisit;
   }
 
   checkVisit(encounters, visitType) {
@@ -188,72 +142,59 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitCategory(active) {
     const { encounters = [] } = active;
     let encounter;
-    if (
-      (encounter =
-        this.checkVisit(encounters, "Visit Complete") ||
-        this.checkVisit(encounters, "Patient Exit Survey"))
-    ) {
+    if ((encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+        (encounter =this.checkVisit(encounters, "Visit Complete")) ||
+        active.stopDatetime != null) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.completedVisit.push(values);
-    } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
+      this.completedVisit.push(values);
+      this.completeVisitNo += 1;
+    }  else if (this.checkVisit(encounters, "Remote Prescription") && 
+      active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.progressVisit.push(values);
+      this.remoteVisits.push(values);
+      this.remotePatientNo += 1;
+    } else if (this.checkVisit(encounters, "Visit Note")  && 
+      active.stopDatetime == null) {
+      const values = this.assignValueToProperty(active, encounter);
+      this.progressVisit.push(values);
+      this.visitNoteNo += 1;
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active, encounter);
-        this.service.flagVisit.push(values);
+        const values = this.assignValueToProperty(active,encounter);
+        this.flagVisit.push(values);
+        this.flagPatientNo += 1;
+        GlobalConstants.visits.push(active);
       }
     } else if (
-      (encounter =
-        this.checkVisit(encounters, "ADULTINITIAL") ||
-        this.checkVisit(encounters, "Vitals"))
+      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
+      (encounter = this.checkVisit(encounters, "Vitals"))&&
+      active.stopDatetime == null
     ) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.service.waitingVisit.push(values);
+      const values = this.assignValueToProperty(active,encounter);
+      this.waitingVisit.push(values);
+      this.activePatient += 1;
+      GlobalConstants.visits.push(active);
     }
   }
 
-  get nextPage() {
-    return Number((this.allVisits.length / this.limit).toFixed()) + 2;
-  }
-
-  tableChange({ loadMore, refresh }) {
-    if (loadMore) {
-      if (!this.isLoadingNextSlot) this.setSpiner = true;
-      const query = {
-        limit: this.limit,
-        startIndex: this.allVisits.length,
-      };
-      this.getVisits(query, refresh);
-    }
-  }
-
-  isLoadingNextSlot = false;
-  loadNextSlot() {
-    if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
-      this.isLoadingNextSlot = true;
-      this.tableChange({ loadMore: true, refresh: () => {} });
-    }
-  }
-  getPhoneNumber(attributes) {
-    let phoneObj = attributes.find(({ display = "" }) =>
-      display.includes("Telephone Number")
-    );
-    return phoneObj ? phoneObj.value : "NA";
-  }
   assignValueToProperty(active, encounter) {
+    if (!encounter) encounter = active.encounters[0];
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
     this.value.name = active.patient.person.display;
-    this.value.telephone = this.getPhoneNumber(active.patient.attributes);
     this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.age;
+    this.value.age = active.patient.person.birthdate;
     this.value.location = active.location.display;
-    this.value.status = encounter.encounterType.display;
+    this.value.status =
+    active.stopDatetime != null
+      ? "Visit Complete"
+      : encounter?.encounterType.display;
     this.value.provider =
-      encounter.encounterProviders[0].provider.display.split("- ")[1];
-    this.value.lastSeen = encounter.encounterDatetime;
+      active.encounters[0].encounterProviders[0].provider.display.split(
+        "- "
+      )[1];
+    this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }
 
@@ -261,4 +202,5 @@ export class HomepageComponent implements OnInit, OnDestroy {
     const audioUrl = "../../../../intelehealth/assets/notification.mp3";
     new Audio(audioUrl).play();
   }
+    
 }

@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
+import * as moment from "moment";
 
 @Injectable({
   providedIn: "root",
@@ -17,15 +18,9 @@ export class VisitService {
 
   constructor(private http: HttpClient, private helper: HelperService) {}
 
-  getVisits(params): Observable<any> {
-    const query = {
-      ...{
-        includeInactive: false,
-        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
-      },
-      ...params,
-    };
-    const url = `${this.baseURL}/visit${this.helper.toParamString(query)}`;
+  getVisits(): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)`;
     return this.http.get(url);
   }
 
@@ -79,4 +74,23 @@ export class VisitService {
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
     );
   }
+
+  getAge(dateString) {
+    //------sol 1 ---------------
+    var mydate = dateString?.replace(
+      /^(\d{2})\/(\d{2})\/(\d{4})$/,
+      "$3, $2, $1"
+    );
+    var a = moment();
+    var b = moment(mydate);
+    var diffDuration = moment.duration(a.diff(b));
+    var ageString =
+      diffDuration.years() + " " 
+      // this.translate.instant("years") +" - " +
+      diffDuration.months() + " "
+      // this.translate.instant("months") + " - " +
+      diffDuration.days() + " "
+      // this.translate.instant("days");
+    return ageString;
+ }
 }

@@ -27,8 +27,9 @@
 }
 
 body {
-  background-color: #f1f4f6;
+  background-color: #17a2b8;
   margin: 0;
+  /* background:  linear-gradient( to bottom right,#17a2b8, #b2d4da); */
 }
 
 html,
