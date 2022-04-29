@@ -3,26 +3,26 @@
     <mat-tab-group class="visit" mat-align-tabs="center" mat-stretch-tabs>
         <mat-tab id="flagged-table" >
             <ng-template mat-tab-label>
-                <p class="name">{{'IN PROGRESS CASES'}} <br> <b class="name">({{flagPatientNo}})</b></p>
+                <p class="name">IN PROGRESS CASES <br> <b class="name">({{flagPatientNo}})</b></p>
             </ng-template><br>
-            <ng-container *ngIf="flagVisit.length > 0;else no_data">
+            <ng-container >
                 <div class="gradient">
                     <h5 class="sub-cat m-2">PRIORITY CASES</h5>
                 </div>
-                <app-tables [data]="flagVisit"></app-tables>
+                <app-tables *ngIf="flagVisit.length > 0;else no_data" [data]="flagVisit"></app-tables>
             </ng-container><br>
-            <ng-container *ngIf="waitingVisit.length > 0;else no_data">
+            <ng-container >
                 <div class="gradient">
                     <h5 class="sub-cat m-2">NORMAL CASES</h5>
                 </div>
-                <app-tables [data]="waitingVisit"></app-tables>
+                <app-tables *ngIf="waitingVisit.length > 0;else no_data" [data]="waitingVisit"></app-tables>
             </ng-container>
         </mat-tab>
         <mat-tab id="queued-table">
             <ng-template mat-tab-label>
-                <p class="name">{{'COMPLETED CASES'}} <br> <b class="name">({{activePatient}})</b></p>
+                <p class="name">COMPLETED CASES <br> <b class="name">({{activePatient}})</b></p>
             </ng-template><br>
-            <ng-container *ngIf="completedVisit.length > 0;else no_data">
+            <ng-container *ngIf="completedVisit.length > 0 ;else no_data">
                 <app-tables [data]="completedVisit"></app-tables>
             </ng-container>
         </mat-tab>
