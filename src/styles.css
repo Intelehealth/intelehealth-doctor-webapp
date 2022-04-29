@@ -69,3 +69,7 @@ body.font-lato td {
 .timepicker-backdrop-overlay {
   z-index: 1001 !important;
 }
+
+.cdk-overlay-container {
+  z-index: 1051 !important;
+}
