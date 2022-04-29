@@ -53,6 +53,7 @@ export class CalendarComponent implements OnInit {
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
+  minDate = moment().format("YYYY-MM-DD");
   drSlots = [];
   modalData: {
     date: Date;
@@ -354,6 +355,12 @@ export class CalendarComponent implements OnInit {
       verticalPosition,
     };
     this.snackbar.open(message, null, opts);
+  }
+
+  clear() {
+    this.selectedSlotIdx = null;
+    this.selectedReason = null;
+    this.otherReason = "";
   }
 
   get locale() {
