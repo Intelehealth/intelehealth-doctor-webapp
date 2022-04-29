@@ -52,6 +52,7 @@ export class AppointmentViewComponent implements OnInit {
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
+  minDate = moment().format("YYYY-MM-DD");
   drSlots = [];
   allSlots = [];
   modalData: {
@@ -374,6 +375,12 @@ export class AppointmentViewComponent implements OnInit {
       this.drSlots = [];
     }
     this.initializeEvents(this.drSlots);
+  }
+
+  clear() {
+    this.selectedSlotIdx = null;
+    this.selectedReason = null;
+    this.otherReason = "";
   }
 
   get locale() {
