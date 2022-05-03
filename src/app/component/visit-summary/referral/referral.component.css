@@ -53,3 +53,8 @@ label {
 .radio-button {
     margin: 5px;
 }
+
+.referral-flex {
+    display: flex;
+    justify-content: space-around;
+}

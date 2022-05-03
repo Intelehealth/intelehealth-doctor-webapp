@@ -1,4 +1,4 @@
-<h4><i class="fas fa-book-medical"></i> Past Medical History</h4>
+<!-- <h4><i class="fas fa-book-medical"></i> Past Medical History</h4>
 <hr>
 <ng-container *ngIf="pastMedicalHistoryPresent">
     <table class="table table-responsive borderless" *ngFor="let pastMedical of pastMedical">
@@ -6,4 +6,10 @@
             <div [innerHTML]=pastMedical.value></div>
         </tr>
     </table>
+</ng-container> -->
+
+
+<ng-container style="display: flex;justify-content: space-between;">
+    <div><b>Past Medical History: </b><span [innerHTML]=pastMedical></span></div>
+    <div><b>Family History: </b><span [innerHTML]=familyHistory></span></div>
 </ng-container>

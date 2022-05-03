@@ -1,7 +1,26 @@
 <h4><i class="fas fa-info-circle"></i> Patient Information</h4>
 <div class="modal-body row">
-        <div class="col-md-6">
-          <table class="table table-borderless table-sm">
+        <div class="col-md-6" *ngIf="patientInfo">
+            <div class="flex-row">
+                <div *ngIf="!coordinator || showDetails">
+                    <div id="name"><b>Name:</b> {{patientInfo.display}}</div>
+                </div>
+                <div *ngIf="!coordinator || showDetails">
+                    <div id="age"><b>Age/Sex:</b> {{patientInfo.birthdate}} {{patientInfo.gender}}</div>
+                </div>
+                <div *ngIf="!showDetails">
+                    <div id="openmrs-id"><b>OpenMRS ID:</b> {{patientInfo.patientIdentifier}}</div>
+                </div>
+            </div>
+            <div class="flex-row">
+                <div *ngIf="!coordinator || showDetails"><b>Address:</b> {{patientInfo.preferredAddress.cityVillage}}</div>
+                <div *ngIf="!coordinator || showDetails"><b>Phone:</b> {{patientInfo.telephone}} | <span *ngIf="patientInfo.occupation"></span></div>
+            </div>
+            <div class="flex-row">
+                <app-past-medical-history></app-past-medical-history>
+            </div>
+           
+          <!-- <table class="table table-borderless table-sm">
                 <tbody *ngIf="patientInfo">
                     <tr *ngIf="!coordinator || showDetails"> 
                         <th scope="row">Name</th>
@@ -16,8 +35,8 @@
                         <td>{{patientInfo.gender}}</td>
                     </tr>
                     <tr *ngIf="!coordinator || showDetails">
-                        <th scope="row">DOB</th>
-                        <td>{{patientInfo.birthdate | date: 'dd-MMM-yyy'}}</td>
+                        <th scope="row">Age</th>
+                        <td>{{patientInfo.birthdate}}</td>
                     </tr>
                     <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Village</th>
@@ -25,7 +44,7 @@
                     </tr>
                     <tr *ngIf="!coordinator || showDetails">
                         <th scope="row">Contact Info</th>
-                        <td *ngIf="patientInfo.telephone && !editMobile">{{patientInfo.telephone}} <i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick('edit', patientInfo.telephone)">edit</i></td>
+                        <td *ngIf="patientInfo.telephone && !editMobile">{{patientInfo.telephone}} | <span *ngIf="patientInfo.occupation">{{patientInfo.occupation}}</span> <i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick('edit', patientInfo.telephone)">edit</i></td>
                         <td *ngIf="editMobile"><input matInput type="number" value={{newPhone}} (keyup)="onChange($event.target.value)" style="width: 200px"><i class="material-icons" style="vertical-align: bottom;cursor: pointer;" (click)="onClick()">done</i></td>
                     </tr>
                     <tr *ngIf="!coordinator || showDetails">
@@ -37,7 +56,7 @@
                         <td *ngIf="patientInfo.healthWorker">{{patientInfo.healthWorker}}</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
         </div>
         <div class="col-md-6" *ngIf="!coordinator">
           <div *ngIf="profileImagePresent" style="text-align: center">

@@ -11,3 +11,9 @@
     width: 100%;
     opacity: 0.5 !important;
 }
+
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}

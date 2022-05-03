@@ -32,7 +32,8 @@ export class PhysicalExaminationComponent implements OnInit {
           const data = {
             image: image.image_path,
             id: image.id,
-            efficient: image.efficient
+            efficient: image.efficient,
+            type: image.type
           };
           this.images.push(data);
         });

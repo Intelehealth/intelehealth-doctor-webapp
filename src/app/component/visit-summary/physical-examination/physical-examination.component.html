@@ -1,10 +1,19 @@
-<h4>Physical Examination</h4>
-<hr>
+<!-- <h4>Physical Examination</h4>
+<hr> -->
 <div class="grid-row" *ngIf="physicalExamPresent">
     <div *ngFor="let image of images" class="col">
-        <a href={{image.image}}>
-            <img src= {{image.image}} class="grid-img">
-        </a>
+        <div *ngIf="image.type === 'right'; then right else left"></div>
+            <ng-template #right>
+                <a href={{image.image}}>
+                    <img src= {{image.image}} class="grid-img">
+                </a>
+            </ng-template>
+            <ng-template #left>
+                <a href={{image.image}}>
+                    <img src= {{image.image}} class="grid-img">
+                </a>
+            </ng-template>
+        
         <mat-radio-group aria-label="Select an option" class="radio-group" [value]="image.efficient">
             <mat-radio-button class="radio-button" value="poor" (change)="onChangeHandler(image.id, 'poor')">Poor</mat-radio-button>
             <mat-radio-button class="radio-button" value="acceptable" (change)="onChangeHandler(image.id, 'acceptable')">Acceptable</mat-radio-button>

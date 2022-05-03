@@ -63,8 +63,22 @@ export class PatientinfoComponent implements OnInit {
           this.info['healthWorker'] = visitProvider.encounterProviders[0].display.split(':')[0];
         }
       }
-      this.patientInfo = this.info;
+      this.patientInfo = {
+        ...this.info,
+        birthdate: this.getAge(this.info['birthdate'])
+      };
     });
+  }
+
+  getAge (dateString: string) {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
   }
 
   onClick(type, value) {

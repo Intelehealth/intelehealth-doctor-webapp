@@ -9,3 +9,7 @@
 .box-radius {
   border-radius: 0 0 10px 10px;
 }
+
+.fixed-top {
+  margin: 0 11% 0;
+}

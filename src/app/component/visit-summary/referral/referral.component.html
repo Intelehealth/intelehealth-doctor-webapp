@@ -2,23 +2,24 @@
 <hr>
 <div>
     <div *ngIf="!coordinator">
-        <div>
-            <h5>Does this patient need a referral?</h5>
-            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralObs?.value" [disabled]="referralObs?.value" (change)="onChangeHandler('referral', $event.value)">
-                <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
-                <mat-radio-button class="radio-button" value="Yes to Base Hospital">Yes to Base Hospital</mat-radio-button>
-                <mat-radio-button class="radio-button" value="Yes to Vision Center">Yes to Vision Center</mat-radio-button>
-                <mat-radio-button class="radio-button" value="Yes to Eye Camp">Yes to Eye Camp</mat-radio-button>
-            </mat-radio-group>
-            <br/>
-        </div>
-        <div *ngIf="referral && referralObs?.value !== 'No'">
-            <h5>What timeframe is required for the referral? </h5>
-            <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralTimeObs?.value" [disabled]="referralTimeObs?.value" (change)="onChangeHandler('referralTime', $event.value)">
-                <mat-radio-button class="radio-button" value="< 3 days">< 3 days</mat-radio-button>
-                <mat-radio-button class="radio-button" value="3+ days">3+ days</mat-radio-button>
-                <!-- <mat-radio-button class="radio-button" value="Refer in 15+ days">Refer in 15+ days</mat-radio-button> -->
-            </mat-radio-group>
+        <div class="referral-flex">
+            <div>
+                <h5>Does this patient need a referral?</h5>
+                <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralObs?.value" [disabled]="referralObs?.value" (change)="onChangeHandler('referral', $event.value)">
+                    <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="Yes to Base Hospital">Yes to Base Hospital</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="Yes to Vision Center">Yes to Vision Center</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="Yes to Eye Camp">Yes to Eye Camp</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div *ngIf="referralObs?.value !== 'No'">
+                <h5>What timeframe is required for the referral? </h5>
+                <mat-radio-group aria-label="Select an option" class="radio-group" [value]="referralTimeObs?.value" [disabled]="referralTimeObs?.value" (change)="onChangeHandler('referralTime', $event.value)">
+                    <mat-radio-button class="radio-button" value="< 3 days">< 3 days</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3+ days">3+ days</mat-radio-button>
+                    <!-- <mat-radio-button class="radio-button" value="Refer in 15+ days">Refer in 15+ days</mat-radio-button> -->
+                </mat-radio-group>
+            </div>
         </div>
     
         <ng-container *ngIf="referral">
