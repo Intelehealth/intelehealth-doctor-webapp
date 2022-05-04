@@ -35,6 +35,12 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     },
   };
   
+  export const reasons = [
+    "Doctor Not available",
+    "Patient Not Available",
+    "Other",
+  ];
+  
   @Component({
     selector: "app-appointment-view",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +58,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     view: CalendarView = CalendarView.Month;
     CalendarView = CalendarView;
     viewDate: Date = new Date();
+    minDate = moment().format("YYYY-MM-DD");
     drSlots = [];
     modalData: {
       date: Date;
@@ -62,7 +69,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     activeDayIsOpen: boolean = false;
     selectedLang: string = "en";
     setSpiner = false;
-  
+    selectedReason = "";
+    otherReason = "";
+    reasons = reasons;
     constructor(
       private modal: NgbModal,
       private appointmentService: AppointmentService,
@@ -237,29 +246,30 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     todaysDate = moment().format("YYYY-MM-DD");
     slots = [];
     rescheduleClick(schedule) {
+      this.selectedReason = "";
       this.vService
-        .fetchVisitDetails(
-          schedule.visitUuid,
-          "custom:(uuid,encounters:(display,uuid,display))"
-        )
-        .subscribe((res) => {
-          const len = res.encounters.filter((e) => {
-            return (
-              e.display.includes("Patient Exit Survey") ||
-              e.display.includes("Visit Complete")
-            );
-          }).length;
-          const isCompleted = Boolean(len);
-          if (isCompleted) {
-            const message = `Visit is already completed, it can't be rescheduled.`;
-            this.toast({ message });
-          } else {
-            this.selectedSchedule = schedule;
-            const e = { target: { value: moment().format("YYYY-MM-DD") } };
-            this.changeCalender(e);
-            this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
-          }
-        });
+      .fetchVisitDetails(
+        schedule.visitUuid,
+        "custom:(uuid,encounters:(display,uuid,display))"
+      )
+      .subscribe((res) => {
+        const len = res.encounters.filter((e) => {
+          return (
+            e.display.includes("Patient Exit Survey") ||
+            e.display.includes("Visit Complete")
+          );
+        }).length;
+        const isCompleted = Boolean(len);
+        if (isCompleted) {
+          const message = `Visit is already completed, it can't be rescheduled.`;
+          this.toast({ message });
+        } else {
+          this.selectedSchedule = schedule;
+          const e = { target: { value: moment().format("YYYY-MM-DD") } };
+          this.changeCalender(e);
+          this.rescheduleModalRef = this.modal.open(this.rescheduleModal);
+        }
+      });
     }
   
     changeCalender(e) {
@@ -274,7 +284,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     reschedule() {
       const payload = {
         ...this.selectedSchedule,
-        ...this.slots[this.selectedSlotIdx]
+        ...this.slots[this.selectedSlotIdx],
+        reason: this.reason,
       };
   
       this.appointmentService
@@ -308,23 +319,31 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     }
   
     cancelAppointment(schedule) {
-      this.dialogService.openConfirmDialog("Are you sure to cancel this appointment?")
-        .afterClosed().subscribe(res => {
-          if (res) {
-            const payload = {
-              "id": schedule.appointmentId,
-              "visitUuid": schedule.visitUuid
-            };
-            this.appointmentService
-              .cancelAppointment(payload)
-              .subscribe((res: any) => {
-                const message = res.message || "Appointment cancelled successfully!";
-                this.toast({ message });
-                this.detailModalRef.close();
-                this.ngOnInit();
-              });
-          }
-        });
+      this.dialogService
+      .openConfirmDialog(
+        "Are you sure to cancel this appointment?",
+        "cancelAppointment"
+      )
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          const payload = {
+            id: schedule.appointmentId,
+            visitUuid: schedule.visitUuid,
+            reason: localStorage.reason,
+            hwUUID: this.userId,
+          };
+          this.appointmentService
+            .cancelAppointment(payload)
+            .subscribe((res: any) => {
+              const message =
+                res.message || "Appointment cancelled successfully!";
+              this.toast({ message });
+              this.detailModalRef.close();
+              this.ngOnInit();
+            });
+        }
+      });
     }
   
     toast({
@@ -342,8 +361,25 @@ import { MatSnackBar } from "@angular/material/snack-bar";
       this.snackbar.open(message, null, opts);
     }
   
+    clear() {
+      this.selectedSlotIdx = null;
+      this.selectedReason = null;
+      this.otherReason = "";
+    }
+
     get locale() {
       return localStorage.getItem("selectedLanguage");
+    }
+
+    get reason() {
+      let reason;
+      if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+      else reason = this.selectedReason;
+      return reason;
+    }
+  
+    get rescheduleDisabled() {
+      return !this.slots[this.selectedSlotIdx] || !this.reason;
     }
   
   }

@@ -181,10 +181,30 @@
             </div>
             <div class="col-7">
               <input
+                min="{{minDate}}"
                 class="form-control"
                 (change)="changeCalender($event)"
                 type="date"
                 [value]="todaysDate"
+              />
+            </div>
+            <div class="col-12" *ngIf="slots?.length">
+              <mat-form-field class="example-full-width w-100">
+                <mat-select
+                  placeholder="Reason"
+                  [(ngModel)]="selectedReason"
+                >
+                  <mat-option *ngFor="let rsn of reasons" [value]="rsn">
+                    {{ rsn }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <input
+                type="text"
+                [(ngModel)]="otherReason"
+                *ngIf="selectedReason == reasons[2]"
+                matInput
+                placeholder="Specify reason"
               />
             </div>
             <div class="col-12 mt-4" *ngIf="setSpiner">
@@ -214,10 +234,10 @@
         </div>
       </div>
       <div class="modal-footer center">
-        <button type="button" mat-raised-button color="primary" [disabled]="!slots[selectedSlotIdx]" (click)="reschedule()">
+        <button type="button" mat-raised-button color="primary"  [disabled]="rescheduleDisabled" (click)="reschedule()">
           Reschedule
         </button>
-        <button type="button" mat-raised-button color="primary" (click)="close()">
+        <button type="button" mat-raised-button color="primary" (click)="close(); clear()">
          Close
         </button>
       </div>
