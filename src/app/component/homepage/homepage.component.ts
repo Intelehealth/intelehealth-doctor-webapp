@@ -47,7 +47,7 @@ export class HomepageComponent implements OnInit {
   visitState = null;
   whatsappIco = environment.production
     ? "https://helpline.ekalarogya.org/intelehealth/assets/images/whatsapp.png"
-    : "../../../assets/images/whatsapp.png";
+    : "assets/images/whatsapp.png";
 
   userDetails: any;
 

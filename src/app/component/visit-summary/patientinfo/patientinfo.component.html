@@ -35,6 +35,11 @@
           <th scope="row">Contact Info</th>
           <td *ngIf="info.telephone">{{ info.telephone }}</td>
         </tr>
+        <tr>
+          <th scope="row">Occupation</th>
+          <td *ngIf="info.occupation">{{ info.occupation }}</td>
+          <td *ngIf="!info.occupation"><b>NA</b></td>
+        </tr>
         <!-- <tr>
           <th scope="row">Occupation</th>
           <td *ngIf="info.occupation">{{ info.occupation }}</td>
