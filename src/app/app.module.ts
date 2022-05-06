@@ -84,6 +84,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { EpartogramComponent } from "./component/visit-summary/epartogram/epartogram.component";
 
 
 
@@ -127,7 +128,8 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
     ChatComponent,
     TestChatComponent,
     ReassignSpecialityComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    EpartogramComponent
   ],
 
   imports: [

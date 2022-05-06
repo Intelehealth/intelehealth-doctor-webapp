@@ -1,0 +1,308 @@
+<div class="view">
+    <h4 style="text-align: center;"> WHO LABOUR CARE GUIDE </h4>
+    <div class="row">
+        <div class="column">
+            <b>Name: </b> Mary Jane Williams
+        </div>
+        <div class="column">
+            <b>Parity:</b> 2 &nbsp; &nbsp; <b>Labour onset: </b>spontaneous
+        </div>
+        <div class="column3">
+            <b>Active labour diagnosis:</b>[Date 06/07/20]
+        </div>
+    </div>
+    <div class="row">
+        <div class="column1">
+            <b>Ruptured membranes:</b> [Date 06/07/20 Time 5:00 ]
+        </div>
+        <div class="column2">
+            <b>Risk factors:</b>History of stillbirth; anaemia
+        </div>
+    </div>
+    <div class="row emptytable fixBottom">
+        <table class="table1">
+            <tr>
+                <td>Time</td>
+                <td *ngFor="let t of timeSlots">
+                    <span *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Hours </td>
+                <td class="alignment" *ngFor="let row of timeSlots">
+                    {{ row. id }}
+                </td>
+            </tr>
+        </table>
+        <table class="table2">
+            <tr>
+                <td *ngFor="let t of stag2TimeSlots">
+                    <span *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="alignment" *ngFor="let row of stag2TimeSlots">
+                    {{ row. id }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row emptytable fixBottom">
+        <button class="align">ALEART</button>
+        <b style="float: left;margin-left: 282px;">
+            <i class='fas fa-arrow-left'></i> ACTIVE FIRST STAGE
+            <i class='fas fa-arrow-right'></i>
+        </b>
+        <b style="float: right;margin-right: 206px;">
+            <i class='fas fa-arrow-left'></i> SECOND STAGE
+            <i class='fas fa-arrow-right'></i>
+        </b>
+    </div>
+    <div class="row fixBottom">
+        <table class="table3">
+            <tr>
+                <td rowspan="5">
+                    <b class="alignTitle"> SUPPORTIVE CARE </b>
+                </td>
+            </tr>
+            <tr *ngFor="let row of titleRows">
+                <td> {{row.name}} </td>
+                <td>{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table4">
+            <tr *ngFor="let row of titleRows">
+                <td *ngFor="let t of stag2TimeSlots">
+                    <span *ngIf="t.value !== null"> . </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table5">
+            <tr>
+                <td rowspan="7">
+                    <b class="alignTitle"> BABY </b>
+                </td>
+            </tr>
+            <tr *ngFor="let row of babyTitleRows">
+                <td> {{row.name}} </td>
+                <td>{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table6">
+            <tr *ngFor="let row of babyTitleRows">
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span> .</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table5">
+            <tr>
+                <td rowspan="7">
+                    <b class="alignTitle"> WOMAN </b>
+                </td>
+            </tr>
+            <tr *ngFor="let row of womanTitleRows">
+                <td> {{row.name}} </td>
+                <td>{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table6">
+            <tr *ngFor="let row of womanTitleRows">
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span>.</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table7">
+            <tr>
+                <td rowspan="3">
+                </td>
+            </tr>
+            <tr *ngFor="let row of labourFirstRows">
+                <td>{{row.name}} </td>
+                <td>{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table8">
+            <tr *ngFor="let row of labourFirstRows">
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span>.</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table9">
+            <tr>
+                <td rowspan="8">
+                    <b class="alignTitle"> LABOUR PROGRESS </b>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="7">
+                    Cervix <br>[Plot X]
+                </td>
+            </tr>
+            <tr *ngFor="let row of labourSecondRows">
+                <td>{{row.name}} </td>
+                <td [class.filled]="row.value  === null">{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table10">
+            <tr>
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span>.</span>
+                </td>
+            </tr>
+            <b>
+               text
+            </b>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table11">
+            <tr>
+                <td rowspan="8">
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="7">
+                    Descent [Plot X]
+                </td>
+            </tr>
+            <tr *ngFor="let row of labourThirdRows">
+                <td>{{row.name}} </td>
+                <td [class.filled]="row.value  === null">{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table12">
+            <tr *ngFor="let row of labourThirdRows">
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span>.</span>
+                </td>
+            </tr>
+        </table>
+    </div> 
+    <div class="row fixBottom">
+        <table class="table13">
+            <tr>
+                <td rowspan="4">
+                    <b class="alignTitle"> MEDICATION </b>
+                </td>
+            </tr>
+            <tr *ngFor="let row of medicationRows">
+                <td>{{row.name}} </td>
+                <td>{{row.value }}</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+        </table>
+        <table class="table14">
+            <tr *ngFor="let row of medicationRows">
+                <td *ngFor="let t of babyStag2TimeSlots">
+                    <span>.</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table15">
+            <tr>
+                <td rowspan="3">
+                    <b class="alignTitle"> SHARED DECISION-MAKING </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">ASSESSMENT</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span class="alignTitle">Normal Progress</span>
+                </td>
+            </tr>
+        </table>
+        <table class="table16">
+            <tr>
+                <td rowspan="3" *ngFor="let t of stag2TimeSlots">
+                    <span class="alignTitle">Normal Progress</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table17">
+            <tr>
+                <td rowspan="3">
+                    <b class="alignTitle"> SHARED DECISION-MAKING </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">PLAN</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span class="alignTitle breakWord">Monitoring SHARED DECISION-MAKING SHARED</span>
+                </td>
+            </tr>
+        </table>
+        <table class="table18">
+            <tr>
+                <td rowspan="3" *ngFor="let t of stag2TimeSlots">
+                    <span class="alignTitle"> Continue Monitoring</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row fixBottom">
+        <table class="table19">
+            <tr>
+                <td rowspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">INITIALS</td>
+                <td *ngFor="let t of supportiveCare">
+                    <span> GP</span>
+                </td>
+            </tr>
+        </table>
+        <table class="table20">
+            <tr>
+                <td *ngFor="let t of stag2TimeSlots">
+                    <span> CL</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="align-text">
+        <b>INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR DOCTOR AND RECORD THE 
+        ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H, PLEASE CONTINUE ON A NEW LABOUR CARE GUIDE.</b> <br>
+        Abbreviations:Y – Yes, N – No, D – Declined, U – Unknown, SP – Supine, MO – Mobile, E – Early, L – Late, V – Variable, I – Intact, 
+        C – Clear, M – Meconium, B – Blood, A – Anterior, P – Posterior, T – Transverse, P+ – Protein, A+ – Acetone
+    </div> <br>
+</div>
+
+<ng-template #no_value>
+    <i style="color: gray;" class='fas fa-ellipsis-v'> </i>
+</ng-template>

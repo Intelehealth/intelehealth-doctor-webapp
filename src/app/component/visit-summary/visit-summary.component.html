@@ -1,8 +1,9 @@
-<div>
+<!-- <div>
       <h2 style="text-align:center;">Visit Summary</h2>
-</div>
+</div> -->
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
+      <app-epartogram></app-epartogram>
 </div>
 <app-chat></app-chat>
 <div class="vc-button" (click)="openVcModal()">

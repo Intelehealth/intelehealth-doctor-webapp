@@ -1,0 +1,136 @@
+.view {
+    background-color: white;
+}
+
+.row {
+    margin-left: 5px;
+    width: 100%;
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+  }
+
+.column1 {
+    float: left;
+    width: 50%;
+    padding: 10px;
+}
+
+.column3 {
+    float: right;
+    width: 33.33%;
+}
+
+table, th, td {
+    font-size: 9px;
+    text-align: center;
+    table-layout: fixed;
+    border:1px solid black;
+    border-bottom: 0px rgb(240, 236, 236);
+}
+
+.emptytable {
+    margin-left: 122px;
+    font-size: 10px;
+}
+
+ td{
+   width: 5%;
+}
+
+.table3 td, .table5 td, .table7 td, .table11 td, .table13 td, .table15 td, .table17 td,  .table19 td{
+    border-bottom: 1px solid black;
+    border-left-color: #fff;
+}
+
+.table4 td, .table6 td, .table8 td, .table9 td,.table10 td, .table11 td, .table12 td, .table14 td, .table16 td, .table18 td,  .table20 td{
+    border-bottom: 1px solid black;
+}
+
+.table1 {
+    width: 66%;
+    margin-right: 20px;
+    float: left;
+}
+
+.table2, .table4, .table6, .table8, .table10, .table12, .table14, .table16, .table18,  .table20 {
+    width: 15%;
+    float:left;
+}
+
+.table3, .table5, .table7, .table9, .table11, .table13, .table15, .table17, .table19{
+    width: 75%;
+    margin-left: 20px;
+    margin-right: 20px;
+    float:left;
+}
+
+.table1 td:nth-child(1) {
+    border-bottom: 1px solid black;
+} 
+
+.table7  > tr:nth-child(1)>td:nth-child(1), .table9  > tr:nth-child(1)>td:nth-child(1), .table15 > tr:nth-child(1)>td:nth-child(1) {
+    border-bottom: 0px;
+} 
+
+.table11  > tr:nth-child(1)>td:nth-child(1), .table9  > tr:nth-child(1)>td:nth-child(1),  .table17  > tr:nth-child(1)>td:nth-child(1) {
+    border-top-color: #fff;
+    border-left-color: #fff;
+}
+
+.table19 > tr:nth-child(1)>td:nth-child(1) {
+    border-top-color: #fff;
+    border-bottom: 0px;
+} 
+
+.alignment {
+    text-align: right;
+}
+
+.align {
+    background-color: white;
+    float: left;
+    border: 1px solid black;
+}
+
+.arrow {
+    margin-left: 5px;
+    width: 1200px;
+    content: "";
+    clear: both;
+}
+
+.fixBottom {
+    margin-bottom: 8px;
+}
+
+.alignTitle{
+    -ms-writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+}
+.filled {
+    background-color: lightsteelblue;
+}
+
+.align-text {
+    font-size: 9px;
+    margin-left: 65px;
+    margin-right: 20px;
+}
+.dotted {
+    border: 1.5px dotted black;
+}
+
+.breakWord { 
+    max-width:5%;
+    word-wrap: break-word;
+}
