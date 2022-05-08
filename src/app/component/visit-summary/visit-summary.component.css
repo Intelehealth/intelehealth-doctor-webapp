@@ -1,14 +1,14 @@
 mat-spinner {
-    position: absolute;
-    z-index: 9999;
-    left:46%;
-    top:42%;
-  }
+  position: absolute;
+  z-index: 9999;
+  left:46%;
+  top:42%;
+}
 
-  .spin {
-    filter: blur(8px);
-    -webkit-filter: blur(8px);
-  }
+.spin {
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+}
 
 .mt-50 {
   margin-top: 50px;
