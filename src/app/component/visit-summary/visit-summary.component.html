@@ -26,7 +26,7 @@
     <mat-card>
       <app-additional-documents></app-additional-documents>
     </mat-card>
-    <br /> -->
+    <br />
 
     <mat-card>
       <small style="color: red">
@@ -43,7 +43,7 @@
         </i>
       </small>
     </mat-card>
-    <br />
+    <br /> -->
 
     <div class="text-center" *ngIf="!show">
       <button
@@ -58,15 +58,14 @@
     </div>
     
     <div *ngIf="show">
-      <br />
-      <mat-card>
-        <app-referral></app-referral>
-      </mat-card>
-      <br />
       <mat-card>
         <app-diagnosis></app-diagnosis>
         <br *ngIf="coordinator" />
         <app-additional-comment *ngIf="coordinator"></app-additional-comment>
+      </mat-card>
+      <br/>
+      <mat-card>
+        <app-referral></app-referral>
       </mat-card>
       <div *ngIf="!coordinator">
         <br />

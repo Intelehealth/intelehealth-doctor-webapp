@@ -27,15 +27,15 @@
           
           <!-- display selected values -->
           <ng-container *ngIf="rightDiagnosis.length > 0">
-            <br />
             <div>
-              <ul class="list-unstyled">
-                <mat-list [@moveInLeft] *ngFor="let diagnosis of rightDiagnosis; index as i"
+              <ul class="list-unstyled" *ngFor="let diagnosis of rightDiagnosis; index as i">
+                <mat-list [@moveInLeft] 
                   class="alert alert-primary">
                   <div class="doctor-value">{{ diagnosis.value }}</div>
                   <i (click)="delete('right', i)" class="material-icons float-right" 
                   style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
                 </mat-list>
+                <span><i class="fa fa-arrow-right" aria-hidden="true" (click)="onClickHandler('left', diagnosis.value)"></i></span>
               </ul>
             </div>
           </ng-container>
@@ -63,7 +63,6 @@
 
           <!-- display selected values -->
           <ng-container *ngIf="leftDiagnosis.length > 0">
-            <br />
             <div>
               <ul class="list-unstyled">
                 <mat-list [@moveInLeft] *ngFor="let diagnosis of leftDiagnosis; index as i"

@@ -3,7 +3,7 @@
 }
 
 .section {
-  width: 26%;
+  width: 30%;
 }
 
 .flex {
@@ -19,6 +19,21 @@
 
 .radio-button {
   margin: 5px;
+}
+
+.list-unstyled {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.mat-list {
+  width: 90%;
+  margin: 0px;
+}
+
+.fa-arrow-right {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 768px) { 

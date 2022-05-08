@@ -42,11 +42,17 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => { this.setSpiner = false; }, 1000);
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    setTimeout(() => {
+      this.setSpiner = false;
+    }, 1000);
     this.visitService.fetchVisitDetails(this.visitUuid)
       .subscribe(visitDetails => {
+        const visitNote = visitDetails.encounters.filter(enc => enc.display.match('Visit Note'));
+        if (!visitNote.length) {
+          this.onStartVisit();
+        }
         visitDetails.encounters.forEach(visit => {
           if (visit.display.match('Visit Note') !== null) {
             this.visitNotePresent = true;

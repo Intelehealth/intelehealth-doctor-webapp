@@ -1,6 +1,6 @@
 <h4><i class="fas fa-info-circle"></i> Patient Information</h4>
-<div class="modal-body row">
-        <div class="col-md-6" *ngIf="patientInfo">
+<div *ngIf="patientInfo" style="width: 60%;">
+        <!-- <div class="col-md-6" > -->
             <div class="flex-row">
                 <div *ngIf="!coordinator || showDetails">
                     <div id="name"><b>Name:</b> {{patientInfo.display}}</div>
@@ -16,7 +16,7 @@
                 <div *ngIf="!coordinator || showDetails"><b>Address:</b> {{patientInfo.preferredAddress.cityVillage}}</div>
                 <div *ngIf="!coordinator || showDetails"><b>Phone:</b> {{patientInfo.telephone}} | <span *ngIf="patientInfo.occupation"></span></div>
             </div>
-            <div class="flex-row">
+            <div>
                 <app-past-medical-history></app-past-medical-history>
             </div>
            
@@ -57,7 +57,7 @@
                     </tr>
                 </tbody>
             </table> -->
-        </div>
+        <!-- </div>
         <div class="col-md-6" *ngIf="!coordinator">
           <div *ngIf="profileImagePresent" style="text-align: center">
                 <img [src]= image width="40%" height="200">
@@ -65,5 +65,5 @@
             <div *ngIf="!profileImagePresent" style="text-align: center">
                 <img src="../../../../assets/dummy profile image.jpg" width="40%" height="40%">
             </div>
-        </div>
+        </div> -->
 </div>

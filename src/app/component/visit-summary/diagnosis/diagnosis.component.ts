@@ -133,6 +133,13 @@ export class DiagnosisComponent implements OnInit {
     }
   }
 
+  onClickHandler = (side, value) => {
+    if (side === 'left') {
+      this.diagnosisForm.controls.lefteye.setValue(value);
+      setTimeout(() => this.onSubmit(side), 200);
+    }
+  }
+
   onSubmit(side) {
     const date = new Date();
     const value = this.diagnosisForm.value;
@@ -150,8 +157,8 @@ export class DiagnosisComponent implements OnInit {
         .subscribe(resp => {
           this.diagnosisForm.reset();
           const allImages = getFromStorage('physicalImages');
-          const filteredImage = allImages.filter(image => image.type === side);
-          if (filteredImage.length) {
+          const filteredImage = allImages?.filter(image => image.type === side);
+          if (filteredImage?.length) {
             const payload = {
               id: uuidv4(),
               diagnosis: json.value,
