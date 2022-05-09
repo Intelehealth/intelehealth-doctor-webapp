@@ -98,7 +98,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
-        console.log('response: ', response);
         const visits = response.results;
         visits.forEach((active) => {
           if (active.encounters.length > 0) {
