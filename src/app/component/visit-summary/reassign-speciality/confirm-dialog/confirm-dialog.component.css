@@ -1,0 +1,14 @@
+.align {
+    text-align: center;
+}
+
+.example-full-width {
+    width: 100%;
+}
+
+.close-icon{
+    float: right;
+    margin-top: -32px;
+    cursor: pointer;
+}
+

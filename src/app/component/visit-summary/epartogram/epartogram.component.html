@@ -13,7 +13,7 @@
     </div>
     <div class="row">
         <div class="column1">
-            <b>Ruptured membranes:</b> [Date 06/07/20 Time 5:00 ]
+            <b>Ruptured membranes:</b> [Date 06/07/20 Time 4:00 ]
         </div>
         <div class="column2">
             <b>Risk factors:</b>History of stillbirth; anaemia
@@ -48,15 +48,19 @@
         </table>
     </div>
     <div class="row emptytable fixBottom">
-        <button class="align">ALEART</button>
-        <b style="float: left;margin-left: 282px;">
-            <i class='fas fa-arrow-left'></i> ACTIVE FIRST STAGE
-            <i class='fas fa-arrow-right'></i>
-        </b>
-        <b style="float: right;margin-right: 206px;">
-            <i class='fas fa-arrow-left'></i> SECOND STAGE
-            <i class='fas fa-arrow-right'></i>
-        </b>
+        <button class="align"><b>ALEART</b></button>
+        <div style="width: 100%;">
+            <div style="width: 66%;">
+                <div class="leftline"></div>
+                <b style="margin-left: 10px;  margin-top: 5px;"> ACTIVE FIRST STAGE</b>
+                <div class="rightline"></div>
+            </div>
+            <div style="width: 15%; float: right;margin-right: 186px; margin-top: -15px;">
+                <div class="leftline1"></div>
+                <b style="margin-left: 6px;"> SECOND STAGE</b>
+                <div class="rightline2"></div>
+            </div>
+        </div>
     </div>
     <div class="row fixBottom">
         <table class="table3">
@@ -88,17 +92,41 @@
                     <b class="alignTitle"> BABY </b>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2"> Baseline FHR </td>
+                <td colspan="2"> ≤110, ≥160 </td>
+                <td *ngFor="let t of this.doubleColStage1">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">FHR deceleration</td>
+                <td colspan="2">L</td>
+                <td *ngFor="let t of this.doubleColStage1">
+                    <span *ngIf="t.value !== null"></span>
+                </td>
+            </tr>
             <tr *ngFor="let row of babyTitleRows">
-                <td> {{row.name}} </td>
-                <td>{{row.value }}</td>
-                <td *ngFor="let t of supportiveCare">
+                <td colspan="2">{{row.name}} </td>
+                <td colspan="2">{{row.value}}</td>
+                <td colspan="2" *ngFor="let t of this.supportiveCare" >
                     <span *ngIf="t.value !== null"></span>
                 </td>
             </tr>
         </table>
         <table class="table6">
+            <tr>
+                <td *ngFor="let t of doubleColStage2">
+                    <span> .</span>
+                </td>
+            </tr>
+            <tr>
+                <td *ngFor="let t of doubleColStage2">
+                    <span> .</span>
+                </td>
+            </tr>
             <tr *ngFor="let row of babyTitleRows">
-                <td *ngFor="let t of babyStag2TimeSlots">
+                <td colspan="2" *ngFor="let t of babyStag2TimeSlots">
                     <span> .</span>
                 </td>
             </tr>
@@ -134,16 +162,16 @@
                 </td>
             </tr>
             <tr *ngFor="let row of labourFirstRows">
-                <td>{{row.name}} </td>
-                <td>{{row.value }}</td>
-                <td *ngFor="let t of supportiveCare">
-                    <span *ngIf="t.value !== null"></span>
+                <td colspan="2">{{row.name}} </td>
+                <td colspan="2">{{row.value }}</td>
+                <td *ngFor="let t of this.doubleColStage1">
+                    <div *ngIf="t.value !== null"></div>
                 </td>
             </tr>
         </table>
         <table class="table8">
             <tr *ngFor="let row of labourFirstRows">
-                <td *ngFor="let t of babyStag2TimeSlots">
+                <td *ngFor="let t of doubleColStage2">
                     <span>.</span>
                 </td>
             </tr>
@@ -155,11 +183,7 @@
                 <td rowspan="8">
                     <b class="alignTitle"> LABOUR PROGRESS </b>
                 </td>
-            </tr>
-            <tr>
-                <td rowspan="7">
-                    Cervix <br>[Plot X]
-                </td>
+                <!-- <td rowspan="7">Cervix <br>[Plot X]</td> -->
             </tr>
             <tr *ngFor="let row of labourSecondRows">
                 <td>{{row.name}} </td>
@@ -171,25 +195,29 @@
         </table>
         <table class="table10">
             <tr>
-                <td *ngFor="let t of babyStag2TimeSlots">
+                <td *ngFor="let t of doubleColStage2">
                     <span>.</span>
                 </td>
             </tr>
-            <b>
-               text
-            </b>
-        </table>
+        </table> <br>
+        <div style="max-width: 95%;">
+            <h5 class="note">
+                In active first stage, plot ‘X’ to <br>record cervical dilatation. Alert<br>triggered when lag time
+                for<br>
+                current cervical dilatation is<br>exceeded with no progress. In<br>second stage, insert ‘P’ to
+                indicate<br>
+                when pushing begins.
+            </h5>
+        </div>
     </div>
     <div class="row fixBottom">
         <table class="table11">
             <tr>
                 <td rowspan="8">
                 </td>
-            </tr>
-            <tr>
-                <td rowspan="7">
-                    Descent [Plot X]
-                </td>
+                <!-- <td rowspan="7">
+                    Descent <br> [Plot X]
+                </td> -->
             </tr>
             <tr *ngFor="let row of labourThirdRows">
                 <td>{{row.name}} </td>
@@ -206,7 +234,7 @@
                 </td>
             </tr>
         </table>
-    </div> 
+    </div>
     <div class="row fixBottom">
         <table class="table13">
             <tr>
@@ -215,8 +243,7 @@
                 </td>
             </tr>
             <tr *ngFor="let row of medicationRows">
-                <td>{{row.name}} </td>
-                <td>{{row.value }}</td>
+                <td colspan="2">{{row.name}} </td>
                 <td *ngFor="let t of supportiveCare">
                     <span *ngIf="t.value !== null"></span>
                 </td>
@@ -230,17 +257,17 @@
             </tr>
         </table>
     </div>
-    <div class="row fixBottom">
+    <div class="row">
         <table class="table15">
             <tr>
-                <td rowspan="3">
-                    <b class="alignTitle"> SHARED DECISION-MAKING </b>
+                <td rowspan="8">
+                    <b class="alignTitle" style="color: transparent" > SHARED DECISION-MAKING</b>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">ASSESSMENT</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span class="alignTitle">Normal Progress</span>
+                    <span class="alignTitle"></span>
                 </td>
             </tr>
         </table>
@@ -252,17 +279,24 @@
             </tr>
         </table>
     </div>
-    <div class="row fixBottom">
+    <b class="alignTitle sharedTitle"> SHARED DECISION-MAKING</b>
+    <div style="margin-top: -70px;" class="row fixBottom">
         <table class="table17">
             <tr>
                 <td rowspan="3">
-                    <b class="alignTitle"> SHARED DECISION-MAKING </b>
+                    <b style="color: transparent" class="alignTitle"> SHARED DECISION-MAKING</b>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">PLAN</td>
+                <td colspan="2" rowspan="2">PLAN</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span class="alignTitle breakWord">Monitoring SHARED DECISION-MAKING SHARED</span>
+                    <span class="alignTitle breakWord"></span>
+                </td>
+            </tr>
+            <tr>
+                <td *ngFor="let t of supportiveCare">
+                    <button (click)="submit()" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
                 </td>
             </tr>
         </table>
@@ -296,10 +330,13 @@
         </table>
     </div>
     <div class="align-text">
-        <b>INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR DOCTOR AND RECORD THE 
-        ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H, PLEASE CONTINUE ON A NEW LABOUR CARE GUIDE.</b> <br>
-        Abbreviations:Y – Yes, N – No, D – Declined, U – Unknown, SP – Supine, MO – Mobile, E – Early, L – Late, V – Variable, I – Intact, 
-        C – Clear, M – Meconium, B – Blood, A – Anterior, P – Posterior, T – Transverse, P+ – Protein, A+ – Acetone
+        <b>INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR
+            DOCTOR AND RECORD THE
+            ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H,<br> PLEASE CONTINUE ON A NEW LABOUR CARE
+            GUIDE.</b> <br>
+        Abbreviations: <b>Y</b> – Yes, <b>N</b> – No, <b>D</b> – Declined, <b>U</b> – Unknown, <b>SP</b> – Supine,<b> MO</b> – Mobile,
+         <b>E</b> – Early,<b>L</b> – Late, <b>V</b> –Variable, <b>I</b> – Intact,<b>C</b> – Clear, <b>M</b> – Meconium, <b>B</b> – Blood,
+        <b>A</b> – Anterior, <b>P</b> – Posterior, <b>T</b> – Transverse, <b>P+ </b>– Protein, <b>A+</b> – Acetone
     </div> <br>
 </div>
 

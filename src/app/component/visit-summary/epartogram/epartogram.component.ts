@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ConfirmDialogService } from '../reassign-speciality/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-epartogram',
@@ -7,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EpartogramComponent implements OnInit {
   timeSlots = [ 
+    {id: 0, value: "5:00"},
     {id: 1, value: "6:00"},
     {id: 2, value: "7:00"},
     {id: 3, value: "8:00"},
@@ -18,7 +20,6 @@ export class EpartogramComponent implements OnInit {
     {id: 9, value: null},
     {id: 10, value: null},
     {id: 11, value: null },
-    {id: 12, value: null},
     ] ;
   stag2TimeSlots = [
     {id: 1, value: "13:05"},
@@ -41,13 +42,6 @@ export class EpartogramComponent implements OnInit {
     {id: 12, value: null},
     ] ;
 
-  supportiveCareStage2 = [
-    {id: 1, value: "N"},
-    {id: 2, value: "Y"},
-    {id: 3, value: "N"},
-    {id: 4, value: "N"}
-  ];
-
   timeRows = [
     {"name" : "Time", 'value': "N"},
     {"name" : "Hours", 'value': "N"},
@@ -61,8 +55,6 @@ export class EpartogramComponent implements OnInit {
   ]
 
   babyTitleRows = [
-    {"name" : "Baseline FHR", 'value': "<110, ≥160"},
-    {"name" : "FHR deceleration",'value': " L"},
     {"name" : "Amniotic fluid",'value': "M+++, B"},
     {"name" : "Fetal position",'value': "P, T"},
     {"name" : "Caput",'value': "+++"},
@@ -73,9 +65,9 @@ export class EpartogramComponent implements OnInit {
     {id: 1, value: 145},
     {id: 2, value: 125},
     {id: 3, value: 130},
-    {id: 1, value: 0},
-    {id: 2, value: 0},
-    {id: 3, value: 0}
+    {id: 4, value: 0},
+    {id: 5, value: 0},
+    {id: 6, value: 0}
   ];
 
   womanTitleRows = [
@@ -110,9 +102,22 @@ export class EpartogramComponent implements OnInit {
     {"name" : "Medicine", 'value': "≤2, >5"},
     {"name" : "IV fluids",'value': "<20, >60"}
   ];
-  constructor() { }
+
+  doubleColStage1 = [];
+  doubleColStage2 = [];
+
+  constructor(private dialogService: ConfirmDialogService ) { }
 
   ngOnInit(): void {
+    this.doubleColStage1 = this.supportiveCare.concat(this.supportiveCare);
+    this.doubleColStage2 = this.babyStag2TimeSlots.concat(this.babyStag2TimeSlots);
   }
 
+  submit() {
+    this.dialogService.openConfirmDialog("Save ASSESSMENT/PLAN")
+    .afterClosed().subscribe(res => {
+      if (res) {
+      }
+    });
+  }
 }
