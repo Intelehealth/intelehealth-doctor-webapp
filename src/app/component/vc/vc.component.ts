@@ -38,6 +38,7 @@ export class VcComponent implements OnInit {
   patientUuid = "";
   nurseId: { uuid } = { uuid: null };
   doctorName = "";
+  initiator = "dr";
 
   constructor(
     public socketService: SocketService,
@@ -47,6 +48,7 @@ export class VcComponent implements OnInit {
   ) {}
 
   close() {
+    this.socketService.initSocket(true);
     this.dialogRef.close();
   }
 
@@ -66,6 +68,7 @@ export class VcComponent implements OnInit {
 
   ngOnInit(): void {
     this.room = this.data.patientUuid;
+    if (this.data.initiator) this.initiator = this.data.initiator;
     const patientVisitProvider = getFromStorage("patientVisitProvider");
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
@@ -92,7 +95,12 @@ export class VcComponent implements OnInit {
 
   makeCall() {
     this.startUserMedia();
-    this.socketService.emitEvent("create or join", this.room);
+    console.log("this.initiator: ", this.initiator);
+    if (this.initiator === "hw") {
+      this.socketService.emitEvent("create_or_join_hw", { room: this.room });
+    } else {
+      this.socketService.emitEvent("create or join", this.room);
+    }
     console.log("Attempted to create or  join room", this.room);
     this.toast({ message: "Calling....", duration: 8000 });
   }
@@ -150,6 +158,17 @@ export class VcComponent implements OnInit {
   }
 
   initSocketEvents() {
+    if (this.initiator === "hw") {
+      this.socketService.onEvent("created").subscribe((room) => {
+        console.log("connectToSignallingServer: created " + room);
+        this.isInitiator = true;
+      });
+      this.socketService.onEvent("ready").subscribe(() => {
+        console.log("connectToSignallingServer: ready ");
+        this.socketService.emitEvent("message", "got user media");
+      });
+    }
+
     this.socketService.onEvent("join").subscribe((room) => {
       console.log("Another peer made a request to join room " + room);
       console.log("This peer is the initiator of room " + room + "!");

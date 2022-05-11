@@ -42,10 +42,6 @@ export class TestChatComponent implements OnInit {
   reInitSocket() {
     localStorage.socketQuery = `userId=${this.data.from}&name=mobile`;
     this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe(() => {
-      this.updateMessages();
-      this.playNotify();
-    });
   }
 
   get chatElem() {
@@ -122,7 +118,8 @@ export class TestChatComponent implements OnInit {
     }, 0);
   }
 
-  playNotify() {
-    new Audio("../../../../intelehealth/assets/notification.mp3").play();
+  callDoctor() {
+    localStorage.patientUuid = this.data.patientId;
+    this.socket.openVcModal();
   }
 }

@@ -40,13 +40,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
-  systemAccess:boolean = false;
+  systemAccess: boolean = false;
 
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
-    private socket: SocketService,
+    private socket: SocketService
   ) {}
 
   ngOnInit() {
@@ -68,9 +68,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
         });
         userDetails["roles"].forEach((role) => {
-          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" || 
-              role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
-              role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
+          if (
+            role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
+            role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+            role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe"
+          ) {
             this.systemAccess = true;
           }
         });
@@ -80,14 +82,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.authService.logout();
     }
     this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
-      this.playNotify();
-    });
   }
 
   ngOnDestroy() {
@@ -101,9 +95,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
         const visits = response.results;
         visits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if(this.systemAccess) {
+            if (this.systemAccess) {
               this.visitCategory(active);
-            }else if (active.attributes.length) {
+            } else if (active.attributes.length) {
               const attributes = active.attributes;
               const speRequired = attributes.filter(
                 (attr) =>
@@ -128,9 +122,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
         this.setSpiner = false;
       },
-      (err) => {
-      
-      }
+      (err) => {}
     );
   }
 
@@ -141,35 +133,41 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitCategory(active) {
     const { encounters = [] } = active;
     let encounter;
-    if ((encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
-        (encounter =this.checkVisit(encounters, "Visit Complete")) ||
-        active.stopDatetime != null) {
+    if (
+      (encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+      (encounter = this.checkVisit(encounters, "Visit Complete")) ||
+      active.stopDatetime != null
+    ) {
       const values = this.assignValueToProperty(active, encounter);
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
-    }  else if (this.checkVisit(encounters, "Remote Prescription") && 
-      active.stopDatetime == null) {
+    } else if (
+      this.checkVisit(encounters, "Remote Prescription") &&
+      active.stopDatetime == null
+    ) {
       const values = this.assignValueToProperty(active, encounter);
       this.remoteVisits.push(values);
       this.remotePatientNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")  && 
-      active.stopDatetime == null) {
+    } else if (
+      this.checkVisit(encounters, "Visit Note") &&
+      active.stopDatetime == null
+    ) {
       const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active,encounter);
+        const values = this.assignValueToProperty(active, encounter);
         this.flagVisit.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
     } else if (
       (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
-      (encounter = this.checkVisit(encounters, "Vitals"))&&
-      active.stopDatetime == null
+      ((encounter = this.checkVisit(encounters, "Vitals")) &&
+        active.stopDatetime == null)
     ) {
-      const values = this.assignValueToProperty(active,encounter);
+      const values = this.assignValueToProperty(active, encounter);
       this.waitingVisit.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
@@ -186,9 +184,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.age = active.patient.person.birthdate;
     this.value.location = active.location.display;
     this.value.status =
-    active.stopDatetime != null
-      ? "Visit Complete"
-      : encounter?.encounterType.display;
+      active.stopDatetime != null
+        ? "Visit Complete"
+        : encounter?.encounterType.display;
     this.value.provider =
       active.encounters[0].encounterProviders[0].provider.display.split(
         "- "
@@ -196,10 +194,4 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }
-
-  playNotify() {
-    const audioUrl = "../../../../intelehealth/assets/notification.mp3";
-    new Audio(audioUrl).play();
-  }
-    
 }

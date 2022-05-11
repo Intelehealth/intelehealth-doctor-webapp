@@ -1,8 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
+import { VcComponent } from "../component/vc/vc.component";
+import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 
 @Injectable()
 export class SocketService {
@@ -15,7 +18,7 @@ export class SocketService {
 
   private baseURL = environment.socketURL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   message(roomId, clientId, message): Observable<any> {
     const url = `${this.baseURL}/message/${roomId}/${clientId}`;
@@ -23,15 +26,38 @@ export class SocketService {
   }
 
   public initSocket(forceInit = false) {
+    console.log("initSocket:called");
     if (forceInit && this.socket?.id && this.socket?.disconnect) {
       this.socket.disconnect();
     }
     if (!this.socket || forceInit) {
+      localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
       this.socket = io(environment.socketURL, {
         query: localStorage.socketQuery,
       });
       this.onEvent("allUsers").subscribe((data) => {
         this.activeUsers = data;
+      });
+      this.onEvent("incoming_call").subscribe((data = {}) => {
+        console.log("data: ", data);
+        if (!location.hash.includes("test/chat")) {
+          localStorage.patientUuid = data.patientUuid;
+          console.log("patientUuid: ", localStorage.patientUuid);
+          if (localStorage.patientUuid) {
+            this.openVcOverlay();
+          }
+        }
+      });
+      this.onEvent("updateMessage").subscribe((data) => {
+        this.showNotification({
+          title: "New chat message",
+          body: data.message,
+          timestamp: new Date(data.createdAt).getTime(),
+        });
+        new Audio("assets/notification.mp3").play();
+      });
+      this.onEvent("log").subscribe((array) => {
+        console.log.apply(console, array);
       });
     }
   }
@@ -58,5 +84,50 @@ export class SocketService {
         });
       }
     }
+  }
+
+  callRing = new Audio("assets/phone.mp3");
+  public openVcOverlay() {
+    this.dialog.open(VcallOverlayComponent, {
+      disableClose: false,
+      hasBackdrop: true,
+      id: "vcOverlay",
+    });
+    this.callRing.play();
+    setTimeout(() => {
+      this.closeVcOverlay();
+    }, 10000);
+  }
+
+  public closeVcOverlay() {
+    const dailog = this.dialog.getDialogById("vcOverlay");
+    if (dailog) {
+      dailog.close();
+    }
+    this.callRing.pause();
+  }
+
+  public openVcModal() {
+    console.log("patientUuid: ", localStorage.patientUuid);
+    this.dialog.open(VcComponent, {
+      disableClose: true,
+      data: { patientUuid: localStorage.patientUuid, initiator: "hw" },
+    });
+  }
+
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  get userUuid() {
+    return this.user.uuid;
+  }
+
+  get userName() {
+    return this.user.display;
   }
 }

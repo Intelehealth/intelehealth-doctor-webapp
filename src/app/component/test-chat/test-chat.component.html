@@ -20,11 +20,12 @@
     </div>
     <input [(ngModel)]="data.to" type="text" class="form-control" />
   </div>
-  <button
-    class="btn btn-primary"
-    (click)="updateMessages(); reInitSocket()"
-  >
+  <button class="btn btn-primary m-2" (click)="updateMessages(); reInitSocket()">
     Get Messages
+  </button>
+
+  <button class="btn btn-primary m-2" (click)="callDoctor()">
+    Call Doctor for patientId
   </button>
 </div>
 

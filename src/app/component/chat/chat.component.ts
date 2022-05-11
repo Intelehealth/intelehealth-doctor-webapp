@@ -59,10 +59,6 @@ export class ChatComponent implements OnInit {
   initSocket(force = true) {
     this.updateMessages();
     this.socket.initSocket(force);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.updateMessages();
-      this.playNotify();
-    });
   }
 
   get chatElem() {
