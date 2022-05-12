@@ -63,4 +63,16 @@ export class VisitService {
     const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
   }
+
+  getVisitCounts(speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
+    );
+  }
+  
+  getDoctorsVisit() {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getDoctorVisits`
+    );
+  }
 }

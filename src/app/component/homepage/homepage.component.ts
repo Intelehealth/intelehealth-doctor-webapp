@@ -74,6 +74,7 @@ export class HomepageComponent implements OnInit {
           }
         });
         this.getVisits();
+        this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -162,11 +163,11 @@ export class HomepageComponent implements OnInit {
     if (this.checkVisit(encounters, "Visit Complete")) {
       const values = this.assignValueToProperty(active);
       this.completedVisit.push(values);
-      this.completeVisitNo += 1;
+      // this.completeVisitNo += 1;
     } else if (this.checkVisit(encounters, "Visit Note")) {
       const values = this.assignValueToProperty(active);
       this.progressVisit.push(values);
-      this.visitNoteNo += 1;
+      // this.visitNoteNo += 1;
     } else if (this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active);
@@ -180,7 +181,7 @@ export class HomepageComponent implements OnInit {
     ) {
       const values = this.assignValueToProperty(active);
       this.waitingVisit.push(values);
-      this.activePatient += 1;
+      // this.activePatient += 1;
       GlobalConstants.visits.push(active);
     }
   }
@@ -198,6 +199,24 @@ export class HomepageComponent implements OnInit {
     })
   }
 
+  getVisitCounts(speciality) {
+    const getTotal = (data, type) => {
+      const item = data.find(({ Status }: any) => Status === type);
+      return item?.Total || 0;
+    };
+    this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
+      if (data.length) {
+        this.flagPatientNo = getTotal(data, "Priority");
+        this.activePatient = getTotal(data, "Awaiting Consult");
+        this.visitNoteNo = getTotal(data, "Visit In Progress");
+        this.completeVisitNo = getTotal(data, "Completed Visit");
+        localStorage.setItem('awaitingVisitsCount', this.activePatient.toString())
+        
+      }
+    });
+  }
+
+
   /**
    * Transform visit Object to make it compatible to show in the mat table
    * @param visitObject Object
@@ -211,11 +230,11 @@ export class HomepageComponent implements OnInit {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = active.encounters[0].encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split(
+    this.value.status = active.encounters[0]?.encounterType.display;
+    this.value.provider = active.encounters[0]?.encounterProviders[0].provider.display.split(
       "- "
     )[1];
-    this.value.lastSeen = active.encounters[0].encounterDatetime;
+    this.value.lastSeen = active?.encounters[0]?.encounterDatetime;
     this.value.complaints = this.getComplaints(active);
     return this.value;
   }
