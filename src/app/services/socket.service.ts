@@ -39,7 +39,6 @@ export class SocketService {
         this.activeUsers = data;
       });
       this.onEvent("incoming_call").subscribe((data = {}) => {
-        console.log("data: ", data);
         if (!location.hash.includes("test/chat")) {
           localStorage.patientUuid = data.patientUuid;
           console.log("patientUuid: ", localStorage.patientUuid);
@@ -57,7 +56,7 @@ export class SocketService {
         new Audio("assets/notification.mp3").play();
       });
       this.onEvent("log").subscribe((array) => {
-        console.log.apply(console, array);
+        if (localStorage.log === "1") console.log.apply(console, array);
       });
     }
   }
@@ -93,7 +92,7 @@ export class SocketService {
       hasBackdrop: true,
       id: "vcOverlay",
     });
-    this.callRing.play();
+    // this.callRing.play();
     setTimeout(() => {
       this.closeVcOverlay();
     }, 10000);
@@ -107,11 +106,11 @@ export class SocketService {
     this.callRing.pause();
   }
 
-  public openVcModal() {
+  public openVcModal(initiator = "dr") {
     console.log("patientUuid: ", localStorage.patientUuid);
     this.dialog.open(VcComponent, {
       disableClose: true,
-      data: { patientUuid: localStorage.patientUuid, initiator: "hw" },
+      data: { patientUuid: localStorage.patientUuid, initiator },
     });
   }
 

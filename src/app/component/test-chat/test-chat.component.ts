@@ -120,6 +120,6 @@ export class TestChatComponent implements OnInit {
 
   callDoctor() {
     localStorage.patientUuid = this.data.patientId;
-    this.socket.openVcModal();
+    this.socket.openVcModal("hw");
   }
 }
