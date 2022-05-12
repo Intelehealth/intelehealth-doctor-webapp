@@ -77,10 +77,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table4">
+        <table id="tb4" class="table4">
             <tr *ngFor="let row of titleRows">
                 <td *ngFor="let t of stag2TimeSlots">
-                    <span *ngIf="t.value !== null"> . </span>
+                    <span *ngIf="t.value !== null"> </span>
                 </td>
             </tr>
         </table>
@@ -114,20 +114,20 @@
                 </td>
             </tr>
         </table>
-        <table class="table6">
+        <table id="tb6"  class="table6">
             <tr>
                 <td *ngFor="let t of doubleColStage2">
-                    <span> .</span>
+                    <span></span>
                 </td>
             </tr>
             <tr>
                 <td *ngFor="let t of doubleColStage2">
-                    <span> .</span>
+                    <span></span>
                 </td>
             </tr>
             <tr *ngFor="let row of babyTitleRows">
                 <td colspan="2" *ngFor="let t of babyStag2TimeSlots">
-                    <span> .</span>
+                    <span></span>
                 </td>
             </tr>
         </table>
@@ -147,10 +147,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table6">
+        <table  id="tb7"  class="table6">
             <tr *ngFor="let row of womanTitleRows">
                 <td *ngFor="let t of babyStag2TimeSlots">
-                    <span>.</span>
+                    <span></span>
                 </td>
             </tr>
         </table>
@@ -169,10 +169,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table8">
+        <table  id="tb8" class="table8">
             <tr *ngFor="let row of labourFirstRows">
                 <td *ngFor="let t of doubleColStage2">
-                    <span>.</span>
+                    <span></span>
                 </td>
             </tr>
         </table>
@@ -183,7 +183,8 @@
                 <td rowspan="8">
                     <b class="alignTitle"> LABOUR PROGRESS </b>
                 </td>
-                <!-- <td rowspan="7">Cervix <br>[Plot X]</td> -->
+                <td rowspan="7">Cervix <br>[Plot X]</td>
+                <td style="width: 16px;"></td>
             </tr>
             <tr *ngFor="let row of labourSecondRows">
                 <td>{{row.name}} </td>
@@ -193,10 +194,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table10">
+        <table id="tb10" class="table10">
             <tr>
                 <td *ngFor="let t of doubleColStage2">
-                    <span>.</span>
+                    <span></span>
                 </td>
             </tr>
         </table> <br>
@@ -215,9 +216,10 @@
             <tr>
                 <td rowspan="8">
                 </td>
-                <!-- <td rowspan="7">
+                <td rowspan="7">
                     Descent <br> [Plot X]
-                </td> -->
+                </td>
+                <td style="width: 16px;"></td>
             </tr>
             <tr *ngFor="let row of labourThirdRows">
                 <td>{{row.name}} </td>
@@ -227,10 +229,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table12">
+        <table  id="tb7" class="table12">
             <tr *ngFor="let row of labourThirdRows">
                 <td *ngFor="let t of babyStag2TimeSlots">
-                    <span>.</span>
+                    <span></span>
                 </td>
             </tr>
         </table>
@@ -249,10 +251,10 @@
                 </td>
             </tr>
         </table>
-        <table class="table14">
+        <table id="tb14" class="table14">
             <tr *ngFor="let row of medicationRows">
                 <td *ngFor="let t of babyStag2TimeSlots">
-                    <span>.</span>
+                    <span></span>
                 </td>
             </tr>
         </table>
@@ -267,14 +269,15 @@
             <tr>
                 <td colspan="2">ASSESSMENT</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span class="alignTitle"></span>
+                    <div class="alignTitle noteSize">
+                        >hhhhhhhhhhhhh jjjjjjj hhhh jikkhhh hjjhjh nbnnv cfdfd hhhh</div>
                 </td>
             </tr>
         </table>
         <table class="table16">
             <tr>
                 <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle">Normal Progress</span>
+                    <span class="alignTitle noteSize">Normal Progress</span>
                 </td>
             </tr>
         </table>
@@ -303,7 +306,7 @@
         <table class="table18">
             <tr>
                 <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle"> Continue Monitoring</span>
+                    <span class="alignTitle noteSize"> Continue Monitoring nbnbn hgfhgf ghjghjg khkjhjkhj jhj</span>
                 </td>
             </tr>
         </table>

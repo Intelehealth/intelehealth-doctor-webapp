@@ -2,6 +2,27 @@
     background-color: white;
 }
 
+#tb4{ 
+    height: 95px;
+}
+
+#tb6 {
+    height: 170px;
+}
+
+#tb7 {
+    height:105px;
+}
+
+#tb8 {
+    height: 66px;
+}
+#tb10 {
+    height: 18px;
+}
+#tb14 {
+    height: 70px;
+}
 .row {
     margin-left: 5px;
     width: 100%;
@@ -116,8 +137,13 @@ table, th, td {
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    white-space: nowrap;
+    overflow-wrap: break-word;
 }
+
+.noteSize {
+    inline-size: 127px;
+}
+
 .filled {
     background-color: lightsteelblue;
 }
