@@ -1,6 +1,6 @@
-<div class="view">
+<div class="view tab-res">
     <h4 style="text-align: center;"> WHO LABOUR CARE GUIDE </h4>
-    <div class="row">
+    <div class="row fixBottom">
         <div class="column">
             <b>Name: </b> Mary Jane Williams
         </div>
@@ -11,7 +11,7 @@
             <b>Active labour diagnosis:</b>[Date 06/07/20]
         </div>
     </div>
-    <div class="row">
+    <div class="row fixBottom">
         <div class="column1">
             <b>Ruptured membranes:</b> [Date 06/07/20 Time 4:00 ]
         </div>
@@ -48,14 +48,15 @@
         </table>
     </div>
     <div class="row emptytable fixBottom">
-        <button class="align"><b>ALEART</b></button>
+        <input  class="align" type="text" value="ALEART" disabled>
+        <!-- <button class="align"><b></b></button> -->
         <div style="width: 100%;">
             <div style="width: 66%;">
                 <div class="leftline"></div>
                 <b style="margin-left: 10px;  margin-top: 5px;"> ACTIVE FIRST STAGE</b>
                 <div class="rightline"></div>
             </div>
-            <div style="width: 15%; float: right;margin-right: 186px; margin-top: -15px;">
+            <div class="second-arrow">
                 <div class="leftline1"></div>
                 <b style="margin-left: 6px;"> SECOND STAGE</b>
                 <div class="rightline2"></div>
@@ -229,7 +230,7 @@
                 </td>
             </tr>
         </table>
-        <table  id="tb7" class="table12">
+        <table  id="tb12" class="table12">
             <tr *ngFor="let row of labourThirdRows">
                 <td *ngFor="let t of babyStag2TimeSlots">
                     <span></span>
@@ -298,7 +299,7 @@
             </tr>
             <tr>
                 <td *ngFor="let t of supportiveCare">
-                    <button (click)="submit()" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>
+                    <button (click)="submit()" class="btn-primary shadow-none"><i class="fa fa-plus"></i>
                     </button>
                 </td>
             </tr>

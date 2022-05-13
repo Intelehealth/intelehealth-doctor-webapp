@@ -3,25 +3,28 @@
 }
 
 #tb4{ 
-    height: 95px;
+    height: 85px;
 }
 
 #tb6 {
-    height: 170px;
+    height: 128px;
 }
 
 #tb7 {
-    height:105px;
+    height:95px;
 }
 
 #tb8 {
-    height: 66px;
+    height: 60px;
 }
 #tb10 {
     height: 18px;
 }
 #tb14 {
-    height: 70px;
+    height: 64px;
+}
+#tb12 {
+    height: 100px;
 }
 .row {
     margin-left: 5px;
@@ -34,13 +37,13 @@
 .column {
     float: left;
     width: 33.33%;
-    padding: 10px;
+    /* padding: 10px; */
   }
 
 .column1 {
     float: left;
     width: 50%;
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .column3 {
@@ -50,7 +53,7 @@
 
 table, th, td {
     width: 100%;
-    font-size: 10px;
+    font-size: 9px;
     text-align: center;
     table-layout: fixed;
     border:1px solid black;
@@ -118,7 +121,10 @@ table, th, td {
 .align {
     background-color: white;
     float: left;
+    color: black;
     border: 1px solid black;
+    width: 5%;
+    text-align: center;
 }
 
 .arrow {
@@ -141,7 +147,7 @@ table, th, td {
 }
 
 .noteSize {
-    inline-size: 127px;
+    inline-size: 120px;
 }
 
 .filled {
@@ -195,6 +201,13 @@ table, th, td {
     margin-right: 10px;
 }
 
+.second-arrow {
+    width: 15%;
+    float: right;
+    margin-right: 186px;
+    margin-top: -15px;
+}
+
 .point {	
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
@@ -211,4 +224,49 @@ table, th, td {
     font-size: 9px;
     margin-left: 40px;
     margin-top: -46px;
+}
+
+@media screen and (max-width: 800px) {
+    .tab-res {
+        font-size: 10px;
+    }
+    .emptytable {
+        margin-left: 85px;
+    }
+    table, th, td {
+        word-wrap: break-word;
+    }
+    .note {
+        font-size: 7px;
+        margin-top: 15px;
+    }
+    .sharedTitle {
+        margin-left: 30px;
+    }
+    .align-text {
+        font-size: 7px;
+        margin-left: 50px
+    }
+    .align {
+        font-size: 7px;
+    }
+    .leftline {
+        width: 140px;
+        margin-left: 15px;
+    }
+    .rightline {
+        width: 140px;
+        margin-right: 15px;
+    }
+    .leftline1 {
+        width: 11px;
+        margin-left: -6px;
+    }
+    .rightline2{
+        width: 11px;
+        margin-right: 0px;
+    }
+    .second-arrow {
+        margin-right: 106px;
+    }
 }
