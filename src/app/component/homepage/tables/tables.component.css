@@ -16,6 +16,14 @@ table {
     width: 14%
 }
 
+td{
+    cursor: pointer;
+}
+
+.mat-row:hover {
+    background-color: #D3D3D3;
+  }
+
 .mat-column-dob {
     width: 10%
 }

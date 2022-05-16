@@ -38,6 +38,7 @@ export class VcComponent implements OnInit {
   patientUuid = "";
   nurseId: { uuid } = { uuid: null };
   doctorName = "";
+  initiator = "dr";
 
   constructor(
     public socketService: SocketService,
@@ -47,6 +48,7 @@ export class VcComponent implements OnInit {
   ) {}
 
   close() {
+    this.socketService.initSocket(true);
     this.dialogRef.close();
   }
 
@@ -64,8 +66,9 @@ export class VcComponent implements OnInit {
     this.snackbar.open(message, null, opts);
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.room = this.data.patientUuid;
+    if (this.data.initiator) this.initiator = this.data.initiator;
     const patientVisitProvider = getFromStorage("patientVisitProvider");
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
@@ -82,7 +85,7 @@ export class VcComponent implements OnInit {
       doctorName: this.doctorName,
       roomId: this.room,
     });
-    this.makeCall();
+    await this.makeCall();
   }
 
   @HostListener("fullscreenchange")
@@ -90,9 +93,14 @@ export class VcComponent implements OnInit {
     this.isFullscreen = document.fullscreenEnabled;
   }
 
-  makeCall() {
-    this.startUserMedia();
-    this.socketService.emitEvent("create or join", this.room);
+  async makeCall() {
+    await this.startUserMedia();
+    console.log("this.initiator: ", this.initiator);
+    if (this.initiator === "hw") {
+      this.socketService.emitEvent("create_or_join_hw", { room: this.room });
+    } else {
+      this.socketService.emitEvent("create or join", this.room);
+    }
     console.log("Attempted to create or  join room", this.room);
     this.toast({ message: "Calling....", duration: 8000 });
   }
@@ -117,7 +125,7 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  async startUserMedia(config?: any, cb = () => {}) {
     let mediaConfig = {
       video: true,
       audio: true,
@@ -128,28 +136,43 @@ export class VcComponent implements OnInit {
     }
 
     const n = <any>navigator;
-    n.getUserMedia =
-      n.getUserMedia ||
-      n.webkitGetUserMedia ||
-      n.mozGetUserMedia ||
-      n.msGetUserMedia;
-    n.getUserMedia(
-      mediaConfig,
-      (stream: MediaStream) => {
-        this.localStream = stream;
-        const localStream = new MediaStream();
-        localStream.addTrack(stream.getVideoTracks()[0]);
-        this.localVideoRef.nativeElement.srcObject = localStream;
-        cb();
-      },
-      (err) => {
-        this.isStreamAvailable = false;
-        console.error(err);
-      }
-    );
+    await new Promise((res, rej) => {
+      n.getUserMedia =
+        n.getUserMedia ||
+        n.webkitGetUserMedia ||
+        n.mozGetUserMedia ||
+        n.msGetUserMedia;
+      n.getUserMedia(
+        mediaConfig,
+        (stream: MediaStream) => {
+          this.localStream = stream;
+          const localStream = new MediaStream();
+          localStream.addTrack(stream.getVideoTracks()[0]);
+          this.localVideoRef.nativeElement.srcObject = localStream;
+          cb();
+          res(1);
+        },
+        (err) => {
+          rej(err);
+          this.isStreamAvailable = false;
+          console.error(err);
+        }
+      );
+    });
   }
 
   initSocketEvents() {
+    if (this.initiator === "hw") {
+      this.socketService.onEvent("created").subscribe((room) => {
+        console.log("connectToSignallingServer: created " + room);
+        this.isInitiator = true;
+      });
+      this.socketService.onEvent("ready").subscribe(() => {
+        console.log("connectToSignallingServer: ready ");
+        this.socketService.emitEvent("message", "got user media");
+      });
+    }
+
     this.socketService.onEvent("join").subscribe((room) => {
       console.log("Another peer made a request to join room " + room);
       console.log("This peer is the initiator of room " + room + "!");
@@ -161,12 +184,9 @@ export class VcComponent implements OnInit {
       this.isChannelReady = true;
     });
 
-    this.socketService.onEvent("log").subscribe((array) => {
-      console.log.apply(console, array);
-    });
-
     this.socketService.onEvent("message").subscribe((message) => {
-      console.log("Client received message:", message);
+      console.log("Client received message:", message?.type);
+      console.log("this.pc: ", this.pc?.signalingState);
       if (message === "got user media") {
         this.maybeStart();
       } else if (message.type === "offer") {
@@ -263,7 +283,7 @@ export class VcComponent implements OnInit {
   }
 
   handleIceCandidate(event) {
-    console.log("icecandidate event: ", event);
+    console.log("event: ", event);
     if (event.candidate) {
       this.sendMessage({
         type: "candidate",
