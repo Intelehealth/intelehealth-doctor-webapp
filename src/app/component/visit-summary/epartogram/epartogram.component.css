@@ -219,6 +219,7 @@ table, th, td {
     font-size: 9px;
     text-align: center;
     font-weight: bold;
+    margin-bottom: 0;
 }
 .sharedTitle {
     font-size: 9px;
