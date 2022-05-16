@@ -69,7 +69,7 @@ table, th, td {
    width: 5%;
 }
 
-.table3 td, .table5 td, .table7 td, .table11 td, .table13 td, .table15 td, .table17 td,  .table19 td{
+.table3 td, .table5 td, .table7 td, .table11 td, .table13 td, .table15 td, .table17 td,  .table19 td, .table21 td{
     border-bottom: 1px solid black;
     border-left-color: #fff;
 }
@@ -89,7 +89,7 @@ table, th, td {
     float:left;
 }
 
-.table3, .table5, .table7, .table9, .table11, .table13, .table15, .table17, .table19{
+.table3, .table5, .table7, .table9, .table11, .table13, .table15, .table17, .table19, .table21{
     width: 75%;
     margin-left: 20px;
     margin-right: 20px;
@@ -224,6 +224,19 @@ table, th, td {
     font-size: 9px;
     margin-left: 40px;
     margin-top: -46px;
+}
+
+.circle {
+    background-color:#fff;
+    padding: 3px;
+    border:1px solid red;    
+    height:100px;
+    border-radius:50%;
+    width:100px;
+}
+
+.text-color {
+    color: #007bff;
 }
 
 @media screen and (max-width: 800px) {

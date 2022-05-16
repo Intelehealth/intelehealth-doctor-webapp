@@ -2,21 +2,22 @@
     <h4 style="text-align: center;"> WHO LABOUR CARE GUIDE </h4>
     <div class="row fixBottom">
         <div class="column">
-            <b>Name: </b> Mary Jane Williams
+            <b>Name: </b> &nbsp;<span class="text-color">Mary Jane Williams</span>
         </div>
         <div class="column">
-            <b>Parity:</b> 2 &nbsp; &nbsp; <b>Labour onset: </b>spontaneous
+            <b>Parity:</b>&nbsp; <span class="text-color">2</span> &nbsp; &nbsp;
+             <b>Labour onset: </b>&nbsp;<span class="text-color">spontaneous</span>
         </div>
         <div class="column3">
-            <b>Active labour diagnosis:</b>[Date 06/07/20]
+            <b>Active labour diagnosis:</b>&nbsp;<span class="text-color">[Date 06/07/20]</span>
         </div>
     </div>
     <div class="row fixBottom">
         <div class="column1">
-            <b>Ruptured membranes:</b> [Date 06/07/20 Time 4:00 ]
+            <b>Ruptured membranes:</b>&nbsp; <span class="text-color">[Date 06/07/20 Time 4:00 ]</span>
         </div>
         <div class="column2">
-            <b>Risk factors:</b>History of stillbirth; anaemia
+            <b>Risk factors:</b>&nbsp;<span class="text-color">History of stillbirth; anaemia</span>
         </div>
     </div>
     <div class="row emptytable fixBottom">
@@ -24,7 +25,7 @@
             <tr>
                 <td>Time</td>
                 <td *ngFor="let t of timeSlots">
-                    <span *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
+                    <span class="text-color" *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
                 </td>
             </tr>
             <tr>
@@ -37,7 +38,7 @@
         <table class="table2">
             <tr>
                 <td *ngFor="let t of stag2TimeSlots">
-                    <span *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
+                    <span class="text-color" *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
                 </td>
             </tr>
             <tr>
@@ -74,7 +75,7 @@
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span *ngIf="t.value !== null"></span>
+                    <span class="circle text-color" *ngIf="t.value !== null">{{ t.value }}</span>
                 </td>
             </tr>
         </table>
@@ -134,7 +135,7 @@
         </table>
     </div>
     <div class="row fixBottom">
-        <table class="table5">
+        <table class="table21">
             <tr>
                 <td rowspan="7">
                     <b class="alignTitle"> WOMAN </b>
@@ -180,12 +181,14 @@
     </div>
     <div class="row fixBottom">
         <table class="table9">
+            <col style="border-top: hidden; border-bottom: hidden;border-left: hidden;"/>
+            <col />
+            <col style="width: 16px;" />
             <tr>
                 <td rowspan="8">
                     <b class="alignTitle"> LABOUR PROGRESS </b>
                 </td>
                 <td rowspan="7">Cervix <br>[Plot X]</td>
-                <td style="width: 16px;"></td>
             </tr>
             <tr *ngFor="let row of labourSecondRows">
                 <td>{{row.name}} </td>
@@ -214,13 +217,14 @@
     </div>
     <div class="row fixBottom">
         <table class="table11">
+            <col style="border-top: hidden;"/>
+            <col />
+            <col style="width: 16px;" />
             <tr>
-                <td rowspan="8">
-                </td>
+                <td rowspan="8"></td>
                 <td rowspan="7">
                     Descent <br> [Plot X]
                 </td>
-                <td style="width: 16px;"></td>
             </tr>
             <tr *ngFor="let row of labourThirdRows">
                 <td>{{row.name}} </td>
@@ -270,15 +274,15 @@
             <tr>
                 <td colspan="2">ASSESSMENT</td>
                 <td *ngFor="let t of supportiveCare">
-                    <div class="alignTitle noteSize">
-                        >hhhhhhhhhhhhh jjjjjjj hhhh jikkhhh hjjhjh nbnnv cfdfd hhhh</div>
+                    <div class="alignTitle noteSize text-color">
+                        PAIN RELIFE REQUIRED</div>
                 </td>
             </tr>
         </table>
         <table class="table16">
             <tr>
                 <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle noteSize">Normal Progress</span>
+                    <span class="alignTitle noteSize text-color">Normal Progress</span>
                 </td>
             </tr>
         </table>
@@ -294,7 +298,7 @@
             <tr>
                 <td colspan="2" rowspan="2">PLAN</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span class="alignTitle breakWord"></span>
+                    <span class="alignTitle noteSize text-color"> Offer companionship and  relaxation technique</span>
                 </td>
             </tr>
             <tr>
@@ -307,7 +311,7 @@
         <table class="table18">
             <tr>
                 <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle noteSize"> Continue Monitoring nbnbn hgfhgf ghjghjg khkjhjkhj jhj</span>
+                    <span class="alignTitle noteSize text-color"> Continue Monitoring nbnbn hgfhgf ghjghjg khkjhjkhj jhj</span>
                 </td>
             </tr>
         </table>
@@ -321,14 +325,14 @@
             <tr>
                 <td colspan="2">INITIALS</td>
                 <td *ngFor="let t of supportiveCare">
-                    <span> GP</span>
+                    <span class="text-color"> GP</span>
                 </td>
             </tr>
         </table>
         <table class="table20">
             <tr>
                 <td *ngFor="let t of stag2TimeSlots">
-                    <span> CL</span>
+                    <span class="text-color"> CL</span>
                 </td>
             </tr>
         </table>
