@@ -172,7 +172,7 @@ export class HomepageComponent implements OnInit {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active);
         this.flagVisit.push(values);
-        this.flagPatientNo += 1;
+        // this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
     } else if (
