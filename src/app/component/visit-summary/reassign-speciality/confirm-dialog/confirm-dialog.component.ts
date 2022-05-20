@@ -24,6 +24,6 @@ export class ConfirmDialogComponent implements OnInit {
   }
 
   update() {
-    console.log("editForm", this.editForm)
+    this.dialogRef.close(this.editForm);
   }
 }

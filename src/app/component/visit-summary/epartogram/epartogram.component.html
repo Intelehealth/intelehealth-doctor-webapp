@@ -2,22 +2,22 @@
     <h4 style="text-align: center;"> WHO LABOUR CARE GUIDE </h4>
     <div class="row fixBottom">
         <div class="column">
-            <b>Name: </b> &nbsp;<span class="text-color">Mary Jane Williams</span>
+            <b>Name: </b> &nbsp;<span class="text-color"> {{patientInfo?.name}}</span>
         </div>
         <div class="column">
-            <b>Parity:</b>&nbsp; <span class="text-color">2</span> &nbsp; &nbsp;
-             <b>Labour onset: </b>&nbsp;<span class="text-color">spontaneous</span>
+            <b>Parity:</b>&nbsp; <span class="text-color">{{patientInfo?.parity ? patientInfo?.parity : '-' }}</span> &nbsp; &nbsp;
+             <b>Labour onset: </b>&nbsp;<span class="text-color">{{patientInfo?.laborOnset}}</span>
         </div>
         <div class="column3">
-            <b>Active labour diagnosis:</b>&nbsp;<span class="text-color">[Date 06/07/20]</span>
+            <b>Active labour diagnosis:</b>&nbsp;<span class="text-color">{{patientInfo?.activeLaborDiagnosed}}</span>
         </div>
     </div>
     <div class="row fixBottom">
         <div class="column1">
-            <b>Ruptured membranes:</b>&nbsp; <span class="text-color">[Date 06/07/20 Time 4:00 ]</span>
+            <b>Ruptured membranes:</b>&nbsp; <span class="text-color">{{patientInfo?.membraneRuptured}}</span>
         </div>
         <div class="column2">
-            <b>Risk factors:</b>&nbsp;<span class="text-color">History of stillbirth; anaemia</span>
+            <b>Risk factors:</b>&nbsp;<span class="text-color">{{patientInfo?.riskFactors}}</span>
         </div>
     </div>
     <div class="row emptytable fixBottom">
