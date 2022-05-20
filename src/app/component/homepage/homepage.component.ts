@@ -163,9 +163,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         GlobalConstants.visits.push(active);
       }
     } else if (
-      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
-      ((encounter = this.checkVisit(encounters, "Vitals")) &&
-        active.stopDatetime == null)
+      (encounter = this.checkVisit(encounters, "Stage1_Hour1_1")) || (encounter = this.checkVisit(encounters, "Stage1_Hour1_2"))
     ) {
       const values = this.assignValueToProperty(active, encounter);
       this.waitingVisit.push(values);
