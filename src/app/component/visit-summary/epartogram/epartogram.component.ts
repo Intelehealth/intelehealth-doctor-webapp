@@ -13,11 +13,6 @@ import { epartogram } from './epartogram'
 export class EpartogramComponent implements OnInit {
   conceptPlan = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   conceptAssessment = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
-  stag2TimeSlots = [
-    { id: 1, value: "13:05" },
-    { id: 2, value: "13:40" },
-    { id: 3, value: null }
-  ];
   titleRows = [
     { "name": "Companion", 'value': "N" },
     { "name": "Pain relief", 'value': "N" },
@@ -29,14 +24,6 @@ export class EpartogramComponent implements OnInit {
     { "name": "Fetal position", 'value': "P, T" },
     { "name": "Caput", 'value': "+++" },
     { "name": "Moulding", 'value': "+++" }
-  ];
-  babyStag2TimeSlots = [
-    { id: 1, value: 145 },
-    { id: 2, value: 125 },
-    { id: 3, value: 130 },
-    { id: 4, value: 0 },
-    { id: 5, value: 0 },
-    { id: 6, value: 0 }
   ];
   womanTitleRows = [
     { "name": "Pulse", 'value': "<60, ≥120" },
@@ -71,9 +58,11 @@ export class EpartogramComponent implements OnInit {
     { "name": "IV fluids", 'value': "<20, >60" }
   ];
 
-  stage1Data = [];
-  filteredStage1 = [];
-  doubleColStage2 = [];
+  stage1Data: Array<epartogram> = [];
+  filteredStage1: Array<epartogram> = [];
+  stage2Data: Array<epartogram> = [];
+  filteredStage2: Array<epartogram> = [];
+  filteredStage2Col: Array<epartogram> = [];
   patientId: string;
   visitId: string;
   patientInfo = {name:null,parity:null, laborOnset:null, activeLaborDiagnosed:null,membraneRuptured:null,riskFactors:null };
@@ -87,10 +76,10 @@ export class EpartogramComponent implements OnInit {
   ngOnInit(): void {
     this.visitId = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.doubleColStage2 = this.babyStag2TimeSlots.concat(this.babyStag2TimeSlots);
     this.visitService.getVisit(this.visitId).subscribe((res) => {
       this.getDetails(res.patient.person);
       this.getStage1Data(res.encounters);
+      this.getStag2Data(res.encounters);
     });
   }
 
@@ -149,79 +138,79 @@ export class EpartogramComponent implements OnInit {
   }
 
   getStage1Data(encounters) {
-    this.createStage1();
+    this.createStages(24, 'stage1');
     encounters.forEach(encounter => {
       if (encounter.display.includes('Stage1_Hour1')) {
         if (encounter.display.includes('Stage1_Hour1_1')) {
-          this.getObsValue(encounter, 0);
+          this.getObsValue(encounter, 0,'stage1Data');
         } else {
-          this.getObsValue(encounter, 1);
+          this.getObsValue(encounter, 1,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour2')) {
         if (encounter.display.includes('Stage1_Hour2_1')) {
-          this.getObsValue(encounter, 2);
+          this.getObsValue(encounter, 2,'stage1Data');
         } else {
-          this.getObsValue(encounter, 3);
+          this.getObsValue(encounter, 3,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour3')) {
         if (encounter.display.includes('Stage1_Hour3_1')) {
-          this.getObsValue(encounter, 4);
+          this.getObsValue(encounter, 4,'stage1Data');
         } else {
-          this.getObsValue(encounter, 5);
+          this.getObsValue(encounter, 5,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour4')) {
         if (encounter.display.includes('Stage1_Hour4_1')) {
-          this.getObsValue(encounter, 6);
+          this.getObsValue(encounter, 6,'stage1Data');
         } else {
-          this.getObsValue(encounter, 7);
+          this.getObsValue(encounter, 7,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour5')) {
         if (encounter.display.includes('Stage1_Hour5_1')) {
-          this.getObsValue(encounter, 8);
+          this.getObsValue(encounter, 8,'stage1Data');
         } else {
-          this.getObsValue(encounter, 9);
+          this.getObsValue(encounter, 9,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour6')) {
         if (encounter.display.includes('Stage1_Hour6_1')) {
-          this.getObsValue(encounter, 10);
+          this.getObsValue(encounter, 10,'stage1Data');
         } else {
-          this.getObsValue(encounter, 11);
+          this.getObsValue(encounter, 11,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour7')) {
         if (encounter.display.includes('Stage1_Hour7_1')) {
-          this.getObsValue(encounter, 12);
+          this.getObsValue(encounter, 12,'stage1Data');
         } else {
-          this.getObsValue(encounter, 13);
+          this.getObsValue(encounter, 13,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour8')) {
         if (encounter.display.includes('Stage1_Hour8_1')) {
-          this.getObsValue(encounter, 14);
+          this.getObsValue(encounter, 14,'stage1Data');
         } else {
-          this.getObsValue(encounter, 15);
+          this.getObsValue(encounter, 15,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour9')) {
         if (encounter.display.includes('Stage1_Hour9_1')) {
-          this.getObsValue(encounter, 16);
+          this.getObsValue(encounter, 16,'stage1Data');
         } else {
-          this.getObsValue(encounter, 17);
+          this.getObsValue(encounter, 17,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour10')) {
         if (encounter.display.includes('Stage1_Hour10_1')) {
-          this.getObsValue(encounter, 18);
+          this.getObsValue(encounter, 18,'stage1Data');
         } else {
-          this.getObsValue(encounter, 19);
+          this.getObsValue(encounter, 19,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour11')) {
         if (encounter.display.includes('Stage1_Hour11_1')) {
-          this.getObsValue(encounter, 20);
+          this.getObsValue(encounter, 20,'stage1Data');
         } else {
-          this.getObsValue(encounter, 21);
+          this.getObsValue(encounter, 21,'stage1Data');
         }
       } else if (encounter.display.includes('Stage1_Hour12')) {
         if (encounter.display.includes('Stage1_Hour12_1')) {
-          this.getObsValue(encounter, 22);
+          this.getObsValue(encounter, 22,'stage1Data');
         } else {
-          this.getObsValue(encounter, 23);
+          this.getObsValue(encounter, 23,'stage1Data');
         }
       }
     });
@@ -230,89 +219,137 @@ export class EpartogramComponent implements OnInit {
     });
   }
 
-  private createStage1() {
-    for (let i = 1; i <= 24; i++) {
-      this.stage1Data.push(new epartogram(i, null, null, null, null, null, null, 0, null, null, null, null,
-        null, null, null, null, 0, null, null, undefined, null, null, null, null, null, null, null, null));
+  getStag2Data(encounters) {
+    this.createStages(12, 'stage2');
+    encounters.forEach(encounter => {
+      if (encounter.display.includes('Stage2_Hour1')) {
+        if (encounter.display.includes('Stage2_Hour1_1')) {
+          this.getObsValue(encounter, 0,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour1_2')) { 
+          this.getObsValue(encounter, 1,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour1_3')) { 
+          this.getObsValue(encounter, 2,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour1_4')) { 
+          this.getObsValue(encounter, 3,'stage2Data');
+        }
+      } else if (encounter.display.includes('Stage2_Hour2')) {
+        if (encounter.display.includes('Stage2_Hour2_1')) {
+          this.getObsValue(encounter, 4,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour2_2')) { 
+          this.getObsValue(encounter, 5,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour2_3')) { 
+          this.getObsValue(encounter, 6,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour2_4')) { 
+          this.getObsValue(encounter, 7,'stage2Data');
+        }
+      } else if (encounter.display.includes('Stage2_Hour3')) {
+        if (encounter.display.includes('Stage2_Hour3_1')) {
+          this.getObsValue(encounter, 8,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour3_2')) { 
+          this.getObsValue(encounter, 9,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour3_3')) { 
+          this.getObsValue(encounter, 10,'stage2Data');
+        } else if (encounter.display.includes('Stage2_Hour3_4')) { 
+          this.getObsValue(encounter, 11,'stage2Data');
+        }
+      }
+    });
+    this.filteredStage2 = this.stage2Data.filter(function (v, i) {
+      return i % 2 == 0;
+    });
+
+    this.filteredStage2Col = this.stage2Data.filter(function (v, i) {
+      return i % 4 == 0;
+    });
+
+    console.log('stage2', this.filteredStage2Col)
+  }
+
+  private createStages(column:number, type:string) {
+    for (let i = 1; i <= column; i++) {
+      type === 'stage1' ? this.stage1Data.push(new epartogram(i, null, null, null, null, null, null, 0, null, null, null, null,
+        null, null, null, null, 0, null, null, undefined, null, null, null, null, null, null, null, null)):
+        this.stage2Data.push(new epartogram(i, null, null, null, null, null, null, 0, null, null, null, null,
+          null, null, null, null, 0, null, null, undefined, null, null, null, null, null, null, null, null));
     }
   }
 
-  private getObsValue(encounter, index) {
-    this.stage1Data[index].time = encounter.encounterDatetime;
-    this.stage1Data[index].uuid = encounter.uuid;
-    this.stage1Data[index].initals = this.getInitials(encounter.encounterProviders[0].display);
+  private getObsValue(encounter, index, stageType) {
+    this[stageType][index].time = encounter.encounterDatetime;
+    this[stageType][index].uuid = encounter.uuid;
+    this[stageType][index].initals = this.getInitials(encounter.encounterProviders[0].display);
     encounter.obs.forEach(obs => {
       if (obs.display.includes('Companion')) {
-        this.stage1Data[index].companion = this.setObs(obs);
+        this[stageType][index].companion = this.setObs(obs);
       }
       if (obs.display.includes('Pain relief')) {
-        this.stage1Data[index].painRelief = this.setObs(obs);
+        this[stageType][index].painRelief = this.setObs(obs);
       }
       if (obs.display.includes('Oral Fluid')) {
-        this.stage1Data[index].oralFluid = this.setObs(obs);
+        this[stageType][index].oralFluid = this.setObs(obs);
       }
       if (obs.display.includes('Posture')) {
-        this.stage1Data[index].posture = this.setObs(obs);
+        this[stageType][index].posture = this.setObs(obs);
       }
       if (obs.display.includes('Baseline FHR')) {
-        this.stage1Data[index].baselineFHR = this.setObs(obs);
+        this[stageType][index].baselineFHR = this.setObs(obs);
       }
       if (obs.display.includes('FHR Deceleration')) {
-        this.stage1Data[index].fhrDeceleration = this.setObs(obs);
+        this[stageType][index].fhrDeceleration = this.setObs(obs);
       }
       if (obs.display.includes('Amniotic fluid')) {
-        this.stage1Data[index].amnioticfluid = this.setObs(obs);
+        this[stageType][index].amnioticfluid = this.setObs(obs);
       }
       if (obs.display.includes('Fetal position')) {
-        this.stage1Data[index].fetalPosition = this.setObs(obs);
+        this[stageType][index].fetalPosition = this.setObs(obs);
       }
       if (obs.display.includes('Caput')) {
-        this.stage1Data[index].caput = this.setObs(obs);
+        this[stageType][index].caput = this.setObs(obs);
       }
       if (obs.display.includes('Moulding')) {
-        this.stage1Data[index].moulding = this.setObs(obs);
+        this[stageType][index].moulding = this.setObs(obs);
       }
       if (obs.display.includes('PULSE')) {
-        this.stage1Data[index].pulse = this.setObs(obs);
+        this[stageType][index].pulse = this.setObs(obs);
       }
       if (obs.display.includes('SYSTOLIC BLOOD PRESSURE')) {
-        this.stage1Data[index].systolicBP = this.setObs(obs);
+        this[stageType][index].systolicBP = this.setObs(obs);
       }
       if (obs.display.includes('DIASTOLIC BLOOD PRESSURE')) {
-        this.stage1Data[index].diastolicBP = this.setObs(obs);
+        this[stageType][index].diastolicBP = this.setObs(obs);
       }
       if (obs.display.includes('TEMPERATURE (C)')) {
-        this.stage1Data[index].temperature = this.setObs(obs);
+        this[stageType][index].temperature = this.setObs(obs);
       }
       if (obs.display.includes('Urine protein')) {
-        this.stage1Data[index].urine = this.setObs(obs);
+        this[stageType][index].urine = this.setObs(obs);
       }
       if (obs.display.includes('Contractions per 10 min')) {
-        this.stage1Data[index].contractions = this.setObs(obs);
+        this[stageType][index].contractions = this.setObs(obs);
       }
       if (obs.display.includes('Duration of contraction')) {
-        this.stage1Data[index].durationOfContraction = this.setObs(obs);
+        this[stageType][index].durationOfContraction = this.setObs(obs);
       }
       if (obs.display.includes('Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm')) {
-        this.stage1Data[index].cervix = this.setObs(obs);
+        this[stageType][index].cervix = this.setObs(obs);
       }
       if (obs.display.includes('Descent 0-5')) {
-        this.stage1Data[index].descent = this.setObs(obs);
+        this[stageType][index].descent = this.setObs(obs);
       }
       if (obs.display.includes('Oxytocin U/l, Drops per min')) {
-        this.stage1Data[index].oxytocin = obs.value;
+        this[stageType][index].oxytocin = obs.value;
       }
       if (obs.display.includes('Medicine')) {
-        this.stage1Data[index].medicine = obs.value;
+        this[stageType][index].medicine = obs.value;
       }
       if (obs.display.includes('IV fluids')) {
-        this.stage1Data[index].ivfluids = obs.value;
+        this[stageType][index].ivfluids = obs.value;
       }
       if (obs.display.includes('Assessment')) {
-        this.setNotes(index, obs.value, 'assessment');
+        this.setNotes(index, obs.value, 'assessment',stageType);
       }
       if (obs.display.includes('Additional Comments')) {
-        this.setNotes(index, obs.value, 'plan');
+        this.setNotes(index, obs.value, 'plan',stageType);
       }
     });
   }
@@ -324,11 +361,11 @@ export class EpartogramComponent implements OnInit {
     };
   }
 
-  private setNotes(index: any, obsValue: any, type: string) {
-    if (this.stage1Data[index][type] !== null) {
-      this.stage1Data[index][type] = this.stage1Data[index][type].concat(' ' + obsValue);
+  private setNotes(index: any, obsValue: any, type: string,stageType:string) {
+    if (this[stageType][index][type] !== null) {
+      this[stageType][index][type] = this[stageType][index][type].concat(' ' + obsValue);
     } else {
-      this.stage1Data[index][type] = obsValue;
+      this[stageType][index][type] = obsValue;
     }
   }
 

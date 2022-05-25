@@ -1,5 +1,5 @@
 export class epartogram {
-    id: Number;
+    id: number;
     time: string;
     uuid: string;
     companion:Object;
@@ -28,7 +28,7 @@ export class epartogram {
     plan:string;
     initals:string;
 
-    constructor(id: Number,  time: string, uuid: string,companion:Object,painRelief: Object,oralFluid:Object, posture:Object,baselineFHR:Object,
+    constructor(id: number,  time: string, uuid: string,companion:Object,painRelief: Object,oralFluid:Object, posture:Object,baselineFHR:Object,
         fhrDeceleration:Object,amnioticfluid:Object, fetalPosition:Object, caput:Object, moulding: Object, pulse:Object,systolicBP: Object, 
         diastolicBP:Object, temperature:Object,urine:Object,contractions:Object,durationOfContraction:Object,cervix:Object,descent:Object,
         oxytocin:string,medicine:string,ivfluids:string,assessment:string,plan:string, initials:string) {

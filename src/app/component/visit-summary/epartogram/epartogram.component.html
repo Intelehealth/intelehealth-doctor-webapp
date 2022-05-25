@@ -30,27 +30,26 @@
             </tr>
             <tr>
                 <td>Hours </td>
-                <td class="alignment" *ngFor="let row of filteredStage1">
-                    {{ row. id }}
+                <td class="alignment" *ngFor="let row of filteredStage1; let i = index">
+                    {{ i+1 }}
                 </td>
             </tr>
         </table>
         <table class="table2">
             <tr>
-                <td *ngFor="let t of stag2TimeSlots">
-                    <span class="text-color" *ngIf="t.value !== null ;else no_value">{{t.value }}</span>
+                <td *ngFor="let t of filteredStage2Col">
+                    <span class="text-color" *ngIf="t.time !== null ;else no_value">{{t.time }}</span>
                 </td>
             </tr>
             <tr>
-                <td class="alignment" *ngFor="let row of stag2TimeSlots">
-                    {{ row. id }}
+                <td class="alignment" *ngFor="let row of filteredStage2Col; let i = index">
+                    {{ i+1 }}
                 </td>
             </tr>
         </table>
     </div>
     <div class="row emptytable fixBottom">
         <input  class="align" type="text" value="ALEART" disabled>
-        <!-- <button class="align"><b></b></button> -->
         <div style="width: 100%;">
             <div style="width: 66%;">
                 <div class="leftline"></div>
@@ -83,9 +82,13 @@
             </tr>
         </table>
         <table id="tb4" class="table4">
-            <tr *ngFor="let row of titleRows">
-                <td *ngFor="let t of stag2TimeSlots">
-                    <span *ngIf="t.value !== null"> </span>
+            <tr *ngFor="let row of titleRows, let i = index">
+                <td class="text-color" *ngFor="let t of filteredStage2Col">
+                    <span>{{t.id}} </span>
+                    <span class="circle text-color" *ngIf="i === 0 && t.companion !== null">{{ t.companion.value }}</span>
+                    <span class="circle text-color" *ngIf="i === 1 && t.painRelief !== null">{{ t.painRelief.value }}</span>
+                    <span class="circle text-color" *ngIf="i === 2 && t.oralFluid !== null">{{ t.oralFluid.value }}</span>
+                    <span class="circle text-color" *ngIf="i === 3 && t.posture !== null">{{ t.posture.value }}</span>
                 </td>
             </tr>
         </table>
@@ -101,7 +104,7 @@
                 <td colspan="2"> Baseline FHR </td>
                 <td colspan="2"> ≤110, ≥160 </td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
-                    <span *ngIf="t.baselineFHR !== 0"> {{ t.baselineFHR.value }}</span>
+                    <span *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
             <tr>
@@ -124,18 +127,24 @@
         </table>
         <table id="tb6"  class="table6">
             <tr>
-                <td *ngFor="let t of doubleColStage2">
-                    <span></span>
+                <td class="text-color"  *ngFor="let t of stage2Data">
+                    <span> {{ t.id }}</span>
+                    <span *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
             <tr>
-                <td *ngFor="let t of doubleColStage2">
-                    <span></span>
+                <td class="text-color" *ngFor="let t of stage2Data">
+                    <span> {{ t.id }}</span>
+                    <span *ngIf="t.fhrDeceleration !== null">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
-            <tr *ngFor="let row of babyTitleRows">
-                <td colspan="2" *ngFor="let t of babyStag2TimeSlots">
-                    <span></span>
+            <tr *ngFor="let row of babyTitleRows; let i = index">
+                <td class="text-color" colspan="2" *ngFor="let t of filteredStage2">
+                    <span>{{ t.id }}</span>
+                    <span *ngIf="i === 0 && t.amnioticfluid !== null">{{ t.amnioticfluid.value }}</span>
+                    <span class="circle" *ngIf="i === 1 && t.fetalPosition !== null">{{ t.fetalPosition.value }}</span>
+                    <span *ngIf="i === 2 && t.caput !== null">{{ t.caput.value }}</span>
+                    <span *ngIf="i === 3 && t.moulding !== null">{{ t.moulding.value }}</span>
                 </td>
             </tr>
         </table>
@@ -151,7 +160,7 @@
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
-                    <span *ngIf="i === 0 && t.pulse !== null">{{ t.pulse.value }}</span>
+                    <span class="yellow" *ngIf="i === 0 && t.pulse !== null">{{ t.pulse.value }}</span>
                     <span *ngIf="i === 1 && t.systolicBP !== null">{{ t.systolicBP.value }}</span>
                     <span *ngIf="i === 2 && t.diastolicBP !== null">{{ t.diastolicBP.value }}</span>
                     <span *ngIf="i === 3 && t.temperature !== 0">{{ t.temperature.value }}</span>
@@ -160,9 +169,14 @@
             </tr>
         </table>
         <table  id="tb7"  class="table6">
-            <tr *ngFor="let row of womanTitleRows">
-                <td *ngFor="let t of babyStag2TimeSlots">
-                    <span></span>
+            <tr *ngFor="let row of womanTitleRows, let i = index">
+                <td class="text-color" colspan="2" *ngFor="let t of filteredStage2">
+                    <span>{{ t.id }}</span>
+                    <span *ngIf="i === 0 && t.pulse !== null">{{ t.pulse.value }}</span>
+                    <span *ngIf="i === 1 && t.systolicBP !== null">{{ t.systolicBP.value }}</span>
+                    <span *ngIf="i === 2 && t.diastolicBP !== null">{{ t.diastolicBP.value }}</span>
+                    <span *ngIf="i === 3 && t.temperature !== 0">{{ t.temperature.value }}</span>
+                    <span *ngIf="i === 4 && t.urine !== null">{{ t.urine.value }}</span>
                 </td>
             </tr>
         </table>
@@ -183,9 +197,11 @@
             </tr>
         </table>
         <table  id="tb8" class="table8">
-            <tr *ngFor="let row of labourFirstRows">
-                <td *ngFor="let t of doubleColStage2">
-                    <span></span>
+            <tr *ngFor="let row of labourFirstRows, let i = index">
+                <td class="text-color"  *ngFor="let t of stage2Data">
+                    <span> {{ t.id}}</span>
+                    <span *ngIf="i === 0 && t.contractions !== null">{{ t.contractions.value }}</span>
+                    <span *ngIf="i === 1 && t.durationOfContraction !== null">{{ t.durationOfContraction?.value }}</span>
                 </td>
             </tr>
         </table>
@@ -211,8 +227,8 @@
         </table>
         <table id="tb10" class="table10">
             <tr>
-                <td *ngFor="let t of doubleColStage2">
-                    <span></span>
+                <td class="text-color"  *ngFor="let t of stage2Data, let i = index">
+                    <span> {{ t.id }}</span>
                 </td>
             </tr>
         </table> <br>
@@ -247,8 +263,8 @@
         </table>
         <table  id="tb12" class="table12">
             <tr *ngFor="let row of labourThirdRows">
-                <td *ngFor="let t of babyStag2TimeSlots">
-                    <span></span>
+                <td class="text-color" colspan="2" *ngFor="let t of filteredStage2, let i = index">
+                    <span>{{ t.id }}</span>
                 </td>
             </tr>
         </table>
@@ -270,9 +286,12 @@
             </tr>
         </table>
         <table id="tb14" class="table14">
-            <tr *ngFor="let row of medicationRows">
-                <td *ngFor="let t of babyStag2TimeSlots">
-                    <span></span>
+            <tr *ngFor="let row of medicationRows, let i = index">
+                <td class="text-color" colspan="2" *ngFor="let t of filteredStage2Col">
+                    <span>{{ t.id }}</span>
+                    <span *ngIf="i === 0 && t.oxytocin !== null">{{ t.oxytocin }}</span>
+                    <span *ngIf="i === 1 && t.medicine !== null">{{ t.medicine }}</span>
+                    <span *ngIf="i === 2 && t.ivfluids !== null">{{ t.ivfluids }}</span>
                 </td>
             </tr>
         </table>
@@ -293,8 +312,8 @@
         </table>
         <table class="table16">
             <tr>
-                <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle noteSize text-color"></span>
+                <td rowspan="3" *ngFor="let t of filteredStage2Col">
+                    <span class="alignTitle noteSize text-color">{{t.assessment}}</span>
                 </td>
             </tr>
         </table>
@@ -322,8 +341,8 @@
         </table>
         <table class="table18">
             <tr>
-                <td rowspan="3" *ngFor="let t of stag2TimeSlots">
-                    <span class="alignTitle noteSize text-color"></span>
+                <td rowspan="3" *ngFor="let t of filteredStage2Col">
+                    <span class="alignTitle noteSize text-color">{{t.plan}}</span>
                 </td>
             </tr>
         </table>
@@ -343,8 +362,8 @@
         </table>
         <table id="tb20" class="table20">
             <tr>
-                <td *ngFor="let t of stag2TimeSlots">
-                    <span class="text-color"></span>
+                <td *ngFor="let t of filteredStage2Col">
+                    <span class="text-color">{{t.initals}}</span>
                 </td>
             </tr>
         </table>
