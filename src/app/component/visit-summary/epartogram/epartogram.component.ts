@@ -261,8 +261,6 @@ export class EpartogramComponent implements OnInit {
     this.filteredStage2Col = this.stage2Data.filter(function (v, i) {
       return i % 4 == 0;
     });
-
-    console.log('stage2', this.filteredStage2Col)
   }
 
   private createStages(column:number, type:string) {
@@ -357,7 +355,7 @@ export class EpartogramComponent implements OnInit {
   private setObs(obs: any): Object {
     return {
       value: obs.value,
-      colorFlag: "red"
+      colorFlag: obs.comment ? obs.comment : "red"
     };
   }
 

@@ -73,11 +73,11 @@
             <tr *ngFor="let row of titleRows; let i = index">
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
-                <td *ngFor="let t of filteredStage1, index as j">
-                    <span class="circle text-color" *ngIf="i === 0 && t.companion !== null">{{ t.companion.value }}</span>
-                    <span class="circle text-color" *ngIf="i === 1 && t.painRelief !== null">{{ t.painRelief.value }}</span>
-                    <span class="circle text-color" *ngIf="i === 2 && t.oralFluid !== null">{{ t.oralFluid.value }}</span>
-                    <span class="circle text-color" *ngIf="i === 3 && t.posture !== null">{{ t.posture.value }}</span>
+                <td class="text-color" *ngFor="let t of filteredStage1, index as j">
+                    <span [ngClass]="{'circle': t.companion.colorFlag === 'red', 'yellow' : t.companion.colorFlag === 'yellow'}"*ngIf="i === 0 && t.companion !== null">{{ t.companion.value }}</span>
+                    <span class="circle" *ngIf="i === 1 && t.painRelief !== null">{{ t.painRelief.value }}</span>
+                    <span class="circle" *ngIf="i === 2 && t.oralFluid !== null">{{ t.oralFluid.value }}</span>
+                    <span class="circle" *ngIf="i === 3 && t.posture !== null">{{ t.posture.value }}</span>
                 </td>
             </tr>
         </table>
