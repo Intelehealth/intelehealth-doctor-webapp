@@ -5,16 +5,23 @@
             <b>Name: </b> &nbsp;<span class="text-color"> {{patientInfo?.name}}</span>
         </div>
         <div class="column">
-            <b>Parity:</b>&nbsp; <span class="text-color">{{patientInfo?.parity ? patientInfo?.parity : '-' }}</span> &nbsp; &nbsp;
+            <b>Parity:</b>&nbsp; <span class="text-color">{{patientInfo?.parity }}</span> &nbsp; &nbsp;
              <b>Labour onset: </b>&nbsp;<span class="text-color">{{patientInfo?.laborOnset}}</span>
         </div>
         <div class="column3">
-            <b>Active labour diagnosis:</b>&nbsp;<span class="text-color">{{patientInfo?.activeLaborDiagnosed}}</span>
+            <b>Active labour diagnosis:</b>&nbsp; <span *ngIf="patientInfo?.membraneRuptured">
+                [<b>Date</b>&nbsp;<span class="text-color"> {{patientInfo?.activeLaborDiagnosed}}</span> ]
+            </span>
         </div>
     </div>
     <div class="row fixBottom">
         <div class="column1">
-            <b>Ruptured membranes:</b>&nbsp; <span class="text-color">{{patientInfo?.membraneRuptured}}</span>
+            <b>Ruptured membranes:</b>&nbsp;
+             <span class="text-color" *ngIf="patientInfo?.membraneRuptured === 'U' && patientInfo?.membraneRuptured">{{patientInfo?.membraneRuptured}}</span>
+             <span *ngIf="patientInfo?.membraneRuptured !== 'U'&& patientInfo?.membraneRuptured">
+                 [<b>Date</b>&nbsp;<span class="text-color"> {{patientInfo?.membraneRuptured?.date}}</span>&nbsp;
+                  <b>Time</b>&nbsp;<span class="text-color"> {{patientInfo?.membraneRuptured?.time}}</span> ]
+            </span>
         </div>
         <div class="column2">
             <b>Risk factors:</b>&nbsp;<span class="text-color">{{patientInfo?.riskFactors}}</span>

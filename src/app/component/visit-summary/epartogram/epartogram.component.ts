@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { ConfirmDialogService } from '../reassign-speciality/confirm-dialog/confirm-dialog.service';
@@ -126,10 +127,17 @@ export class EpartogramComponent implements OnInit {
         this.patientInfo["laborOnset"] = attri.value;
       }
       if (attri.attributeType.display.match("Active Labor Diagnosed")) {
-        this.patientInfo["activeLaborDiagnosed"] = attri.value;
+        this.patientInfo["activeLaborDiagnosed"] = attri?.value.split(' ')[0];
       }
       if (attri.attributeType.display.match("Membrane Ruptured Timestamp")) {
-        this.patientInfo["membraneRuptured"] = attri.value;
+        if(attri.value !== 'U') {
+          let obj = {'date': null, 'time':null};
+          obj['date'] = attri?.value.split(' ')[0];
+          obj['time'] = attri?.value.split(' ')[1];
+          this.patientInfo["membraneRuptured"] = obj;
+        } else {
+          this.patientInfo["membraneRuptured"] = attri.value ;
+        }
       }
       if (attri.attributeType.display.match("Risk factors")) {
         this.patientInfo["riskFactors"] = attri.value;
@@ -273,7 +281,7 @@ export class EpartogramComponent implements OnInit {
   }
 
   private getObsValue(encounter, index, stageType) {
-    this[stageType][index].time = encounter.encounterDatetime;
+    this[stageType][index].time = moment(encounter.encounterDatetime).format("HH:mm");
     this[stageType][index].uuid = encounter.uuid;
     this[stageType][index].initals = this.getInitials(encounter.encounterProviders[0].display);
     encounter.obs.forEach(obs => {
