@@ -84,6 +84,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TestChatComponent } from './component/test-chat/test-chat.component';
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
+import { EpartogramComponent } from "./component/visit-summary/epartogram/epartogram.component";
 import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overlay.component';
 
 
@@ -129,6 +130,7 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
     TestChatComponent,
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
+    EpartogramComponent,
     VcallOverlayComponent
   ],
 
@@ -172,7 +174,7 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
         { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent},
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
