@@ -174,7 +174,7 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
         { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
         { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
         { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent},
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },

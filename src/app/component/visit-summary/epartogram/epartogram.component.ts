@@ -66,7 +66,7 @@ export class EpartogramComponent implements OnInit {
   filteredStage2Col: Array<epartogram> = [];
   patientId: string;
   visitId: string;
-  patientInfo = {name:null,parity:null, laborOnset:null, activeLaborDiagnosed:null,membraneRuptured:null,riskFactors:null };
+  patientInfo = {name:null,parity:null, laborOnset:null, activeLaborDiagnosed:null,membraneRuptured:null,riskFactors:null,mobileNo:null };
 
   constructor(
     private route: ActivatedRoute,
@@ -141,6 +141,9 @@ export class EpartogramComponent implements OnInit {
       }
       if (attri.attributeType.display.match("Risk factors")) {
         this.patientInfo["riskFactors"] = attri.value;
+      }
+      if (attri.attributeType.display.match("Telephone Number")) {
+        this.patientInfo["mobileNo"] = attri.value;
       }
     });
   }
@@ -271,6 +274,22 @@ export class EpartogramComponent implements OnInit {
     });
   }
 
+  print() {
+    var tempTitle = document.title;
+    document.title = "eLCG.pdf";
+    window.print();
+    document.title = tempTitle;
+  }
+  
+  share(linkfor) {
+      const text = encodeURIComponent(`Please find the link to download the case details -https://ezazi.intelehealth.org/intelehealth/index.html#/visitSummary/${this.patientId}/${this.visitId}`);
+      if(linkfor === "whatsapp") {
+      return `https://wa.me/91${this.patientInfo.mobileNo}?text=${text}`;
+      } else {
+        return 'Please find the link to download the case details - '+text;
+      }
+  }
+
   private createStages(column:number, type:string) {
     for (let i = 1; i <= column; i++) {
       type === 'stage1' ? this.stage1Data.push(new epartogram(i, null, null, null, null, null, null, 0, null, null, null, null,
@@ -363,7 +382,7 @@ export class EpartogramComponent implements OnInit {
   private setObs(obs: any): Object {
     return {
       value: obs.value,
-      colorFlag: obs.comment ? obs.comment : "red"
+      colorFlag: obs.comment
     };
   }
 
