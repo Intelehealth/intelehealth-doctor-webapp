@@ -10,6 +10,7 @@ import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overl
 @Injectable()
 export class SocketService {
   public socket: any;
+  public incoming;
   public activeUsers = [];
   appIcon =
     false && environment.production
@@ -18,7 +19,7 @@ export class SocketService {
 
   private baseURL = environment.socketURL;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) { }
 
   message(roomId, clientId, message): Observable<any> {
     const url = `${this.baseURL}/message/${roomId}/${clientId}`;
@@ -92,7 +93,7 @@ export class SocketService {
       hasBackdrop: true,
       id: "vcOverlay",
     });
-    // this.callRing.play();
+    this.callRing.play();
     setTimeout(() => {
       this.closeVcOverlay();
     }, 10000);

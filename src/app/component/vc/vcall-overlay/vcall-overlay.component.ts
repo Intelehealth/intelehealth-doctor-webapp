@@ -7,11 +7,12 @@ import { SocketService } from "src/app/services/socket.service";
   styleUrls: ["./vcall-overlay.component.css"],
 })
 export class VcallOverlayComponent implements OnInit {
-  constructor(private socketService: SocketService) {}
+  constructor(private socketService: SocketService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   accept() {
+    this.socketService.incoming = true;
     this.socketService.openVcModal();
     this.close();
   }
