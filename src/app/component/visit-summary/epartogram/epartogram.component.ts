@@ -38,20 +38,20 @@ export class EpartogramComponent implements OnInit {
     { "name": "Duration of contractions", 'value': "<20, >60" }
   ];
   labourSecondRows = [
-    { "name": 10, 'value': null },
-    { "name": 9, 'value': "≥ 2h" },
-    { "name": 8, 'value': "≥ 2.5h" },
-    { "name": 7, 'value': "≥ 3h" },
-    { "name": 6, 'value': "≥ 5h" },
-    { "name": 5, 'value': "≥ 6h" },
+    { "name": "10", 'value': null },
+    { "name": "9", 'value': "≥ 2h" },
+    { "name": "8", 'value': "≥ 2.5h" },
+    { "name": "7", 'value': "≥ 3h" },
+    { "name": "6", 'value': "≥ 5h" },
+    { "name": "5", 'value': "≥ 6h" },
   ];
   labourThirdRows = [
-    { "name": 5, 'value': null },
-    { "name": 4, 'value': null },
-    { "name": 3, 'value': null },
-    { "name": 2, 'value': null },
-    { "name": 1, 'value': null },
-    { "name": 0, 'value': null },
+    { "name": "5", 'value': null },
+    { "name": "4", 'value': null },
+    { "name": "3", 'value': null },
+    { "name": "2", 'value': null },
+    { "name": "1", 'value': null },
+    { "name": "0", 'value': null },
   ];
   medicationRows = [
     { "name": "Oxytocin (U/L, drops/min)", 'value': "≤2, >5" },

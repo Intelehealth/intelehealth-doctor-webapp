@@ -63,20 +63,18 @@
             </tr>
         </table>
     </div>
-    <div class="row emptytable fixBottom">
-        <input  class="align" type="text" value="ALEART" disabled>
-        <div style="width: 100%;">
-            <div style="width: 66%;">
-                <div class="leftline"></div>
-                <b style="margin-left: 10px;  margin-top: 5px;"> ACTIVE FIRST STAGE</b>
-                <div class="rightline"></div>
+    <div class="emptytable fixBottom">
+          <input  class="align" type="text" value="ALEART" disabled>
+            <div class="container2">
+                <div class="line"><mat-divider></mat-divider></div>
+                <div class="text mat-typography">ACTIVE FIRST STAGE</div>
+                <div class="line"><mat-divider></mat-divider></div>
             </div>
-            <div class="second-arrow">
-                <div class="leftline1"></div>
-                <b style="margin-left: 6px;"> SECOND STAGE</b>
-                <div class="rightline2"></div>
-            </div>
-        </div>
+            <div class="container1">
+                <div class="line"><mat-divider></mat-divider></div>
+                <div class="text mat-typography">SECOND STAGE</div>
+                <div class="line"><mat-divider></mat-divider></div>
+            </div>    
     </div>
     <div class="row fixBottom">
         <table class="table3">
@@ -260,12 +258,12 @@
                 </td>
                 <td rowspan="7">Cervix <br>[Plot X]</td>
             </tr>
-            <tr *ngFor="let row of labourSecondRows">
+            <tr *ngFor="let row of labourSecondRows,let i = index">
                 <td>{{row.name}} </td>
                 <td [class.filled]="row.value  === null">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
                     <span [ngClass]="{'red': t.cervix?.colorFlag === 'R', 'yellow' : t.cervix?.colorFlag === 'Y'}"
-                         *ngIf="t.cervix !== null"> {{t.cervix.value}}</span>
+                         *ngIf="t.cervix !== null && row.name === t.cervix.value"> {{t.cervix.value}}</span>
                 </td>
             </tr>
         </table>
@@ -273,7 +271,7 @@
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data, let i = index">
                     <span [ngClass]="{'red': t.cervix?.colorFlag === 'R', 'yellow' : t.cervix?.colorFlag === 'Y'}"
-                        *ngIf="t.cervix !== null"> {{t.cervix.value}}</span>
+                        *ngIf="t.cervix !== null && row.name === t.cervix.value"> {{t.cervix.value}}</span>
                 </td>
             </tr>
         </table> <br>
@@ -303,7 +301,7 @@
                 <td [class.filled]="row.value  === null">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
                     <span  [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
-                        *ngIf="t.descent !== null"> {{t.descent.value}}</span>
+                        *ngIf="t.descent !== null && row.name === t.descent.value"> {{t.descent.value}}</span>
                 </td>
             </tr>
         </table>
@@ -311,7 +309,7 @@
             <tr *ngFor="let row of labourThirdRows">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2, let i = index">
                     <span [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
-                    *ngIf="t.descent !== null"> {{t.descent.value}}</span>
+                    *ngIf="t.descent !== null && row.name === t.descent.value"> {{t.descent.value}}</span>
                 </td>
             </tr>
         </table>
