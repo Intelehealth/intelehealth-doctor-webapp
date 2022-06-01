@@ -231,7 +231,7 @@ export class HomepageComponent implements OnInit {
           }
           this.value = {};
         });
-        saveToStorage('allAwaitingConsult', this.waitingVisit);
+        // saveToStorage('allAwaitingConsult', this.waitingVisit);
         saveToStorage('allReviewVisit1', this.review1);
         saveToStorage('allReviewVisit2', this.review2);
         this.setSpiner = false;
@@ -355,6 +355,18 @@ export class HomepageComponent implements OnInit {
         resolve(data);
       }
     });
+  }
+
+  setType(type) {
+    if (type === 'complete') {
+      saveToStorage('allAwaitingConsult', this.completedVisit);
+    } else if (type === 'progress') {
+      saveToStorage('allAwaitingConsult', this.progressVisit);
+    } else if (type === 'waiting') {
+      saveToStorage('allAwaitingConsult', this.waitingVisit);
+    } else {
+      saveToStorage('allAwaitingConsult', this.flagVisit);
+    }
   }
 
 }

@@ -69,7 +69,7 @@
             <mat-panel-title><h5>PRIORITY VISITS</h5></mat-panel-title>
           </mat-expansion-panel-header>
           <ng-container *ngIf="flagVisit.length > 0">
-            <app-tables [data]="flagVisit"></app-tables>
+            <app-tables [data]="flagVisit" [type]="'flag'" (getType)="setType($event)"></app-tables>
           </ng-container>
         </mat-expansion-panel>
 
@@ -82,7 +82,7 @@
             <mat-panel-title><h5>AWAITING CONSULT</h5></mat-panel-title>
           </mat-expansion-panel-header>
           <ng-container *ngIf="waitingVisit.length > 0">
-            <app-tables [data]="waitingVisit"></app-tables>
+            <app-tables [data]="waitingVisit" [type]="'waiting'" (getType)="setType($event)"></app-tables>
           </ng-container>
         </mat-expansion-panel>
 
@@ -95,7 +95,7 @@
             <mat-panel-title><h5>VISITS IN PROGRESS</h5></mat-panel-title>
           </mat-expansion-panel-header>
           <ng-container *ngIf="progressVisit.length > 0">
-            <app-tables [data]="progressVisit"></app-tables>
+            <app-tables [data]="progressVisit" [type]="'progress'" (getType)="setType($event)"></app-tables>
           </ng-container>
         </mat-expansion-panel>
 
@@ -108,7 +108,7 @@
             <mat-panel-title><h5>COMPLETED VISITS</h5></mat-panel-title>
           </mat-expansion-panel-header>
           <ng-container *ngIf="completedVisit.length > 0">
-            <app-tables [data]="completedVisit"></app-tables>
+            <app-tables [data]="completedVisit" [type]="'complete'" (getType)="setType($event)"></app-tables>
           </ng-container>
         </mat-expansion-panel>
       </mat-accordion>
