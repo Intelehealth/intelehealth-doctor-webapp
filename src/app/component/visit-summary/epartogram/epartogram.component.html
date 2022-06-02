@@ -154,20 +154,20 @@
         <table id="tb6" class="table6">
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red': t.baselineFHR?.colorFlag === 'R', 'yellow' : t.baselineFHR?.colorFlag === 'Y'}" 
-                         *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
+                    <span [ngClass]="{'red1': t.baselineFHR?.colorFlag === 'R', 'yellow1' : t.baselineFHR?.colorFlag === 'Y'}" 
+                    class="alignTitle" *ngIf="t.baselineFHR !== null;else no_Data"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red': t.fhrDeceleration?.colorFlag === 'R', 'yellow' : t.fhrDeceleration?.colorFlag === 'Y'}"
-                     *ngIf="t.fhrDeceleration !== null">{{t.fhrDeceleration.value}}</span>
+                    <span [ngClass]="{'red1': t.fhrDeceleration?.colorFlag === 'R', 'yellow1' : t.fhrDeceleration?.colorFlag === 'Y'}"
+                     *ngIf="t.fhrDeceleration !== null;else no_Data">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
             <tr *ngFor="let row of babyTitleRows; let i = index">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2">
                     <span [ngClass]="{'red': t.amnioticfluid?.colorFlag === 'R', 'yellow' : t.amnioticfluid?.colorFlag === 'Y'}"
-                          *ngIf="i === 0 && t.amnioticfluid !== null">{{ t.amnioticfluid.value }}</span>
+                          *ngIf="i === 0 && t.amnioticfluid !== null;else no_Data">{{ t.amnioticfluid.value }}</span>
                     <span [ngClass]="{'red': t.fetalPosition?.colorFlag === 'R', 'yellow' : t.fetalPosition?.colorFlag === 'Y'}"
                           *ngIf="i === 1 && t.fetalPosition !== null">{{ t.fetalPosition.value }}</span>
                     <span [ngClass]="{'red': t.caput?.colorFlag === 'R', 'yellow' : t.caput?.colorFlag === 'Y'}"
@@ -239,9 +239,9 @@
         <table id="tb8" class="table8">
             <tr *ngFor="let row of labourFirstRows, let i = index">
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red': t.contractions?.colorFlag === 'R', 'yellow' : t.contractions?.colorFlag === 'Y'}"
+                    <span [ngClass]="{'red1': t.contractions?.colorFlag === 'R', 'yellow1' : t.contractions?.colorFlag === 'Y'}"
                           *ngIf="i === 0 && t.contractions !== null">{{ t.contractions.value }}</span>
-                    <span [ngClass]="{'red': t.durationOfContraction?.colorFlag === 'R', 'yellow' : t.durationOfContraction?.colorFlag === 'Y'}"
+                    <span [ngClass]="{'red1': t.durationOfContraction?.colorFlag === 'R', 'yellow1' : t.durationOfContraction?.colorFlag === 'Y'}"
                           *ngIf="i === 1 && t.durationOfContraction !== null">{{ t.durationOfContraction?.value }}</span>
                 </td>
             </tr>
@@ -428,4 +428,8 @@
 
 <ng-template #no_value>
     <i style="color: gray;" class='fas fa-ellipsis-v'> </i>
+</ng-template>
+
+<ng-template #no_Data>
+   <span style="color: white;">.</span>
 </ng-template>

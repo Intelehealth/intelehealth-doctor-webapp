@@ -57,6 +57,7 @@ export class VisitSummaryComponent implements OnInit {
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
         visitDetails.encounters.forEach((visit) => {
+          saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
           if (visit.display.match("Visit Note") !== null) {
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;

@@ -278,6 +278,14 @@ td {
     border-radius: 50%;
 }
 
+.red1 {
+    color: red;    
+}
+
+.yellow1 {
+    color: yellow;
+}
+
 .text-color {
     color: #007bff;
 }
