@@ -151,7 +151,26 @@ export class EpartogramComponent implements OnInit {
   getStage1Data(encounters) {
     this.createStages(24, 'stage1');
     encounters.forEach(encounter => {
-      if (encounter.display.includes('Stage1_Hour1')) {
+      if (encounter.display.includes('Stage1_Hour10')) {
+        console.log("Stage1_Hour10", encounter)
+        if (encounter.display.includes('Stage1_Hour10_1')) {
+          this.getObsValue(encounter, 18,'stage1Data');
+        } else {
+          this.getObsValue(encounter, 19,'stage1Data');
+        }
+      } else if (encounter.display.includes('Stage1_Hour11')) {
+        if (encounter.display.includes('Stage1_Hour11_1')) {
+          this.getObsValue(encounter, 20,'stage1Data');
+        } else {
+          this.getObsValue(encounter, 21,'stage1Data');
+        }
+      } else if (encounter.display.includes('Stage1_Hour12')) {
+        if (encounter.display.includes('Stage1_Hour12_1')) {
+          this.getObsValue(encounter, 22,'stage1Data');
+        } else {
+          this.getObsValue(encounter, 23,'stage1Data');
+        }
+      } else if (encounter.display.includes('Stage1_Hour1')) {
         if (encounter.display.includes('Stage1_Hour1_1')) {
           this.getObsValue(encounter, 0,'stage1Data');
         } else {
@@ -204,24 +223,6 @@ export class EpartogramComponent implements OnInit {
           this.getObsValue(encounter, 16,'stage1Data');
         } else {
           this.getObsValue(encounter, 17,'stage1Data');
-        }
-      } else if (encounter.display.includes('Stage1_Hour10')) {
-        if (encounter.display.includes('Stage1_Hour10_1')) {
-          this.getObsValue(encounter, 18,'stage1Data');
-        } else {
-          this.getObsValue(encounter, 19,'stage1Data');
-        }
-      } else if (encounter.display.includes('Stage1_Hour11')) {
-        if (encounter.display.includes('Stage1_Hour11_1')) {
-          this.getObsValue(encounter, 20,'stage1Data');
-        } else {
-          this.getObsValue(encounter, 21,'stage1Data');
-        }
-      } else if (encounter.display.includes('Stage1_Hour12')) {
-        if (encounter.display.includes('Stage1_Hour12_1')) {
-          this.getObsValue(encounter, 22,'stage1Data');
-        } else {
-          this.getObsValue(encounter, 23,'stage1Data');
         }
       }
     });
