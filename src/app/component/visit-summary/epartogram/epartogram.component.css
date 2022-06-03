@@ -3,6 +3,22 @@
     border: 2px solid gray;
 }
 
+.lineh {
+    line-height: 20px;
+}
+
+.lineh1 {
+    line-height: 14px;
+}
+
+#ellipse {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    width: 300px;
+}
+
 .container2 {
     width: 68%;
     display: flex;
@@ -40,11 +56,11 @@
 }
 
 #tb6 {
-    height: 138px;
+    height: 170px;
 }
 
 #tb7 {
-    height: 95px;
+    height: 124px;
 }
 
 #tb8 {
@@ -353,5 +369,9 @@ td {
 @media print {
     .emptytable {
         margin-left: 110px;
+    }
+
+    #tb7 {
+        height: 140px;
     }
 }

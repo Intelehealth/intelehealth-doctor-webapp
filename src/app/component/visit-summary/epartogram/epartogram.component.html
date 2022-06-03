@@ -4,7 +4,7 @@
             <span id="printPageButton" style="float:right;margin-top: -44px;">
                 <i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;
                 <a class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;
-                <a  href="mailto:?subject= eLCG - Case Detaills&body={{share('message')}}"><i class="fa fa-envelope btnsize"></i></a>
+                <a><i style="color: #ffdb58;" class="fa fa-envelope btnsize"></i></a>
             </span>
     </div>
     <div class="row fixBottom">
@@ -120,7 +120,7 @@
                     <b class="alignTitle"> BABY </b>
                 </td>
             </tr>
-            <tr style="line-height: 10px;">
+            <tr class="lineh1">
                 <td colspan="2"> Baseline<br>FHR </td>
                 <td colspan="2"> ≤110, ≥160 </td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
@@ -128,7 +128,7 @@
                       class="alignTitle" *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
-            <tr style="line-height: 10px;" >
+            <tr class="lineh1" >
                 <td colspan="2">FHR deceleration</td>
                 <td colspan="2">L</td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
@@ -136,7 +136,7 @@
                          *ngIf="t.fhrDeceleration !== null">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
-            <tr *ngFor="let row of babyTitleRows; let i = index">
+            <tr [ngClass]="(i === 0 || i === 1)? 'lineh1' : 'lineh'" *ngFor="let row of babyTitleRows; let i = index">
                 <td colspan="2">{{row.name}} </td>
                 <td colspan="2">{{row.value}}</td>
                 <td class="text-color" colspan="2" *ngFor="let t of this.filteredStage1">
@@ -185,7 +185,7 @@
                     <b class="alignTitle"> WOMAN </b>
                 </td>
             </tr>
-            <tr *ngFor="let row of womanTitleRows, let i = index">
+            <tr  [ngClass]="i === 3 ? 'lineh1' : 'lineh'" *ngFor="let row of womanTitleRows, let i = index">
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
@@ -376,7 +376,7 @@
                     <span class="alignTitle noteSize text-color"> {{t.plan}}</span>
                 </td>
             </tr>
-            <tr>
+            <tr style="height: 20px;">
                 <td *ngFor="let t of filteredStage1">
                     <button *ngIf="t.time !== null" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
                             class="fa fa-plus"></i>
