@@ -291,7 +291,7 @@ export class EpartogramComponent implements OnInit {
   }
 
   share(linkfor) {
-    const text = encodeURIComponent(`Please find the link to download the case details -https://ezazi.intelehealth.org/intelehealth/index.html#/visitSummary/${this.patientId}/${this.visitId}`);
+    const text = encodeURIComponent(`Please find the link to download the case details -https://ezazi.intelehealth.org/intelehealth/index.html#/epartogram/${this.patientId}/${this.visitId}`);
     if (linkfor === "whatsapp") {
       return `https://wa.me/91${this.nurseMobNo}?text=${text}`;
     } else {

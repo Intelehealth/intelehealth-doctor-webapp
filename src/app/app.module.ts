@@ -165,6 +165,7 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
+      { path: 'epartogram/:patient_id/:visit_id', component: EpartogramComponent},
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
