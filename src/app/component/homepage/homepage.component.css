@@ -64,8 +64,8 @@ mat-form-field {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
 }
+
 .gradient {
   height: 30px;
   background-color: rgb(185, 59, 59);
