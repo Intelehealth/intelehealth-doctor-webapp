@@ -62,11 +62,9 @@
         <div
           class="badge badge-pill"
           [ngClass]="{
-            'badge-danger': row?.status == 'Flagged',
             'badge-warning':
-              row?.status == 'ADULTINITIAL' || row?.status == 'Vitals',
-            'badge-success': row?.status === 'Visit Complete',
-            'badge-info': row?.status === 'Visit Note'
+              row?.status >= 30,
+            'badge-success': row?.status <= 30
           }"
         >
           {{ row?.status === "Flagged" ? "Priority" : row?.status }}

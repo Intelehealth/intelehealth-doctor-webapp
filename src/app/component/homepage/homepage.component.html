@@ -3,7 +3,7 @@
     <mat-tab-group class="visit" mat-align-tabs="center" mat-stretch-tabs>
         <mat-tab id="flagged-table" >
             <ng-template mat-tab-label>
-                <p class="name">IN PROGRESS CASES <br> <b class="name">({{flagPatientNo}})</b></p>
+                <p class="name">IN PROGRESS CASES <br> <b class="name">({{normalVisits.length + priorityVisits.length}})</b></p>
             </ng-template><br>
             <ng-container >
                 <div class="gradient">
