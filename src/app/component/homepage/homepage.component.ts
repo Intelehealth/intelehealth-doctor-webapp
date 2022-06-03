@@ -37,7 +37,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   // waitingVisit: VisitData[] = [];
   // progressVisit: VisitData[] = [];
   // remoteVisits: VisitData[] = [];
-  // completedVisit: VisitData[] = [];
+  completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
   visits = [];
@@ -173,7 +173,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
   // }
 
   assignValueToProperty(active, encounter: any = {}): any {
-    console.log('active: ', active);
     return {
       visitId: active.uuid,
       patientId: active.patient.uuid,
