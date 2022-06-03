@@ -9,20 +9,20 @@
                 <div class="gradient">
                     <h5 class="sub-cat m-2">PRIORITY CASES</h5>
                 </div>
-                <app-tables *ngIf="flagVisit.length > 0;else no_data" [data]="flagVisit"></app-tables>
+                <app-tables *ngIf="priorityVisits?.length > 0;else no_data" [data]="priorityVisits"></app-tables>
             </ng-container><br>
             <ng-container >
                 <div class="gradient">
                     <h5 class="sub-cat m-2">NORMAL CASES</h5>
                 </div>
-                <app-tables *ngIf="waitingVisit.length > 0;else no_data" [data]="waitingVisit"></app-tables>
+                <app-tables *ngIf="normalVisits?.length > 0;else no_data" [data]="normalVisits"></app-tables>
             </ng-container>
         </mat-tab>
         <mat-tab id="queued-table">
             <ng-template mat-tab-label>
                 <p class="name">COMPLETED CASES <br> <b class="name">({{activePatient}})</b></p>
             </ng-template><br>
-            <ng-container *ngIf="completedVisit.length > 0 ;else no_data">
+            <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
                 <app-tables [data]="completedVisit"></app-tables>
             </ng-container>
         </mat-tab>

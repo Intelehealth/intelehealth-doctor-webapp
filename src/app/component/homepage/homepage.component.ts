@@ -33,13 +33,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitNoteNo = 0;
   remotePatientNo = 0;
   completeVisitNo = 0;
-  flagVisit: VisitData[] = [];
-  waitingVisit: VisitData[] = [];
-  progressVisit: VisitData[] = [];
-  remoteVisits: VisitData[] = [];
-  completedVisit: VisitData[] = [];
+  // flagVisit: VisitData[] = [];
+  // waitingVisit: VisitData[] = [];
+  // progressVisit: VisitData[] = [];
+  // remoteVisits: VisitData[] = [];
+  // completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
+  visits = [];
+  normalVisits: VisitData[] = [];;
+  priorityVisits: VisitData[] = [];;
   systemAccess: boolean = false;
 
   constructor(
@@ -47,9 +50,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private service: VisitService,
     private socket: SocketService
-  ) {}
+  ) { }
 
   ngOnInit() {
+    console.log('-------normal', this.normalVisits);
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
@@ -61,7 +65,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -92,37 +96,33 @@ export class HomepageComponent implements OnInit, OnDestroy {
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
-        const visits = response.results;
-        visits.forEach((active) => {
-          if (active.encounters.length > 0) {
-            if (this.systemAccess) {
-              this.visitCategory(active);
-            } else if (active.attributes.length) {
-              const attributes = active.attributes;
-              const speRequired = attributes.filter(
-                (attr) =>
-                  attr.attributeType.uuid ===
-                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-              );
-              if (speRequired.length) {
-                speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
-                    if (index === 0) {
-                      this.visitCategory(active);
-                    }
-                    if (index === 1 && spe[0] !== spe[1]) {
-                      this.visitCategory(active);
-                    }
-                  }
-                });
-              }
+        this.visits = response.results;
+        this.visits.forEach((active) => {
+          active.encounters.sort((a: any, b: any) => {
+            return new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime()
+          });
+          const [encounter] = active.encounters;
+          let score = 0;
+          if (encounter) {
+            if (Array.isArray(encounter.obs)) {
+              const yellow = encounter.obs.filter(obs => obs.comment === 'Y').length;
+              const red = encounter.obs.filter(obs => obs.comment === 'R').length;
+              score += red * 2;
+              score += yellow * 1;
+              active.score = score;
             }
           }
-          this.value = {};
+
+          // push in respective array as per score
+          if (active.score >= 40) {
+            this.priorityVisits.push(this.assignValueToProperty(active, encounter))
+          } else {
+            this.normalVisits.push(this.assignValueToProperty(active, encounter))
+          }
         });
         this.setSpiner = false;
       },
-      (err) => {}
+      (err) => { }
     );
   }
 
@@ -130,66 +130,61 @@ export class HomepageComponent implements OnInit, OnDestroy {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  visitCategory(active) {
-    const { encounters = [] } = active;
-    let encounter;
-    if (
-      (encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
-      (encounter = this.checkVisit(encounters, "Visit Complete")) ||
-      active.stopDatetime != null
-    ) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.completedVisit.push(values);
-      this.completeVisitNo += 1;
-    } else if (
-      this.checkVisit(encounters, "Remote Prescription") &&
-      active.stopDatetime == null
-    ) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.remoteVisits.push(values);
-      this.remotePatientNo += 1;
-    } else if (
-      this.checkVisit(encounters, "Visit Note") &&
-      active.stopDatetime == null
-    ) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.progressVisit.push(values);
-      this.visitNoteNo += 1;
-    } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
-      if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active, encounter);
-        this.flagVisit.push(values);
-        this.flagPatientNo += 1;
-        GlobalConstants.visits.push(active);
-      }
-    } else if (
-      (encounter = this.checkVisit(encounters, "Stage1_Hour1_1")) || (encounter = this.checkVisit(encounters, "Stage1_Hour1_2"))
-    ) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.waitingVisit.push(values);
-      this.activePatient += 1;
-      GlobalConstants.visits.push(active);
-    }
-  }
+  // visitCategory(active) {
+  //   const { encounters = [] } = active;
+  //   let encounter;
+  //   if (
+  //     (encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+  //     (encounter = this.checkVisit(encounters, "Visit Complete")) ||
+  //     active.stopDatetime != null
+  //   ) {
+  //     const values = this.assignValueToProperty(active, encounter);
+  //     this.completedVisit.push(values);
+  //     this.completeVisitNo += 1;
+  //   } else if (
+  //     this.checkVisit(encounters, "Remote Prescription") &&
+  //     active.stopDatetime == null
+  //   ) {
+  //     const values = this.assignValueToProperty(active, encounter);
+  //     this.remoteVisits.push(values);
+  //     this.remotePatientNo += 1;
+  //   } else if (
+  //     this.checkVisit(encounters, "Visit Note") &&
+  //     active.stopDatetime == null
+  //   ) {
+  //     const values = this.assignValueToProperty(active, encounter);
+  //     this.progressVisit.push(values);
+  //     this.visitNoteNo += 1;
+  //   } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+  //     if (!this.checkVisit(encounters, "Flagged").voided) {
+  //       const values = this.assignValueToProperty(active, encounter);
+  //       this.flagVisit.push(values);
+  //       this.flagPatientNo += 1;
+  //       GlobalConstants.visits.push(active);
+  //     }
+  //   } else if (
+  //     (encounter = this.checkVisit(encounters, "Stage1_Hour1_1")) || (encounter = this.checkVisit(encounters, "Stage1_Hour1_2"))
+  //   ) {
+  //     const values = this.assignValueToProperty(active, encounter);
+  //     this.waitingVisit.push(values);
+  //     this.activePatient += 1;
+  //     GlobalConstants.visits.push(active);
+  //   }
+  // }
 
-  assignValueToProperty(active, encounter) {
-    if (!encounter) encounter = active.encounters[0];
-    this.value.visitId = active.uuid;
-    this.value.patientId = active.patient.uuid;
-    this.value.id = active.patient.identifiers[0].identifier;
-    this.value.name = active.patient.person.display;
-    this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.birthdate;
-    this.value.location = active.location.display;
-    this.value.status =
-      active.stopDatetime != null
-        ? "Visit Complete"
-        : encounter?.encounterType.display;
-    this.value.provider =
-      active.encounters[0].encounterProviders[0].provider.display.split(
-        "- "
-      )[1];
-    this.value.lastSeen = active.encounters[0].encounterDatetime;
-    return this.value;
+  assignValueToProperty(active, encounter: any = {}): any {
+    console.log('active: ', active);
+    return {
+      visitId: active.uuid,
+      patientId: active.patient.uuid,
+      id: active.patient.identifiers[0].identifier,
+      name: active.patient.person.display,
+      gender: active.patient.person.gender,
+      age: active.patient.person.birthdate,
+      location: active.location.display,
+      status: active.score || 0,
+      lastSeen: encounter?.encounterDatetime ? new Date(encounter?.encounterDatetime) : null,
+      provider: encounter?.encounterProviders?.[0]?.provider?.display || 'NA'
+    };
   }
 }
