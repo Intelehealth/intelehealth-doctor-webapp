@@ -271,7 +271,7 @@
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data, let i = index">
                     <span [ngClass]="{'red': t.cervix?.colorFlag === 'R', 'yellow' : t.cervix?.colorFlag === 'Y'}"
-                        *ngIf="t.cervix !== null && row.name === t.cervix.value"> {{t.cervix.value}}</span>
+                        *ngIf="t.cervix !== null && row?.name === t.cervix.value"> {{t.cervix.value}}</span>
                 </td>
             </tr>
         </table> <br>
@@ -301,7 +301,7 @@
                 <td [class.filled]="row.value  === null">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
                     <span  [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
-                        *ngIf="t.descent !== null && row.name === t.descent.value"> {{t.descent.value}}</span>
+                        *ngIf="t.descent !== null && row?.name === t.descent.value"> {{t.descent.value}}</span>
                 </td>
             </tr>
         </table>
@@ -309,7 +309,7 @@
             <tr *ngFor="let row of labourThirdRows">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2, let i = index">
                     <span [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
-                    *ngIf="t.descent !== null && row.name === t.descent.value"> {{t.descent.value}}</span>
+                    *ngIf="t.descent !== null && row?.name === t.descent.value; else no_Data"> {{t.descent.value}}</span>
                 </td>
             </tr>
         </table>
