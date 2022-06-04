@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
@@ -26,8 +26,14 @@ export class VisitService {
 
   getVisit(uuid): Observable<any> {
     // tslint:disable-next-line:max-line-length
+    var header = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic ' + btoa('admin:IHUser#1')
+      })
+    }
     const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate,attributes:(value,attributeType:(display)))),location:(display),encounters:(uuid,display,obs:(display,uuid,value,comment),encounterDatetime,voided,encounterType:(display),encounterProviders:(display,provider:(uuid,attributes))),attributes)`;
-    return this.http.get(url);
+    return this.http.get(url,header);
   }
 
   clearVisits() {
