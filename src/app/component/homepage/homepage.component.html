@@ -18,14 +18,14 @@
                 <app-tables *ngIf="normalVisits?.length > 0;else no_data" [data]="normalVisits"></app-tables>
             </ng-container>
         </mat-tab>
-        <!-- <mat-tab id="queued-table">
+        <mat-tab id="queued-table">
             <ng-template mat-tab-label>
                 <p class="name">COMPLETED CASES <br> <b class="name">({{activePatient}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
                 <app-tables [data]="completedVisit"></app-tables>
             </ng-container>
-        </mat-tab> -->
+        </mat-tab>
     </mat-tab-group>
 </div>
 
