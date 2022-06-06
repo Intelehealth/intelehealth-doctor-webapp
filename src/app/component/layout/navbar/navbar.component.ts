@@ -70,7 +70,7 @@ export class NavbarComponent implements OnInit {
     public swUpdate: SwUpdate,
     public swPush: SwPush,
     public notificationService: PushNotificationsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const userDetails = getFromStorage("user");
@@ -203,7 +203,7 @@ export class NavbarComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 this.notificationService
@@ -254,9 +254,9 @@ export class NavbarComponent implements OnInit {
     this.condition1 =
       eDate1 < sDate1
         ? (this.error = {
-            isError: true,
-            errorMessage: "End Date can't before start time",
-          })
+          isError: true,
+          errorMessage: "End Date can't before start time",
+        })
         : "Success";
 
     if (this.condition == true && this.condition1 == "Success") {
