@@ -20,6 +20,8 @@ export class EditDetailsComponent implements OnInit {
                       "All",
                       "Referred out",
                       "MSF MD",
+                      "Diabetes",
+                      "Dietician",
                       "Doctor not needed"
                     ];
   editForm = new FormGroup({

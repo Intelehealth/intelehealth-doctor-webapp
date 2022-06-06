@@ -25,6 +25,8 @@ export class ReassignSpecialityComponent implements OnInit {
     "All",
     "Referred out",
     "MSF MD",
+    "Diabetes",
+    "Dietician",
     "Doctor not needed"
   ];
   errorText: string;
