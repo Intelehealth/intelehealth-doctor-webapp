@@ -1,11 +1,9 @@
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
-import { HelperService } from "src/app/services/helper.service";
-import { GlobalConstants } from "src/app/js/global-constants";
+import * as moment from "moment";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -41,19 +39,20 @@ export class HomepageComponent implements OnInit, OnDestroy {
   setSpiner = true;
   specialization;
   visits = [];
-  normalVisits: VisitData[] = [];;
-  priorityVisits: VisitData[] = [];;
+  normalVisits: VisitData[] = [];
+  priorityVisits: VisitData[] = [];
   systemAccess: boolean = false;
+  overdueIn = 60;
 
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
     private socket: SocketService
-  ) { }
+  ) {}
 
   ngOnInit() {
-    console.log('-------normal', this.normalVisits);
+    console.log("-------normal", this.normalVisits);
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
@@ -65,7 +64,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -99,14 +98,21 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.visits = response.results;
         this.visits.forEach((active) => {
           active.encounters.sort((a: any, b: any) => {
-            return new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime()
+            return (
+              new Date(a.encounterDatetime).getTime() -
+              new Date(b.encounterDatetime).getTime()
+            );
           });
           const [encounter] = active.encounters;
           let score = 0;
           if (encounter) {
             if (Array.isArray(encounter.obs)) {
-              const yellow = encounter.obs.filter(obs => obs.comment === 'Y').length;
-              const red = encounter.obs.filter(obs => obs.comment === 'R').length;
+              const yellow = encounter.obs.filter(
+                (obs) => obs.comment === "Y"
+              ).length;
+              const red = encounter.obs.filter(
+                (obs) => obs.comment === "R"
+              ).length;
               score += red * 2;
               score += yellow * 1;
               active.score = score;
@@ -115,14 +121,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
           // push in respective array as per score
           if (active.score >= 40) {
-            this.priorityVisits.push(this.assignValueToProperty(active, encounter))
+            this.priorityVisits.push(
+              this.assignValueToProperty(active, encounter)
+            );
           } else {
-            this.normalVisits.push(this.assignValueToProperty(active, encounter))
+            this.normalVisits.push(
+              this.assignValueToProperty(active, encounter)
+            );
           }
         });
         this.setSpiner = false;
       },
-      (err) => { }
+      (err) => {}
     );
   }
 
@@ -173,6 +183,32 @@ export class HomepageComponent implements OnInit, OnDestroy {
   // }
 
   assignValueToProperty(active, encounter: any = {}): any {
+    let overdueIn;
+    let notes;
+    if (encounter) {
+      const duration = moment.duration(
+        moment(new Date()).diff(moment(encounter.encounterDatetime))
+      );
+      overdueIn =
+        duration.asMinutes() >= this.overdueIn ? `Overdue` : "No Overdue";
+    } else {
+      overdueIn = "No encounter found!";
+    }
+
+    notes = ["No Sticky Notes!"];
+
+    if (Array.isArray(active.encounters)) {
+      active.encounters.forEach((encounter: any) => {
+        if (Array.isArray(encounter.obs)) {
+          encounter.obs.forEach((obs) => {
+            if (obs?.comment === "R") {
+              if (notes[0] === "No Sticky Notes!") notes = [];
+              notes.push(obs.display);
+            }
+          });
+        }
+      });
+    }
     return {
       visitId: active.uuid,
       patientId: active.patient.uuid,
@@ -182,8 +218,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
       age: active.patient.person.birthdate,
       location: active.location.display,
       status: active.score || 0,
-      lastSeen: encounter?.encounterDatetime ? new Date(encounter?.encounterDatetime) : null,
-      provider: encounter?.encounterProviders?.[0]?.provider?.display || 'NA'
+      stage:
+        encounter?.display?.includes && encounter?.display?.includes("Stage2")
+          ? "2"
+          : "1",
+      notes,
+      overdue: overdueIn,
+      lastSeen: encounter?.encounterDatetime
+        ? new Date(encounter?.encounterDatetime)
+        : null,
+      provider: encounter?.encounterProviders?.[0]?.provider?.display || "NA",
     };
   }
 }

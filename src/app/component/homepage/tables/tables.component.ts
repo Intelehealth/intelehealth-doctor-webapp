@@ -18,12 +18,24 @@ import { VisitService } from "src/app/services/visit.service";
   styleUrls: ["./tables.component.css"],
 })
 export class TablesComponent implements OnInit {
-  displayColumns: string[] = ['id', 'name', 'gender', 'age', 'location', 'status', 'provider', 'lastSeen'];
+  displayColumns: string[] = [
+    "id",
+    "name",
+    "gender",
+    "age",
+    "location",
+    "status",
+    "stage",
+    "notes",
+    "overdue",
+    "provider",
+    "lastSeen",
+  ];
   dataSource;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input() data;
-  constructor(private service: VisitService) { }
+  constructor(private service: VisitService) {}
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource(this.data);

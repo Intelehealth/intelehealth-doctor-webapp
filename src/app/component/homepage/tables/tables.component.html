@@ -72,6 +72,26 @@
       </td>
     </ng-container>
 
+    <!-- Stage column -->
+    <ng-container matColumnDef="stage">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Stage</th>
+      <td mat-cell *matCellDef="let row" [routerLink]="['/visitSummary', row?.patientId, row?.visitId]">{{ row?.stage }}</td>
+    </ng-container>
+
+    <!-- Notes column -->
+    <ng-container matColumnDef="notes">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Sticky Notes</th>
+      <td class="d-grid" mat-cell *matCellDef="let row" [routerLink]="['/visitSummary', row?.patientId, row?.visitId]">
+        <div *ngFor="let note of row.notes">{{note}}</div><br>
+      </td>
+    </ng-container>
+
+    <!-- Overdue column -->
+    <ng-container matColumnDef="overdue">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Overdue</th>
+      <td mat-cell *matCellDef="let row" [routerLink]="['/visitSummary', row?.patientId, row?.visitId]">{{ row?.overdue }}</td>
+    </ng-container>
+    
     <!-- Provider column -->
     <ng-container matColumnDef="provider">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Provider</th>
