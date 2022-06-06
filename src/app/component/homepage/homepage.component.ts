@@ -49,7 +49,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private service: VisitService,
     private socket: SocketService
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log("-------normal", this.normalVisits);
@@ -64,7 +64,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -130,9 +130,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
             );
           }
         });
+        this.normalVisits = this.normalVisits.sort((b: any, a: any) => a.status - b.status)
+        this.priorityVisits = this.priorityVisits.sort((b: any, a: any) => a.status - b.status)
         this.setSpiner = false;
       },
-      (err) => {}
+      (err) => { }
     );
   }
 
@@ -190,34 +192,33 @@ export class HomepageComponent implements OnInit, OnDestroy {
         moment(new Date()).diff(moment(encounter.encounterDatetime))
       );
       overdueIn =
-        duration.asMinutes() >= this.overdueIn ? `Overdue` : "No Overdue";
-    } else {
-      overdueIn = "No encounter found!";
+        duration.asMinutes() >= this.overdueIn ? `Overdue (${duration.asHours().toFixed(2)} hrs)` : "";
     }
 
-    notes = ["No Sticky Notes!"];
+    notes = null;
 
     if (Array.isArray(active.encounters)) {
       active.encounters.forEach((encounter: any) => {
         if (Array.isArray(encounter.obs)) {
           encounter.obs.forEach((obs) => {
             if (obs?.comment === "R") {
-              if (notes[0] === "No Sticky Notes!") notes = [];
+              if (!notes) notes = [];
               notes.push(obs.display);
             }
           });
         }
       });
     }
+
     return {
       visitId: active.uuid,
       patientId: active.patient.uuid,
       id: active.patient.identifiers[0].identifier,
       name: active.patient.person.display,
-      gender: active.patient.person.gender,
-      age: active.patient.person.birthdate,
+      // gender: active.patient.person.gender,
+      // age: active.patient.person.birthdate,
       location: active.location.display,
-      status: active.score || 0,
+      status: Number(active.score) || 0,
       stage:
         encounter?.display?.includes && encounter?.display?.includes("Stage2")
           ? "2"
@@ -227,7 +228,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       lastSeen: encounter?.encounterDatetime
         ? new Date(encounter?.encounterDatetime)
         : null,
-      provider: encounter?.encounterProviders?.[0]?.provider?.display || "NA",
+      provider: encounter?.encounterProviders?.[0]?.provider?.name || "NA",
     };
   }
 }

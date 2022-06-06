@@ -109,3 +109,8 @@ body.font-lato td {
   align-items: center;
   cursor: pointer;
 }
+
+.mat-elevation-z8 tbody tr:nth-child(odd) {
+  background-color: #6299f6a1;
+  color: #fff;
+}
