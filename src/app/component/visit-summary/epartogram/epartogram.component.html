@@ -350,14 +350,14 @@
             <tr>
                 <td colspan="2">ASSESSMENT</td>
                 <td *ngFor="let t of filteredStage1">
-                    <span class="alignTitle noteSize text-color"> {{t.assessment}}</span>
+                    <span class="alignTitle noteSize text-color" [innerText]='t.assessment'></span>
                 </td>
             </tr>
         </table>
         <table class="table16">
             <tr>
                 <td rowspan="3" *ngFor="let t of filteredStage2Col">
-                    <span class="alignTitle noteSize text-color">{{t.assessment}}</span>
+                    <span class="alignTitle noteSize text-color" [innerText]='t.assessment'></span>
                 </td>
             </tr>
         </table>
@@ -373,7 +373,7 @@
             <tr>
                 <td colspan="2" rowspan="2">PLAN</td>
                 <td *ngFor="let t of filteredStage1">
-                    <span class="alignTitle noteSize text-color"> {{t.plan}}</span>
+                    <span class="alignTitle noteSize text-color" [innerText]='t.plan'></span>
                 </td>
             </tr>
             <tr style="height: 20px;">
@@ -386,8 +386,15 @@
         </table>
         <table class="table18">
             <tr>
-                <td rowspan="3" *ngFor="let t of filteredStage2Col">
-                    <span class="alignTitle noteSize text-color">{{t.plan}}</span>
+                <td  colspan="2" *ngFor="let t of filteredStage2Col">
+                    <span class="alignTitle noteSize text-color" [innerText]='t.plan'></span>
+                </td>
+            </tr>
+            <tr style="height: 20px;">
+                <td colspan="2" *ngFor="let t of filteredStage2Col">
+                    <button *ngIf="t.time !== null" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
+                            class="fa fa-plus"></i>
+                    </button>
                 </td>
             </tr>
         </table>

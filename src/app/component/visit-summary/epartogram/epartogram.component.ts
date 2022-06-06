@@ -397,7 +397,7 @@ export class EpartogramComponent implements OnInit {
 
   private setNotes(index: any, obsValue: any, type: string, stageType: string) {
     if (this[stageType][index][type] !== null) {
-      this[stageType][index][type] = this[stageType][index][type].concat(' ' + obsValue);
+      this[stageType][index][type] = this[stageType][index][type].concat(';\n' + obsValue);
     } else {
       this[stageType][index][type] = obsValue;
     }
