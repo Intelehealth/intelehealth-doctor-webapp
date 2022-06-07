@@ -17,7 +17,7 @@ export class ReportComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<ReportComponent>,
     private visitService: VisitService,
-    private snackbar: MatSnackBar,) { }
+    private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
   }

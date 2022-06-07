@@ -9,7 +9,3 @@ mat-spinner {
   filter: blur(8px);
   -webkit-filter: blur(8px);
 }
-
-.mt-50 {
-  margin-top: 50px;
-}
