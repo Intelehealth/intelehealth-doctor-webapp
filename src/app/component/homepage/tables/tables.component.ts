@@ -26,7 +26,7 @@ export class TablesComponent implements OnInit {
     "notes",
     "overdue",
     "provider",
-    "lastSeen",
+    // "lastSeen",
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;

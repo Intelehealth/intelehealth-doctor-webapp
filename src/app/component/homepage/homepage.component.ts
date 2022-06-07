@@ -52,7 +52,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    console.log("-------normal", this.normalVisits);
     if (getFromStorage("visitNoteProvider")) {
       deleteFromStorage("visitNoteProvider");
     }
@@ -120,7 +119,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
 
           // push in respective array as per score
-          if (active.score >= 40) {
+          if (active.score >= 22) {
             this.priorityVisits.push(
               this.assignValueToProperty(active, encounter)
             );
@@ -187,6 +186,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
   assignValueToProperty(active, encounter: any = {}): any {
     let overdueIn;
     let notes;
+    let stage = 1;
+    if (active?.encounters?.length) {
+      if (active.encounters.filter(vst => vst.display.includes('Stage2')).length > 0) {
+        stage = 2;
+      }
+    }
     if (encounter) {
       const duration = moment.duration(
         moment(new Date()).diff(moment(encounter.encounterDatetime))
@@ -203,11 +208,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
           encounter.obs.forEach((obs) => {
             if (obs?.comment === "R") {
               if (!notes) notes = [];
-              notes.push(obs.display);
+              notes.push(obs.display.split(':')[0]);
             }
           });
         }
       });
+      notes = Array.from(new Set(notes))
     }
 
     return {
@@ -219,10 +225,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       // age: active.patient.person.birthdate,
       location: active.location.display,
       status: Number(active.score) || 0,
-      stage:
-        encounter?.display?.includes && encounter?.display?.includes("Stage2")
-          ? "2"
-          : "1",
+      stage,
       notes,
       overdue: overdueIn,
       lastSeen: encounter?.encounterDatetime
