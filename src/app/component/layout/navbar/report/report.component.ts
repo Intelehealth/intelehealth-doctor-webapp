@@ -1,5 +1,5 @@
 import { VisitService } from 'src/app/services/visit.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -10,9 +10,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
-  reportForm = new FormGroup({
-    start: new FormControl(),
-    end: new FormControl(),
+  reportForm = new UntypedFormGroup({
+    start: new UntypedFormControl(),
+    end: new UntypedFormControl(),
   });
 
   constructor(private dialogRef: MatDialogRef<ReportComponent>,

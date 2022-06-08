@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { v4 as uuidv4 } from 'uuid';
@@ -68,11 +68,11 @@ export class DiagnosisComponent implements OnInit {
 
   rightConcept: string;
 
-  diagnosisForm = new FormGroup({
-    lefteye: new FormControl(''),
-    righteye: new FormControl(''),
-    leftEyeOtherValue: new FormControl(''),
-    rightEyeOtherValue: new FormControl('')
+  diagnosisForm = new UntypedFormGroup({
+    lefteye: new UntypedFormControl(''),
+    righteye: new UntypedFormControl(''),
+    leftEyeOtherValue: new UntypedFormControl(''),
+    rightEyeOtherValue: new UntypedFormControl('')
   });
 
   constructor(private service: EncounterService,

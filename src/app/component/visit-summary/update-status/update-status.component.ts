@@ -1,6 +1,6 @@
 import { ModalComponent } from './modal/modal.component';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,10 +19,10 @@ export class UpdateStatusComponent implements OnInit {
   patientUuid: string;
   visitUuid: string;
 
-  coordinatorStatus = new FormGroup({
-    date: new FormControl(new Date(), [Validators.required]),
-    status: new FormControl('', [Validators.required]),
-    comment: new FormControl('')
+  coordinatorStatus = new UntypedFormGroup({
+    date: new UntypedFormControl(new Date(), [Validators.required]),
+    status: new UntypedFormControl('', [Validators.required]),
+    comment: new UntypedFormControl('')
   });
 
   constructor(private service: EncounterService,

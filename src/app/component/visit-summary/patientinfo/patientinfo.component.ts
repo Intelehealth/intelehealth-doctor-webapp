@@ -4,7 +4,7 @@ import { ImagesService } from 'src/app/services/images.service';
 import { ActivatedRoute } from '@angular/router';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from '../../../../environments/environment';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 declare var getFromStorage: any;
 
 @Component({
@@ -26,8 +26,8 @@ export class PatientinfoComponent implements OnInit {
   contactUuid = '';
   @Input() showDetails;
 
-  patientForm = new FormGroup({
-    mobile: new FormControl('', [Validators.required])
+  patientForm = new UntypedFormGroup({
+    mobile: new UntypedFormControl('', [Validators.required])
   });
 
   constructor(private route: ActivatedRoute,

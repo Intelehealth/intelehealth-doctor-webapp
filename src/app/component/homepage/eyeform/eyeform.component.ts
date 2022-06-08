@@ -2,7 +2,7 @@ import { DiagnosisService } from './../../../services/diagnosis.service';
 import { VisitService } from './../../../services/visit.service';
 import { Component, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getFromStorage: any;
 
@@ -39,18 +39,18 @@ export class EyeformComponent implements OnInit {
   diagnosisrightOther: String = '';
   diagnosisleftOther: String = '';
 
-  eyeCampForm = new FormGroup({
-    accuityLeft: new FormControl(''),
-    accuityRight: new FormControl(''),
-    pinholeLeft: new FormControl(''),
-    pinholeRight: new FormControl(''),
-    complaintLeft: new FormControl(''),
-    complaintRight: new FormControl(''),
-    diagnosisLeft: new FormControl(''),
-    diagnosisRight: new FormControl(''),
-    referral: new FormControl(''),
-    referralTime: new FormControl(''),
-    ophthalmologist: new FormControl('')
+  eyeCampForm = new UntypedFormGroup({
+    accuityLeft: new UntypedFormControl(''),
+    accuityRight: new UntypedFormControl(''),
+    pinholeLeft: new UntypedFormControl(''),
+    pinholeRight: new UntypedFormControl(''),
+    complaintLeft: new UntypedFormControl(''),
+    complaintRight: new UntypedFormControl(''),
+    diagnosisLeft: new UntypedFormControl(''),
+    diagnosisRight: new UntypedFormControl(''),
+    referral: new UntypedFormControl(''),
+    referralTime: new UntypedFormControl(''),
+    ophthalmologist: new UntypedFormControl('')
   });
   constructor(
     private visitService: VisitService,

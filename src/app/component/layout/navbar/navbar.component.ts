@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangePasswordComponent } from '../../change-password/change-password.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { FindPatientComponent } from '../../find-patient/find-patient.component';
 import { environment } from '../../../../environments/environment';
 declare var getFromStorage: any;
@@ -23,8 +23,8 @@ export class NavbarComponent implements OnInit {
   eyeCampAccess: Boolean = false;
   values: any = [];
 
-  searchForm = new FormGroup({
-    findInput: new FormControl('', [Validators.required])
+  searchForm = new UntypedFormGroup({
+    findInput: new UntypedFormControl('', [Validators.required])
   });
 
   @Output() messageEvent = new EventEmitter<string>();
