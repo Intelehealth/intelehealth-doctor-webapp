@@ -209,7 +209,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
     }
 
     notes = null;
-
     if (Array.isArray(active.encounters)) {
       active.encounters.forEach((encounter: any) => {
         if (Array.isArray(encounter.obs)) {
