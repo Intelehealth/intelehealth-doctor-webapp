@@ -25,7 +25,7 @@
     "@angular/pwa": "^0.1000.6",
     "@angular/router": "~11.2.14",
     "@angular/service-worker": "~11.2.14",
-    "@ng-bootstrap/ng-bootstrap": "^7.0.0",
+
     "@types/intro.js": "^2.4.7",
     "angular-user-idle": "^2.2.4",
     "core-js": "^3.6.5",
