@@ -31,6 +31,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitNoteNo = 0;
   remotePatientNo = 0;
   completeVisitNo = 0;
+  allowedNotesToShow = [
+    'Baseline FHR',
+    'FHR Deceleration',
+    'Amniotic fluid',
+    'Moulding',
+    'SYSTOLIC BLOOD PRESSURE',
+    'DIASTOLIC BLOOD PRESSURE'
+  ]
   // flagVisit: VisitData[] = [];
   // waitingVisit: VisitData[] = [];
   // progressVisit: VisitData[] = [];
@@ -208,12 +216,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
           encounter.obs.forEach((obs) => {
             if (obs?.comment === "R") {
               if (!notes) notes = [];
-              notes.push(obs.display.split(':')[0]);
+              const note = obs.display.split(':')[0]
+              if (this.allowedNotesToShow.includes(note)) {
+                notes.push(note);
+              }
             }
           });
         }
       });
-      notes = Array.from(new Set(notes))
+      if (Array.isArray(notes)) {
+        notes = notes.sort((a, b) => a.localeCompare(b));
+        notes = Array.from(new Set(notes))
+      }
     }
 
     return {
