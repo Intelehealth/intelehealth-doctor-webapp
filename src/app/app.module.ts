@@ -165,7 +165,7 @@ import { ReportComponent } from './component/layout/navbar/report/report.compone
       { path: 'report', component: ReportComponent, canActivate: [AuthGuard] },
       { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
       { path: '**', component: Page404Component }
-    ], { scrollPositionRestoration: 'enabled' }),
+    ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
