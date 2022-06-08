@@ -26,10 +26,6 @@ body {
   height: 100%;
 }
 
-body {
-  margin-top: 50px;
-}
-
 .alert-primary {
   display: flex !important;
 }
@@ -39,5 +35,6 @@ body {
 }
 
 .mat-datepicker-content {
-  zoom: 0.7;
+  transform: scale(0.75);
+  -moz-transform: scale(0.75);
 }
