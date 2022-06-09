@@ -126,8 +126,17 @@ export class HomepageComponent implements OnInit, OnDestroy {
             }
           }
 
+          let visitEncounter;
+          const { encounters = [] } = active;
           // push in respective array as per score
-          if (active.score >= 22) {
+
+          if (
+            (visitEncounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+            (visitEncounter = this.checkVisit(encounters, "Visit Complete")) ||
+            active.stopDatetime != null
+          ) {
+            this.completedVisit.push(this.assignValueToProperty(active, visitEncounter));
+          } else if (active.score >= 22) {
             this.priorityVisits.push(
               this.assignValueToProperty(active, encounter)
             );
@@ -148,48 +157,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
-
-  // visitCategory(active) {
-  //   const { encounters = [] } = active;
-  //   let encounter;
-  //   if (
-  //     (encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
-  //     (encounter = this.checkVisit(encounters, "Visit Complete")) ||
-  //     active.stopDatetime != null
-  //   ) {
-  //     const values = this.assignValueToProperty(active, encounter);
-  //     this.completedVisit.push(values);
-  //     this.completeVisitNo += 1;
-  //   } else if (
-  //     this.checkVisit(encounters, "Remote Prescription") &&
-  //     active.stopDatetime == null
-  //   ) {
-  //     const values = this.assignValueToProperty(active, encounter);
-  //     this.remoteVisits.push(values);
-  //     this.remotePatientNo += 1;
-  //   } else if (
-  //     this.checkVisit(encounters, "Visit Note") &&
-  //     active.stopDatetime == null
-  //   ) {
-  //     const values = this.assignValueToProperty(active, encounter);
-  //     this.progressVisit.push(values);
-  //     this.visitNoteNo += 1;
-  //   } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
-  //     if (!this.checkVisit(encounters, "Flagged").voided) {
-  //       const values = this.assignValueToProperty(active, encounter);
-  //       this.flagVisit.push(values);
-  //       this.flagPatientNo += 1;
-  //       GlobalConstants.visits.push(active);
-  //     }
-  //   } else if (
-  //     (encounter = this.checkVisit(encounters, "Stage1_Hour1_1")) || (encounter = this.checkVisit(encounters, "Stage1_Hour1_2"))
-  //   ) {
-  //     const values = this.assignValueToProperty(active, encounter);
-  //     this.waitingVisit.push(values);
-  //     this.activePatient += 1;
-  //     GlobalConstants.visits.push(active);
-  //   }
-  // }
 
   assignValueToProperty(active, encounter: any = {}): any {
     let overdueIn;

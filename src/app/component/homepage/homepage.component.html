@@ -20,7 +20,7 @@
         </mat-tab>
         <mat-tab id="queued-table">
             <ng-template mat-tab-label>
-                <p class="name">COMPLETED CASES <br> <b class="name">({{activePatient}})</b></p>
+                <p class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
                 <app-tables [data]="completedVisit"></app-tables>
