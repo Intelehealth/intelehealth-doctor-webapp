@@ -68,6 +68,8 @@ export class EpartogramComponent implements OnInit {
   visitId: string;
   nurseMobNo: string;
   patientInfo = { name: null, parity: null, laborOnset: null, activeLaborDiagnosed: null, membraneRuptured: null, riskFactors: null, mobileNo: null };
+  isVisitEnded: boolean = false;
+  birthOutcome: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -89,6 +91,10 @@ export class EpartogramComponent implements OnInit {
             this.nurseMobNo = attribute.value;
           }
         });
+      }
+      if (res.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
+        this.isVisitEnded = true;
+        this.birthOutcome = res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.obs[0]?.value;
       }
     });
   }
