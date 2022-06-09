@@ -327,6 +327,11 @@ td {
     cursor: pointer;
 }
 
+.disabled {
+    pointer-events: none;
+    cursor: default;
+    color: gray;
+  }
 @media screen and (max-width: 800px) {
     .tab-res {
         font-size: 10px;

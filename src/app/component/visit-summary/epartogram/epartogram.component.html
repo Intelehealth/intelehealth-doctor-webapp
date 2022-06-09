@@ -377,8 +377,8 @@
                 </td>
             </tr>
             <tr style="height: 20px;">
-                <td *ngFor="let t of filteredStage1">
-                    <button *ngIf="t.time !== null" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
+                <td *ngFor="let t of filteredStage1, let i=index">
+                    <button *ngIf="t.time !== null" [class.disabled]="filteredStage1[i]?.time < filteredStage1[i+1]?.time" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
                             class="fa fa-plus"></i>
                     </button>
                 </td>
@@ -391,8 +391,8 @@
                 </td>
             </tr>
             <tr style="height: 20px;">
-                <td colspan="2" *ngFor="let t of filteredStage2Col">
-                    <button *ngIf="t.time !== null" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
+                <td colspan="2" *ngFor="let t of filteredStage2Col, let i=index">
+                    <button *ngIf="t.time !== null" [class.disabled]="filteredStage2Col[i]?.time < filteredStage2Col[i+1]?.time" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
                             class="fa fa-plus"></i>
                     </button>
                 </td>
