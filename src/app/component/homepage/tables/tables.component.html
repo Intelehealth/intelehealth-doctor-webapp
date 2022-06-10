@@ -129,7 +129,10 @@
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
       >
-        <div *ngFor="let note of row.notes">{{ note }}</div>
+        <div *ngFor="let note of row.notes" [title]="note.value">
+          {{ note?.key }}
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </div>
         <br />
       </td>
     </ng-container>

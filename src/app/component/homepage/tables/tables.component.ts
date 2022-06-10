@@ -20,7 +20,7 @@ export class TablesComponent implements OnInit {
     "name",
     // "gender",
     // "age",
-    "location",
+    // "location",
     "status",
     "stage",
     "notes",

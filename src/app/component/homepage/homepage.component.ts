@@ -36,8 +36,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     'FHR Deceleration',
     'Amniotic fluid',
     'Moulding',
-    'SYSTOLIC BLOOD PRESSURE',
-    'DIASTOLIC BLOOD PRESSURE'
+    'Systolic BP',
+    'Diastolic BP'
   ]
   // flagVisit: VisitData[] = [];
   // waitingVisit: VisitData[] = [];
@@ -172,7 +172,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         moment(new Date()).diff(moment(encounter.encounterDatetime))
       );
       overdueIn =
-        duration.asMinutes() >= this.overdueIn ? `Overdue (${duration.asHours().toFixed(2)} hrs)` : "";
+        duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hrs` : "";
     }
 
     notes = null;
@@ -182,16 +182,17 @@ export class HomepageComponent implements OnInit, OnDestroy {
           encounter.obs.forEach((obs) => {
             if (obs?.comment === "R") {
               if (!notes) notes = [];
-              const note = obs.display.split(':')[0]
-              if (this.allowedNotesToShow.includes(note)) {
-                notes.push(note);
+              const key = obs.display.split(':')[0];
+              const value = obs.display.split(':')[1];
+              if (this.allowedNotesToShow.includes(key)) {
+                notes.push({ key, value });
               }
             }
           });
         }
       });
       if (Array.isArray(notes)) {
-        notes = notes.sort((a, b) => a.localeCompare(b));
+        notes = notes.sort((a, b) => a?.key.localeCompare(b?.key));
         notes = Array.from(new Set(notes))
       }
     }
