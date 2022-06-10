@@ -32,12 +32,16 @@ export class TablesComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input() data;
+  @Input() dataFor;
   constructor(private service: VisitService) { }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource(this.data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    if (this.dataFor === "completedVisit") {
+      this.displayColumns.push("birthOutcome");
+    }
   }
 
   applyFilter(filterValue: string) {
