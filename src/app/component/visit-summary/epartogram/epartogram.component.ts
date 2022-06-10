@@ -70,6 +70,7 @@ export class EpartogramComponent implements OnInit {
   patientInfo = { name: null, parity: null, laborOnset: null, activeLaborDiagnosed: null, membraneRuptured: null, riskFactors: null, mobileNo: null };
   isVisitEnded: boolean = false;
   birthOutcome: string;
+  birthtime: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -82,8 +83,6 @@ export class EpartogramComponent implements OnInit {
     this.patientId = this.route.snapshot.params["patient_id"];
     this.visitService.getVisit(this.visitId).subscribe((res) => {
       this.getDetails(res.patient.person);
-      this.getStage1Data(res.encounters);
-      this.getStag2Data(res.encounters);
       const providerAttribute = res.encounters[0]?.encounterProviders[0]?.provider?.attributes;
       if (providerAttribute?.length) {
         providerAttribute.forEach((attribute) => {
@@ -95,7 +94,10 @@ export class EpartogramComponent implements OnInit {
       if (res.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
         this.isVisitEnded = true;
         this.birthOutcome = res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.obs[0]?.value;
+        this.birthtime =  moment(res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.encounterDatetime).format("HH:mm");
       }
+      this.getStage1Data(res.encounters);
+      this.getStag2Data(res.encounters);
     });
   }
 
@@ -287,6 +289,16 @@ export class EpartogramComponent implements OnInit {
     this.filteredStage2Col = this.stage2Data.filter(function (v, i) {
       return i % 4 == 0;
     });
+
+    for(let t of this.filteredStage2Col) {
+      if(!t.time && this.isVisitEnded) {
+        t['flag'] = true;
+        t['birthTime']= this.birthtime;
+        break;
+      } else {
+        t['flag'] = false;
+      }
+    }
   }
 
   print() {

@@ -1,11 +1,11 @@
 <div class="view pres-content container tab-res">
     <div>
-            <h4 style="text-align: center"> WHO LABOUR CARE GUIDE </h4>
-            <span id="printPageButton" style="float:right;margin-top: -44px;">
-                <i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;
-                <a class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;
-                <a><i style="color: #ffdb58;" class="fa fa-envelope btnsize"></i></a>
-            </span>
+        <h4 style="text-align: center"> WHO LABOUR CARE GUIDE </h4>
+        <span id="printPageButton" style="float:right;margin-top: -44px;">
+            <i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;
+            <a class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;
+            <!-- <a><i style="color: #ffdb58;" class="fa fa-envelope btnsize"></i></a> -->
+        </span>
     </div>
     <div class="row fixBottom">
         <div class="column">
@@ -53,7 +53,10 @@
         <table class="table2">
             <tr>
                 <td *ngFor="let t of filteredStage2Col">
-                    <span class="text-color" *ngIf="t.time !== null ;else no_value">{{t.time }}</span>
+                    <span *ngIf="!t.birthTime">
+                        <span class="text-color" *ngIf="t.time !== null;else no_value">{{t.time }}</span>
+                    </span> 
+                    <span class="text-color" *ngIf="isVisitEnded">{{t.birthTime }}</span>
                 </td>
             </tr>
             <tr>
@@ -64,17 +67,25 @@
         </table>
     </div>
     <div class="emptytable fixBottom">
-          <input  class="align" type="text" value="ALEART" disabled>
-            <div class="container2">
-                <div class="line"><mat-divider></mat-divider></div>
-                <div class="text mat-typography">ACTIVE FIRST STAGE</div>
-                <div class="line"><mat-divider></mat-divider></div>
+        <input class="align" type="text" value="ALEART" disabled>
+        <div class="container2">
+            <div class="line">
+                <mat-divider></mat-divider>
             </div>
-            <div class="container1">
-                <div class="line"><mat-divider></mat-divider></div>
-                <div class="text mat-typography">SECOND STAGE</div>
-                <div class="line"><mat-divider></mat-divider></div>
-            </div>    
+            <div class="text mat-typography">ACTIVE FIRST STAGE</div>
+            <div class="line">
+                <mat-divider></mat-divider>
+            </div>
+        </div>
+        <div class="container1">
+            <div class="line">
+                <mat-divider></mat-divider>
+            </div>
+            <div class="text mat-typography">SECOND STAGE</div>
+            <div class="line">
+                <mat-divider></mat-divider>
+            </div>
+        </div>
     </div>
     <div class="row fixBottom">
         <table class="table3">
@@ -87,29 +98,35 @@
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1, index as j">
-                    <span   [ngClass]="{'red': t.companion?.colorFlag === 'R', 'yellow' : t.companion?.colorFlag === 'Y'}"
+                    <span [ngClass]="{'red': t.companion?.colorFlag === 'R', 'yellow' : t.companion?.colorFlag === 'Y'}"
                         *ngIf="i === 0 && t.companion !== null">{{ t.companion.value }}</span>
-                    <span   [ngClass]="{'red': t.painRelief?.colorFlag === 'R', 'yellow' : t.painRelief?.colorFlag === 'Y'}"
+                    <span
+                        [ngClass]="{'red': t.painRelief?.colorFlag === 'R', 'yellow' : t.painRelief?.colorFlag === 'Y'}"
                         *ngIf="i === 1 && t.painRelief !== null">{{ t.painRelief.value }}</span>
-                    <span   [ngClass]="{'red': t.oralFluid?.colorFlag === 'R', 'yellow' : t.oralFluid?.colorFlag === 'Y'}"
+                    <span [ngClass]="{'red': t.oralFluid?.colorFlag === 'R', 'yellow' : t.oralFluid?.colorFlag === 'Y'}"
                         *ngIf="i === 2 && t.oralFluid !== null">{{ t.oralFluid.value }}</span>
-                    <span   [ngClass]="{'red': t.posture?.colorFlag === 'R', 'yellow' : t.posture?.colorFlag === 'Y'}"
-                         *ngIf="i === 3 && t.posture !== null">{{ t.posture.value }}</span>
+                    <span [ngClass]="{'red': t.posture?.colorFlag === 'R', 'yellow' : t.posture?.colorFlag === 'Y'}"
+                        *ngIf="i === 3 && t.posture !== null">{{ t.posture.value }}</span>
                 </td>
             </tr>
         </table>
         <table id="tb4" class="table4">
             <tr *ngFor="let row of titleRows, let i = index">
-                <td class="text-color" *ngFor="let t of filteredStage2Col">
+                <ng-container *ngFor="let t of filteredStage2Col">
+                <td  *ngIf="!t.birthTime" class="text-color">  
                     <span [ngClass]="{'red': t.posture?.colorFlag === 'R', 'yellow' : t.posture?.colorFlag === 'Y'}"
-                    *ngIf="i === 0 && t.companion !== null; else no_Data">{{ t.companion.value}}</span>
-                 <span  [ngClass]="{'red': t.painRelief?.colorFlag === 'R', 'yellow' : t.painRelief?.colorFlag === 'Y'}"
-                         *ngIf="i === 1 && t.painRelief !== null; else no_Data">{{ t.painRelief.value}}</span>
-                    <span  [ngClass]="{'red': t.oralFluid?.colorFlag === 'R', 'yellow' : t.oralFluid?.colorFlag === 'Y'}"
-                     *ngIf="i === 2 && t.oralFluid !== null; else no_Data">{{ t.oralFluid.value}}</span>
-               <span  [ngClass]="{'red': t.posture?.colorFlag === 'R', 'yellow' : t.posture?.colorFlag === 'Y'}"
-                          *ngIf="i === 3 && t.posture !== null; else no_Data">{{ t.posture.value }}</span>
+                        *ngIf="i === 0 && t.companion !== null; else no_Data">{{ t.companion.value}}</span>
+                    <span [ngClass]="{'red': t.painRelief?.colorFlag === 'R', 'yellow' : t.painRelief?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.painRelief !== null; else no_Data">{{ t.painRelief.value}}</span>
+                    <span [ngClass]="{'red': t.oralFluid?.colorFlag === 'R', 'yellow' : t.oralFluid?.colorFlag === 'Y'}"
+                        *ngIf="i === 2 && t.oralFluid !== null; else no_Data">{{ t.oralFluid.value}}</span>
+                    <span [ngClass]="{'red': t.posture?.colorFlag === 'R', 'yellow' : t.posture?.colorFlag === 'Y'}"
+                        *ngIf="i === 3 && t.posture !== null; else no_Data">{{ t.posture.value }}</span>
                 </td>
+                <td *ngIf="t.birthTime && t.flag">
+                    <span *ngIf="i === 1" class="alignTitle textS text-color">{{birthOutcome}}</span>      
+                </td>
+                </ng-container>
             </tr>
         </table>
     </div>
@@ -124,56 +141,64 @@
                 <td colspan="2"> Baseline<br>FHR </td>
                 <td colspan="2"> ≤110, ≥160 </td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
-                    <span [ngClass]="{'red': t.baselineFHR?.colorFlag === 'R', 'yellow' : t.baselineFHR?.colorFlag === 'Y'}"
-                      class="alignTitle" *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.baselineFHR?.colorFlag === 'R', 'yellow' : t.baselineFHR?.colorFlag === 'Y'}"
+                        class="alignTitle" *ngIf="t.baselineFHR !== null"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
-            <tr class="lineh1" >
+            <tr class="lineh1">
                 <td colspan="2">FHR deceleration</td>
                 <td colspan="2">L</td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
-                    <span [ngClass]="{'red': t.fhrDeceleration?.colorFlag === 'R', 'yellow' : t.fhrDeceleration?.colorFlag === 'Y'}"
-                         *ngIf="t.fhrDeceleration !== null">{{t.fhrDeceleration.value}}</span>
+                    <span
+                        [ngClass]="{'red': t.fhrDeceleration?.colorFlag === 'R', 'yellow' : t.fhrDeceleration?.colorFlag === 'Y'}"
+                        *ngIf="t.fhrDeceleration !== null">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
             <tr [ngClass]="(i === 0 || i === 1)? 'lineh1' : 'lineh'" *ngFor="let row of babyTitleRows; let i = index">
                 <td colspan="2">{{row.name}} </td>
                 <td colspan="2">{{row.value}}</td>
                 <td class="text-color" colspan="2" *ngFor="let t of this.filteredStage1">
-                    <span [ngClass]="{'red': t.amnioticfluid?.colorFlag === 'R', 'yellow' : t.amnioticfluid?.colorFlag === 'Y'}"
-                         *ngIf="i === 0 && t.amnioticfluid !== null">{{ t.amnioticfluid.value }}</span>
-                    <span [ngClass]="{'red': t.fetalPosition?.colorFlag === 'R', 'yellow' : t.fetalPosition?.colorFlag === 'Y'}"
-                         *ngIf="i === 1 && t.fetalPosition !== null">{{ t.fetalPosition.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.amnioticfluid?.colorFlag === 'R', 'yellow' : t.amnioticfluid?.colorFlag === 'Y'}"
+                        *ngIf="i === 0 && t.amnioticfluid !== null">{{ t.amnioticfluid.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.fetalPosition?.colorFlag === 'R', 'yellow' : t.fetalPosition?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.fetalPosition !== null">{{ t.fetalPosition.value }}</span>
                     <span [ngClass]="{'red': t.caput?.colorFlag === 'R', 'yellow' : t.caput?.colorFlag === 'Y'}"
-                         *ngIf="i === 2 && t.caput !== null">{{ t.caput.value }}</span>
+                        *ngIf="i === 2 && t.caput !== null">{{ t.caput.value }}</span>
                     <span [ngClass]="{'red': t.moulding?.colorFlag === 'R', 'yellow' : t.moulding?.colorFlag === 'Y'}"
-                         *ngIf="i === 3 && t.moulding !== null">{{ t.moulding.value }}</span>
+                        *ngIf="i === 3 && t.moulding !== null">{{ t.moulding.value }}</span>
                 </td>
             </tr>
         </table>
         <table id="tb6" class="table6">
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red1': t.baselineFHR?.colorFlag === 'R', 'yellow1' : t.baselineFHR?.colorFlag === 'Y'}" 
-                    class="alignTitle" *ngIf="t.baselineFHR !== null;else no_Data"> {{ t.baselineFHR.value }}</span>
+                    <span
+                        [ngClass]="{'red1': t.baselineFHR?.colorFlag === 'R', 'yellow1' : t.baselineFHR?.colorFlag === 'Y'}"
+                        class="alignTitle" *ngIf="t.baselineFHR !== null;else no_Data"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red1': t.fhrDeceleration?.colorFlag === 'R', 'yellow1' : t.fhrDeceleration?.colorFlag === 'Y'}"
-                     *ngIf="t.fhrDeceleration !== null;else no_Data">{{t.fhrDeceleration.value}}</span>
+                    <span
+                        [ngClass]="{'red1': t.fhrDeceleration?.colorFlag === 'R', 'yellow1' : t.fhrDeceleration?.colorFlag === 'Y'}"
+                        *ngIf="t.fhrDeceleration !== null;else no_Data">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
             <tr *ngFor="let row of babyTitleRows; let i = index">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2">
-                    <span [ngClass]="{'red': t.amnioticfluid?.colorFlag === 'R', 'yellow' : t.amnioticfluid?.colorFlag === 'Y'}"
-                          *ngIf="i === 0 && t.amnioticfluid !== null;else no_Data">{{ t.amnioticfluid.value }}</span>
-                    <span [ngClass]="{'red': t.fetalPosition?.colorFlag === 'R', 'yellow' : t.fetalPosition?.colorFlag === 'Y'}"
-                          *ngIf="i === 1 && t.fetalPosition !== null; else no_Data">{{ t.fetalPosition.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.amnioticfluid?.colorFlag === 'R', 'yellow' : t.amnioticfluid?.colorFlag === 'Y'}"
+                        *ngIf="i === 0 && t.amnioticfluid !== null;else no_Data">{{ t.amnioticfluid.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.fetalPosition?.colorFlag === 'R', 'yellow' : t.fetalPosition?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.fetalPosition !== null; else no_Data">{{ t.fetalPosition.value }}</span>
                     <span [ngClass]="{'red': t.caput?.colorFlag === 'R', 'yellow' : t.caput?.colorFlag === 'Y'}"
-                          *ngIf="i === 2 && t.caput !== null; else no_Data">{{ t.caput.value }}</span>
-                    <span  [ngClass]="{'red': t.moulding?.colorFlag === 'R', 'yellow' : t.moulding?.colorFlag === 'Y'}"
-                          *ngIf="i === 3 && t.moulding !== null; else no_Data">{{ t.moulding.value }}</span>
+                        *ngIf="i === 2 && t.caput !== null; else no_Data">{{ t.caput.value }}</span>
+                    <span [ngClass]="{'red': t.moulding?.colorFlag === 'R', 'yellow' : t.moulding?.colorFlag === 'Y'}"
+                        *ngIf="i === 3 && t.moulding !== null; else no_Data">{{ t.moulding.value }}</span>
                 </td>
             </tr>
         </table>
@@ -185,20 +210,23 @@
                     <b class="alignTitle"> WOMAN </b>
                 </td>
             </tr>
-            <tr  [ngClass]="i === 3 ? 'lineh1' : 'lineh'" *ngFor="let row of womanTitleRows, let i = index">
+            <tr [ngClass]="i === 3 ? 'lineh1' : 'lineh'" *ngFor="let row of womanTitleRows, let i = index">
                 <td> {{row.name}} </td>
                 <td>{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
-                    <span  [ngClass]="{'red': t.pulse?.colorFlag === 'R', 'yellow' : t.pulse?.colorFlag === 'Y'}"
-                            *ngIf="i === 0 && t.pulse !== null">{{ t.pulse.value }}</span>
-                    <span  [ngClass]="{'red': t.systolicBP?.colorFlag === 'R', 'yellow' : t.systolicBP?.colorFlag === 'Y'}"
-                            *ngIf="i === 1 && t.systolicBP !== null">{{ t.systolicBP.value }}</span>
-                    <span  [ngClass]="{'red': t.diastolicBP?.colorFlag === 'R', 'yellow' : t.diastolicBP?.colorFlag === 'Y'}"
-                            *ngIf="i === 2 && t.diastolicBP !== null">{{ t.diastolicBP.value }}</span>
-                    <span  [ngClass]="{'red': t.temperature?.colorFlag === 'R', 'yellow' : t.temperature?.colorFlag === 'Y'}"
-                            *ngIf="i === 3 && t.temperature !== 0">{{ t.temperature.value }}</span>
-                    <span  [ngClass]="{'red': t.urine?.colorFlag === 'R', 'yellow' : t.urine?.colorFlag === 'Y'}"
-                            *ngIf="i === 4 && t.urine !== null">{{ t.urine.value }}</span>
+                    <span [ngClass]="{'red': t.pulse?.colorFlag === 'R', 'yellow' : t.pulse?.colorFlag === 'Y'}"
+                        *ngIf="i === 0 && t.pulse !== null">{{ t.pulse.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.systolicBP?.colorFlag === 'R', 'yellow' : t.systolicBP?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.systolicBP !== null">{{ t.systolicBP.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.diastolicBP?.colorFlag === 'R', 'yellow' : t.diastolicBP?.colorFlag === 'Y'}"
+                        *ngIf="i === 2 && t.diastolicBP !== null">{{ t.diastolicBP.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.temperature?.colorFlag === 'R', 'yellow' : t.temperature?.colorFlag === 'Y'}"
+                        *ngIf="i === 3 && t.temperature !== 0">{{ t.temperature.value }}</span>
+                    <span [ngClass]="{'red': t.urine?.colorFlag === 'R', 'yellow' : t.urine?.colorFlag === 'Y'}"
+                        *ngIf="i === 4 && t.urine !== null">{{ t.urine.value }}</span>
                 </td>
             </tr>
         </table>
@@ -206,15 +234,18 @@
             <tr *ngFor="let row of womanTitleRows, let i = index">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2">
                     <span [ngClass]="{'red': t.pulse?.colorFlag === 'R', 'yellow' : t.pulse?.colorFlag === 'Y'}"
-                          *ngIf="i === 0 && t.pulse !== null; else no_Data">{{ t.pulse.value }}</span>
-                    <span [ngClass]="{'red': t.systolicBP?.colorFlag === 'R', 'yellow' : t.systolicBP?.colorFlag === 'Y'}"
-                          *ngIf="i === 1 && t.systolicBP !== null; else no_Data">{{ t.systolicBP.value }}</span>
-                    <span [ngClass]="{'red': t.diastolicBP?.colorFlag === 'R', 'yellow' : t.diastolicBP?.colorFlag === 'Y'}"
-                          *ngIf="i === 2 && t.diastolicBP !== null; else no_Data">{{ t.diastolicBP.value }}</span>
-                    <span [ngClass]="{'red': t.temperature?.colorFlag === 'R', 'yellow' : t.temperature?.colorFlag === 'Y'}"
-                          *ngIf="i === 3 && t.temperature !== 0; else no_Data">{{ t.temperature.value }}</span>
+                        *ngIf="i === 0 && t.pulse !== null; else no_Data">{{ t.pulse.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.systolicBP?.colorFlag === 'R', 'yellow' : t.systolicBP?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.systolicBP !== null; else no_Data">{{ t.systolicBP.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.diastolicBP?.colorFlag === 'R', 'yellow' : t.diastolicBP?.colorFlag === 'Y'}"
+                        *ngIf="i === 2 && t.diastolicBP !== null; else no_Data">{{ t.diastolicBP.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.temperature?.colorFlag === 'R', 'yellow' : t.temperature?.colorFlag === 'Y'}"
+                        *ngIf="i === 3 && t.temperature !== 0; else no_Data">{{ t.temperature.value }}</span>
                     <span [ngClass]="{'red': t.urine?.colorFlag === 'R', 'yellow' : t.urine?.colorFlag === 'Y'}"
-                          *ngIf="i === 4 && t.urine !== null; else no_Data">{{ t.urine.value }}</span>
+                        *ngIf="i === 4 && t.urine !== null; else no_Data">{{ t.urine.value }}</span>
                 </td>
             </tr>
         </table>
@@ -229,20 +260,25 @@
                 <td colspan="2">{{row.name}} </td>
                 <td colspan="2">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of this.stage1Data">
-                    <span [ngClass]="{'red': t.contractions?.colorFlag === 'R', 'yellow' : t.contractions?.colorFlag === 'Y'}"
-                          *ngIf="i === 0 && t.contractions !== null">{{ t.contractions.value }}</span>
-                    <span [ngClass]="{'red': t.durationOfContraction?.colorFlag === 'R', 'yellow' : t.durationOfContraction?.colorFlag === 'Y'}"
-                          *ngIf="i === 1 && t.durationOfContraction !== null">{{ t.durationOfContraction?.value}}</span>
+                    <span
+                        [ngClass]="{'red': t.contractions?.colorFlag === 'R', 'yellow' : t.contractions?.colorFlag === 'Y'}"
+                        *ngIf="i === 0 && t.contractions !== null">{{ t.contractions.value }}</span>
+                    <span
+                        [ngClass]="{'red': t.durationOfContraction?.colorFlag === 'R', 'yellow' : t.durationOfContraction?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.durationOfContraction !== null">{{ t.durationOfContraction?.value}}</span>
                 </td>
             </tr>
         </table>
         <table id="tb8" class="table8">
             <tr *ngFor="let row of labourFirstRows, let i = index">
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span [ngClass]="{'red1': t.contractions?.colorFlag === 'R', 'yellow1' : t.contractions?.colorFlag === 'Y'}"
-                          *ngIf="i === 0 && t.contractions !== null; else no_Data">{{ t.contractions.value }}</span>
-                    <span [ngClass]="{'red1': t.durationOfContraction?.colorFlag === 'R', 'yellow1' : t.durationOfContraction?.colorFlag === 'Y'}"
-                          *ngIf="i === 1 && t.durationOfContraction !== null; else no_Data">{{ t.durationOfContraction?.value }}</span>
+                    <span
+                        [ngClass]="{'red1': t.contractions?.colorFlag === 'R', 'yellow1' : t.contractions?.colorFlag === 'Y'}"
+                        *ngIf="i === 0 && t.contractions !== null; else no_Data">{{ t.contractions.value }}</span>
+                    <span
+                        [ngClass]="{'red1': t.durationOfContraction?.colorFlag === 'R', 'yellow1' : t.durationOfContraction?.colorFlag === 'Y'}"
+                        *ngIf="i === 1 && t.durationOfContraction !== null; else no_Data">{{
+                        t.durationOfContraction?.value }}</span>
                 </td>
             </tr>
         </table>
@@ -263,7 +299,7 @@
                 <td [class.filled]="row.value  === null">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
                     <span [ngClass]="{'red': t.cervix?.colorFlag === 'R', 'yellow' : t.cervix?.colorFlag === 'Y'}"
-                         *ngIf="t.cervix !== null && row.name === t.cervix.value"> x </span>
+                        *ngIf="t.cervix !== null && row.name === t.cervix.value"> x </span>
                 </td>
             </tr>
         </table>
@@ -300,7 +336,7 @@
                 <td>{{row.name}} </td>
                 <td [class.filled]="row.value  === null">{{row.value }}</td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
-                    <span  [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
+                    <span [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}"
                         *ngIf="t.descent !== null && row?.name === t.descent.value"> o </span>
                 </td>
             </tr>
@@ -308,8 +344,8 @@
         <table id="tb12" class="table12">
             <tr *ngFor="let row of labourThirdRows">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2, let i = index">
-                    <span [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}" 
-                    *ngIf="t.descent !== null && row?.name === t.descent.value; else no_Data"> o </span>
+                    <span [ngClass]="{'red': t.descent?.colorFlag === 'R', 'yellow' : t.descent?.colorFlag === 'Y'}"
+                        *ngIf="t.descent !== null && row?.name === t.descent.value; else no_Data"> o </span>
                 </td>
             </tr>
         </table>
@@ -378,22 +414,24 @@
             </tr>
             <tr style="height: 20px;">
                 <td *ngFor="let t of filteredStage1, let i=index">
-                    <button *ngIf="t.time !== null" [class.disabled]="(filteredStage1[i]?.time < filteredStage1[i+1]?.time || filteredStage2Col[0]?.time !== null)" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
-                            class="fa fa-plus"></i>
+                    <button *ngIf="t.time !== null"
+                        [class.disabled]="(filteredStage1[i]?.time < filteredStage1[i+1]?.time || filteredStage2Col[0]?.time !== null)"
+                        (click)="submit(t.uuid)" class="btn-primary shadow-none"><i class="fa fa-plus"></i>
                     </button>
                 </td>
             </tr>
         </table>
         <table class="table18">
             <tr>
-                <td  colspan="2" *ngFor="let t of filteredStage2Col">
+                <td colspan="2" *ngFor="let t of filteredStage2Col">
                     <span class="alignTitle noteSize text-color" [innerText]='t.plan'></span>
                 </td>
             </tr>
             <tr style="height: 20px;">
                 <td colspan="2" *ngFor="let t of filteredStage2Col, let i=index">
-                    <button *ngIf="t.time !== null" [class.disabled]="(filteredStage2Col[i]?.time < filteredStage2Col[i+1]?.time || isVisitEnded)" (click)="submit(t.uuid)" class="btn-primary shadow-none"><i
-                            class="fa fa-plus"></i>
+                    <button *ngIf="t.time !== null"
+                        [class.disabled]="(filteredStage2Col[i]?.time < filteredStage2Col[i+1]?.time || isVisitEnded)"
+                        (click)="submit(t.uuid)" class="btn-primary shadow-none"><i class="fa fa-plus"></i>
                     </button>
                 </td>
             </tr>
@@ -438,5 +476,5 @@
 </ng-template>
 
 <ng-template #no_Data>
-   <span style="color: white;">.</span>
+    <span style="color: transparent;">.</span>
 </ng-template>

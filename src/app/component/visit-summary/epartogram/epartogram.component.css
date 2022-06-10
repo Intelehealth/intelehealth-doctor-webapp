@@ -26,6 +26,12 @@
     width: 300px;
 }
 
+.textS {
+  text-transform: uppercase;
+  font-size: 12px;
+  margin: -37px;
+  } 
+
 .container2 {
     width: 68%;
     display: flex;
