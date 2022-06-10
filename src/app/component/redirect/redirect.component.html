@@ -1,1 +1,8 @@
-<p>{{ message }}</p>
+<p *ngIf="loading">{{ message }}</p>
+<ng-container *ngIf="selectedLink?.type === 'pdf'">
+  <embed
+    src="https://msf-arogyabharat.intelehealth.org/assets/Diet_Plan_Hindi.pdf"
+    style="width: 100%; height: 100%"
+    type="application/pdf"
+  />
+</ng-container>

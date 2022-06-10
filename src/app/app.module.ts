@@ -120,7 +120,8 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     ModalsComponent,
     MainComponent,
     ConfirmDialogComponent,
-    ReassignSpecialityComponent
+    ReassignSpecialityComponent,
+    RedirectComponent
   ],
 
   imports: [
