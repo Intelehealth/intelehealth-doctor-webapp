@@ -173,6 +173,14 @@
       </td>
     </ng-container>
 
+     <!-- Birth Outcome column -->
+    <ng-container matColumnDef="birthOutcome">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Birth Outcome</th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+       {{ row?.birthOutcome }}
+      </td>
+    </ng-container>
+
     <tr
       mat-header-row
       *matHeaderRowDef="displayColumns"

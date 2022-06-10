@@ -23,7 +23,7 @@
                 <p class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
             </ng-template><br>
             <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
-                <app-tables [data]="completedVisit"></app-tables>
+                <app-tables [data]="completedVisit" [dataFor]="'completedVisit'"></app-tables>
             </ng-container>
         </mat-tab>
     </mat-tab-group>
