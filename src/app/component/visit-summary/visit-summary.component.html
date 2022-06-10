@@ -2,7 +2,7 @@
       <h2 style="text-align:center;">Visit Summary</h2>
 </div> -->
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
-<div class="container" [ngClass]="(setSpiner)?'spin':''">
+<div [ngClass]="(setSpiner)?'spin':''">
       <app-epartogram></app-epartogram>
 </div>
 <app-chat></app-chat>

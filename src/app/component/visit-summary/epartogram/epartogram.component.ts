@@ -317,6 +317,25 @@ export class EpartogramComponent implements OnInit {
     }
   }
 
+  zoomin() {
+    var Page = document.getElementById('epartogram');
+    var zoom = parseInt(Page.style['zoom']) + 5 + '%'
+    Page.style['zoom'] = zoom;
+    var width = parseInt(Page.style['width']) + 5 + '%'
+    Page.style['width'] = width;
+    return false;
+  }
+
+  zoomout() {
+    var Page = document.getElementById('epartogram');
+    if(parseInt(Page.style['zoom']) == 100) return false;
+    var zoom = parseInt(Page.style['zoom']) - 5 + '%'
+    Page.style['zoom'] = zoom;
+    var width = parseInt(Page.style['width']) - 5 + '%'
+    Page.style['width'] = width;
+    return false;
+  }
+
   private createStages(column: number, type: string) {
     for (let i = 1; i <= column; i++) {
       type === 'stage1' ? this.stage1Data.push(new epartogram(i, null, null, null, null, null, null, 0, null, null, null, null,
