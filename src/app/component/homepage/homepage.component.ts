@@ -160,9 +160,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   assignValueToProperty(active, encounter: any = {}): any {
     let overdueIn;
-    let notes;
+    let notes = [];
+    let notesObj = {};
     let stage = 1;
-    let birthOutcome:string;
+    let birthOutcome: string;
     if (active?.encounters?.length) {
       if (active.encounters.filter(vst => vst.display.includes('Stage2')).length > 0) {
         stage = 2;
@@ -173,31 +174,36 @@ export class HomepageComponent implements OnInit, OnDestroy {
         moment(new Date()).diff(moment(encounter.encounterDatetime))
       );
       overdueIn =
-        duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hrs` : "";
+        duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hr(s)` : "";
     }
 
-    notes = null;
     if (Array.isArray(active.encounters)) {
       active.encounters.forEach((encounter: any) => {
         if (Array.isArray(encounter.obs)) {
           encounter.obs.forEach((obs) => {
             if (obs?.comment === "R") {
-              if (!notes) notes = [];
               const key = obs.display.split(':')[0];
               const value = obs.display.split(':')[1];
               if (this.allowedNotesToShow.includes(key)) {
-                notes.push({ key, value });
+                notesObj[key] = value
               }
             }
           });
-          if(encounter.display.includes('Visit Complete')) {
+          if (encounter.display.includes('Visit Complete')) {
             birthOutcome = encounter.obs[0]?.value;
           }
         }
       });
       if (Array.isArray(notes)) {
+        for (const k in notesObj) {
+          if (Object.prototype.hasOwnProperty.call(notesObj, k)) {
+            notes.push({
+              key: k,
+              value: notesObj[k]
+            })
+          }
+        }
         notes = notes.sort((a, b) => a?.key.localeCompare(b?.key));
-        notes = Array.from(new Set(notes))
       }
     }
 
