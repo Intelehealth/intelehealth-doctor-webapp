@@ -10,3 +10,8 @@
 .no-data {
   background: white;
 }
+
+.export {
+  height: 20px;
+  width: 20px;
+}

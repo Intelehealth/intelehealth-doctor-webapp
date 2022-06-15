@@ -1,9 +1,14 @@
+<div class="container text-right">
+  <button type="button" class="btn btn-outline-secondary" title="Export Sheet" (click)="export()">
+    Export &nbsp;
+    <img class="export" src="assets/spreadsheet.svg" alt="Sheet" />
+  </button>
+</div>
 <div class="container">
   <mat-tab-group
     [(selectedIndex)]="selectedIndexBinding"
     (focusChange)="tabChange($event)"
   >
-    mat-align-tabs="center" >
     <mat-tab>
       <ng-template mat-tab-label>
         <b> Health Worker</b>&nbsp;

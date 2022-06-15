@@ -5,6 +5,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MonitoringService } from "src/app/services/monitoring.service";
 import * as moment from "moment";
 import { MatTabChangeEvent } from "@angular/material/tabs";
+import { ExportToCsv } from "export-to-csv";
 
 @Component({
   selector: "app-monitoring",
@@ -43,6 +44,7 @@ export class MonitoringComponent implements OnInit {
   allData: any = [];
   dataSource;
   selectedIndexBinding;
+  csvExporter;
 
   constructor(private monitorService: MonitoringService) {
     this.hwDisplayedColumns = this.hwColumns.map((c) => c.key);
@@ -78,17 +80,19 @@ export class MonitoringComponent implements OnInit {
   setTableData(item) {
     switch (item.userType) {
       case 'Doctor': {
-        let tableCol = {}
+        let tableCol: any = {}
         this.drColumns.forEach(col => {
-          tableCol[col.key] = this.showValue(item, col.key)
+          tableCol[col.key] = this.showValue(item, col.key);
+          tableCol.userType = item.userType;
         });
         this.data.push(tableCol);
       }
         break;
       case 'Health Worker': {
-        let tableCol = {}
+        let tableCol: any = {}
         this.hwColumns.forEach(col => {
-          tableCol[col.key] = this.showValue(item, col.key)
+          tableCol[col.key] = this.showValue(item, col.key);
+          tableCol.userType = item.userType;
         });
         this.data.push(tableCol);
       }
@@ -142,5 +146,58 @@ export class MonitoringComponent implements OnInit {
     } catch (error) {
       return {};
     }
+  }
+
+  export() {
+    this.hwExport();
+    setTimeout(() => {
+      // this.drExport();
+    }, 1000);
+  }
+
+  hwExport() {
+    const headers = this.hwColumns.map(col => col.label);
+    const csvExporter = new ExportToCsv({
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: `hw-${Date.now()}`,
+      filename: `hw-${Date.now()}`,
+      useTextFile: false,
+      useBom: true,
+      // useKeysAsHeaders: true,
+      headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+    });
+    const _data: any = Array.from(this.data.filter(d => d.userType === "Health Worker"))
+    const data = _data.map(d => {
+      delete d.userType
+      return d;
+    });
+    csvExporter.generateCsv(data);
+  }
+
+  drExport() {
+    const headers = this.drColumns.map(col => col.label);
+    const csvExporter = new ExportToCsv({
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: `doctor-${Date.now()}`,
+      filename: `doctor-${Date.now()}`,
+      useTextFile: false,
+      useBom: true,
+      // useKeysAsHeaders: true,
+      headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+    });
+    let _data: any = Array.from(this.data.filter(d => d.userType === "Doctor"))
+    const data = _data.map(d => {
+      delete d.userType
+      return d;
+    });
+    csvExporter.generateCsv(data);
   }
 }
