@@ -383,10 +383,10 @@ export class EpartogramComponent implements OnInit {
       if (obs.display.includes('PULSE')) {
         this[stageType][index].pulse = this.setObs(obs);
       }
-      if (obs.display.includes('SYSTOLIC BLOOD PRESSURE')) {
+      if (obs.display.includes('Systolic BP')) {
         this[stageType][index].systolicBP = this.setObs(obs);
       }
-      if (obs.display.includes('DIASTOLIC BLOOD PRESSURE')) {
+      if (obs.display.includes('Diastolic BP')) {
         this[stageType][index].diastolicBP = this.setObs(obs);
       }
       if (obs.display.includes('TEMPERATURE (C)')) {
