@@ -151,7 +151,7 @@ export class MonitoringComponent implements OnInit {
   export() {
     this.hwExport();
     setTimeout(() => {
-      // this.drExport();
+      this.drExport();
     }, 1000);
   }
 
