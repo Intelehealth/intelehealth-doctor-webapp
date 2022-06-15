@@ -24,6 +24,7 @@ export class MonitoringComponent implements OnInit {
     { label: "Consultation Device", key: "device" },
     { label: "Average Time Spent(In a day)", key: "avgTimeSpentInADay" },
     { label: "Total Time", key: "totalTime" },
+    { label: "No. of Days", key: "days", class: 'n-day' },
     { label: "Current Status", key: "status" },
   ];
   hwColumns: any = [
@@ -35,6 +36,7 @@ export class MonitoringComponent implements OnInit {
     { label: "Average Time Spent(In a day)", key: "avgTimeSpentInADay" },
     { label: "Total Time", key: "totalTime" },
     { label: "Last Activity", key: "lastActivity" },
+    { label: "No. of Days", key: "days", class: 'n-day' },
     { label: "Current Status", key: "status" },
   ];
   data: any = [];
@@ -57,7 +59,8 @@ export class MonitoringComponent implements OnInit {
   filterData() {
     setTimeout(() => {
       let page = 0;
-      this.data = this.allData.filter((d) => {
+      this.allData.filter((d) => {
+        this.setTableData(d);
         if (this.selectedIndexBinding) {
           page = 0;
           return d.userType === "Doctor";
@@ -70,6 +73,28 @@ export class MonitoringComponent implements OnInit {
       this.dataSource.paginator = page == 1 ? this.paginator0 : this.paginator1;
       this.dataSource.sort = page === 1 ? this.sort0 : this.sort1;
     }, 0);
+  }
+
+  setTableData(item) {
+    switch (item.userType) {
+      case 'Doctor': {
+        let tableCol = {}
+        this.drColumns.forEach(col => {
+          tableCol[col.key] = this.showValue(item, col.key)
+        });
+        this.data.push(tableCol);
+      }
+        break;
+      case 'Health Worker': {
+        let tableCol = {}
+        this.hwColumns.forEach(col => {
+          tableCol[col.key] = this.showValue(item, col.key)
+        });
+        this.data.push(tableCol);
+      }
+        break;
+    }
+
   }
 
   get len() {
@@ -91,7 +116,20 @@ export class MonitoringComponent implements OnInit {
   }
 
   showValue(obj, key) {
-    if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
+    if (key === 'days') {
+      const createdAt = moment(obj.createdAt)
+      const duration = moment.duration(moment().diff(createdAt));
+      return duration.asDays().toFixed();
+    } else if (key === 'avgTimeSpentInADay') {
+      const createdAt = moment(obj.createdAt)
+      const duration = moment.duration(moment().diff(createdAt));
+      const totalTime = moment(obj.totalTime, 'h[h] m[m]');
+      const totalDuration = moment.duration({ minutes: totalTime.minutes(), hours: totalTime.hours() });
+      const avgTimeSpentInADayInMins = totalDuration.asMinutes() / Number(duration.asDays().toFixed());
+      const hours = Number((avgTimeSpentInADayInMins / 60).toFixed());
+      const mins = avgTimeSpentInADayInMins - (hours * 60);
+      return `${Math.abs(hours).toFixed()}h ${Math.abs(mins).toFixed()}m`;
+    } else if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
       return obj[key];
