@@ -119,6 +119,10 @@ export class MonitoringComponent implements OnInit {
     this.filterData();
   }
 
+  trunc(value) {
+    return Math.trunc(value);
+  }
+
   showValue(obj, key) {
     if (key === 'days') {
       const createdAt = moment(obj.createdAt)
@@ -129,10 +133,10 @@ export class MonitoringComponent implements OnInit {
       const duration = moment.duration(moment().diff(createdAt));
       const totalTime = moment(obj.totalTime, 'h[h] m[m]');
       const totalDuration = moment.duration({ minutes: totalTime.minutes(), hours: totalTime.hours() });
-      const avgTimeSpentInADayInMins = totalDuration.asMinutes() / Number(duration.asDays().toFixed());
-      const hours = Number((avgTimeSpentInADayInMins / 60).toFixed());
-      const mins = avgTimeSpentInADayInMins - (hours * 60);
-      return `${Math.abs(hours).toFixed()}h ${Math.abs(mins).toFixed()}m`;
+      const avgTimeSpentInADayInMins = totalDuration.asMinutes() / this.trunc(duration.asDays());
+      const hours = this.trunc(avgTimeSpentInADayInMins / 60);
+      const mins = this.trunc(avgTimeSpentInADayInMins - (hours * 60));
+      return `${!isNaN(hours) ? hours : 0}h ${!isNaN(mins) ? mins : 0}m`;
     } else if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
