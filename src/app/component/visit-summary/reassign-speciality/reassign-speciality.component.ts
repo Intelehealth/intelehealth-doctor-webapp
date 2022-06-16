@@ -24,10 +24,8 @@ export class ReassignSpecialityComponent implements OnInit {
   specializations = [
     "All",
     "Referred out",
-    "MSF MD",
     "Diabetes",
     "Dietician",
-    "Doctor not needed"
   ];
   errorText: string;
 
@@ -43,7 +41,7 @@ export class ReassignSpecialityComponent implements OnInit {
     private EncounterService: EncounterService,
     private snackbar: MatSnackBar,
     private pushNotificationService: PushNotificationsService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.visitService.getVisit(this.visitUuid).subscribe((visitDetails) => {
@@ -116,7 +114,7 @@ export class ReassignSpecialityComponent implements OnInit {
                     attributes.forEach((element) => {
                       if (
                         element.attributeType.uuid ===
-                          "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                        "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                         !element.voided
                       ) {
                         const payload = {
@@ -128,8 +126,8 @@ export class ReassignSpecialityComponent implements OnInit {
                           skipFlag: false,
                         };
                         this.pushNotificationService
-                        .postNotification(payload)
-                        .subscribe();
+                          .postNotification(payload)
+                          .subscribe();
                       }
                     });
                   }
