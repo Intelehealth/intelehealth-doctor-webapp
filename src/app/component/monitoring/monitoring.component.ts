@@ -61,8 +61,7 @@ export class MonitoringComponent implements OnInit {
   filterData() {
     setTimeout(() => {
       let page = 0;
-      this.allData.filter((d) => {
-        this.setTableData(d);
+      this.data = this.allData.filter((d) => {
         if (this.selectedIndexBinding) {
           page = 0;
           return d.userType === "Doctor";
@@ -70,6 +69,9 @@ export class MonitoringComponent implements OnInit {
           page = 1;
           return d.userType === "Health Worker";
         }
+      });
+      this.data = this.data.map(item => {
+        return this.setTableData(item);
       });
       this.dataSource = new MatTableDataSource(this.data);
       this.dataSource.paginator = page == 1 ? this.paginator0 : this.paginator1;
@@ -85,7 +87,7 @@ export class MonitoringComponent implements OnInit {
           tableCol[col.key] = this.showValue(item, col.key);
           tableCol.userType = item.userType;
         });
-        this.data.push(tableCol);
+        return tableCol;
       }
         break;
       case 'Health Worker': {
@@ -94,7 +96,7 @@ export class MonitoringComponent implements OnInit {
           tableCol[col.key] = this.showValue(item, col.key);
           tableCol.userType = item.userType;
         });
-        this.data.push(tableCol);
+        return tableCol;
       }
         break;
     }
@@ -123,20 +125,28 @@ export class MonitoringComponent implements OnInit {
     return Math.trunc(value);
   }
 
+  getDays(date) {
+    const createdAt = moment(date)
+    const duration = moment.duration(moment().diff(createdAt));
+    const days = isFinite(this.trunc(duration.asDays())) ? this.trunc(duration.asDays()) : 1;
+    return days;
+  }
+
   showValue(obj, key) {
     if (key === 'days') {
-      const createdAt = moment(obj.createdAt)
-      const duration = moment.duration(moment().diff(createdAt));
-      return duration.asDays().toFixed();
+      return this.getDays(obj.createdAt);
     } else if (key === 'avgTimeSpentInADay') {
-      const createdAt = moment(obj.createdAt)
-      const duration = moment.duration(moment().diff(createdAt));
       const totalTime = moment(obj.totalTime, 'h[h] m[m]');
-      const totalDuration = moment.duration({ minutes: totalTime.minutes(), hours: totalTime.hours() });
-      const avgTimeSpentInADayInMins = totalDuration.asMinutes() / this.trunc(duration.asDays());
+      if (obj.totalTime === '1h 13m') {
+        debugger
+      }
+      const totalDurationInMins = ((totalTime.hours() || 0) * 60) + (totalTime.minutes() || 0)
+      let days = this.getDays(obj.createdAt);
+      if (days === 0) days = 1
+      const avgTimeSpentInADayInMins = totalDurationInMins / days;
       const hours = this.trunc(avgTimeSpentInADayInMins / 60);
       const mins = this.trunc(avgTimeSpentInADayInMins - (hours * 60));
-      return `${!isNaN(hours) ? hours : 0}h ${!isNaN(mins) ? mins : 0}m`;
+      return `${!isNaN(hours) && isFinite(hours) ? hours : 0}h ${!isNaN(mins) && isFinite(hours) ? mins : 0}m`;
     } else if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
@@ -162,46 +172,44 @@ export class MonitoringComponent implements OnInit {
   hwExport() {
     const headers = this.hwColumns.map(col => col.label);
     const csvExporter = new ExportToCsv({
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
+      // fieldSeparator: ',',
+      // quoteStrings: '"',
+      // decimalSeparator: '.',
       showLabels: true,
-      showTitle: true,
-      title: `hw-${Date.now()}`,
+      // showTitle: true,
+      // title: `hw-${Date.now()}`,
       filename: `hw-${Date.now()}`,
       useTextFile: false,
-      useBom: true,
+      // useBom: true,
       // useKeysAsHeaders: true,
       headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
     });
-    const _data: any = Array.from(this.data.filter(d => d.userType === "Health Worker"))
-    const data = _data.map(d => {
-      delete d.userType
-      return d;
+    let _data: any = this.allData.filter(d => d.userType === "Health Worker")
+    _data = _data.map(item => {
+      console.log('item: ', item);
+      return this.setTableData(item)
     });
+    const data = _data.map(({ userType, ...rest }) => rest);
     csvExporter.generateCsv(data);
   }
 
   drExport() {
     const headers = this.drColumns.map(col => col.label);
     const csvExporter = new ExportToCsv({
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
+      // fieldSeparator: ',',
+      // quoteStrings: '"',
+      // decimalSeparator: '.',
       showLabels: true,
-      showTitle: true,
-      title: `doctor-${Date.now()}`,
+      // showTitle: true,
       filename: `doctor-${Date.now()}`,
       useTextFile: false,
-      useBom: true,
+      // useBom: true,
       // useKeysAsHeaders: true,
       headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
     });
-    let _data: any = Array.from(this.data.filter(d => d.userType === "Doctor"))
-    const data = _data.map(d => {
-      delete d.userType
-      return d;
-    });
+    let _data: any = this.allData.filter(d => d.userType === "Doctor")
+    _data = _data.map(item => this.setTableData(item));
+    const data = _data.map(({ userType, ...rest }) => rest);
     csvExporter.generateCsv(data);
   }
 }
