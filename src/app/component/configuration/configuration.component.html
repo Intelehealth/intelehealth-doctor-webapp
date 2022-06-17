@@ -1,0 +1,18 @@
+<div class="container">
+    <h4 style="text-align:center;">Configuration </h4>
+    <div>
+        <b>1. Oxytocin:</b>
+        <hr>
+        <mat-radio-group class="d-flex flex-column" aria-labelledby="group-radio">
+            <mat-radio-button *ngFor="let option of oxytocinOptions" [checked]="option.selected" (change)="radioChange($event)"
+            [value]="option.id" color="primary">
+              {{ option.name }}
+            </mat-radio-button>
+        </mat-radio-group>
+        <hr>
+    </div>
+    <button type="submit" mat-raised-button color="primary" (click)="save()">
+        Save
+    </button> 
+    <hr>
+</div>

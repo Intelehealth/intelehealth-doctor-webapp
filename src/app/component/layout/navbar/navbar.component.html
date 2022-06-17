@@ -39,6 +39,7 @@
             <a class="dropdown-item" routerLink="/myAccount">My account</a>
             <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">System
               administration</a>
+            <a *ngIf="systemAccess" class="dropdown-item" routerLink="/configuration">Configuration</a>
             <a class="dropdown-item" (click)="changePassword()">Change password</a>
           </div>
         </li>

@@ -86,6 +86,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { EpartogramComponent } from "./component/visit-summary/epartogram/epartogram.component";
 import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overlay.component';
+import { ConfigurationComponent } from './component/configuration/configuration.component';
 
 
 
@@ -131,7 +132,8 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     EpartogramComponent,
-    VcallOverlayComponent
+    VcallOverlayComponent,
+    ConfigurationComponent
   ],
 
   imports: [
@@ -178,6 +180,7 @@ import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overla
         { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent},
         { path: 'vc/call', component: VcComponent },
         { path: 'test/chat', component: TestChatComponent },
+        { path: 'configuration', component: ConfigurationComponent },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
       },

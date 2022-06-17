@@ -40,4 +40,14 @@ export class MindmapService {
     const url = `${this.baseURL}/mindmap/delete/${key}`;
     return this.http.post(url, data);
   }
+
+  getConfiguration(): Observable<any> {
+    const url = `${this.baseURL}/epartogram/configuration`;
+    return this.http.get(url);
+  }
+
+  addUpdateConfiguration(payload): Observable<any> {
+    const url = `${this.baseURL}/epartogram/configuration`;
+    return this.http.post(url, payload);
+  }
 }
