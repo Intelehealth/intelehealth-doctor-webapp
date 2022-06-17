@@ -137,9 +137,6 @@ export class MonitoringComponent implements OnInit {
       return this.getDays(obj.createdAt);
     } else if (key === 'avgTimeSpentInADay') {
       const totalTime = moment(obj.totalTime, 'h[h] m[m]');
-      if (obj.totalTime === '1h 13m') {
-        debugger
-      }
       const totalDurationInMins = ((totalTime.hours() || 0) * 60) + (totalTime.minutes() || 0)
       let days = this.getDays(obj.createdAt);
       if (days === 0) days = 1
