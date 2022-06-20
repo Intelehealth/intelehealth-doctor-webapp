@@ -343,7 +343,7 @@
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data, let i = index">
                     <span [ngClass]="{'red': t.cervix?.colorFlag === 'R', 'yellow' : t.cervix?.colorFlag === 'Y'}"
-                        *ngIf="t.cervix !== null && row?.name === t.cervix.value"> P </span>
+                        *ngIf="t.cervix !== null"> P </span>
                 </td>
             </tr>
         </table> <br>
@@ -387,13 +387,13 @@
         </table>
     </div>
     <div class="row fixBottom">
-        <table class="table13">
+        <table id="tb13" class="table13">
             <tr>
                 <td rowspan="4">
                     <b class="alignTitle"> MEDICATION </b>
                 </td>
             </tr>
-            <tr *ngFor="let row of medicationRows, let i = index">
+            <tr [ngClass]="i === 1 ? 'lineh1' : ''" *ngFor="let row of medicationRows, let i = index">
                 <td colspan="2">{{row.name}} </td>
                 <td class="text-color" *ngFor="let t of filteredStage1">
                     <span *ngIf="i === 0 && t.oxytocin !== null">{{ t.oxytocin }}</span>
@@ -403,7 +403,7 @@
             </tr>
         </table>
         <table id="tb14" class="table14">
-            <tr *ngFor="let row of medicationRows, let i = index">
+            <tr [ngClass]="i === 1 ? 'lineh2' : ''" *ngFor="let row of medicationRows, let i = index">
                 <td class="text-color" colspan="2" *ngFor="let t of filteredStage2Col">
                     <ng-container *ngIf="i === 0">
                         <span *ngIf="t.oxytocin !== null; else no_Data">{{ t.oxytocin }}</span>

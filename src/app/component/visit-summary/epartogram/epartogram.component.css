@@ -18,6 +18,10 @@
     line-height: 14px;
 }
 
+.lineh2 {
+    line-height: 42px;
+}
+
 #ellipse {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -83,6 +87,10 @@
 #tb10,
 #tb20 {
     height: 18px;
+}
+
+#tb13 {
+    height: 80px;
 }
 
 #tb14 {
@@ -392,7 +400,10 @@ td {
     #tb7 {
         height: 140px;
     }
-    #tb8 {
+    #tb8{
         height: 73px;
+    }
+    #tb14 {
+        height: 90px;
     }
 }
