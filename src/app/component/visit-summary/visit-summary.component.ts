@@ -31,6 +31,7 @@ export class VisitSummaryComponent implements OnInit {
   managerRoleAccess = false;
   patientId: string;
   visitUuid: string;
+  isSevikaVisit = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -94,6 +95,9 @@ export class VisitSummaryComponent implements OnInit {
      });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+      if (Array.isArray(visitDetails.attributes)) {
+        this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value = 'Specialist doctor not needed')
+      }
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null  ) {
           saveToStorage("visitNoteProvider", visit);
@@ -310,7 +314,7 @@ export class VisitSummaryComponent implements OnInit {
    */
     showReminder(visitUuid:string) {
       this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-        if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary') 
+      if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary')
          && visitUuid === this.router.url.split('/')[3]) {
           var data = "Patient "+ visitDetails.patient.person.display +" is waiting, Please provide prescription.";
           window.confirm(data);

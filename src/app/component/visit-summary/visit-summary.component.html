@@ -205,8 +205,9 @@ require by speaking with the patient directly.  -->
 
 
   <div class="text-center" *ngIf="!show">
-    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess">Start Visit
-      Note</button>
+    <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="managerRoleAccess || isSevikaVisit">
+      Start Visit Note
+    </button>
   </div>
 
   <br>
@@ -255,7 +256,7 @@ require by speaking with the patient directly.  -->
 
     <div class="text-center">
       <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-        [disabled]="visitCompletePresent || isVisitSummaryChanged">Sign and Submit</button>
+        [disabled]="visitCompletePresent || isVisitSummaryChanged || isSevikaVisit">Sign and Submit</button>
     </div>
   </div>
 </div>
