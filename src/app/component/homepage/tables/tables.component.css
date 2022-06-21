@@ -18,6 +18,7 @@ table {
 
 td{
     cursor: pointer;
+    font-size: medium;
 }
 
 .mat-row:hover {

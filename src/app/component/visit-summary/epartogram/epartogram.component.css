@@ -19,7 +19,7 @@
 }
 
 .lineh2 {
-    line-height: 42px;
+    line-height: 11px;
 }
 
 #ellipse {
@@ -94,7 +94,7 @@
 }
 
 #tb14 {
-    height: 64px;
+    height: 80px;
 }
 
 #tb12 {
@@ -404,6 +404,9 @@ td {
         height: 73px;
     }
     #tb14 {
+        height: 90px;
+    }
+    #tb13 {
         height: 90px;
     }
 }
