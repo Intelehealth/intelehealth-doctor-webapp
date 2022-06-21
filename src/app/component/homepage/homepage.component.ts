@@ -4,6 +4,8 @@ import { SessionService } from "./../../services/session.service";
 import { Component, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { AppointmentService } from "src/app/services/appointment.service";
+import * as moment from "moment";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -43,12 +45,15 @@ export class HomepageComponent implements OnInit {
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
   visitState = null;
   endVisitData: any;
+  visits = []
+  slots = []
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
-    private snackbar: MatSnackBar
-  ) {}
+    private snackbar: MatSnackBar,
+    private apnmntSvc: AppointmentService
+  ) { }
 
   ngOnInit() {
     if (getFromStorage("visitNoteProvider")) {
@@ -80,6 +85,7 @@ export class HomepageComponent implements OnInit {
       this.authService.logout();
     }
     this.getEndedVisits();
+    this.getDrSlots();
   }
 
   getStateFromVisit(provider) {
@@ -89,49 +95,54 @@ export class HomepageComponent implements OnInit {
     return attribute && attribute.value ? attribute.value : "missing";
   }
 
+  setVisits() {
+    let stateVisits = [];
+    if (this.visitState && this.visitState !== "All") {
+      stateVisits = this.visits.filter(({ attributes }) => {
+        const visitState = this.getStateFromVisit(attributes);
+        return this.visitState === visitState;
+      });
+    } else if (this.visitState === "All") {
+      stateVisits = this.visits;
+    }
+
+    stateVisits.forEach((active) => {
+      if (active.encounters.length > 0) {
+        if (active.attributes.length) {
+          const attributes = active.attributes;
+          const speRequired = attributes.filter(
+            (attr) =>
+              attr.attributeType.uuid ===
+              "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+          );
+          if (speRequired.length) {
+            speRequired.forEach((spe, index) => {
+              if (spe.value === this.specialization) {
+                if (index === 0) {
+                  this.visitCategory(active);
+                }
+                if (index === 1 && spe[0] !== spe[1]) {
+                  this.visitCategory(active);
+                }
+              }
+            });
+          }
+        } else if (this.specialization === "General Physician") {
+          this.visitCategory(active);
+        }
+      }
+      this.value = {};
+    });
+  }
+
   /**
    * Get all visits
    */
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
-        const visits = response.results;
-        let stateVisits = [];
-        if (this.visitState && this.visitState !== "All") {
-          stateVisits = visits.filter(({ attributes }) => {
-            const visitState = this.getStateFromVisit(attributes);
-            return this.visitState === visitState;
-          });
-        } else if (this.visitState === "All") {
-          stateVisits = visits;
-        }
-        stateVisits.forEach((active) => {
-          if (active.encounters.length > 0) {
-            if (active.attributes.length) {
-              const attributes = active.attributes;
-              const speRequired = attributes.filter(
-                (attr) =>
-                  attr.attributeType.uuid ===
-                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-              );
-              if (speRequired.length) {
-                speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
-                    if (index === 0) {
-                      this.visitCategory(active);
-                    }
-                    if (index === 1 && spe[0] !== spe[1]) {
-                      this.visitCategory(active);
-                    }
-                  }
-                });
-              }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
-            }
-          }
-          this.value = {};
-        });
+        this.visits = response.results;
+        this.setVisits();
         this.setSpiner = false;
       },
       (err) => {
@@ -186,16 +197,16 @@ export class HomepageComponent implements OnInit {
     }
   }
 
-  getEndedVisits(){
-    this.service.getEndedVisits().subscribe((res)=>{
+  getEndedVisits() {
+    this.service.getEndedVisits().subscribe((res) => {
       this.endVisitData = res.results
-       let endvisits =  this.endVisitData.filter(a=>a.stopDatetime != null);
-       endvisits.forEach( a => {
-         this.endVisits.push(this.assignValueToProperty(a));
-         this.endedVisitNo += 1
-         localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
-       });
-       this.setSpiner = false;
+      let endvisits = this.endVisitData.filter(a => a.stopDatetime != null);
+      endvisits.forEach(a => {
+        this.endVisits.push(this.assignValueToProperty(a));
+        this.endedVisitNo += 1
+        localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
+      });
+      this.setSpiner = false;
     })
   }
 
@@ -211,7 +222,6 @@ export class HomepageComponent implements OnInit {
         this.visitNoteNo = getTotal(data, "Visit In Progress");
         this.completeVisitNo = getTotal(data, "Completed Visit");
         localStorage.setItem('awaitingVisitsCount', this.activePatient.toString())
-        
       }
     });
   }
@@ -236,29 +246,55 @@ export class HomepageComponent implements OnInit {
     )[1];
     this.value.lastSeen = active?.encounters[0]?.encounterDatetime;
     this.value.complaints = this.getComplaints(active);
+    this.value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
     return this.value;
   }
 
   getComplaints(visitDetails) {
-    let recent: any =[];
+    let recent: any = [];
     const encounters = visitDetails.encounters;
     encounters.forEach(encounter => {
-    const display = encounter.display;
-    if (display.match('ADULTINITIAL') !== null ) {
-      const obs = encounter.obs;
-      obs.forEach(currentObs => {
-        if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-          const currentComplaint = currentObs.display.split('<b>');
-          for (let i = 1; i < currentComplaint.length; i++) {
-            const obs1 = currentComplaint[i].split('<');
-            if (!obs1[0].match('Associated symptoms')) {   
-              recent.push(obs1[0]);
+      const display = encounter.display;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+            const currentComplaint = currentObs.display.split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
             }
           }
-        }
-      });
+        });
+      }
+    });
+    return recent;
+  }
+
+  get userId() {
+    try {
+      return JSON.parse(localStorage.user).uuid;
+    } catch (error) {
+      return null;
     }
-   });
-   return recent;
+  }
+
+  getDrSlots() {
+    let toDate = moment().add(1, 'year');
+    this.apnmntSvc
+      .getUserSlots(
+        this.userId,
+        moment().format("DD/MM/YYYY"),
+        toDate.format("DD/MM/YYYY")
+      )
+      .subscribe({
+        next: (res: any) => {
+          console.log('res: ', res);
+          this.slots = res.data;
+          this.setVisits();
+        },
+      });
   }
 }

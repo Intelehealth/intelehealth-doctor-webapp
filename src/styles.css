@@ -73,3 +73,9 @@ body.font-lato td {
 .cdk-overlay-container {
   z-index: 1051 !important;
 }
+
+.disabled{
+  pointer-events: none;
+  cursor: not-allowed;
+  background: lightgray;
+}
