@@ -96,7 +96,7 @@ export class VisitSummaryComponent implements OnInit {
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       if (Array.isArray(visitDetails.attributes)) {
-        this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value = 'Specialist doctor not needed')
+        this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value === 'Specialist doctor not needed')
       }
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null  ) {
