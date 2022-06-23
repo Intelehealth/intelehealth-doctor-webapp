@@ -41,7 +41,7 @@
     <!-- Gender Column -->
     <ng-container matColumnDef="gender">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Gender'| translate}}</th>
-      <td mat-cell *matCellDef="let row">{{ row.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
+      <td mat-cell *matCellDef="let row">{{ row?.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
     </ng-container>
 
     <!-- Date OF Birth Column -->
@@ -78,7 +78,7 @@
             'badge-info': row?.status === 'Visit Note'
           }"
         >
-          {{ row?.status === "Flagged" ? ('Priority'| translate) : (row.status) | translate }}
+          {{ row?.status === "Flagged" ? ('Priority'| translate) : (row?.status) | translate }}
         </div>
       </td>
     </ng-container>
