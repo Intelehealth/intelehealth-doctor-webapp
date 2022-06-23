@@ -14,6 +14,7 @@ declare var getEncounterProviderUUID: any,
 export class DiagnosisService {
   diagnosisArray = [];
   public isVisitSummaryChanged = false
+  public diagnosisExists = false;
 
   private baseURL = environment.baseURL;
   constructor(

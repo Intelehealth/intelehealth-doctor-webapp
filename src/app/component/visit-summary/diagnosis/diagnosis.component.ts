@@ -63,7 +63,7 @@ export class DiagnosisComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
@@ -76,6 +76,7 @@ export class DiagnosisComponent implements OnInit {
             this.diagnosis.push(obs);
           }
         });
+        this.checkDiagnosis();
       });
   }
 
@@ -105,6 +106,7 @@ export class DiagnosisComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = true;
         this.diagnosisList = [];
         this.diagnosis.push({ uuid: resp.uuid, value: json.value });
+        this.checkDiagnosis();
       });
     } else {
       this.snackbar.open("Another doctor is viewing this case", null, {
@@ -113,10 +115,20 @@ export class DiagnosisComponent implements OnInit {
     }
   }
 
+  checkDiagnosis() {
+    if (this.diagnosis.length) {
+      this.diagnosisService.diagnosisExists = true;
+    } else {
+      this.diagnosisService.diagnosisExists = false;
+    }
+    console.log('this.diagnosisService.diagnosisExists: ', this.diagnosisService.diagnosisExists);
+  }
+
   delete(i) {
     const uuid = this.diagnosis[i].uuid;
     this.diagnosisService.deleteObs(uuid).subscribe((res) => {
       this.diagnosis.splice(i, 1);
+      this.checkDiagnosis();
     });
   }
 }

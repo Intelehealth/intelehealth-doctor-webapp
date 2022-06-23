@@ -132,6 +132,10 @@ export class VisitSummaryComponent implements OnInit {
     return !this.diagnosisService.isVisitSummaryChanged;
   }
 
+  get requiredNotFilled(){
+    return !this.diagnosisService.diagnosisExists;
+  }
+
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
