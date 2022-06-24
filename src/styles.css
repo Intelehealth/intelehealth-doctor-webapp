@@ -79,3 +79,7 @@ body.font-lato td {
   cursor: not-allowed;
   background: lightgray;
 }
+
+.red-star {
+  color: red;
+}
