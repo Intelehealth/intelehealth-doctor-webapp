@@ -9,6 +9,7 @@ import {
 } from "@angular/common";
 import localeRu from '@angular/common/locales/ru';
 import localeEn from '@angular/common/locales/en';
+import localeHi from '@angular/common/locales/hi';
 
 // Component Import
 import { AppComponent } from "./app.component";
@@ -101,6 +102,7 @@ export function TranslationLoaderFactory(http: HttpClient) {
 
 registerLocaleData(localeRu);
 registerLocaleData(localeEn);
+registerLocaleData(localeHi);
 
 @NgModule({
   declarations: [
