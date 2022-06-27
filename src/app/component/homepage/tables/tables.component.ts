@@ -41,6 +41,10 @@ export class TablesComponent implements OnInit {
     this.dataSource.sort = this.sort;
     if (this.dataFor === "completedVisit") {
       this.displayColumns.push("birthOutcome");
+      const index = this.displayColumns.indexOf('overdue');
+      if (index > -1) {
+        this.displayColumns.splice(index, 1);
+      }
     }
   }
 
