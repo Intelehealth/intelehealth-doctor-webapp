@@ -68,7 +68,7 @@ export class MainComponent implements OnInit {
       let steps = [
         {
           // tslint:disable-next-line: max-line-length
-          intro: 'Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.'
+          intro: 'Welcome to the Doctor portal. In less than 1 min, we will show you how to check labour status and give consultation to a patient.'
         },
         {
           element: '#navbarDropdownMenuLink-4',
@@ -82,14 +82,14 @@ export class MainComponent implements OnInit {
         },
         {
           element: '#queued-table',
-          intro: 'These are visits that are not provided with consultation.',
+          intro: 'These are visits that are normal and not provided with consultation.',
           position: 'left'
         },
-        {
-          element: '#visit-in-progress',
-          intro: 'These are visits that are seen by the doctor and have been partially provided a consultation',
-          position: 'right'
-        },
+        // {
+        //   element: '#visit-in-progress',
+        //   intro: 'These are visits that are seen by the doctor and have been partially provided a consultation',
+        //   position: 'right'
+        // },
         {
           element: '#visit-complete',
           intro: 'All visits that are seen by the doctor',
@@ -105,8 +105,8 @@ export class MainComponent implements OnInit {
           intro: 'Click on the headings of the table to sort.'
         },
         {
-          element: document.getElementById('patient-id'),
-          intro: 'Click on patient id to add doctor\'s prescription for the patient.'
+          element: '#patient-id',
+          intro: 'Click on anywhere on row to add doctor\'s consultation for the patient.'
         },
         {
           element: '#logout-link',
@@ -126,58 +126,33 @@ export class MainComponent implements OnInit {
       }
       if (window.location.hash.match('visitSummary') !== null) {
         steps = [{
-          element: '#past-visits',
-          intro: 'Click on the visit date to see the patient record for that visit and schedule.'
+          element: '#save',
+          intro: 'Click on the plus button to write the patient assessment and plan for each hour.'
         },
         {
-          element: '#start-visit',
-          intro: 'Click on start visit/here to write diagnosis, medications, tests, advice and follow up\'s',
+          element: '#zoom',
+          intro: 'Click on plus icon to zoom in and minus icon to zoom out the epartogram ',
+          position: 'right'
+
         },
         {
-          element: '#call-link',
-          intro: 'Click on whatsapp or phone icon to speak to the patient ',
+          element: '#whatsappBtn',
+          intro: 'Click on whatsapp icon to share epartogram with health worker ',
         },
         {
-          element: '#patient-interaction',
-          intro: 'Select yes or no and click on \'Submit\'',
+          element: '#printPageButton',
+          intro: 'Click on print icon to save or print the epartogram',
         },
         {
-          element: '#dropdown-diagnosis',
-          intro: 'Write or choose from drop down options of diagnosis'
+          element: '#vcButton',
+          intro: 'Click on video icon to perform video call with health worker'
         },
         {
-          element: '#primary-confirm',
-          intro: 'Select from PRIMARY AND SECONDARY and from PROVISIONAL and CONFIRMED '
+          element: '#chat-button',
+          intro: 'Click on chat icon to chat with health worker'
         },
         {
-          element: '#diagnosis-submit',
-          intro: 'Click on \'Add diagnosis\' to give diagnosis'
-        },
-        {
-          element: '#doctor-notes',
-          // tslint:disable-next-line: max-line-length
-          intro: 'Write information such as reference notes, patients call notes etc and click on \'Add Note\'. These notes are not shared with the patient.'
-        },
-        {
-          element: '#medication-form',
-          // tslint:disable-next-line: max-line-length
-          intro: 'Type the name of the medicines and choose from drop down options. If the name is not available on the drop down options you can type the name.'
-        },
-        {
-          element: '#test-form',
-          intro: 'Write or choose from drop down options of tests and click on \'Add Test\''
-        },
-        {
-          element: '#advice-form',
-          intro: 'Write or choose from drop down options of advise and then click on \'Add Advice\''
-        },
-        {
-          element: '#followup-button',
-          intro: 'Click on calender icon and select follow up date. Write remarks and click on \'Schedule a follow up\''
-        },
-        {
-          element: '#sign-button',
-          intro: 'Review the prescription and click on \'Sign and Submit\' to send the prescription to the health worker.'
+          intro: 'Great job, you have completed the epartogram tour.'
         }
         ];
         this.introJS.setOptions({

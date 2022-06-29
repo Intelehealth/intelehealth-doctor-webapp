@@ -22,7 +22,7 @@
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
       >
-        <a id="patient-id">
+        <a>
           {{ row?.id }}
         </a>
       </td>
@@ -186,7 +186,7 @@
       *matHeaderRowDef="displayColumns"
       id="columns-sorting"
     ></tr>
-    <tr mat-row *matRowDef="let row; columns: displayColumns"></tr>
+    <tr id="patient-id" mat-row *matRowDef="let row; columns: displayColumns"></tr>
   </table>
 
   <mat-paginator

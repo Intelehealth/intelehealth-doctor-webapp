@@ -1,30 +1,37 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container" [ngClass]="(setSpiner)?'spin':''">
     <mat-tab-group class="visit" mat-align-tabs="center" mat-stretch-tabs>
-        <mat-tab id="flagged-table" >
+        <mat-tab id="flagged-table">
             <ng-template mat-tab-label>
-                <p class="name">IN PROGRESS CASES <br> <b class="name">({{normalVisits.length + priorityVisits.length}})</b></p>
+                <p class="name">IN PROGRESS CASES <br> <b class="name">({{normalVisits.length +
+                        priorityVisits.length}})</b></p>
             </ng-template><br>
-            <ng-container >
-                <div class="gradient">
-                    <h5 class="sub-cat m-2">PRIORITY CASES <b>({{priorityVisits.length}})</b></h5>
+            <ng-container>
+                <div id="flagged-table">
+                    <div class="gradient">
+                        <h5 class="sub-cat m-2">PRIORITY CASES <b>({{priorityVisits.length}})</b></h5>
+                    </div>
+                    <app-tables *ngIf="priorityVisits?.length > 0;else no_data" [data]="priorityVisits"></app-tables>
                 </div>
-                <app-tables *ngIf="priorityVisits?.length > 0;else no_data" [data]="priorityVisits"></app-tables>
             </ng-container><br>
-            <ng-container >
-                <div class="gradient">
-                    <h5 class="sub-cat m-2">NORMAL CASES <b>({{normalVisits.length}})</b></h5>
+            <ng-container>
+                <div id="queued-table">
+                    <div class="gradient">
+                        <h5 class="sub-cat m-2">NORMAL CASES <b>({{normalVisits.length}})</b></h5>
+                    </div>
+                    <app-tables *ngIf="normalVisits?.length > 0;else no_data" [data]="normalVisits"></app-tables>
                 </div>
-                <app-tables *ngIf="normalVisits?.length > 0;else no_data" [data]="normalVisits"></app-tables>
             </ng-container>
         </mat-tab>
-        <mat-tab id="queued-table">
-            <ng-template mat-tab-label>
-                <p class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
-            </ng-template><br>
-            <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
-                <app-tables [data]="completedVisit" [dataFor]="'completedVisit'"></app-tables>
-            </ng-container>
+        <mat-tab>
+            <div id="visit-complete">
+                <ng-template mat-tab-label>
+                    <p class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
+                </ng-template><br>
+                <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
+                    <app-tables [data]="completedVisit" [dataFor]="'completedVisit'"></app-tables>
+                </ng-container>
+            </div>
         </mat-tab>
     </mat-tab-group>
 </div>

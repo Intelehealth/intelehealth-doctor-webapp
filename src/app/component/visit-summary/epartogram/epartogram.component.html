@@ -1,13 +1,12 @@
 <div id="epartogram" style="zoom: 100%; width: 100%; height:auto" class="container view pres-content ab-res">
-    <div>
-        <h4 style="text-align: center"> WHO LABOUR CARE GUIDE </h4>
-        <span id="printPageButton" style="float:right;margin-top: -44px;">
-            <i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;
-            <a class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;
-            <!-- <a><i style="color: #ffdb58;" class="fa fa-envelope btnsize"></i></a> -->
+    <h4 style="text-align: center"> WHO LABOUR CARE GUIDE </h4>
+    <div style="float:right;margin-top: -44px; ">
+        <span id="zoom"> 
             <i class="fa fa-search-plus btnsize" (click)="zoomin()" aria-hidden="true" title="Zoom in"></i>
             <i class="fa fa-search-minus btnsize" (click)="zoomout()" aria-hidden="true" title="Zoom out"></i>
         </span>
+        <span id="whatsappBtn"> <a class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;</span>
+        <span id="printPageButton"><i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;</span>
     </div>
     <div class="row fixBottom">
         <div class="column">
@@ -454,7 +453,7 @@
                     <span class="alignTitle noteSize text-color" [innerText]='t.plan'></span>
                 </td>
             </tr>
-            <tr style="height: 20px;">
+            <tr id="save" style="height: 20px;">
                 <td *ngFor="let t of filteredStage1, let i=index">
                     <button *ngIf="t.time !== null"
                         [class.disabled]="(filteredStage1[i]?.time < filteredStage1[i+1]?.time || filteredStage2Col[0]?.time !== null)"
