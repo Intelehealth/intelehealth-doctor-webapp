@@ -10,7 +10,9 @@ import { EncounterService } from 'src/app/services/encounter.service';
 })
 export class VitalComponent implements OnInit {
 answer: any = [];
+dignosis: any = [];
 v: any = [];
+d: any = [];
 vitalsPresent = false;
   constructor(private route: ActivatedRoute,
               private visitService: VisitService,
@@ -56,22 +58,23 @@ vitalsPresent = false;
                   this.answer.respiratoryRate = Number(obs.display.slice(18, obs.display.length));
                 }
                 if (displayObs.match('BLOOD_GLUCOSE_AFTER_FOOD') !== null ) {
-                  this.answer.glucoseAf = Number(obs.display.slice(26, obs.display.length));
+                  this.dignosis.glucoseAf = Number(obs.display.slice(26, obs.display.length));
                 }
                 if (displayObs.match('Blood Glucose') !== null ) {
-                  this.answer.glucoseF = Number(obs.display.slice(26, obs.display.length));
+                  this.dignosis.glucoseF = Number(obs.display.slice(26, obs.display.length));
                 }
                 if (displayObs.match('Haemoglobin') !== null ) {
-                  this.answer.hgb = Number(obs.display.slice(23, obs.display.length));
+                  this.dignosis.hgb = Number(obs.display.slice(23, obs.display.length));
                 }
                 if (displayObs.match('Uric Acid') !== null ) {
-                  this.answer.uricAcid = Number(obs.display.slice(11, obs.display.length));
+                  this.dignosis.uricAcid = Number(obs.display.slice(11, obs.display.length));
                 }
                 if (displayObs.match('Total Chlolestrol') !== null ) {
-                  this.answer.totalChlolestrol = Number(obs.display.slice(19, obs.display.length));
+                  this.dignosis.totalChlolestrol = Number(obs.display.slice(19, obs.display.length));
                 }
               });
               this.v.push(this.answer);
+              this.d.push(this.dignosis);
             });
           }
         });

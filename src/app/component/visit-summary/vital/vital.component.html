@@ -1,4 +1,4 @@
-<h4><i class="fas fa-heartbeat"></i> Vitals/Diagnostics</h4>
+<h4><i class="fas fa-heartbeat"></i> Vitals</h4>
 <hr>
 <div *ngIf='!vitalsPresent'>No Data</div>
 <div *ngIf='vitalsPresent'>
@@ -20,6 +20,36 @@
       <td>{{item.pulse}}</td>
       <th>RR:</th>
       <td>{{item.respiratoryRate}}</td>
+      <ng-container *ngIf="item.glucoseAf">
+        <th>Glucose (Non-Fasting):</th>
+        <td>{{item.glucoseAf}}</td>
+      </ng-container>
+      <ng-container *ngIf="item.glucoseF">
+        <th>Glucose (Diabetes):</th>
+        <td>{{item.glucoseF}}</td>
+      </ng-container>
+      <ng-container *ngIf="item.hgb">
+        <th>HGB:</th>
+        <td>{{item.hgb}}</td>
+      </ng-container>
+      <ng-container *ngIf="item.uricAcid">
+        <th>Uric Acid:</th>
+        <td>{{item.uricAcid}}</td>
+      </ng-container>
+      <ng-container *ngIf="item.totalChlolestrol">
+        <th>Total Chlolestrol:</th>
+        <td>{{item.totalChlolestrol}}</td>
+      </ng-container>
+    </tr>
+  </table>
+</div>
+
+<h4><i class="fas fa-heartbeat"></i> Diagnostics</h4>
+<hr>
+<div *ngIf='!d.length'>No Data</div>
+<div *ngIf='d.length'>
+  <table class="table table-responsive">
+    <tr *ngFor='let item of d'>
       <ng-container *ngIf="item.glucoseAf">
         <th>Glucose (Non-Fasting):</th>
         <td>{{item.glucoseAf}}</td>
