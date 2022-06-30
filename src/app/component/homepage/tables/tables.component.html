@@ -181,6 +181,13 @@
       </td>
     </ng-container>
 
+     <!-- DateTime Of Birth column -->
+     <ng-container matColumnDef="dateTimeOfBirth">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date and time of Birth</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row?.dateTimeOfBirth | date: "dd-MMM-yyyy, H:mm" }}
+      </td>
+    </ng-container>
     <tr
       mat-header-row
       *matHeaderRowDef="displayColumns"
