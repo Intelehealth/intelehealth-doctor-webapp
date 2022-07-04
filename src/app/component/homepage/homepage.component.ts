@@ -164,6 +164,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     let notesObj = {};
     let stage = 1;
     let birthOutcome: string;
+    let dateTimeOfBirth: string;
     if (active?.encounters?.length) {
       if (active.encounters.filter(vst => vst.display.includes('Stage2')).length > 0) {
         stage = 2;
@@ -191,6 +192,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           });
           if (encounter.display.includes('Visit Complete')) {
             birthOutcome = encounter.obs[0]?.value;
+            dateTimeOfBirth = encounter.encounterDatetime;
           }
         }
       });
@@ -220,6 +222,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       notes,
       overdue: overdueIn,
       birthOutcome: birthOutcome,
+      dateTimeOfBirth:dateTimeOfBirth,
       lastSeen: encounter?.encounterDatetime
         ? new Date(encounter?.encounterDatetime)
         : null,
