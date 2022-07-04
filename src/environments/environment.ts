@@ -7,9 +7,9 @@ export const environment = {
   baseURL: "https://ezazi.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://ezazi.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://ezazi.intelehealth.org/openmrs",
-  mindmapURL: "https://ezazi.intelehealth.org:3004/api",
-  notificationURL: "https://ezazi.intelehealth.org:3004/notification",
-  socketURL: "https://ezazi.intelehealth.org:3004",
+  mindmapURL: "http://localhost:3004/api",
+  notificationURL: "http://localhost:3004/notification",
+  socketURL: "http://localhost:3004",
 };
 
 /*

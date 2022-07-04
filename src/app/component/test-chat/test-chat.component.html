@@ -20,7 +20,10 @@
     </div>
     <input [(ngModel)]="data.to" type="text" class="form-control" />
   </div>
-  <button class="btn btn-primary m-2" (click)="updateMessages(); reInitSocket()">
+  <button
+    class="btn btn-primary m-2"
+    (click)="updateMessages(); reInitSocket()"
+  >
     Get Messages
   </button>
 
@@ -29,16 +32,54 @@
   </button>
 </div>
 
-<ul class="card mt-5">
-  <li class="mt-2" *ngFor="let user of activeUsers">
+<!-- <ul class="card mt-5">
+  <li
+    class="mt-2"
+    [class.green]="user == socket?.socket?.id"
+    *ngFor="let user of activeUsers"
+  >
     {{ user }}&nbsp;&nbsp;&nbsp;
-    <span>({{ socket.activeUsers[user]?.status }})</span>
-    <span>-({{ socket.activeUsers[user]?.uuid }})</span>
+    <span>({{ socket.activeUsers[user]?.uuid }})</span>
     <span>-({{ socket.activeUsers[user]?.name }})</span>
-    &nbsp;
     <span *ngIf="user == socket?.socket?.id">(me)</span>
+    <span *ngIf="socket.activeUsers[user]?.callStatus"
+      >-({{ socket.activeUsers[user]?.callStatus }})</span
+    >
+    <span *ngIf="socket.activeUsers[user]?.room"
+      >-({{ socket.activeUsers[user]?.room }})</span
+    >
   </li>
-</ul>
+</ul> -->
+<div class="table-responsive card mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>UUID</th>
+        <th>Socket ID</th>
+        <th>Name</th>
+        <th>Call Status</th>
+        <th>Room ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        [class.green]="user == socket?.socket?.id"
+        *ngFor="let user of activeUsers; index as i"
+      >
+        <th scope="row">{{ i }}</th>
+        <td>{{ socket.activeUsers[user]?.uuid }}</td>
+        <td>{{user}}</td>
+        <td>
+          {{ socket.activeUsers[user]?.name }}
+          <span *ngIf="user == socket?.socket?.id">(me)</span>
+        </td>
+        <td>{{ socket.activeUsers[user]?.callStatus || "-" }}</td>
+        <td>{{ socket.activeUsers[user]?.room || "-" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <div class="chat-button" id="chat-button" (click)="chatLaunch()">
   <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
