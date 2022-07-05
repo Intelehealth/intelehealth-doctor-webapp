@@ -96,7 +96,7 @@ export class SocketService {
     this.callRing.play();
     setTimeout(() => {
       this.closeVcOverlay();
-    }, 10000);
+    }, 5000);
   }
 
   public closeVcOverlay() {
