@@ -130,4 +130,8 @@ export class SocketService {
   get userName() {
     return this.user.display;
   }
+
+  close() {
+    this.socket.close();
+  }
 }

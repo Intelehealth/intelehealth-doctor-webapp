@@ -5,9 +5,9 @@ import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
-import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
+import { VctoHwComponent } from "../vcto-hw/vcto-hw.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -246,7 +246,7 @@ export class VisitSummaryComponent implements OnInit {
   };
 
   openVcModal() {
-    this.dialog.open(VcComponent, {
+    this.dialog.open(VctoHwComponent, {
       disableClose: true,
       data: {
         patientUuid: this.patientUuid,

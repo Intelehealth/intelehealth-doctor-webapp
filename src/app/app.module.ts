@@ -87,6 +87,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { EpartogramComponent } from "./component/visit-summary/epartogram/epartogram.component";
 import { VcallOverlayComponent } from './component/vc/vcall-overlay/vcall-overlay.component';
 import { ConfigurationComponent } from './component/configuration/configuration.component';
+import { VctoHwComponent } from "./component/vcto-hw/vcto-hw.component";
 
 
 
@@ -126,6 +127,7 @@ import { ConfigurationComponent } from './component/configuration/configuration.
     ModalsComponent,
     MainComponent,
     VcComponent,
+    VctoHwComponent,
     HoverClassDirective,
     ChatComponent,
     TestChatComponent,
