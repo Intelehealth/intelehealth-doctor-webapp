@@ -253,4 +253,8 @@ export class VisitSummaryComponent implements OnInit {
       },
     });
   }
+
+  back(){
+    this.router.navigate(['/home']);
+  }
 }
