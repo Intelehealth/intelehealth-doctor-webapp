@@ -47,8 +47,8 @@ export class DietTypeComponent implements OnInit {
     'Non Vegeterian',
     'Lactoveg (Milk+Veg)',
     'Non Vegeterian',
-    'Other(Enter Text)',
     'Ovo Lacto Veg (Egg + Milk + Veg)',
+    'Other(Enter Text)',
   ]
   diets = [];
 
@@ -73,7 +73,7 @@ export class DietTypeComponent implements OnInit {
   }
 
   get value() {
-    return this.dietType === this.dietTypes[5] ? this.otherText : this.dietType
+    return this.dietType === this.dietTypes[6] ? this.otherText : this.dietType
   }
 
   submit() {
@@ -88,6 +88,8 @@ export class DietTypeComponent implements OnInit {
     this.service.postObs(json).subscribe((response) => {
       this.isDataPresent.emit(true);
       this.diets.push({ uuid: response.uuid, value: this.value });
+      this.dietType = '';
+      this.otherText = '';
     });
   }
 

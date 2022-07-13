@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
-// import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
-// import { Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { DiagnosisService } from "../../../services/diagnosis.service";
 // import { FormGroup, FormControl, Validators } from "@angular/forms";
 import {
@@ -12,7 +12,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-// import medicines from "./medicines";
+import medicines from "./medicines";
 declare var getEncounterUUID: any;
 
 @Component({
@@ -51,7 +51,7 @@ export class PrescribedMedicationComponent implements OnInit {
   visitUuid: string;
   // add = false;
   // encounterUuid: string;
-  // conceptPrescription = [];
+  conceptPrescription = [];
   // conceptDose = [];
   // conceptfrequency = [];
   // conceptAdministration = [];
@@ -85,18 +85,97 @@ export class PrescribedMedicationComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  // searchPrescription = (text$: Observable<string>) =>
-  //   text$.pipe(
-  //     debounceTime(200),
-  //     distinctUntilChanged(),
-  //     map((term) =>
-  //       term.length < 1
-  //         ? []
-  //         : this.conceptPrescription
-  //           .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-  //           .slice(0, 10)
-  //     )
-  //   );
+  searchEarlyMorning = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.earlyMorning
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchBreakfast = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.breakfast
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchMidMorning = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.midMorning
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchLunch = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.lunch
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchEveningSnack = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.eveningSnack
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchDinner = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.dinner
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
+  searchBedTime = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : medicines.bedTime
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
+
 
   // searchFrequency = (text$: Observable<string>) =>
   //   text$.pipe(
@@ -152,6 +231,7 @@ export class PrescribedMedicationComponent implements OnInit {
 
   ngOnInit() {
     // this.init();
+    this.conceptPrescription = this.conceptPrescription.concat(medicines);
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService
@@ -262,6 +342,7 @@ export class PrescribedMedicationComponent implements OnInit {
       this.service.postObs(json).subscribe((response) => {
         this.isDataPresent.emit(true);
         this.meds.push({ uuid: response.uuid, value });
+        this.clearFields();
       });
     }
   }
@@ -276,5 +357,15 @@ export class PrescribedMedicationComponent implements OnInit {
         }
       });
     }
+  }
+
+  clearFields() {
+    this.earlyMorning = '';
+    this.breakfast = '';
+    this.midMorning = '';
+    this.lunch = '';
+    this.eveningSnack = '';
+    this.dinner = '';
+    this.bedTime = '';
   }
 }

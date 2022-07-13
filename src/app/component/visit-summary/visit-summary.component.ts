@@ -373,7 +373,8 @@ export class VisitSummaryComponent implements OnInit {
         const result = response.results;
         var tempMsg = result.filter((pType) => pType.display.includes("Patient Interaction")
         );
-        if (ObsData.length > 6 && tempMsg.length > 0) {
+        if (ObsData.length > 5) {
+        // if (ObsData.length > 6 && tempMsg.length > 0) {
           this.isVisitSummaryChanged = false;
         } else {
           this.isVisitSummaryChanged = true;

@@ -79,6 +79,7 @@ export class WeightHistoryComponent implements OnInit {
     this.service.postObs(json).subscribe((response) => {
       this.isDataPresent.emit(true);
       this.history.push({ uuid: response.uuid, value: this.selectedHistory });
+      this.selectedHistory = '';
     });
   }
 

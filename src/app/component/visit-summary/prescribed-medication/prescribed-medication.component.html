@@ -6,31 +6,66 @@
 <hr />
 <div>
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Early Morning" [(ngModel)]="earlyMorning" />
+    <input
+      matInput
+      placeholder="Early Morning"
+      [(ngModel)]="earlyMorning"
+      [ngbTypeahead]="searchEarlyMorning"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Breakfast" [(ngModel)]="breakfast" />
+    <input
+      matInput
+      placeholder="Breakfast"
+      [(ngModel)]="breakfast"
+      [ngbTypeahead]="searchBreakfast"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Mid Morning" [(ngModel)]="midMorning" />
+    <input
+      matInput
+      placeholder="Mid Morning"
+      [(ngModel)]="midMorning"
+      [ngbTypeahead]="searchMidMorning"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Lunch" [(ngModel)]="lunch" />
+    <input
+      matInput
+      placeholder="Lunch"
+      [(ngModel)]="lunch"
+      [ngbTypeahead]="searchLunch"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Evening Snack" [(ngModel)]="eveningSnack" />
+    <input
+      matInput
+      placeholder="Evening Snack"
+      [(ngModel)]="eveningSnack"
+      [ngbTypeahead]="searchEveningSnack"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Dinner" [(ngModel)]="dinner" />
+    <input
+      matInput
+      placeholder="Dinner"
+      [(ngModel)]="dinner"
+      [ngbTypeahead]="searchDinner"
+    />
   </mat-form-field>
 
   <mat-form-field class="w-100" id="medication-form">
-    <input matInput placeholder="Bed Time" [(ngModel)]="bedTime" />
+    <input
+      matInput
+      placeholder="Bed Time"
+      [(ngModel)]="bedTime"
+      [ngbTypeahead]="searchBedTime"
+    />
   </mat-form-field>
 
   <button
@@ -114,7 +149,7 @@
       *ngFor="let meds of meds; index as i"
       class="alert alert-primary"
     >
-      <div class="doctor-value" style="white-space: pre;">{{ meds.value }}</div>
+      <div class="doctor-value" style="white-space: pre">{{ meds.value }}</div>
       <i
         (click)="delete(i)"
         class="material-icons float-right"
