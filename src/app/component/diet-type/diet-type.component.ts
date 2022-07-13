@@ -1,8 +1,9 @@
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EventEmitter } from 'protractor';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { EncounterService } from 'src/app/services/encounter.service';
+declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-diet-type',
@@ -34,10 +35,10 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
   ],
 })
 export class DietTypeComponent implements OnInit {
-  @Output() isDataPresent = new EventEmitter();
+  @Output() isDataPresent = new EventEmitter<boolean>();
   public dietType: any;
   otherText;
-  dietTypeConcept = '44a97181-bb50-4e97-b4e6-7bd5be0c1bdc';
+  dietTypeConcept = '7ef63395-4c40-47e2-981c-7adf1647cca0';
   patientId = '';
   visitUuid = '';
   dietTypes = [
@@ -53,8 +54,8 @@ export class DietTypeComponent implements OnInit {
 
   constructor(
     private diagnosisService: DiagnosisService,
-    private route: ActivatedRoute
-
+    private route: ActivatedRoute,
+    private service: EncounterService,
   ) { }
 
   ngOnInit(): void {
@@ -77,10 +78,21 @@ export class DietTypeComponent implements OnInit {
 
   submit() {
     console.log(this.value);
+    const json = {
+      concept: this.dietTypeConcept,
+      person: this.patientId,
+      obsDatetime: new Date(),
+      value: this.value,
+      encounter: getEncounterUUID(),
+    };
+    this.service.postObs(json).subscribe((response) => {
+      this.isDataPresent.emit(true);
+      this.diets.push({ uuid: response.uuid, value: this.value });
+    });
   }
 
   get isInvalid() {
-    return !this.value
+    return !this.value;
   }
 
   delete(i) {
@@ -89,7 +101,7 @@ export class DietTypeComponent implements OnInit {
       this.diagnosisService.deleteObs(uuid).subscribe((res) => {
         this.diets.splice(i, 1);
         if (this.diets.length === 0) {
-          this.isDataPresent.emit('');
+          this.isDataPresent.emit(false);
         }
       });
     }
