@@ -1,0 +1,14 @@
+<h4><i class="fas fa-allergies"></i> Food Allergy</h4>
+<hr />
+<mat-form-field class="w-100">
+  <input matInput placeholder="Enter Food Allergy." [(ngModel)]="allergy" />
+</mat-form-field>
+<button
+  type="reset"
+  (click)="submit()"
+  mat-raised-button
+  color="primary"
+  [disabled]="isInvalid"
+>
+  Add Food Allergy
+</button>

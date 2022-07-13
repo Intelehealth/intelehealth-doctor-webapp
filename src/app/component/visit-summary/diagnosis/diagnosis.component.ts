@@ -52,8 +52,8 @@ export class DiagnosisComponent implements OnInit {
 
   diagnosisForm = new FormGroup({
     text: new FormControl("", [Validators.required]),
-    type: new FormControl("", [Validators.required]),
-    confirm: new FormControl("", [Validators.required]),
+    // type: new FormControl("", [Validators.required]),
+    // confirm: new FormControl("", [Validators.required]),
   });
 
   constructor(
@@ -93,7 +93,8 @@ export class DiagnosisComponent implements OnInit {
         concept: this.conceptDiagnosis,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.text}:${value.type} & ${value.confirm}`,
+        // value: `${value.text}:${value.type} & ${value.confirm}`,
+        value: value.text,
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {

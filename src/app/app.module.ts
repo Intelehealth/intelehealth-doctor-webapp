@@ -79,6 +79,9 @@ import { environment } from '../environments/environment';
 import { MainComponent } from './component/main/main.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { RedirectComponent } from "./component/redirect/redirect.component";
+import { DietTypeComponent } from './component/diet-type/diet-type.component';
+import { WeightHistoryComponent } from './component/weight-history/weight-history.component';
+import { FoodAllergyComponent } from './component/food-allergy/food-allergy.component';
 
 
 
@@ -121,7 +124,10 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
     MainComponent,
     ConfirmDialogComponent,
     ReassignSpecialityComponent,
-    RedirectComponent
+    RedirectComponent,
+    DietTypeComponent,
+    WeightHistoryComponent,
+    FoodAllergyComponent
   ],
 
   imports: [

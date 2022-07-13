@@ -1,0 +1,18 @@
+<h4><i class="fas fa-weight"></i> Weight History</h4>
+<hr />
+<mat-form-field class="w-100">
+  <mat-select placeholder="Weight History" [(ngModel)]="selectedHistory">
+    <mat-option *ngFor="let history of historyTypes" [value]="history">
+      {{ history }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button
+  type="reset"
+  (click)="submit()"
+  mat-raised-button
+  color="primary"
+  [disabled]="isInvalid"
+>
+  Add Weight History
+</button>
