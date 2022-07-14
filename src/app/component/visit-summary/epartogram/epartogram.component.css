@@ -410,3 +410,9 @@ td {
         height: 90px;
     }
 }
+
+.disabled{
+    pointer-events: none;
+    color: grey;
+    cursor: not-allowed;
+}

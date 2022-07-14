@@ -86,7 +86,7 @@ export class EpartogramComponent implements OnInit {
       const providerAttribute = res.encounters[0]?.encounterProviders[0]?.provider?.attributes;
       if (providerAttribute?.length) {
         providerAttribute.forEach((attribute) => {
-          if (attribute.display.match("phoneNumber") != null) {
+          if (attribute.display.match("whatsapp") != null) {
             this.nurseMobNo = attribute.value;
           }
         });
