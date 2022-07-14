@@ -36,6 +36,7 @@ export class VcComponent implements OnInit {
   isFullscreen = false;
   classFlag = false;
   patientUuid = "";
+  connectToDrId = "";
   nurseId: { uuid } = { uuid: null };
   doctorName = "";
   initiator = "dr";
@@ -74,6 +75,7 @@ export class VcComponent implements OnInit {
   async ngOnInit() {
     this.room = this.data.patientUuid;
     if (this.data.initiator) this.initiator = this.data.initiator;
+    this.connectToDrId = this.data.connectToDrId;
     const patientVisitProvider = getFromStorage("patientVisitProvider");
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
@@ -96,18 +98,21 @@ export class VcComponent implements OnInit {
     this.isFullscreen = document.fullscreenEnabled;
   }
 
-  call() {
-    this.socketService.emitEvent("call", {
-      nurseId: this.nurseId.uuid,
-      doctorName: this.doctorName,
-      roomId: this.room,
-    });
-  }
+  // call() {
+  //   this.socketService.emitEvent("call", {
+  //     nurseId: this.nurseId.uuid,
+  //     doctorName: this.doctorName,
+  //     roomId: this.room,
+  //   });
+  // }
 
   async connect() {
     console.log("this.initiator: ", this.initiator);
     // if (this.initiator === "hw") {
-    this.socketService.emitEvent("create_or_join_hw", { room: this.room });
+    this.socketService.emitEvent("create_or_join_hw", {
+      room: this.room,
+      connectToDrId: this.connectToDrId
+    });
     // } else {
     //   this.socketService.emitEvent("create or join", this.room);
     // }

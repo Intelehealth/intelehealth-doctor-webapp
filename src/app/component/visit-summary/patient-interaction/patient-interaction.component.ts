@@ -87,6 +87,7 @@ export class PatientInteractionComponent implements OnInit {
                   this.phoneNo = attribute.value;
                 }
                 if (attribute.display.match("whatsapp") != null) {
+                  debugger;
                   const whatsapp = attribute.value;
                   // tslint:disable-next-line: max-line-length
                   const text = encodeURI(

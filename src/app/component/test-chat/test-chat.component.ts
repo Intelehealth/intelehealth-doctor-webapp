@@ -16,6 +16,7 @@ export class TestChatComponent implements OnInit {
     to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
     from: "28cea4ab-3188-434a-82f0-055133090a38",
     patientId: "a286e0de-eba0-4ad5-b698-900657d8ac75",
+    connectToDrId: '75ce3130-ad64-4284-af34-aefa04165dff'//dr 1 id by default to test
   };
   classFlag = false;
   chats = [];
@@ -28,7 +29,7 @@ export class TestChatComponent implements OnInit {
     private chatService: ChatService,
     private route: ActivatedRoute,
     private socket: SocketService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
@@ -108,6 +109,7 @@ export class TestChatComponent implements OnInit {
     this.classFlag = true;
     this.scroll();
   }
+  
   chatClose() {
     this.classFlag = false;
   }
@@ -120,6 +122,7 @@ export class TestChatComponent implements OnInit {
 
   callDoctor() {
     localStorage.patientUuid = this.data.patientId;
+    localStorage.connectToDrId = this.data.connectToDrId;
     this.socket.openVcModal("hw");
   }
 }

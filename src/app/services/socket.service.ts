@@ -96,7 +96,7 @@ export class SocketService {
     this.callRing.play();
     setTimeout(() => {
       this.closeVcOverlay();
-    }, 5000);
+    }, 10000);
   }
 
   public closeVcOverlay() {
@@ -108,10 +108,9 @@ export class SocketService {
   }
 
   public openVcModal(initiator = "dr") {
-    console.log("patientUuid: ", localStorage.patientUuid);
     this.dialog.open(VcComponent, {
       disableClose: true,
-      data: { patientUuid: localStorage.patientUuid, initiator },
+      data: { patientUuid: localStorage.patientUuid, initiator, connectToDrId: localStorage.connectToDrId },
     });
   }
 
