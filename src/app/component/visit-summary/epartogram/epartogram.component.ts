@@ -90,6 +90,13 @@ export class EpartogramComponent implements OnInit {
             this.nurseMobNo = attribute.value;
           }
         });
+        if(!this.nurseMobNo){
+          providerAttribute.forEach((attribute) => {
+            if (attribute.display.match("phoneNumber") != null) {
+              this.nurseMobNo = attribute.value;
+            }
+          });
+        }
       }
       if (res.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
         this.isVisitEnded = true;
