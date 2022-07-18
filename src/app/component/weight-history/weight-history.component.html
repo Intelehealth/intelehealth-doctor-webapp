@@ -1,12 +1,18 @@
 <h4><i class="fas fa-weight"></i> Weight History</h4>
 <hr />
 <div>
+  <form [formGroup]="historyForm">
+    <mat-radio-group aria-label="Weight History" formControlName="text">
+      <mat-radio-button class="ml-2" [value]="historyTypes[0]">{{
+        historyTypes[0]
+      }}</mat-radio-button>
+      <mat-radio-button class="ml-2" [value]="historyTypes[1]">{{
+        historyTypes[1]
+      }}</mat-radio-button>
+    </mat-radio-group>
+  </form>
   <mat-form-field class="w-100">
-    <mat-select placeholder="Weight History" [(ngModel)]="selectedHistory">
-      <mat-option *ngFor="let history of historyTypes" [value]="history">
-        {{ history }}
-      </mat-option>
-    </mat-select>
+    <input type="text" matInput [(ngModel)]="otherText" />
   </mat-form-field>
   <button
     type="reset"
@@ -18,7 +24,7 @@
     Add Weight History
   </button>
 </div>
-
+<!-- 
 <ng-container *ngIf="history.length > 0">
   <br />
   <ul class="list-unstyled">
@@ -36,4 +42,4 @@
       >
     </mat-list>
   </ul>
-</ng-container>
+</ng-container> -->

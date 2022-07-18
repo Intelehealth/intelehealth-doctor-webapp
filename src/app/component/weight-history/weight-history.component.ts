@@ -1,5 +1,6 @@
 import { animate, keyframes, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
@@ -36,12 +37,16 @@ declare var getEncounterUUID: any;
 })
 export class WeightHistoryComponent implements OnInit {
   @Output() isDataPresent = new EventEmitter<boolean>();
-  public selectedHistory: any;
   weightHistoryConcept = '51133d22-8b1b-44ea-8147-cd8ab4b6a6e1';
   historyTypes = ['Weight Gain', 'Weight Loss'];
   patientId = '';
   visitUuid = '';
   history = []
+  otherText = '';
+
+  historyForm = new FormGroup({
+    text: new FormControl("", [Validators.required]),
+  });
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -58,28 +63,46 @@ export class WeightHistoryComponent implements OnInit {
         response.results.forEach((obs) => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
             this.history.push(obs);
+            this.setValue(obs.value);
           }
         });
       });
   }
 
+  setValue(val) {
+    const splitted = val.split(':');
+    if (splitted.length > 1) {
+      this.historyForm.controls.text.setValue(splitted[0]);
+      this.otherText = splitted[1];
+    } else {
+      this.historyForm.controls.text.setValue(val);
+    }
+  }
+
 
   get isInvalid() {
-    return !this.selectedHistory;
+    return !this.value.text;
+  }
+
+  get value() {
+    return this.historyForm.value;
   }
 
   submit() {
+    this.history.forEach((hist, idx) => {
+      this.delete(idx);
+    });
     const json = {
       concept: this.weightHistoryConcept,
       person: this.patientId,
       obsDatetime: new Date(),
-      value: this.selectedHistory,
+      value: this.otherText ? `${this.value.text}:${this.otherText}` : this.value.text,
       encounter: getEncounterUUID(),
     };
     this.service.postObs(json).subscribe((response) => {
       this.isDataPresent.emit(true);
-      this.history.push({ uuid: response.uuid, value: this.selectedHistory });
-      this.selectedHistory = '';
+      this.history.push({ uuid: response.uuid, value: this.value.text });
+      this.setValue(this.value.text);
     });
   }
 

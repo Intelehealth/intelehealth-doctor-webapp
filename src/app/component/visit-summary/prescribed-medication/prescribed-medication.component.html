@@ -5,7 +5,7 @@
 </h4>
 <hr />
 <div>
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Early Morning"
@@ -13,8 +13,14 @@
       [ngbTypeahead]="searchEarlyMorning"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="earlyMorningOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="earlyMorningOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Breakfast"
@@ -22,8 +28,14 @@
       [ngbTypeahead]="searchBreakfast"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="breakfastOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="breakfastOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Mid Morning"
@@ -31,8 +43,14 @@
       [ngbTypeahead]="searchMidMorning"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="midMorningOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="midMorningOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Lunch"
@@ -40,8 +58,14 @@
       [ngbTypeahead]="searchLunch"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="lunchOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="lunchOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Evening Snack"
@@ -49,8 +73,14 @@
       [ngbTypeahead]="searchEveningSnack"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="eveningSnackOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="eveningSnackOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Dinner"
@@ -58,14 +88,26 @@
       [ngbTypeahead]="searchDinner"
     />
   </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="dinnerOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="dinnerOpt.unit" />
+  </mat-form-field>
 
-  <mat-form-field class="w-100" id="medication-form">
+  <mat-form-field class="w-100 col-8" id="medication-form">
     <input
       matInput
       placeholder="Bed Time"
       [(ngModel)]="bedTime"
       [ngbTypeahead]="searchBedTime"
     />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput type="number" placeholder="Quantity" [(ngModel)]="bedTimeOpt.qty" />
+  </mat-form-field>
+  <mat-form-field class="w-100 col-2" id="medication-form">
+    <input matInput placeholder="Unit" [(ngModel)]="bedTimeOpt.unit" />
   </mat-form-field>
 
   <button

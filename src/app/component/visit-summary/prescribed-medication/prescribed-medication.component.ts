@@ -57,12 +57,46 @@ export class PrescribedMedicationComponent implements OnInit {
   // conceptAdministration = [];
   // conceptDurationUnit = [];
   earlyMorning: any;
+  earlyMorningOpt = {
+    qty: '',
+    unit: ''
+  }
+
   breakfast: any;
+  breakfastOpt = {
+    qty: '',
+    unit: ''
+  }
+
   midMorning: any;
+  midMorningOpt = {
+    qty: '',
+    unit: ''
+  }
+
   lunch: any;
+  lunchOpt = {
+    qty: '',
+    unit: ''
+  }
+
   eveningSnack: any;
+  eveningSnackOpt = {
+    qty: '',
+    unit: ''
+  }
+
   dinner: any;
+  dinnerOpt = {
+    qty: '',
+    unit: ''
+  }
+
   bedTime: any;
+  bedTimeOpt = {
+    qty: '',
+    unit: ''
+  }
   conceptMed = "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca";
 
   // medForm = new FormGroup({
@@ -242,6 +276,7 @@ export class PrescribedMedicationComponent implements OnInit {
             this.meds.push(obs);
           }
         });
+        this.setToHindi();
       });
   }
 
@@ -319,18 +354,20 @@ export class PrescribedMedicationComponent implements OnInit {
   submit() {
     if (this.diagnosisService.isSameDoctor()) {
       const prescTypes = [
-        { label: 'Early Morning', value: this.earlyMorning },
-        { label: 'Breakfast', value: this.breakfast },
-        { label: 'Mid Morning', value: this.midMorning },
-        { label: 'Lunch', value: this.lunch },
-        { label: 'Evening Snack', value: this.eveningSnack },
-        { label: 'Dinner', value: this.dinner },
-        { label: 'Bed Time', value: this.bedTime }
+        { label: 'Early Morning', value: this.earlyMorning, qty: this.earlyMorningOpt.qty, unit: this.earlyMorningOpt.unit },
+        { label: 'Breakfast', value: this.breakfast, qty: this.breakfastOpt.qty, unit: this.breakfastOpt.unit },
+        { label: 'Mid Morning', value: this.midMorning, qty: this.midMorningOpt.qty, unit: this.midMorningOpt.unit },
+        { label: 'Lunch', value: this.lunch, qty: this.lunchOpt.qty, unit: this.lunchOpt.unit },
+        { label: 'Evening Snack', value: this.eveningSnack, qty: this.eveningSnackOpt.qty, unit: this.eveningSnackOpt.unit },
+        { label: 'Dinner', value: this.dinner, qty: this.dinnerOpt.qty, unit: this.dinnerOpt.unit },
+        { label: 'Bed Time', value: this.bedTime, qty: this.bedTimeOpt.qty, unit: this.bedTimeOpt.unit }
       ]
       let value = '';
       prescTypes.forEach((type, idx) => {
-        value += `${type.label} : ${type.value}`;
-        if (idx <= (prescTypes.length - 2)) value += ', \n';
+        value += type.value ? `${type.label} : ${type.value.split(',')[0]}` : '';
+        if (type.value && type.qty) value += ` - ${type.qty} `;
+        if (type.value && type.unit) value += type.unit;
+        if (type.value && idx <= (prescTypes.length - 2)) value += '; \n';
       });
       const json = {
         concept: this.conceptMed,
@@ -342,9 +379,24 @@ export class PrescribedMedicationComponent implements OnInit {
       this.service.postObs(json).subscribe((response) => {
         this.isDataPresent.emit(true);
         this.meds.push({ uuid: response.uuid, value });
+        this.setToHindi();
         this.clearFields();
       });
     }
+  }
+
+  setToHindi() {
+    this.meds.forEach((med, idx) => {
+      for (const key in medicines) {
+        if (Object.prototype.hasOwnProperty.call(medicines, key) && key != 'earlyMorning') {
+          const optionsArr = medicines[key];
+          optionsArr.forEach(opt => {
+            const [eng] = opt.split(',')
+            this.meds[idx].value = med.value.replaceAll(eng.trim(), opt);
+          });
+        }
+      }
+    });
   }
 
   delete(i) {
@@ -367,5 +419,26 @@ export class PrescribedMedicationComponent implements OnInit {
     this.eveningSnack = '';
     this.dinner = '';
     this.bedTime = '';
+
+    this.earlyMorningOpt.qty = ''
+    this.earlyMorningOpt.unit = ''
+
+    this.breakfastOpt.qty = ''
+    this.breakfastOpt.unit = ''
+
+    this.midMorningOpt.qty = ''
+    this.midMorningOpt.unit = ''
+
+    this.lunchOpt.qty = ''
+    this.lunchOpt.unit = ''
+
+    this.eveningSnackOpt.qty = ''
+    this.eveningSnackOpt.unit = ''
+
+    this.dinnerOpt.qty = ''
+    this.dinnerOpt.unit = ''
+
+    this.bedTimeOpt.qty = ''
+    this.bedTimeOpt.unit = ''
   }
 }
