@@ -195,6 +195,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
             if (birthOutcome === 'Refer to other Hospital') {
               birthOutcome = 'RTOH';
             }
+            if (birthOutcome === 'Self discharge against Medical Advice') {
+              birthOutcome = 'DAMA';
+            }    
             dateTimeOfBirth = encounter.encounterDatetime;
           }
         }

@@ -104,6 +104,9 @@ export class EpartogramComponent implements OnInit {
         if (this.birthOutcome === 'Refer to other Hospital') {
           this.birthOutcome = 'RTOH';
         }
+        if (this.birthOutcome === 'Self discharge against Medical Advice') {
+          this.birthOutcome = 'DAMA';
+        }
         this.birthtime =  moment(res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.encounterDatetime).format("HH:mm");
       }
       this.getStage1Data(res.encounters);
