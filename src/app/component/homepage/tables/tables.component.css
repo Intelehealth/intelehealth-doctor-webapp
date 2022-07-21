@@ -1,7 +1,7 @@
 table {
     width: 100%;
 }
-  
+
 .mat-form-field {
     font-size: 14px;
     width: 100%;
@@ -16,14 +16,16 @@ table {
     width: 14%
 }
 
-td{
+td {
     cursor: pointer;
     font-size: medium;
 }
 
 .mat-row:hover {
-    background-color: #D3D3D3;
-  }
+    background-color: #ed1a564f;
+    background-image: linear-gradient(to top right, #ed1a564f, #e6e6e6);
+    /* background-color: #3E2E8B; */
+}
 
 .mat-column-dob {
     width: 10%
@@ -48,14 +50,15 @@ td{
 .mat-column-lastSeen {
     width: 14%
 }
-  
+
 .mat-cell,
 .mat-header-cell {
     white-space: nowrap;
 }
 
-mat-cell, .mat-cell {
-    min-height:auto; 
+mat-cell,
+.mat-cell {
+    min-height: auto;
     padding: 5px 10px 0px 0;
 }
 
