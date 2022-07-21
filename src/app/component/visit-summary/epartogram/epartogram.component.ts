@@ -101,6 +101,9 @@ export class EpartogramComponent implements OnInit {
       if (res.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
         this.isVisitEnded = true;
         this.birthOutcome = res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.obs[0]?.value;
+        if (this.birthOutcome === 'Refer to other Hospital') {
+          this.birthOutcome = 'RTOH';
+        }
         this.birthtime =  moment(res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.encounterDatetime).format("HH:mm");
       }
       this.getStage1Data(res.encounters);

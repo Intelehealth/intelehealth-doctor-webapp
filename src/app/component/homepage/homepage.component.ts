@@ -192,6 +192,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
           });
           if (encounter.display.includes('Visit Complete')) {
             birthOutcome = encounter.obs[0]?.value;
+            if (birthOutcome === 'Refer to other Hospital') {
+              birthOutcome = 'RTOH';
+            }
             dateTimeOfBirth = encounter.encounterDatetime;
           }
         }
@@ -222,7 +225,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       notes,
       overdue: overdueIn,
       birthOutcome: birthOutcome,
-      dateTimeOfBirth:dateTimeOfBirth,
+      dateTimeOfBirth: dateTimeOfBirth,
       lastSeen: encounter?.encounterDatetime
         ? new Date(encounter?.encounterDatetime)
         : null,
