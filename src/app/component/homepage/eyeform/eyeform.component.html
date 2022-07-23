@@ -1,239 +1,209 @@
-<div class="container">
-  <form [formGroup]="eyeCampForm" (ngSubmit)="Save()">
-    <mat-card>
-      <h3>Eye camp sister to Complete:</h3>
-    </mat-card>
-    <br />
-    <div>
-      <mat-card
-        style="
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-        "
-      >
-        <div>
-          <mat-form-field class="example-full-width" appearance="fill">
-            <input type="text" placeholder="Patient Eye Camp Id" matInput (keyup)="_filter($event.target.value)"
-              [matAutocomplete]="auto"/>
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selected($event.option.value)">
-              <mat-option *ngFor="let option of filterData" [value]="option?.patient_uuid">
-                <p>
-                  {{ option?.eye_camp_id?.value }} -
-                  {{ option?.patient.person?.display }}
-                </p>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field class="example-full-width" appearance="fill">
-            <input type="text" placeholder="Patient Phone Number" matInput (keyup)="_filterPhone($event.target.value)"
-              [matAutocomplete]="autophone"/>
-            <mat-autocomplete autoActiveFirstOption #autophone="matAutocomplete" (optionSelected)="selected($event.option.value)">
-              <mat-option *ngFor="let option of filterDataPhone" [value]="option?.patient_uuid">
-                <p>
-                  {{ option?.phoneno?.value }}
-                </p>
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-        </div>
+<div class="mt-50">
+  <div class="container">
+    <form [formGroup]="eyeCampForm" (ngSubmit)="Save()">
+      <mat-card>
+        <h3>Eye camp sister to Complete:</h3>
       </mat-card>
-    </div>
-    <br />
-    <div class="acuity-pinhole">
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Visual Acuity from Paper Chart</h5>
-          <div class="visual-acuity-wrapper">
-            <div>
-              <mat-radio-group class="radio-group" formControlName="accuityRight">
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of accuityandpinholeright"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
-              </mat-radio-group>
-            </div>
-            <div>
-              <mat-radio-group class="radio-group" formControlName="accuityLeft">
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of accuityandpinholeleft"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
-              </mat-radio-group>
-            </div>
+      <br />
+      <div>
+        <mat-card style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+          ">
+          <div>
+            <mat-form-field class="example-full-width" appearance="fill">
+              <input type="text" placeholder="Patient Eye Camp Id" matInput (keyup)="_filter($event.target.value)"
+                [matAutocomplete]="auto" />
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                (optionSelected)="selected($event.option.value)">
+                <mat-option *ngFor="let option of filterData" [value]="option?.patient_uuid">
+                  <p>
+                    {{ option?.eye_camp_id?.value }} -
+                    {{ option?.patient.person?.display }}
+                  </p>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field class="example-full-width" appearance="fill">
+              <input type="text" placeholder="Patient Phone Number" matInput (keyup)="_filterPhone($event.target.value)"
+                [matAutocomplete]="autophone" />
+              <mat-autocomplete autoActiveFirstOption #autophone="matAutocomplete"
+                (optionSelected)="selected($event.option.value)">
+                <mat-option *ngFor="let option of filterDataPhone" [value]="option?.patient_uuid">
+                  <p>
+                    {{ option?.phoneno?.value }}
+                  </p>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
           </div>
         </mat-card>
       </div>
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Pinhole Acuity from Paper Chart</h5>
-          <div class="visual-acuity-wrapper">
-            <div>
-              <mat-radio-group
-                aria-label="Select an option"
-                class="radio-group"
-                formControlName="pinholeRight"
-              >
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of accuityandpinholeright"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
-              </mat-radio-group>
-            </div>
-            <div>
-              <mat-radio-group class="radio-group" formControlName="pinholeLeft">
-                <mat-radio-button
-                  class="radio-button"
-                  *ngFor="let data of accuityandpinholeleft"
-                  [value]="data.value">{{ data.name }}</mat-radio-button
-                >
-              </mat-radio-group>
-            </div>
-          </div>
-        </mat-card>
-      </div>
-    </div>
-    <br />
-
-    <mat-card>
-      <h3>Ophthalmologist to Complete:</h3>
-    </mat-card>
-    <br />
-    <mat-card>
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Ophthalmologist Name: </mat-label>
-        <input matInput placeholder="Ophthalmologist Name" formControlName="ophthalmologist" />
-      </mat-form-field>
-    </mat-card>
-    <br />
-    <div class="acuity-pinhole">
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Patient Complaint</h5>
-          <div class="visual-acuity-wrapper direction-column">
-            <div style="display: flex; align-items: baseline; justify-content: space-between;">
-              <mat-radio-group class="radio-group" formControlName="complaintRight">
-                <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintright"
-                  (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintright')"
-                  [value]="data.value">{{ data.name }}</mat-radio-button>
-              </mat-radio-group>
-              <div class="radio-group">
-                <div class="radio-button" style="margin: 9px" *ngFor="let data of patientcomplaintright">{{ data.value }}</div>
+      <br />
+      <div class="acuity-pinhole">
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Visual Acuity from Paper Chart</h5>
+            <div class="visual-acuity-wrapper">
+              <div>
+                <mat-radio-group class="radio-group" formControlName="accuityRight">
+                  <mat-radio-button class="radio-button" *ngFor="let data of accuityandpinholeright"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
+                </mat-radio-group>
               </div>
               <div>
-                <mat-radio-group class="radio-group" formControlName="complaintLeft">
-                  <mat-radio-button class="radio-button"
-                    *ngFor="let data of patientcomplaintleft"
-                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintleft')"
+                <mat-radio-group class="radio-group" formControlName="accuityLeft">
+                  <mat-radio-button class="radio-button" *ngFor="let data of accuityandpinholeleft"
                     [value]="data.value">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
             </div>
-            <div style="display: flex; flex-direction: column;align-self: center;">
-              <mat-form-field  *ngIf="patientcomplaintrightShow">
-                <input matInput placeholder="Complaint Right Other" (change)="onChangeHandler('patientcomplaintrightOther', $event.target.value)">
-              </mat-form-field>
-              <mat-form-field *ngIf="patientcomplaintleftShow">
-                <input matInput placeholder="Complaint Left Other" (change)="onChangeHandler('patientcomplaintleftOther', $event.target.value)">
-              </mat-form-field>
-            </div>
-          </div>
-        </mat-card>
-      </div>
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Diagnosis</h5>
-          <div class="visual-acuity-wrapper direction-column">
-            <div style="display: flex; align-items: baseline; justify-content: space-between;">
-              <mat-radio-group class="radio-group" formControlName="diagnosisRight">
-                <mat-radio-button class="radio-button" *ngFor="let data of diagnosisright"
-                  (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisright')" [value]="data.value">{{ data.name }}</mat-radio-button>
-              </mat-radio-group>
-              <div class="radio-group">
-                <div class="radio-button" style="margin: 9px" *ngFor="let data of diagnosisright">
-                  {{ data.value }}
-                </div>
+          </mat-card>
+        </div>
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Pinhole Acuity from Paper Chart</h5>
+            <div class="visual-acuity-wrapper">
+              <div>
+                <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="pinholeRight">
+                  <mat-radio-button class="radio-button" *ngFor="let data of accuityandpinholeright"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
+                </mat-radio-group>
               </div>
               <div>
-                <mat-radio-group class="radio-group" formControlName="diagnosisLeft">
-                  <mat-radio-button class="radio-button"
-                    *ngFor="let data of diagnosisleft" [value]="data.value"
-                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisleft')">{{ data.name }}</mat-radio-button>
+                <mat-radio-group class="radio-group" formControlName="pinholeLeft">
+                  <mat-radio-button class="radio-button" *ngFor="let data of accuityandpinholeleft"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
                 </mat-radio-group>
               </div>
             </div>
-            <div style="display: flex; flex-direction: column;align-self: center;">
-              <mat-form-field  *ngIf="diagnosisrightShow">
-                <input matInput placeholder="Diagnosis Right Other" (change)="onChangeHandler('diagnosisrightOther', $event.target.value)">
-              </mat-form-field>
-              <mat-form-field *ngIf="diagnosisleftShow">
-                <input matInput placeholder="Diagnosis Left Other" (change)="onChangeHandler('diagnosisleftOther', $event.target.value)">
-              </mat-form-field>
+          </mat-card>
+        </div>
+      </div>
+      <br />
+
+      <mat-card>
+        <h3>Ophthalmologist to Complete:</h3>
+      </mat-card>
+      <br />
+      <mat-card>
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Ophthalmologist Name: </mat-label>
+          <input matInput placeholder="Ophthalmologist Name" formControlName="ophthalmologist" />
+        </mat-form-field>
+      </mat-card>
+      <br />
+      <div class="acuity-pinhole">
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Patient Complaint</h5>
+            <div class="visual-acuity-wrapper direction-column">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <mat-radio-group class="radio-group" formControlName="complaintRight">
+                  <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintright"
+                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintright')"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
+                </mat-radio-group>
+                <div class="radio-group">
+                  <div class="radio-button" style="margin: 9px" *ngFor="let data of patientcomplaintright">{{ data.value
+                    }}</div>
+                </div>
+                <div>
+                  <mat-radio-group class="radio-group" formControlName="complaintLeft">
+                    <mat-radio-button class="radio-button" *ngFor="let data of patientcomplaintleft"
+                      (change)="selected($event.value, $event.value === 'Other' ? true : false, 'patientcomplaintleft')"
+                      [value]="data.value">{{ data.name }}</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column;align-self: center;">
+                <mat-form-field *ngIf="patientcomplaintrightShow">
+                  <input matInput placeholder="Complaint Right Other"
+                    (change)="onChangeHandler('patientcomplaintrightOther', $event.target.value)">
+                </mat-form-field>
+                <mat-form-field *ngIf="patientcomplaintleftShow">
+                  <input matInput placeholder="Complaint Left Other"
+                    (change)="onChangeHandler('patientcomplaintleftOther', $event.target.value)">
+                </mat-form-field>
+              </div>
             </div>
-          </div>
-        </mat-card>
+          </mat-card>
+        </div>
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Diagnosis</h5>
+            <div class="visual-acuity-wrapper direction-column">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <mat-radio-group class="radio-group" formControlName="diagnosisRight">
+                  <mat-radio-button class="radio-button" *ngFor="let data of diagnosisright"
+                    (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisright')"
+                    [value]="data.value">{{ data.name }}</mat-radio-button>
+                </mat-radio-group>
+                <div class="radio-group">
+                  <div class="radio-button" style="margin: 9px" *ngFor="let data of diagnosisright">
+                    {{ data.value }}
+                  </div>
+                </div>
+                <div>
+                  <mat-radio-group class="radio-group" formControlName="diagnosisLeft">
+                    <mat-radio-button class="radio-button" *ngFor="let data of diagnosisleft" [value]="data.value"
+                      (change)="selected($event.value, $event.value === 'Other' ? true : false, 'diagnosisleft')">{{
+                      data.name }}</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column;align-self: center;">
+                <mat-form-field *ngIf="diagnosisrightShow">
+                  <input matInput placeholder="Diagnosis Right Other"
+                    (change)="onChangeHandler('diagnosisrightOther', $event.target.value)">
+                </mat-form-field>
+                <mat-form-field *ngIf="diagnosisleftShow">
+                  <input matInput placeholder="Diagnosis Left Other"
+                    (change)="onChangeHandler('diagnosisleftOther', $event.target.value)">
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card>
+        </div>
       </div>
-    </div>
-    <br />
-    <div class="acuity-pinhole">
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Referral</h5>
-          <div class="visual-acuity-wrapper">
-            <mat-radio-group
-              aria-label="Select an option"
-              class="radio-group"
-              formControlName="referral"
-            >
-              <mat-radio-button
-                class="radio-button"
-                value="Yes to Base Hospital"
-                >Yes to Base Hospital</mat-radio-button
-              >
-              <mat-radio-button
-                class="radio-button"
-                value="Yes to Vision Center"
-                >Yes to Vision Center</mat-radio-button
-              >
-              <mat-radio-button class="radio-button" value="Yes to Eye Camp"
-                >Yes to Eye Camp</mat-radio-button
-              >
-              <mat-radio-button class="radio-button" value="No"
-                >No</mat-radio-button
-              >
-            </mat-radio-group>
-          </div>
-        </mat-card>
+      <br />
+      <div class="acuity-pinhole">
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Referral</h5>
+            <div class="visual-acuity-wrapper">
+              <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="referral">
+                <mat-radio-button class="radio-button" value="Yes to Base Hospital">Yes to Base Hospital
+                </mat-radio-button>
+                <mat-radio-button class="radio-button" value="Yes to Vision Center">Yes to Vision Center
+                </mat-radio-button>
+                <mat-radio-button class="radio-button" value="Yes to Eye Camp">Yes to Eye Camp</mat-radio-button>
+                <mat-radio-button class="radio-button" value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </mat-card>
+        </div>
+        <div style="width: 49%">
+          <mat-card>
+            <h5>Referral Timing/Urgency</h5>
+            <h6>If refer:</h6>
+            <div class="visual-acuity-wrapper">
+              <mat-radio-group aria-label="Select an option" class="radio-group" formControlName="referralTime">
+                <mat-radio-button class="radio-button" value="< 3 days">
+                  < 3 days</mat-radio-button>
+                    <mat-radio-button class="radio-button" value="3+ days">3+ days</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </mat-card>
+        </div>
       </div>
-      <div style="width: 49%">
-        <mat-card>
-          <h5>Referral Timing/Urgency</h5>
-          <h6>If refer:</h6>
-          <div class="visual-acuity-wrapper">
-            <mat-radio-group
-              aria-label="Select an option"
-              class="radio-group"
-              formControlName="referralTime"
-            >
-              <mat-radio-button class="radio-button" value="< 3 days"
-                >< 3 days</mat-radio-button
-              >
-              <mat-radio-button class="radio-button" value="3+ days"
-                >3+ days</mat-radio-button
-              >
-            </mat-radio-group>
-          </div>
-        </mat-card>
+      <br />
+      <div style="text-align: center">
+        <button mat-raised-button color="primary" [disabled]="!showSubmitButton">Submit</button>
       </div>
-    </div>
-    <br />
-    <div style="text-align: center">
-      <button mat-raised-button color="primary" [disabled]="!showSubmitButton">Submit</button>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
