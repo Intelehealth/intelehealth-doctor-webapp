@@ -159,23 +159,38 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   assignValueToProperty(active, encounter: any = {}): any {
-    let overdueIn;
+    let overdueIn = '';
     let notes = [];
     let notesObj = {};
     let stage = 1;
+    let visitEndPresent = false;
     let birthOutcome: string;
     let dateTimeOfBirth: string;
+
     if (active?.encounters?.length) {
+      const [latestEncounter] = active.encounters.sort((a: any, b: any) => {
+        return new Date(b.encounterDatetime).valueOf() - new Date(a.encounterDatetime).valueOf()
+      });
+
       if (active.encounters.filter(vst => vst.display.includes('Stage2')).length > 0) {
         stage = 2;
       }
+      
+      if (active.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
+        visitEndPresent = true;
+      }
+      
+      if (encounter && !visitEndPresent && !latestEncounter?.obs?.length) {
+        const duration = moment.duration(
+          moment(new Date()).diff(moment(encounter.encounterDatetime))
+        );
+        overdueIn =
+          duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hr(s)` : "";
+      }
     }
-    if (encounter) {
-      const duration = moment.duration(
-        moment(new Date()).diff(moment(encounter.encounterDatetime))
-      );
-      overdueIn =
-        duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hr(s)` : "";
+
+    if (visitEndPresent) {
+      overdueIn = '-';
     }
 
     if (Array.isArray(active.encounters)) {
@@ -197,7 +212,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
             }
             if (birthOutcome === 'Self discharge against Medical Advice') {
               birthOutcome = 'DAMA';
-            }    
+            }
             dateTimeOfBirth = encounter.encounterDatetime;
           }
         }
