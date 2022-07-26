@@ -3,3 +3,8 @@
     display: block;
   }
 }
+
+.add {
+  font-size: 32px;
+  top: 10px;
+}

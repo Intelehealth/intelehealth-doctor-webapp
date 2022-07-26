@@ -56,47 +56,62 @@ export class PrescribedMedicationComponent implements OnInit {
   // conceptfrequency = [];
   // conceptAdministration = [];
   // conceptDurationUnit = [];
-  earlyMorning: any;
-  earlyMorningOpt = {
-    qty: '',
-    unit: ''
-  }
+  earlyMorning = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  breakfast: any;
-  breakfastOpt = {
-    qty: '',
-    unit: ''
-  }
+  breakfast = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  midMorning: any;
-  midMorningOpt = {
-    qty: '',
-    unit: ''
-  }
+  midMorning = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  lunch: any;
-  lunchOpt = {
-    qty: '',
-    unit: ''
-  }
+  lunch = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  eveningSnack: any;
-  eveningSnackOpt = {
-    qty: '',
-    unit: ''
-  }
+  eveningSnack = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  dinner: any;
-  dinnerOpt = {
-    qty: '',
-    unit: ''
-  }
+  dinner = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
 
-  bedTime: any;
-  bedTimeOpt = {
-    qty: '',
-    unit: ''
-  }
+  bedTime = [
+    {
+      value: '',
+      unit: '',
+      qty: ''
+    }
+  ]
+
   conceptMed = "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca";
 
   // medForm = new FormGroup({
@@ -353,21 +368,38 @@ export class PrescribedMedicationComponent implements OnInit {
 
   submit() {
     if (this.diagnosisService.isSameDoctor()) {
+
       const prescTypes = [
-        { label: 'Early Morning', value: this.earlyMorning, qty: this.earlyMorningOpt.qty, unit: this.earlyMorningOpt.unit },
-        { label: 'Breakfast', value: this.breakfast, qty: this.breakfastOpt.qty, unit: this.breakfastOpt.unit },
-        { label: 'Mid Morning', value: this.midMorning, qty: this.midMorningOpt.qty, unit: this.midMorningOpt.unit },
-        { label: 'Lunch', value: this.lunch, qty: this.lunchOpt.qty, unit: this.lunchOpt.unit },
-        { label: 'Evening Snack', value: this.eveningSnack, qty: this.eveningSnackOpt.qty, unit: this.eveningSnackOpt.unit },
-        { label: 'Dinner', value: this.dinner, qty: this.dinnerOpt.qty, unit: this.dinnerOpt.unit },
-        { label: 'Bed Time', value: this.bedTime, qty: this.bedTimeOpt.qty, unit: this.bedTimeOpt.unit }
+        { label: 'Early Morning', key: 'earlyMorning' },
+        { label: 'Breakfast', key: 'breakfast' },
+        { label: 'Mid Morning', key: 'midMorning' },
+        { label: 'Lunch', key: 'lunch' },
+        { label: 'Evening Snack', key: 'eveningSnack' },
+        { label: 'Dinner', key: 'dinner' },
+        { label: 'Bed Time', key: 'bedTime' }
       ]
-      let value = '';
-      prescTypes.forEach((type, idx) => {
-        value += type.value ? `${type.label} : ${type.value.split(',')[0]}` : '';
-        if (type.value && type.qty) value += ` - ${type.qty} `;
-        if (type.value && type.unit) value += type.unit;
-        if (type.value && idx <= (prescTypes.length - 2)) value += '; \n';
+      let value = {
+        en: {},
+        hi: {}
+      };
+      prescTypes.forEach((type) => {
+        if (Array.isArray(this[type.key])) {
+          this[type.key].filter(opt => opt.value).forEach(opt => {
+            if (!value.en[type.label]) value.en[type.label] = [];
+            if (!value.hi[type.label]) value.hi[type.label] = [];
+
+            let [enVal, hiVal] = opt.value.split(',');
+
+            if (!enVal) enVal = ''
+            if (!hiVal) hiVal = ''
+
+            enVal = enVal.trim();
+            hiVal = hiVal.trim();
+
+            value.en[type.label].push({ value: enVal, unit: opt.unit, qty: opt.qty });
+            value.hi[type.label].push({ value: hiVal, unit: opt.unit, qty: opt.qty });
+          });
+        }
       });
       const json = {
         concept: this.conceptMed,
@@ -411,34 +443,21 @@ export class PrescribedMedicationComponent implements OnInit {
     }
   }
 
+  add(optArr) {
+    optArr.unshift({
+      value: '',
+      qty: '',
+      unit: ''
+    })
+  }
+
   clearFields() {
-    this.earlyMorning = '';
-    this.breakfast = '';
-    this.midMorning = '';
-    this.lunch = '';
-    this.eveningSnack = '';
-    this.dinner = '';
-    this.bedTime = '';
-
-    this.earlyMorningOpt.qty = ''
-    this.earlyMorningOpt.unit = ''
-
-    this.breakfastOpt.qty = ''
-    this.breakfastOpt.unit = ''
-
-    this.midMorningOpt.qty = ''
-    this.midMorningOpt.unit = ''
-
-    this.lunchOpt.qty = ''
-    this.lunchOpt.unit = ''
-
-    this.eveningSnackOpt.qty = ''
-    this.eveningSnackOpt.unit = ''
-
-    this.dinnerOpt.qty = ''
-    this.dinnerOpt.unit = ''
-
-    this.bedTimeOpt.qty = ''
-    this.bedTimeOpt.unit = ''
+    this.earlyMorning = [{ value: '', qty: '', unit: '' }];
+    this.breakfast = [{ value: '', qty: '', unit: '' }];
+    this.midMorning = [{ value: '', qty: '', unit: '' }];
+    this.lunch = [{ value: '', qty: '', unit: '' }];
+    this.eveningSnack = [{ value: '', qty: '', unit: '' }];
+    this.dinner = [{ value: '', qty: '', unit: '' }];
+    this.bedTime = [{ value: '', qty: '', unit: '' }];
   }
 }
