@@ -291,7 +291,6 @@ export class HomepageComponent implements OnInit {
       )
       .subscribe({
         next: (res: any) => {
-          console.log('res: ', res);
           this.slots = res.data;
           this.setVisits();
         },
