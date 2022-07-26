@@ -84,11 +84,13 @@ export class NavbarComponent implements OnInit {
       this.logout();
     }
     this.authService.getFingerPrint();
-    this.createUpdateStatus();
     const duration = 1000 * 60 * 15; // hearbeat in every 15 mins
-    setInterval(() => {
+    if(getFromStorage('userType') !== 'Organizational: Nurse'){
       this.createUpdateStatus();
-    }, duration);
+      setInterval(() => {
+        this.createUpdateStatus();
+      }, duration);
+    }
     setTimeout(() => {
       this.subscribeNotification(true);
     }, 1000);

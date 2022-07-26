@@ -68,6 +68,7 @@ export class LoginPageComponent implements OnInit {
             (provider) => {
               this.authService.sendToken(response.sessionId);
               saveToStorage("user", response.user);
+              saveToStorage("userType", response.user.roles[0].display);
               if (provider.results[0].attributes.length === 0) {
                 this.router.navigate(["/myAccount"]);
               } else {
