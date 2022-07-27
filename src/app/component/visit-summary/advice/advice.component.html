@@ -5,7 +5,7 @@
       <mat-form-field class="w-100">
           <input id="search" matInput placeholder="Advice or Refer Patient" [ngbTypeahead]="search" formControlName='advice'>
       </mat-form-field>
-      <button id="addAdvice" mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
+      <button id="add-advice" mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>Add Advice</button>
   </form>
   <br>
 </div>

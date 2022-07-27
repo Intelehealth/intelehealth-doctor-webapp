@@ -14,8 +14,8 @@
   </div>
   <div id="call-link" *ngIf="whatsappLink || phoneNo">
     Start a call:
-    <span id="whatsapplink" *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
-    <span id="phoneNo" *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
+    <span id="whatsapp-link" *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
+    <span id="phone-no" *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
   </div>
   <div id="call-link" *ngIf="!whatsappLink && !phoneNo">
     Please provide health worker's contact number at

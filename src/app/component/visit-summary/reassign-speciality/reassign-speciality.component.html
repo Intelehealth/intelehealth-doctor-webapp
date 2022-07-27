@@ -7,8 +7,8 @@
     <div id="patient-interaction">
         <br>
         <mat-radio-group id="type" name="type" aria-label="Select an option" [(ngModel)]="type">
-            <mat-radio-button id="typeYes" name="type"  (change)="type = 'N'"  [value]="'Y'">Yes </mat-radio-button>
-            <mat-radio-button id="typeNo" name="type"  (change)="type = 'Y'" [value]="'N'">No</mat-radio-button>
+            <mat-radio-button id="type-yes" name="type"  (change)="type = 'N'"  [value]="'Y'">Yes </mat-radio-button>
+            <mat-radio-button id="type-no" name="type"  (change)="type = 'Y'" [value]="'N'">No</mat-radio-button>
         </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp; 
     </div>
 <form [formGroup]='updateSpeciality'>
@@ -19,7 +19,7 @@
         </mat-select>
     </mat-form-field>
     <br>
-<button id="resetBtn" type="reset" (click)="Submit()" mat-raised-button color="primary">Re-Assign</button>
+<button id="reset" type="reset" (click)="Submit()" mat-raised-button color="primary">Re-Assign</button>
 </div>
 {{errorText}}
 </form>

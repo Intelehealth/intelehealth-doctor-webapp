@@ -16,9 +16,9 @@
   >
     <!-- ID Column -->
     <ng-container matColumnDef="id">
-      <th id="patientID" mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID</th>
+      <th id="patient-ID" mat-header-cell *matHeaderCellDef mat-sort-header>Patient ID</th>
       <td
-        id="patientIdBtn"
+        id="patient-id"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -31,9 +31,9 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th id="Name" mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <th id="name" mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
       <td
-        id="patientName"
+        id="patient-name"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -43,9 +43,9 @@
     </ng-container>
 
     <ng-container matColumnDef="telephone">
-      <th id="phoneNumber" mat-header-cell *matHeaderCellDef mat-sort-header>Phone No</th>
+      <th id="phone-number" mat-header-cell *matHeaderCellDef mat-sort-header>Phone No</th>
       <td
-        id="patientPhoneNumber"
+        id="patient-phone-number"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -58,7 +58,7 @@
     <ng-container matColumnDef="gender">
       <th id="gender" mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
       <td
-        id="patientGender" 
+        id="patient-gender" 
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -71,7 +71,7 @@
     <ng-container matColumnDef="age">
       <th id="age" mat-header-cell *matHeaderCellDef mat-sort-header>Age</th>
       <td
-        id="patientAge"
+        id="patient-ge"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -84,7 +84,7 @@
     <ng-container matColumnDef="location">
       <th id="location" mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
       <td
-        id="patientLocation"
+        id="patient-location"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -97,7 +97,7 @@
     <ng-container matColumnDef="status">
       <th id="status" mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
       <td
-        id="patientStatus"
+        id="patient-status"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -119,7 +119,7 @@
     <ng-container matColumnDef="stage">
       <th id="stage" mat-header-cell *matHeaderCellDef mat-sort-header>Stage</th>
       <td
-        id="patientStatus"
+        id="patient-stage"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -130,9 +130,9 @@
 
     <!-- Notes column -->
     <ng-container matColumnDef="notes">
-      <th id="stickyNotes" mat-header-cell *matHeaderCellDef mat-sort-header>Sticky Notes</th>
+      <th id="sticky-notes" mat-header-cell *matHeaderCellDef mat-sort-header>Sticky Notes</th>
       <td
-        id="patientStickyNotes"
+        id="patient-sticky-notes"
         class="d-grid"
         mat-cell
         *matCellDef="let row"
@@ -150,7 +150,7 @@
     <ng-container matColumnDef="overdue">
       <th id="overdue" mat-header-cell *matHeaderCellDef mat-sort-header>Overdue</th>
       <td
-        id="patientOverdue"
+        id="patient-overdue"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -163,7 +163,7 @@
     <ng-container matColumnDef="provider">
       <th id="provider" mat-header-cell *matHeaderCellDef mat-sort-header>Provider</th>
       <td
-        id="patientProvider"
+        id="patient-provider"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -174,9 +174,9 @@
 
     <!-- lastSeen column -->
     <ng-container matColumnDef="lastSeen">
-      <th id="lastSeen" mat-header-cell *matHeaderCellDef mat-sort-header>Last Seen</th>
+      <th id="last-seen" mat-header-cell *matHeaderCellDef mat-sort-header>Last Seen</th>
       <td
-        id="patientLastSeen"
+        id="patient-last-seen"
         mat-cell
         *matCellDef="let row"
         [routerLink]="['/visitSummary', row?.patientId, row?.visitId]"
@@ -187,16 +187,16 @@
 
      <!-- Birth Outcome column -->
     <ng-container matColumnDef="birthOutcome">
-      <th id="birthOutcome" mat-header-cell *matHeaderCellDef mat-sort-header>Birth Outcome</th>
-      <td id="patientBirthOutcome" mat-cell *matCellDef="let row">
+      <th id="birth-outcome" mat-header-cell *matHeaderCellDef mat-sort-header>Birth Outcome</th>
+      <td id="patient-birth-outcome" mat-cell *matCellDef="let row">
        {{ row?.birthOutcome }}
       </td>
     </ng-container>
 
      <!-- DateTime Of Birth column -->
      <ng-container matColumnDef="dateTimeOfBirth">
-      <th id="dateAndTimeOfBirth" mat-header-cell *matHeaderCellDef mat-sort-header>Date and time of Birth</th>
-      <td id="patientdateAndTimeOfBirth" mat-cell *matCellDef="let row">
+      <th id="date-and-time-of-birth" mat-header-cell *matHeaderCellDef mat-sort-header>Date and time of Birth</th>
+      <td id="patient-date-and-time-of-birth" mat-cell *matCellDef="let row">
         {{ row?.dateTimeOfBirth | date: "dd-MMM-yyyy, H:mm" }}
       </td>
     </ng-container>
@@ -209,7 +209,7 @@
   </table>
 
   <mat-paginator 
-    id="displayData"
+    id="display-data"
     [pageSizeOptions]="[5, 10, 20]"
     showFirstLastButtons
   ></mat-paginator>

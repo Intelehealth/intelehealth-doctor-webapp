@@ -11,7 +11,7 @@
     <div class="button-tab p-3 w-100 position-absolute">
       <div class="container d-flex">
         <div
-          id="videoCallBtn"
+          id="video-call"
           [class.bg-primary]="isVideoOff"
           hover-class="bg-info"
           class="icon rounded-circle mr-2 video"
@@ -29,7 +29,7 @@
           />
         </div>
         <div
-          id="muteBtn"
+          id="mute"
           [class.bg-primary]="isMute"
           hover-class="bg-info"
           class="icon rounded-circle mr-2 mute"
@@ -39,7 +39,7 @@
           <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
         </div>
         <div
-          id="endCallInRoomBtn"
+          id="end-call-in-room"
           (click)="endCallInRoom()"
           hover-class="bg-info"
           class="icon rounded-circle mr-2 end-call"
@@ -47,7 +47,7 @@
           <i class="fa fa-phone text-danger"></i>
         </div>
         <div
-          id="fullScreenBtn"
+          id="full-screen"
           [class.bg-primary]="isFullscreen"
           hover-class="bg-info"
           (click)="fullscreen()"

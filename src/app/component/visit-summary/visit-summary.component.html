@@ -4,7 +4,7 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div [ngClass]="(setSpiner)?'spin':''">
   <div class="container w-100 p-2 back-btn">
-    <button id="backBtn" (click)="back();" type="button" class="btn btn-outline-dark ml-auto float-right">Back</button>
+    <button id="back" (click)="back();" type="button" class="btn btn-outline-dark ml-auto float-right">Back</button>
   </div>
       <app-epartogram></app-epartogram>
 </div>

@@ -2,9 +2,9 @@
   <span id="chat-button"><i class="fa fa-comment" aria-hidden="true"></i> </span>
 </div>
 <div [class.active]="classFlag" class="chat card container col-md-3">
-  <div class="card-header" (click)="chatClose()">
+  <div id="chat-close" class="card-header" (click)="chatClose()">
     <h6>Chat &nbsp;{{ isOnline ? "" : "(you are offline)" }}</h6>
-    <i id="chatClose" class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
+    <i id="chat-close" class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
     <div
@@ -36,7 +36,7 @@
   <div class="message-form card-footer">
     <div class="input-group mb-3">
       <input
-        id="messageBtn"
+        id="message"
         #chatInput
         [disabled]="!isOnline"
         type="text"
@@ -49,7 +49,7 @@
       />
       <div class="input-group-append">
         <button
-          id="sendMessageBtn"
+          id="send-message"
           [disabled]="!isOnline"
           class="btn btn-primary btn-pill"
           type="submit"
