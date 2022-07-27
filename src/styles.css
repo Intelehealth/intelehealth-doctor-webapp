@@ -27,7 +27,8 @@
 }
 
 body {
-  background-color: #d1e9ec;
+  background-color: white;
+  /* background-color: #d1e9ec; */
   margin: 0;
   /* background:  linear-gradient( to bottom right,#17a2b8, #b2d4da); */
 }
@@ -111,6 +112,11 @@ body.font-lato td {
 }
 
 .mat-elevation-z8 tbody tr:nth-child(odd) {
-  background-color: #e2d5d4;
+  background-color: #3e2e8b87;
+  background-image:
+  linear-gradient(
+    to top right, 
+    #3e2e8b87, #e6e6e6
+  );
   color: #fff;
 }

@@ -43,6 +43,23 @@ export class HomepageComponent implements OnInit, OnDestroy {
   // waitingVisit: VisitData[] = [];
   // progressVisit: VisitData[] = [];
   // remoteVisits: VisitData[] = [];
+  hourlyStages = [
+    'Stage1_Hour1',
+    'Stage1_Hour2',
+    'Stage1_Hour3',
+    'Stage1_Hour4',
+    'Stage1_Hour5',
+    'Stage1_Hour6',
+    'Stage1_Hour7',
+    'Stage1_Hour8',
+    'Stage1_Hour9',
+    'Stage1_Hour10',
+    'Stage1_Hour11',
+    'Stage1_Hour12',
+    'Stage2_Hour1',
+    'Stage2_Hour2',
+    'Stage2_Hour3',
+  ];
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
@@ -99,6 +116,45 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.socket.socket.close();
   }
 
+  setScore(active) {
+    let score: any = 0;
+    let stageData = {};
+    let statusData = {};
+    active.encounters.forEach(encounter => {
+      if (Array.isArray(encounter.obs) && encounter.obs.length) {
+        const stage = encounter.display;
+        if (!stageData[stage]) stageData[stage] = 0;
+
+        let score = stageData[stage];
+        const yellow = encounter.obs.filter(
+          (obs) => obs.comment === "Y"
+        ).length;
+        const red = encounter.obs.filter(
+          (obs) => obs.comment === "R"
+        ).length;
+        score += red * 2;
+        score += yellow * 1;
+        stageData[stage] = score;
+      }
+    });
+
+    for (const key in stageData) {
+      if (Object.prototype.hasOwnProperty.call(stageData, key)) {
+        const value = stageData[key];
+        this.hourlyStages.forEach(stage => {
+          if (!statusData[stage]) statusData[stage] = 0;
+          if (key.includes(stage)) {
+            statusData[stage] += value;
+          }
+        });
+      }
+    }
+
+    score = Object.values(statusData).filter(a => a).pop();
+    if (!score) score = 0;
+    return score;
+  }
+
   getVisits() {
     this.service.getVisits().subscribe(
       (response) => {
@@ -111,20 +167,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
             );
           });
           const [encounter] = active.encounters;
-          let score = 0;
-          if (encounter) {
-            if (Array.isArray(encounter.obs)) {
-              const yellow = encounter.obs.filter(
-                (obs) => obs.comment === "Y"
-              ).length;
-              const red = encounter.obs.filter(
-                (obs) => obs.comment === "R"
-              ).length;
-              score += red * 2;
-              score += yellow * 1;
-              active.score = score;
-            }
-          }
+
+          active.score = this.setScore(active);
 
           let visitEncounter;
           const { encounters = [] } = active;
@@ -159,23 +203,38 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   assignValueToProperty(active, encounter: any = {}): any {
-    let overdueIn;
+    let overdueIn = '';
     let notes = [];
     let notesObj = {};
     let stage = 1;
+    let visitEndPresent = false;
     let birthOutcome: string;
     let dateTimeOfBirth: string;
+
     if (active?.encounters?.length) {
+      const [latestEncounter] = active.encounters.sort((a: any, b: any) => {
+        return new Date(b.encounterDatetime).valueOf() - new Date(a.encounterDatetime).valueOf()
+      });
+
       if (active.encounters.filter(vst => vst.display.includes('Stage2')).length > 0) {
         stage = 2;
       }
+
+      if (active.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
+        visitEndPresent = true;
+      }
+
+      if (encounter && !visitEndPresent && !latestEncounter?.obs?.length) {
+        const duration = moment.duration(
+          moment(new Date()).diff(moment(encounter.encounterDatetime))
+        );
+        overdueIn =
+          duration.asMinutes() >= this.overdueIn && duration.asMinutes() < 60 ? `${duration.asMinutes().toFixed(2)} mins` : "";
+      }
     }
-    if (encounter) {
-      const duration = moment.duration(
-        moment(new Date()).diff(moment(encounter.encounterDatetime))
-      );
-      overdueIn =
-        duration.asMinutes() >= this.overdueIn ? `${duration.asHours().toFixed(2)} hr(s)` : "";
+
+    if (visitEndPresent) {
+      overdueIn = '-';
     }
 
     if (Array.isArray(active.encounters)) {
@@ -191,8 +250,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
             }
           });
           if (encounter.display.includes('Visit Complete')) {
-            birthOutcome = encounter.obs[0]?.value;
-            dateTimeOfBirth = encounter.encounterDatetime;
+            encounter.obs.forEach(obs => {
+              if (obs.display.includes('Birth Outcome')) {
+                birthOutcome = obs.value;
+              }
+              if (obs.display.includes('Refer to other Hospital')) {
+                birthOutcome = 'RTOH';
+              }
+              if (obs.display.includes('Self discharge against Medical Advice')) {
+                birthOutcome = 'DAMA';
+              }
+              dateTimeOfBirth = encounter.encounterDatetime;
+            });
           }
         }
       });
@@ -222,7 +291,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       notes,
       overdue: overdueIn,
       birthOutcome: birthOutcome,
-      dateTimeOfBirth:dateTimeOfBirth,
+      dateTimeOfBirth: dateTimeOfBirth,
       lastSeen: encounter?.encounterDatetime
         ? new Date(encounter?.encounterDatetime)
         : null,

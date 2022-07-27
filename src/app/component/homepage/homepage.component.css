@@ -68,13 +68,18 @@ mat-form-field {
 
 .gradient {
   height: 30px;
-  background-color: rgb(185, 59, 59);
+  background-color: #ED1A56;
   background-image:
     linear-gradient(
       to top right, 
-      rgb(185, 59, 59), #e6e6e6
+      #ED1A56, #e6e6e6
     );
 }
 .sub-cat{
   color: #fcfafa
+}
+
+.label-bar{
+  height: 40px;
+  border-radius: 5px;
 }

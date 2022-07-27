@@ -90,7 +90,7 @@ export class EpartogramComponent implements OnInit {
             this.nurseMobNo = attribute.value;
           }
         });
-        if(!this.nurseMobNo){
+        if (!this.nurseMobNo) {
           providerAttribute.forEach((attribute) => {
             if (attribute.display.match("phoneNumber") != null) {
               this.nurseMobNo = attribute.value;
@@ -100,8 +100,24 @@ export class EpartogramComponent implements OnInit {
       }
       if (res.encounters.filter(vst => vst.display.includes('Visit Complete')).length > 0) {
         this.isVisitEnded = true;
-        this.birthOutcome = res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.obs[0]?.value;
-        this.birthtime =  moment(res?.encounters.filter(vst => vst.display.includes('Visit Complete'))[0]?.encounterDatetime).format("HH:mm");
+        
+        res.encounters.forEach(encounter => {
+          if (encounter.display.includes('Visit Complete')) {
+            encounter.obs.forEach(obs => {
+              if (obs.display.includes('Birth Outcome')) {
+                this.birthOutcome = obs.value;
+              }
+              if (obs.display.includes('Refer to other Hospital')) {
+                this.birthOutcome = 'RTOH';
+              }
+              if (obs.display.includes('Self discharge against Medical Advice')) {
+                this.birthOutcome = 'DAMA';
+              }
+              this.birthtime = moment(encounter.encounterDatetime).format("HH:mm");
+            });
+          }
+        });
+
       }
       this.getStage1Data(res.encounters);
       this.getStag2Data(res.encounters);
@@ -297,10 +313,10 @@ export class EpartogramComponent implements OnInit {
       return i % 4 == 0;
     });
 
-    for(let t of this.filteredStage2Col) {
-      if(!t.time && this.isVisitEnded) {
+    for (let t of this.filteredStage2Col) {
+      if (!t.time && this.isVisitEnded) {
         t['flag'] = true;
-        t['birthTime']= this.birthtime;
+        t['birthTime'] = this.birthtime;
         break;
       } else {
         t['flag'] = false;
@@ -335,7 +351,7 @@ export class EpartogramComponent implements OnInit {
 
   zoomout() {
     var Page = document.getElementById('epartogram');
-    if(parseInt(Page.style['zoom']) == 100) return false;
+    if (parseInt(Page.style['zoom']) == 100) return false;
     var zoom = parseInt(Page.style['zoom']) - 5 + '%'
     Page.style['zoom'] = zoom;
     var width = parseInt(Page.style['width']) - 5 + '%'
