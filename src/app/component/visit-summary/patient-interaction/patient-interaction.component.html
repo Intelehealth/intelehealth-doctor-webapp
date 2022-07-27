@@ -4,18 +4,18 @@
 <form [formGroup]="interaction" (ngSubmit)="submit()">
   <div id="patient-interaction">
     <br />
-    <mat-radio-group aria-label="Select an option" formControlName="interaction">
-      <mat-radio-button value="Yes">Yes </mat-radio-button>
-      <mat-radio-button value="No">No</mat-radio-button>
+    <mat-radio-group id="interaction" aria-label="Select an option" formControlName="interaction">
+      <mat-radio-button id="yes" value="Yes">Yes </mat-radio-button>
+      <mat-radio-button id="no" value="No">No</mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">
+    <button id="submit" type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid" [hidden]="msg.length > 0">
       Submit
     </button>
   </div>
   <div id="call-link" *ngIf="whatsappLink || phoneNo">
     Start a call:
-    <span *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
-    <span *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
+    <span id="whatsapplink" *ngIf="whatsappLink"><a class="fab fa-whatsapp" href="{{ whatsappLink }}" target="_blank"></a></span>
+    <span id="phoneNo" *ngIf="phoneNo"><a href="tel:{{ phoneNo }}" class="fas fa-phone-volume"></a></span>
   </div>
   <div id="call-link" *ngIf="!whatsappLink && !phoneNo">
     Please provide health worker's contact number at
@@ -27,7 +27,7 @@
   <div *ngFor="let msg of msg">
     <div [@moveInLeft] class="alert alert-primary">
       <div class="doctor-value">{{ msg.value }}</div>
-      <i (click)="delete(msg.uuid)" class="material-icons float-right"
+      <i id="delete" (click)="delete(msg.uuid)" class="material-icons float-right"
         style="color: rgb(235, 30, 30); cursor: pointer">delete</i>
     </div>
   </div>

@@ -3,13 +3,13 @@
     <mat-tab-group class="visit" mat-align-tabs="center" mat-stretch-tabs>
         <mat-tab id="flagged-table">
             <ng-template mat-tab-label>
-                <p class="name">IN PROGRESS CASES <br> <b class="name">({{normalVisits.length +
+                <p id="inProgressCases" class="name">IN PROGRESS CASES <br> <b class="name">({{normalVisits.length +
                         priorityVisits.length}})</b></p>
             </ng-template><br>
             <ng-container>
                 <div id="flagged-table">
                     <div class="gradient">
-                        <h5 class="sub-cat m-2">PRIORITY CASES <b>({{priorityVisits.length}})</b></h5>
+                        <h5 id="priortyCases" class="sub-cat m-2">PRIORITY CASES <b>({{priorityVisits.length}})</b></h5>
                     </div>
                     <app-tables *ngIf="priorityVisits?.length > 0;else no_data" [data]="priorityVisits"></app-tables>
                 </div>
@@ -17,7 +17,7 @@
             <ng-container>
                 <div id="queued-table">
                     <div class="gradient">
-                        <h5 class="sub-cat m-2">NORMAL CASES <b>({{normalVisits.length}})</b></h5>
+                        <h5 id="normalCases" class="sub-cat m-2">NORMAL CASES <b>({{normalVisits.length}})</b></h5>
                     </div>
                     <app-tables *ngIf="normalVisits?.length > 0;else no_data" [data]="normalVisits"></app-tables>
                 </div>
@@ -26,7 +26,7 @@
         <mat-tab>
             <div id="visit-complete">
                 <ng-template mat-tab-label>
-                    <p class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
+                    <p id="completedCases" class="name">COMPLETED CASES <br> <b class="name">({{completedVisit?.length}})</b></p>
                 </ng-template><br>
                 <ng-container *ngIf="completedVisit?.length > 0 ;else no_data">
                     <app-tables [data]="completedVisit" [dataFor]="'completedVisit'"></app-tables>

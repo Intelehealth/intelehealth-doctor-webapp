@@ -1,23 +1,23 @@
 <div>
   <div class="content-container">
     <h4 class="align"> Assessment/Plan</h4>
-    <mat-icon class="close-icon" (click)="closeDialog()">close</mat-icon>
+    <mat-icon id="closeDialog" class="close-icon" (click)="closeDialog()">close</mat-icon>
     <form [formGroup]="editForm">
       <mat-form-field class="example-full-width">
         <mat-label>Assessment : </mat-label>
-        <textarea matInput name="Text1" cols="40" rows="2" formControlName="assessment"></textarea>
+        <textarea id="assessmentText" matInput name="Text1" cols="40" rows="2" formControlName="assessment"></textarea>
         <!-- <input class="max-length" matInput formControlName="assessment" /> -->
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-label>Plan : </mat-label>
-        <textarea matInput name="Text1" cols="40" rows="2" formControlName="plan"></textarea>
+        <textarea id="planText" matInput name="Text1" cols="40" rows="2" formControlName="plan"></textarea>
         <!-- <input matInput formControlName="plan" /> -->
       </mat-form-field>
     </form>
   </div>
   <div class="center">
     <button mat-raised-button id="no-button" [mat-dialog-close]="false">Cancel</button>
-    <button mat-raised-button id="yes-button"  style="margin-left: 10px" (click)="update()" [disabled]="!editForm.valid" [mat-dialog-close]="true">
+    <button id="update" mat-raised-button id="yes-button"  style="margin-left: 10px" (click)="update()" [disabled]="!editForm.valid" [mat-dialog-close]="true">
       Save
     </button>
   </div><br>

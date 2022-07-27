@@ -2,8 +2,8 @@
     <h4 style="text-align: center"> WHO LABOUR CARE GUIDE </h4>
     <div style="float:right;margin-top: -44px; ">
         <span id="zoom"> 
-            <i class="fa fa-search-plus btnsize" (click)="zoomin()" aria-hidden="true" title="Zoom in"></i>
-            <i class="fa fa-search-minus btnsize" (click)="zoomout()" aria-hidden="true" title="Zoom out"></i>
+            <i id="zoomIN" class="fa fa-search-plus btnsize" (click)="zoomin()" aria-hidden="true" title="Zoom in"></i>
+            <i id="zoomOUT" class="fa fa-search-minus btnsize" (click)="zoomout()" aria-hidden="true" title="Zoom out"></i>
         </span>
         <span [class.disabled]="!nurseMobNo" id="whatsappBtn"> <a [class.disabled]="!nurseMobNo" class="fab fa-whatsapp btnsize" href="{{share('whatsapp')}}" target="_blank"></a>&nbsp;</span>
         <span id="printPageButton"><i class="fa fa-print btnsize" (click)="print()"></i>&nbsp;</span>
@@ -455,7 +455,7 @@
             </tr>
             <tr id="save" style="height: 20px;">
                 <td *ngFor="let t of filteredStage1, let i=index">
-                    <button *ngIf="t.time !== null"
+                    <button id="submit" *ngIf="t.time !== null"
                         [class.disabled]="(filteredStage1[i]?.time < filteredStage1[i+1]?.time || filteredStage2Col[0]?.time !== null)"
                         (click)="submit(t.uuid)" class="btn-primary shadow-none"><i class="fa fa-plus"></i>
                     </button>
@@ -470,7 +470,7 @@
             </tr>
             <tr style="height: 20px;">
                 <td colspan="2" *ngFor="let t of filteredStage2Col, let i=index">
-                    <button *ngIf="t.time !== null"
+                    <button id="submit" *ngIf="t.time !== null"
                         [class.disabled]="(filteredStage2Col[i]?.time < filteredStage2Col[i+1]?.time || isVisitEnded)"
                         (click)="submit(t.uuid)" class="btn-primary shadow-none"><i class="fa fa-plus"></i>
                     </button>
