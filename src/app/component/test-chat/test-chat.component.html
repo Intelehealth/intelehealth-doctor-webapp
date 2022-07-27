@@ -4,7 +4,7 @@
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">Patient Id</span>
     </div>
-    <input [(ngModel)]="data.patientId" type="text" class="form-control" />
+    <input id="form-control-patientId" [(ngModel)]="data.patientId" type="text" class="form-control" />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
@@ -12,28 +12,29 @@
         >From User Id</span
       >
     </div>
-    <input [(ngModel)]="data.from" type="text" class="form-control" />
+    <input id="form-control-patientId" [(ngModel)]="data.from" type="text" class="form-control" />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">To User Id</span>
     </div>
-    <input [(ngModel)]="data.to" type="text" class="form-control" />
+    <input id="form-control-patientId" [(ngModel)]="data.to" type="text" class="form-control" />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">Connect to Dr id</span>
     </div>
-    <input [(ngModel)]="data.connectToDrId" type="text" class="form-control" />
+    <input id="form-control-patientId" [(ngModel)]="data.connectToDrId" type="text" class="form-control" />
   </div>
   <button
+    id="update-messages"
     class="btn btn-primary m-2"
     (click)="updateMessages(); reInitSocket()"
   >
     Get Messages
   </button>
 
-  <button class="btn btn-primary m-2" (click)="callDoctor()">
+  <button id="call-doctor" class="btn btn-primary m-2" (click)="callDoctor()">
     Call Doctor for patientId
   </button>
 </div>
@@ -91,9 +92,9 @@
   <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
 </div>
 <div [class.active]="classFlag" class="card container col-md-6">
-  <div class="card-header" (click)="chatClose()">
+  <div id="chat-close-patientId" class="card-header" (click)="chatClose()">
     <h6>Chat</h6>
-    <i class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
+    <i id="chat-close-patientId" class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
   </div>
   <div #chatBox class="chat-box card-body">
     <div
@@ -122,6 +123,7 @@
   <div class="message-form card-footer">
     <div class="input-group mb-3">
       <input
+        id="message"
         #chatInput
         type="text"
         class="form-control"
@@ -133,6 +135,7 @@
       />
       <div class="input-group-append">
         <button
+          id="send-message"
           class="btn btn-primary btn-pill"
           type="submit"
           (click)="sendMessage($event)"
