@@ -7,4 +7,11 @@
 .add {
   font-size: 32px;
   top: 10px;
+  cursor: pointer;
+  color: #3f51b5;
+}
+
+.disabled {
+  color: lightgray;
+  cursor: not-allowed;
 }

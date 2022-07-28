@@ -56,61 +56,57 @@ export class PrescribedMedicationComponent implements OnInit {
   // conceptfrequency = [];
   // conceptAdministration = [];
   // conceptDurationUnit = [];
-  earlyMorning = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  prescTypes = [
+    { label: 'Early Morning', key: 'earlyMorning' },
+    { label: 'Breakfast', key: 'breakfast' },
+    { label: 'Mid Morning', key: 'midMorning' },
+    { label: 'Lunch', key: 'lunch' },
+    { label: 'Evening Snack', key: 'eveningSnack' },
+    { label: 'Dinner', key: 'dinner' },
+    { label: 'Bed Time', key: 'bedTime' }
+  ];
 
-  breakfast = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  earlyMorning = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
-  midMorning = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  breakfast = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
-  lunch = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  midMorning = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
-  eveningSnack = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  lunch = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
-  dinner = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  eveningSnack = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
-  bedTime = [
-    {
-      value: '',
-      unit: '',
-      qty: ''
-    }
-  ]
+  dinner = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
+
+  bedTime = {
+    value: '',
+    unit: '',
+    qty: ''
+  }
 
   conceptMed = "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca";
 
@@ -362,45 +358,12 @@ export class PrescribedMedicationComponent implements OnInit {
   //   }
   // }
 
-  get isInvalid() {
-    return !(this.earlyMorning || this.breakfast || this.midMorning || this.lunch || this.eveningSnack || this.dinner || this.bedTime);
+  invalid(opt) {
+    return opt.value && opt.unit && opt.qty ? false : true;
   }
 
-  submit() {
+  submit(value) {
     if (this.diagnosisService.isSameDoctor()) {
-
-      const prescTypes = [
-        { label: 'Early Morning', key: 'earlyMorning' },
-        { label: 'Breakfast', key: 'breakfast' },
-        { label: 'Mid Morning', key: 'midMorning' },
-        { label: 'Lunch', key: 'lunch' },
-        { label: 'Evening Snack', key: 'eveningSnack' },
-        { label: 'Dinner', key: 'dinner' },
-        { label: 'Bed Time', key: 'bedTime' }
-      ]
-      let value = {
-        en: {},
-        hi: {}
-      };
-      prescTypes.forEach((type) => {
-        if (Array.isArray(this[type.key])) {
-          this[type.key].filter(opt => opt.value).forEach(opt => {
-            if (!value.en[type.label]) value.en[type.label] = [];
-            if (!value.hi[type.label]) value.hi[type.label] = [];
-
-            let [enVal, hiVal] = opt.value.split(',');
-
-            if (!enVal) enVal = ''
-            if (!hiVal) hiVal = ''
-
-            enVal = enVal.trim();
-            hiVal = hiVal.trim();
-
-            value.en[type.label].push({ value: enVal, unit: opt.unit, qty: opt.qty });
-            value.hi[type.label].push({ value: hiVal, unit: opt.unit, qty: opt.qty });
-          });
-        }
-      });
       const json = {
         concept: this.conceptMed,
         person: this.patientId,
@@ -411,7 +374,7 @@ export class PrescribedMedicationComponent implements OnInit {
       this.service.postObs(json).subscribe((response) => {
         this.isDataPresent.emit(true);
         this.meds.push({ uuid: response.uuid, value });
-        this.setToHindi();
+        // this.setToHindi();
         this.clearFields();
       });
     }
@@ -443,21 +406,25 @@ export class PrescribedMedicationComponent implements OnInit {
     }
   }
 
-  add(optArr) {
-    optArr.unshift({
-      value: '',
-      qty: '',
-      unit: ''
-    })
+  add(opt, type) {
+    if (!this.invalid(opt)) {
+      const value = `${type}: ${opt.value}, ${opt.qty || ''} ${opt.unit || ''}`
+      this.submit(value);
+    }
+    // optArr.unshift({
+    //   value: '',
+    //   qty: '',
+    //   unit: ''
+    // })
   }
 
   clearFields() {
-    this.earlyMorning = [{ value: '', qty: '', unit: '' }];
-    this.breakfast = [{ value: '', qty: '', unit: '' }];
-    this.midMorning = [{ value: '', qty: '', unit: '' }];
-    this.lunch = [{ value: '', qty: '', unit: '' }];
-    this.eveningSnack = [{ value: '', qty: '', unit: '' }];
-    this.dinner = [{ value: '', qty: '', unit: '' }];
-    this.bedTime = [{ value: '', qty: '', unit: '' }];
+    this.earlyMorning = { value: '', qty: '', unit: '' };
+    this.breakfast = { value: '', qty: '', unit: '' };
+    this.midMorning = { value: '', qty: '', unit: '' };
+    this.lunch = { value: '', qty: '', unit: '' };
+    this.eveningSnack = { value: '', qty: '', unit: '' };
+    this.dinner = { value: '', qty: '', unit: '' };
+    this.bedTime = { value: '', qty: '', unit: '' };
   }
 }
