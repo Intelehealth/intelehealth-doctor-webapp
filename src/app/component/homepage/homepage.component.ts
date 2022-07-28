@@ -178,18 +178,18 @@ export class HomepageComponent implements OnInit {
     if (this.checkVisit(encounters, "Patient Exit Survey") ||
       this.checkVisit(encounters, "Visit Complete") ||
       active.stopDatetime != null) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active,"Visit Complete");
       this.completedVisit.push(values);
       this.completeVisitNo += 1;
       this.getFollowUpVisits(active);
     } else if (this.checkVisit(encounters, "Visit Note") &&
       active.stopDatetime == null) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active, "Visit Note");
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
     } else if (this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active);
+        const values = this.assignValueToProperty(active,"Flagged");
         this.flagVisit.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
@@ -199,7 +199,7 @@ export class HomepageComponent implements OnInit {
       this.checkVisit(encounters, "Vitals") &&
       active.stopDatetime == null
     ) {
-      const values = this.assignValueToProperty(active);
+      const values = this.assignValueToProperty(active,"ADULTINITIAL");
       this.waitingVisit.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
@@ -267,7 +267,7 @@ export class HomepageComponent implements OnInit {
    * @param visitObject Object
    * @returns Object
    */
-  assignValueToProperty(active) {
+  assignValueToProperty(active, status?) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -276,10 +276,7 @@ export class HomepageComponent implements OnInit {
     this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
     this.value.age = active.patient.person.age;
     this.value.location = active.patient.person.preferredAddress.stateProvince;
-    this.value.status =
-    active.stopDatetime != null
-      ? "Visit Complete"
-      : active.encounters[0]?.encounterType.display;
+    this.value.status = status;
     this.value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split(
       "- "
     )[1];
