@@ -5,12 +5,12 @@
 </h4>
 <hr />
 <div>
-  <div>
+  <div *ngFor="let eMorning of earlyMorning; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Early Morning"
-        [(ngModel)]="earlyMorning.value"
+        [(ngModel)]="eMorning.value"
         [ngbTypeahead]="searchEarlyMorning"
       />
     </mat-form-field>
@@ -18,27 +18,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="earlyMorning.qty"
+        [(ngModel)]="eMorning.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="earlyMorning.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="eMorning.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(earlyMorning, 'Early Morning')"
-      [class.disabled]="invalid(earlyMorning)"
+      [class.disabled]="invalid(eMorning)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let bfast of breakfast; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Breakfast"
-        [(ngModel)]="breakfast.value"
+        [(ngModel)]="bfast.value"
         [ngbTypeahead]="searchBreakfast"
       />
     </mat-form-field>
@@ -46,27 +49,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="breakfast.qty"
+        [(ngModel)]="bfast.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="breakfast.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="bfast.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(breakfast, 'Breakfast')"
-      [class.disabled]="invalid(breakfast)"
+      [class.disabled]="invalid(bfast)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let mMorning of midMorning; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Mid Morning"
-        [(ngModel)]="midMorning.value"
+        [(ngModel)]="mMorning.value"
         [ngbTypeahead]="searchMidMorning"
       />
     </mat-form-field>
@@ -74,27 +80,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="midMorning.qty"
+        [(ngModel)]="mMorning.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="midMorning.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="mMorning.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(midMorning, 'Mid Morning')"
-      [class.disabled]="invalid(midMorning)"
+      [class.disabled]="invalid(mMorning)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let lnch of lunch; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Lunch"
-        [(ngModel)]="lunch.value"
+        [(ngModel)]="lnch.value"
         [ngbTypeahead]="searchLunch"
       />
     </mat-form-field>
@@ -102,27 +111,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="lunch.qty"
+        [(ngModel)]="lnch.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="lunch.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="lnch.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(lunch, 'Lunch')"
-      [class.disabled]="invalid(lunch)"
+      [class.disabled]="invalid(lnch)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let eSnack of eveningSnack; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Evening Snack"
-        [(ngModel)]="eveningSnack.value"
+        [(ngModel)]="eSnack.value"
         [ngbTypeahead]="searchEveningSnack"
       />
     </mat-form-field>
@@ -130,27 +142,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="eveningSnack.qty"
+        [(ngModel)]="eSnack.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="eveningSnack.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="eSnack.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(eveningSnack, 'Evening Snack')"
-      [class.disabled]="invalid(eveningSnack)"
+      [class.disabled]="invalid(eSnack)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let dinr of dinner; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Dinner"
-        [(ngModel)]="dinner.value"
+        [(ngModel)]="dinr.value"
         [ngbTypeahead]="searchDinner"
       />
     </mat-form-field>
@@ -158,27 +173,30 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="dinner.qty"
+        [(ngModel)]="dinr.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="dinner.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="dinr.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(dinner, 'Dinner')"
       class="col-1 add"
-      [class.disabled]="invalid(dinner)"
+      [class.disabled]="invalid(dinr)"
       >add_circle</mat-icon
     >
   </div>
 
-  <div>
+  <div *ngFor="let bdTime of bedTime; index as i">
     <mat-form-field class="w-100 col-7" id="medication-form">
       <input
         matInput
         placeholder="Bed Time"
-        [(ngModel)]="bedTime.value"
+        [(ngModel)]="bdTime.value"
         [ngbTypeahead]="searchBedTime"
       />
     </mat-form-field>
@@ -186,30 +204,33 @@
       <input
         matInput
         type="number"
+        min="1"
+        oninput="this.value = Math.abs(this.value)"
         placeholder="Quantity"
-        [(ngModel)]="bedTime.qty"
+        [(ngModel)]="bdTime.qty"
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="bedTime.unit" />
+      <input matInput placeholder="Unit" [(ngModel)]="bdTime.unit" />
     </mat-form-field>
     <mat-icon
+      *ngIf="i === 0"
       (click)="add(bedTime, 'Bed Time')"
-      [class.disabled]="invalid(bedTime)"
+      [class.disabled]="invalid(bdTime)"
       class="col-1 add"
       >add_circle</mat-icon
     >
   </div>
 
-  <!-- <button
+  <button
+    [disabled]="!isInvalid"
     type="reset"
     (click)="submit()"
     mat-raised-button
     color="primary"
-    [disabled]="isInvalid"
   >
     Add Prescription
-  </button> -->
+  </button>
 </div>
 
 <!-- <div>
@@ -221,7 +242,9 @@
     <div *ngIf="add">
       <div class="form-row">
         <div class="col">
-          <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control"
+          <input type="number"
+          min="1"
+          oninput="this.value = Math.abs(this.value)" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control"
             placeholder="Strength" formControlName="dose">
         </div>
         <div class="col">
@@ -229,7 +252,9 @@
             formControlName="unit">
         </div>
         <div class="col">
-          <input type="number" min="1" class="form-control" placeholder="Amount" formControlName="amount">
+          <input type="number"
+          min="1"
+          oninput="this.value = Math.abs(this.value)" min="1" class="form-control" placeholder="Amount" formControlName="amount">
         </div>
         <div class="col">
           <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: Tab/Syrup/etc.)"
@@ -250,7 +275,9 @@
         <div class="col">
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">For</span>
-            <input type="number" min="1" class="form-control" placeholder="Duration" formControlName="duration">
+            <input type="number"
+            min="1"
+            oninput="this.value = Math.abs(this.value)" min="1" class="form-control" placeholder="Duration" formControlName="duration">
           </div>
         </div>
         <div class="col">
@@ -283,7 +310,7 @@
       class="alert alert-primary"
     >
       <div class="doctor-value" style="white-space: pre-line">
-        {{ meds.value }}
+        {{ meds.value }}{{ meds.uuid }}
       </div>
       <i
         (click)="delete(i)"
