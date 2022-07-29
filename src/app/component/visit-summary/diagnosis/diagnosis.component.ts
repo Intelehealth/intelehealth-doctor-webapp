@@ -93,7 +93,7 @@ export class DiagnosisComponent implements OnInit {
     const value = this.diagnosisForm.value;
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptDiagnosis,
@@ -108,10 +108,6 @@ export class DiagnosisComponent implements OnInit {
         this.diagnosis.push({ uuid: resp.uuid, value: json.value });
         this.checkDiagnosis();
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
@@ -125,10 +121,12 @@ export class DiagnosisComponent implements OnInit {
   }
 
   delete(i) {
-    const uuid = this.diagnosis[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.diagnosis.splice(i, 1);
-      this.checkDiagnosis();
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.diagnosis[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.diagnosis.splice(i, 1);
+        this.checkDiagnosis();
+      });
+    }
   }
 }

@@ -225,7 +225,7 @@ export class VisitSummaryComponent implements OnInit {
       this.doctorDetails = providerDetails;
       this.getDoctorValue();
       const providerUuid = providerDetails.uuid;
-      if (providerUuid === getEncounterProviderUUID()) {
+      if (this.diagnosisService.isSameDoctor()) {
         this.service.signRequest(providerUuid).subscribe((res) => {
           if (res.results.length) {
             res.results.forEach((element) => {
@@ -267,10 +267,6 @@ export class VisitSummaryComponent implements OnInit {
               this.router.navigateByUrl("/myAccount");
             }
           }
-        });
-      } else {
-        this.snackbar.open("Another doctor is viewing this case", null, {
-          duration: 4000,
         });
       }
     } else {

@@ -60,7 +60,7 @@ export class AdditionalCommentComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
@@ -82,7 +82,7 @@ export class AdditionalCommentComponent implements OnInit {
     const value = form.comment;
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptComment,
@@ -95,17 +95,15 @@ export class AdditionalCommentComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = true;
         this.comment.push({ uuid: resp.uuid, value: value });
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.comment[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.comment.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.comment[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.comment.splice(i, 1);
+      });
+    }
   }
 }

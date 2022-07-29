@@ -64,7 +64,7 @@ export class PrescribedTestComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private snackbar: MatSnackBar,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -74,8 +74,8 @@ export class PrescribedTestComponent implements OnInit {
         term.length < 1
           ? []
           : this.test
-              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
-              .slice(0, 10)
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
       )
     );
 
@@ -106,7 +106,7 @@ export class PrescribedTestComponent implements OnInit {
     const value = form.test;
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptTest,
@@ -119,17 +119,15 @@ export class PrescribedTestComponent implements OnInit {
         this.diagnosisService.isVisitSummaryChanged = true;
         this.tests.push({ uuid: resp.uuid, value: value });
       });
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
-    const uuid = this.tests[i].uuid;
-    this.diagnosisService.deleteObs(uuid).subscribe((res) => {
-      this.tests.splice(i, 1);
-    });
+    if (this.diagnosisService.isSameDoctor()) {
+      const uuid = this.tests[i].uuid;
+      this.diagnosisService.deleteObs(uuid).subscribe((res) => {
+        this.tests.splice(i, 1);
+      });
+    }
   }
 }

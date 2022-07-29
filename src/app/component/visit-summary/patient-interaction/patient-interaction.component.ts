@@ -131,7 +131,7 @@ export class PatientInteractionComponent implements OnInit {
     const value = formValue.interaction;
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
+    if (this.diagnosisService.isSameDoctor()) {
       this.visitService.getAttribute(visitId).subscribe((response) => {
         const result = response.results;
         if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
@@ -182,14 +182,11 @@ export class PatientInteractionComponent implements OnInit {
           });
         }
       }
-    } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
     }
   }
 
   delete(i) {
+    if (this.diagnosisService.isSameDoctor()) {
     const visitId = this.route.snapshot.params["visit_id"];
     this.visitService.deleteAttribute(visitId, i).subscribe((res) => {
       this.msg = [];
@@ -200,4 +197,5 @@ export class PatientInteractionComponent implements OnInit {
       });
     }
   }
+ }
 }
