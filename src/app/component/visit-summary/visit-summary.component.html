@@ -91,19 +91,19 @@ require by speaking with the patient directly.  -->
         </mat-card>
         <br>
         <mat-card>
-          <app-diagnosis (isDataPresent)="getIsDataPresent($event)"></app-diagnosis>
+              <app-diagnosis (isDataPresent)="getIsDataPresent($event)"></app-diagnosis>
         </mat-card>
         <br>
+        <mat-card>
+            <app-food-allergy></app-food-allergy>
+        </mat-card>
+        <br>  
         <mat-card>
               <app-prescribed-medication (isDataPresent)="getIsDataPresent($event)"></app-prescribed-medication>
         </mat-card>
         <br>
         <mat-card>
               <app-prescribed-test (isDataPresent)="getIsDataPresent($event)"></app-prescribed-test>
-        </mat-card>
-        <br>
-        <mat-card>
-          <app-food-allergy></app-food-allergy>
         </mat-card>
         <br>
         <mat-card>
