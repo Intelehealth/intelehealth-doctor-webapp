@@ -15,3 +15,10 @@
   color: lightgray;
   cursor: not-allowed;
 }
+
+.remove{
+  font-size: 32px;
+  top: 10px;
+  cursor: pointer;
+  color: red;
+}

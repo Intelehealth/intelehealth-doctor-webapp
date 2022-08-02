@@ -34,6 +34,12 @@
       class="col-1 add"
       >add_circle</mat-icon
     >
+    <mat-icon
+      *ngIf="i != 0"
+      (click)="remove(earlyMorning, i)"
+      class="col-1 remove"
+      >clear</mat-icon
+    >
   </div>
 
   <div *ngFor="let bfast of breakfast; index as i">
@@ -64,6 +70,9 @@
       [class.disabled]="invalid(bfast)"
       class="col-1 add"
       >add_circle</mat-icon
+    >
+    <mat-icon *ngIf="i != 0" (click)="remove(breakfast, i)" class="col-1 remove"
+      >clear</mat-icon
     >
   </div>
 
@@ -96,6 +105,12 @@
       class="col-1 add"
       >add_circle</mat-icon
     >
+    <mat-icon
+      *ngIf="i != 0"
+      (click)="remove(midMorning, i)"
+      class="col-1 remove"
+      >clear</mat-icon
+    >
   </div>
 
   <div *ngFor="let lnch of lunch; index as i">
@@ -126,6 +141,9 @@
       [class.disabled]="invalid(lnch)"
       class="col-1 add"
       >add_circle</mat-icon
+    >
+    <mat-icon *ngIf="i != 0" (click)="remove(lunch, i)" class="col-1 remove"
+      >clear</mat-icon
     >
   </div>
 
@@ -158,6 +176,12 @@
       class="col-1 add"
       >add_circle</mat-icon
     >
+    <mat-icon
+      *ngIf="i != 0"
+      (click)="remove(eveningSnack, i)"
+      class="col-1 remove"
+      >clear</mat-icon
+    >
   </div>
 
   <div *ngFor="let dinr of dinner; index as i">
@@ -189,6 +213,9 @@
       [class.disabled]="invalid(dinr)"
       >add_circle</mat-icon
     >
+    <mat-icon *ngIf="i != 0" (click)="remove(dinner, i)" class="col-1 remove"
+      >clear</mat-icon
+    >
   </div>
 
   <div *ngFor="let bdTime of bedTime; index as i">
@@ -219,6 +246,9 @@
       [class.disabled]="invalid(bdTime)"
       class="col-1 add"
       >add_circle</mat-icon
+    >
+    <mat-icon *ngIf="i != 0" (click)="remove(bedTime, i)" class="col-1 remove"
+      >clear</mat-icon
     >
   </div>
 

@@ -57,13 +57,13 @@ export class PrescribedMedicationComponent implements OnInit {
   // conceptAdministration = [];
   // conceptDurationUnit = [];
   prescTypes = [
-    { label: 'Early Morning', hiLabel: 'बहुत सवेरे', key: 'earlyMorning' },
-    { label: 'Breakfast', hiLabel: 'नाश्ता', key: 'breakfast' },
-    { label: 'Mid Morning', hiLabel: 'सुबह के दौरान', key: 'midMorning' },
-    { label: 'Lunch', hiLabel: 'दिन का खाना', key: 'lunch' },
-    { label: 'Evening Snack', hiLabel: 'शाम का नाश्ता', key: 'eveningSnack' },
-    { label: 'Dinner', hiLabel: 'रात का खाना', key: 'dinner' },
-    { label: 'Bed Time', hiLabel: 'सोने के समय', key: 'bedTime' }
+    { label: 'Early Morning', hiLabel: 'बहुत सवेरे', key: 'earlyMorning', sortId: 1 },
+    { label: 'Breakfast', hiLabel: 'नाश्ता', key: 'breakfast', sortId: 2 },
+    { label: 'Mid Morning', hiLabel: 'सुबह के दौरान', key: 'midMorning', sortId: 3 },
+    { label: 'Lunch', hiLabel: 'दिन का खाना', key: 'lunch', sortId: 4 },
+    { label: 'Evening Snack', hiLabel: 'शाम का नाश्ता', key: 'eveningSnack', sortId: 5 },
+    { label: 'Dinner', hiLabel: 'रात का खाना', key: 'dinner', sortId: 6 },
+    { label: 'Bed Time', hiLabel: 'सोने के समय', key: 'bedTime', sortId: 7 }
   ];
 
   earlyMorning = [{
@@ -424,6 +424,7 @@ export class PrescribedMedicationComponent implements OnInit {
     let meds = [];
     this.meds.forEach((med) => {
       const data = this.parse(med.value);
+      const sortId = this.prescTypes.find(pt => pt.label === data.en.meal_type).sortId;
       if (data instanceof Object) {
 
         let value = `${data.en.meal_type}(${data.hi.meal_type}) :\n`;
@@ -434,12 +435,13 @@ export class PrescribedMedicationComponent implements OnInit {
           value += `${idx + 1}. ${enData.value}${val} - ${enData.qty || ''} ${enData.unit || ''}\n`
 
         });
-        meds.unshift({ value, uuid: med.uuid });
+        meds.unshift({ value, uuid: med.uuid, sortId });
 
       } else {
-        meds.unshift({ value: data, uuid: med.uuid });
+        meds.unshift({ value: data, uuid: med.uuid, sortId });
       }
     });
+    meds = meds.sort((a, b) => a.sortId - b.sortId).map(({ sortId, ...rest }) => rest);
     this.meds = meds;
   }
 
@@ -460,11 +462,13 @@ export class PrescribedMedicationComponent implements OnInit {
     //   const value = `${type}: ${opt.value}, ${opt.qty || ''} ${opt.unit || ''}`
     //   this.submit(value);
     // }
-    optArr.unshift({
-      value: '',
-      qty: '',
-      unit: ''
-    })
+    if (!this.invalid(optArr[0])) {
+      optArr.unshift({
+        value: '',
+        qty: '',
+        unit: ''
+      })
+    }
   }
 
   clearFields(key) {
@@ -476,5 +480,9 @@ export class PrescribedMedicationComponent implements OnInit {
     // this.eveningSnack = [{ value: '', qty: '', unit: '' }];
     // this.dinner = [{ value: '', qty: '', unit: '' }];
     // this.bedTime = [{ value: '', qty: '', unit: '' }];
+  }
+
+  remove(arr, i) {
+    arr.splice(i, 1);
   }
 }
