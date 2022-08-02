@@ -424,7 +424,7 @@ export class PrescribedMedicationComponent implements OnInit {
     let meds = [];
     this.meds.forEach((med) => {
       const data = this.parse(med.value);
-      const sortId = this.prescTypes.find(pt => pt.label === data.en.meal_type).sortId;
+      const sortId = this.prescTypes.find(pt => pt.label === data?.en?.meal_type)?.sortId;
       if (data instanceof Object) {
 
         let value = `${data.en.meal_type}(${data.hi.meal_type}) :\n`;
