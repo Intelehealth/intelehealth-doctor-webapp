@@ -82,6 +82,7 @@ import { RedirectComponent } from "./component/redirect/redirect.component";
 import { DietTypeComponent } from './component/diet-type/diet-type.component';
 import { WeightHistoryComponent } from './component/weight-history/weight-history.component';
 import { FoodAllergyComponent } from './component/food-allergy/food-allergy.component';
+import { DietPrescriptionComponent } from './component/diet-prescription/diet-prescription.component';
 
 
 
@@ -127,7 +128,8 @@ import { FoodAllergyComponent } from './component/food-allergy/food-allergy.comp
     RedirectComponent,
     DietTypeComponent,
     WeightHistoryComponent,
-    FoodAllergyComponent
+    FoodAllergyComponent,
+    DietPrescriptionComponent
   ],
 
   imports: [
