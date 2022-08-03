@@ -66,6 +66,16 @@ export class PrescribedMedicationComponent implements OnInit {
     { label: 'Bed Time', hiLabel: 'सोने के समय', key: 'bedTime', sortId: 7 }
   ];
 
+  units = [
+    'tablespoon',
+    'grams',
+    'ml',
+    'small cup',
+    'small bowl',
+    'big bowl',
+    'glass'
+  ]
+
   earlyMorning = [{
     value: '',
     unit: '',
@@ -129,6 +139,19 @@ export class PrescribedMedicationComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute
   ) { }
+
+  searchUnits = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term) =>
+        term.length < 1
+          ? []
+          : this.units
+            .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+            .slice(0, 10)
+      )
+    );
 
   searchEarlyMorning = (text$: Observable<string>) =>
     text$.pipe(

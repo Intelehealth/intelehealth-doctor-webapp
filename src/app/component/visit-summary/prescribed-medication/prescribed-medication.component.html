@@ -25,7 +25,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="eMorning.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="eMorning.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -62,7 +68,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="bfast.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="bfast.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -96,7 +108,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="mMorning.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="mMorning.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -133,7 +151,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="lnch.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="lnch.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -167,7 +191,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="eSnack.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="eSnack.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -204,7 +234,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="dinr.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="dinr.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"
@@ -238,7 +274,13 @@
       />
     </mat-form-field>
     <mat-form-field class="w-100 col-2" id="medication-form">
-      <input matInput placeholder="Unit" [(ngModel)]="bdTime.unit" />
+      <input
+        matInput
+        appSpecialIsAlphaNumeric
+        [ngbTypeahead]="searchUnits"
+        placeholder="Unit"
+        [(ngModel)]="bdTime.unit"
+      />
     </mat-form-field>
     <mat-icon
       *ngIf="i === 0"

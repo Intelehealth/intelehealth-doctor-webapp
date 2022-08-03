@@ -83,6 +83,7 @@ import { DietTypeComponent } from './component/diet-type/diet-type.component';
 import { WeightHistoryComponent } from './component/weight-history/weight-history.component';
 import { FoodAllergyComponent } from './component/food-allergy/food-allergy.component';
 import { DietPrescriptionComponent } from './component/diet-prescription/diet-prescription.component';
+import { SpecialIsAlphaNumericDirective } from './directives/special-is-alpha-numeric.directive';
 
 
 
@@ -129,7 +130,8 @@ import { DietPrescriptionComponent } from './component/diet-prescription/diet-pr
     DietTypeComponent,
     WeightHistoryComponent,
     FoodAllergyComponent,
-    DietPrescriptionComponent
+    DietPrescriptionComponent,
+    SpecialIsAlphaNumericDirective
   ],
 
   imports: [
