@@ -5,7 +5,7 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 })
 export class SpecialIsAlphaNumericDirective {
 
-  regexStr = '^[a-zA-Z]*$';
+  regexStr = '^[a-zA-Z0-9 ]*$';
   @Input() isAlphaNumeric: boolean;
 
   constructor(private el: ElementRef) { }
