@@ -3,8 +3,8 @@
     border: 1px solid #cdd3e2;
     box-shadow: 0px 0px 1px #ccc;
     border-radius: 4px;
-  }
-  
+}
+
 .view {
     background-color: white;
     border: 2px solid gray;
@@ -31,10 +31,10 @@
 }
 
 .textS {
-  text-transform: uppercase;
-  font-size: 12px;
-  margin: -37px;
-  } 
+    text-transform: uppercase;
+    font-size: 12px;
+    margin: -37px;
+}
 
 .container2 {
     width: 68%;
@@ -316,7 +316,7 @@ td {
 }
 
 .red1 {
-    color: red;    
+    color: red;
 }
 
 .yellow1 {
@@ -345,7 +345,8 @@ td {
     pointer-events: none;
     cursor: default;
     color: gray;
-  }
+}
+
 @media screen and (max-width: 800px) {
     .tab-res {
         font-size: 10px;
@@ -400,19 +401,27 @@ td {
     #tb7 {
         height: 140px;
     }
-    #tb8{
+
+    #tb8 {
         height: 73px;
     }
+
     #tb14 {
         height: 90px;
     }
+
     #tb13 {
         height: 90px;
     }
 }
 
-.disabled{
+.disabled {
     pointer-events: none;
     color: grey;
     cursor: not-allowed;
+}
+
+.f8 {
+    font-size: 8px;
+    padding: 1px;
 }

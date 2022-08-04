@@ -24,7 +24,7 @@ export class TablesComponent implements OnInit {
     "status",
     "stage",
     "notes",
-    "overdue",
+    // "overdue",
     "provider",
     // "lastSeen",
   ];

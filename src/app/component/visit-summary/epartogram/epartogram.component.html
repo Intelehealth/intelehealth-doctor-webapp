@@ -189,14 +189,15 @@
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
                     <span
-                        [ngClass]="{'red1': t.baselineFHR?.colorFlag === 'R', 'yellow1' : t.baselineFHR?.colorFlag === 'Y'}"
-                        class="alignTitle" *ngIf="t.baselineFHR !== null;else no_Data"> {{ t.baselineFHR.value }}</span>
+                        [ngClass]="{'red': t.baselineFHR?.colorFlag === 'R', 'yellow' : t.baselineFHR?.colorFlag === 'Y'}"
+                        class="alignTitle f8" *ngIf="t.baselineFHR !== null;else no_Data"> {{ t.baselineFHR.value }}</span>
                 </td>
             </tr>
             <tr>
                 <td class="text-color" *ngFor="let t of stage2Data">
-                    <span
-                        [ngClass]="{'red1': t.fhrDeceleration?.colorFlag === 'R', 'yellow1' : t.fhrDeceleration?.colorFlag === 'Y'}"
+                    <span 
+                        class="f8"
+                        [ngClass]="{'red': t.fhrDeceleration?.colorFlag === 'R', 'yellow' : t.fhrDeceleration?.colorFlag === 'Y'}"
                         *ngIf="t.fhrDeceleration !== null;else no_Data">{{t.fhrDeceleration.value}}</span>
                 </td>
             </tr>
@@ -306,12 +307,14 @@
                 <td class="text-color" *ngFor="let t of stage2Data">
                     <ng-container *ngIf="i === 0">
                         <span
-                            [ngClass]="{'red1': t.contractions?.colorFlag === 'R', 'yellow1' : t.contractions?.colorFlag === 'Y'}"
+                            class="f8"
+                            [ngClass]="{'red': t.contractions?.colorFlag === 'R', 'yellow' : t.contractions?.colorFlag === 'Y'}"
                             *ngIf="t.contractions !== null; else no_Data">{{ t.contractions.value }}</span>
                     </ng-container>
                     <ng-container *ngIf="i===1">
                         <span
-                            [ngClass]="{'red1': t.durationOfContraction?.colorFlag === 'R', 'yellow1' : t.durationOfContraction?.colorFlag === 'Y'}"
+                            class="f8"
+                            [ngClass]="{'red': t.durationOfContraction?.colorFlag === 'R', 'yellow' : t.durationOfContraction?.colorFlag === 'Y'}"
                             *ngIf="t.durationOfContraction?.value !== null; else no_Data">{{ t.durationOfContraction?.value }}</span>
                     </ng-container>
                 </td>

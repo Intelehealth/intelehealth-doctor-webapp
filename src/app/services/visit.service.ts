@@ -29,7 +29,7 @@ export class VisitService {
     var header = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
-        'Authorization': 'Basic ' + btoa('admin:IHUser#1')
+        'Authorization': 'Basic c3lzbnVyc2U6SUhOdXJzZSMx'
       })
     }
     const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate,attributes:(value,attributeType:(display)))),location:(display),encounters:(uuid,display,obs:(display,uuid,value,comment),encounterDatetime,voided,encounterType:(display),encounterProviders:(display,provider:(uuid,attributes))),attributes)`;
