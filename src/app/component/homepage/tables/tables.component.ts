@@ -31,6 +31,9 @@ export class TablesComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    if(this.isFollowup) {
+      this.displayColumns.push("date");
+    }
   }
 
   /**

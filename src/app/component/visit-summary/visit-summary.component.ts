@@ -260,7 +260,7 @@ export class VisitSummaryComponent implements OnInit {
             if (this.isFollowUpComplaint) {
               this.sendSms(); 
              } else {
-              this.updateVisit();
+              //this.updateVisit();
             } 
           } else {
             if (
