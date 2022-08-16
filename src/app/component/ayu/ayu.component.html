@@ -1,4 +1,5 @@
 <div class="container">
+  <mat-spinner *ngIf="setSpiner" [diameter]="50"></mat-spinner>
   <mat-card>
     <div class="upload">
       <div><b>{{ 'Select licence Key' | translate}}: </b> &nbsp;&nbsp;
@@ -29,7 +30,7 @@
           <input matInput (keyup)="applyFilter($event.target.value)" placeholder="{{'Search'|translate}}">
         </mat-form-field>
         
-        <div class="mat-elevation-z8">
+        <div class="mat-elevation-z8" [ngClass]="setSpiner ? 'spin' : ''">
           <table class="table-responsive" mat-table [dataSource]="dataSource" #sortCol4="matSort" matSort>
         
             <!-- ID Column -->

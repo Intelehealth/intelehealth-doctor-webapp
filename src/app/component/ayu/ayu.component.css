@@ -46,3 +46,17 @@ table {
     text-align: center;
      margin-top: 10px;
 }
+
+
+mat-spinner {
+    position: absolute;
+    z-index: 9999;
+    left: 47%;
+    top: 50%;
+  }
+  
+  .spin {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+  }
+  

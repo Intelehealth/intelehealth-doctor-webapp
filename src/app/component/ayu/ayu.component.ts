@@ -28,6 +28,7 @@ export class AyuComponent implements OnInit {
   newExpiryDate: string;
   expiryDate: string;
   isImageError:boolean= false;
+  setSpiner = false;
 
   constructor(
     private mindmapService: MindmapService,
@@ -40,9 +41,11 @@ export class AyuComponent implements OnInit {
   }
 
   fetchMindmap(): void {
+    this.setSpiner = true;
     this.mindmapService.getMindmapKey().subscribe(
       (response) => {
         this.mindmaps = response.data;
+        this.setSpiner = false;
       },
       (err) => {
         const message = err?.error?.message || err?.message || "Something went wrong";
@@ -104,6 +107,7 @@ export class AyuComponent implements OnInit {
   }
 
   licenceKeyHandler(): void {
+    this.setSpiner = true;
     this.mindmapService.detailsMindmap(this.selectedKey).subscribe(
       (response) => {
         this.mindmapData = response.data;
@@ -115,6 +119,7 @@ export class AyuComponent implements OnInit {
         );
         this.expiryDate = expiry;
         this.image = imageValue;
+        this.setSpiner = false;
       },
       (err) => {
         this.translationService.getTranslation('somethingWentWrong');
