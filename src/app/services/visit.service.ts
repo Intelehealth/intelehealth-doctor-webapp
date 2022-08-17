@@ -9,7 +9,7 @@ import { environment } from "../../environments/environment";
 export class VisitService {
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
@@ -60,8 +60,12 @@ export class VisitService {
 
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage,stateProvince),attributes:(value,attributeType:(display))))`;
     return this.http.get(url);
+  }
+
+  getLocations() {
+    return this.http.get(`${environment.mindmapURL}/openmrs/getLocations`);
   }
 
   getVisitCounts(speciality) {
@@ -69,7 +73,7 @@ export class VisitService {
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
     );
   }
-  
+
   getDoctorsVisit() {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getDoctorVisits`

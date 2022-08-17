@@ -17,7 +17,7 @@ export class PatientinfoComponent implements OnInit {
   image: string;
   patientInfo = [];
   patientIdentifier: string;
-  info = {};
+  info: any = {};
   profileImagePresent = false;
   personAge: any;
   yearAge: any;
@@ -30,7 +30,7 @@ export class PatientinfoComponent implements OnInit {
     private visitService: VisitService,
     private service: ImagesService,
     private datePipe: DatePipe
-  ) {}
+  ) { }
 
   ngOnInit() {
     const uuid = this.route.snapshot.paramMap.get("patient_id");
@@ -40,7 +40,6 @@ export class PatientinfoComponent implements OnInit {
     });
     this.visitService.patientInfo(uuid).subscribe((info) => {
       this.info = info.person;
-
       this.patientIdentifier = info.identifiers[0].identifier;
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
@@ -50,7 +49,28 @@ export class PatientinfoComponent implements OnInit {
         }
       });
       this.patientInfo.push(this.info);
+      this.getLocationAndSetSanch();
     });
+  }
+
+  getLocationAndSetSanch() {
+    this.visitService.getLocations().subscribe((res: any) => {
+      console.log('this.info: ', this.info);
+      const state = res.states.find(state => state?.name === this.info?.preferredAddress?.stateProvince);
+      if (state) {
+        state.districts.forEach(district => {
+
+          district.sanchs
+            .forEach(sanch => {
+              const village = sanch.villages.find(vilg => vilg.name === this.info?.preferredAddress?.cityVillage);
+              if (village) {
+                this.info.sanch = sanch.name;
+              }
+            });
+
+        });
+      }
+    })
   }
 
   getAge(dateString) {
