@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -9,6 +9,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
 import { TranslateService } from "@ngx-translate/core";
+import { DOCUMENT } from "@angular/common";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -31,7 +32,8 @@ export class LoginPageComponent implements OnInit {
     private pushNotificationsService: PushNotificationsService,
     private service: VisitService,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit() {
@@ -42,6 +44,13 @@ export class LoginPageComponent implements OnInit {
       this.translate.setDefaultLang(browserlang);
       localStorage.setItem("selectedLanguage", browserlang);
     }
+    let htmlTag = this.document.getElementsByTagName(
+      "html"
+    )[0] as HTMLHtmlElement;
+    htmlTag.dir = localStorage.getItem('selectedLanguage') === "ar" ? "rtl" : "ltr";
+    this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
+    this.translate.use(localStorage.getItem('selectedLanguage'));
+    this.changeCssFile(localStorage.getItem('selectedLanguage'));
     this.service.clearVisits();
   }
 
@@ -94,6 +103,29 @@ export class LoginPageComponent implements OnInit {
           });
         }
       });
+    }
+  }
+
+
+  changeCssFile(lang: string) {
+    let headTag = this.document.getElementsByTagName(
+      "head"
+    )[0] as HTMLHeadElement;
+    let existingLink = this.document.getElementById(
+      "langCss"
+    ) as HTMLLinkElement;
+
+    let bundleName = lang === "ar" ? "arabicStyle.css" : "englishStyle.css";
+
+    if (existingLink) {
+      existingLink.href = bundleName;
+    } else {
+      let newLink = this.document.createElement("link");
+      newLink.rel = "stylesheet";
+      newLink.type = "text/css";
+      newLink.id = "langCss";
+      newLink.href = bundleName;
+      headTag.appendChild(newLink);
     }
   }
 }

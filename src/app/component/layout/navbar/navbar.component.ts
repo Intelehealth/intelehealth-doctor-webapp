@@ -5,6 +5,7 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  Inject,
 } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -17,6 +18,7 @@ import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { TranslateService } from "@ngx-translate/core";
 import { TranslationService } from "src/app/services/translation.service";
+import { DOCUMENT } from "@angular/common";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -44,7 +46,7 @@ export class NavbarComponent implements OnInit {
   endTimeData: any;
   showData: any;
   error: any = { isError: false, errorMessage: "" };
-  langs = ['en', 'hi', 'ru'];
+  langs = ['en', 'hi', 'ru', 'ar'];
   selectedLanguage:string = 'en';
 
   weekDays: any = [
@@ -57,8 +59,7 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-    "BG4nDxMHBPV4YtkBZoGjPSOWDPrbyzw-o-vDKaScPhYfAjQs1hclQLwNWKKHYHNut0GZoVyj0jONVZgA5Dzdq0U"; //demo
-  // "BAfolLQ7VpRSmWm6DskG-YyG3jjzq5z0rjKEl5HXLCw2W8CKS9cVmifnCAWnrlJMETgbgjuV1pWKLUf8zlbojH0"; // testing
+  "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54"
 
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
@@ -74,7 +75,8 @@ export class NavbarComponent implements OnInit {
     public swPush: SwPush,
     public notificationService: PushNotificationsService,
     private translateService: TranslateService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit() {
@@ -150,6 +152,13 @@ export class NavbarComponent implements OnInit {
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
     this.subscribeNotification(true);
+    let htmlTag = this.document.getElementsByTagName(
+      "html"
+    )[0] as HTMLHtmlElement;
+    htmlTag.dir = lang === "ar" ? "rtl" : "ltr";
+    this.translateService.setDefaultLang(lang);
+    this.translateService.use(lang);
+    this.changeCssFile(lang);
   }
 
   unsubscribeNotification() {
@@ -329,5 +338,27 @@ export class NavbarComponent implements OnInit {
 
   get snoozeTimeout() {
     return this.notificationService.snoozeTimeout;
+  }
+
+  changeCssFile(lang: string) {
+    let headTag = this.document.getElementsByTagName(
+      "head"
+    )[0] as HTMLHeadElement;
+    let existingLink = this.document.getElementById(
+      "langCss"
+    ) as HTMLLinkElement;
+
+    let bundleName = lang === "ar" ? "arabicStyle.css" : "englishStyle.css";
+
+    if (existingLink) {
+      existingLink.href = bundleName;
+    } else {
+      let newLink = this.document.createElement("link");
+      newLink.rel = "stylesheet";
+      newLink.type = "text/css";
+      newLink.id = "langCss";
+      newLink.href = bundleName;
+      headTag.appendChild(newLink);
+    }
   }
 }
