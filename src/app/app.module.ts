@@ -10,7 +10,7 @@ import {
 import localeRu from '@angular/common/locales/ru';
 import localeEn from '@angular/common/locales/en';
 import localeHi from '@angular/common/locales/hi';
-import localeAr from '@angular/common/locales/ar';
+import localeAr from '@angular/common/locales/ar-SA';
 
 // Component Import
 import { AppComponent } from "./app.component";
