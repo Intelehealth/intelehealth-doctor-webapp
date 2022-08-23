@@ -19,12 +19,12 @@
     (click)="submit()"
     mat-raised-button
     color="primary"
-    [disabled]="isInvalid"
+    [disabled]="isInvalid || history.length > 0"
   >
     Add Weight History
   </button>
 </div>
-<!-- 
+
 <ng-container *ngIf="history.length > 0">
   <br />
   <ul class="list-unstyled">
@@ -42,4 +42,4 @@
       >
     </mat-list>
   </ul>
-</ng-container> -->
+</ng-container>

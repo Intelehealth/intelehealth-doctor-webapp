@@ -43,7 +43,7 @@ declare var getEncounterUUID: any;
   ],
 })
 export class FollowUpComponent implements OnInit {
-  @Output() isDataPresent = new EventEmitter<boolean>();
+  //@Output() isDataPresent = new EventEmitter<boolean>();
   minDate = new Date();
   followUp: any = [];
   conceptFollow = "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86";
@@ -93,7 +93,7 @@ export class FollowUpComponent implements OnInit {
         encounter: this.encounterUuid,
       };
       this.service.postObs(json).subscribe((resp) => {
-        this.isDataPresent.emit(true);
+       // this.isDataPresent.emit(true);
         this.followUp.push({ uuid: resp.uuid, value: json.value });
       });
     }
@@ -105,7 +105,7 @@ export class FollowUpComponent implements OnInit {
       this.diagnosisService.deleteObs(uuid).subscribe((res) => {
         this.followUp.splice(i, 1);
         if (this.followUp.length === 0) {
-          this.isDataPresent.emit(false);
+         // this.isDataPresent.emit(false);
         }
       });
     }

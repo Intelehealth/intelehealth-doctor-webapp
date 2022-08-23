@@ -307,6 +307,9 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe((response) => {
         response.results.forEach((obs) => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
+            const data = this.parse(obs.value);
+            const sortId = this.prescTypes.find(pt => pt.label === data?.en?.meal_type)?.sortId;
+            obs.sortId = sortId;
             this.meds.push(obs);
           }
         });
@@ -425,8 +428,9 @@ export class PrescribedMedicationComponent implements OnInit {
           };
           this.service.postObs(json).subscribe((response) => {
             this.isDataPresent.emit(true);
-            this.meds.push({ uuid: response.uuid, value });
-            this.setJsonData();
+            const sortId = this.prescTypes.find(pt => pt.label === dataObj?.en?.meal_type)?.sortId;
+            this.meds.push({ uuid: response.uuid, value,sortId:sortId });
+            this.setJsonData(true);
             this.clearFields(type.key);
           });
 
@@ -443,11 +447,20 @@ export class PrescribedMedicationComponent implements OnInit {
     }
   }
 
-  setJsonData() {
+  setJsonData(flag?) {
     let meds = [];
     this.meds.forEach((med) => {
       const data = this.parse(med.value);
-      const sortId = this.prescTypes.find(pt => pt.label === data?.en?.meal_type)?.sortId;
+      let sortId;
+      if(flag) {
+        this.prescTypes.forEach(type => {
+          if(med.value.includes(type.label)) {
+            sortId = type.sortId;
+          }
+        })
+      } else {
+        sortId = this.prescTypes.find(pt => pt.label === data?.en?.meal_type)?.sortId;
+      }
       if (data instanceof Object) {
 
         let value = `${data.en.meal_type}(${data.hi.meal_type}) :\n`;

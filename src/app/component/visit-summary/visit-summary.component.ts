@@ -47,7 +47,7 @@ export class VisitSummaryComponent implements OnInit {
     "67a050c1-35e5-451c-a4ab-fff9d57b0db1",
     "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca",
     "23601d71-50e6-483f-968d-aeef3031346d",
-    "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
+   // "e8caffd6-5d22-41c4-8d6a-bc31a44d0c86"
   ];
 
   constructor(

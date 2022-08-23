@@ -218,8 +218,8 @@ export class HomepageComponent implements OnInit {
             const currentComplaint = res.value.split(" - ");
             if((currentComplaint.length === 3) && currentComplaint[1].trim().includes("Yes")) {
               if(currentComplaint[2]?.trim()) {
-                this.followUpVisit.push(this.assignValueToProperty(visit, "", currentComplaint[2]?.substring(0, currentComplaint[2].length-1)));
-                this.followUpVisitNo += 1;
+                let v = this.assignValueToProperty(visit, "", currentComplaint[2]?.substring(0, currentComplaint[2].length-1));
+                this.updateFollowUpVisits(v);
               }        
             }
           }
@@ -230,8 +230,8 @@ export class HomepageComponent implements OnInit {
   getFollowUpVisits(visit) {
     this.getFollowUpDateAndExamination(visit);
     if(visit.followUp) {
-    this.followUpVisit.push(this.assignValueToProperty(visit,"", visit.followUp));
-    this.followUpVisitNo += 1;
+      let v = this.assignValueToProperty(visit,"", visit.followUp);
+      this.updateFollowUpVisits(v);
      }
   }
 
@@ -311,4 +311,11 @@ export class HomepageComponent implements OnInit {
      return Math.round(difference_ms / ONEDAY);
   }
 
+  private updateFollowUpVisits(v: any) {
+    let found = this.followUpVisit.find(c => c.id === v.id);
+    if (!found) {
+      this.followUpVisit.push(v);
+      this.followUpVisitNo += 1;
+    }
+  }
 }
