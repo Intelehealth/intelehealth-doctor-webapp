@@ -88,6 +88,7 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
+import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
 
 
 
@@ -133,7 +134,8 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     AppointmentViewComponent,
-    AppointmentScheduleComponent
+    AppointmentScheduleComponent,
+    ForgotPasswordComponent
   ],
 
   imports: [
@@ -168,6 +170,7 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
+      { path: "forgot/password", component: ForgotPasswordComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
