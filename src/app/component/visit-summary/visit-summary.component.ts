@@ -6,8 +6,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
-import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
+import { AppointmentService } from "src/app/services/appointment.service";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -16,7 +16,7 @@ declare var getFromStorage: any,
   selector: "app-visit-summary",
   templateUrl: "./visit-summary.component.html",
   styleUrls: ["./visit-summary.component.css"],
-  encapsulation : ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 export class VisitSummaryComponent implements OnInit {
   show = false;
@@ -30,16 +30,15 @@ export class VisitSummaryComponent implements OnInit {
   doctorValue;
   patientUuid = "";
   visitUuid = "";
-  isVisitEnded:boolean = false;
+  isVisitEnded: boolean = false;
   visitSpeciality: any;
   userSpeciality: any;
-  videoIcon = environment.production
-    ? "../../../intelehealth/assets/svgs/video-w.svg"
-    : "../../../assets/svgs/video-w.svg";
+  videoIcon = "assets/svgs/video-w.svg";
   isFamilyHistoryPresent = true; isPastMedicalPresent = true;
   isPhyscExamPresent = true; isAdditionalDocPresent = true;
   isVitalPresent = true;
   isManagerRole = false;
+  showReleaseIcon = false;
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
@@ -48,7 +47,8 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private pushNotificationService: PushNotificationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private apmntService: AppointmentService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -59,25 +59,54 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-    this.checkProviderRole(); 
+    this.checkProviderRole();
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+
+    this.fetchVisit();
+    this.getVisitAppointment();
+
+    this.translationService.getSelectedLanguage();
+  }
+
+  getVisitAppointment() {
+    console.log('this.visitUuid: ', this.visitUuid);
+    this.apmntService.getVisitAppointment(this.visitUuid).subscribe({
+      next: (res: any) => {
+        if (res?.data?.userUuid) {
+          this.showReleaseIcon = true;
+        } else {
+          this.showReleaseIcon = false;
+        }
+        if (this.visitNotePresent) {
+          this.showReleaseIcon = false;
+        }
+      },
+      error: (err: any) => {
+        this.showReleaseIcon = false;
+      }
+    })
+  }
+
+
+  fetchVisit() {
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
-        this.visitSpeciality = visitDetails.attributes.find(a=>a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+        this.visitSpeciality = visitDetails.attributes.find(a => a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
         const providerDetails = getFromStorage("provider");
-        this.userSpeciality = providerDetails.attributes.find(a=>a.attributeType.display == "specialization").value;
+        this.userSpeciality = providerDetails.attributes.find(a => a.attributeType.display == "specialization").value;
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;
+            this.showReleaseIcon = false;
             this.show = true;
           }
           if (!this.visitCompletePresent && visit.display.match("Remote Prescription") !== null) {
             this.setSignature(visit);
-          } 
-           if (visit.display.match("Visit Complete") !== null) {
+          }
+          if (visit.display.match("Visit Complete") !== null) {
             this.visitCompletePresent = true;
             this.setSignature(visit);
           }
@@ -92,7 +121,6 @@ export class VisitSummaryComponent implements OnInit {
           this.isVisitEnded = true;
         }
       });
-      this.translationService.getSelectedLanguage();
   }
 
   private checkProviderRole() {
@@ -101,7 +129,7 @@ export class VisitSummaryComponent implements OnInit {
       const roles = userDetails['roles'];
       roles.forEach(role => {
         if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
-        role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
+          role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
           this.isManagerRole = true;
         }
       });
@@ -151,11 +179,12 @@ export class VisitSummaryComponent implements OnInit {
                 saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
               });
             this.show = true;
+            this.showReleaseIcon = false;
             this.translationService.getTranslation(`Visit Note Created`);
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -291,18 +320,27 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   getIsMedicalDataPresent(isDataPresent) {
-    isDataPresent ? this.isPastMedicalPresent = isDataPresent :  this.isPastMedicalPresent = false;
+    isDataPresent ? this.isPastMedicalPresent = isDataPresent : this.isPastMedicalPresent = false;
   }
-  
+
   getIsExamDataPresent(isDataPresent) {
-    isDataPresent ?  this.isPhyscExamPresent = isDataPresent : this.isPhyscExamPresent= false;
+    isDataPresent ? this.isPhyscExamPresent = isDataPresent : this.isPhyscExamPresent = false;
   }
 
   getIsAdditionalDataPresent(isDataPresent) {
-    isDataPresent ? this.isAdditionalDocPresent = isDataPresent : this.isAdditionalDocPresent= false;
+    isDataPresent ? this.isAdditionalDocPresent = isDataPresent : this.isAdditionalDocPresent = false;
   }
 
   getIsVitalDataPresent(isDataPresent) {
-    isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent= false;
+    isDataPresent ? this.isVitalPresent = isDataPresent : this.isVitalPresent = false;
+  }
+
+  release() {
+    this.apmntService.releaseAppointment({
+      visitUuid: this.visitUuid
+    }).subscribe((res: any) => {
+      this.translationService.getTranslation(`Appointment released`);
+      this.getVisitAppointment();
+    });
   }
 }

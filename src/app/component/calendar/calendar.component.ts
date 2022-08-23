@@ -5,6 +5,7 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
+import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {
   CalendarView,
@@ -70,13 +71,21 @@ export class CalendarComponent implements OnInit {
     private appointmentService: AppointmentService,
     private vService: VisitService,
     private translationService: TranslationService,
-    private dialogService: ConfirmDialogService
-  ) {}
+    private dialogService: ConfirmDialogService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.selectedLang = localStorage.getItem("selectedLanguage");
+    let dates = this.getDates("month");
+    this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
+  }
 
   private initializeEvents(slot) {
     let array: CalendarEvent[] = [];
     for (let i = 0; i < slot.length; i++) {
       let event1 = {
+        ...slot[i],
         title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
         color: colors.yellow,
         start: new Date(
@@ -197,12 +206,6 @@ export class CalendarComponent implements OnInit {
     this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
 
-  ngOnInit(): void {
-    this.selectedLang = localStorage.getItem("selectedLanguage");
-    let dates = this.getDates("month");
-    this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
-  }
-
   getDates(view) {
     let startOfMonth = moment(this.viewDate)
       .startOf(view)
@@ -213,10 +216,16 @@ export class CalendarComponent implements OnInit {
     return { startOfMonth, endOfMonth };
   }
 
+  public getSpeciality() {
+    return JSON.parse(localStorage.provider).attributes.find((a) =>
+      a.display.includes("specialization")
+    ).value;
+  }
+
   getDrSlots(fromDate, toDate) {
     this.appointmentService
-      .getUserSlots(
-        this.userId,
+      .getSpecialitySlots(
+        this.getSpeciality(),
         moment(fromDate).format("DD/MM/YYYY"),
         moment(toDate).format("DD/MM/YYYY")
       )
@@ -373,5 +382,30 @@ export class CalendarComponent implements OnInit {
 
   get rescheduleDisabled() {
     return !this.slots[this.selectedSlotIdx] || !this.reason;
+  }
+
+  startAppointment(appnt) {
+    this.appointmentService.startAppointment({
+      appointmentId: appnt.appointmentId || appnt.id,
+      drName: this.drName,
+      userUuid: this.userId
+    }).subscribe((res: any) => {
+      if (res.status) {
+        this.toast({ message: 'Appointment started' });
+        this.router.navigate(['/visitSummary', appnt.patientId, appnt.visitUuid])
+      }
+    });
+  }
+
+  isAppointmentTime(appnt) {
+    const isTime = moment().isBefore(moment(appnt.slotJsDate));
+    return isTime;
+  }
+
+  get drName() {
+    return (
+      JSON.parse(localStorage.user)?.person?.display ||
+      JSON.parse(localStorage.user)?.display
+    );
   }
 }

@@ -268,7 +268,9 @@
     "Appointment not found!":"Appointment not found!",
     "Prescription added for review":"Prescription added for review",
     "Please check the slot start & end time it cannot be same and between the other slots":
-    "Please check the slot start & end time it cannot be same and between the other slots"
+    "Please check the slot start & end time it cannot be same and between the other slots",
+    "Appointment started": "Appointment started.",
+    "Appointment released": "Appointment released."
   },
   "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
@@ -5603,5 +5605,7 @@
   "Patient Not Available":"Patient Not Available",
   "Other":"Other",
   "Add New Schedule":"Add New Schedule",
-  "You can not modify past schedule":"You can not modify past schedule"
+  "You can not modify past schedule":"You can not modify past schedule",
+  "Start Appointment": "Start Appointment",
+  "Release Case": "Release Case"
 }

@@ -268,7 +268,9 @@
     "Appointment not found!":"Назначение не найдено!",
     "Prescription added for review":"Рецепт добавлен на рассмотрение",
     "Please check the slot start & end time it cannot be same and between the other slots":
-    "Пожалуйста, проверьте время начала и окончания слота, оно не может быть одинаковым и между другими слотами"
+    "Пожалуйста, проверьте время начала и окончания слота, оно не может быть одинаковым и между другими слотами",
+    "Appointment started": "Назначение началось",
+    "Appointment released": "Освобождение от записи"
   },
   "No slots avalable for the day, try changing dates.":"В течение дня свободных мест нет, попробуйте изменить даты.",
   "helpMsg1": "Добро пожаловать на портал Доктора. Менее чем за 1 минуту мы покажем вам, как поставить диагноз, лекарства, анализы и посоветовать пациенту.",
@@ -5603,5 +5605,7 @@
   "Patient Not Available":"Пациент недоступен",
   "Other":"Другое",
   "Add New Schedule":"Добавить новое расписание",
-  "You can not modify past schedule":"Вы не можете изменить прошлое расписание"
+  "You can not modify past schedule":"Вы не можете изменить прошлое расписание",
+  "Start Appointment": "Начать встречу",
+  "Release Case": "Дело о выпуске"
 }

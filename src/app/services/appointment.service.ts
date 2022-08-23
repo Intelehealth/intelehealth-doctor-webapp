@@ -7,11 +7,18 @@ import { environment } from "src/environments/environment";
 })
 export class AppointmentService {
   private baseURL = environment.mindmapURL;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   updateOrCreateAppointment(payload) {
     return this.http.post(
       `${this.baseURL}/appointment/createOrUpdateSchedule`,
+      payload
+    );
+  }
+
+  startAppointment(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/startAppointment`,
       payload
     );
   }
@@ -28,15 +35,32 @@ export class AppointmentService {
     );
   }
 
+  getSpecialitySlots(speciality, fromDate, toDate) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getSpecialitySlots/${speciality}?fromDate=${fromDate}&toDate=${toDate}`
+    );
+  }
+
   getAppointmentSlots(fromDate, toDate, speciality) {
     return this.http.get(
       `${this.baseURL}/appointment/getAppointmentSlots?fromDate=${fromDate}&toDate=${toDate}&speciality=${speciality}`
     );
   }
 
+  getVisitAppointment(visitUuid) {
+    return this.http.get(`${this.baseURL}/appointment/getAppointment/${visitUuid}`);
+  }
+
   rescheduleAppointment(payload) {
     return this.http.post(
       `${this.baseURL}/appointment/rescheduleAppointment`,
+      payload
+    );
+  }
+
+  releaseAppointment(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/releaseAppointment`,
       payload
     );
   }

@@ -114,7 +114,9 @@
             <th>{{ "Name" | translate }}</th>
             <th>{{ "OpenMRS ID" | translate }}</th>
             <th>{{ "Start Time" | translate }}</th>
+            <th></th>
             <th>{{ "Action" | translate }}</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -124,14 +126,30 @@
             <td>{{ e1.slotTime }}</td>
             <td>
               <button
+                *ngIf="e1.userUuid"
                 mat-raised-button
                 style="float: left"
                 color="primary"
                 [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
+                [disabled]="e1.userUuid !== userId" 
                 (click)="close()"
               >
                 {{ "View" | translate }}
               </button>
+
+              <button
+                *ngIf="!e1.userUuid"
+                mat-raised-button
+                style="float: left"
+                color="primary"
+                [disabled]="isAppointmentTime(e1)"
+                (click)="startAppointment(e1); close()"
+              >
+                {{ "Start Appointment" | translate }}
+              </button>
+            </td>
+
+            <td>
               <button
                 mat-raised-button
                 color="primary"
@@ -139,6 +157,9 @@
               >
                 {{ "Reschedule" | translate }}
               </button>
+            </td>
+
+            <td>
               <button
                 style="float: right"
                 mat-raised-button
@@ -182,7 +203,7 @@
           </div>
           <div class="col-7">
             <input
-              min="{{minDate}}"
+              min="{{ minDate }}"
               class="form-control"
               (change)="changeCalender($event)"
               type="date"
@@ -249,7 +270,12 @@
       >
         {{ "Reschedule" | translate }}
       </button>
-      <button type="button" mat-raised-button color="primary" (click)="close(); clear()">
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="close(); clear()"
+      >
         {{ "Close" | translate }}
       </button>
     </div>
