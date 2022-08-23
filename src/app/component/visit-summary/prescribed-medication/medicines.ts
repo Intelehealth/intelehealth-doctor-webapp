@@ -125,8 +125,8 @@
 
 export default {
     earlyMorning: [
-        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight]',
-        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight]',
+        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight], 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
+        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight], 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]',
     ],
     breakfast: [
         'Tea with milk [no sugar]|| चाय [बिना चीनी]',

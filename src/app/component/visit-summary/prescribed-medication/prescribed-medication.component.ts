@@ -1,8 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
-import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
-import { Observable } from "rxjs";
 import { DiagnosisService } from "../../../services/diagnosis.service";
 // import { FormGroup, FormControl, Validators } from "@angular/forms";
 import {
