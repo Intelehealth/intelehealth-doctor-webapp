@@ -2,6 +2,8 @@ import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute } from "@angular/router";
 import { DiagnosisService } from "../../../services/diagnosis.service";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import { Observable } from "rxjs";
 // import { FormGroup, FormControl, Validators } from "@angular/forms";
 import {
   transition,
@@ -71,7 +73,8 @@ export class PrescribedMedicationComponent implements OnInit {
     'small cup',
     'small bowl',
     'big bowl',
-    'glass'
+    'glass',
+    'teaspoon'
   ]
 
   earlyMorning = [{

@@ -125,8 +125,8 @@
 
 export default {
     earlyMorning: [
-        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight], 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
-        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight], 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]',
+        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
+        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]',
     ],
     breakfast: [
         'Tea with milk [no sugar]|| चाय [बिना चीनी]',
@@ -155,7 +155,7 @@ export default {
         'egg [without yellow part; medium size]|| अंडा [पीले भाग के बिना; मध्यम आकार]',
         'Whole wheat bread|| साबुत गेहूँ की ब्रेड',
         'Dhokla [2 big pieces]|| ढोकला [2 बड़े पीस]',
-        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit]|| फल',
+        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit]|| फल [केला, अंगूर, आम, चीकू, कटहल से परहेज करें]',
         'sambhar|| सांभर',
         'Oats|| ओट्स',
         'Dosa|| डोसा',
@@ -168,7 +168,7 @@ export default {
         'Upma|| उपमा',
     ],
     midMorning: [
-        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit]|| फल',
+        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit] || फल [केला, अंगूर, आम, चीकू, कटहल से परहेज करें]',
         'Buttermilk [No sugar]|| छाछ [बिना चीनी]',
         'Egg [boiled medium size]|| अंडा [उबला हुआ मध्यम आकार का]',
         'Egg [boiled without yellow part; medium size]|| अंडा [बिना पीले भाग के उबला हुआ; मध्यम आकार]',
@@ -190,8 +190,8 @@ export default {
         'Besan Cheela|| बेसन चीला',
         'Moong dal cheela|| मूंग दाल चीला',
         'Paneer paratha without oil|| बिना तेल के पनीर पराठा',
-        'Sabzi [Avoid potato, corn|| yam, sweet potato, carrot, beetroot], सब्जी [आलू, मक्का, रतालू, शकरकंद, गाजर, चुकन्दर से परहेज़ करें]',
-        'Moong Dal Pulaov मूंग दाल पुलो',
+        'Sabzi [Avoid potato, corn, yam, sweet potato, carrot, beetroot] || सब्जी [आलू, मक्का, रतालू, शकरकंद, गाजर, चुकन्दर से परहेज़ करें]',
+        'Moong Dal Pulaov || मूंग दाल पुलो',
         'Vegetble pulao|| सब्जी पुलाव',
         'Vegetable khichdi|| सब्जी खिचड़ी',
         'Moong Dal|| मूंग दाल',
@@ -291,11 +291,11 @@ export default {
         'Khichdi|| खिचड़ी',
     ],
     bedTime: [
-        'Milk [no sugar]|| दूध [बिना चीनी]',
-        'Protein supplement|| प्रोटीन सप्लीमेंट',
-        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit]|| फल',
-        'Nuts [Avoid raisins/ dates/ cashewnuts]|| मेवे/नट्स  [काजू /खजूरसे परहेज करें]',
-        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight]|| 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
-        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight]|| 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]'
+        'Milk [no sugar] || दूध [बिना चीनी]',
+        'Protein supplement || प्रोटीन सप्लीमेंट',
+        'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit] || फल [केला, अंगूर, आम, चीकू, कटहल से परहेज करें]',
+        'Nuts [Avoid raisins/ dates/ cashewnuts] || मेवे/नट्स  [काजू /खजूरसे परहेज करें]',
+        '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
+        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]'
     ]
 }
