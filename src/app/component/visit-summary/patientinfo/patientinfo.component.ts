@@ -56,6 +56,10 @@ export class PatientinfoComponent implements OnInit {
     });
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  }
+  
   getAge(dateString) {
     //------sol 1 ---------------
     var mydate = dateString.replace(

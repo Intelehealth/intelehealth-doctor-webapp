@@ -27,5 +27,8 @@ clinicName: string;
       });
     });
   }
-
+ 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  } 
 }

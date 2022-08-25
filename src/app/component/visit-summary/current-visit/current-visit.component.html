@@ -1,4 +1,4 @@
-<div id="past-visits">
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'" id="past-visits">
   <h4><i class="fas fa-clinic-medical"></i> {{ 'Current Visit'|translate}}</h4>
 <hr>
 <div *ngIf="visitDetail">

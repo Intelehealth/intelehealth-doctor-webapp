@@ -106,4 +106,8 @@ export class AdviceComponent implements OnInit {
         });
     }    
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

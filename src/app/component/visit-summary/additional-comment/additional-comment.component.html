@@ -1,19 +1,24 @@
-<h4><i class="fas fa-notes-medical"></i> {{ 'Notes' | translate }}</h4>
-<hr>
-<form [formGroup]='commentForm'>
-<div id="doctor-notes">
-    <mat-form-field class="example-full-width">
-        <textarea matInput placeholder="{{ 'Notes (not shared with the patient)' | translate }}" formControlName='comment'></textarea>
-    </mat-form-field>
-<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>{{ 'Add Note' | translate}}</button>
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4><i class="fas fa-notes-medical"></i> {{ 'Notes' | translate }}</h4>
+    <hr>
+    <form [formGroup]='commentForm'>
+        <div id="doctor-notes">
+            <mat-form-field class="example-full-width">
+                <textarea matInput placeholder="{{ 'Notes (not shared with the patient)' | translate }}"
+                    formControlName='comment'></textarea>
+            </mat-form-field>
+            <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid'>{{
+                'Add Note' | translate}}</button>
+        </div>
+    </form>
+    <br>
+    <ng-container *ngIf="comment.length > 0">
+        <div  *ngFor="let comment of comment, index as i" >
+            <div [@moveInLeft] class="alert alert-primary">
+                <div class="doctor-value">{{comment.value}} </div>
+                <i (click)="delete(i)" class="material-icons float-right"
+                    style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+            </div>
+        </div>
+    </ng-container>
 </div>
-</form>
-<br>
-<ng-container *ngIf="comment.length > 0">
-    <ul class="list-unstyled">
-        <mat-list [@moveInLeft] *ngFor="let comment of comment, index as i" class="alert alert-primary">
-            <div class="doctor-value">{{comment.value}} </div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-        </mat-list>
-    </ul>
-</ng-container>

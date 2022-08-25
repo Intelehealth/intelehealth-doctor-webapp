@@ -133,4 +133,7 @@ export class ReassignSpecialityComponent implements OnInit {
       })
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

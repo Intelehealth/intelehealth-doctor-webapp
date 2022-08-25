@@ -9,6 +9,7 @@ import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
+import { browserRefresh } from 'src/app/app.component';
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -86,7 +87,14 @@ export class VisitSummaryComponent implements OnInit {
         });
       });
        this.translationService.getSelectedLanguage();
+       if(browserRefresh) {
+        this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
+      }
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);

@@ -47,7 +47,7 @@
         <app-reassign-speciality></app-reassign-speciality>
       </mat-card>
       <br>
-      <mat-card>
+      <mat-card [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
             <small style="color: red">
                   <i>
                         <b>{{ 'Note' | translate }}:</b>

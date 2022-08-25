@@ -30,5 +30,8 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
       }
     });
 }
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  } 
 }
 

@@ -53,4 +53,8 @@ export class PastVisitsComponent implements OnInit {
       });
     });
   }
+ 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  } 
 }

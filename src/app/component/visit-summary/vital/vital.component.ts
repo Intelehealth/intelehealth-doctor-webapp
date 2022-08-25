@@ -88,4 +88,7 @@ vitalsPresent = false;
     return value.toString().replace(/\./g, ',')
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

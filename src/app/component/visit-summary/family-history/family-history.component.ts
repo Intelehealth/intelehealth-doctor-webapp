@@ -31,4 +31,8 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
       }
     });
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

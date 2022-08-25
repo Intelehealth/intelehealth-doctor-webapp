@@ -10,6 +10,7 @@ import { ChangePasswordComponent } from "../change-password/change-password.comp
 import { VisitService } from "src/app/services/visit.service";
 import { TranslateService } from "@ngx-translate/core";
 import { DOCUMENT } from "@angular/common";
+import { TranslationService } from "src/app/services/translation.service";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -33,6 +34,7 @@ export class LoginPageComponent implements OnInit {
     private service: VisitService,
     private dialog: MatDialog,
     private translate: TranslateService,
+    private translationService : TranslationService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
@@ -50,7 +52,7 @@ export class LoginPageComponent implements OnInit {
     htmlTag.dir = localStorage.getItem('selectedLanguage') === "ar" ? "rtl" : "ltr";
     this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
     this.translate.use(localStorage.getItem('selectedLanguage'));
-    this.changeCssFile(localStorage.getItem('selectedLanguage'));
+    this.translationService.changeCssFile(localStorage.getItem('selectedLanguage'));
     this.service.clearVisits();
   }
 
@@ -103,29 +105,6 @@ export class LoginPageComponent implements OnInit {
           });
         }
       });
-    }
-  }
-
-
-  changeCssFile(lang: string) {
-    let headTag = this.document.getElementsByTagName(
-      "head"
-    )[0] as HTMLHeadElement;
-    let existingLink = this.document.getElementById(
-      "langCss"
-    ) as HTMLLinkElement;
-
-    let bundleName = lang === "ar" ? "arabicStyle.css" : "englishStyle.css";
-
-    if (existingLink) {
-      existingLink.href = bundleName;
-    } else {
-      let newLink = this.document.createElement("link");
-      newLink.rel = "stylesheet";
-      newLink.type = "text/css";
-      newLink.id = "langCss";
-      newLink.href = bundleName;
-      headTag.appendChild(newLink);
     }
   }
 }

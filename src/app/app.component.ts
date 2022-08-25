@@ -1,23 +1,28 @@
-import { SessionService } from './services/session.service';
-import { VisitService } from './services/visit.service';
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
-import { UserIdleService } from 'angular-user-idle';
-import * as introJs from 'intro.js/intro.js';
-import { Router } from '@angular/router';
-import { PushNotificationsService } from './services/push-notification.service';
-import { GlobalConstants } from './js/global-constants';
-import { SwPush, SwUpdate } from '@angular/service-worker';
-declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
+export let browserRefresh = false;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   
+  subscription : Subscription
+
+  constructor(private router: Router) {
+    this.subscription = router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        browserRefresh = !router.navigated;
+      }
+    });
+  }
   ngOnInit () {   
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

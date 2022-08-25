@@ -196,4 +196,8 @@ export class PatientInteractionComponent implements OnInit {
       }
     }  
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

@@ -82,4 +82,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       });
     }
   }
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

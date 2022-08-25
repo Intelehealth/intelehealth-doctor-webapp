@@ -206,4 +206,7 @@ export class PrescribedMedicationComponent implements OnInit {
     }
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

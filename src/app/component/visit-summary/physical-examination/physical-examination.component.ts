@@ -34,4 +34,8 @@ export class PhysicalExaminationComponent implements OnInit {
       });
     });
   }
+  
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
   }

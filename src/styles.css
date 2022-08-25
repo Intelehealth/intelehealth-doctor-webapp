@@ -32,6 +32,13 @@ body {
   background-color: #f1f4f6;
   margin: 0;
 }
+.class1 {
+  text-align: right;
+}
+
+.class2 {
+  text-align: left;
+}
 
 html,
 body {

@@ -92,4 +92,8 @@ diagnosisForm = new FormGroup({
       });
     }
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

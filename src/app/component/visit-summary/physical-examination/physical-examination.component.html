@@ -1,12 +1,15 @@
-<h4>{{'Physical Examination'|translate}}</h4>
-<hr>
-<div *ngIf="physicalExamPresent">
-<div class="row">
-<div *ngFor="let image of images" class="col">
-    <a href={{image.image}}><img src= {{image.image}} [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}" alt=""></a>
-</div>
-</div>
-</div>
-<div *ngIf="!physicalExamPresent">
-    	{{'No Physical Exam Images available!' |translate}}
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4>{{'Physical Examination'|translate}}</h4>
+    <hr>
+    <div *ngIf="physicalExamPresent">
+        <div class="row">
+            <div *ngFor="let image of images" class="col">
+                <a href={{image.image}}><img src={{image.image}}
+                        [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}" alt=""></a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!physicalExamPresent">
+        {{'No Physical Exam Images available!' |translate}}
+    </div>
 </div>

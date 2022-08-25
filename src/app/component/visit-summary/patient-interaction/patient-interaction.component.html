@@ -1,3 +1,4 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
 <h4><i class="material-icons">contact_phone</i> {{'Patient Interaction'| translate}}</h4>
 <hr />
 <div>{{'Have you spoken with the patient directly' | translate}}?</div>
@@ -32,3 +33,4 @@
     </div>
   </div>
 </form>
+</div>

@@ -30,4 +30,8 @@ conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
       }
     });
  }
+
+ getLang() {
+  return localStorage.getItem("selectedLanguage");
+ } 
 }

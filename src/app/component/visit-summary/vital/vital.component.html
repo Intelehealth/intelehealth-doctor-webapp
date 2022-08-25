@@ -1,25 +1,27 @@
-<h4><i class="fas fa-heartbeat"></i> {{'Vitals'|translate}}</h4>
-<hr>
-<div *ngIf='!vitalsPresent'>{{'No Data'|translate}}</div>
-<div *ngIf='vitalsPresent'>
-  <table class="table table-responsive">
-    <tr *ngFor='let item of v'>
-      <th>{{'Temp'|translate}}:</th>
-      <td><span *ngIf="item.temp"> {{ item.temp }} F</span></td>
-      <th>{{'Height'|translate}}:</th>
-      <td><span *ngIf="item.height">{{item.height}} cm</span></td>
-      <th>{{'Weight'|translate}}:</th>
-      <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
-      <th>{{'BMI'|translate}}:</th>
-      <td>{{item.bmi}}</td>
-      <th>{{'SP02'|translate}}:</th>
-      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
-      <th>{{'BP'|translate}}:</th>
-      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
-      <th>{{'HR'|translate}}:</th>
-      <td>{{item.pulse}}</td>
-      <th>{{'RR'|translate}}:</th>
-      <td>{{item.respiratoryRate}}</td>
-    </tr>
-  </table>
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+  <h4><i class="fas fa-heartbeat"></i> {{'Vitals'|translate}}</h4>
+  <hr>
+  <div *ngIf='!vitalsPresent'>{{'No Data'|translate}}</div>
+  <div *ngIf='vitalsPresent'>
+    <table class="table table-responsive">
+      <tr *ngFor='let item of v'>
+        <th>{{'Temp'|translate}}:</th>
+        <td><span *ngIf="item.temp"> {{ item.temp }} F</span></td>
+        <th>{{'Height'|translate}}:</th>
+        <td><span *ngIf="item.height">{{item.height}} cm</span></td>
+        <th>{{'Weight'|translate}}:</th>
+        <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
+        <th>{{'BMI'|translate}}:</th>
+        <td>{{item.bmi}}</td>
+        <th>{{'SP02'|translate}}:</th>
+        <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
+        <th>{{'BP'|translate}}:</th>
+        <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
+        <th>{{'HR'|translate}}:</th>
+        <td>{{item.pulse}}</td>
+        <th>{{'RR'|translate}}:</th>
+        <td>{{item.respiratoryRate}}</td>
+      </tr>
+    </table>
+  </div>
 </div>

@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
 import { TranslationService } from "src/app/services/translation.service";
+import { browserRefresh } from 'src/app/app.component';
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -83,6 +84,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
       this.playNotify();
     });
     this.translationService.getSelectedLanguage();
+    if(browserRefresh) {
+      this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
+    }
   }
 
   ngOnDestroy() {

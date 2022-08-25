@@ -1,63 +1,78 @@
-<h4><i class="fas fa-pills"></i> {{'Prescribed Medication'|translate}}</h4>
-<hr>
-<div>
-  <form [formGroup]="medForm">
-        <mat-form-field class="w-100" id="medication-form">
-            <input matInput placeholder="{{'Medication'|translate}}" (keydown)="add = true"  [ngbTypeahead]="searchPrescription" formControlName="med">
-        </mat-form-field>
-  <div *ngIf="add">
-    <div class="form-row">
-      <div class="col">
-        <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control" placeholder="{{'Strength'|translate}}" formControlName="dose">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="{{'Units (eg: mg)'|translate}}" formControlName="unit">
-      </div>
-      <div class="col">
-        <input type="number" min="1" class="form-control" placeholder="{{'Amount'|translate}}" formControlName="amount">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="{{'Units (eg: Tab/Syrup/etc.)'|translate}}" formControlName="unitType">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" [ngbTypeahead]="searchFrequency" placeholder="{{'Frequency'| translate}}" formControlName="frequency">
-      </div>
-      <div class="col">
-        <input type="text" class="form-control" [ngbTypeahead]="searchAdministration" placeholder="{{'Route(optional)'|translate}}" formControlName="route">
-      </div>
-    </div>
-    <br>
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+  <h4><i class="fas fa-pills"></i> {{'Prescribed Medication'|translate}}</h4>
+  <hr>
+  <div>
+    <form [formGroup]="medForm">
+      <mat-form-field class="w-100" id="medication-form">
+        <input matInput placeholder="{{'Medication'|translate}}" (keydown)="add = true"
+          [ngbTypeahead]="searchPrescription" formControlName="med">
+      </mat-form-field>
+      <div *ngIf="add">
+        <div class="form-row">
+          <div class="col">
+            <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control"
+              placeholder="{{'Strength'|translate}}" formControlName="dose">
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Units (eg: mg)'|translate}}" formControlName="unit">
+          </div>
+          <div class="col">
+            <input type="number" min="1" class="form-control" placeholder="{{'Amount'|translate}}"
+              formControlName="amount">
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" [ngbTypeahead]="searchDose"
+              placeholder="{{'Units (eg: Tab/Syrup/etc.)'|translate}}" formControlName="unitType">
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" [ngbTypeahead]="searchFrequency"
+              placeholder="{{'Frequency'| translate}}" formControlName="frequency">
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" [ngbTypeahead]="searchAdministration"
+              placeholder="{{'Route(optional)'|translate}}" formControlName="route">
+          </div>
+        </div>
+        <br>
         <div>{{'As needed'|translate}}</div>
         <div class="form-row">
           <div class="col">
             <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon1">{{'For'|translate}}</span> 
-              <input type="number" min="1" class="form-control" placeholder="{{'Duration' | translate}}" formControlName="duration">
+              <span class="input-group-text" id="basic-addon1">{{'For'|translate}}</span>
+              <input type="number" min="1" class="form-control" placeholder="{{'Duration' | translate}}"
+                formControlName="duration">
             </div>
           </div>
           <div class="col">
             <div class="input-group-prepend">
-              <input type="text" class="form-control" [ngbTypeahead]="durationUnit" placeholder="{{'Units(eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">              
+              <input type="text" class="form-control" [ngbTypeahead]="durationUnit"
+                placeholder="{{'Units(eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">
               <span class="input-group-text" id="basic-addon1">{{'total'|translate}}</span>
             </div>
           </div>
           <div class="col">
-            <input type="text" class="form-control" placeholder="{{'reason(optional)'|translate}}" formControlName="reason"> 
+            <input type="text" class="form-control" placeholder="{{'reason(optional)'|translate}}"
+              formControlName="reason">
           </div>
         </div>
+        <br>
+        <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
+          formControlName="additional"></textarea>
+        <br>
+        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>{{'Add
+          Meds'|translate}}</button>
+      </div>
+    </form>
     <br>
-    <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}" formControlName="additional"></textarea>
-    <br>
-    <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>{{'Add Meds'|translate}}</button>
   </div>
-</form>
-<br>
-</div>
-<ng-container *ngIf="meds.length > 0">
-    <ul class="list-unstyled">
-      <mat-list [@moveInLeft] *ngFor='let meds of meds, index as i' class="alert alert-primary">
+  <ng-container *ngIf="meds.length > 0">
+      <div *ngFor='let meds of meds, index as i' >
+        <div [@moveInLeft] class="alert alert-primary">
         <div class="doctor-value">{{meds.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
-      </mat-list>
-    </ul>
-</ng-container>
+        <i (click)="delete(i)" class="material-icons"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+    </div>
+  </ng-container>
+</div>

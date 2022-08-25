@@ -30,5 +30,9 @@ export class PresentingComplaintsComponent implements OnInit {
       }
     });
  }
+ 
+ getLang() {
+  return localStorage.getItem("selectedLanguage");
+ } 
 }
 

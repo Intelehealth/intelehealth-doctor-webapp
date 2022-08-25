@@ -34,5 +34,8 @@ conceptAdditionlDocument = '07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba';
       });
     });
   }
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
   }
 
