@@ -85,6 +85,10 @@ td {
   padding-top: 140px;
   }
 
+  .overlap1 {
+    right: 27%;
+  }
+  
 mat-spinner {
   position: absolute;
   z-index: 9999;

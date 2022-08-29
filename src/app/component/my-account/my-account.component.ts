@@ -53,6 +53,7 @@ export class MyAccountComponent implements OnInit {
         this.setSpiner = false;
       });
       this.translationService.getSelectedLanguage();
+      this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
   /**
    * Open edit details modal
@@ -85,4 +86,8 @@ export class MyAccountComponent implements OnInit {
       data: { type: "add" },
     });
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

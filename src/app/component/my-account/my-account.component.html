@@ -11,7 +11,7 @@
           providerDetails.address.value
           }}</span>
       </div>
-      <mat-card class="overlap">
+      <mat-card class="overlap"  [class.overlap1] = "getLang() === 'ar'">
         <div>
           <i class="material-icons" style="float: right; cursor: pointer" (click)="onEdit()">create</i>
 
