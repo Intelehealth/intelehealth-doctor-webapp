@@ -108,8 +108,9 @@
 
       <div class="text-center" *ngIf="!show">
             <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" 
-            [disabled]="visitSpeciality != userSpeciality || isVisitEnded || isManagerRole">{{'Start Visit Note' | translate}}</button>
-            <button *ngIf="showReleaseIcon && !(visitSpeciality != userSpeciality || isVisitEnded || isManagerRole)" (click)="release()" mat-raised-button color="primary" class="ml-3"
+            [disabled]="visitSpeciality != userSpeciality || isVisitEnded || isManagerRole || (showReleaseIcon && disableReleaseIcon)">{{'Start Visit Note' | translate}}</button>
+            <button *ngIf="showReleaseIcon && !(visitSpeciality != userSpeciality || isVisitEnded || isManagerRole)" 
+            (click)="release()" mat-raised-button color="primary" class="ml-3" [disabled]="disableReleaseIcon"
             >{{'Release Case' | translate}}</button>
       </div>
       <div *ngIf="show">

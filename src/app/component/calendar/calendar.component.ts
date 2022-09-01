@@ -50,7 +50,7 @@ const colors: any = {
 export class CalendarComponent implements OnInit {
   @ViewChild("modalContent") modalContent: TemplateRef<any>;
   @ViewChild("rescheduleModal") rescheduleModal: TemplateRef<any>;
-  view: CalendarView = CalendarView.Month;
+  view: CalendarView = CalendarView.Day;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   drSlots = [];

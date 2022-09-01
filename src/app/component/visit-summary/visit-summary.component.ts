@@ -39,6 +39,7 @@ export class VisitSummaryComponent implements OnInit {
   isVitalPresent = true;
   isManagerRole = false;
   showReleaseIcon = false;
+  disableReleaseIcon = true;
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
@@ -70,11 +71,14 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   getVisitAppointment() {
-    console.log('this.visitUuid: ', this.visitUuid);
     this.apmntService.getVisitAppointment(this.visitUuid).subscribe({
       next: (res: any) => {
         if (res?.data?.userUuid) {
           this.showReleaseIcon = true;
+          const userDetails = getFromStorage("user");
+          if(res?.data?.userUuid === userDetails?.uuid){
+            this.disableReleaseIcon = false;
+          }
         } else {
           this.showReleaseIcon = false;
         }

@@ -37,10 +37,10 @@
       <div class="btn-group" style="float: right">
         <div
           class="btn btn-primary"
-          (click)="setView(CalendarView.Month)"
-          [class.active]="view === CalendarView.Month"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
         >
-          {{ "Month" | translate }}
+          {{ "Day" | translate }}
         </div>
         <div
           class="btn btn-primary"
@@ -51,10 +51,10 @@
         </div>
         <div
           class="btn btn-primary"
-          (click)="setView(CalendarView.Day)"
-          [class.active]="view === CalendarView.Day"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
         >
-          {{ "Day" | translate }}
+          {{ "Month" | translate }}
         </div>
       </div>
     </div>
