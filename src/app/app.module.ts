@@ -89,6 +89,9 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import {Ng2TelInputModule} from 'ng2-tel-input';
+import { ForgotUsernameComponent } from './component/forgot-username/forgot-username.component';
 
 
 
@@ -135,10 +138,13 @@ import { ForgotPasswordComponent } from './component/forgot-password/forgot-pass
     ConfirmDialogComponent,
     AppointmentViewComponent,
     AppointmentScheduleComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    ForgotUsernameComponent,
   ],
 
   imports: [
+    MatTabsModule,
+    Ng2TelInputModule,
     BrowserModule,
     CommonModule,
     FormsModule,
@@ -171,6 +177,7 @@ import { ForgotPasswordComponent } from './component/forgot-password/forgot-pass
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
       { path: "forgot/password", component: ForgotPasswordComponent },
+      { path: "forgot/username", component: ForgotUsernameComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },

@@ -1,0 +1,111 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <ngb-carousel #carousel [interval]="2000" [pauseOnHover]="true">
+          <ng-template ngbSlide>
+            <div class="picsum-img-wrapper">
+              <img
+                src="../../../assets/images/Forgot-password/Hero1.png"
+                width="100%"
+                alt="Random first slide"
+              />
+            </div>
+          </ng-template>
+          <ng-template ngbSlide>
+            <div class="picsum-img-wrapper">
+              <img
+                src="../../../assets/images/Forgot-password/Hero2.png"
+                width="100%"
+                alt="Random second slide"
+              />
+            </div>
+          </ng-template>
+          <ng-template ngbSlide>
+            <div class="picsum-img-wrapper">
+              <img
+                src="../../../assets/images/Forgot-password/Hero3.png"
+                width="100%"
+                alt="Random third slide"
+              />
+            </div>
+          </ng-template>
+        </ngb-carousel>
+      </div>
+      <div class="col" style="background-color: #faf9ff">
+        <div class="language-div">
+          <select name="language" id="language" class="language-dropdown">
+            <option value="" selected="selected">English</option>
+            <option value="">Marathi</option>
+          </select>
+        </div>
+        <form class="form">
+          <div class="content-container">
+            <div class="form-header">
+              <h3 class="forgot-username-header">Forgot Username</h3>
+              <p class="forgot-username-para">
+                No worries, enter your Mobile number or Email ID and we will send you the OTP to retrive your username.</p>
+            </div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <button class="btn btn-light" data-toggle="button" aria-pressed="false" (click)="toggleFieldTextType()">Mobile Number</button>
+              <button class="btn btn-light" data-toggle="button" aria-pressed="false" (click)="toggleFieldTextType()">Email ID</button>      
+            </div>
+            <ng-container *ngIf="!fieldTextType">
+              <form [formGroup]="ForgotUsernameForm" (ngSubmit)="onSubmit()" class="inner-form">
+                <div class="form-group">
+                  <br>
+                  <div class="row">
+                    <div class="col">
+                      <label for="username" class="lbl-mobileNumber">Mobile Number</label>
+                    </div>
+                  </div>
+                    <div class="input-codes">
+                      <input type="text" ng2TelInput
+                      [ng2TelInputOptions]="{initialCountry: 'in'}"
+                      (hasError)="hasError($event)"    
+                      (ng2TelOutput)="getNumber($event)"
+                      (intlTelInputObject)="telInputObject($event)"
+                      (countryChange)="onCountryChange($event)" 
+                    >
+                    </div> 
+                  <div>
+                    <button type="submit" class="btn-darkblue btn-block" [disabled]="!ForgotUsernameForm.valid">
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </ng-container>
+            <ng-container *ngIf="fieldTextType">
+              <form [formGroup]="ForgotUsernameForm" (ngSubmit)="onSubmit()" class="inner-form">
+                <div class="form-email">
+                  <br>
+                  <div class="row">
+                    <div class="col">
+                      <label for="username" class="lbl-email">Email ID</label>
+                    </div>
+                  </div>
+                  <div class="input">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email-id"
+                      aria-describedby="emailHelp"
+                    />
+                    <i for="email" class="icon fas fa-envelope fa-sm"></i>
+                  </div>
+                  <div>
+                    <button type="submit" class="btn-darkblue btn-block" [disabled]="!ForgotUsernameForm.valid">
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </ng-container>
+            <div class="fixed-bottom position-absolute text-right">
+              <button type="button" class="help-btn btn-info">Help</button>
+            </div>
+          </div>
+        </form>
+  </div>
+</div>
+   

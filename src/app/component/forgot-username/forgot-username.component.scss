@@ -1,0 +1,131 @@
+@mixin font($weight,$size) {
+    font-family: 'DM Sans';
+    font-style: normal; 
+    font-weight:$weight;
+    font-size:$size;
+  }
+  
+  @mixin color($color) {
+    color:$color;
+  }
+  
+  @mixin background($background) {
+    background:$background;
+  }
+  @mixin margintop($margintop) {
+    margin-top:$margintop;
+  }
+  @mixin marginleft($marginleft) {
+    margin-left:$marginleft;
+  }
+  @mixin marginright($marginright) {
+    margin-right:$marginright;
+  }
+  
+  .forgot-username-header{
+    @include font(700,32px);
+    margin-top: 150px;
+    @include color(#2E1E91);
+  }
+  
+  .forgot-username-para{
+    @include font(500,16px);
+    @include color(#7F7B92);
+  }
+  
+  .language-div{
+    box-sizing: border-box;
+    /* Auto layout */
+    @include margintop(30px);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 5px 10px;
+    gap: 4px;
+    position: absolute;
+    left: calc(45% - 108px/2 + 212px);
+    @include background(#FAF9FF);
+    /* Divider */
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+  }
+  
+  .div{
+    @include background(#ffffff);
+  }
+  
+  .language-dropdown{
+    @include font(400,16px);
+    @include color(#1B163A);
+    @include background(#FAF9FF);
+  }
+  
+  .btn-darkblue{ 
+    @include margintop(40px);
+    @include background(#2E1E91);
+    border-radius: 8px;
+    @include font(700,18px);
+    @include color(#FFFFFF);
+  }
+  
+  .mainForm{
+    @include marginleft(70px);
+    @include marginright(70px);
+  }
+  
+  .link-forgot-username{
+    @include font(400,14px);
+    text-decoration-line: underline;
+    @include color(#7F7B92);
+  }
+  
+  .lbl-username{ 
+    @include font(500,14px); 
+    line-height: 150%;
+    @include color(#1B163A);
+  }
+
+  .icon{
+    position:absolute;
+    top:calc(45.5%);
+    left:35rem;
+  }
+
+  button {
+    margin-right: 2px;
+  }
+
+  .btn-group{
+    background-color:#EFE8FF;
+    height: 40px;
+    border-style: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 4px 4px;
+    border-radius:8px;
+  }
+
+  .btn-light{
+    border-radius:5px;
+    width: 200px;
+    height: 32px;
+    @include font(700,16px);
+    line-height: 100%;
+    @include marginleft(2px);
+    color: #2E1E91;
+    background: #FFFFFF;
+    border-radius: 8px;
+  }
+
+  .form{
+    @include marginleft(70px);
+    @include marginright(70px);
+  }
+
+  .input-codes input{
+    width: 530px;
+    height:35px;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+  }
