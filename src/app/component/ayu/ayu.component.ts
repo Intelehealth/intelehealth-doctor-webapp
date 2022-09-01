@@ -50,6 +50,7 @@ export class AyuComponent implements OnInit {
         this.translationService.getTranslation(message);
       }
     );
+   this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   addKey(): void {
@@ -239,4 +240,8 @@ export class AyuComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

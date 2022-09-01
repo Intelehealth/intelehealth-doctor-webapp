@@ -14,9 +14,16 @@
   }
   .modal-content {
     width: 170%;
-    right: 140px;
   }
   
+  .align-left {
+    left: 140px;
+  }
+
+  .align-right {
+    right: 140px;
+  }
+
   table,
   th, td {
     text-align: center;

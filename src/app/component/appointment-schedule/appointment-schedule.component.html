@@ -3,7 +3,7 @@
       <div class="container wrap-login100">
         <div class="row">
           <div class="col-md-4">
-            <div class="btn-group" style="float: left;">
+            <div class="btn-group" [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'">
               <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay('Previous')">
                 {{ 'Previous'| translate }}
@@ -22,7 +22,7 @@
             <h3>{{viewDateLabel}}</h3>
           </div>
           <div class="col-md-4">
-            <button style="float: right;" class="btn btn-primary" (click)="addSchedule()">
+            <button [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" class="btn btn-primary" (click)="addSchedule()">
               {{'Add Schedule for Month' | translate}}
             </button>
           </div>
@@ -105,7 +105,7 @@
       </div>
       <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
       <div class="modal-footer center">
-        <button mat-raised-button color="primary" (click)="submit()">
+        <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="submit()">
           {{'Save' | translate}}
         </button>
         <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">

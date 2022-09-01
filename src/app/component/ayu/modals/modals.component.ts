@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-modals',
@@ -11,9 +12,10 @@ export class ModalsComponent implements OnInit {
   mindmapUploadJson: any;
   minDate = new Date();
   constructor(@Inject(MAT_DIALOG_DATA) public data,
-  private dialogRef: MatDialogRef<ModalsComponent>) { }
+  private dialogRef: MatDialogRef<ModalsComponent>, private translationService: TranslationService) { }
 
   ngOnInit() {
+    this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   close(): void {

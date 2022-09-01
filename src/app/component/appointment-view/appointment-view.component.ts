@@ -229,6 +229,7 @@ import {
           next: (res: any) => {
             this.drSlots = res.data;
             this.initializeEvents(this.drSlots);
+            this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
           },
         });
     }
@@ -379,4 +380,8 @@ import {
       return !this.slots[this.selectedSlotIdx] || !this.reason;
     }
   
+    getLang() {
+      return localStorage.getItem("selectedLanguage");
+     } 
+     
   }

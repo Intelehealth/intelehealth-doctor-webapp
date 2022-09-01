@@ -1,27 +1,39 @@
 <div class="container">
   <mat-card>
-    <div class="upload">
-      <div><b>{{ 'Select licence Key' | translate}}: </b> &nbsp;&nbsp;
-        <mat-form-field>
-          <mat-label>{{ 'MindMap Key' | translate}}</mat-label>
-          <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
-            <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
-              {{ mindmap.keyName }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="addKey()" style="float: right;">{{ 'Add New Key' | translate}}</button>
+      <div>
+        <div [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'">
+          <b>{{ 'Select licence Key' | translate}}: </b> &nbsp;&nbsp;
+          <mat-form-field>
+            <mat-label>{{ 'MindMap Key' | translate}}</mat-label>
+            <mat-select [(ngModel)]="selectedKey" (selectionChange)="licenceKeyHandler()">
+              <mat-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
+                {{ mindmap.keyName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button color="primary" (click)="addKey()" [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'">{{ 'Add New Key' | translate}}</button>
+        </div>
       </div>
+      <br>
+      <br>
       <div *ngIf="selectedKey">
-        <div>{{ 'Expiry Date'|translate}}: {{expiryDate | date: 'dd-MMM-yyyy'}}
+        <br>
+        <div [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'">
+          {{ 'Expiry Date'|translate}}: {{expiryDate | date: 'dd-MMM-yyyy'}}
           <span>
             <i class="material-icons" style="cursor:pointer;vertical-align: text-bottom;" (click)="editExpiryDate()">create</i>
           </span>
         </div>
         <br>
-        <div>{{ 'Mindmaps associated with this licence key are'|translate}}:
-          <span style="float: right;">
-            <button mat-raised-button color="primary" (click)="addMindmap()" style="float: right;">{{ 'Add Mindmap' | translate}}</button>
+        <br>
+        <div>
+          <span [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'">
+            {{ 'Mindmaps associated with this licence key are'|translate}}:
+          </span>
+          <span [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'">
+            <button mat-raised-button color="primary" (click)="addMindmap()">{{ 'Add Mindmap' | translate}}</button>
           </span>
         </div>
         <br>
@@ -29,7 +41,7 @@
           <input matInput (keyup)="applyFilter($event.target.value)" placeholder="{{'Search'|translate}}">
         </mat-form-field>
         
-        <div class="mat-elevation-z8">
+        <div [ngClass]="getLang() === 'ar' ? 'right' : 'left'" class="mat-elevation-z8">
           <table class="table-responsive" mat-table [dataSource]="dataSource" #sortCol4="matSort" matSort>
         
             <!-- ID Column -->
@@ -70,7 +82,7 @@
       <br>
       <br>
       <div class="image-card" *ngIf="image">
-        <div>{{ 'Images associated with this licence key' | translate}}.</div>
+        <div>{{ 'Images associated with this licence key' | translate}}</div>
         <br>
         <div><img src={{image}} alt=""/></div>
         <br>
@@ -91,7 +103,6 @@
           <button mat-button color="primary" (click)="imageUpload()" [disabled]="isImageError" class="submit"><mat-icon>file_upload</mat-icon>{{ 'Upload' | translate}}</button>
         </div>
       </div>
-    </div>
   </mat-card>
 </div>
 <input

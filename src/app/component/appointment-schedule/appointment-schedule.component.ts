@@ -154,6 +154,7 @@ export class AppointmentScheduleComponent implements OnInit {
           this.initializeEvents(this.userSchedule.slotSchedule);
         },
       });
+      this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   private initializeEvents(slots) {
@@ -192,6 +193,10 @@ export class AppointmentScheduleComponent implements OnInit {
     return this.scheduleForm.controls;
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
+   
   getHours(returnAll = true, date?) {
     const hours = Array.from(
       {
