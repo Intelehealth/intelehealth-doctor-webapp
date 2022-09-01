@@ -1,0 +1,95 @@
+// main.scss 
+@import "variables";
+//@import "global";
+// import more custom files...
+@mixin font($weight,$size) {
+    font-family:var(--font-family);
+    font-style:var(--font-style); 
+    font-weight:$weight;
+    font-size:$size;
+  }
+  @mixin margintop($margintop) {
+    margin-top:$margintop;
+  }
+  @mixin marginleft($marginleft) {
+    margin-left:$marginleft;
+  }
+  @mixin marginright($marginright) {
+    margin-right:$marginright;
+  }
+  
+.login-header
+{
+@include font(700,2rem);
+margin-top: 80px;
+color: var(--color-darkBlue);
+
+}
+.login-para
+{
+@include font(500,1rem);
+color: var(--color-gray);
+}
+.language-div
+{
+  box-sizing: border-box;
+  
+/* Auto layout */
+@include margintop(0rem);
+display: flex;
+flex-direction: row;
+justify-content: center;
+padding: 5px 10px;
+gap: 0.25rem;
+  
+position: absolute;
+left: calc(50% - 108px/2 + 212px);
+  
+background : var(--color-offWhite);
+/* Divider */
+  
+border: 0.770833px solid rgba(178, 175, 190, 0.2);
+border-radius: 0.5rem;
+}
+.div{
+  background : var(--color-white);
+}
+.form{
+  @include marginleft(4.375rem);
+  @include marginright(4.375rem);
+  
+}
+.language-dropdown{
+@include font(400,1rem);
+color: var(--color-darkestBlue);
+background : var(--color-offWhite);
+}
+  
+.btn-darkblue
+{
+
+@include margintop(1.875rem);
+background : var(--color-darkBlue);
+border-radius: 0.75rem;
+@include font(700,1.125rem);
+color: var(--color-white);
+}
+  
+.link-forgot-username
+{
+@include font(400,0.875rem);
+text-decoration-line: underline;
+color: var(--color-gray);
+}
+  
+.lbl-username
+{
+@include font(500,0.875rem);
+line-height: 150%;
+color: var(--color-darkestBlue);
+}
+.error-message{
+  @include font(500,0.875rem);
+  line-height: 150%;
+  color: var(--color-red);
+}

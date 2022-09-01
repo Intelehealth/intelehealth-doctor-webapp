@@ -1,0 +1,58 @@
+<div>
+  <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()" class="form">
+    <div>
+      <h3 class="login-header">Choose verification method</h3>
+      <p class="login-para">
+        Choose your email or phone number through which you want to verify your
+        identity. We will send a verofication code to confirm your entry.
+      </p>
+    </div>
+    <div>
+      <input
+        type="button"
+        value="Mobile Number"
+        (click)="setShowEmail(false)"
+      />
+      <input type="button" value="Email ID" (click)="setShowEmail(true)" />
+    </div>
+    <div class="form-group" role="group" *ngIf="!showEmail">
+      <div class="row">
+        <div class="col">
+          <label for="username" class="lbl-username">Mobile number</label>
+        </div>
+      </div>
+      <select name="mobilecode" id="mobilecode" class="language-dropdown">
+        <option value="" selected="selected">+ 91</option>
+        <option value="">+ 61</option>
+      </select>
+      <input
+        type="text"
+        class="form-control"
+        id="mobile"
+        name="mobile"
+        aria-describedby="mobile"
+        formControlName="mobile"
+      />
+    </div>
+
+    <div class="form-group" role="group" *ngIf="showEmail">
+      <div class="row">
+        <div class="col">
+          <label for="email" class="lbl-username">Email ID</label>
+        </div>
+      </div>
+      <input
+        type="text"
+        class="form-control"
+        id="email"
+        name="email"
+        aria-describedby="email"
+        formControlName="email"
+      />
+    </div>
+
+    <div>
+      <button type="submit" class="btn-darkblue btn-block">Next</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,41 @@
+
+.header { grid-area: header; 
+text-align: right;
+align-self: end;
+}
+.loginform { grid-area: loginform; }
+.footer { grid-area: footer; 
+  display: grid;
+  grid-template-areas: 
+    '. terms help';
+}
+.terms{
+    grid-area: terms;
+    text-align: center;
+}
+.help{
+    grid-area: help;
+    text-align: right;
+}
+.imagerotate {grid-area: imagerotate; }
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'imagerotate header'
+    'imagerotate loginform'
+    'imagerotate footer';
+  gap: 1.2rem;
+  padding: 1rem;
+}
+@media screen and (max-width: 1024px) {
+    .grid-container {
+        display: grid;
+        grid-template-areas:
+          '. header'
+          'loginform loginform'
+          'imagerotate imagerotate'
+          '. footer';
+        gap: 1.2rem;
+        padding: 1rem;
+      }
+  }

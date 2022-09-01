@@ -1,0 +1,68 @@
+<div class="grid-container">
+  <div class="imagerotate">
+    <ngb-carousel
+      #carousel
+      [interval]="2000"
+      [pauseOnHover]="true"
+      [pauseOnFocus]="true"
+    >
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <img
+            src="../../../assets/images/login/Hero1.png"
+            width="100%"
+            alt="Random first slide"
+          />
+        </div>
+      </ng-template>
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <img
+            src="../../../assets/images/login/Hero2.png"
+            width="100%"
+            alt="Random second slide"
+          />
+        </div>
+      </ng-template>
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <img
+            src="../../../assets/images/login/Hero3.png"
+            width="100%"
+            alt="Random third slide"
+          />
+        </div>
+      </ng-template>
+    </ngb-carousel>
+  </div>
+  <div class="header">
+    <div>
+      <!--class="language-div"-->
+      <select name="language" id="language" class="language-dropdown">
+        <option value="" selected="selected">English</option>
+        <option value="">Marathi</option>
+      </select>
+    </div>
+  </div>
+  <div class="loginform">
+    <app-login-page
+      *ngIf="showLogin"
+      (onSucess)="onLoginSucess($event)"
+    ></app-login-page>
+    <app-login-verification
+      *ngIf="showLoginverifictaion"
+      (onSucess)="onVerificationSucess($event)"
+    ></app-login-verification>
+    <app-otp-verification *ngIf="showOTPverifictaion"></app-otp-verification>
+  </div>
+  <div class="footer">
+    <div class="terms">
+      <p class="login-para text-center">
+        Intelehealth <a href="#"><u>Terms & Conditions</u></a>
+      </p>
+    </div>
+    <div class="help">
+      <button type="button" class="btn btn-info">Help</button>
+    </div>
+  </div>
+</div>
