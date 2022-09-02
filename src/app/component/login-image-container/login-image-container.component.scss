@@ -1,0 +1,23 @@
+.container{
+    background-color: var(--color-darkBlue);
+    height: 100%;
+    width:100%;
+    display: grid;
+grid-template-areas:
+  'logo logo'
+  'image image'
+  'copyright copyright';
+gap: 1.2rem;
+padding: 1rem;
+}
+.logo { grid-area: logo;
+    align-self: center;
+    margin-left: 1.5rem;
+ }
+ .copyright{
+    grid-area: copyright;
+    text-align: center;
+     align-self: end;
+     
+ }
+

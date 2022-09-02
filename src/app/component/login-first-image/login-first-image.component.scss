@@ -1,0 +1,28 @@
+.container{
+display: grid;
+grid-template-areas:
+  'heartbeat1 image heartbeat2'
+  'footer footer footer';
+  
+gap: 1.2rem;
+padding: 1rem;
+}
+.heartbeat1 { grid-area: heartbeat1;
+    align-self: flex-end;
+   }
+
+ .heartbeat2{
+    grid-area: heartbeat2;
+}
+
+ .image{
+    grid-area: image;
+    
+ }
+ .footer{
+    grid-area: footer;
+    color:var(--color-white);
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+ }

@@ -96,6 +96,9 @@ import { LoginContainerComponent } from "./component/login-container/login-conta
 import { LoginVerificationComponent } from "./component/login-verification/login-verification.component";
 import { OtpVerificationComponent } from "./component/otp-verification/otp-verification.component";
 import { NgxCaptchaModule } from "ngx-captcha";
+import { LoginImageContainerComponent } from './component/login-image-container/login-image-container.component';
+import { LoginFirstImageComponent } from './component/login-first-image/login-first-image.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -142,6 +145,8 @@ import { NgxCaptchaModule } from "ngx-captcha";
     LoginContainerComponent,
     LoginVerificationComponent,
     OtpVerificationComponent,
+    LoginImageContainerComponent,
+    LoginFirstImageComponent,
   ],
 
   imports: [

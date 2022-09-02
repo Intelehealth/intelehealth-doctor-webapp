@@ -17,7 +17,8 @@ align-self: end;
     grid-area: help;
     text-align: right;
 }
-.imagerotate {grid-area: imagerotate; }
+.imagerotate {grid-area: imagerotate; 
+}
 .grid-container {
   display: grid;
   grid-template-areas:
@@ -29,6 +30,7 @@ align-self: end;
 }
 @media screen and (max-width: 1024px) {
     .grid-container {
+
         display: grid;
         grid-template-areas:
           '. header'
@@ -38,4 +40,7 @@ align-self: end;
         gap: 1.2rem;
         padding: 1rem;
       }
+     /* .imagerotate{
+        display: none;
+      }*/
   }

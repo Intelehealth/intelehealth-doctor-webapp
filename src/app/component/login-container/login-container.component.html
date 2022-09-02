@@ -1,39 +1,6 @@
 <div class="grid-container">
   <div class="imagerotate">
-    <ngb-carousel
-      #carousel
-      [interval]="2000"
-      [pauseOnHover]="true"
-      [pauseOnFocus]="true"
-    >
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img
-            src="../../../assets/images/login/Hero1.png"
-            width="100%"
-            alt="Random first slide"
-          />
-        </div>
-      </ng-template>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img
-            src="../../../assets/images/login/Hero2.png"
-            width="100%"
-            alt="Random second slide"
-          />
-        </div>
-      </ng-template>
-      <ng-template ngbSlide>
-        <div class="picsum-img-wrapper">
-          <img
-            src="../../../assets/images/login/Hero3.png"
-            width="100%"
-            alt="Random third slide"
-          />
-        </div>
-      </ng-template>
-    </ngb-carousel>
+    <app-login-image-container></app-login-image-container>
   </div>
   <div class="header">
     <div>
