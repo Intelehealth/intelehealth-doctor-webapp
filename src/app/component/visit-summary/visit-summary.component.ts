@@ -76,7 +76,7 @@ export class VisitSummaryComponent implements OnInit {
         if (res?.data?.userUuid) {
           this.showReleaseIcon = true;
           const userDetails = getFromStorage("user");
-          if(res?.data?.userUuid === userDetails?.uuid){
+          if (res?.data?.userUuid === userDetails?.uuid) {
             this.disableReleaseIcon = false;
           }
         } else {
@@ -254,6 +254,7 @@ export class VisitSummaryComponent implements OnInit {
               ],
             };
             this.service.postEncounter(json).subscribe((post) => {
+              this.apmntService.completeAppointment({ visitUuid: this.visitUuid }).subscribe();
               this.remotePrescriptionPresent = true;
               this.router.navigateByUrl("/home");
               this.translationService.getTranslation("Prescription added for review");
