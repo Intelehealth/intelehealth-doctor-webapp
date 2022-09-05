@@ -77,6 +77,19 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedLang = localStorage.getItem("selectedLanguage");
+    this.getSlots();
+
+    setInterval(this.tick.bind(this), 30000);
+  }
+
+  tick() {
+    const mins: any = new Date().getMinutes();
+    if ([0, 15, 30, 45].includes(mins)) {
+      this.getSlots();
+    }
+  }
+
+  getSlots() {
     let dates = this.getDates("month");
     this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
   }
@@ -88,25 +101,27 @@ export class CalendarComponent implements OnInit {
         ...slot[i],
         title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
         color: colors.yellow,
-        start: new Date(
-          moment(
-            slot[i].slotDate.concat(
-              moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")
-            ),
-            "DD/MM/YYYY hh:mm:ss"
-          ).toDate()
-        ),
-        end: new Date(
-          addMinutes(
-            moment(
-              slot[i].slotDate.concat(
-                moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")
-              ),
-              "DD/MM/YYYY hh:mm:ss"
-            ).toDate(),
-            slot[i].slotDuration
-          )
-        ),
+        start: new Date(slot[i].slotJsDate),
+        end: new Date(moment(slot[i].slotJsDate).add(30, 'minutes').toDate()),
+        // start: new Date(
+        //   moment(
+        //     slot[i].slotDate.concat(
+        //       moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")
+        //     ),
+        //     "DD/MM/YYYY hh:mm:ss"
+        //   ).toDate()
+        // ),
+        // end: new Date(
+        //   addMinutes(
+        //     moment(
+        //       slot[i].slotDate.concat(
+        //         moment(slot[i].slotTime, ["h:mm A"]).format("HH:mm:ss")
+        //       ),
+        //       "DD/MM/YYYY hh:mm:ss"
+        //     ).toDate(),
+        //     slot[i].slotDuration
+        //   )
+        // ),
         patientId: slot[i].patientId,
         visitUuid: slot[i].visitUuid,
         patientName: slot[i].patientName,
