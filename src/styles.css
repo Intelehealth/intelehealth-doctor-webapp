@@ -57,7 +57,7 @@ body.font-lato h6,
 body.font-lato a:not(.fa-whatsapp, .fa-phone-volume, .material-icons),
 body.font-lato th,
 body.font-lato td {
-  font-family: lato;
+  font-family: DM Sans;
 }
 
 /* for dialog pop-up */

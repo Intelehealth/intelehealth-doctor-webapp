@@ -73,6 +73,18 @@ background : var(--color-darkBlue);
 border-radius: 0.75rem;
 @include font(700,1.125rem);
 color: var(--color-white);
+
+height: 3.5rem;
+
+}
+.btn-help{
+background:var(--color-green);
+box-shadow: 0px 4px 16px rgba(15, 209, 151, 0.32);
+border-radius: 80px;
+color:  var(--color-white);
+@include font(500,1.125rem);
+line-height: 150%;
+
 }
   
 .link-forgot-username
@@ -100,3 +112,10 @@ color: var(--color-darkestBlue);
   text-align: center;
   color:var(--color-white)
 }
+.btn-no-boarder{
+  border:none;
+  background-color: transparent;
+  color:var(--color-darkBlue) ;
+  @include font(700,1rem);
+  line-height: 150%;
+  }

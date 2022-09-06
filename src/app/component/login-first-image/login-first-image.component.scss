@@ -1,23 +1,27 @@
 .container{
 display: grid;
+grid-template-columns: 1fr 4fr 1fr;
 grid-template-areas:
   'heartbeat1 image heartbeat2'
-  'footer footer footer';
-  
-gap: 1.2rem;
-padding: 1rem;
+  'footer footer footer'; 
 }
 .heartbeat1 { grid-area: heartbeat1;
-    align-self: flex-end;
+   justify-self: flex-start;
+   align-self: flex-end;
    }
 
  .heartbeat2{
     grid-area: heartbeat2;
+    justify-self: flex-end;
 }
 
  .image{
     grid-area: image;
+    img{max-width: 280px;
+      align-self: center;
+   }
     
+    //overflow: hidden;
  }
  .footer{
     grid-area: footer;

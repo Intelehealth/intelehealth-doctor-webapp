@@ -1,14 +1,13 @@
-.container{
+.main-container{
     background-color: var(--color-darkBlue);
-    height: 100%;
-    width:100%;
     display: grid;
+  grid-template-columns: repeat(2,1fr);
 grid-template-areas:
   'logo logo'
   'image image'
   'copyright copyright';
-gap: 1.2rem;
-padding: 1rem;
+  width: 98vh;
+  height: 98vh;
 }
 .logo { grid-area: logo;
     align-self: center;
@@ -19,5 +18,12 @@ padding: 1rem;
     text-align: center;
      align-self: end;
      
+ }
+ .image{
+  grid-area: image;
+  
+ }
+ .imagecontainer{
+  grid-area: image;
  }
 

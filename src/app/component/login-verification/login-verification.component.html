@@ -1,46 +1,42 @@
-<div>
-  <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()" class="form">
-    <div>
-      <h3 class="login-header">Choose verification method</h3>
-      <p class="login-para">
-        Choose your email or phone number through which you want to verify your
-        identity. We will send a verofication code to confirm your entry.
-      </p>
-    </div>
-    <div>
+<div class="vr-container">
+  <div class="vr-header">
+    <h3 class="login-header">Choose verification method</h3>
+  </div>
+  <div class="vr-para">
+    <p class="login-para">
+      Choose your email or phone number through which you want to verify your
+      identity. We will send a verofication code to confirm your entry.
+    </p>
+  </div>
+  <div class="vr-btngrp">
+    <div [class]="!showEmail ? 'vr-mobilebtn vr-active' : 'vr-mobilebtn'">
       <input
+        class="btn-no-boarder"
         type="button"
-        value="Mobile Number"
+        value="Mobile number"
         (click)="setShowEmail(false)"
       />
-      <input type="button" value="Email ID" (click)="setShowEmail(true)" />
     </div>
-    <div class="form-group" role="group" *ngIf="!showEmail">
-      <div class="row">
-        <div class="col">
-          <label for="username" class="lbl-username">Mobile number</label>
-        </div>
-      </div>
-      <select name="mobilecode" id="mobilecode" class="language-dropdown">
-        <option value="" selected="selected">+ 91</option>
-        <option value="">+ 61</option>
-      </select>
+    <div [class]="showEmail ? 'vr-emailbtn vr-active' : 'vr-emailbtn'">
       <input
-        type="text"
-        class="form-control"
-        id="mobile"
-        name="mobile"
-        aria-describedby="mobile"
-        formControlName="mobile"
+        type="button"
+        class="btn-no-boarder"
+        value="Email ID"
+        (click)="setShowEmail(true)"
       />
     </div>
+  </div>
 
-    <div class="form-group" role="group" *ngIf="showEmail">
-      <div class="row">
-        <div class="col">
-          <label for="email" class="lbl-username">Email ID</label>
-        </div>
-      </div>
+  <form
+    [formGroup]="verificationForm"
+    (ngSubmit)="onSubmit()"
+    *ngIf="showEmail"
+    class="vr-emailform"
+  >
+    <div class="vr-email-label">
+      <label class="lbl-username"> Email ID </label>
+    </div>
+    <div class="vr-textbox">
       <input
         type="text"
         class="form-control"
@@ -50,8 +46,41 @@
         formControlName="email"
       />
     </div>
+    <div class="btnnext">
+      <button type="submit" class="btn-darkblue btn-block">Next</button>
+    </div>
+  </form>
 
-    <div>
+  <form
+    [formGroup]="verificationForm"
+    (ngSubmit)="onSubmit()"
+    *ngIf="!showEmail"
+    class="vr-mobileform"
+  >
+    <div class="vr-mobile-label">
+      <label class="lbl-username">Mobile number</label>
+    </div>
+    <div class="vr-dropdown">
+      <select
+        name="mobilecode"
+        id="mobilecode"
+        class="language-dropdown form-control"
+      >
+        <option value="" selected="selected">+ 91</option>
+        <option value="">+ 61</option>
+      </select>
+    </div>
+    <div class="vr-textbox">
+      <input
+        type="text"
+        class="form-control"
+        id="mobile"
+        name="mobile"
+        aria-describedby="mobile"
+        formControlName="mobile"
+      />
+    </div>
+    <div class="btnnext">
       <button type="submit" class="btn-darkblue btn-block">Next</button>
     </div>
   </form>

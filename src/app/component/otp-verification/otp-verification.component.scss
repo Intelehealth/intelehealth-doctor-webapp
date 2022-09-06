@@ -1,1 +1,31 @@
 @import "../../../assets/scss/main.scss";
+.otp-container{
+    display: grid;
+    
+    grid-template-areas:
+      'header'
+      'para'
+      'label'
+      'textbox'
+      'lblotpnotreceived'
+      'btnverify'; 
+    }
+    .otp-header { 
+        grid-area: header;
+       }
+    .otp-para{
+        grid-area: para;
+       }
+    .otp-label{
+        grid-area: label;
+    }
+    .otp-textbox{
+        grid-area: textbox;
+    }
+    .otp-lblotpnotreceived
+    {
+        grid-area: lblotpnotreceived;
+    }
+    .otp-btn{
+        grid-area: btnverify;
+    }

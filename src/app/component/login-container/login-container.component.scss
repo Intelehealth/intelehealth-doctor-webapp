@@ -3,7 +3,22 @@
 text-align: right;
 align-self: end;
 }
-.loginform { grid-area: loginform; }
+.loginform{
+  grid-area: loginform;
+  margin-bottom: 2rem;
+  
+  
+}
+.formcontainer { grid-area: formcontainer; 
+  grid-template-areas:
+  '. header'
+  'loginform loginform'
+  'footer footer' 
+  ;
+
+gap: 1.2rem;
+padding: 1rem;
+}
 .footer { grid-area: footer; 
   display: grid;
   grid-template-areas: 
@@ -17,26 +32,27 @@ align-self: end;
     grid-area: help;
     text-align: right;
 }
-.imagerotate {grid-area: imagerotate; 
+.imagerotate {
+  grid-area: imagerotate; 
 }
 .grid-container {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows:1fr;
   grid-template-areas:
-    'imagerotate header'
-    'imagerotate loginform'
-    'imagerotate footer';
+    'imagerotate formcontainer';
   gap: 1.2rem;
   padding: 1rem;
+  width: 100vw;
+  height: 100vh;
 }
 @media screen and (max-width: 1024px) {
     .grid-container {
 
         display: grid;
         grid-template-areas:
-          '. header'
           'loginform loginform'
-          'imagerotate imagerotate'
-          '. footer';
+          'imagerotate imagerotate';
         gap: 1.2rem;
         padding: 1rem;
       }
