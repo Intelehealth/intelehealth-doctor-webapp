@@ -91,7 +91,7 @@ export class HomepageComponent implements OnInit {
     const text = encodeURI(
       `Hello, my name is ${this.userDetails.person.display} and I need some assistance.`
     );
-    this.whatsappLink = `https://wa.me/917005308163?text=${text}`;
+    this.whatsappLink = `https://wa.me/919503692181?text=${text}`;
   }
 
   getStateFromVisit(provider) {
