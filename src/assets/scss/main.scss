@@ -119,3 +119,13 @@ color: var(--color-darkestBlue);
   @include font(700,1rem);
   line-height: 150%;
   }
+
+.btn-otp{
+  padding: 0.75rem 1.5rem;
+  gap: 3rem;
+  width: 48px;
+  height: 48px;
+  background:var(--color-offWhite);
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  }

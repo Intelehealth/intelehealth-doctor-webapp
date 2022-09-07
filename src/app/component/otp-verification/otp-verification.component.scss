@@ -18,13 +18,19 @@
        }
     .otp-label{
         grid-area: label;
+       
     }
     .otp-textbox{
+        display: grid;
         grid-area: textbox;
+        grid-template-columns: repeat(6,1fr);
+        gap:1rem;
     }
     .otp-lblotpnotreceived
     {
         grid-area: lblotpnotreceived;
+        margin-top: 2rem;
+        
     }
     .otp-btn{
         grid-area: btnverify;
