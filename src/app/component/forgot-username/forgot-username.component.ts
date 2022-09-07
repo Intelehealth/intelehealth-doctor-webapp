@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-forgot-username',
@@ -8,10 +7,11 @@ import { Router } from "@angular/router";
   styleUrls: ['./forgot-username.component.scss']
 })
 export class ForgotUsernameComponent implements OnInit {
-  fieldTextType: boolean = false;
-  ForgotUsernameForm = new FormGroup({
-    mobileNumber: new FormControl("", [Validators.required]),
-    emailId: new FormControl("", [Validators.required]),
+  @Output() onSucess = new EventEmitter<boolean>();
+  showEmail: boolean = false;
+  verificationForm = new FormGroup({
+    mobile: new FormControl(),
+    email: new FormControl(),
   });
 
   constructor() { }
@@ -19,9 +19,12 @@ export class ForgotUsernameComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit() {}
-
-  toggleFieldTextType() {
-    this.fieldTextType = !this.fieldTextType;
+  setShowEmail(show: boolean) {
+    this.showEmail = show;
   }
+  
+  onSubmit() {
+    this.onSucess.emit(true);
+  }
+    
 }

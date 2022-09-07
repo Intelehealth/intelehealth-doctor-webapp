@@ -61,71 +61,107 @@
   }
   
   .btn-darkblue{ 
-    @include margintop(40px);
+    @include margintop(30px);
     @include background(#2E1E91);
     border-radius: 8px;
     @include font(700,18px);
     @include color(#FFFFFF);
-  }
-  
-  .mainForm{
-    @include marginleft(70px);
-    @include marginright(70px);
-  }
-  
-  .link-forgot-username{
-    @include font(400,14px);
-    text-decoration-line: underline;
-    @include color(#7F7B92);
-  }
-  
-  .lbl-username{ 
-    @include font(500,14px); 
-    line-height: 150%;
-    @include color(#1B163A);
-  }
-
-  .icon{
-    position:absolute;
-    top:calc(45.5%);
-    left:35rem;
-  }
-
-  button {
-    margin-right: 2px;
-  }
-
-  .btn-group{
-    background-color:#EFE8FF;
-    height: 40px;
-    border-style: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 4px 4px;
-    border-radius:8px;
-  }
-
-  .btn-light{
-    border-radius:5px;
-    width: 200px;
-    height: 32px;
-    @include font(700,16px);
-    line-height: 100%;
-    @include marginleft(2px);
-    color: #2E1E91;
-    background: #FFFFFF;
-    border-radius: 8px;
+    border: none;
+    padding: 7px 12px;
   }
 
   .form{
-    @include marginleft(70px);
-    @include marginright(70px);
+    @include marginleft(60px);
+    @include marginright(60px);
   }
 
-  .input-codes input{
-    width: 530px;
-    height:35px;
-    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+.vr-btngrp{
+    background: #EFE8FF;
     border-radius: 8px;
+    padding: 0.4rem 1rem;
+    grid-area: btngrp;
+    display: grid;
+    
+}
+.vr-mobilebtn{
+    text-align: center;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    grid-area: mobilebtn;
+    grid-row: 1;
+    grid-column: 1;
+}
+.vr-emailbtn{
+    text-align: center;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    grid-area: emailbtn;
+    grid-row: 1;
+    grid-column: 2;
+}
+
+.vr-mobile-label{
+    grid-area: label;
+    margin-top: 2rem;
+    // text-align: center;
+}
+.vr-email-label{
+    grid-area: label;
+    margin-top: 2rem;
+    
+}
+.vr-textbox{
+    grid-area: textbox;
+
+}
+.vr-mobileform{
+    grid-area: form;
+    display: grid;
+    grid-template-areas: 
+    'label .'
+    'dropdown textbox'
+    'btnnext btnnext';  
+    grid-template-columns: 1fr 5fr;
+}
+
+.btnnext{
+    grid-area: btnnext;
+}
+.vr-dropdown{
+    grid-area: dropdown;
+    justify-self: center;
+   
+}
+.vr-active{
+    background: #FFFFFF;
+    box-shadow: 0px 2px 6px rgba(27, 22, 58, 0.08);
+    border-radius: 8px;
+}
+
+.btn-no-boarder{
+  border:none;
+  background-color: transparent;
+  color:#2E1E91; ;
+  @include font(700,1rem);
+  line-height: 150%;
   }
+  .lbl-username{
+    @include font(500,0.875rem);
+    line-height: 150%;
+    color: var(--color-darkestBlue);
+  }
+
+  .btn-help{
+    background:#0FD197;
+    box-shadow: 0px 4px 16px rgba(15, 209, 151, 0.32);
+    border-radius: 80px;
+    color:  #FFFFFF;
+    @include font(500,1.125rem);
+    line-height: 150%;
+    border: none;
+    padding: 4px 10px;
+    height: 100%;
+    margin-top: 10rem;
+    margin-left: 30rem;
+  }
+  
