@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <label>Select State</label>
+      <ng-multiselect-dropdown
+        [placeholder]="'Select State'"
+        [settings]="stateDropDownSettings"
+        [data]="states"
+        [(ngModel)]="selectedState"
+        [ngModelOptions]="{ standalone: true }"
+        (onSelect)="onStateSelect($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+
+    <div class="col-6">
+      <label>Select District</label>
+      <ng-multiselect-dropdown
+        [placeholder]="'Select District'"
+        [settings]="districtDropDownSettings"
+        [data]="districts"
+        [(ngModel)]="selectedDistrict"
+        [ngModelOptions]="{ standalone: true }"
+        (onSelect)="onDistrictSelect($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+      <label>Select Sanch</label>
+      <ng-multiselect-dropdown
+        [placeholder]="'Select Sanch'"
+        [settings]="sanchDropDownSettings"
+        [data]="sanchs"
+        [(ngModel)]="selectedSanch"
+        [ngModelOptions]="{ standalone: true }"
+        (onSelect)="onSanchSelect($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+
+    <div class="col-6">
+      <label>Select Village</label>
+      <ng-multiselect-dropdown
+        [placeholder]="'Select Village'"
+        [settings]="villageDropDownSettings"
+        [data]="villages"
+        [(ngModel)]="selectedVillage"
+        [ngModelOptions]="{ standalone: true }"
+        (onSelect)="onVillageSelect($event)"
+      >
+      </ng-multiselect-dropdown>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <div class="form-group">
+        <label for="sevikaName">Sevika Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="sevikaName"
+          placeholder="Enter Sevika Name"
+          [(ngModel)]="sevikaName"
+        />
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="form-group">
+        <label for="mobNumber">Mobile Number</label>
+        <input
+          type="number"
+          class="form-control"
+          id="mobNumber"
+          placeholder="Enter Mobile Number"
+          [(ngModel)]="sevikaMobNo"
+          pattern="/^-?\d+\.?\d*$/"
+          onKeyPress="if(this.value.length==10) return false;"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="form-group">
+        <textarea
+          class="form-control"
+          id="displayMessage"
+          style="height: 21vh"
+          [disabled]="!isDisabled"
+        >
+         {{template}}
+        </textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4" *ngIf="filteredVillagePatients?.length">
+    <div class="col-md-12">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                name="checkboxes"
+                (change)="selectAllVisits($event)"
+              />
+            </th>
+            <th>Name</th>
+            <th>OpenMRS ID</th>
+            <th>Sex</th>
+            <th>DOB</th>
+            <th>Age</th>
+            <th>Village</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visit of filteredVillagePatients; let i = index">
+            <td>
+              <input
+                type="checkbox"
+                name="checkboxes"
+                [(ngModel)]="visit.isSelected"
+                (change)="selectIndividualVisit($event)"
+                value="{{ visit.uuid }}"
+              />
+            </td>
+            <td>{{ visit?.patient?.person?.display }}</td>
+            <td>{{ visit?.patient?.identifiers[0]?.identifier }}</td>
+            <td>
+              {{ visit?.patient?.person?.gender === "M" ? "Male" : "Female" }}
+            </td>
+            <td>
+              {{ visit?.patient?.person?.birthdate | date: "dd-MMM-yyy" }}
+            </td>
+            <td>{{ visit?.patient?.person?.age }}</td>
+            <td>{{ visit?.location?.display }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-group">
+        <button type="button" class="btn btn-secondary" [disabled]="!sevikaNam" (click)="sendSMS()">
+          Send SMS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
