@@ -73,7 +73,7 @@ export class CalendarComponent implements OnInit {
     private translationService: TranslationService,
     private dialogService: ConfirmDialogService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.selectedLang = localStorage.getItem("selectedLanguage");
@@ -102,7 +102,7 @@ export class CalendarComponent implements OnInit {
         title: `${slot[i].patientName}(${slot[i].openMrsId}) ${slot[i].slotTime}`,
         color: colors.yellow,
         start: new Date(slot[i].slotJsDate),
-        end: new Date(moment(slot[i].slotJsDate).add(30, 'minutes').toDate()),
+        end: new Date(moment(slot[i].slotJsDate).add(30, "minutes").toDate()),
         // start: new Date(
         //   moment(
         //     slot[i].slotDate.concat(
@@ -247,7 +247,11 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.drSlots = res.data;
-          this.initializeEvents(this.drSlots);
+          const doctors = this.drSlots.filter((f) =>
+            [this.userId, null, undefined, ""].includes(f.userUuid)
+          );
+
+          this.initializeEvents(doctors);
         },
       });
   }
@@ -303,6 +307,9 @@ export class CalendarComponent implements OnInit {
       ...this.selectedSchedule,
       ...this.slots[this.selectedSlotIdx],
       reason: this.reason,
+      webApp: true,
+      userUuid: this.userId,
+      drName: this.drName,
     };
 
     this.appointmentService
@@ -400,16 +407,22 @@ export class CalendarComponent implements OnInit {
   }
 
   startAppointment(appnt) {
-    this.appointmentService.startAppointment({
-      appointmentId: appnt.appointmentId || appnt.id,
-      drName: this.drName,
-      userUuid: this.userId
-    }).subscribe((res: any) => {
-      if (res.status) {
-        this.toast({ message: 'Appointment started' });
-        this.router.navigate(['/visitSummary', appnt.patientId, appnt.visitUuid])
-      }
-    });
+    this.appointmentService
+      .startAppointment({
+        appointmentId: appnt.appointmentId || appnt.id,
+        drName: this.drName,
+        userUuid: this.userId,
+      })
+      .subscribe((res: any) => {
+        if (res.status) {
+          this.toast({ message: "Appointment started" });
+          this.router.navigate([
+            "/visitSummary",
+            appnt.patientId,
+            appnt.visitUuid,
+          ]);
+        }
+      });
   }
 
   isAppointmentTime(appnt) {
