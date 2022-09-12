@@ -18,8 +18,8 @@ export class LoginContainerComponent implements OnInit {
     recaptcha: new FormControl("", [Validators.required]),
   });
   showOTPverifictaion: boolean = false;
-  showLoginverifictaion: boolean = true;
-  showLogin: boolean = false;
+  showLoginverifictaion: boolean = false;
+  showLogin: boolean = true;
 
   constructor(
     //private sessionService: SessionService,
