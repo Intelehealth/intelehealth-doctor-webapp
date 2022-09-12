@@ -8,6 +8,8 @@ import { PushNotificationsService } from "src/app/services/push-notification.ser
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ModalinternetconnectionComponent } from "../modalinternetconnection/modalinternetconnection.component";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -34,7 +36,8 @@ export class LoginPageComponent implements OnInit {
     private authService: AuthService,
     private pushNotificationsService: PushNotificationsService,
     private service: VisitService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -101,5 +104,11 @@ export class LoginPageComponent implements OnInit {
   }
   showHidePassword() {
     this.showPassword = !this.showPassword;
+  }
+  open() {
+    const modalRef = this.modalService.open(ModalinternetconnectionComponent, {
+      backdrop: true,
+      size: "s",
+    });
   }
 }
