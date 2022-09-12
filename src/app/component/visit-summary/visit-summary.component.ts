@@ -8,6 +8,7 @@ import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { TranslationService } from "src/app/services/translation.service";
 import { AppointmentService } from "src/app/services/appointment.service";
+import * as moment from "moment";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -67,7 +68,20 @@ export class VisitSummaryComponent implements OnInit {
     this.fetchVisit();
     this.getVisitAppointment();
 
+    setInterval(this.tick.bind(this), 30000);
     this.translationService.getSelectedLanguage();
+  }
+
+  tick() {
+    const mins: any = new Date().getMinutes();
+    if ([0, 15, 30, 45].includes(mins)) {
+      this.getVisitAppointment();
+    }
+  }
+
+  isAppointmentTime(appnt) {
+    const isTime = moment().isBefore(moment(appnt.slotJsDate));
+    return isTime;
   }
 
   getVisitAppointment() {
@@ -77,7 +91,12 @@ export class VisitSummaryComponent implements OnInit {
           this.showReleaseIcon = true;
           const userDetails = getFromStorage("user");
           if (res?.data?.userUuid === userDetails?.uuid) {
-            this.disableReleaseIcon = false;
+
+            if (this.isAppointmentTime(res.data)) {
+              this.disableReleaseIcon = true;
+            } else {
+              this.disableReleaseIcon = false;
+            }
           }
         } else {
           this.showReleaseIcon = false;

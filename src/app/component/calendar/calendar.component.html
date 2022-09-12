@@ -131,7 +131,7 @@
                 style="float: left"
                 color="primary"
                 [routerLink]="['/visitSummary', e1.patientId, e1.visitUuid]"
-                [disabled]="e1.userUuid !== userId" 
+                [disabled]="e1.userUuid !== userId || isAppointmentTime(e1)" 
                 (click)="close()"
               >
                 {{ "View" | translate }}
