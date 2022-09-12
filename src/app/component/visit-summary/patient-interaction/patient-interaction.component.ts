@@ -12,6 +12,7 @@ import {
 } from "@angular/animations";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { TranslationService } from "src/app/services/translation.service";
+import { TranslateService } from "@ngx-translate/core";
 declare var getFromStorage: any,
   getEncounterUUID: any;
 
@@ -64,7 +65,8 @@ export class PatientInteractionComponent implements OnInit {
     private visitService: VisitService,
     private route: ActivatedRoute,
     private encounterService: EncounterService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -107,10 +109,11 @@ export class PatientInteractionComponent implements OnInit {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
       const result = response.results;
       var tempMsg = result.filter((pType) =>
-        ["Yes", "No"].includes(pType.value)
+          pType.display.includes('Patient Interaction')
       );
-      if (result.length !== 0) {
-        this.msg = tempMsg;
+      let data = this.diagnosisService.getData(tempMsg[0])
+      if (data) {
+        this.msg.push(data);
       }
     });
   }
@@ -135,12 +138,16 @@ export class PatientInteractionComponent implements OnInit {
         } else {
           const json = {
             attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
-            value: value,
+            value: this.getBody(value),
           };
           this.visitService
             .postAttribute(visitId, json)
             .subscribe((response1) => {
-              this.msg.push({ uuid: response1.uuid, value: response1.value });
+              let obj = {
+                uuid : response1.uuid,
+                value: json.value
+              }
+             this.msg.push(this.diagnosisService.getData(obj));
             });
         }
       });
@@ -195,6 +202,15 @@ export class PatientInteractionComponent implements OnInit {
         });
       }
     }  
+  }
+
+
+  getBody(value) {
+    let value1 = {
+      "ar": this.translate.instant(value),
+      "en": value,
+    }
+    return JSON.stringify(value1);
   }
 
   getLang() {

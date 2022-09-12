@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { TranslateService } from '@ngx-translate/core';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -41,7 +42,7 @@ diagnosisForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,private translationService: TranslateService) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -50,7 +51,7 @@ diagnosisForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosis.push(obs);
+          this.diagnosis.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -72,15 +73,27 @@ diagnosisForm = new FormGroup({
         concept: this.conceptDiagnosis,
         person: this.patientId,
         obsDatetime: date,
-        value: `${value.text}:${value.type} & ${value.confirm}`,
+        value:  this.getBody('diagnosis',value.text, value.type, value.confirm),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
         this.diagnosisList = [];
-        this.diagnosis.push({uuid: resp.uuid, value: json.value});
+        let obj = {
+          uuid : resp.uuid,
+          value: json.value
+        }
+        this.diagnosis.push(this.diagnosisService.getData(obj));
       });
     }
+  }
+
+  getBody(element: string, elementName: string,type, confirm) {
+    let value = {
+      "ar": `${this.translationService.instant(`${element}.${elementName}`)}:${type} & ${confirm}`,
+      "en": `${elementName}:${type} & ${confirm}`,
+    }
+    return JSON.stringify(value);
   }
 
   delete(i) {

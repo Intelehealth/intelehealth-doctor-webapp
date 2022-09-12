@@ -156,7 +156,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.meds.push(obs);
+            this.meds.push(this.diagnosisService.getData(obs));
           }
         });
       });
@@ -166,6 +166,7 @@ export class PrescribedMedicationComponent implements OnInit {
     const date = new Date();
     const value = this.medForm.value;
     // tslint:disable-next-line:max-line-length
+
     var insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
     if (value.route) {
       insertValue = `${insertValue} (${value.route})`;
@@ -185,7 +186,7 @@ export class PrescribedMedicationComponent implements OnInit {
         concept: this.conceptMed,
         person: this.patientId,
         obsDatetime: date,
-        value: insertValue,
+        value: this.getBody(insertValue),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
@@ -204,6 +205,14 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.splice(i, 1);
         });
     }
+  }
+
+  getBody(value) {
+    let value1 = {
+      "ar": value,
+      "en": value,
+    }
+    return JSON.stringify(value1);
   }
 
   getLang() {

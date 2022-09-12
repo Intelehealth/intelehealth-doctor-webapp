@@ -107,4 +107,8 @@ export class LoginPageComponent implements OnInit {
       });
     }
   }
+  
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

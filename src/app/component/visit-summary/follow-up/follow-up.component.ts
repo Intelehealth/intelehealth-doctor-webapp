@@ -52,7 +52,7 @@ followForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.followUp.push(obs);
+          this.followUp.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -65,17 +65,20 @@ followForm = new FormGroup({
     const advice = form.advice;
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
-      let remark = localStorage.getItem('selectedLanguage') === 'ru'?  'Замечание': 'Remark';
       const json = {
         concept: this.conceptFollow,
         person: this.patientId,
         obsDatetime: date,
-        value: advice ? `${obsdate}, ${remark}: ${advice}` : obsdate,
+        value: this.getObj(obsdate,advice),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.followUp.push({uuid: resp.uuid, value: json.value});
+        let obj = {
+          uuid : resp.uuid,
+          value: json.value
+        }
+        this.followUp.push(this.diagnosisService.getData(obj));
       });
     }
   }
@@ -92,5 +95,15 @@ followForm = new FormGroup({
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
+   } 
+
+  getObj(obsdate, advice) {
+    let value1 = {
+      "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  (advice ? `${obsdate}, ملاحظة: ${advice}` : obsdate) 
+      :  `${obsdate}, ملاحظة: غير متوفر  `,
+      "en": localStorage.getItem('selectedLanguage') === 'en' ?  (advice ? `${obsdate}, Remark: ${advice}` : obsdate) 
+      :  `${obsdate}, Remark: NA`
+    }
+    return JSON.stringify(value1);
    } 
 }

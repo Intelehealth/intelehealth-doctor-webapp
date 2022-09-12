@@ -70,7 +70,7 @@ testForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.tests.push(obs);
+          this.tests.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -86,12 +86,16 @@ testForm = new FormGroup({
         concept: this.conceptTest,
         person: this.patientId,
         obsDatetime: date,
-        value: value,
+        value: JSON.stringify(this.diagnosisService.getBody('tests', value)),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.tests.push({uuid: resp.uuid, value: value});
+        let obj = {
+          uuid : resp.uuid,
+          value: json.value
+        }
+        this.tests.push(this.diagnosisService.getData(obj));
       });
     }
   }

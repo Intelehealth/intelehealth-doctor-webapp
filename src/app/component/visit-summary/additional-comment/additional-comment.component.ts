@@ -47,7 +47,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.comment.push(obs);
+          this.comment.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -63,7 +63,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
         concept: this.conceptComment,
         person: this.patientId,
         obsDatetime: date,
-        value: value,
+        value: this.getObj(value),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
@@ -82,7 +82,16 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       });
     }
   }
+
   getLang() {
     return localStorage.getItem("selectedLanguage");
+   }
+   
+   getObj(value) {
+    let value1 = {
+      "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  value: "غير متوفر",
+      "en": localStorage.getItem('selectedLanguage') === 'en' ? value : "NA"
+    }
+    return JSON.stringify(value1);
    } 
 }

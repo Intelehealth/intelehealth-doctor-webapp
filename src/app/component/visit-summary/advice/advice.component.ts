@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -26,7 +26,8 @@ declare var getEncounterUUID: any;
         style({ transform: 'translateX(300px)' })
       ]))])
     ])
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class AdviceComponent implements OnInit {
   advice: any = [];
@@ -70,7 +71,7 @@ export class AdviceComponent implements OnInit {
         response.results.forEach(obs => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
             if (!obs.value.includes('</a>')) {
-              this.advice.push(obs);
+              this.advice.push(this.diagnosisService.getData(obs));
             }
           }
         });
@@ -87,12 +88,17 @@ export class AdviceComponent implements OnInit {
         concept: this.conceptAdvice,
         person: this.patientId,
         obsDatetime: date,
-        value: value,
+        value: JSON.stringify(this.diagnosisService.getBody('advice', value)),
         encounter: this.encounterUuid
       };
+      
       this.service.postObs(json)
         .subscribe(response => {
-          this.advice.push({ uuid: response.uuid, value: value });
+          let obj = {
+            uuid : response.uuid,
+            value: json.value
+          }
+          this.advice.push(this.diagnosisService.getData(obj));
         });
     }
   }

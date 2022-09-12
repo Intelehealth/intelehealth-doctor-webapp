@@ -15,13 +15,13 @@
             
             <div role="group" class="form-group">
               <div>
-                  <label for="examplePassword">{{'Username'|translate}} :</label>
+                  <label [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'" for="examplePassword">{{'Username'|translate}} :</label>
                 <input type="email" placeholder="{{ 'Enter Username...'| translate}}" class="form-control" formControlName="username">
               </div>
             </div>
             <div role="group" class="form-group">
               <div>
-                  <label for="examplePassword">{{'Password'|translate}} :</label>
+                  <label [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'" for="examplePassword">{{'Password'|translate}} :</label>
                   <div style="display: flex;">
                 <input  [type]="fieldTextType ? 'text' : 'password'" placeholder="{{'Enter password...'| translate}}" class="form-control" formControlName="password">
                 <!-- <div class="input-group-append"> -->

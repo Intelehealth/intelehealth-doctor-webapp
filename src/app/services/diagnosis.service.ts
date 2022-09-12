@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslateService } from '@ngx-translate/core';
 declare var getEncounterProviderUUID: any,
   getFromStorage: any;
 
@@ -16,7 +17,8 @@ export class DiagnosisService {
   public isVisitSummaryChanged = false
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient,  private snackbar: MatSnackBar) { }
+  constructor(private http: HttpClient,  private snackbar: MatSnackBar,
+    private translateService: TranslateService) { }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -67,4 +69,33 @@ export class DiagnosisService {
       });
     }
   } 
+
+
+  getData(data: any) {
+    if (data?.value.toString().startsWith("{")) {
+      let value = JSON.parse(data.value.toString());
+      data.value = localStorage.getItem('selectedLanguage') === 'en' ? value["en"] : value['ar'];
+    }  
+    return data;
+  }
+
+  getBody(element: string, elementName: string ) {
+    let value, ar1, en1;
+    if(localStorage.getItem('selectedLanguage') === 'ar') {
+       ar1 =  localStorage.getItem('selectedLanguage') === 'ar' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
+      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'غير متوفر'
+      en1 = localStorage.getItem('selectedLanguage') === 'en' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
+      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'NA'
+    } else {
+      en1 = localStorage.getItem('selectedLanguage') === 'en' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
+      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'NA'
+      ar1 =  localStorage.getItem('selectedLanguage') === 'ar' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
+      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'غير متوفر'
+    }
+    value = {
+      "ar": ar1,
+      "en": en1
+     }
+    return value;
+  }
 }
