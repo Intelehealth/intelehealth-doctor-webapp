@@ -31,19 +31,19 @@
       type="button"
       data-toggle="collapse"
       data-target="#navbarSupportedContent-4"
-      aria-controls="navbarSupportedContent-4"
       aria-expanded="false"
       aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">Home</a>
+          <a class="nav-link" data-target="#navbarSupportedContent-4" data-toggle="collapse" routerLink="/home">Home</a>
         </li>
         <li class="nav-item" *ngIf="!subscribeAccess">
-          <a class="nav-link" (click)="subscribeNotification(false)"
+          <a class="nav-link" data-target="#navbarSupportedContent-4" data-toggle="collapse" (click)="subscribeNotification(false)"
             >Subscribe</a
           >
         </li>
@@ -53,25 +53,25 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a
-              class="dropdown-item"
+              class="dropdown-item" data-target="#navbarSupportedContent-4" data-toggle="collapse"
               [routerLink]="['/appointment', 'schedule']"
             >
               Appointment Schedule
             </a>
-            <a class="dropdown-item" [routerLink]="['/appointment', 'view']">
+            <a class="dropdown-item" data-target="#navbarSupportedContent-4" data-toggle="collapse" [routerLink]="['/appointment', 'view']">
               Appointment View
             </a>
           </div>
         </li>
         <li *ngIf="systemAccess" class="nav-item">
-          <a class="nav-link" routerLink="/ayu">Ayu</a>
+          <a class="nav-link" data-target="#navbarSupportedContent-4" data-toggle="collapse" routerLink="/ayu">Ayu</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" (click)="callTour()">Help</a>
+          <a class="nav-link" data-target="#navbarSupportedContent-4" data-toggle="collapse" (click)="callTour()">Help</a>
         </li>
         <li *ngIf="reportAccess" class="nav-item">
           <a
-            class="nav-link"
+            class="nav-link" data-target="#navbarSupportedContent-4" data-toggle="collapse"
             href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page"
             >Reports</a
           >
@@ -85,20 +85,22 @@
             ><i class="fa fa-user"></i> Profile
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" routerLink="/myAccount">My account</a>
+            <a class="dropdown-item" data-target="#navbarSupportedContent-4" data-toggle="collapse" routerLink="/myAccount">My account</a>
             <a
               *ngIf="systemAccess"
               class="dropdown-item"
+              data-target="#navbarSupportedContent-4" data-toggle="collapse"
               href="{{ baseURLLegacy }}/admin/index.htm"
               >System administration</a
             >
             <a
               *ngIf="systemAccess"
               class="dropdown-item"
+              data-target="#navbarSupportedContent-4" data-toggle="collapse"
               routerLink="/monitoring"
               >Monitoring</a
             >
-            <a class="dropdown-item" (click)="changePassword()"
+            <a class="dropdown-item" data-target="#navbarSupportedContent-4" data-toggle="collapse" (click)="changePassword()"
               >Change password</a
             >
           </div>
