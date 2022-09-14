@@ -16,6 +16,7 @@
     <div class="col-6">
       <label>Select District</label>
       <ng-multiselect-dropdown
+        [disabled]="!isDistrict"
         [placeholder]="'Select District'"
         [settings]="districtDropDownSettings"
         [data]="districts"
@@ -31,6 +32,7 @@
     <div class="col-6">
       <label>Select Sanch</label>
       <ng-multiselect-dropdown
+        [disabled]="!isSanch"
         [placeholder]="'Select Sanch'"
         [settings]="sanchDropDownSettings"
         [data]="sanchs"
@@ -44,6 +46,7 @@
     <div class="col-6">
       <label>Select Village</label>
       <ng-multiselect-dropdown
+        [disabled]="!isVillage"
         [placeholder]="'Select Village'"
         [settings]="villageDropDownSettings"
         [data]="villages"
@@ -55,7 +58,7 @@
     </div>
   </div>
 
-  <div class="row mt-3">
+  <div class="row mt-3" *ngIf="isShow">
     <div class="col-6">
       <div class="form-group">
         <label for="sevikaName">Sevika Name</label>
@@ -85,20 +88,28 @@
     </div>
   </div>
 
-  <div class="row mt-2">
-    <div class="col-12">
-      <div class="form-group">
-        <textarea
-          class="form-control"
-          id="displayMessage"
-          style="height: 21vh"
-          [disabled]="!isDisabled"
-        >
-         {{template}}
-        </textarea>
+  <ng-container *ngIf="isShow">
+    &nbsp;<span class="sevika-validation"
+      >*Please fill Sevika Name and Mobile Number to enable send SMS
+      button.</span
+    >
+
+    <div class="row mt-2">
+      <div class="col-12">
+        <div class="form-group">
+          <textarea
+            class="form-control"
+            id="displayMessage"
+            style="height: 21vh"
+            [disabled]="!isDisabled"
+          >
+          {{ template }}
+        </textarea
+          >
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 
   <div class="row mt-4" *ngIf="filteredVillagePatients?.length">
     <div class="col-md-12">
@@ -109,6 +120,7 @@
               <input
                 type="checkbox"
                 name="checkboxes"
+                [ngModel]="isAllSelected"
                 (change)="selectAllVisits($event)"
               />
             </th>
@@ -145,7 +157,12 @@
         </tbody>
       </table>
       <div class="form-group">
-        <button type="button" class="btn btn-secondary" [disabled]="!sevikaNam" (click)="sendSMS()">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="!sevikaName && !sevikaMobNo"
+          (click)="sendSMS()"
+        >
           Send SMS
         </button>
       </div>

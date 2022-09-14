@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { IDropdownSettings } from "ng-multiselect-dropdown";
+import { ChatService } from "src/app/services/chat.service";
 import { VisitService } from "src/app/services/visit.service";
 
 @Component({
@@ -13,8 +15,14 @@ export class SendSmsComponent implements OnInit {
   sanchs: any = [];
   villages: any = [];
   visits: any = [];
+  info: any = {};
+  patientsMobileNumbers: any[];
   filteredVillagePatients = [];
   isDisabled: Boolean = false;
+  isShow: Boolean = false;
+  isDistrict: Boolean = false;
+  isSanch: Boolean = false;
+  isVillage: Boolean = false;
   sevikaName: any = "";
   sevikaMobNo: any = "";
   templateSMS: any;
@@ -64,6 +72,8 @@ export class SendSmsComponent implements OnInit {
 
   constructor(
     private visitService: VisitService,
+    private chatService: ChatService,
+    private snackbar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +91,6 @@ export class SendSmsComponent implements OnInit {
     this.visitService.getVisits().subscribe(
       (response) => {
         this.visits = response.results;
-        console.log("visits", this.visits);
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -110,18 +119,21 @@ export class SendSmsComponent implements OnInit {
   onStateSelect(state: any) {
     if (state?.districts?.length) {
       this.districts = state.districts;
+      this.isDistrict = true;
     }
   }
 
   onDistrictSelect(district: any) {
     if (district?.sanchs?.length) {
       this.sanchs = district.sanchs;
+      this.isSanch = true;
     }
   }
 
   onSanchSelect(sanch: any) {
     if (sanch?.villages?.length) {
       this.villages = sanch.villages;
+      this.isVillage = true;
     }
   }
 
@@ -130,16 +142,31 @@ export class SendSmsComponent implements OnInit {
       (x) => x?.location?.display === village?.name
     );
 
-    console.log("this.filteredVillagePatients: ", this.filteredVillagePatients);
-
-    const villageList = this.filteredVillagePatients.map((object) => {
-      return { ...object, isSelected: false };
+    this.filteredVillagePatients.forEach((patient) => {
+      patient.isSelected = true;
     });
+    console.log('Patients',this.filteredVillagePatients);
+    this.isShow = true;
   }
 
-  // findSevika(visits) {
-  //   for (let index = 0; index < visits.length; index++) {
-  //     const encounter = visits[index].encounters;
+  toast({
+    message,
+    duration = 5000,
+    horizontalPosition = "center",
+    verticalPosition = "bottom",
+  }) {
+    const opts: any = {
+      duration,
+      horizontalPosition,
+      verticalPosition,
+    };
+    this.snackbar.open(message, null, opts);
+  }
+
+
+  // findSevika(filteredPatients) {
+  //   for (let index = 0; index < filteredPatients.length; index++) {
+  //     const encounter = filteredPatients[index].encounters;
   //     if (encounter?.length) {
   //       for (let index = 0; index < encounter.length; index++) {
   //         const encounterProviders = encounter[index].encounterProviders;
@@ -156,20 +183,54 @@ export class SendSmsComponent implements OnInit {
   //   }
   // }
 
-
   sendSMS() {
     const patientsList = this.filteredVillagePatients.filter(function (vil) {
       return vil.isSelected === true;
     });
-    if (patientsList?.length) {
-      const payload = {
-        sevikaName: this.sevikaName,
-        sevikaMobNo: this.sevikaMobNo,
-        message: this.templateSMS,
-        patients: patientsList,
-      };
-      //    console.log("payload", payload);
-      console.log("patientsList", patientsList);
-    }
+
+    const patientsListPromises = patientsList.map((patient) =>
+      this.visitService.patientInfo(patient?.patient?.uuid).toPromise()
+    );
+    Promise.all(patientsListPromises).then((results) => {
+      this.patientsMobileNumbers = results
+        .map((info) => {
+          const personData: any = info.person;
+          let phoneNo = null;
+          let number = 91;
+          personData.attributes.forEach((attri) => {
+            if (attri.attributeType.display.match("Telephone Number")) {
+              phoneNo = attri.value;
+              if (phoneNo?.length === 10) {
+                phoneNo = "91" + phoneNo;
+              }
+            }
+          });
+
+          return phoneNo;
+        })
+        .filter((mob) => mob);
+      if (patientsList?.length) {
+        const payload = {
+          message: this.templateSMS,
+          patients: this.patientsMobileNumbers,
+        };
+        this.chatService.sendSMS(payload).subscribe((res: any) => {
+          if (res.status) {
+            const message = res.message || "SMS sent successfully.";
+            this.toast({ message });
+          }
+        });
+      }
+    });
+  }
+
+  get isAllSelected() {
+    let allSelected = true;
+    this.filteredVillagePatients.forEach((visit) => {
+      if (!visit.isSelected) {
+        allSelected = false;
+      }
+    });
+    return allSelected;
   }
 }
