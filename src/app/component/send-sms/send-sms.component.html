@@ -160,7 +160,7 @@
         <button
           type="button"
           class="btn btn-secondary"
-          [disabled]="!sevikaName && !sevikaMobNo"
+          [disabled]="!hasSevikaNameAndMobile"
           (click)="sendSMS()"
         >
           Send SMS

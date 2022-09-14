@@ -74,7 +74,7 @@ export class SendSmsComponent implements OnInit {
     private visitService: VisitService,
     private chatService: ChatService,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getLocationAndSetSanch();
@@ -145,7 +145,7 @@ export class SendSmsComponent implements OnInit {
     this.filteredVillagePatients.forEach((patient) => {
       patient.isSelected = true;
     });
-    console.log('Patients',this.filteredVillagePatients);
+    console.log('Patients', this.filteredVillagePatients);
     this.isShow = true;
   }
 
@@ -232,5 +232,9 @@ export class SendSmsComponent implements OnInit {
       }
     });
     return allSelected;
+  }
+
+  get hasSevikaNameAndMobile() {
+    return !!this.sevikaName && !!this.sevikaMobNo
   }
 }
