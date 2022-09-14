@@ -1,28 +1,32 @@
-<div class="modal-header">
-  <h4 class="modal-title" id="modal-title">{{ title }}</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-describedby="modal-title"
-    (click)="modal.dismiss('Cross click')"
-  ></button>
+<div class="popup-container">
+  <div class="popup-close">
+    <button type="button" (click)="modal.dismiss('Cross click')">
+      Close<i class="fa-duotone fa-rectangle-xmark"> </i>
+    </button>
+  </div>
+  <div class="popup-icon">
+    <img src="../../../assets/images/login/interneticon.png" alt="image" />
+  </div>
+  <div class="popup-title">
+    <h4 class="modal-title" id="modal-title">{{ title }}</h4>
+  </div>
+  <div class="popup-para">
+    <ng-content></ng-content>
+  </div>
+  <div class="popup-button">
+    <button
+      type="button"
+      class="btn-small-darkblue"
+      (click)="modal.close('Ok click')"
+    >
+      {{ btnname }}
+    </button>
+  </div>
 </div>
-<div class="modal-body">
-  <ng-content></ng-content>
-</div>
-<div class="modal-footer">
-  <button
+<!--<button
     type="button"
     class="btn btn-outline-secondary"
     (click)="modal.dismiss('cancel click')"
   >
     Cancel
-  </button>
-  <!--<button
-      type="button"
-      class="btn btn-danger"
-      (click)="modal.close('Ok click')"
-    >
-      Ok
-    </button>-->
-</div>
+  </button>-->

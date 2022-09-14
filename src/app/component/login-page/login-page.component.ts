@@ -105,10 +105,4 @@ export class LoginPageComponent implements OnInit {
   showHidePassword() {
     this.showPassword = !this.showPassword;
   }
-  open() {
-    const modalRef = this.modalService.open(ModalinternetconnectionComponent, {
-      backdrop: true,
-      size: "s",
-    });
-  }
 }

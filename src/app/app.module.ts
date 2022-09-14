@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -100,7 +100,7 @@ import { LoginImageContainerComponent } from "./component/login-image-container/
 import { LoginFirstImageComponent } from "./component/login-first-image/login-first-image.component";
 import { ModaldialogComponent } from "./component/modaldialog/modaldialog.component";
 import { ModalinternetconnectionComponent } from "./component/modalinternetconnection/modalinternetconnection.component";
-import { InternetConnectionComponent } from "./component/internet-connection/internet-connection.component";
+import { InternetconnectionInterceptor } from "./interceptors/internetconnection.interceptor";
 
 @NgModule({
   declarations: [
@@ -152,7 +152,6 @@ import { InternetConnectionComponent } from "./component/internet-connection/int
     LoginFirstImageComponent,
     ModaldialogComponent,
     ModalinternetconnectionComponent,
-    InternetConnectionComponent,
   ],
 
   imports: [
@@ -269,6 +268,11 @@ import { InternetConnectionComponent } from "./component/internet-connection/int
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InternetconnectionInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

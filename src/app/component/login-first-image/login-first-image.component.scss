@@ -17,8 +17,9 @@ grid-template-areas:
 
  .image{
     grid-area: image;
-    img{max-width: 280px;
+    img{max-width: 17.5rem;
       align-self: center;
+      max-height: 17rem;
    }
     
     //overflow: hidden;
@@ -26,7 +27,7 @@ grid-template-areas:
  .footer{
     grid-area: footer;
     color:var(--color-white);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center;
     margin-bottom: 2rem;
  }

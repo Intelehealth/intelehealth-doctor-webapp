@@ -1,0 +1,32 @@
+.popup-container{
+background-color: var(--color-white);
+display: grid;
+  grid-template-areas:
+  'close'
+  'icon'
+  'title'
+  'para'
+  'buttton';
+  width: 501px;
+  height: 322px;
+}
+.popup-close { grid-area: close;
+    align-self: right;
+    margin-top: 1.5px;
+ }
+ .popup-icon { grid-area: icon;
+    align-self: center;
+ }
+ .popup-title{
+    grid-area: title;
+    align-self: center;
+ }
+ .popup-para{
+    grid-area: para;
+    align-self: left;
+ }
+ .popup-buttton{
+    grid-area: buttton;
+    align-self: center;
+    justify-self: center;
+ }
