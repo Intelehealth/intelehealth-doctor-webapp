@@ -1,29 +1,37 @@
 <mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
 <div class="container">
-  <img class="banner" src="assets/banner.png" alt="" />
+  <div class="d-block w-100">
+    <img class="banner" src="assets/banner.png" alt="" />
+  </div>
   <div class="row">
     <!-- <div class="login100-form-title ml-3 col-2 ">
         <img class="login100-form-avatar" src="assets/dummy profile image.jpg" width="25%" alt="" />
     </div> -->
-    <div class="login100-form-title ml-3 col-2">
-      <label class="hoverable mt-5" for="fileInput">
-        <img class="profileImg"  id="output" [src]="personImageURL" width="25%"> 
+    <div class="login100-form-title ml-3 col-3 col-lg-2">
+      <label class="hoverable" for="fileInput">
+        <img
+          class="profileImg"
+          id="output"
+          [src]="personImageURL"
+          width="25%"
+        />
         <!-- <button class="hover-text">Choose file</button> -->
         <span class="hover-text"><b>Choose File</b></span>
         <div class="background"></div>
       </label>
       <!-- <br/> -->
-      <input id="fileInput" type='file' (change)="onSelectFile($event)">
+      <input id="fileInput" type="file" (change)="onSelectFile($event)" />
     </div>
 
-    <div class="col-6 info provider-info">
-      <span *ngIf="providerDetails?.person?.display"><b style="font-size: 22px;">{{ providerDetails.person.display
-          }}</b></span><br />
+    <div class="col-4 col-lg-6 info provider-info pl-md-1">
+      <span class="name" *ngIf="providerDetails?.person?.display"
+        ><b>{{ providerDetails.person.display }}</b></span
+      ><br />
       <span *ngIf="providerDetails?.specialization?.value">
-        {{ providerDetails.specialization.value | uppercase }}
-      </span><br>
+        {{ providerDetails.specialization.value | uppercase }} </span
+      ><br />
       <span *ngIf="providerDetails?.qualification?.value">
-        {{ providerDetails.qualification.value | uppercase}}
+        {{ providerDetails.qualification.value | uppercase }}
       </span>
       <!-- <span *ngIf="providerDetails.address">{{
         providerDetails.address.value
@@ -39,7 +47,7 @@
           <div class="text-left">
             AWAITING CONSULATATION<span class="text-right badge badge-light">{{
               awaitngCount
-              }}</span>
+            }}</span>
           </div>
         </div>
       </div>
@@ -50,7 +58,7 @@
           <div class="text-left">
             COMPLETED CONSULATATION<span class="text-right badge badge-light">{{
               completedCount[0]?.length
-              }}</span>
+            }}</span>
           </div>
         </div>
       </div>
@@ -59,7 +67,9 @@
       <div class="card text-white" style="background: #17a2b8">
         <div class="card-body">
           <div class="text-left">
-            TAT OF ONESELF<span class="text-right badge badge-light">{{ turnAround }} mins</span>
+            TAT OF ONESELF<span class="text-right badge badge-light"
+              >{{ turnAround }} mins</span
+            >
           </div>
         </div>
       </div>
@@ -86,50 +96,70 @@
     <h5><b>PERSONAL INFORMATION</b></h5>
     <mat-card class="shadow">
       <div>
-        <i class="material-icons" style="float: right; cursor: pointer" (click)="onEdit()">create</i>
+        <i
+          class="material-icons"
+          style="float: right; cursor: pointer"
+          (click)="onEdit()"
+          >create</i
+        >
         <table class="ml-1">
           <tr>
-            <th><img src="assets/about-me.png" alt="" class="profileIcon">About </th>
+            <th>
+              <img src="assets/about-me.png" alt="" class="profileIcon" />About
+            </th>
             <td *ngIf="providerDetails.aboutMe">
               {{ providerDetails.aboutMe.value }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr>
-            <th><img src="assets/Gender.png" alt="" class="profileIcon">Gender </th>
+            <th>
+              <img src="assets/Gender.png" alt="" class="profileIcon" />Gender
+            </th>
             <td *ngIf="providerDetails.person">
               {{ providerDetails.person.gender }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr>
-            <th><img src="assets/State.png" alt="" class="profileIcon">State </th>
+            <th>
+              <img src="assets/State.png" alt="" class="profileIcon" />State
+            </th>
             <td *ngIf="providerDetails.person">
               {{ visitState }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr>
-            <th><img src="assets/Phone-No.png" alt="" class="profileIcon"> Phone No. </th>
+            <th>
+              <img src="assets/Phone-No.png" alt="" class="profileIcon" /> Phone
+              No.
+            </th>
             <td *ngIf="providerDetails.phoneNumber">
               {{ providerDetails.phoneNumber.value }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr>
-            <th><img src="assets/WhatsApp-No.png" alt="" class="profileIcon"> WhatsApp No. </th>
+            <th>
+              <img src="assets/WhatsApp-No.png" alt="" class="profileIcon" />
+              WhatsApp No.
+            </th>
             <td *ngIf="providerDetails.whatsapp">
               {{ providerDetails.whatsapp.value }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr>
-            <th><img src="assets/Email-Id.png" alt="" class="profileIcon"> Email Id </th>
+            <th>
+              <img src="assets/Email-Id.png" alt="" class="profileIcon" /> Email
+              Id
+            </th>
             <td *ngIf="providerDetails.emailId">
               {{ providerDetails.emailId.value }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <!-- <tr>
               <th><i class="fa fa-graduation-cap"></i> Qualification :</th>
               <td *ngIf="providerDetails.qualification">
@@ -143,30 +173,57 @@
               </td>
             </tr> -->
           <tr>
-            <th><img src="assets/Registration-No.png" alt="" class="profileIcon"> Registration No. </th>
+            <th>
+              <img
+                src="assets/Registration-No.png"
+                alt=""
+                class="profileIcon"
+              />
+              Registration No.
+            </th>
             <td *ngIf="providerDetails?.registrationNumber">
               {{ providerDetails?.registrationNumber.value }}
             </td>
           </tr>
-          <hr>
+          <hr />
           <tr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'">
-            <th><img src="assets/Signature.png" alt="" class="profileIcon"> Signature </th>
-            <td *ngIf="providerDetails.textOfSign" [class]="providerDetails?.fontOfSign?.value"
-              [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 50px">
+            <th>
+              <img src="assets/Signature.png" alt="" class="profileIcon" />
+              Signature
+            </th>
+            <td
+              *ngIf="providerDetails.textOfSign"
+              [class]="providerDetails?.fontOfSign?.value"
+              [style.font-family]="providerDetails?.fontOfSign?.value"
+              style="font-size: 50px"
+            >
               {{ providerDetails?.textOfSign?.value }}
             </td>
-            <td *ngIf="
-                  (providerDetails && !providerDetails.textOfSign) ||
-                  action === 'add'
-                ">
-              <button mat-raised-button color="primary" (click)="signature('add')">
+            <td
+              *ngIf="
+                (providerDetails && !providerDetails.textOfSign) ||
+                action === 'add'
+              "
+            >
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="signature('add')"
+              >
                 Signature
               </button>
             </td>
           </tr>
-          <hr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'">
+          <hr *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'" />
           <tr>
-            <th>&nbsp;<img src="assets/svgs/clock.svg" width="25" class="profileIcon"> Timings </th>
+            <th>
+              &nbsp;<img
+                src="assets/svgs/clock.svg"
+                width="25"
+                class="profileIcon"
+              />
+              Timings
+            </th>
             <td>
               {{ providerDetails?.timings?.value }}
             </td>

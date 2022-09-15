@@ -40,7 +40,6 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  padding-top: 70px;
 }
 
 .login100-form-title::before {
@@ -86,9 +85,8 @@ td {
 }
 
 .banner {
-  position: absolute;
-  max-width: 92vw;
-  max-height: 100vh;
+  max-height: 100%;
+  width: 100%;
 }
 
 mat-spinner {
@@ -107,50 +105,8 @@ hr {
 }
 
 .provider-info {
-  margin-top: 11rem;
-  margin-left: 2rem;
-}
-
-@media only screen and (max-width: 765px) {
-  .overlap {
-    top: -100px;
-    position: relative;
-    width: 96%;
-    border-radius: 10px;
-    padding-top: 140px;
-  }
-  .info {
-    margin-left: 5.625rem;
-    margin-top: 5.8rem;
-  }
-
-  .wrap-login100 {
-    font-size: 14px;
-    background: none;
-  }
-  .login100-form-title {
-    padding-top: 0px;
-  }
-}
-
-@media only screen and (min-width: 413px) and (max-width: 540px) {
-  .info {
-    margin-left: 3.625rem;
-    margin-top: 6.8rem;
-  }
-}
-
-@media only screen and (min-width: 280px) and (max-width: 320px) {
-  .info {
-    margin-left: 3.625rem !important;
-    margin-top: 4.2rem !important;
-    font-size: 12px !important;
-  }
-
-  .hoverable {
-    height: 100px !important;
-    width: 100px !important;
-  }
+  margin-top: 3%;
+  /* margin-left: 3%; */
 }
 
 /* 
@@ -181,11 +137,16 @@ mat-form-field {
 }
 
 .hoverable {
+  height: 15vw;
+  width: 15vw;
+
+  top: -20px;
+
   position: relative;
   display: block;
   cursor: pointer;
-  height: 135px;
-  width: 138px;
+  max-height: 138px;
+  max-width: 138px;
   border: 2px solid rgb(255, 253, 253);
   border-radius: 50%;
 }
@@ -288,3 +249,15 @@ mat-form-field {
     height: 2em;
   }
 } */
+
+@media only screen and (max-width: 765px) {
+  .hoverable {
+    height: 18vw;
+    width: 18vw;
+  }
+
+  .provider-info {
+    margin-top: 3%;
+    /* margin-left: 10%; */
+  }
+}
