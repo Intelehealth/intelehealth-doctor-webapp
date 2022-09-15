@@ -52,6 +52,7 @@ import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 // Material Design Imports
 import { AdminGuard } from "./admin.guard";
@@ -95,6 +96,7 @@ import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
+import { SendSmsComponent } from './component/send-sms/send-sms.component';
 
 @NgModule({
   declarations: [
@@ -141,7 +143,8 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
     VcComponent,
     HoverClassDirective,
     ChatComponent,
-    TestChatComponent
+    TestChatComponent,
+    SendSmsComponent
   ],
 
   imports: [
@@ -172,6 +175,7 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    NgMultiSelectDropDownModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     MatTabsModule,
     MatChipsModule,
@@ -231,6 +235,11 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
             {
               path: "monitoring",
               component: MonitoringComponent,
+              canActivate: [AuthGuard, AdminGuard],
+            },
+            {
+              path: "send-sms",
+              component: SendSmsComponent,
               canActivate: [AuthGuard, AdminGuard],
             },
             {

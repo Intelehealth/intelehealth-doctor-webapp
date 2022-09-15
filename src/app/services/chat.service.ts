@@ -26,6 +26,10 @@ export class ChatService {
     );
   }
 
+  sendSMS(payload) {
+    return this.http.post(`${this.baseURL}/messages/sendSMS`, payload);
+  }
+
   get user() {
     try {
       return JSON.parse(localStorage.user);
