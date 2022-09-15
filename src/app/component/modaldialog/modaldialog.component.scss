@@ -6,27 +6,30 @@ display: grid;
   'icon'
   'title'
   'para'
-  'buttton';
-  width: 501px;
-  height: 322px;
+  'btntry';
+width: 520px;
+height: 280px;
 }
+
 .popup-close { grid-area: close;
-    align-self: right;
-    margin-top: 1.5px;
+   justify-self: end;
+    margin-top: 1rem;
+    margin-right: 1rem;
  }
  .popup-icon { grid-area: icon;
-    align-self: center;
+    justify-self: center;
+    
  }
  .popup-title{
     grid-area: title;
-    align-self: center;
+    justify-self: center;
  }
  .popup-para{
     grid-area: para;
     align-self: left;
+    margin-left: 1rem;
  }
  .popup-buttton{
-    grid-area: buttton;
-    align-self: center;
+    grid-area: btntry;
     justify-self: center;
  }
