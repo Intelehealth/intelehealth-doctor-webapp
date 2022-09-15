@@ -65,7 +65,7 @@
   margin-top: 99px;
 }
 
-tr th i{
+tr th i {
   padding: 10px;
 }
 
@@ -85,8 +85,10 @@ td {
   border-radius: 10px;
 }
 
-.banner{
+.banner {
   position: absolute;
+  max-width: 92vw;
+  max-height: 100vh;
 }
 
 mat-spinner {
@@ -95,16 +97,21 @@ mat-spinner {
   left: 46%;
   top: 42%;
 }
-.shadow{
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
-hr{
-	border-top: 1px thin #8c8b8b;
+hr {
+  border-top: 1px thin #8c8b8b;
   width: 200%;
 }
 
+.provider-info {
+  margin-top: 11rem;
+  margin-left: 2rem;
+}
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 765px) {
   .overlap {
     top: -100px;
     position: relative;
@@ -112,15 +119,40 @@ hr{
     border-radius: 10px;
     padding-top: 140px;
   }
-  .info{
-    margin-left: 93px;
+  .info {
+    margin-left: 5.625rem;
+    margin-top: 5.8rem;
   }
 
   .wrap-login100 {
     font-size: 14px;
     background: none;
   }
+  .login100-form-title {
+    padding-top: 0px;
+  }
 }
+
+@media only screen and (min-width: 413px) and (max-width: 540px) {
+  .info {
+    margin-left: 3.625rem;
+    margin-top: 6.8rem;
+  }
+}
+
+@media only screen and (min-width: 280px) and (max-width: 320px) {
+  .info {
+    margin-left: 3.625rem !important;
+    margin-top: 4.2rem !important;
+    font-size: 12px !important;
+  }
+
+  .hoverable {
+    height: 100px !important;
+    width: 100px !important;
+  }
+}
+
 /* 
 .almondita {
   padding-top: 20px;
@@ -148,46 +180,43 @@ mat-form-field {
   border-radius: 50%;
 }
 
-.hoverable{
+.hoverable {
   position: relative;
   display: block;
   cursor: pointer;
-  height: 200px;
-  width: 200px;
-  border: 5px solid rgb(255, 253, 253);
+  height: 135px;
+  width: 138px;
+  border: 2px solid rgb(255, 253, 253);
   border-radius: 50%;
 }
-.hoverable .hover-text{
+.hoverable .hover-text {
   position: absolute;
   display: none;
   top: 50%;
-  left:  50%;
-  transform: translate(-50%,-50%);   
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
 }
-.hoverable .background{
+.hoverable .background {
   position: absolute;
   display: none;
   top: 0;
-  left:  0;
+  left: 0;
   bottom: 0;
   right: 0;
-  background-color:rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
   pointer-events: none;
   border-radius: 50%;
   z-index: 1;
 }
-.hoverable:hover .hover-text{
+.hoverable:hover .hover-text {
   display: block;
 }
-.hoverable:hover .background{
+.hoverable:hover .background {
   display: block;
-}
-.mt-5{
-  margin-top: 5rem !important;
 }
 
-#fileInput{
+#fileInput {
   display: none;
 }
 

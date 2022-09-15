@@ -16,7 +16,7 @@
       <input id="fileInput" type='file' (change)="onSelectFile($event)">
     </div>
 
-    <div class="col-6 info" style="margin-top: 231px; margin-left: 25px;">
+    <div class="col-6 info provider-info">
       <span *ngIf="providerDetails?.person?.display"><b style="font-size: 22px;">{{ providerDetails.person.display
           }}</b></span><br />
       <span *ngIf="providerDetails?.specialization?.value">
