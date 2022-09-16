@@ -88,6 +88,8 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 
@@ -133,7 +135,8 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     AppointmentViewComponent,
-    AppointmentScheduleComponent
+    AppointmentScheduleComponent,
+    DashboardComponent,
   ],
 
   imports: [
@@ -165,9 +168,11 @@ import { AppointmentViewComponent } from "./component/appointment-view/appointme
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    MatMenuModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
+      { path: 'dashboard', component: DashboardComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
