@@ -17,13 +17,24 @@ grid-template-areas:
 
  .image{
     grid-area: image;
-    img{max-width: 17.5rem;
+    img{max-width: 50rem;
       align-self: center;
-      max-height: 17rem;
+      max-height: 50rem;
    }
-    
-    //overflow: hidden;
  }
+
+ @media screen and (max-width: 2000px) {
+   .image{
+      grid-area: image;
+      img{max-width: 17.5rem;
+        align-self: center;
+        max-height: 17rem;
+     }
+   }
+ }
+ 
+
+
  .footer{
     grid-area: footer;
     color:var(--color-white);

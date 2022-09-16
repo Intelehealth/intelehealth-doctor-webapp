@@ -3,12 +3,12 @@
     display: grid;
     
     grid-template-areas:
-      'header'
-      'para'
-      'label'
-      'textbox'
-      'lblotpnotreceived'
-      'btnverify'; 
+      'header header'
+      'para para'
+      'label label'
+      'textbox .'
+      'lblotpnotreceived lblotpnotreceived'
+      'btnverify btnverify'; 
     }
     .otp-header { 
         grid-area: header;
@@ -23,8 +23,10 @@
     .otp-textbox{
         display: grid;
         grid-area: textbox;
+        //grid-template-columns: auto auto auto;
         grid-template-columns: repeat(6,1fr);
         gap:1rem;
+        
     }
     .otp-lblotpnotreceived
     {
