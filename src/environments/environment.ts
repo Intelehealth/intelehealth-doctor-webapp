@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  baseURL: 'https://testing.visilant.org/openmrs/ws/rest/v1',
-  baseURLCoreApp : 'https://testing.visilant.org/openmrs/coreapps/diagnoses',
-  baseURLLegacy: 'https://testing.visilant.org/openmrs',
-  mindmapURL: 'http://testing.visilant.org:3004/api',
-  azureImage: 'https://testing.visilant.org:3006/api/v1'
+  baseURL: 'https://tvl.visilant.org/openmrs/ws/rest/v1',
+  baseURLCoreApp : 'https://tvl.visilant.org/openmrs/coreapps/diagnoses',
+  baseURLLegacy: 'https://tvl.visilant.org/openmrs',
+  mindmapURL: 'http://tvl.visilant.org:3004/api',
+  azureImage: 'https://tvl.visilant.org:3006/api/v1'
 };
 
 /*
