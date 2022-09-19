@@ -106,7 +106,7 @@
           class="badge badge-pill"
           [ngClass]="{
             'badge-danger': row?.status > 22,
-            'badge-warning': row?.status < 22 && row?.status >= 15,
+            'badge-warning': row?.status <= 22 && row?.status >= 15,
             'badge-success': row?.status < 15
           }"
         >
