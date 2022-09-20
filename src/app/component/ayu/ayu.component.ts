@@ -6,6 +6,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { TranslationService } from "src/app/services/translation.service";
+import * as moment from "moment";
 
 @Component({
   selector: "app-ayu",
@@ -244,4 +245,8 @@ export class AyuComponent implements OnInit {
   getLang() {
     return localStorage.getItem("selectedLanguage");
    } 
-}
+
+   viewDate(date1) {
+    return moment(date1).locale(this.getLang()).format("DD-MMM-YYYY");
+   }
+  }

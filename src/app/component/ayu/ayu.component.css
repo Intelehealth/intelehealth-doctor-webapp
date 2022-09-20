@@ -46,3 +46,7 @@ table {
     text-align: center;
      margin-top: 10px;
 }
+
+.table-responsive {
+    display: inline-table;
+}

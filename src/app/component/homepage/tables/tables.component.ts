@@ -9,6 +9,7 @@ import {
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTable, MatTableDataSource } from "@angular/material/table";
+import * as moment from "moment";
 import { HelperService } from "src/app/services/helper.service";
 import { VisitService } from "src/app/services/visit.service";
 
@@ -60,6 +61,9 @@ export class TablesComponent implements OnInit {
     });
   }
 
+  viewDate(date1) {
+   return moment(date1).locale(this.getLang()).format("YYYY-MM-DD HH:mm:ss");
+  }
   /**
    * Apply filter with the filter string
    * @param filterValue String
@@ -101,5 +105,9 @@ export class TablesComponent implements OnInit {
       refresh: this.refresh.bind(this),
     };
     this.tableEmitter.emit(data);
+  }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
   }
 }

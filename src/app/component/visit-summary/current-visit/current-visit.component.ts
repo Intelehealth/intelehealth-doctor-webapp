@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-current-visit',
@@ -31,4 +32,8 @@ clinicName: string;
   getLang() {
     return localStorage.getItem("selectedLanguage");
   } 
+
+  viewDate(date1) {
+    return moment(date1).locale(this.getLang()).format("DD-MMM-YYYY");
+   }
 }

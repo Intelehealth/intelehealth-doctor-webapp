@@ -9,6 +9,7 @@
 <div class="mat-elevation-z8">
   <table
     class="table-responsive"
+    [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'"
     mat-table
     [dataSource]="dataSource"
     #sortCol4="matSort"
@@ -16,7 +17,7 @@
   >
     <!-- ID Column -->
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'Patient ID'| translate}}</th>
+      <th mat-header-cell [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'" *matHeaderCellDef mat-sort-header>{{ 'Patient ID'| translate}}</th>
       <td mat-cell *matCellDef="let row">
         <a
           id="patient-id"
@@ -93,7 +94,7 @@
     <ng-container matColumnDef="lastSeen">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Last Seen'| translate}}</th>
       <td mat-cell *matCellDef="let row">
-        {{ row?.lastSeen | date: "dd-MMM-yyyy, h:mm a" }}
+        {{ viewDate(row?.lastSeen) }}
       </td>
     </ng-container>
 

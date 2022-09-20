@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import * as moment from "moment";
 import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
 
@@ -148,4 +149,8 @@ export class ChatComponent implements OnInit {
   playNotify() {
     new Audio("assets/notification.mp3").play();
   }
+
+  viewDate(date1) {
+    return moment(date1).locale(localStorage.getItem("selectedLanguage")).format("YYYY-MM-DD HH:mm:ss");
+   }
 }

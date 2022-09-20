@@ -69,7 +69,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
         });
         this.getVisits();
-        this.getVisitCounts(this.specialization);
+        //this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -142,7 +142,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           this.value = {};
         });
         if (response.results.length === 0) {
-          this.setVisitlengthAsPerLoadedData();
+         // this.setVisitlengthAsPerLoadedData();
           this.allVisitsLoaded = true;
         }
         this.helper.refreshTable.next();
@@ -201,13 +201,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.checkVisit(encounters, "Patient Exit Survey"))
     ) {
       const values = this.assignValueToProperty(active, encounter);
+      this.completeVisitNo += 1;
       this.service.completedVisit.push(values);
     } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
       const values = this.assignValueToProperty(active, encounter);
+      this.visitNoteNo += 1;
       this.service.progressVisit.push(values);
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
+        this.flagPatientNo += 1;
         this.service.flagVisit.push(values);
       }
     } else if (
@@ -216,6 +219,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.checkVisit(encounters, "Vitals"))
     ) {
       const values = this.assignValueToProperty(active, encounter);
+      this.activePatient += 1;
       this.service.waitingVisit.push(values);
     }
   }

@@ -1,3 +1,7 @@
+.container {
+  padding-right: 0px;
+}
+
 .tooltip-red {
     background: #b71c1c;
 }

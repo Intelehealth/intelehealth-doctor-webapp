@@ -137,6 +137,7 @@ export class NavbarComponent implements OnInit {
     if (this.swPush.isEnabled) {
       this.notificationService.notificationHandler();
     }
+    this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   logout() {

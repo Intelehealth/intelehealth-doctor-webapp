@@ -2,7 +2,7 @@
     <h4><i class="fas fa-hospital"></i> {{'Past Visits'| translate}}</h4>
 <hr>
 <div *ngFor="let data of recent">
-    <div> <a [routerLink]="['/visitSummary', data.details.patient.uuid, data.details.uuid]">{{data.details.startDatetime | date:"dd-MMM-yyyy"}}</a>
+    <div> <a [routerLink]="['/visitSummary', data.details.patient.uuid, data.details.uuid]">{{ viewDate(data.details.startDatetime)}}</a>
       <span> {{data.observation}} </span> 
       <span class="badge badge-pill badge-success">{{(data.visitStatus) | translate}}</span>
     </div>

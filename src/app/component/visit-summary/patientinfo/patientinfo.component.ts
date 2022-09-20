@@ -82,4 +82,8 @@ export class PatientinfoComponent implements OnInit {
       " days";
     return ageString;
   }
+
+  viewDate(date1) {
+    return moment(date1).locale(this.getLang()).format("DD-MMM-YYYY");
+   }
 }
