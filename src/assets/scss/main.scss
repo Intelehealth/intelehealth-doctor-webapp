@@ -155,3 +155,24 @@ color: var(--color-darkestBlue);
   border-radius: 8px;
 
   }
+  .btn-cross-close
+  {  
+    font-family:var(--font-family);
+    font-style:var(--font-style); 
+    border: none;
+    color:var(--color-gray);
+    background-color: var(--color-white);
+  }
+.label-no-internet
+{
+@include font(700,1.5rem);
+line-height: 150%;
+/* identical to box height, or 36px */
+
+display: flex;
+align-items: center;
+text-align: center;
+
+/* Text/Dark */
+color: var(--color-darkestBlue);
+}

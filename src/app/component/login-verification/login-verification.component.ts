@@ -8,8 +8,8 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 export class LoginVerificationComponent implements OnInit {
   @Output() onSucess = new EventEmitter<boolean>();
   verificationForm = new FormGroup({
-    mobile: new FormControl(),
-    email: new FormControl(),
+    mobile: new FormControl("", [Validators.required]),
+    email: new FormControl("", [Validators.required]),
   });
   showEmail: boolean = false;
   constructor() {}

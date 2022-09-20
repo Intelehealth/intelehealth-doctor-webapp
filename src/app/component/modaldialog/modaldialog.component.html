@@ -1,6 +1,10 @@
 <div class="popup-container">
   <div class="popup-close">
-    <button type="button" (click)="modal.dismiss('Cross click')">
+    <button
+      class="btn-cross-close"
+      type="button"
+      (click)="modal.dismiss('Cross click')"
+    >
       Close
       <svg
         width="22"
@@ -60,7 +64,7 @@
     <!---<img src="../../../assets/images/login/interneticon.png" alt="image" />-->
   </div>
   <div class="popup-title">
-    <h4 class="modal-title" id="modal-title">{{ title }}</h4>
+    <h4 class="popup-title" id="modal-title">{{ title }}</h4>
   </div>
   <div class="popup-para">
     <ng-content></ng-content>

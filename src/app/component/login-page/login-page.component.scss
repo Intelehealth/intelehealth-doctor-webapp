@@ -12,7 +12,8 @@
      'lbl link'
      'txt txt'
 }
-.captcha { grid-area: captcha; }
+.captcha { grid-area: captcha;
+ }
 .btnnext { grid-area: btnnext; }
 
 .lbl{
@@ -38,6 +39,7 @@
 .eye-icon{
   text-align: right;
   margin-right: 1rem;
+  margin-top: 0.5rem;
   grid-area: col3;
   z-index: 2;
 }

@@ -9,6 +9,11 @@ display: grid;
   'btntry';
 width: 520px;
 height: 280px;
+border-radius: 12px;
+justify-self: center;
+position:fixed; 
+top: calc(50% - 140px); 
+left: calc(50% - 280px); 
 }
 
 .popup-close { grid-area: close;
@@ -18,11 +23,19 @@ height: 280px;
  }
  .popup-icon { grid-area: icon;
     justify-self: center;
+    align-items: flex-start;
     
  }
  .popup-title{
     grid-area: title;
     justify-self: center;
+    color: var(--color-darkestBlue);
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    align-items: center;
+    text-align: center;
  }
  .popup-para{
     grid-area: para;
@@ -33,3 +46,4 @@ height: 280px;
     grid-area: btntry;
     justify-self: center;
  }
+   
