@@ -94,6 +94,10 @@
     }
 }
 
+.active {
+    background-color: #4B39B7;
+}
+
 hr{
     opacity: 0.48;
     border: 1px solid #EFE8FF;
@@ -157,7 +161,6 @@ hr{
         height: 80px;
         right: 59px;
         top: 24px;
-        background: #C4FBE2;
         opacity: 0.64;
     }
 }
@@ -211,7 +214,6 @@ hr{
     position: absolute;
     width: 350px;
     height: 60px;
-    // background: #c8c2d6;
     right: 1px;
     .notification{
         width: 48px;
@@ -320,4 +322,16 @@ hr{
     height: 40px;
     background: #FFE8E8;
     border-radius: 200px;
+}
+
+.popup-message{
+    position: absolute;
+    width: 335px;
+    height: 82px;
+    right: 18px;
+    background: #FFFFFF;
+    top: 124px;
+    border-radius: 6px;
+    filter: drop-shadow(0px 4px 16px rgba(14, 134, 98, 0.12));
+    border-left:6px solid #0FD197;
 }
