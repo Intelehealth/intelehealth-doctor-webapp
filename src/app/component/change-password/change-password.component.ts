@@ -17,25 +17,26 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   userUuid: string;
   constructor(
-              private formBuilder: FormBuilder,
-              private http: HttpClient,
-              private dialogRef: MatDialogRef<ChangePasswordComponent>,
-              private pushNotificationsService: PushNotificationsService,
-              private translationService: TranslationService
-              ) {
+    private formBuilder: FormBuilder,
+    private http: HttpClient,
+    private dialogRef: MatDialogRef<ChangePasswordComponent>,
+    private pushNotificationsService: PushNotificationsService,
+    private translationService: TranslationService
+  ) {
     this.changePasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
       repeatPassword: ['', Validators.required]
     }, {
-        validator: MustMatch('newPassword', 'repeatPassword')
-      });
+      validator: MustMatch('newPassword', 'repeatPassword')
+    });
   }
 
 
   ngOnInit() {
     const userDetails = getFromStorage('user');
     this.userUuid = userDetails.uuid;
+    this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   onSubmit() {
@@ -43,12 +44,12 @@ export class ChangePasswordComponent implements OnInit {
     const url = `${this.baseURL}/password`;
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Basic my-auth-token'
       })
     };
-    
-    
+
+
     const json = {
       'oldPassword': value.currentPassword,
       'newPassword': value.newPassword
@@ -60,7 +61,7 @@ export class ChangePasswordComponent implements OnInit {
     this.http.post(url, json, httpOptions)
       .subscribe(response => {
         if (response == null) {
-          this.pushNotificationsService.changePassword(json1).subscribe((response)=>{
+          this.pushNotificationsService.changePassword(json1).subscribe((response) => {
             this.translationService.getTranslation('Password changed successfully.');
             this.dialogRef.close();
           })
@@ -76,4 +77,8 @@ export class ChangePasswordComponent implements OnInit {
     this.dialogRef.close();
   }
 
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  }
 }

@@ -165,4 +165,8 @@ export class EditDetailsComponent implements OnInit {
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 }

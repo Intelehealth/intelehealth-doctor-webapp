@@ -123,18 +123,15 @@ body.font-lato td {
   z-index: 1060;
 }
 
-.right {
-  text-align: right;
-}
-
-.left {
-  text-align: left;
-}
-
 .left1 {
   float: left;
 }
 
 .right1 {
   float: right;
+}
+
+.dropdown-menu.show {
+  text-align: right;
+   right: 0px;
 }

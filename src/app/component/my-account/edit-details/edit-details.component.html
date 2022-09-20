@@ -1,6 +1,6 @@
-<h4>
+<h4 [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
   {{ 'Update Details' | translate }}
-  <a style="float: right; cursor: pointer" (click)="onClose()" class="material-icons">clear</a>
+  <a [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" style="cursor: pointer" (click)="onClose()" class="material-icons">clear</a>
 </h4>
 <form [formGroup]="editForm">
   <mat-form-field class="example-full-width">
@@ -31,14 +31,14 @@
     <input matInput placeholder="{{ 'Registration No' | translate }}" formControlName="registrationNumber" />
   </mat-form-field>
 
-  <div style="float: left" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
+  <div [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
     <button *ngIf="attributes.length != '0' && data?.textOfSign?.uuid" mat-raised-button color="primary"
       (click)="editSignature()">
       {{ 'Edit Signature' | translate }}
     </button>
   </div>
 
-  <div style="float: right">
+  <div [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'">
     <button mat-raised-button color="primary" type="submit" (click)="updateDetails()" [disabled]="!editForm.valid" >
       {{ 'Save' | translate }}
     </button>

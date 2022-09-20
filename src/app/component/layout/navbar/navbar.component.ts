@@ -46,7 +46,7 @@ export class NavbarComponent implements OnInit {
   showData: any;
   error: any = { isError: false, errorMessage: "" };
   langs = ['en', 'hi', 'ru', 'ar'];
-  selectedLanguage:string = 'en';
+  selectedLanguage: string = 'en';
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -58,7 +58,7 @@ export class NavbarComponent implements OnInit {
     { day: "Sunday", startTime: null, endTime: null },
   ];
   readonly VapidKEY =
-  "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54"
+    "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54"
 
   searchForm = new FormGroup({
     findInput: new FormControl("", [Validators.required]),
@@ -75,8 +75,8 @@ export class NavbarComponent implements OnInit {
     public notificationService: PushNotificationsService,
     private translateService: TranslateService,
     private translationService: TranslationService,
-  
-  ) {}
+
+  ) { }
 
   ngOnInit() {
     if (localStorage.getItem("selectedLanguage")) {
@@ -147,7 +147,7 @@ export class NavbarComponent implements OnInit {
     }, 0);
   }
 
-   useLanguage(lang: string): void {
+  useLanguage(lang: string): void {
     this.translateService.use(lang);
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
@@ -232,7 +232,7 @@ export class NavbarComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 this.notificationService
@@ -281,9 +281,9 @@ export class NavbarComponent implements OnInit {
     this.condition1 =
       eDate1 < sDate1
         ? (this.error = {
-            isError: true,
-            errorMessage: "End Date can't before start time",
-          })
+          isError: true,
+          errorMessage: "End Date can't before start time",
+        })
         : "Success";
 
     if (this.condition == true && this.condition1 == "Success") {
@@ -332,5 +332,9 @@ export class NavbarComponent implements OnInit {
 
   get snoozeTimeout() {
     return this.notificationService.snoozeTimeout;
+  }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
   }
 }

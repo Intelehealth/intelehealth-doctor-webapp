@@ -1,46 +1,36 @@
-<h4>{{ 'Setup your Signature'| translate }} <a style="float: right;cursor: pointer;" (click)="onClose()" class="material-icons">clear</a></h4>
+<h4 [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">{{ 'Setup your Signature'| translate }}
+  <a [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" style="cursor: pointer;" (click)="onClose()"
+    class="material-icons">clear</a>
+</h4>
 <br>
-<form [formGroup]="addSignatureForm">
+<form [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'" [formGroup]="addSignatureForm">
   <div class="input-group">
     <mat-form-field class="example-full-width">
-      <input
-        matInput
-        placeholder="{{ 'Enter Text' | translate }}"
-        [(ngModel)]="name"
-        formControlName="text"
-      />
+      <input matInput placeholder="{{ 'Enter Text' | translate }}" [(ngModel)]="name" formControlName="text" />
     </mat-form-field>
   </div>
   <div class="sign">
     <input type="radio" value="1" formControlName="signature" /><span
-      style="font-family: arty; font-size: 50px; top: -20px"
-    >
-      {{ name }}</span
-    >
+      style="font-family: arty; font-size: 50px; top: -20px">
+      {{ name }}</span>
   </div>
   <br />
   <div class="sign">
     <input type="radio" value="2" formControlName="signature" /><span
-      style="font-family: asem; font-size: 50px; top: -25px"
-    >
-      {{ name }}</span
-    >
+      style="font-family: asem; font-size: 50px; top: -25px">
+      {{ name }}</span>
   </div>
   <br />
   <div class="sign">
     <input type="radio" value="3" formControlName="signature" /><span
-      style="font-family: youthness; font-size: 50px; top: -20px"
-    >
-      {{ name }}</span
-    >
+      style="font-family: youthness; font-size: 50px; top: -20px">
+      {{ name }}</span>
   </div>
   <br />
   <div class="sign">
     <input type="radio" value="4" formControlName="signature" /><span
-      style="font-family: almondita; font-size: 30px; top: -10px"
-    >
-      {{ name }}</span
-    >
+      style="font-family: almondita; font-size: 30px; top: -10px">
+      {{ name }}</span>
   </div>
   <br />
   <button mat-raised-button color="primary" (click)="onSubmit()">{{ 'Select' |translate }}</button>

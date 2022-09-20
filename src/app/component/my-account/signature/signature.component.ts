@@ -37,6 +37,7 @@ export class SignatureComponent implements OnInit {
     if(this.data.type == 'edit'){
       this.name = this.data.name
     }
+    this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
 
   onClose() {
@@ -125,5 +126,9 @@ signature = (text: string, font: string) => {
  
   }
 }
+
+getLang() {
+  return localStorage.getItem("selectedLanguage");
+ } 
 }
 

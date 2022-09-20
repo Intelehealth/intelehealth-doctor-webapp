@@ -115,9 +115,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{'Custom Notifications:' |translate}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h4><a [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" style="cursor: pointer;" data-dismiss="modal" class="material-icons">clear</a></h4>
       </div>
       <div class="modal-body">
         <ul>
@@ -135,7 +133,7 @@
       
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="onSubmit()">{{'Save changes' |translate}}</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        <button  style="margin-right: 10px;" type="button" class="btn btn-secondary" data-dismiss="modal">
           {{'Close' |translate}}
         </button>
       </div>
