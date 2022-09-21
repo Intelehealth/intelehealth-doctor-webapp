@@ -68,6 +68,10 @@ export class VisitService {
     return this.http.get(`${environment.mindmapURL}/openmrs/getLocations`);
   }
 
+  getBaselineSurveyPatients(location_id) {
+    return this.http.get(`${environment.mindmapURL}/openmrs/getBaselineSurveyPatients/${location_id}`);
+  }
+
   getVisitCounts(speciality) {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`

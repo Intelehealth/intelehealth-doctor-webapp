@@ -126,10 +126,7 @@
             </th>
             <th>Name</th>
             <th>OpenMRS ID</th>
-            <th>Sex</th>
-            <th>DOB</th>
-            <th>Age</th>
-            <th>Village</th>
+            <th>Mobile Number</th>
           </tr>
         </thead>
         <tbody>
@@ -143,16 +140,11 @@
                 value="{{ visit.uuid }}"
               />
             </td>
-            <td>{{ visit?.patient?.person?.display }}</td>
-            <td>{{ visit?.patient?.identifiers[0]?.identifier }}</td>
+            <td>{{ visit?.Patient_Name }}</td>
+            <td>{{ visit?.OpenMRS_Id }}</td>
             <td>
-              {{ visit?.patient?.person?.gender === "M" ? "Male" : "Female" }}
+              {{ visit?.Telephone_Number? visit?.Telephone_Number: 'Not Available' }}
             </td>
-            <td>
-              {{ visit?.patient?.person?.birthdate | date: "dd-MMM-yyy" }}
-            </td>
-            <td>{{ visit?.patient?.person?.age }}</td>
-            <td>{{ visit?.location?.display }}</td>
           </tr>
         </tbody>
       </table>

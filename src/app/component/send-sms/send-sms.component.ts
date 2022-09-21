@@ -16,7 +16,6 @@ export class SendSmsComponent implements OnInit {
   villages: any = [];
   visits: any = [];
   info: any = {};
-  patientsMobileNumbers: any[];
   filteredVillagePatients = [];
   isDisabled: Boolean = false;
   isShow: Boolean = false;
@@ -63,7 +62,7 @@ export class SendSmsComponent implements OnInit {
   /* For Village DropDown */
   villageDropDownSettings: IDropdownSettings = {
     singleSelection: true,
-    idField: "uuid",
+    idField: "id",
     textField: "name",
     // itemsShowLimit: 5,
     allowSearchFilter: true,
@@ -74,7 +73,7 @@ export class SendSmsComponent implements OnInit {
     private visitService: VisitService,
     private chatService: ChatService,
     private snackbar: MatSnackBar
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getLocationAndSetSanch();
@@ -98,6 +97,20 @@ export class SendSmsComponent implements OnInit {
         }
       }
     );
+  }
+
+  getBaselineSurveyPatients(location_id) {
+    this.visitService
+      .getBaselineSurveyPatients(location_id)
+      .subscribe((res: any) => {
+        if (res.success) {
+          this.filteredVillagePatients = res.data;
+          this.isShow = true;
+          this.filteredVillagePatients.forEach((patient) => {
+            patient.isSelected = true;
+          });
+        }
+      });
   }
 
   get template() {
@@ -138,15 +151,7 @@ export class SendSmsComponent implements OnInit {
   }
 
   onVillageSelect(village: any) {
-    this.filteredVillagePatients = this.visits.filter(
-      (x) => x?.location?.display === village?.name
-    );
-
-    this.filteredVillagePatients.forEach((patient) => {
-      patient.isSelected = true;
-    });
-    console.log('Patients', this.filteredVillagePatients);
-    this.isShow = true;
+    this.getBaselineSurveyPatients(village?.id);
   }
 
   toast({
@@ -163,65 +168,33 @@ export class SendSmsComponent implements OnInit {
     this.snackbar.open(message, null, opts);
   }
 
-
-  // findSevika(filteredPatients) {
-  //   for (let index = 0; index < filteredPatients.length; index++) {
-  //     const encounter = filteredPatients[index].encounters;
-  //     if (encounter?.length) {
-  //       for (let index = 0; index < encounter.length; index++) {
-  //         const encounterProviders = encounter[index].encounterProviders;
-  //         //this.sevikaId = encounterProviders[0]?.uuid;
-  //         if (encounterProviders?.length) {
-  //           const provider = encounterProviders[0].provider;
-  //            this.sevikaId = provider?.uuid;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   if (this.sevikaId) {
-  //     this.getSevikaDetails(this.sevikaId);
-  //   }
-  // }
-
   sendSMS() {
     const patientsList = this.filteredVillagePatients.filter(function (vil) {
       return vil.isSelected === true;
     });
+    const mobileNumbers = patientsList
+      .map((a) => a?.Telephone_Number)
+      .filter((n) => n);
+    const findUniqueNumbers = new Set(mobileNumbers);
+    let patientsMobileNumbers = Array.from(findUniqueNumbers);
+    if (patientsMobileNumbers?.length) {
+      patientsMobileNumbers = patientsMobileNumbers.map((mobNo) => {
+        return mobNo?.length === 10 ? "91" + mobNo : mobNo;
+      });
+      const payload = {
+        message: this.templateSMS,
+        patients: patientsMobileNumbers,
+      };
 
-    const patientsListPromises = patientsList.map((patient) =>
-      this.visitService.patientInfo(patient?.patient?.uuid).toPromise()
-    );
-    Promise.all(patientsListPromises).then((results) => {
-      this.patientsMobileNumbers = results
-        .map((info) => {
-          const personData: any = info.person;
-          let phoneNo = null;
-          let number = 91;
-          personData.attributes.forEach((attri) => {
-            if (attri.attributeType.display.match("Telephone Number")) {
-              phoneNo = attri.value;
-              if (phoneNo?.length === 10) {
-                phoneNo = "91" + phoneNo;
-              }
-            }
-          });
-
-          return phoneNo;
-        })
-        .filter((mob) => mob);
-      if (patientsList?.length) {
-        const payload = {
-          message: this.templateSMS,
-          patients: this.patientsMobileNumbers,
-        };
-        this.chatService.sendSMS(payload).subscribe((res: any) => {
-          if (res.status) {
-            const message = res.message || "SMS sent successfully.";
-            this.toast({ message });
-          }
-        });
-      }
-    });
+      this.chatService.sendSMS(payload).subscribe((res: any) => {
+        if (res.status) {
+          const message = res.message || "SMS sent successfully.";
+          this.toast({ message });
+        }
+      });
+    } else {
+      this.toast({ message: "Please select from available mobile numbers" });
+    }
   }
 
   get isAllSelected() {
@@ -235,6 +208,6 @@ export class SendSmsComponent implements OnInit {
   }
 
   get hasSevikaNameAndMobile() {
-    return !!this.sevikaName && !!this.sevikaMobNo
+    return !!this.sevikaName && !!this.sevikaMobNo;
   }
 }
