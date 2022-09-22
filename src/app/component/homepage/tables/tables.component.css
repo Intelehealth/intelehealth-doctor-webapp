@@ -22,8 +22,10 @@ td {
 }
 
 .mat-row:hover {
-    background-color: #ed1a564f;
-    background-image: linear-gradient(to top right, #ed1a564f, #e6e6e6);
+    /* background-color: #ed1a564f;
+    background-image: linear-gradient(to top right, #ed1a564f, #e6e6e6); */
+    background-color: #abd699;
+    background-image: linear-gradient(to top right, #abd699, #e6e6e6);
     /* background-color: #3E2E8B; */
 }
 
