@@ -153,6 +153,9 @@ export class NavbarComponent implements OnInit {
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
     this.subscribeNotification(true);
     this.translationService.changeCssFile(lang);
+    if(window.location.href.includes('/visitSummary')) {
+      window.location.reload();
+    }
   }
 
   unsubscribeNotification() {

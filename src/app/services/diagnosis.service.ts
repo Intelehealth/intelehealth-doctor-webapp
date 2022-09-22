@@ -16,9 +16,17 @@ export class DiagnosisService {
   diagnosisArray = [];
   public isVisitSummaryChanged = false
   private baseURL = environment.baseURL;
+  public values;
 
-  constructor(private http: HttpClient,  private snackbar: MatSnackBar,
-    private translateService: TranslateService) { }
+  constructor(private http: HttpClient, private snackbar: MatSnackBar,
+    private translateService: TranslateService) {
+      let lang;
+      if(localStorage.getItem('selectedLanguage') === 'en' ) lang = 'ar';
+      else lang="en";
+      this.translateService.getTranslation(lang).subscribe(values => {
+        this.values = values
+      });
+     }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -39,63 +47,69 @@ export class DiagnosisService {
   getDiagnosisList(term) {
     const url = `${environment.baseURLCoreApp}/search.action?&term=${term}`;
     return this.http.get(url)
-    .pipe(
-      map((response: []) => {
-        this.diagnosisArray = [];
-        response.forEach((element: any) => {
-          element.concept.conceptMappings.forEach(name => {
-            if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-              const diagnosis = {
-                name: element.concept.preferredName,
-                code: name.conceptReferenceTerm.code
-              };
-              this.diagnosisArray.push(diagnosis);
-            }
+      .pipe(
+        map((response: []) => {
+          this.diagnosisArray = [];
+          response.forEach((element: any) => {
+            element.concept.conceptMappings.forEach(name => {
+              if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
+                const diagnosis = {
+                  name: element.concept.preferredName,
+                  code: name.conceptReferenceTerm.code
+                };
+                this.diagnosisArray.push(diagnosis);
+              }
+            });
           });
-        });
-        return this.diagnosisArray;
-      })
-    );
+          return this.diagnosisArray;
+        })
+      );
   }
 
   isSameDoctor() {
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) { 
+    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;
     } else {
       this.snackbar.open("Another doctor is viewing this case", null, {
         duration: 4000,
       });
     }
-  } 
+  }
 
 
   getData(data: any) {
     if (data?.value.toString().startsWith("{")) {
       let value = JSON.parse(data.value.toString());
       data.value = localStorage.getItem('selectedLanguage') === 'en' ? value["en"] : value['ar'];
-    }  
+    }
     return data;
   }
 
-  getBody(element: string, elementName: string ) {
-    let value, ar1, en1;
-    if(localStorage.getItem('selectedLanguage') === 'ar') {
-       ar1 =  localStorage.getItem('selectedLanguage') === 'ar' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
-      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'غير متوفر'
-      en1 = localStorage.getItem('selectedLanguage') === 'en' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
-      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'NA'
-    } else {
-      en1 = localStorage.getItem('selectedLanguage') === 'en' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
-      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'NA'
-      ar1 =  localStorage.getItem('selectedLanguage') === 'ar' ? (this.translateService.instant(`${element}.${elementName}`).includes(element) 
-      ? elementName :  this.translateService.instant(`${element}.${elementName}`)) : 'غير متوفر'
-    }
-    value = {
-      "ar": ar1,
-      "en": en1
-     }
-    return value;
-  }
+   getBody(element: string, elementName: string) {
+      let value, ar1, en1;
+      if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
+        localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,
+          en1 = 'NA') : (en1 = elementName, ar1 = 'غير متوفر')
+          value = {
+            "ar": ar1,
+            "en": en1
+          }
+          return value;
+      } else {
+        if (localStorage.getItem('selectedLanguage') === 'ar') {
+          ar1 = elementName;
+          en1 = this.translateService.instant(`${element}.${elementName}`);
+        } else {
+          en1 = this.translateService.instant(`${element}.${elementName}`);
+          ar1 = this.values[`${element}`][`${elementName}`];
+        }
+        value = {
+          "ar": ar1,
+          "en": en1
+        }
+        return value;
+      }
+  } 
 }

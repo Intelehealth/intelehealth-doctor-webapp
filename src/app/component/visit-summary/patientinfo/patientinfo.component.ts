@@ -5,6 +5,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { environment } from "../../../../environments/environment";
 import * as moment from "moment";
 import { DatePipe } from "@angular/common";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
 
 @Component({
   selector: "app-patientinfo",
@@ -29,7 +30,8 @@ export class PatientinfoComponent implements OnInit {
     private route: ActivatedRoute,
     private visitService: VisitService,
     private service: ImagesService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private diagnsisService : DiagnosisService
   ) {}
 
   ngOnInit() {
@@ -46,8 +48,8 @@ export class PatientinfoComponent implements OnInit {
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
-        } else if (attri.attributeType.display.match("occupation")) {
-          this.info["occupation"] = attri.value;
+        } else if (attri.attributeType.display.match("Employment status")) {
+          this.info["occupation"] = this.diagnsisService.getData(attri)?.value;
         } else if (attri.attributeType.display.match("Health Scheme Card")) {
           this.info["medicalInsurance"] = attri.value;
         }

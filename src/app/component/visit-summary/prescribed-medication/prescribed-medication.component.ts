@@ -165,20 +165,46 @@ export class PrescribedMedicationComponent implements OnInit {
   onSubmit() {
     const date = new Date();
     const value = this.medForm.value;
-    // tslint:disable-next-line:max-line-length
-
-    var insertValue = `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`;
-    if (value.route) {
-      insertValue = `${insertValue} (${value.route})`;
-    }
-    if (value.reason) {
-      insertValue = `${insertValue} ${value.reason}`;
-    }
-    insertValue = `${insertValue} for ${value.duration} ${value.durationUnit}`;
-    if (value.additional) {
-      insertValue = `${insertValue} ${value.additional}`;
+    let insertValue;
+    if (localStorage.getItem('selectedLanguage') === 'ar') {
+      insertValue = {
+        "ar": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
+        "en": `${value.med}: ${value.dose} ${this.diagnosisService.values['units'][`${value.unit}`]}, ${value.amount} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['frequency'][`${value.frequency}`]}`,
+      }
+      if (value.route) {
+        insertValue["ar"] = `${insertValue["ar"]} (${value.route})`;
+        insertValue["en"] = `${insertValue["en"]} (${this.diagnosisService.values['route'][`${value.route}`]})`;
+      }
+      if (value.reason) {
+        insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
+        insertValue["en"] =  `${insertValue["en"]} 'NA'`;
+      }
+      insertValue["ar"] =  `${insertValue["ar"]} for ${value.duration} ${value.durationUnit}`;
+      insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
+      if (value.additional) {
+        insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
+        insertValue["en"] =`${insertValue["en"]} 'NA'`;
+      }
     } else {
-      insertValue = `${insertValue}`;
+      insertValue = {
+        "en": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
+        "ar": `${value.med}: ${value.dose} ${this.diagnosisService.values['units'][`${value.unit}`]}, ${value.amount} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['frequency'][`${value.frequency}`]}`,
+      }
+      if (value.route) {
+        insertValue["en"] = `${insertValue["en"]} (${value.route})`;
+        insertValue["ar"] = `${insertValue["ar"]} (${this.diagnosisService.values['route'][`${value.route}`]})`;
+      }
+      if (value.reason) {
+        insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
+        insertValue["ar"] =  `${insertValue["ar"]} 'غير متوفر'`;
+      }
+      insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
+      insertValue["ar"] =  `${insertValue["ar"]} for ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
+
+      if (value.additional) {
+        insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
+        insertValue["ar"] =`${insertValue["ar"]} 'غير متوفر'`;
+      }
     }
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
@@ -186,12 +212,12 @@ export class PrescribedMedicationComponent implements OnInit {
         concept: this.conceptMed,
         person: this.patientId,
         obsDatetime: date,
-        value: this.getBody(insertValue),
+        value: JSON.stringify(insertValue),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
         .subscribe(response => {
-          this.meds.push({ uuid: response.uuid, value: insertValue });
+          this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value }));
           this.add = false;
         });
     }
@@ -205,14 +231,6 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.splice(i, 1);
         });
     }
-  }
-
-  getBody(value) {
-    let value1 = {
-      "ar": value,
-      "en": value,
-    }
-    return JSON.stringify(value1);
   }
 
   getLang() {

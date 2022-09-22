@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
 
 @Component({
   selector: 'app-past-visits',
@@ -14,7 +15,8 @@ export class PastVisitsComponent implements OnInit {
   visitStatus: String;
   recent: any = [ ];
   constructor(private route: ActivatedRoute,
-    private service: VisitService) { }
+    private service: VisitService,
+    private diagnosisService: DiagnosisService) { }
 
   ngOnInit() {
     const patientUuid = this.route.snapshot.paramMap.get('patient_id');
@@ -34,10 +36,10 @@ export class PastVisitsComponent implements OnInit {
                 let b = ' ';
                 obs.forEach( res => {
                   if (res.display.match('CURRENT COMPLAINT') !== null) {
-                    const currentComplaint = res.display.split('<b>');
+                    const currentComplaint = this.diagnosisService.getData(res)?.value.split('<b>');
                     for (let i = 1; i < currentComplaint.length; i++) {
                       const obs1 = currentComplaint[i].split('<');
-                      if (!obs1[0].match('Associated symptoms')) {
+                      if (!obs1[0].match('Associated symptoms') && !obs1[0].match('الأعراض المرافقة')) {
                         b = b + ' | ' + obs1[0];
                         this.recentVisit.observation = b;
                       }

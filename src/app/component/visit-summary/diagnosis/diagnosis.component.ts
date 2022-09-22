@@ -89,9 +89,18 @@ diagnosisForm = new FormGroup({
   }
 
   getBody(element: string, elementName: string,type, confirm) {
-    let value = {
-      "ar": `${this.translationService.instant(`${element}.${elementName}`)}:${type} & ${confirm}`,
-      "en": `${elementName}:${type} & ${confirm}`,
+    let vl = this.diagnosisService.getBody(element,elementName);
+    let value;
+    if (localStorage.getItem('selectedLanguage') === 'ar') {
+      value = {
+        "ar": `${vl.ar}:${type} & ${confirm}`,
+        "en": `${vl.en}:${this.diagnosisService.values[type]} & ${this.diagnosisService.values[confirm]}`,
+      }
+    } else {
+      value = {
+        "ar": `${vl.ar}:${this.diagnosisService.values[type]} & ${this.diagnosisService.values[confirm]}`,
+        "en": `${vl.en}:${type} & ${confirm}`,
+      }
     }
     return JSON.stringify(value);
   }

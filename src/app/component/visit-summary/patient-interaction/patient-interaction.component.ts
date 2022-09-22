@@ -206,9 +206,17 @@ export class PatientInteractionComponent implements OnInit {
 
 
   getBody(value) {
-    let value1 = {
-      "ar": this.translate.instant(value),
-      "en": value,
+    let value1;
+    if (localStorage.getItem('selectedLanguage') === 'ar') {
+      value1 = {
+        "ar": value,
+        "en": this.diagnosisService.values[value],
+      }
+    } else {
+      value1 = {
+        "ar": this.diagnosisService.values[value],
+        "en": value,
+      }
     }
     return JSON.stringify(value1);
   }

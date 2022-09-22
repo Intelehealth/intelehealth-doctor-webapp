@@ -23,7 +23,7 @@ conceptFamilyHistory = 'd63ae965-47fb-40e8-8f08-1f46a8a60b2b';
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === visitUuid) {
-          this.familyHistory.push(obs);
+          this.familyHistory.push(this.diagnosisService.getData(obs));
         }
       });
       if (this.familyHistory !== undefined && this.familyHistory.length > 0) {

@@ -3,3 +3,7 @@
     display: block;
   }
 }
+
+.dropdown-item {
+  white-space: pre-wrap;
+}

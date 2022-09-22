@@ -6,11 +6,11 @@
     <table class="table table-responsive">
       <tr *ngFor='let item of v'>
         <th>{{'Temp'|translate}}:</th>
-        <td><span *ngIf="item.temp"> {{ item.temp }} F</span></td>
+        <td><span *ngIf="item.temp"> {{ item.temp }} {{'F' | translate}}</span></td>
         <th>{{'Height'|translate}}:</th>
-        <td><span *ngIf="item.height">{{item.height}} cm</span></td>
+        <td><span *ngIf="item.height">{{item.height}} {{'cm'| translate }}</span></td>
         <th>{{'Weight'|translate}}:</th>
-        <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
+        <td><span *ngIf="item.weight">{{item.weight}} {{ 'kg' | translate }}</span></td>
         <th>{{'BMI'|translate}}:</th>
         <td>{{item.bmi}}</td>
         <th>{{'SP02'|translate}}:</th>

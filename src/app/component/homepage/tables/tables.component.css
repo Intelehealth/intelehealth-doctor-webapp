@@ -13,10 +13,10 @@ table {
 }
 
 .mat-column-name {
-    width: 14%
+    width: 18%
 }
 
-.mat-column-dob {
+.mat-column-telephone {
     width: 10%
 }
 
@@ -24,8 +24,12 @@ table {
     width: 10%
 }
 
+.mat-column-age {
+    width: 10%
+}
+
 .mat-column-location {
-    width: 14%
+    width: 20%
 }
 
 .mat-column-status {
@@ -33,11 +37,11 @@ table {
 }
 
 .mat-column-provider {
-    width: 10%
+    width: 14%
 }
 
 .mat-column-lastSeen {
-    width: 14%
+    width: 18%
 }
   
 .mat-cell,
