@@ -8,6 +8,7 @@
       identity. We will send a verofication code to confirm your entry.
     </p>
   </div>
+
   <div class="vr-btngrp">
     <div [class]="!showEmail ? 'vr-mobilebtn vr-active' : 'vr-mobilebtn'">
       <input
@@ -74,14 +75,18 @@
       <input
         type="text"
         class="form-control"
-        id="mobile"
-        name="mobile"
-        aria-describedby="mobile"
-        formControlName="mobile"
+        id="phoneNumber"
+        name="phoneNumber"
+        aria-describedby="phoneNumber"
+        formControlName="phoneNumber"
+        max="10"
       />
     </div>
     <div class="btnnext">
-      <button type="submit" class="btn-darkblue btn-block">Next</button>
+      <button type="submit" (click)="getOTP()" class="btn-darkblue btn-block">
+        Next
+      </button>
     </div>
+    <div id="recaptcha-container"></div>
   </form>
 </div>

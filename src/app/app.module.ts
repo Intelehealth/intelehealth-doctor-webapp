@@ -101,7 +101,12 @@ import { LoginFirstImageComponent } from "./component/login-first-image/login-fi
 import { ModaldialogComponent } from "./component/modaldialog/modaldialog.component";
 import { ModalinternetconnectionComponent } from "./component/modalinternetconnection/modalinternetconnection.component";
 import { InternetconnectionInterceptor } from "./interceptors/internetconnection.interceptor";
+//Firebase services
+import { AngularFireModule } from "@angular/fire/compat";
+import { AngularFireAuthModule } from "@angular/fire/compat/auth";
+import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
 
+import { WindowService } from "./services/window.service";
 @NgModule({
   declarations: [
     AppComponent,
@@ -155,6 +160,9 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
   ],
 
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
     NgxCaptchaModule,
     BrowserModule,
     CommonModule,
@@ -258,6 +266,7 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
     }),
   ],
   providers: [
+    WindowService,
     CookieService,
     AuthGuard,
     DatePipe,

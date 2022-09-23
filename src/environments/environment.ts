@@ -10,6 +10,15 @@ export const environment = {
   mindmapURL: "https://demo.intelehealth.org:3004/api",
   notificationURL: "https://demo.intelehealth.org:3004/notification",
   socketURL: "https://demo.intelehealth.org:3004",
+  firebase: {
+    // add IDA firebase key for phone below is the temporary key we have created
+    apiKey: "AIzaSyDkU15rxve37d9hu_4y0lUNOfrUX6iSpUI",
+    authDomain: "intelehealth-webapp.firebaseapp.com",
+    projectId: "intelehealth-webapp",
+    storageBucket: "intelehealth-webapp.appspot.com",
+    messagingSenderId: "246647122371",
+    appId: "1:246647122371:web:c45944219d1f37bf30b576",
+  },
 };
 
 /*

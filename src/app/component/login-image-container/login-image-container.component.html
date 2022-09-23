@@ -6,18 +6,13 @@
     <img src="../../../assets/images/login/Intelehealth-logo-white 1.png" />
   </div>
   <div class="imagecontainer">
-    <ngb-carousel
-      #carousel
-      [interval]="2000"
-      [pauseOnHover]="true"
-      [pauseOnFocus]="true"
-    >
+    <ngb-carousel #carousel [interval]="2000" [pauseOnHover]="true">
       <ng-template ngbSlide>
         <div class="picsum-img-wrapper">
           <app-login-first-image
             heartbeat1="../../../assets/images/login/right_green_heartbeat.png"
             heartbeat2="../../../assets/images/login/left_red_heartbeat.png"
-            image="../../../assets/images/login/Group 2608884.png"
+            image="../../../assets/images/login/doctor.png"
             footer="Deliver quality health care where there is no doctor"
           ></app-login-first-image>
         </div>
@@ -37,7 +32,7 @@
           <app-login-first-image
             heartbeat1="../../../assets/images/login/right_green_heartbeat.png"
             heartbeat2="../../../assets/images/login/left_red_heartbeat.png"
-            image="../../../assets/images/login/image3.png"
+            image="../../../assets/images/login/chart.png"
             footer="Take online consultations and send prescriptions to the patients virtually"
           ></app-login-first-image>
         </div>
