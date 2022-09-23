@@ -48,14 +48,6 @@ export class SocketService {
           }
         }
       });
-      this.onEvent("updateMessage").subscribe((data) => {
-        this.showNotification({
-          title: "New chat message",
-          body: data.message,
-          timestamp: new Date(data.createdAt).getTime(),
-        });
-        new Audio("assets/notification.mp3").play();
-      });
       this.onEvent("log").subscribe((array) => {
         if (localStorage.log === "1") console.log.apply(console, array);
       });
