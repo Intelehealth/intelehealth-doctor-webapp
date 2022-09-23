@@ -33,7 +33,7 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService,
     private route: ActivatedRoute,
     private socket: SocketService
-  ) {}
+  ) { }
 
   @HostListener("window:online", ["$event"])
   online() {
@@ -59,6 +59,16 @@ export class ChatComponent implements OnInit {
   initSocket(force = true) {
     this.updateMessages();
     this.socket.initSocket(force);
+
+    this.socket.onEvent("updateMessage").subscribe((data) => {
+      this.updateMessages();
+      this.socket.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+      new Audio("assets/notification.mp3").play();
+    });
   }
 
   get chatElem() {

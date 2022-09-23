@@ -14,8 +14,8 @@ export class TestChatComponent implements OnInit {
   @ViewChild("chatBox") chatBox: ElementRef;
   data = {
     to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
-    from: "28cea4ab-3188-434a-82f0-055133090a38",
-    patientId: "a286e0de-eba0-4ad5-b698-900657d8ac75",
+    from: "5a700f00-eca8-4fe2-bbbd-a2d4e5c3622a",
+    patientId: "e5ec6a24-c350-4f66-a991-f0610962996b",
     connectToDrId: '75ce3130-ad64-4284-af34-aefa04165dff'//dr 1 id by default to test
   };
   classFlag = false;
