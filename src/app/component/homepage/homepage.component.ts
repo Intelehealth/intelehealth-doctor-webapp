@@ -1,4 +1,3 @@
-import { GlobalConstants } from "../../js/global-constants";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { Component, OnInit } from "@angular/core";
@@ -171,29 +170,24 @@ export class HomepageComponent implements OnInit {
    */
   visitCategory(active) {
     const { encounters = [] } = active;
-    if (this.checkVisit(encounters, "Visit Complete")) {
-      const values = this.assignValueToProperty(active,"Visit Complete");
+    let encounter = null;
+    if (encounter = this.checkVisit(encounters, "Visit Complete")) {
+      const values = this.assignValueToProperty(active, encounter);
       this.completedVisit.push(values);
-      // this.completeVisitNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")) {
-      const values = this.assignValueToProperty(active,"Visit Note");
+    } else if (encounter = this.checkVisit(encounters, "Visit Note")) {
+      const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);
-      // this.visitNoteNo += 1;
-    } else if (this.checkVisit(encounters, "Flagged")) {
+    } else if (encounter = this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active,"Flagged");
+        const values = this.assignValueToProperty(active, encounter);
         this.flagVisit.push(values);
-        // this.flagPatientNo += 1;
-        GlobalConstants.visits.push(active);
       }
     } else if (
-      this.checkVisit(encounters, "ADULTINITIAL") ||
-      this.checkVisit(encounters, "Vitals")
+      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
+      (encounter = this.checkVisit(encounters, "Vitals"))
     ) {
-      const values = this.assignValueToProperty(active,"ADULTINITIAL");
+      const values = this.assignValueToProperty(active, encounter);
       this.waitingVisit.push(values);
-      // this.activePatient += 1;
-      GlobalConstants.visits.push(active);
     }
   }
 
@@ -232,7 +226,7 @@ export class HomepageComponent implements OnInit {
    * @param visitObject Object
    * @returns Object
    */
-  assignValueToProperty(active, status?) {
+  assignValueToProperty(active, encounter?) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -240,11 +234,13 @@ export class HomepageComponent implements OnInit {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = status? status : active.encounters[0]?.encounterType.display;
-    this.value.provider = active.encounters[0]?.encounterProviders[0].provider.display.split(
-      "- "
-    )[1];
-    this.value.lastSeen = active?.encounters[0]?.encounterDatetime;
+
+    this.value.status = encounter?.encounterType?.display || active.encounters[0]?.encounterType.display;
+    const provider = encounter?.encounterProviders?.[0]?.provider.display || active.encounters?.[0]?.encounterProviders?.[0]?.provider.display;
+    this.value.provider = provider.split("- ")[1];
+
+    this.value.lastSeen = encounter?.encounterDatetime || active?.encounters[0]?.encounterDatetime;
+
     this.value.complaints = this.getComplaints(active);
     this.value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
     return this.value;
