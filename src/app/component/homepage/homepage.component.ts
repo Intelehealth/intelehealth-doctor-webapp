@@ -237,7 +237,7 @@ export class HomepageComponent implements OnInit {
 
     this.value.status = encounter?.encounterType?.display || active.encounters[0]?.encounterType.display;
     const provider = encounter?.encounterProviders?.[0]?.provider.display || active.encounters?.[0]?.encounterProviders?.[0]?.provider.display;
-    this.value.provider = provider.split("- ")[1];
+    this.value.provider = provider?.split("- ")?.[1] || 'Missing Encounters';
 
     this.value.lastSeen = encounter?.encounterDatetime || active?.encounters[0]?.encounterDatetime;
 
