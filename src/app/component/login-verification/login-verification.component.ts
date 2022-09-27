@@ -6,11 +6,9 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore/lite";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import firebase from "firebase/compat/app";
-import { WindowService } from "../../services/window.service";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 
 var config = {
   apiKey: "AIzaSyDkU15rxve37d9hu_4y0lUNOfrUX6iSpUI",
@@ -33,47 +31,40 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
     email: new FormControl("", [Validators.required]),
   });
   showEmail: boolean = false;
-  phoneNumber: any;
   reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor(private windowService: WindowService) {
-    this.windowRef = this.windowService.windowRef;
-  }
+  constructor() {}
 
   ngOnInit() {
     firebase.initializeApp(config);
   }
-  ngAfterViewInit() {
-    this.windowRef.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "normal",
-        callback: (responce) => {},
-      }
-    );
-    this.windowRef.reCaptchaVerifier.render();
-  }
+  ngAfterViewInit() {}
   setShowEmail(show: boolean) {
     this.showEmail = show;
   }
   onSubmit() {
-    //const value = this.verificationForm.value;
-    //const string = `${value.mobile}:${value.email}`;
-    //API call to send otp
-    this.onSucess.emit(true);
-  }
-  getOTP() {
-    /*this.windowRef.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-      "recaptcha-container",
-      { size: "invisible" }
-    );*/
-
+    const value = this.verificationForm.value;
+    this.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      "sign-in-button",
+      {
+        size: "invisible",
+      }
+    );
+    console.log(this.reCaptchaVerifier);
+    console.log(value.phoneNumber);
     firebase
       .auth()
-      .signInWithPhoneNumber(this.phoneNumber, this.reCaptchaVerifier)
+      .signInWithPhoneNumber(value.phoneNumber, this.reCaptchaVerifier)
       .then((confimationResult) => {
-        console.log(confimationResult);
+        localStorage.setItem(
+          "verificationId",
+          JSON.stringify(confimationResult.verificationId)
+        );
+        this.onSucess.emit(true);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   }
 }

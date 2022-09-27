@@ -13,25 +13,27 @@ grid-template-areas:
  .heartbeat2{
     grid-area: heartbeat2;
     justify-self: flex-end;
+    align-self: flex-start;
 }
 
  .image{
     grid-area: image;
-    img{max-width: 100%;
+    align-self: center;
+   /* img{max-width: 100%;
       align-self: center;
      height: auto;
-   }
+   }*/
  }
 
- @media screen and (max-width: 600px) {
+ /*@media screen and (max-width: 600px) {
    .image{
       grid-area: image;
-      img{max-width: 100%;
+    /*  img{max-width: 100%;
         align-self: center;
         height: auto;
-     }
-   }
- }
+     }*/
+   //}
+ //}
  
 
 

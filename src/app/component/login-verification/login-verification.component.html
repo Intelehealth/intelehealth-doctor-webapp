@@ -74,19 +74,17 @@
     <div class="vr-textbox">
       <input
         type="text"
-        class="form-control"
         id="phoneNumber"
+        class="form-control"
         name="phoneNumber"
-        aria-describedby="phoneNumber"
+        aria-describedby="email"
         formControlName="phoneNumber"
-        max="10"
+        max="15"
       />
     </div>
     <div class="btnnext">
-      <button type="submit" (click)="getOTP()" class="btn-darkblue btn-block">
-        Next
-      </button>
+      <button type="submit" class="btn-darkblue btn-block">Next</button>
     </div>
-    <div id="recaptcha-container"></div>
+    <div id="sign-in-button"></div>
   </form>
 </div>

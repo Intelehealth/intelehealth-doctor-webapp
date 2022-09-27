@@ -102,9 +102,9 @@ import { ModaldialogComponent } from "./component/modaldialog/modaldialog.compon
 import { ModalinternetconnectionComponent } from "./component/modalinternetconnection/modalinternetconnection.component";
 import { InternetconnectionInterceptor } from "./interceptors/internetconnection.interceptor";
 //Firebase services
-import { AngularFireModule } from "@angular/fire/compat";
-import { AngularFireAuthModule } from "@angular/fire/compat/auth";
-import { AngularFirestoreModule } from "@angular/fire/compat/firestore";
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
 
 import { WindowService } from "./services/window.service";
 @NgModule({
