@@ -83,7 +83,7 @@ export class HomepageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
-    this.getEndedVisits();
+    // this.getEndedVisits();
     this.getDrSlots();
   }
 
