@@ -105,8 +105,8 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
-
 import { WindowService } from "./services/window.service";
+import { NgOtpInputModule } from "ng-otp-input";
 @NgModule({
   declarations: [
     AppComponent,
@@ -192,6 +192,7 @@ import { WindowService } from "./services/window.service";
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    NgOtpInputModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [

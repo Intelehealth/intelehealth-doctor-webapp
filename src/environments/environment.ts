@@ -11,7 +11,14 @@ export const environment = {
   notificationURL: "https://demo.intelehealth.org:3004/notification",
   socketURL: "https://demo.intelehealth.org:3004",
   firebase: {
-    // add IDA firebase key for phone below is the temporary key we have created
+    /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
+    authDomain: "intelehealth-3-0.firebaseapp.com",
+    databaseURL: "https://intelehealth-3-0-default-rtdb.firebaseio.com",
+    projectId: "intelehealth-3-0",
+    storageBucket: "intelehealth-3-0.appspot.com",
+    messagingSenderId: "781318396284",
+    appId: "1:781318396284:web:69d37af4daa956a3df6cf9",
+    measurementId: "G-68HCCL881X",*/
     apiKey: "AIzaSyDkU15rxve37d9hu_4y0lUNOfrUX6iSpUI",
     authDomain: "intelehealth-webapp.firebaseapp.com",
     projectId: "intelehealth-webapp",

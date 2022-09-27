@@ -63,12 +63,12 @@
     </div>
     <div class="vr-dropdown">
       <select
-        name="mobilecode"
-        id="mobilecode"
+        name="code"
+        id="code"
         class="language-dropdown form-control"
+        formControlName="code"
       >
-        <option value="" selected="selected">+ 91</option>
-        <option value="">+ 61</option>
+        <option *ngFor="let c of countries" [ngValue]="c">{{ c }}</option>
       </select>
     </div>
     <div class="vr-textbox">

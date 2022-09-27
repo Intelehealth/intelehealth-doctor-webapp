@@ -17,6 +17,14 @@ var config = {
   storageBucket: "intelehealth-webapp.appspot.com",
   messagingSenderId: "246647122371",
   appId: "1:246647122371:web:c45944219d1f37bf30b576",
+  /*apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
+  authDomain: "intelehealth-3-0.firebaseapp.com",
+  databaseURL: "https://intelehealth-3-0-default-rtdb.firebaseio.com",
+  projectId: "intelehealth-3-0",
+  storageBucket: "intelehealth-3-0.appspot.com",
+  messagingSenderId: "781318396284",
+  appId: "1:781318396284:web:69d37af4daa956a3df6cf9",
+  measurementId: "G-68HCCL881X",*/
 };
 
 @Component({
@@ -26,15 +34,24 @@ var config = {
 })
 export class LoginVerificationComponent implements OnInit, AfterViewInit {
   @Output() onSucess = new EventEmitter<boolean>();
+  countries: string[] = ["+91", "+61", "+44"];
+  default: string = "+91";
+
   verificationForm = new FormGroup({
     phoneNumber: new FormControl("", [Validators.required]),
     email: new FormControl("", [Validators.required]),
+    code: new FormControl("", [Validators.required]),
   });
+
   showEmail: boolean = false;
   reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor() {}
+  constructor() {
+    this.verificationForm.controls["code"].setValue(this.default, {
+      onlySelf: true,
+    });
+  }
 
   ngOnInit() {
     firebase.initializeApp(config);
@@ -44,7 +61,8 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
     this.showEmail = show;
   }
   onSubmit() {
-    const value = this.verificationForm.value;
+    var value = this.verificationForm.value;
+    var mobileNumber = value.code + value.phoneNumber;
     this.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       "sign-in-button",
       {
@@ -52,10 +70,10 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
       }
     );
     console.log(this.reCaptchaVerifier);
-    console.log(value.phoneNumber);
+    console.log(mobileNumber);
     firebase
       .auth()
-      .signInWithPhoneNumber(value.phoneNumber, this.reCaptchaVerifier)
+      .signInWithPhoneNumber(mobileNumber, this.reCaptchaVerifier)
       .then((confimationResult) => {
         localStorage.setItem(
           "verificationId",

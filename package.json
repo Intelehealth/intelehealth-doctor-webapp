@@ -37,6 +37,7 @@
     "intro.js": "^2.9.3",
     "jquery": "^3.5.1",
     "moment": "^2.24.0",
+    "ng-otp-input": "^1.8.5",
     "ngx-captcha": "^10.0.0",
     "ngx-cookie-service": "^2.1.0",
     "ngx-spinner": "^10.0.1",

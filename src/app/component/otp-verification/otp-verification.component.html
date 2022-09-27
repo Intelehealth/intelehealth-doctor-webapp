@@ -12,12 +12,10 @@
     <label class="lbl-username">Enter OTP</label>
   </div>
   <div class="otp-textbox">
-    <input type="text" class="btn-otp" />
-    <input type="text" class="btn-otp" />
-    <input type="text" class="btn-otp" />
-    <input type="text" class="btn-otp" />
-    <input type="text" class="btn-otp" />
-    <input type="text" class="btn-otp" />
+    <ng-otp-input
+      (onInputChange)="onOtpChange($event)"
+      [config]="config"
+    ></ng-otp-input>
   </div>
   <div class="otp-lblotpnotreceived">
     <p class="login-para">
@@ -25,6 +23,12 @@
     </p>
   </div>
   <div class="otp-btn">
-    <button type="submit" class="btn-darkblue btn-block">Verify</button>
+    <button
+      type="submit"
+      class="btn-darkblue btn-block"
+      (click)="handleClick()"
+    >
+      Verify
+    </button>
   </div>
 </div>
