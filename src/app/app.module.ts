@@ -105,8 +105,9 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
-import { WindowService } from "./services/window.service";
+
 import { NgOtpInputModule } from "ng-otp-input";
+import { OtpService } from "./services/otp.service";
 @NgModule({
   declarations: [
     AppComponent,
@@ -267,7 +268,7 @@ import { NgOtpInputModule } from "ng-otp-input";
     }),
   ],
   providers: [
-    WindowService,
+    OtpService,
     CookieService,
     AuthGuard,
     DatePipe,

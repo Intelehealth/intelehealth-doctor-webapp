@@ -6,27 +6,7 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-
-var config = {
-  apiKey: "AIzaSyDkU15rxve37d9hu_4y0lUNOfrUX6iSpUI",
-  authDomain: "intelehealth-webapp.firebaseapp.com",
-  projectId: "intelehealth-webapp",
-  storageBucket: "intelehealth-webapp.appspot.com",
-  messagingSenderId: "246647122371",
-  appId: "1:246647122371:web:c45944219d1f37bf30b576",
-  /*apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
-  authDomain: "intelehealth-3-0.firebaseapp.com",
-  databaseURL: "https://intelehealth-3-0-default-rtdb.firebaseio.com",
-  projectId: "intelehealth-3-0",
-  storageBucket: "intelehealth-3-0.appspot.com",
-  messagingSenderId: "781318396284",
-  appId: "1:781318396284:web:69d37af4daa956a3df6cf9",
-  measurementId: "G-68HCCL881X",*/
-};
-
+import { OtpService } from "src/app/services/otp.service";
 @Component({
   selector: "app-login-verification",
   templateUrl: "./login-verification.component.html",
@@ -47,14 +27,14 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
   reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor() {
+  constructor(private otpservice: OtpService) {
     this.verificationForm.controls["code"].setValue(this.default, {
       onlySelf: true,
     });
   }
 
   ngOnInit() {
-    firebase.initializeApp(config);
+    //firebase.initializeApp(config);
   }
   ngAfterViewInit() {}
   setShowEmail(show: boolean) {
@@ -63,7 +43,17 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
   onSubmit() {
     var value = this.verificationForm.value;
     var mobileNumber = value.code + value.phoneNumber;
-    this.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    this.otpservice
+      .getOTP("sign-in-button", mobileNumber)
+      .subscribe((confimationResult) => {
+        localStorage.setItem(
+          "verificationId",
+          JSON.stringify(confimationResult.verificationId)
+        );
+        localStorage.setItem("mobilenumber", mobileNumber);
+        this.onSucess.emit(true);
+      });
+    /*this.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       "sign-in-button",
       {
         size: "invisible",
@@ -83,6 +73,6 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
       })
       .catch((e) => {
         console.log(e);
-      });
+      });*/
   }
 }

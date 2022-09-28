@@ -19,7 +19,9 @@
   </div>
   <div class="otp-lblotpnotreceived">
     <p class="login-para">
-      Didn’t receive OTP ?<a href="#"><u>Resend in 3:00</u></a>
+      Didn’t receive OTP ?<a [routerLink]="[]" (click)="resendOTP()"
+        ><u>Resend in 3:00</u></a
+      >
     </p>
   </div>
   <div class="otp-btn">
@@ -31,4 +33,5 @@
       Verify
     </button>
   </div>
+  <div id="sign-in-button"></div>
 </div>

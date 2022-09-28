@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import { OtpService } from "src/app/services/otp.service";
 @Component({
   selector: "app-otp-verification",
   templateUrl: "./otp-verification.component.html",
@@ -10,7 +11,7 @@ import "firebase/firestore";
 export class OtpVerificationComponent implements OnInit {
   otp: string;
   verify: any;
-  constructor() {}
+  constructor(private otpservice: OtpService) {}
   config = {
     allowNumbersOnly: true,
     length: 6,
@@ -47,5 +48,11 @@ export class OtpVerificationComponent implements OnInit {
         console.log(error);
         alert(error.message);
       });
+  }
+  resendOTP() {
+    var data = localStorage.getItem("mobilenumber");
+    this.otpservice.getOTP("sign-in-button", data).subscribe(() => {
+      alert("OTP resend sucessfully");
+    });
   }
 }
