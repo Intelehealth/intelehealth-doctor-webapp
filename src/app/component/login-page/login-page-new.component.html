@@ -1,0 +1,67 @@
+<div>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="grid-container">
+    <div class="header"><h3 class="login-header">Login</h3></div>
+    <div class="para">
+      <p class="login-para">
+        Login with your provided username and password then you can choose the
+        verification method.
+      </p>
+    </div>
+    <div class="username">
+      <label for="username" class="lbl lbl-username">Username</label>
+      <a href="#" class="link link-forgot-username"> Forgot username ? </a>
+      <input
+        type="email"
+        class="txt form-control"
+        id="username"
+        name="username"
+        aria-describedby="emailHelp"
+        formControlName="username"
+      />
+    </div>
+    <div class="password">
+      <label for="examplePassword" class="lbl lbl-username">Password</label>
+      <a href="#" class="link link-forgot-username"> Forgot password ? </a>
+      <div class="txt">
+        <div class="password-container">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="password-text form-control"
+            id="examplePassword"
+            name="examplePassword"
+            formControlName="password"
+          />
+          <div class="eye-icon" (click)="showHidePassword()">
+            <span>
+              <i [class]="showPassword ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <label class="error-message" *ngIf="showError"
+        >Credentials provided are wrong.</label
+      >
+    </div>
+    <div class="captcha">
+      <label class="lbl-username"
+        >Before logging in,please confirm you are not a robot</label
+      >
+      <ngx-recaptcha2
+        #captchaElem
+        [siteKey]="siteKey"
+        formControlName="recaptcha"
+      >
+      </ngx-recaptcha2>
+    </div>
+    <div class="btnnext">
+      <button
+        type="submit"
+        class="btn-darkblue btn-block"
+        [disabled]="!loginForm.valid"
+      >
+        Next
+      </button>
+    </div>
+  </form>
+</div>

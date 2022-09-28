@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -53,37 +53,41 @@ import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { CalendarModule, DateAdapter } from "angular-calendar";
-import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
 
 // Material Design Imports
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatChipsModule } from '@angular/material/chips';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { MainComponent } from './component/main/main.component';
-import { VcComponent } from './component/vc/vc.component';
-import { SocketService } from './services/socket.service';
-import { HoverClassDirective } from './directives/hover-class.directive';
-import { ChatComponent } from './component/chat/chat.component';
-import { TestChatComponent } from './component/test-chat/test-chat.component';
+import {
+  MatDialogModule,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatCardModule } from "@angular/material/card";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatRadioModule } from "@angular/material/radio";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatListModule } from "@angular/material/list";
+import { MatSelectModule } from "@angular/material/select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatChipsModule } from "@angular/material/chips";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
+import { MainComponent } from "./component/main/main.component";
+import { VcComponent } from "./component/vc/vc.component";
+import { SocketService } from "./services/socket.service";
+import { HoverClassDirective } from "./directives/hover-class.directive";
+import { ChatComponent } from "./component/chat/chat.component";
+import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
@@ -92,9 +96,22 @@ import { ForgotPasswordComponent } from './component/forgot-password/forgot-pass
 import { MatTabsModule } from '@angular/material/tabs';
 import {Ng2TelInputModule} from 'ng2-tel-input';
 import { ForgotUsernameComponent } from './component/forgot-username/forgot-username.component';
+import { LoginContainerComponent } from "./component/login-container/login-container.component";
+import { LoginVerificationComponent } from "./component/login-verification/login-verification.component";
+import { OtpVerificationComponent } from "./component/otp-verification/otp-verification.component";
+import { NgxCaptchaModule } from "ngx-captcha";
+import { LoginImageContainerComponent } from "./component/login-image-container/login-image-container.component";
+import { LoginFirstImageComponent } from "./component/login-first-image/login-first-image.component";
+import { ModaldialogComponent } from "./component/modaldialog/modaldialog.component";
+import { ModalinternetconnectionComponent } from "./component/modalinternetconnection/modalinternetconnection.component";
+import { InternetconnectionInterceptor } from "./interceptors/internetconnection.interceptor";
+//Firebase services
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
 
-
-
+import { NgOtpInputModule } from "ng-otp-input";
+import { OtpService } from "./services/otp.service";
 @NgModule({
   declarations: [
     AppComponent,
@@ -138,11 +155,22 @@ import { ForgotUsernameComponent } from './component/forgot-username/forgot-user
     ConfirmDialogComponent,
     AppointmentViewComponent,
     AppointmentScheduleComponent,
+    LoginContainerComponent,
+    LoginVerificationComponent,
+    OtpVerificationComponent,
+    LoginImageContainerComponent,
+    LoginFirstImageComponent,
+    ModaldialogComponent,
+    ModalinternetconnectionComponent,,
     ForgotPasswordComponent,
     ForgotUsernameComponent,
   ],
 
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    NgxCaptchaModule,
     MatTabsModule,
     Ng2TelInputModule,
     BrowserModule,
@@ -173,6 +201,7 @@ import { ForgotUsernameComponent } from './component/forgot-username/forgot-user
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    NgOtpInputModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
@@ -208,16 +237,22 @@ import { ForgotUsernameComponent } from './component/forgot-username/forgot-user
     }),
   ],
   providers: [
+    OtpService,
     CookieService,
     AuthGuard,
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
-    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
+    { provide: MatDialogRef, useValue: {} },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InternetconnectionInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

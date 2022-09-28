@@ -1,0 +1,90 @@
+<div class="vr-container">
+  <div class="vr-header">
+    <h3 class="login-header">Choose verification method</h3>
+  </div>
+  <div class="vr-para">
+    <p class="login-para">
+      Choose your email or phone number through which you want to verify your
+      identity. We will send a verofication code to confirm your entry.
+    </p>
+  </div>
+
+  <div class="vr-btngrp">
+    <div [class]="!showEmail ? 'vr-mobilebtn vr-active' : 'vr-mobilebtn'">
+      <input
+        class="btn-no-boarder"
+        type="button"
+        value="Mobile number"
+        (click)="setShowEmail(false)"
+      />
+    </div>
+    <div [class]="showEmail ? 'vr-emailbtn vr-active' : 'vr-emailbtn'">
+      <input
+        type="button"
+        class="btn-no-boarder"
+        value="Email ID"
+        (click)="setShowEmail(true)"
+      />
+    </div>
+  </div>
+
+  <form
+    [formGroup]="verificationForm"
+    (ngSubmit)="onSubmit()"
+    *ngIf="showEmail"
+    class="vr-emailform"
+  >
+    <div class="vr-email-label">
+      <label class="lbl-username"> Email ID </label>
+    </div>
+    <div class="vr-textbox">
+      <input
+        type="text"
+        class="form-control"
+        id="email"
+        name="email"
+        aria-describedby="email"
+        formControlName="email"
+      />
+    </div>
+    <div class="btnnext">
+      <button type="submit" class="btn-darkblue btn-block">Next</button>
+    </div>
+  </form>
+
+  <form
+    [formGroup]="verificationForm"
+    (ngSubmit)="onSubmit()"
+    *ngIf="!showEmail"
+    class="vr-mobileform"
+  >
+    <div class="vr-mobile-label">
+      <label class="lbl-username">Mobile number</label>
+    </div>
+    <div class="vr-dropdown">
+      <select
+        name="code"
+        id="code"
+        class="language-dropdown form-control"
+        formControlName="code"
+      >
+        <option *ngFor="let c of countries" [ngValue]="c">{{ c }}</option>
+      </select>
+    </div>
+    <div class="vr-textbox">
+      <input
+        type="text"
+        id="phoneNumber"
+        class="form-control"
+        name="phoneNumber"
+        aria-describedby="email"
+        formControlName="phoneNumber"
+        max="15"
+      />
+    </div>
+    <div class="btnnext">
+      <button type="submit" class="btn-darkblue btn-block">Next</button>
+    </div>
+    <div id="sign-in-button"></div>
+  </form>
+</div>

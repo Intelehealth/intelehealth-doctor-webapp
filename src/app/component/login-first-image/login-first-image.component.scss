@@ -1,0 +1,46 @@
+.container{
+display: grid;
+grid-template-columns: 1fr 4fr 1fr;
+grid-template-areas:
+  'heartbeat1 image heartbeat2'
+  'footer footer footer'; 
+}
+.heartbeat1 { grid-area: heartbeat1;
+   justify-self: flex-start;
+   align-self: flex-end;
+   }
+
+ .heartbeat2{
+    grid-area: heartbeat2;
+    justify-self: flex-end;
+    align-self: flex-start;
+}
+
+ .image{
+    grid-area: image;
+    align-self: center;
+   /* img{max-width: 100%;
+      align-self: center;
+     height: auto;
+   }*/
+ }
+
+ /*@media screen and (max-width: 600px) {
+   .image{
+      grid-area: image;
+    /*  img{max-width: 100%;
+        align-self: center;
+        height: auto;
+     }*/
+   //}
+ //}
+ 
+
+
+ .footer{
+    grid-area: footer;
+    color:var(--color-white);
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+ }

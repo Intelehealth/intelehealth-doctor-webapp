@@ -1,0 +1,50 @@
+<div class="main-container">
+  <div class="logocontainer">
+    <div class="logo-square">
+      <img src="../../../assets/images/login/Vector.png" />
+    </div>
+    <div class="logo-text">
+      <img src="../../../assets/images/login/Intelehealth-logo-white 1.png" />
+    </div>
+  </div>
+  <div class="imagecontainer">
+    <ngb-carousel #carousel [interval]="2000" [pauseOnHover]="true">
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <app-login-first-image
+            heartbeat1="../../../assets/images/login/right_green_heartbeat.png"
+            heartbeat2="../../../assets/images/login/left_red_heartbeat.png"
+            image="../../../assets/images/login/doctor.png"
+            footer="Deliver quality health care where there is no doctor"
+          ></app-login-first-image>
+        </div>
+      </ng-template>
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <app-login-first-image
+            heartbeat1="../../../assets/images/login/right_red_heartbeat.png"
+            heartbeat2="../../../assets/images/login/left_green_heartbeat.png"
+            image="../../../assets/images/login/sevika.png"
+            footer="2,75,000 population covered from 215 villages in 2 countries"
+          ></app-login-first-image>
+        </div>
+      </ng-template>
+      <ng-template ngbSlide>
+        <div class="picsum-img-wrapper">
+          <app-login-first-image
+            heartbeat1="../../../assets/images/login/right_green_heartbeat.png"
+            heartbeat2="../../../assets/images/login/left_red_heartbeat.png"
+            image="../../../assets/images/login/chart.png"
+            footer="Take online consultations and send prescriptions to the patients virtually"
+          ></app-login-first-image>
+        </div>
+      </ng-template>
+    </ngb-carousel>
+  </div>
+  <div class="copyright">
+    <label class="copy-right-text">
+      Copyright ©2022 Intelehealth, a 501 (c)(3) & Section 8 non-profit
+      organisation
+    </label>
+  </div>
+</div>

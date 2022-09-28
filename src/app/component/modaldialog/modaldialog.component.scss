@@ -1,0 +1,49 @@
+.popup-container{
+background-color: var(--color-white);
+display: grid;
+  grid-template-areas:
+  'close'
+  'icon'
+  'title'
+  'para'
+  'btntry';
+width: 520px;
+height: 280px;
+border-radius: 12px;
+justify-self: center;
+position:fixed; 
+top: calc(50% - 140px); 
+left: calc(50% - 280px); 
+}
+
+.popup-close { grid-area: close;
+   justify-self: end;
+    margin-top: 1rem;
+    margin-right: 1rem;
+ }
+ .popup-icon { grid-area: icon;
+    justify-self: center;
+    align-items: flex-start;
+    
+ }
+ .popup-title{
+    grid-area: title;
+    justify-self: center;
+    color: var(--color-darkestBlue);
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    align-items: center;
+    text-align: center;
+ }
+ .popup-para{
+    grid-area: para;
+    align-self: left;
+    margin-left: 1rem;
+ }
+ .popup-buttton{
+    grid-area: btntry;
+    justify-self: center;
+ }
+   

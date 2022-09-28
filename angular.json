@@ -8,7 +8,11 @@
       "sourceRoot": "src",
       "projectType": "application",
       "prefix": "app",
-      "schematics": {},
+      "schematics": {
+         "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -31,8 +35,12 @@
               "src/ngsw.json",
               "src/js/util.js"
             ],
-            "styles": ["src/styles.css", "node_modules/bootstrap/dist/css/bootstrap.min.css","node_modules/intro.js/introjs.css", "node_modules/intl-tel-input/build/css/intlTelInput.css"],
-            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js","node_modules/intl-tel-input/build/js/intlTelInput.min.js"],
+            "styles": [
+              "node_modules/bootstrap/scss/bootstrap.scss",
+              "src/assets/scss/main.scss",
+              "src/styles.css",
+              "node_modules/intro.js/introjs.css"],
+            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
@@ -95,13 +103,22 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": ["src/styles.css", "node_modules/intro.js/introjs.css"],
+            "styles": [
+              "node_modules/bootstrap/scss/bootstrap.scss",
+              "src/assets/scss/main.scss",
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/intro.js/introjs.css"
+             ],
             "scripts": ["node_modules/intro.js/intro.js", "src/app/js/util.js"],
             "assets": [
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/js/util.js"
+              "src/js/util.js",
+              "node_modules/jquery/dist/jquery.slim.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           }
         },

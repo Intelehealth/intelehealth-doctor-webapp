@@ -1,0 +1,37 @@
+<div class="grid-container">
+  <div class="imagerotate" style="width: 100%; height: 100%">
+    <app-login-image-container></app-login-image-container>
+  </div>
+  <div class="formcontainer" style="width: 100%; height: 100%">
+    <div class="header">
+      <div>
+        <!--class="language-div"-->
+        <select name="language" id="language" class="language-dropdown">
+          <option value="" selected="selected">English</option>
+          <option value="">Marathi</option>
+        </select>
+      </div>
+    </div>
+    <div class="loginform">
+      <app-login-page
+        *ngIf="showLogin"
+        (onSucess)="onLoginSucess($event)"
+      ></app-login-page>
+      <app-login-verification
+        *ngIf="showLoginverifictaion"
+        (onSucess)="onVerificationSucess($event)"
+      ></app-login-verification>
+      <app-otp-verification *ngIf="showOTPverifictaion"></app-otp-verification>
+    </div>
+    <div class="footer">
+      <div class="terms">
+        <p class="login-para text-center">
+          Intelehealth <a href="#"><u>Terms & Conditions</u></a>
+        </p>
+      </div>
+      <div class="help">
+        <button type="button" class="btn-help">Help</button>
+      </div>
+    </div>
+  </div>
+</div>
