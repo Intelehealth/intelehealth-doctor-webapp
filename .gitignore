@@ -32,12 +32,14 @@ speed-measure-plugin.json
 # misc
 /.sass-cache
 /connect.lock
-/coverage
+/coverage/ih
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.scannerwork/*
+reports/*
 
 # System Files
 .DS_Store

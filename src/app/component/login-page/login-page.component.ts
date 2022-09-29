@@ -18,10 +18,10 @@ export class LoginPageComponent implements OnInit {
   });
 
   constructor(
-    private sessionService: SessionService,
-    private router: Router,
-    private snackbar: MatSnackBar,
-    private authService: AuthService
+    public sessionService: SessionService,
+    public router: Router,
+    public snackbar: MatSnackBar,
+    public authService: AuthService
   ) { }
 
   ngOnInit() {
