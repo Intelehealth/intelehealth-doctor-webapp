@@ -1,3 +1,8 @@
 body {
    background-color: #f1f4f6;
 }
+
+.dropdown-menu.show {
+   text-align: left;
+    left: 0px;
+ } 
