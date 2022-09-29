@@ -179,7 +179,7 @@ export class PrescribedMedicationComponent implements OnInit {
         insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
         insertValue["en"] =  `${insertValue["en"]} 'NA'`;
       }
-      insertValue["ar"] =  `${insertValue["ar"]} for ${value.duration} ${value.durationUnit}`;
+      insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
       insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
       if (value.additional) {
         insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
@@ -199,7 +199,7 @@ export class PrescribedMedicationComponent implements OnInit {
         insertValue["ar"] =  `${insertValue["ar"]} 'غير متوفر'`;
       }
       insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
-      insertValue["ar"] =  `${insertValue["ar"]} for ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
+      insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
 
       if (value.additional) {
         insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
