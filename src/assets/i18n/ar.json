@@ -312,7 +312,8 @@
     "Visit is already completed, it can't be rescheduled.": "تم الانتهاء من الزيارة بالفعل ، لا يمكن إعادة الجدولة",
     "You can not cancel past appointments!": "لا يمكنك إلغاء المواعيد السابقة",
     "Appointment not found!": "الموعد غير موجود",
-    "Please check the slot start & end time it cannot be same and between the other slots":"يرجى التحقق من وقت بدء ووقت نهاية الموعد المتاح حيث لا يمكن أن يتقاطع مع المواعيد الأخرى"
+    "Please check the slot start & end time it cannot be same and between the other slots":"يرجى التحقق من وقت بدء ووقت نهاية الموعد المتاح حيث لا يمكن أن يتقاطع مع المواعيد الأخرى",
+    "You can't create/update past and schedule":"لا يمكنك إنشاء / تحديث الماضي والجدول الزمني"
   },
   "No slots avalable for the day, try changing dates.": "لا توجد مواعيد متاحة لهذا اليوم ، حاول تغيير التواريخ",
   "helpMsg1": "مرحبا بكم في بوابة الطبيب. في أقل من دقيقة واحدة ، سوف نوضح لك كيفية تقديم التشخيص والأدوية والاختبارات والمشورة للمريض.",

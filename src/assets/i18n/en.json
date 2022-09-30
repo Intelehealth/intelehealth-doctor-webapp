@@ -303,7 +303,8 @@
       "Visit is already completed, it can't be rescheduled.":"Visit is already completed, it can't be rescheduled.",
       "You can not cancel past appointments!": "You can not cancel past appointments!",
       "Appointment not found!":"Appointment not found!",
-      "Please check the slot start & end time it cannot be same and between the other slots":"Please check the slot start & end time it cannot be same and between the other slots"
+      "Please check the slot start & end time it cannot be same and between the other slots":"Please check the slot start & end time it cannot be same and between the other slots",
+      "You can't create/update past and schedule":"You can't create/update past and schedule"
     },
     "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
     "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",

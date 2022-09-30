@@ -360,9 +360,7 @@ export class AppointmentScheduleComponent implements OnInit {
 
   submit() {
     if (this.isPast()) {
-      this.toast({
-        message: `You can't create/update past and schedule`,
-      });
+      this.translationService.getTranslation(`You can't create/update past and schedule`);
       return;
     }
     if (this.validateTimeSlots(this.scheduleForm.value)) {

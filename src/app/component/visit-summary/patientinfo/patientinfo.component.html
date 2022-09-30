@@ -1,7 +1,7 @@
 <div  [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
 <h4><i class="fas fa-info-circle"></i> {{'Patient Information'| translate}}</h4>
 <div class="modal-body row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <table class="table table-borderless table-sm">
             <tbody *ngFor="let info of patientInfo">
                 <tr>
@@ -43,7 +43,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div *ngIf="profileImagePresent" style="text-align: center">
             <img [src]=image width="40%" height="200" alt="">
         </div>
