@@ -130,8 +130,13 @@ body.font-lato td {
 .right1 {
   float: right;
 }
-/* 
-.dropdown-menu.show {
+
+[dir="rtl"] .dropdown-menu.show {
   text-align: right;
    right: 0px;
-} */
+}
+
+[dir="ltr"] .dropdown-menu.show {
+  text-align: left;
+  left: 0px;
+}
