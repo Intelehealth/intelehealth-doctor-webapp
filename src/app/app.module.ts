@@ -105,6 +105,10 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { DashboardPageComponent } from './component/dashboard-page/dashboard-page.component';
+import { SidenavComponent } from './component/dashboard-page/sidenav/sidenav.component';
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
@@ -158,6 +162,9 @@ import { OtpService } from "./services/otp.service";
     LoginFirstImageComponent,
     ModaldialogComponent,
     ModalinternetconnectionComponent,
+    DashboardComponent,
+    DashboardPageComponent,
+    SidenavComponent,
   ],
 
   imports: [
@@ -194,69 +201,30 @@ import { OtpService } from "./services/otp.service";
     HttpClientModule,
     NgxSpinnerModule,
     NgOtpInputModule,
+    MatMenuModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot(
-      [
-        { path: "login", component: LoginContainerComponent },
-        {
-          path: "",
-          component: MainComponent,
-          children: [
-            {
-              path: "home",
-              component: HomepageComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "findPatient",
-              component: FindPatientComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "myAccount",
-              component: MyAccountComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-            {
-              path: "modals",
-              component: ModalsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "signature",
-              component: SignatureComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "editDetails",
-              component: EditDetailsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "changePassword",
-              component: ChangePasswordComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "visitSummary/:patient_id/:visit_id",
-              component: VisitSummaryComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "vc/call", component: VcComponent },
-            { path: "test/chat", component: TestChatComponent },
-            {
-              path: "appointment/schedule",
-              component: AppointmentScheduleComponent,
-            },
-            { path: "appointment/view", component: AppointmentViewComponent },
-            { path: "", redirectTo: "home", pathMatch: "full" },
-          ],
-        },
-        { path: "**", component: Page404Component },
-      ],
-      { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
-    ),
+    RouterModule.forRoot([
+      { path: 'login', component: LoginPageComponent },
+      { path: 'dashboard', component: DashboardComponent },
+      {
+        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
+        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
+        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
+        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
+        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
+        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
+        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
+        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
+        { path: 'vc/call', component: VcComponent },
+        { path: 'test/chat', component: TestChatComponent },
+        { path: "appointment/schedule", component: AppointmentScheduleComponent },
+        { path: "appointment/view", component: AppointmentViewComponent },
+        { path: '', redirectTo: 'home', pathMatch: 'full' },
+        ]
+      },
+      { path: '**', component: Page404Component },
+    ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
