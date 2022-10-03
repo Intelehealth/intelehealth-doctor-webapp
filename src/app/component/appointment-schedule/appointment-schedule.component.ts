@@ -163,7 +163,7 @@ export class AppointmentScheduleComponent implements OnInit {
     let array: CalendarEvent[] = [];
     for (let i = 0; i < slot.length; i++) {
       let event1 = {
-        title: `${slot[i].startTime}-${slot[i].endTime}`,
+        title: `(${this.drName}) ${slot[i].startTime} - ${slot[i].endTime}`,
         color: colors.yellow,
         start: new Date(slot[i].date),
         startTime: slot[i].startTime,

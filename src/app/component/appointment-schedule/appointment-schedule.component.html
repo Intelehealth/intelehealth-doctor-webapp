@@ -166,7 +166,7 @@
               (click)="saveSlots(modalData?.events)">
               {{'Save' | translate}}
             </button>
-            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" style="margin-right: 15px;"
+            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" style="margin-right: 15px;margin-left: 15px;"
               (click)="addSlots(modalData?.events[0])">
               {{'Add New Schedule' | translate}}
             </button>
