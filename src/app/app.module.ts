@@ -204,7 +204,7 @@ import { OtpService } from "./services/otp.service";
     MatMenuModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
-      { path: 'login', component: LoginPageComponent },
+      { path: 'login', component: LoginContainerComponent },
       { path: 'dashboard', component: DashboardComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
