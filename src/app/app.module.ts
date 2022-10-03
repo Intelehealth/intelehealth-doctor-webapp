@@ -90,6 +90,8 @@ import { AppointmentScheduleComponent } from "./component/appointment-schedule/a
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { DashboardPageComponent } from './component/dashboard-page/dashboard-page.component';
+import { SidenavComponent } from './component/dashboard-page/sidenav/sidenav.component';
 
 
 
@@ -137,6 +139,8 @@ import { MatMenuModule } from '@angular/material/menu';
     AppointmentViewComponent,
     AppointmentScheduleComponent,
     DashboardComponent,
+    DashboardPageComponent,
+    SidenavComponent,
   ],
 
   imports: [
