@@ -6,8 +6,6 @@ declare const getFromStorage: Function;
   styleUrls: ["./dashboard-page.component.scss"],
 })
 export class DashboardPageComponent implements OnInit {
-  @Input() collapsed: boolean = false;
-  @Input() screenWidth: number = 0;
   doctorName = "";
   constructor() {}
 
@@ -16,11 +14,4 @@ export class DashboardPageComponent implements OnInit {
     this.doctorName = doctorName;
   }
 
-  getBodyClass() {
-    let styleClass = "";
-    if (this.collapsed && this.screenWidth > 768) {
-      styleClass = "body-trimmed";
-    }
-    return styleClass;
-  }
 }

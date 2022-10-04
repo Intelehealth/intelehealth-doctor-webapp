@@ -10,20 +10,6 @@
     font-weight:$weight;
     font-size:$size;
 }
-.body {
-    display: grid;
-    @include size(1250px, 100vh);
-    top: 12px;
-    margin-left: 7.5rem;
-    padding: 0.5rem;
-    gap: 1.2rem;
-    padding: 1rem;
-}
-.body-trimmed {
-    @include size(1060px, 100vh);
-    top: 12px;
-    margin-left: 19rem;
-}
 .alert{
     position: absolute;
     width: 630px;
