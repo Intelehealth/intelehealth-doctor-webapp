@@ -115,6 +115,7 @@ import { OtpService } from "./services/otp.service";
 import { CalendarContainerComponent } from "./component/calendar-container/calendar-container.component";
 import { SetUpCalendarComponent } from "./component/calendar-container/set-up-calendar/set-up-calendar.component";
 import { ViewCalendarComponent } from "./component/calendar-container/view-calendar/view-calendar.component";
+import { DashboardBodyComponent } from "./component/dashboard/dashboard-body/dashboard-body.component";
 
 @NgModule({
   declarations: [
@@ -172,6 +173,7 @@ import { ViewCalendarComponent } from "./component/calendar-container/view-calen
     CalendarContainerComponent,
     SetUpCalendarComponent,
     ViewCalendarComponent,
+    DashboardBodyComponent,
   ],
 
   imports: [
