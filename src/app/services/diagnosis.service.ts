@@ -20,12 +20,6 @@ export class DiagnosisService {
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar,
     private translateService: TranslateService) {
-      let lang;
-      if(localStorage.getItem('selectedLanguage') === 'en' ) lang = 'ar';
-      else lang="en";
-      this.translateService.getTranslation(lang).subscribe(values => {
-        this.values = values
-      });
      }
 
   concept(uuid): Observable<any> {
@@ -88,6 +82,7 @@ export class DiagnosisService {
   }
 
    getBody(element: string, elementName: string) {
+    this.getTranslationData();
       let value, ar1, en1;
       if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
         localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,
@@ -112,4 +107,15 @@ export class DiagnosisService {
         return value;
       }
   } 
+
+  getTranslationData() {
+    let lang;
+    if (localStorage.getItem('selectedLanguage') === 'en')
+      lang = 'ar';
+    else
+      lang = "en";
+    this.translateService.getTranslation(lang).subscribe(values => {
+      this.values = values;
+    });
+  }
 }
