@@ -112,9 +112,9 @@ import { SidenavComponent } from "./component/dashboard-page/sidenav/sidenav.com
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
-import { CalendarContainerComponent } from "./calendar-container/calendar-container.component";
-import { SetUpCalendarComponent } from "./calendar-container/set-up-calendar/set-up-calendar.component";
-import { ViewCalendarComponent } from "./calendar-container/view-calendar/view-calendar.component";
+import { CalendarContainerComponent } from "./component/calendar-container/calendar-container.component";
+import { SetUpCalendarComponent } from "./component/calendar-container/set-up-calendar/set-up-calendar.component";
+import { ViewCalendarComponent } from "./component/calendar-container/view-calendar/view-calendar.component";
 
 @NgModule({
   declarations: [
@@ -223,7 +223,7 @@ import { ViewCalendarComponent } from "./calendar-container/view-calendar/view-c
               canActivate: [AuthGuard],
             },
             {
-              path: "calender",
+              path: "calendar",
               component: CalendarContainerComponent,
               canActivate: [AuthGuard],
             },
