@@ -111,6 +111,9 @@ color:  var(--color-white);
 line-height: 150%;
 
 }
+
+
+
   
 .link-forgot-username
 {
@@ -175,4 +178,33 @@ text-align: center;
 
 /* Text/Dark */
 color: var(--color-darkestBlue);
+}
+.btn-view{
+  @include font(700,1.125rem);
+  color: var(--color-darkBlue);
+  background: #EFE8FF;
+  width: 10.25rem;
+  height: 3rem;
+  border: none;
+  border-radius: 8px;
+}
+
+.text-setup{
+@include font(700,1.125rem);
+line-height: 150%;
+color: var(--color-darkestBlue);
+}
+.text-working-days
+{
+@include font(700,1.125rem);
+color: var(--color-darkBlue);
+align-items: left;
+margin-top: 1rem;
+margin-left: 1rem;
+
+}
+.label-start-date{
+  @include font(500,0.875rem);
+  color: var(--color-darkestBlue);
+  line-height: 150%;
 }
