@@ -8,13 +8,14 @@ import { Component, OnInit, Input } from '@angular/core';
 export class DashboardBodyComponent implements OnInit {
   @Input() collapsed: boolean = false;
   @Input() screenWidth: number = 0;
+  doctorName = "";
   constructor() { }
 
   ngOnInit(): void {
   }
   getBodyClass() {
     let styleClass = "";
-    if (this.collapsed && this.screenWidth > 768) {
+    if (this.collapsed && this.screenWidth > 1068) {
       styleClass = "body-trimmed";
     }
     return styleClass;

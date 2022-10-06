@@ -1,20 +1,91 @@
+@import "../../dashboard-page/dashboard-page.component.scss";
+
 .body {
     display: grid;
     position: absolute;
-    display: flex;
     width: 1250px;
     height: 100vh;
     top: 12px;
-    margin-left: 6rem;
+    margin-left: 6.5rem;
     padding: 0.5rem;
     gap: 1.2rem;
     padding: 1rem;
 }
 .body-trimmed {
     position: absolute;
-    display: flex;
     width: 1060px;
     height: 100vh;
     top: 12px;
-    margin-left: 17rem;
+    margin-left: 18rem;
+}
+.profile{
+    @include size(350px, 60px);
+    flex-direction: row;
+    align-items: flex-start;
+    right: 1px;
+    top: 32px;
+    .text{
+        margin-left: 0.8rem;
+        @include font(500, 16px);
+        line-height: 150%;
+        color: #1B163A;
+    }
+}
+.notification{
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #EFE8FF;
+    img{
+        @include size(24px, 24px);
+        left: 12px;
+        top: 12px;
+    }
+}
+.profile-pic img{
+    width: 52px;
+    height: 52px;
+    border-radius: 52px;
+    margin-left: 1.5rem;
+}
+.profile-pic button{
+    left: 10px;
+}
+.btn-help{
+    justify-content: center;
+    align-items: center;
+    @include size(82px, 50px);
+    padding: 16px 24px;
+    right: 70px;
+    top: 760px;
+    background: #0FD197;
+    box-shadow: 0px 4px 16px rgba(15, 209, 151, 0.32);
+    border-radius: 80px;
+    color:  #FFFFFF;
+    border:none;
+}
+.search-box{
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    @include size(443px, 52px);
+    background: #FAF9FF;
+    border: 2px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.search-box > i {
+	font-size: 20px;
+	color: #2E1E91;
+}
+.search-box > input{
+	flex: 1;
+	height: 40px;
+	border: none;
+	outline: none;
+	font-size: 18px;
+	padding-left: 10px;
+    background: #FAF9FF;      
+}
+::placeholder{
+    color: #7F7B92;
 }

@@ -1,3 +1,30 @@
 <div class="body" [ngClass]="getBodyClass()">
-    <router-outlet></router-outlet>
+  <div class="body-cont">
+    <div class="search-box">
+      <i class="fa fa-search" aria-hidden="true"></i>
+      <input type="text" class="txt" id="firstName" name="firstName" placeholder="Search by patient name or ID"/>
+    </div>
+    <div class="profile">
+        <div class="notification">
+          <img
+            src="../../../assets/icons/dashboard-icons/icons8-notification 1.png"
+          />
+        </div>
+        <div class="profile-pic">
+          <img src="../../../assets/icons/dashboard-icons/Frame 2608562.png"/>
+          <span class="text">Hello Dr. {{ doctorName }} 👋</span>
+          <button
+            mat-icon-button
+            aria-label="Example icon-button with a menu"
+            style="top: -2px"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+    </div>
+    <div class="help">
+      <button type="button" class="btn-help">Help</button>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
 </div>
