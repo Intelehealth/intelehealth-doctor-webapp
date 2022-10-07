@@ -411,11 +411,37 @@ export class PrescribedMedicationComponent implements OnInit {
           }
 
           data.forEach(dietValue => {
-            let [enValue, hiValue] = dietValue.value.split('||');
-            if (!enValue) enValue = '';
-            if (!hiValue) hiValue = '';
-            dataObj.en.data.push({ value: enValue.trim(), unit: dietValue.unit, qty: dietValue.qty });
-            dataObj.hi.data.push({ value: hiValue.trim(), unit: dietValue.unit, qty: dietValue.qty });
+            let arr = dietValue.value.split('||');
+            let enValue = '', hiValue = '';
+             for(let i=0; i<arr.length; i++) {
+               if(arr.length === 2) {
+                if(i%2==0) enValue =  arr[i];
+                if(i%2==1) hiValue =  arr[i];
+               } else {
+                if(arr[i].toLowerCase().includes('or')) {
+                  let a = arr[i].split('or');
+                    enValue = enValue + ' or ' + a[1] ;
+                    hiValue = a[0] + ' अथवा ' + hiValue ;
+                 } else if(arr[i].toLowerCase().includes('and')) {
+                  let a = arr[i].split('and');
+                    enValue = enValue + ' and ' + a[1] ;
+                    hiValue = a[0] + ' और ' + hiValue ;
+                 } else {
+                   if(i == 2) {
+                     hiValue = hiValue + arr[i] ;
+                   } else {
+                    if(i%2==1) {
+                      hiValue = hiValue + arr[i] ;
+                    }
+                    if(i%2==0) {
+                      enValue =  enValue + ',' + arr[i];
+                    }
+                   }
+                 }
+               }
+             }
+            dataObj.en.data.push({ value:  enValue.replace(/^,/, '').trim(), unit: dietValue.unit, qty: dietValue.qty });
+            dataObj.hi.data.push({ value:  hiValue.replace(/,\s*$/, "").trim(), unit: dietValue.unit, qty: dietValue.qty });
           });
 
           const value = JSON.stringify(dataObj);

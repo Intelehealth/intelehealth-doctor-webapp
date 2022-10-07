@@ -174,7 +174,7 @@ export default {
         'Egg [boiled without yellow part; medium size]|| अंडा [बिना पीले भाग के उबला हुआ; मध्यम आकार]',
         'Nuts [Avoid raisins/ dates/ cashewnuts]|| मेवे/नट्स  [काजू /खजूरसे परहेज करें]',
         'Cucumber sticks|| ककड़ी',
-        'sprouts with onion and tomato|| प्याज और टमाटर के साथ स्प्राउट्स'
+        'sprouts with onion & tomato|| प्याज और टमाटर के साथ स्प्राउट्स'
     ],
     lunch: [
         'parataha without oil|| बिना तेल के पराठा',
