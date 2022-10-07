@@ -2,15 +2,27 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
+declare var getFromStorage: any;
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class TranslationService {
+  public isManagerRole = false;
 
   constructor( private translateService: TranslateService,
-    private snackbar: MatSnackBar,   @Inject(DOCUMENT) private document: Document) { }
+    private snackbar: MatSnackBar,   @Inject(DOCUMENT) private document: Document) { 
+      const userDetails = getFromStorage('user');
+      if (userDetails) {
+        const roles = userDetails['roles'];
+        roles.forEach(role => {
+          if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
+            this.isManagerRole = true;
+          }
+        });
+      }
+    }
 
   getTranslation(msg:string) {
     this.translateService.get(`messages.${msg}`).subscribe((res: string) => {

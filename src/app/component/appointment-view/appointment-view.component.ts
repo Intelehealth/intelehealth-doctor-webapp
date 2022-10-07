@@ -71,6 +71,7 @@ import {
     selectedReason = "";
     otherReason = "";
     reasons = reasons;
+    isManagerRole = false;
     constructor(
       private modal: NgbModal,
       private appointmentService: AppointmentService,
@@ -206,6 +207,7 @@ import {
     ngOnInit(): void {
       let dates = this.getDates("month");
       this.getDrSlots(dates.startOfMonth, dates.endOfMonth);
+      this.isManagerRole = this.translationService.isManagerRole;
     }
   
     getDates(view) {

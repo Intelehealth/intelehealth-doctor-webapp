@@ -23,7 +23,7 @@
                 </mat-form-field>
                 <br>
                 <button type="reset" (click)="Submit()" mat-raised-button
-                    color="primary">{{'Re-Assign'|translate}}</button>
+                    color="primary" [disabled]="isManagerRole">{{'Re-Assign'|translate}}</button>
             </div>
             {{errorText}}
         </form>

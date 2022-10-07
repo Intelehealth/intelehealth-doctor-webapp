@@ -140,3 +140,9 @@ body.font-lato td {
   text-align: left;
   left: 0px;
 }
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #212529;
+}

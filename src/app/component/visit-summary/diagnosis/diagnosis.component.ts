@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -27,6 +27,7 @@ declare var getEncounterUUID: any;
  ]
 })
 export class DiagnosisComponent implements OnInit {
+@Input() isManagerRole : boolean;
 diagnosis: any = [];
 diagnosisList = [];
 conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';

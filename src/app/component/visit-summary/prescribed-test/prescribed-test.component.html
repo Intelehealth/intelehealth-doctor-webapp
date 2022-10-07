@@ -7,7 +7,7 @@
         <input matInput placeholder="{{'Test'|translate}}" [ngbTypeahead]="search" formControlName='test'>
       </mat-form-field>
       <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid'>{{'Add
+      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole'>{{'Add
         Test'|translate}}</button>
     </form>
     <br>
@@ -16,7 +16,7 @@
       <div *ngFor='let test of tests, index as i' >
         <div  [@moveInLeft] class="alert alert-primary">
           <div class="doctor-value">{{test.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right"
+        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
           style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
       </div>

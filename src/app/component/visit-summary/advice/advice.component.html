@@ -7,7 +7,7 @@
         <input matInput placeholder="{{'Advice or Refer Patient'| translate}}" [ngbTypeahead]="search"
           formControlName='advice'>
       </mat-form-field>
-      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid'>{{'Add
+      <button mat-raised-button color="primary" type="reset" (click)="submit()" [disabled]='!adviceForm.valid || isManagerRole'>{{'Add
         Advice'|translate}}</button>
     </form>
     <br>
@@ -16,7 +16,7 @@
     <div *ngFor='let advice of advice, index as i'>
         <div [@moveInLeft] class="alert alert-primary">
           <div class="doctor-value" [innerHtml]="advice?.value"></div>
-          <i (click)="delete(i)" class="material-icons float-right"
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
             style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
     </div>

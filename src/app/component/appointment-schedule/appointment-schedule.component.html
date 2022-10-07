@@ -22,8 +22,9 @@
             <h3>{{viewDateLabel}}</h3>
           </div>
           <div class="col-md-4">
-            <button [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" class="btn btn-primary" (click)="addSchedule()">
-              {{'Add Schedule for Month' | translate}}
+            <button [ngClass]="getLang() === 'ar' ? 'left1' : 'right1'" class="btn btn-primary" (click)="addSchedule()"
+            [disabled]='isManagerRole'>
+              {{'Add Schedule for Month' | translate}} 
             </button>
           </div>
         </div>
@@ -105,10 +106,10 @@
       </div>
       <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
       <div class="modal-footer center">
-        <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="submit()">
+        <button mat-raised-button color="primary" style="margin-left: 10px;" [disabled]='isManagerRole' (click)="submit()">
           {{'Save' | translate}}
         </button>
-        <button mat-raised-button color="primary" style="margin-left: 10px;" (click)="clear()">
+        <button mat-raised-button color="primary" style="margin-left: 10px;" [disabled]='isManagerRole' (click)="clear()">
           {{'Clear' | translate}}
         </button>
       </div>
@@ -153,7 +154,7 @@
                 font-size: 31px;
                 margin-top: -16px;
                 margin-right: 10px;
-              " [class.disabled]="e1?.isTimeOver" (click)="deleteSlot(modalData?.events[i])">&times;</span>
+              " [class.disabled]="e1?.isTimeOver || isManagerRole" (click)="deleteSlot(modalData?.events[i])">&times;</span>
             </div>
           </div>
           <hr />
@@ -162,11 +163,11 @@
           </div>
         </div> 
           <div class="center">
-            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" 
+            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" [disabled]='isManagerRole'
               (click)="saveSlots(modalData?.events)">
               {{'Save' | translate}}
             </button>
-            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" style="margin-right: 15px;margin-left: 15px;"
+            <button *ngIf="!modalData?.events[0]?.isTimeOver" class="btn btn-primary" style="margin-right: 15px;margin-left: 15px;" [disabled]='isManagerRole'
               (click)="addSlots(modalData?.events[0])">
               {{'Add New Schedule' | translate}}
             </button>

@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslateService } from '@ngx-translate/core';
+import { TranslationService } from './translation.service';
 declare var getEncounterProviderUUID: any,
   getFromStorage: any;
 
@@ -19,7 +20,8 @@ export class DiagnosisService {
   public values;
 
   constructor(private http: HttpClient, private snackbar: MatSnackBar,
-    private translateService: TranslateService) {
+    private translateService: TranslateService,
+    private translationService: TranslationService) {
      }
 
   concept(uuid): Observable<any> {
@@ -66,9 +68,7 @@ export class DiagnosisService {
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;
     } else {
-      this.snackbar.open("Another doctor is viewing this case", null, {
-        duration: 4000,
-      });
+      this.translationService.getTranslation("Another doctor is viewing this case");
     }
   }
 

@@ -12,6 +12,7 @@ import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
 import { TranslationService } from "src/app/services/translation.service";
 import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
+declare var getFromStorage: any;
 
 const colors: any = {
   red: {
@@ -76,6 +77,7 @@ export class AppointmentScheduleComponent implements OnInit {
   };
   scheduleModalRef = null;
   unChanged: boolean = true;
+  isManagerRole = false;
   constructor(
     private appointmentService: AppointmentService,
     private snackbar: MatSnackBar,
@@ -88,6 +90,7 @@ export class AppointmentScheduleComponent implements OnInit {
   ngOnInit(): void {
     this.getSchedule();
     this.slotHours = this.getHours();
+    this.isManagerRole = this.translationService.isManagerRole;
   }
 
   checkDaysFromSchedule() {

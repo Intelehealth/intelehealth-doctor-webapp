@@ -136,6 +136,7 @@
                   mat-raised-button
                   color="primary"
                   (click)="rescheduleClick(e1)"
+                  [disabled]='isManagerRole'
                 >
                 {{ "Reschedule" | translate }}
                 </button>
@@ -144,6 +145,7 @@
                   mat-raised-button
                   color="primary"
                   (click)="cancelAppointment(e1)"
+                  [disabled]='isManagerRole'
                 >
                 {{ "Cancel" | translate }}
                 </button>
@@ -234,7 +236,7 @@
         </div>
       </div>
       <div class="modal-footer center">
-        <button type="button" mat-raised-button color="primary"  [disabled]="rescheduleDisabled" style="margin-left: 15px;" (click)="reschedule()">
+        <button type="button" mat-raised-button color="primary"  [disabled]="rescheduleDisabled" style="margin-left: 15px;" [disabled]='isManagerRole' (click)="reschedule()">
           {{ "Reschedule" | translate }}
         </button>
         <button type="button" mat-raised-button color="primary" (click)="close(); clear()">

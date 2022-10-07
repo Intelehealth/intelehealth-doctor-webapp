@@ -44,7 +44,7 @@
       </mat-card>
       <br>
       <mat-card *ngIf="!visitNotePresent">
-        <app-reassign-speciality></app-reassign-speciality>
+        <app-reassign-speciality [isManagerRole]="isManagerRole"></app-reassign-speciality>
       </mat-card>
       <br>
       <mat-card [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
@@ -64,38 +64,39 @@
 
 
       <div class="text-center" *ngIf="!show">
-            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">{{'Start Visit Note' | translate}}</button>
+            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"
+            [disabled]="isManagerRole">{{'Start Visit Note' | translate}}</button>
       </div>
 
       <br>
 
       <div *ngIf="show">
             <mat-card>
-                  <app-patient-interaction></app-patient-interaction>
+                  <app-patient-interaction [isManagerRole]="isManagerRole"></app-patient-interaction>
             </mat-card>
             <br>
             <mat-card>
-                  <app-diagnosis></app-diagnosis>
+                  <app-diagnosis [isManagerRole]="isManagerRole"></app-diagnosis>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-medication></app-prescribed-medication>
+                  <app-prescribed-medication [isManagerRole]="isManagerRole"></app-prescribed-medication>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-test></app-prescribed-test>
+                  <app-prescribed-test [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
             <br>
             <mat-card>
-                  <app-advice></app-advice>
+                  <app-advice [isManagerRole]="isManagerRole"></app-advice>
             </mat-card>
             <br>
             <mat-card>
-                  <app-additional-comment></app-additional-comment>
+                  <app-additional-comment [isManagerRole]="isManagerRole"></app-additional-comment>
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up></app-follow-up>
+                  <app-follow-up [isManagerRole]="isManagerRole"></app-follow-up>
             </mat-card>
             <br>
         
@@ -111,7 +112,7 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent">{{ 'Sign and Submit' | translate }}</button>
+                        [disabled]="visitCompletePresent || isManagerRole">{{ 'Sign and Submit' | translate }}</button>
             </div>
       </div>
 </div>

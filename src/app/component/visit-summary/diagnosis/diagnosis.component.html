@@ -29,7 +29,7 @@
       </div>
       <br>
       <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit"
-        [disabled]='!diagnosisForm.valid'>{{'Add Diagnosis'|translate}}</button>
+        [disabled]='!diagnosisForm.valid || isManagerRole'>{{'Add Diagnosis'|translate}}</button>
     </form>
   </div>
   <ng-container *ngIf="diagnosis.length > 0">
@@ -37,7 +37,7 @@
     <div *ngFor='let diagnosis of diagnosis, index as i'>
       <div [@moveInLeft] class="alert alert-primary">
         <div class="doctor-value">{{ diagnosis.value }}</div>
-        <i (click)="delete(i)" class="material-icons float-right"
+        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
         style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>

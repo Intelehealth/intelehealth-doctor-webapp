@@ -60,7 +60,7 @@
         <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
           formControlName="additional"></textarea>
         <br>
-        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid'>{{'Add
+        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole'>{{'Add
           Meds'|translate}}</button>
       </div>
     </form>
@@ -70,7 +70,7 @@
       <div *ngFor='let meds of meds, index as i' >
         <div [@moveInLeft] class="alert alert-primary">
         <div class="doctor-value">{{meds.value}}</div>
-        <i (click)="delete(i)" class="material-icons"
+        <i (click)="delete(i)" class="material-icons" [class.disabled]="isManagerRole" 
           style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>
