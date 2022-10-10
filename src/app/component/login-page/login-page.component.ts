@@ -17,7 +17,10 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.scss"],
 })
 export class LoginPageComponent implements OnInit {
-  @Output() onSucess = new EventEmitter<boolean>();
+  @Output() onSucessFU = new EventEmitter<boolean>();
+  @Output() onSucessFP = new EventEmitter<boolean>();
+
+  @Output() onSucessIntele = new EventEmitter<boolean>();
   loginForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),
@@ -58,7 +61,7 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
-          this.onSucess.emit(true);
+          this.onSucessIntele.emit(true);
           /* this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               this.authService.sendToken(response.user.sessionId);
@@ -104,5 +107,15 @@ export class LoginPageComponent implements OnInit {
   }
   showHidePassword() {
     this.showPassword = !this.showPassword;
+  }
+
+  moveToFUform(){
+    this.onSucessFU.emit(true);
+    console.log("Hello Intelehealth");
+  }
+
+  moveToFPform(){
+    this.onSucessFP.emit(true)
+    console.log("Hello Intelehealth 2");
   }
 }

@@ -20,6 +20,8 @@ export class LoginContainerComponent implements OnInit {
   showOTPverifictaion: boolean = false;
   showLoginverifictaion: boolean = false;
   showLogin: boolean = true;
+  onFUform: boolean = false;
+  onFPform: boolean = false;
 
   constructor(
     //private sessionService: SessionService,
@@ -40,5 +42,17 @@ export class LoginContainerComponent implements OnInit {
   onVerificationSucess(isSucess: boolean) {
     this.showOTPverifictaion = isSucess;
     this.showLoginverifictaion = !isSucess;
+    this.onFUform = !isSucess;
+    this.onFPform = !isSucess;
+  }
+
+  onFUSucess(isSucess: boolean) {
+    this.onFUform = isSucess;
+    this.showLogin = !isSucess; 
+  }
+
+  onFPSucess(isSucess: boolean) {
+    this.onFPform = isSucess;
+    this.showLogin = !isSucess; 
   }
 }

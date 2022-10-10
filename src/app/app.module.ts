@@ -112,6 +112,8 @@ import { AngularFirestoreModule } from "@angular/fire/firestore";
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
+import { SetNewPasswordComponent } from './component/set-new-password/set-new-password.component';
+import { PasswordStrengthComponent } from './component/set-new-password/password-strength/password-strength.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -161,9 +163,11 @@ import { OtpService } from "./services/otp.service";
     LoginImageContainerComponent,
     LoginFirstImageComponent,
     ModaldialogComponent,
-    ModalinternetconnectionComponent,,
+    ModalinternetconnectionComponent,
     ForgotPasswordComponent,
     ForgotUsernameComponent,
+    SetNewPasswordComponent,
+    PasswordStrengthComponent,
   ],
 
   imports: [
@@ -204,9 +208,8 @@ import { OtpService } from "./services/otp.service";
     NgOtpInputModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
-      { path: 'login', component: LoginPageComponent },
-      { path: "forgot/password", component: ForgotPasswordComponent },
-      { path: "forgot/username", component: ForgotUsernameComponent },
+      { path: 'login', component: LoginContainerComponent },
+      { path: "set-new/password", component: SetNewPasswordComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },

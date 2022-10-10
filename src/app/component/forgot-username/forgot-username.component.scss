@@ -1,167 +1,93 @@
-@mixin font($weight,$size) {
-    font-family: 'DM Sans';
-    font-style: normal; 
-    font-weight:$weight;
-    font-size:$size;
-  }
-  
-  @mixin color($color) {
-    color:$color;
-  }
-  
-  @mixin background($background) {
-    background:$background;
-  }
-  @mixin margintop($margintop) {
-    margin-top:$margintop;
-  }
-  @mixin marginleft($marginleft) {
-    margin-left:$marginleft;
-  }
-  @mixin marginright($marginright) {
-    margin-right:$marginright;
-  }
-  
-  .forgot-username-header{
-    @include font(700,32px);
-    margin-top: 150px;
-    @include color(#2E1E91);
-  }
-  
-  .forgot-username-para{
-    @include font(500,16px);
-    @include color(#7F7B92);
-  }
-  
-  .language-div{
-    box-sizing: border-box;
-    /* Auto layout */
-    @include margintop(30px);
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding: 5px 10px;
-    gap: 4px;
-    position: absolute;
-    left: calc(45% - 108px/2 + 212px);
-    @include background(#FAF9FF);
-    /* Divider */
-    border: 0.770833px solid rgba(178, 175, 190, 0.2);
-    border-radius: 8px;
-  }
-  
-  .div{
-    @include background(#ffffff);
-  }
-  
-  .language-dropdown{
-    @include font(400,16px);
-    @include color(#1B163A);
-    @include background(#FAF9FF);
-  }
-  
-  .btn-darkblue{ 
-    @include margintop(30px);
-    @include background(#2E1E91);
-    border-radius: 8px;
-    @include font(700,18px);
-    @include color(#FFFFFF);
-    border: none;
-    padding: 7px 12px;
-  }
+@import "../../../assets/scss/main";
+.fu-container{
 
-  .form{
-    @include marginleft(60px);
-    @include marginright(60px);
-  }
-
-.vr-btngrp{
+display: grid;
+grid-template-areas:
+  'header'
+  'para'
+  'btngrp'
+   'form'
+}
+.fu-header {
+    grid-area: header;
+    .forgot-username-header{
+        @include font(700,2rem);
+        margin-top: 80px;
+        color: var(--color-darkBlue);
+    }
+}
+.fu-para{
+    grid-area: para;
+    .forgot-username-para{
+        @include font(500,1rem);
+        color: var(--color-gray);
+    }
+}
+.fu-btngrp{
     background: #EFE8FF;
     border-radius: 8px;
-    padding: 0.4rem 1rem;
+    padding: 1rem 2rem;
     grid-area: btngrp;
     display: grid;
-    
+    grid-template-areas:
+  'mobilebtn emailbtn';
 }
-.vr-mobilebtn{
+.fu-mobilebtn{
     text-align: center;
     border-radius: 8px;
-    padding: 0.4rem 1rem;
+    padding: 1rem 2rem;
     grid-area: mobilebtn;
     grid-row: 1;
     grid-column: 1;
 }
-.vr-emailbtn{
+.fu-emailbtn{
     text-align: center;
     border-radius: 8px;
-    padding: 0.4rem 1rem;
+    padding: 1rem 2rem;
     grid-area: emailbtn;
     grid-row: 1;
     grid-column: 2;
 }
-
-.vr-mobile-label{
+.fu-emailform{
+    grid-area: form;
+    display: grid;
+    grid-template-areas: 
+    'label'
+    'textbox'
+    'btnnext';
+}
+.fu-mobile-label{
     grid-area: label;
     margin-top: 2rem;
-    // text-align: center;
+    text-align: center;
 }
-.vr-email-label{
+.fu-email-label{
     grid-area: label;
     margin-top: 2rem;
     
 }
-.vr-textbox{
+.fu-textbox{
     grid-area: textbox;
 
 }
-.vr-mobileform{
+.fu-mobileform{
     grid-area: form;
     display: grid;
     grid-template-areas: 
     'label .'
     'dropdown textbox'
     'btnnext btnnext';  
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 1fr 4fr;
+    gap:1rem;
 }
-
 .btnnext{
     grid-area: btnnext;
 }
-.vr-dropdown{
-    grid-area: dropdown;
-    justify-self: center;
-   
+.fu-dropdown{
+    grid-area: dropdown;   
 }
-.vr-active{
-    background: #FFFFFF;
+.fu-active{
+    background: var(--color-white);
     box-shadow: 0px 2px 6px rgba(27, 22, 58, 0.08);
     border-radius: 8px;
 }
-
-.btn-no-boarder{
-  border:none;
-  background-color: transparent;
-  color:#2E1E91; ;
-  @include font(700,1rem);
-  line-height: 150%;
-  }
-  .lbl-username{
-    @include font(500,0.875rem);
-    line-height: 150%;
-    color: var(--color-darkestBlue);
-  }
-
-  .btn-help{
-    background:#0FD197;
-    box-shadow: 0px 4px 16px rgba(15, 209, 151, 0.32);
-    border-radius: 80px;
-    color:  #FFFFFF;
-    @include font(500,1.125rem);
-    line-height: 150%;
-    border: none;
-    padding: 4px 10px;
-    height: 100%;
-    margin-top: 10rem;
-    margin-left: 30rem;
-  }
-  

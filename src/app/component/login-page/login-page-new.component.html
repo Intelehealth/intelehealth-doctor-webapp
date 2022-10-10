@@ -9,7 +9,7 @@
     </div>
     <div class="username">
       <label for="username" class="lbl lbl-username">Username</label>
-      <a href="#" class="link link-forgot-username"> Forgot username ? </a>
+      <p class="link link-forgot-username" (click)="moveToFUform()"> Forgot username ? </p>
       <input
         type="email"
         class="txt form-control"
@@ -21,7 +21,7 @@
     </div>
     <div class="password">
       <label for="examplePassword" class="lbl lbl-username">Password</label>
-      <a href="#" class="link link-forgot-username"> Forgot password ? </a>
+      <p class="link link-forgot-username" (click)="moveToFPform()"> Forgot password ? </p>
       <div class="txt">
         <div class="password-container">
           <input

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 
@@ -8,14 +8,16 @@ import { Router } from "@angular/router";
   styleUrls: ['./forgot-password.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit {
-  ForgotPasswordForm = new FormGroup({
+  @Output() onSucess = new EventEmitter<boolean>();
+
+  forgotpasswordForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
-    password: new FormControl("", [Validators.required]),
   });
-  constructor() { }
 
-  ngOnInit(): void {
+  constructor() {}
+  ngOnInit() {
   }
-
-  onSubmit() {}
+  onSubmit() {
+    this.onSucess.emit(true);
+  }
 }
