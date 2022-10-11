@@ -1,0 +1,93 @@
+@import "../../../assets/scss/main";
+.fu-container{
+
+display: grid;
+grid-template-areas:
+  'header'
+  'para'
+  'btngrp'
+   'form'
+}
+.fu-header {
+    grid-area: header;
+    .forgot-username-header{
+        @include font(700,2rem);
+        margin-top: 80px;
+        color: var(--color-darkBlue);
+    }
+}
+.fu-para{
+    grid-area: para;
+    .forgot-username-para{
+        @include font(500,1rem);
+        color: var(--color-gray);
+    }
+}
+.fu-btngrp{
+    background: #EFE8FF;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    grid-area: btngrp;
+    display: grid;
+    grid-template-areas:
+  'mobilebtn emailbtn';
+}
+.fu-mobilebtn{
+    text-align: center;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    grid-area: mobilebtn;
+    grid-row: 1;
+    grid-column: 1;
+}
+.fu-emailbtn{
+    text-align: center;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    grid-area: emailbtn;
+    grid-row: 1;
+    grid-column: 2;
+}
+.fu-emailform{
+    grid-area: form;
+    display: grid;
+    grid-template-areas: 
+    'label'
+    'textbox'
+    'btnnext';
+}
+.fu-mobile-label{
+    grid-area: label;
+    margin-top: 2rem;
+    text-align: center;
+}
+.fu-email-label{
+    grid-area: label;
+    margin-top: 2rem;
+    
+}
+.fu-textbox{
+    grid-area: textbox;
+
+}
+.fu-mobileform{
+    grid-area: form;
+    display: grid;
+    grid-template-areas: 
+    'label .'
+    'dropdown textbox'
+    'btnnext btnnext';  
+    grid-template-columns: 1fr 4fr;
+    gap:1rem;
+}
+.btnnext{
+    grid-area: btnnext;
+}
+.fu-dropdown{
+    grid-area: dropdown;   
+}
+.fu-active{
+    background: var(--color-white);
+    box-shadow: 0px 2px 6px rgba(27, 22, 58, 0.08);
+    border-radius: 8px;
+}

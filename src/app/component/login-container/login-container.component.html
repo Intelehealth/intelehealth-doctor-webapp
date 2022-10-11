@@ -13,9 +13,14 @@
       </div>
     </div>
     <div class="loginform">
+      <!-- <app-set-new-password></app-set-new-password> -->
+      <app-forgot-username *ngIf="onFUform" (onSucess)="onVerificationSucess($event)"></app-forgot-username>
+      <app-forgot-password *ngIf="onFPform" (onSucess)="onVerificationSucess($event)"></app-forgot-password>
       <app-login-page
         *ngIf="showLogin"
-        (onSucess)="onLoginSucess($event)"
+        (onSucessIntele)="onLoginSucess($event)"
+        (onSucessFP)="onFPSucess($event)"
+        (onSucessFU)="onFUSucess($event)"
       ></app-login-page>
       <app-login-verification
         *ngIf="showLoginverifictaion"

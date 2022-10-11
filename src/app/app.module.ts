@@ -92,6 +92,10 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
+import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import {Ng2TelInputModule} from 'ng2-tel-input';
+import { ForgotUsernameComponent } from './component/forgot-username/forgot-username.component';
 import { LoginContainerComponent } from "./component/login-container/login-container.component";
 import { LoginVerificationComponent } from "./component/login-verification/login-verification.component";
 import { OtpVerificationComponent } from "./component/otp-verification/otp-verification.component";
@@ -112,6 +116,8 @@ import { SidenavComponent } from './component/dashboard-page/sidenav/sidenav.com
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
+import { SetNewPasswordComponent } from './component/set-new-password/set-new-password.component';
+import { PasswordStrengthComponent } from './component/set-new-password/password-strength/password-strength.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -165,6 +171,10 @@ import { OtpService } from "./services/otp.service";
     DashboardComponent,
     DashboardPageComponent,
     SidenavComponent,
+    ForgotPasswordComponent,
+    ForgotUsernameComponent,
+    SetNewPasswordComponent,
+    PasswordStrengthComponent,
   ],
 
   imports: [
@@ -172,6 +182,8 @@ import { OtpService } from "./services/otp.service";
     AngularFireAuthModule,
     AngularFirestoreModule,
     NgxCaptchaModule,
+    MatTabsModule,
+    Ng2TelInputModule,
     BrowserModule,
     CommonModule,
     FormsModule,
@@ -206,6 +218,7 @@ import { OtpService } from "./services/otp.service";
     RouterModule.forRoot([
       { path: 'login', component: LoginContainerComponent },
       { path: 'dashboard', component: DashboardComponent },
+      { path: "set-new/password", component: SetNewPasswordComponent },
       {
         path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
         { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
