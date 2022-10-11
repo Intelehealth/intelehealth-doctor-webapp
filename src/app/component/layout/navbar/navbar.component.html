@@ -22,7 +22,7 @@
         <li class="nav-item" *ngIf="!subscribeAccess">
           <a class="nav-link" (click)="subscribeNotification(false)">{{'Subscribe' | translate}}</a>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown" *ngIf="!isProjectManger">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown">
             {{ 'Appointment' | translate }}
           </a>

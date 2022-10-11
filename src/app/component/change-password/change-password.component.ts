@@ -61,10 +61,11 @@ export class ChangePasswordComponent implements OnInit {
     this.http.post(url, json, httpOptions)
       .subscribe(response => {
         if (response == null) {
-          this.pushNotificationsService.changePassword(json1).subscribe((response) => {
-            this.translationService.getTranslation('Password changed successfully.');
-            this.dialogRef.close();
-          })
+          this.translationService.getTranslation('Password changed successfully.');
+          this.dialogRef.close();
+          // this.pushNotificationsService.changePassword(json1).subscribe((response) => {
+            
+          // })
         }
       }, error => {
         if (error.error.message.match('Old password is not correct.')) {

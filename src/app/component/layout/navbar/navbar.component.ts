@@ -47,6 +47,7 @@ export class NavbarComponent implements OnInit {
   error: any = { isError: false, errorMessage: "" };
   langs = ['en', 'hi', 'ru', 'ar'];
   selectedLanguage: string = 'en';
+  isProjectManger: boolean = false;
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -107,6 +108,9 @@ export class NavbarComponent implements OnInit {
           role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a"
         ) {
           this.reportAccess = true;
+        } 
+        if(role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
+          this.isProjectManger = true;
         }
       });
     } else {
