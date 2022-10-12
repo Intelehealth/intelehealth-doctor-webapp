@@ -1,9 +1,8 @@
-
-import { AuthService } from 'src/app/services/auth.service';
-import { SessionService } from './../../services/session.service';
-import { Component, OnInit } from '@angular/core';
-import { VisitService } from 'src/app/services/visit.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from "src/app/services/auth.service";
+import { SessionService } from "./../../services/session.service";
+import { Component, OnInit } from "@angular/core";
+import { VisitService } from "src/app/services/visit.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -19,13 +18,11 @@ export interface VisitData {
   provider: string;
 }
 
-
 @Component({
-  selector: 'app-homepage',
-  templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.css']
+  selector: "app-homepage",
+  templateUrl: "./homepage.component.html",
+  styleUrls: ["./homepage.component.css"],
 })
-
 export class HomepageComponent implements OnInit {
   value: any = {};
   activePatient: number;
@@ -38,48 +35,50 @@ export class HomepageComponent implements OnInit {
   completedVisit: VisitData[] = [];
   setSpiner = true;
 
-  constructor(private sessionService: SessionService,
-              private authService: AuthService,
-              private service: VisitService,
-              private snackbar: MatSnackBar) { }
+  constructor(
+    private sessionService: SessionService,
+    private authService: AuthService,
+    private service: VisitService,
+    private snackbar: MatSnackBar
+  ) {}
 
   ngOnInit() {
-    if (getFromStorage('visitNoteProvider')) {deleteFromStorage('visitNoteProvider'); }
-    const userDetails = getFromStorage('user');
+    if (getFromStorage("visitNoteProvider")) {
+      deleteFromStorage("visitNoteProvider");
+    }
+    const userDetails = getFromStorage("user");
     if (userDetails) {
-      this.sessionService.provider(userDetails.uuid)
-      .subscribe(provider => {
-        saveToStorage('provider', provider.results[0]);
-        // const attributes = provider.results[0].attributes;
-        // attributes.forEach(element => {
-        //   if (element.attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !element.voided) {
-        //     this.specialization = element.value;
-        //   }
-        // });
+      this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
+        saveToStorage("provider", provider.results[0]);
       });
-    } else {this.authService.logout(); }
-    this.service.getVisits()
-      .subscribe(response => {
+    } else {
+      this.authService.logout();
+    }
+    this.service.getVisits().subscribe(
+      (response) => {
         const visits = response.results;
-        let length = 0, flagLength = 0, visitNoteLength = 0, completeVisitLength = 0;
-        visits.forEach(active => {
+        let length = 0,
+          flagLength = 0,
+          visitNoteLength = 0,
+          completeVisitLength = 0;
+        visits.forEach((active) => {
           if (active.encounters.length > 0) {
             const value = active.encounters[0].display;
-            if (value.match('Flagged')) {
+            if (value.match("Flagged")) {
               if (!active.encounters[0].voided) {
                 const values = this.assignValueToProperty(active);
                 this.flagVisit.push(values);
                 flagLength += 1;
               }
-            } else if (value.match('ADULTINITIAL') || value.match('Vitals')) {
+            } else if (value.match("ADULTINITIAL") || value.match("Vitals")) {
               const values = this.assignValueToProperty(active);
               this.waitingVisit.push(values);
               length += 1;
-            } else if (value.match('Visit Note')) {
+            } else if (value.match("Visit Note")) {
               const values = this.assignValueToProperty(active);
               this.progressVisit.push(values);
               visitNoteLength += 1;
-            } else if (value.match('Visit Complete')) {
+            } else if (value.match("Visit Complete")) {
               const values = this.assignValueToProperty(active);
               this.completedVisit.push(values);
               completeVisitLength += 1;
@@ -92,13 +91,15 @@ export class HomepageComponent implements OnInit {
         this.flagPatientNo = flagLength;
         this.visitNoteNo = visitNoteLength;
         this.completeVisitNo = completeVisitLength;
-      }, err => {
+      },
+      (err) => {
         if (err.error instanceof Error) {
-          this.snackbar.open('Client-side error', null, { duration: 4000 });
+          this.snackbar.open("Client-side error", null, { duration: 4000 });
         } else {
-          this.snackbar.open('Server-side error', null, { duration: 4000 });
+          this.snackbar.open("Server-side error", null, { duration: 4000 });
         }
-      });
+      }
+    );
   }
 
   assignValueToProperty(active) {
@@ -110,9 +111,11 @@ export class HomepageComponent implements OnInit {
     this.value.dob = active.patient.person.birthdate;
     this.value.location = active.location.display;
     this.value.status = active.encounters[0].encounterType.display;
-    this.value.provider = active.encounters[0].encounterProviders[0].provider.display.split('- ')[1];
+    this.value.provider =
+      active.encounters[0].encounterProviders[0].provider.display.split(
+        "- "
+      )[1];
     this.value.lastSeen = active.encounters[0].encounterDatetime;
     return this.value;
   }
-
 }

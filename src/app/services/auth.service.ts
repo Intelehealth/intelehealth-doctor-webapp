@@ -1,25 +1,26 @@
-import { SessionService } from './session.service';
-import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
-import { Router } from '@angular/router';
+import { SessionService } from "./session.service";
+import { Injectable } from "@angular/core";
+import { CookieService } from "ngx-cookie-service";
+import { Router } from "@angular/router";
 
 declare var deleteFromStorage: any;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
-
-  constructor(private myRoute: Router,
-              private sessionService: SessionService,
-              private cookieService: CookieService) { }
+  constructor(
+    private myRoute: Router,
+    private sessionService: SessionService,
+    private cookieService: CookieService
+  ) {}
 
   sendToken(token) {
-    this.cookieService.set('JSESSIONID', token);
+    this.cookieService.set("JSESSIONID", token);
   }
 
   getToken() {
-    return this.cookieService.check('JSESSIONID');
+    return this.cookieService.check("JSESSIONID");
   }
 
   isLoggedIn() {
@@ -27,16 +28,14 @@ export class AuthService {
   }
 
   logout() {
-    this.sessionService.session()
-    .subscribe(res => {
-      this.sessionService.deleteSession(res.sessionId)
-      .subscribe(response => {
-        deleteFromStorage('user');
-        deleteFromStorage('provider');
-        deleteFromStorage('visitNoteProvider');
+    this.sessionService.session().subscribe((res) => {
+      this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
+        deleteFromStorage("user");
+        deleteFromStorage("provider");
+        deleteFromStorage("visitNoteProvider");
         this.cookieService.deleteAll();
-        this.myRoute.navigate(['/']);
-    });
+        this.myRoute.navigate(["/"]);
+      });
     });
   }
 }
