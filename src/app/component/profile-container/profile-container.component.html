@@ -1,0 +1,41 @@
+<div class="calendar-container">
+  <div class="activePage">
+    Dashboard
+    <img class="text" src="../../../assets/icons/dashboard-icons/Vector3.png" />
+    <span class="text">Profile</span>
+  </div>
+
+  <div class="profile-container">
+    <img class="pulse" src="../../../assets/images/profile/Group 2608886.png" />
+    <img class="pulse" src="../../../assets/images/profile/Group 2608887.png" />
+    <button class="menuBtn" [matMenuTriggerFor]="menu" mat-icon-button>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <span>Change password</span>
+      </button>
+      <button mat-menu-item>
+        <span>Change language</span>
+      </button>
+      <button mat-menu-item>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+    <div class="profileImg">
+      <img
+        class="profilePic"
+        src="../../../assets/images/profile/Frame 2609036.png"
+      />
+      <button class="camera" (click)="inputField.click()">
+        <i class="fas fa-camera"></i>
+      </button>
+      <span class="txt">Dr. Sakshi Prabhat</span>
+    </div>
+    <input #inputField hidden type="file" />
+  </div>
+
+  <div class="setview">
+    <app-personal-information></app-personal-information>
+  </div>
+</div>

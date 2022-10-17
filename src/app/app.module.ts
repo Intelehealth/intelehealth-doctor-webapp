@@ -116,6 +116,10 @@ import { CalendarContainerComponent } from "./component/calendar-container/calen
 import { SetUpCalendarComponent } from "./component/calendar-container/set-up-calendar/set-up-calendar.component";
 import { ViewCalendarComponent } from "./component/calendar-container/view-calendar/view-calendar.component";
 import { DashboardBodyComponent } from "./component/dashboard/dashboard-body/dashboard-body.component";
+import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
+import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
+import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -174,9 +178,13 @@ import { DashboardBodyComponent } from "./component/dashboard/dashboard-body/das
     SetUpCalendarComponent,
     ViewCalendarComponent,
     DashboardBodyComponent,
+    ProfileContainerComponent,
+    PersonalInformationComponent,
+    ProfessionalDetailsComponent,
   ],
 
   imports: [
+    MatTabsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
@@ -227,6 +235,11 @@ import { DashboardBodyComponent } from "./component/dashboard/dashboard-body/das
             {
               path: "calendar",
               component: CalendarContainerComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "profile",
+              component: ProfileContainerComponent,
               canActivate: [AuthGuard],
             },
           ],

@@ -1,0 +1,299 @@
+@import '../../../../assets/scss/main.scss';
+
+.personal-info-container {
+    display: grid;
+    grid-template-areas:
+      'personal-info-form'
+      ;
+  }
+.personal-info-form{
+    grid-area:personal-info-form;
+    background-color: var(--color-white);
+    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+    border-radius: 20px;
+    width:796px;
+    height: 900px;
+}
+.header{ 
+    grid-area: header;
+    img{
+        position: absolute;
+        left: 270px;
+        top: 30px;
+        color: #7F7B92;
+    }
+    .col-left{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: absolute;
+        left: 30px;
+        top: 20px;
+        .circle{
+            border: 2px solid #0FD197;
+        }
+    }
+    .col-right{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: absolute;
+        top: 20px;        
+        left: 300px;
+    }    
+    .circle{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background: #E6FFF3;
+        border-radius: 50px;
+        color: #0FD197;
+    }
+    .text{
+        font-size: 18px;
+    }
+    hr{
+        position: absolute;
+        width: 796px;
+        top: 60px;
+        border: 1px solid rgba(178, 175, 190, 0.2);
+    }    
+}
+.form-body{
+    position: relative;
+    top: 6rem;
+}
+.user-name{
+    display: flex;
+    gap: 20px;
+    margin-left: 1rem;
+}
+.txt{
+    box-sizing: border-box;
+    display: flex;
+    padding: 14px 16px;
+    gap: 4px;
+    width: 238.67px;
+    height: 48px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.user-gender{
+    display: flex;
+    gap: 20px;
+    margin-left: 1rem;
+    margin-top: 26px;
+}
+.gender{
+    width: 320px;
+    height: 81px;
+}
+.user-age{
+    display: flex;
+    gap: 20px;
+    margin-left: 3rem;
+    .txt{
+        width:260px;
+    }
+}
+.total-age{
+    display: flex;
+    padding: 14px 16px;
+    gap: 4px;
+    width: 88px;
+    height: 48px;
+    background: rgba(178, 175, 190, 0.2);
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.user-contact{
+    display: flex;
+    gap: 20px;
+    position: absolute;
+    left: 20px;
+    top: 210px;
+}
+.options{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 16px;
+    width: 368px;
+    height: 48px;
+}
+.code-dropdown{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+    width: 118.4px;
+    height: 48px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.number-box{
+    padding: 14px 16px;
+    gap: 4px;
+    width: 233.6px;
+    height: 48px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    position: absolute;
+    left: 130px;
+    top: 32px;
+}
+.whatsappNo{
+    position: absolute;
+    width: 368px;
+    height: 81px;
+    left: 390px;
+}
+.user-emailID{
+    display: flex;
+    gap: 20px;
+    margin-top: 130px;
+    margin-left: 1rem;
+}
+.email-box{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 4px;
+    width: 368px;
+    height: 48px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.add-signature{
+    margin-left: 1rem;
+}
+.signature-header{
+    h2{
+        @include font(700,18px);
+        line-height: 150%;
+        color: #2E1E91;
+        margin-left: 1rem;
+        margin-top: 30px;
+    }
+}   
+.generate{
+    width:100px;
+    height: 100px;
+}
+.sign-text{
+    position: absolute;
+    width: 360px;
+    height: 81px;
+    top: 10px;
+    .signText{
+        padding: 14px 16px;
+        gap: 4px;
+        width: 360px;
+        height: 48px;
+        background: #FAF9FF;
+        border: 0.770833px solid rgba(178, 175, 190, 0.2);
+        border-radius: 8px;
+    }
+}
+.signature-option{
+    position: absolute;
+    width: 360px;
+    height: 81px;
+    left: 390px;
+    top: 10px;
+    .signature-dropdown{
+        padding: 14px 16px;
+        gap: 4px;
+        width: 360px;
+        height: 48px;
+        background: #FAF9FF;
+        border: 0.770833px solid rgba(178, 175, 190, 0.2);
+        border-radius: 8px;
+    }
+}
+
+.draw-signature{
+    // width: 250px;
+    // height: 190px;
+    button {
+        margin: 10px;
+        position: relative;
+        left: 530px;
+        border: none;
+        background: none;
+        color: gray;
+    }
+}
+
+canvas {
+    width: 756px;
+    height: 88px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+
+.para{
+    position: relative;
+    left: 18px;
+    top: 10px;
+    width: 720px;
+    .para-text{
+        @include font(400,14px);
+        color: #7F7B92;
+    }
+}
+
+.uploadFiles{
+    position: relative;
+    width: 368px;
+    height: 72px;
+    left: 20px;
+    background: #FAF9FF;
+    border-radius: 4px;
+    margin-top: 1.5rem;
+    button{
+        position: relative;
+        width: 45px;
+        height: 45px;
+        left: 1rem;
+        top: 12px;
+    }
+    img{
+        position: relative;
+        bottom: 4px;
+        right: 10px;
+    }
+}
+
+.text-content{
+    position: relative;
+    width:260px;
+    bottom: 32px;
+    left:4.5rem;
+    .text{
+        @include font(400,16px);
+        color: #7F7B92;
+        line-height: 150%;
+    }
+}
+
+.next-btn{
+    position: relative;
+    left: 35rem;
+    width: 206px;
+    height: 56px;
+    bottom: 20px;
+    border: none;
+}
