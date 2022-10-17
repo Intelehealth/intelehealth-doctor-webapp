@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://syrianatest.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://syrianatest.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://syrianatest.intelehealth.org/openmrs",
-  mindmapURL: "https://syrianatest.intelehealth.org:3004/api",
-  notificationURL: "https://syrianatest.intelehealth.org:3004/notification",
-  socketURL: "https://syrianatest.intelehealth.org:3004",
+  baseURL: "https://sila.swaida.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://sila.swaida.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://sila.swaida.org/openmrs",
+  mindmapURL: "https://sila.swaida.org:3004/api",
+  notificationURL: "https://sila.swaida.org:3004/notification",
+  socketURL: "https://sila.swaida.org:3004",
 };
 
 /*
