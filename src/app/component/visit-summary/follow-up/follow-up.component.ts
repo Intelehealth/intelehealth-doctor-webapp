@@ -5,6 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { DateAdapter } from '@angular/material/core';
 declare var getEncounterUUID: any;
 
 @Component({
@@ -43,7 +44,8 @@ followForm = new FormGroup({
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute,
-              private datepipe: DatePipe) { }
+              private datepipe: DatePipe,
+              private dateAdapter: DateAdapter<any>) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -56,6 +58,7 @@ followForm = new FormGroup({
         }
       });
     });
+    this.dateAdapter.setLocale(this.getLang());
   }
 
   Submit() {
@@ -65,7 +68,7 @@ followForm = new FormGroup({
     const advice = form.advice;
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
-      let remark = localStorage.getItem('selectedLanguage') === 'ru'?  'Замечание': 'Remark';
+      let remark = localStorage.getItem('selectedLanguage') === 'hi'?  'टिप्पणी': 'Remark';
       const json = {
         concept: this.conceptFollow,
         person: this.patientId,
@@ -89,5 +92,9 @@ followForm = new FormGroup({
       });
     } 
   }
+
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+   } 
 
 }

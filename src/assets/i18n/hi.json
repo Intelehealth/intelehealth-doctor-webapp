@@ -1,4 +1,5 @@
 {
+  "Smart Care Doc":"स्मार्ट केयर डॉक",
   "Welcome back,": "वापस स्वागत है,",
   "Please sign in to your account below.": "कृपया नीचे अपने खाते में साइन इन करें।",
   "Username": "उपयोगकर्ता नाम",
@@ -235,7 +236,7 @@
   "Clear": "साफ़ करें",
   "Cancel": "रद्द करें",
   "Schedule": "अनुसूची",
-  "Reason":"Reason",
+  "Reason":"कारण",
   "Specify reason":"कारण निर्दिष्ट करें",
   "Doctor Not available":"डॉक्टर उपलब्ध नहीं है",
   "Patient Not Available":"रोगी उपलब्ध नहीं है",
