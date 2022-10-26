@@ -44,7 +44,7 @@ import { ModalsComponent } from "./component/ayu/modals/modals.component";
 // Package Import
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, NgSelectOption, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
@@ -92,10 +92,10 @@ import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
-import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
-import { MatTabsModule } from '@angular/material/tabs';
-import {Ng2TelInputModule} from 'ng2-tel-input';
-import { ForgotUsernameComponent } from './component/forgot-username/forgot-username.component';
+import { ForgotPasswordComponent } from "./component/forgot-password/forgot-password.component";
+import { MatTabsModule } from "@angular/material/tabs";
+import { Ng2TelInputModule } from "ng2-tel-input";
+import { ForgotUsernameComponent } from "./component/forgot-username/forgot-username.component";
 import { LoginContainerComponent } from "./component/login-container/login-container.component";
 import { LoginVerificationComponent } from "./component/login-verification/login-verification.component";
 import { OtpVerificationComponent } from "./component/otp-verification/otp-verification.component";
@@ -109,15 +109,16 @@ import { InternetconnectionInterceptor } from "./interceptors/internetconnection
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
-import { DashboardComponent } from './component/dashboard/dashboard.component';
-import { MatMenuModule } from '@angular/material/menu';
-import { DashboardPageComponent } from './component/dashboard-page/dashboard-page.component';
-import { SidenavComponent } from './component/dashboard-page/sidenav/sidenav.component';
+import { DashboardComponent } from "./component/dashboard/dashboard.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { DashboardPageComponent } from "./component/dashboard-page/dashboard-page.component";
+import { SidenavComponent } from "./component/dashboard-page/sidenav/sidenav.component";
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
-import { SetNewPasswordComponent } from './component/set-new-password/set-new-password.component';
-import { PasswordStrengthComponent } from './component/set-new-password/password-strength/password-strength.component';
+import { SetNewPasswordComponent } from "./component/set-new-password/set-new-password.component";
+import { PasswordStrengthComponent } from "./component/set-new-password/password-strength/password-strength.component";
+import { NgSelectModule } from '@ng-select/ng-select';
 @NgModule({
   declarations: [
     AppComponent,
@@ -214,30 +215,72 @@ import { PasswordStrengthComponent } from './component/set-new-password/password
     NgxSpinnerModule,
     NgOtpInputModule,
     MatMenuModule,
+    NgSelectModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot([
-      { path: 'login', component: LoginContainerComponent },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: "set-new/password", component: SetNewPasswordComponent },
-      {
-        path: '', component: MainComponent, children: [{ path: 'home', component: HomepageComponent, canActivate: [AuthGuard] },
-        { path: 'findPatient', component: FindPatientComponent, canActivate: [AuthGuard] },
-        { path: 'myAccount', component: MyAccountComponent, canActivate: [AuthGuard] },
-        { path: 'ayu', component: AyuComponent, canActivate: [AuthGuard] },
-        { path: 'modals', component: ModalsComponent, canActivate: [AuthGuard] },
-        { path: 'signature', component: SignatureComponent, canActivate: [AuthGuard] },
-        { path: 'editDetails', component: EditDetailsComponent, canActivate: [AuthGuard] },
-        { path: 'changePassword', component: ChangePasswordComponent, canActivate: [AuthGuard] },
-        { path: 'visitSummary/:patient_id/:visit_id', component: VisitSummaryComponent, canActivate: [AuthGuard] },
-        { path: 'vc/call', component: VcComponent },
-        { path: 'test/chat', component: TestChatComponent },
-        { path: "appointment/schedule", component: AppointmentScheduleComponent },
-        { path: "appointment/view", component: AppointmentViewComponent },
-        { path: '', redirectTo: 'home', pathMatch: 'full' },
-        ]
-      },
-      { path: '**', component: Page404Component },
-    ], { scrollPositionRestoration: 'enabled', relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(
+      [
+        { path: "login", component: LoginContainerComponent },
+        { path: "dashboard", component: DashboardComponent },
+        { path: "set-new/password", component: SetNewPasswordComponent },
+        {
+          path: "",
+          component: MainComponent,
+          children: [
+            {
+              path: "home",
+              component: HomepageComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "findPatient",
+              component: FindPatientComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "myAccount",
+              component: MyAccountComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+            {
+              path: "modals",
+              component: ModalsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "signature",
+              component: SignatureComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "editDetails",
+              component: EditDetailsComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "changePassword",
+              component: ChangePasswordComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "visitSummary/:patient_id/:visit_id",
+              component: VisitSummaryComponent,
+              canActivate: [AuthGuard],
+            },
+            { path: "vc/call", component: VcComponent },
+            { path: "test/chat", component: TestChatComponent },
+            {
+              path: "appointment/schedule",
+              component: AppointmentScheduleComponent,
+            },
+            { path: "appointment/view", component: AppointmentViewComponent },
+            { path: "", redirectTo: "home", pathMatch: "full" },
+          ],
+        },
+        { path: "**", component: Page404Component },
+      ],
+      { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
+    ),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,

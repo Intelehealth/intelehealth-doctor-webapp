@@ -1,42 +1,66 @@
-.header { grid-area: header; }
-.para { grid-area: para; }
-.username { grid-area: username; 
-   display: grid;
-   grid-template-areas:
-   'lbl link'
-   'txt txt'
+.header {
+  grid-area: header;
 }
-.password { grid-area: password; 
-    display: grid;
-    grid-template-areas:
-     'lbl link'
-     'txt txt'
+.para {
+  grid-area: para;
 }
-.captcha { grid-area: captcha;
- }
-.btnnext { grid-area: btnnext; }
+.username {
+  grid-area: username;
+  display: grid;
+  grid-template-areas:
+    "lbl link"
+    "txt txt";
+}
+.font {
+  font-size: x-large;
+}
+.font-para {
+  font-size: small;
+}
+.font-username {
+  font-size: small;
+  // font-weight: 600;
+}
+.font-forgot {
+  font-size: small;
+}
+.mt {
+  margin-top: 9%;
+}
+.password {
+  grid-area: password;
+  display: grid;
+  grid-template-areas:
+    "lbl link"
+    "txt txt";
+}
+.captcha {
+  grid-area: captcha;
+}
+.btnnext {
+  grid-area: btnnext;
+}
 
-.lbl{
-    grid-area: lbl;
+.lbl {
+  grid-area: lbl;
 }
-.link{
-    grid-area: link;
-    text-align: right;
+.link {
+  grid-area: link;
+  text-align: right;
 }
-.txt{
-    grid-area: txt;
+.txt {
+  grid-area: txt;
 }
 
 .password-container {
   display: grid;
-  grid-template-areas:
-  'col1 col2 col3'
+  grid-template-areas: "col1 col2 col3";
 }
-.password-text{
+.password-text {
   grid-row: 1;
   grid-column: span 3 /-1;
 }
-.eye-icon{
+.eye-icon {
   text-align: right;
   margin-right: 1rem;
   margin-top: 0.5rem;
@@ -45,15 +69,15 @@
 }
 
 .grid-container {
-  display: grid;
+  // display: grid;
   grid-template-areas:
-    'header header'
-    'para para'
-    'username username'
-    'password password'
-    'captcha captcha'
-    'btnnext btnnext';
-  gap: 1.2rem;
+    "header header"
+    "para para"
+    "username username"
+    "password password"
+    "captcha captcha"
+    "btnnext btnnext";
+  // gap: 1.2rem;
   //background-color: #2196F3;
   padding: 10px;
 }

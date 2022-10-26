@@ -4,6 +4,7 @@ grid-template-columns: 1fr 4fr 1fr;
 grid-template-areas:
   'heartbeat1 image heartbeat2'
   'footer footer footer'; 
+  height: 506px;
 }
 .heartbeat1 { grid-area: heartbeat1;
    justify-self: flex-start;
@@ -42,5 +43,5 @@ grid-template-areas:
     color:var(--color-white);
     font-size: 1.2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    // margin-bottom: 2rem;
  }

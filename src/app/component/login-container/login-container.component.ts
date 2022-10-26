@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
+import { NgSelectConfig } from "@ng-select/ng-select";
 declare var saveToStorage: any;
 
 @Component({
@@ -22,18 +23,22 @@ export class LoginContainerComponent implements OnInit {
   showLogin: boolean = true;
   onFUform: boolean = false;
   onFPform: boolean = false;
+  selectedLanguage: any;
+  languageList = [{ name: "English" }, { name: "Hindi" }];
 
   constructor(
     //private sessionService: SessionService,
     private router: Router,
     //private snackbar: MatSnackBar,
-    private authService: AuthService
+    private authService: AuthService,
+    private ngSelect: NgSelectConfig
   ) {}
   ngOnInit() {
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
       this.router.navigateByUrl("/home");
     }
+    this.selectedLanguage = this.languageList[0];
   }
   onLoginSucess(isSucess: boolean) {
     this.showLoginverifictaion = isSucess;
@@ -48,11 +53,11 @@ export class LoginContainerComponent implements OnInit {
 
   onFUSucess(isSucess: boolean) {
     this.onFUform = isSucess;
-    this.showLogin = !isSucess; 
+    this.showLogin = !isSucess;
   }
 
   onFPSucess(isSucess: boolean) {
     this.onFPform = isSucess;
-    this.showLogin = !isSucess; 
+    this.showLogin = !isSucess;
   }
 }
