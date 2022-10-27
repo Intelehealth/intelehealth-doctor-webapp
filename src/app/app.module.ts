@@ -119,6 +119,7 @@ import { OtpService } from "./services/otp.service";
 import { SetNewPasswordComponent } from "./component/set-new-password/set-new-password.component";
 import { PasswordStrengthComponent } from "./component/set-new-password/password-strength/password-strength.component";
 import { NgSelectModule } from '@ng-select/ng-select';
+import { CountryData } from "./component/country-data/country-data";
 @NgModule({
   declarations: [
     AppComponent,
@@ -299,6 +300,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
+    CountryData,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

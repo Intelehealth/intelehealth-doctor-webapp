@@ -1,39 +1,43 @@
 @import "../../../assets/scss/main.scss";
-.otp-container{
-    display: grid;
-    
-    grid-template-areas:
-      'header header'
-      'para para'
-      'label label'
-      'textbox .'
-      'lblotpnotreceived lblotpnotreceived'
-      'btnverify btnverify'; 
-    }
-    .otp-header { 
-        grid-area: header;
-       }
-    .otp-para{
-        grid-area: para;
-       }
-    .otp-label{
-        grid-area: label;
-       
-    }
-    .otp-textbox{
-        display: grid;
-        grid-area: textbox;
-        //grid-template-columns: auto auto auto;
-        //grid-template-columns: repeat(6,1fr);
-        gap:1rem;
-        
-    }
-    .otp-lblotpnotreceived
-    {
-        grid-area: lblotpnotreceived;
-        margin-top: 2rem;
-        
-    }
-    .otp-btn{
-        grid-area: btnverify;
-    }
+.otp-container {
+  grid-template-areas:
+    "header header"
+    "para para"
+    "label label"
+    "textbox ."
+    "lblotpnotreceived lblotpnotreceived"
+    "btnverify btnverify";
+}
+.otp-header {
+  grid-area: header;
+}
+.otp-para {
+  grid-area: para;
+}
+.otp-label {
+  grid-area: label;
+}
+.otp-textbox {
+  display: grid;
+  grid-area: textbox;
+  //grid-template-columns: auto auto auto;
+  //grid-template-columns: repeat(6,1fr);
+  gap: 1rem;
+}
+.otp-lblotpnotreceived {
+  grid-area: lblotpnotreceived;
+  margin-top: 1rem;
+}
+.otp-btn {
+  grid-area: btnverify;
+}
+.otp-font {
+  font-size: x-large;
+  margin-top: 21%;
+}
+.otp-font-sm {
+  font-size: small;
+}
+.font-color {
+  color: #2e1e91;
+}

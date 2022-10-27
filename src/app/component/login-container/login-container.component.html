@@ -38,13 +38,13 @@
         (onSucessFU)="onFUSucess($event)"
       ></app-login-page>
       <app-login-verification
-        *ngIf="showLoginverifictaion"
+        *ngIf="showLoginVerifictaion"
         (onSucess)="onVerificationSucess($event)"
       ></app-login-verification>
-      <app-otp-verification *ngIf="showOTPverifictaion"></app-otp-verification>
+      <app-otp-verification *ngIf="showOTPVerifictaion"></app-otp-verification>
     </div>
     <div class="footer mt">
-      <div class="terms">
+      <div class="terms" *ngIf="!showLoginVerifictaion">
         <p class="login-para text-center">
           Intelehealth
           <a class="dark-blue-text font-weight-bold" href="#"
@@ -57,7 +57,9 @@
         </p>
       </div>
       <div class="help">
-        <button type="button" class="btn btn-help font-weight-bold position">Help</button>
+        <button type="button" class="btn btn-help font-weight-bold position">
+          Help
+        </button>
       </div>
     </div>
   </div>

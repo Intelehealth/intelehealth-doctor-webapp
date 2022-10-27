@@ -18,8 +18,8 @@ export class LoginContainerComponent implements OnInit {
     password: new FormControl("", [Validators.required]),
     recaptcha: new FormControl("", [Validators.required]),
   });
-  showOTPverifictaion: boolean = false;
-  showLoginverifictaion: boolean = false;
+  showOTPVerifictaion: boolean = false;
+  showLoginVerifictaion: boolean = false;
   showLogin: boolean = true;
   onFUform: boolean = false;
   onFPform: boolean = false;
@@ -41,12 +41,12 @@ export class LoginContainerComponent implements OnInit {
     this.selectedLanguage = this.languageList[0];
   }
   onLoginSucess(isSucess: boolean) {
-    this.showLoginverifictaion = isSucess;
+    this.showLoginVerifictaion = isSucess;
     this.showLogin = !isSucess;
   }
   onVerificationSucess(isSucess: boolean) {
-    this.showOTPverifictaion = isSucess;
-    this.showLoginverifictaion = !isSucess;
+    this.showOTPVerifictaion = isSucess;
+    this.showLoginVerifictaion = !isSucess;
     this.onFUform = !isSucess;
     this.onFPform = !isSucess;
   }

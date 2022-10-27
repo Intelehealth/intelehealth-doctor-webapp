@@ -16,26 +16,29 @@
 .vr-btngrp {
   background: #efe8ff;
   border-radius: 8px;
-  padding: 1rem 2rem;
   grid-area: btngrp;
   display: grid;
   grid-template-areas: "mobilebtn emailbtn";
+  padding: 7px;
+  align-items: center;
 }
 .vr-mobilebtn {
   text-align: center;
   border-radius: 8px;
-  padding: 1rem 2rem;
   grid-area: mobilebtn;
   grid-row: 1;
   grid-column: 1;
+  padding: 11px;
+  width: 80%;
 }
 .vr-emailbtn {
   text-align: center;
   border-radius: 8px;
-  padding: 1rem 2rem;
   grid-area: emailbtn;
   grid-row: 1;
   grid-column: 2;
+  padding: 11px;
+  width: 99%;
 }
 .vr-emailform {
   grid-area: form;
@@ -64,8 +67,7 @@
     "label ."
     "dropdown textbox"
     "btnnext btnnext";
-  grid-template-columns: 1fr 4fr;
-  gap: 1rem;
+  grid-template-columns: 1fr 3fr;
 }
 .btnnext {
   grid-area: btnnext;
@@ -78,4 +80,44 @@
   background: var(--color-white);
   box-shadow: 0px 2px 6px rgba(27, 22, 58, 0.08);
   border-radius: 8px;
+}
+.mt {
+  margin-top: 17%;
+}
+.vr-font {
+  font-size: x-large;
+}
+.vr-font-para {
+  font-size: small;
+}
+.w {
+  width: 80%;
+}
+.mr {
+  margin-right: 4px;
+}
+.parent-mobile {
+  position: relative;
+  .mobile-img {
+    position: absolute;
+    right: 3%;
+    top: 16%;
+  }
+}
+.parent-email {
+  position: relative;
+  .email-img {
+    position: absolute;
+    right: 3%;
+    bottom: 16%;
+  }
+}
+
+.parent-right-arrow {
+  position: relative;
+  .right-arrow {
+    position: absolute;
+    right: 3%;
+    bottom: 16%;
+  }
 }

@@ -7,6 +7,8 @@ import {
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { OtpService } from "src/app/services/otp.service";
+import { CountryData } from "../country-data/country-data";
+
 @Component({
   selector: "app-login-verification",
   templateUrl: "./login-verification.component.html",
@@ -15,20 +17,25 @@ import { OtpService } from "src/app/services/otp.service";
 export class LoginVerificationComponent implements OnInit, AfterViewInit {
   @Output() onSucess = new EventEmitter<boolean>();
   countries: string[] = ["+91", "+61", "+44"];
+
+  countryCode: any = this.country.country_Codes.map((code: any) => {
+    code.img = `assets/flags/1x1/${code.country_code.toLowerCase()}.svg`;
+    return code;
+  });
   default: string = "+91";
 
   verificationForm = new FormGroup({
     phoneNumber: new FormControl("", [Validators.required]),
     email: new FormControl("", [Validators.required]),
-    code: new FormControl("", [Validators.required]),
+    selectedCode: new FormControl("", [Validators.required]),
   });
 
   showEmail: boolean = false;
   reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor(private otpservice: OtpService) {
-    this.verificationForm.controls["code"].setValue(this.default, {
+  constructor(private otpservice: OtpService, private country: CountryData) {
+    this.verificationForm.controls["selectedCode"].setValue(this.default, {
       onlySelf: true,
     });
   }
