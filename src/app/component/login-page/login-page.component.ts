@@ -1,15 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { AuthService } from "src/app/services/auth.service";
-import { SessionService } from "src/app/services/session.service";
-import { PushNotificationsService } from "src/app/services/push-notification.service";
-import { MatDialog } from "@angular/material/dialog";
-import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
-import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ModalinternetconnectionComponent } from "../modalinternetconnection/modalinternetconnection.component";
+import { SessionService } from "src/app/services/session.service";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -34,13 +26,7 @@ export class LoginPageComponent implements OnInit {
   fieldTextType: boolean;
   constructor(
     private sessionService: SessionService,
-    private router: Router,
-    private snackbar: MatSnackBar,
-    private authService: AuthService,
-    private pushNotificationsService: PushNotificationsService,
-    private service: VisitService,
-    private dialog: MatDialog,
-    private modalService: NgbModal
+    private service: VisitService
   ) {}
 
   ngOnInit() {
@@ -107,15 +93,5 @@ export class LoginPageComponent implements OnInit {
   }
   showHidePassword() {
     this.showPassword = !this.showPassword;
-  }
-
-  moveToFUform(){
-    this.onSucessFU.emit(true);
-    console.log("Hello Intelehealth");
-  }
-
-  moveToFPform(){
-    this.onSucessFP.emit(true)
-    console.log("Hello Intelehealth 2");
   }
 }

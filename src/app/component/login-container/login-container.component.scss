@@ -17,8 +17,6 @@
     "loginform loginform"
     "footer footer";
 
-  // gap: 1.2rem;
-  // padding: 1rem;
   background-color: white;
 }
 .footer {
@@ -32,13 +30,9 @@
 
 .terms {
   grid-area: terms;
-  // text-align: center;
 }
 .help {
   grid-area: help;
-  // text-align: right;
-  // position: relative;
-  // left: 30%;
 }
 .position {
   position: fixed;
@@ -65,25 +59,15 @@
 }
 .grid-container {
   display: grid;
-  //grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 1fr;
   grid-template-areas: "imagerotate formcontainer";
-  // gap: 1.2rem;
-  // padding: 1rem;
-  // width: 100vw;
-  // height: 100vh;
 }
 
 @media screen and (max-width: 1024px) {
   .grid-container {
     display: grid;
 
-    // grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr;
     grid-template-areas: "imagerotate formcontainer";
-    // gap: 1.2rem;
-    // padding: 1rem;
-    // width: 100vw;
-    // height: 100vh;
   }
 }

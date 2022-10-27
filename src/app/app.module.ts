@@ -44,7 +44,7 @@ import { ModalsComponent } from "./component/ayu/modals/modals.component";
 // Package Import
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
-import { FormsModule, NgSelectOption, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
@@ -118,8 +118,10 @@ import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
 import { SetNewPasswordComponent } from "./component/set-new-password/set-new-password.component";
 import { PasswordStrengthComponent } from "./component/set-new-password/password-strength/password-strength.component";
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectModule } from "@ng-select/ng-select";
 import { CountryData } from "./component/country-data/country-data";
+import { FooterTermsConditionComponent } from "./component/footer-terms-condition/footer-terms-condition.component";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -177,6 +179,7 @@ import { CountryData } from "./component/country-data/country-data";
     ForgotUsernameComponent,
     SetNewPasswordComponent,
     PasswordStrengthComponent,
+    FooterTermsConditionComponent,
   ],
 
   imports: [
@@ -220,7 +223,20 @@ import { CountryData } from "./component/country-data/country-data";
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [
-        { path: "login", component: LoginContainerComponent },
+        {
+          path: "login",
+          component: LoginContainerComponent,
+          children: [
+            { path: "", component: LoginPageComponent },
+            { path: "forget-username", component: ForgotUsernameComponent },
+            { path: "forgot-password", component: ForgotPasswordComponent },
+            {
+              path: "login-verification",
+              component: LoginVerificationComponent,
+            },
+            { path: "otp-verification", component: OtpVerificationComponent },
+          ],
+        },
         { path: "dashboard", component: DashboardComponent },
         { path: "set-new/password", component: SetNewPasswordComponent },
         {

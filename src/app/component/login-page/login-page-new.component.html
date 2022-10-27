@@ -13,8 +13,8 @@
       >Username</label
     >
     <p
-      class="link link-forgot-username mt font-forgot mb-2"
-      (click)="moveToFUform()"
+      class="link link-forgot-username mt font-forgot mb-2 click"
+      [routerLink]="['/login', 'forget-username']"
     >
       Forgot username ?
     </p>
@@ -34,8 +34,8 @@
       >Password</label
     >
     <p
-      class="link link-forgot-username mt font-forgot mb-2"
-      (click)="moveToFPform()"
+      class="link link-forgot-username mt font-forgot mb-2 click"
+      [routerLink]="['/login', 'forgot-password']"
     >
       Forgot password ?
     </p>
@@ -72,13 +72,22 @@
     >
     </ngx-recaptcha2>
   </div>
-  <div class="btnnext mb-3">
+  <div class="btnnext mb-3 parent-right-arrow">
     <button
       type="submit"
-      class="btn-darkblue btn-block"
+      class="btn-darkblue btn-block click"
       [disabled]="!loginForm.valid"
+      [routerLink]="['/login', 'login-verification']"
     >
       Next
     </button>
+    <img
+      class="right-arrow"
+      height="24px"
+      width="20px"
+      src="assets/svgs/right-arrow.svg"
+    />
   </div>
+  <app-footer-terms-condition [showTermsAndCondition]="true">
+  </app-footer-terms-condition>
 </form>

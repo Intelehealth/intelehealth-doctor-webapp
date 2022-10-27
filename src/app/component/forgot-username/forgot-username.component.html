@@ -1,10 +1,11 @@
-<div class="fu-container">
+<div class="fu-container mt">
   <div class="fu-header">
-    <h3 class="forgot-username-header">Forgot Username?</h3>
+    <div class="forgot-username-header fu-font mb-2">Forgot Username?</div>
   </div>
   <div class="fu-para">
-    <p class="forgot-username-para">
-      No worries, enter your Mobile number or Email ID and we will send you the OTP to retrive your username.
+    <p class="forgot-username-para fu-font-para mb-5">
+      No worries, enter your Mobile number or Email ID and we will send you the
+      OTP to retrive your username.
     </p>
   </div>
 
@@ -34,20 +35,34 @@
     class="fu-emailform"
   >
     <div class="fu-email-label">
-      <label class="lbl-username"> Email ID </label>
+      <label class="lbl-username fu-font-para"> Email ID </label>
     </div>
-    <div class="fu-textbox">
+    <div class="fu-textbox mb-4 parent-email">
       <input
         type="text"
-        class="form-control"
+        class="form-control click"
         id="email"
         name="email"
         aria-describedby="email"
         formControlName="email"
       />
+      <img
+        title="Email ID"
+        class="email-img click"
+        height="25px"
+        width="25px"
+        src="assets/svgs/email.svg"
+      />
     </div>
-    <div class="btnnext">
+    <div class="btnnext parent-right-arrow">
       <button type="submit" class="btn-darkblue btn-block">Next</button>
+      <img
+        title="Next"
+        class="right-arrow"
+        height="24px"
+        width="20px"
+        src="assets/svgs/right-arrow.svg"
+      />
     </div>
   </form>
 
@@ -58,19 +73,26 @@
     class="fu-mobileform"
   >
     <div class="fu-mobile-label">
-      <label class="lbl-username">Mobile number</label>
+      <label class="lbl-username fu-font-para">Mobile number</label>
     </div>
-    <div class="fu-dropdown">
-      <select
-        name="code"
-        id="code"
-        class="language-dropdown form-control"
-        formControlName="code"
-      >
-        <option *ngFor="let c of countries" [ngValue]="c">{{ c }}</option>
-      </select>
+    <div class="fu-dropdown w mb-4">
+      <ng-select formControlName="selectedCode" [clearable]="false">
+        <ng-option
+          *ngFor="let code of countryCode"
+          [value]="code.dialling_code"
+        >
+          <img
+            title="{{ code.country_name }}"
+            class="mb-1 mr click"
+            height="16px"
+            width="16px"
+            [src]="code.img"
+          />
+          {{ code.dialling_code }}</ng-option
+        >
+      </ng-select>
     </div>
-    <div class="fu-textbox">
+    <div class="fu-textbox parent-mobile">
       <input
         type="text"
         id="phoneNumber"
@@ -80,10 +102,23 @@
         formControlName="phoneNumber"
         max="15"
       />
+      <img
+        title="Mobile Number"
+        class="mobile-img click"
+        height="20px"
+        width="20px"
+        src="assets/svgs/mobile.svg"
+      />
     </div>
-    <div class="btnnext">
+    <div class="btnnext parent-right-arrow">
       <button type="submit" class="btn-darkblue btn-block">Next</button>
+      <img
+        class="right-arrow"
+        height="24px"
+        width="20px"
+        src="assets/svgs/right-arrow.svg"
+      />
     </div>
-    <div id="sign-in-button"></div>
   </form>
+  <app-footer-terms-condition></app-footer-terms-condition>
 </div>

@@ -4,14 +4,6 @@
   </div>
   <div class="formcontainer col-6 p-0">
     <div class="select">
-      <!-- class="language-div"
-      <select name="language" id="language" class="language-dropdown btn">
-        <option class="" value="" selected="selected">
-          English
-        </option>
-        <option class="" value="">Marathi</option>
-      </select> -->
-
       <ng-select
         class=""
         [items]="languageList"
@@ -22,45 +14,7 @@
       </ng-select>
     </div>
     <div class="loginform">
-      <!-- <app-set-new-password></app-set-new-password> -->
-      <app-forgot-username
-        *ngIf="onFUform"
-        (onSucess)="onVerificationSucess($event)"
-      ></app-forgot-username>
-      <app-forgot-password
-        *ngIf="onFPform"
-        (onSucess)="onVerificationSucess($event)"
-      ></app-forgot-password>
-      <app-login-page
-        *ngIf="showLogin"
-        (onSucessIntele)="onLoginSucess($event)"
-        (onSucessFP)="onFPSucess($event)"
-        (onSucessFU)="onFUSucess($event)"
-      ></app-login-page>
-      <app-login-verification
-        *ngIf="showLoginVerifictaion"
-        (onSucess)="onVerificationSucess($event)"
-      ></app-login-verification>
-      <app-otp-verification *ngIf="showOTPVerifictaion"></app-otp-verification>
-    </div>
-    <div class="footer mt">
-      <div class="terms" *ngIf="!showLoginVerifictaion">
-        <p class="login-para text-center">
-          Intelehealth
-          <a class="dark-blue-text font-weight-bold" href="#"
-            ><u>Terms & Conditions</u></a
-          >
-          and
-          <a class="dark-blue-text font-weight-bold" href="#"
-            ><u>privacy policy</u></a
-          >
-        </p>
-      </div>
-      <div class="help">
-        <button type="button" class="btn btn-help font-weight-bold position">
-          Help
-        </button>
-      </div>
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>

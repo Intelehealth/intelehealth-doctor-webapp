@@ -1,11 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
-import { SessionService } from "src/app/services/session.service";
-import { NgSelectConfig } from "@ng-select/ng-select";
-declare var saveToStorage: any;
 
 @Component({
   selector: "app-login-container",
@@ -26,38 +22,12 @@ export class LoginContainerComponent implements OnInit {
   selectedLanguage: any;
   languageList = [{ name: "English" }, { name: "Hindi" }];
 
-  constructor(
-    //private sessionService: SessionService,
-    private router: Router,
-    //private snackbar: MatSnackBar,
-    private authService: AuthService,
-    private ngSelect: NgSelectConfig
-  ) {}
+  constructor(private router: Router, private authService: AuthService) {}
   ngOnInit() {
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
       this.router.navigateByUrl("/home");
     }
     this.selectedLanguage = this.languageList[0];
-  }
-  onLoginSucess(isSucess: boolean) {
-    this.showLoginVerifictaion = isSucess;
-    this.showLogin = !isSucess;
-  }
-  onVerificationSucess(isSucess: boolean) {
-    this.showOTPVerifictaion = isSucess;
-    this.showLoginVerifictaion = !isSucess;
-    this.onFUform = !isSucess;
-    this.onFPform = !isSucess;
-  }
-
-  onFUSucess(isSucess: boolean) {
-    this.onFUform = isSucess;
-    this.showLogin = !isSucess;
-  }
-
-  onFPSucess(isSucess: boolean) {
-    this.onFPform = isSucess;
-    this.showLogin = !isSucess;
   }
 }

@@ -16,7 +16,6 @@ import { CountryData } from "../country-data/country-data";
 })
 export class LoginVerificationComponent implements OnInit, AfterViewInit {
   @Output() onSucess = new EventEmitter<boolean>();
-  countries: string[] = ["+91", "+61", "+44"];
 
   countryCode: any = this.country.country_Codes.map((code: any) => {
     code.img = `assets/flags/1x1/${code.country_code.toLowerCase()}.svg`;
