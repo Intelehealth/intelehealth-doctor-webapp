@@ -1,14 +1,8 @@
 <div class="main-container">
   <div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed' : ''">
     <div class="logo-container">
-      <button class="logo" (click)="toggleCollapse()" (click)="iconMove()">
-        <img
-          [src]="
-            changeSide
-              ? '../../../assets/icons/dashboard-icons/Vector2.png'
-              : '../../../assets/icons/dashboard-icons/Vector.png'
-          "
-        />
+      <button class="logo" (click)="toggleCollapse()">
+        <img [src]="toggleImage" />
       </button>
       <div class="logo-img" *ngIf="collapsed">
         <img src="../../../assets/images/Intelehealth-logo-white.png" />

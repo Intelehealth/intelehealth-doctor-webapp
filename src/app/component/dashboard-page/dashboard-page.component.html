@@ -1,77 +1,74 @@
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Good Morning Dr. {{ doctorName }}! 👋</strong>
-    <p>Complete the following actions to start treating the patients</p>
-    <img src="../../../assets/icons/dashboard-icons/Group 2608817.png" />
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Good Morning Dr. {{ doctorName }}! 👋</strong>
+  <p>Complete the following actions to start treating the patients</p>
+  <img src="../../../assets/icons/dashboard-icons/Group 2608817.png" />
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="profile">
+  <div class="notification">
+    <img
+      src="../../../assets/icons/dashboard-icons/icons8-notification 1.png"
+    />
+  </div>
+  <div class="profile-pic">
+    <img src="../../../assets/icons/dashboard-icons/Frame 2608562.png" />
+    <span class="text">Hello Dr. {{ doctorName }} 👋</span>
+    <button
+      mat-icon-button
+      aria-label="Example icon-button with a menu"
+      style="top: -2px"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+</div>
+<div
+  class="popup-message alert alert-success alert-dismissible fade show"
+  role="alert"
+>
+  <div>
+    <strong>Login Successful</strong>
+    <p class="para">You have successfully logged in</p>
+    <button
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-label="Close"
+      style="color: #7f7b92"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="profile">
-    <div class="notification">
-      <img
-        src="../../../assets/icons/dashboard-icons/icons8-notification 1.png"
-      />
-    </div>
-    <div class="profile-pic">
-      <img src="../../../assets/icons/dashboard-icons/Frame 2608562.png" />
-      <span class="text">Hello Dr. {{ doctorName }} 👋</span>
-      <button
-        mat-icon-button
-        aria-label="Example icon-button with a menu"
-        style="top: -2px"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
-    </div>
+</div>
+<div class="setup-your-profile">
+  <div class="icon">
+    <img src="../../../assets/icons/dashboard-icons/icons8-user 2.png" />
   </div>
-  <div
-    class="popup-message alert alert-success alert-dismissible fade show"
-    role="alert"
-  >
-    <div>
-      <strong>Login Successful</strong>
-      <p class="para">You have successfully logged in</p>
-      <button
-        type="button"
-        class="close"
-        data-dismiss="alert"
-        aria-label="Close"
-        style="color: #7f7b92"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
+  <div class="text">
+    <h5 class="header">Set up your profile</h5>
+    <p class="para">
+      You need to set-up your profile by adding few details of yours & start
+      receiving the patient prescription requests.
+    </p>
+    <button class="btn">
+      <span class="text">setup profile</span>
+    </button>
   </div>
-  <div class="setup-your-profile">
-    <div class="icon">
-      <img src="../../../assets/icons/dashboard-icons/icons8-user 2.png" />
-    </div>
-    <div class="text">
-      <h5 class="header">Set up your profile</h5>
-      <p class="para">
-        You need to set-up your profile by adding few details of yours & start
-        receiving the patient prescription requests.
-      </p>
-      <button class="btn">
-        <span class="text">setup profile</span>
-      </button>
-    </div>
+</div>
+<div class="setup-your-calendar">
+  <div class="icon">
+    <img src="../../../assets/icons/dashboard-icons/icons8-calendar 1.png" />
   </div>
-  <div class="setup-your-calendar">
-    <div class="icon">
-      <img src="../../../assets/icons/dashboard-icons/icons8-calendar 1.png" />
-    </div>
-    <div class="text">
-      <h5 class="header">Set up your calendar</h5>
-      <p class="para">
-        You need to set-up your calendar so you can start taking appointments of
-        the patients.
-      </p>
-      <button class="btn">
-        <span class="text">setup calendar</span>
-      </button>
-    </div>
+  <div class="text">
+    <h5 class="header">Set up your calendar</h5>
+    <p class="para">
+      You need to set-up your calendar so you can start taking appointments of
+      the patients.
+    </p>
+    <button class="btn">
+      <span class="text">setup calendar</span>
+    </button>
   </div>
-  <div class="help">
-    <button type="button" class="btn-help">Help</button>
-  </div>
+</div>

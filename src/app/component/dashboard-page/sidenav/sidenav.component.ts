@@ -1,5 +1,5 @@
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { animate, style, transition, trigger } from "@angular/animations";
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 
 interface SideNavToggle {
   screenWidth: number;
@@ -7,19 +7,17 @@ interface SideNavToggle {
 }
 
 @Component({
-  selector: 'app-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss'],
+  selector: "app-sidenav",
+  templateUrl: "./sidenav.component.html",
+  styleUrls: ["./sidenav.component.scss"],
   animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({opacity: 0}),
-        animate('350ms',
-          style({opacity: 1})
-        )
-      ])
-    ])
-  ]
+    trigger("fadeInOut", [
+      transition(":enter", [
+        style({ opacity: 0 }),
+        animate("350ms", style({ opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class SidenavComponent implements OnInit {
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
@@ -27,17 +25,26 @@ export class SidenavComponent implements OnInit {
   screenWidth = 0;
   changeSide: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
-  }
-  toggleCollapse(): void {
-    this.collapsed = !this.collapsed;
-    this.onToggleSideNav.emit({collapsed: this.collapsed, screenWidth: this.screenWidth});
-  }
-  iconMove() {
-    this.changeSide = !this.changeSide;
+    console.log("this.screenWidth: ", this.screenWidth);
   }
 
+  toggleCollapse(): void {
+    this.collapsed = !this.collapsed;
+    this.changeSide = !this.changeSide;
+
+    this.onToggleSideNav.emit({
+      collapsed: this.collapsed,
+      screenWidth: this.screenWidth,
+    });
+  }
+
+  get toggleImage() {
+    return `assets/icons/dashboard-icons/${
+      this.changeSide ? "Vector.png" : "Vector2.png"
+    }`;
+  }
 }
