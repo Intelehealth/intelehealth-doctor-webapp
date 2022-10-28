@@ -6,6 +6,7 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 import { OtpService } from "src/app/services/otp.service";
 import { CountryData } from "../country-data/country-data";
 
@@ -33,7 +34,11 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
   reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor(private otpservice: OtpService, private country: CountryData) {
+  constructor(
+    private otpservice: OtpService,
+    private country: CountryData,
+    private router: Router
+  ) {
     this.verificationForm.controls["selectedCode"].setValue(this.default, {
       onlySelf: true,
     });
@@ -48,7 +53,7 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
   }
   onSubmit() {
     var value = this.verificationForm.value;
-    var mobileNumber = value.code + value.phoneNumber;
+    var mobileNumber = value.selectedCode + value.phoneNumber;
     this.otpservice
       .getOTP("sign-in-button", mobileNumber)
       .subscribe((confimationResult) => {
@@ -57,7 +62,8 @@ export class LoginVerificationComponent implements OnInit, AfterViewInit {
           JSON.stringify(confimationResult.verificationId)
         );
         localStorage.setItem("mobilenumber", mobileNumber);
-        this.onSucess.emit(true);
+        //this.onSucess.emit(true);
+        this.router.navigateByUrl("/login/otp-verification");
       });
     /*this.reCaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       "sign-in-button",

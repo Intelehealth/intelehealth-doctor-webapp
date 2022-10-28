@@ -1,7 +1,15 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { VisitService } from "src/app/services/visit.service";
+import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
+import { MatDialog } from "@angular/material/dialog";
+import { ChangePasswordComponent } from "../change-password/change-password.component";
+import { VisitService } from "src/app/services/visit.service";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ModalinternetconnectionComponent } from "../modalinternetconnection/modalinternetconnection.component";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -9,6 +17,7 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.scss"],
 })
 export class LoginPageComponent implements OnInit {
+  @Output() onSucess = new EventEmitter<boolean>();
   @Output() onSucessFU = new EventEmitter<boolean>();
   @Output() onSucessFP = new EventEmitter<boolean>();
 
@@ -26,7 +35,13 @@ export class LoginPageComponent implements OnInit {
   fieldTextType: boolean;
   constructor(
     private sessionService: SessionService,
-    private service: VisitService
+    private router: Router,
+    private snackbar: MatSnackBar,
+    private authService: AuthService,
+    private pushNotificationsService: PushNotificationsService,
+    private service: VisitService,
+    private dialog: MatDialog,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
