@@ -48,7 +48,7 @@ export class LoginPageComponent implements OnInit {
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
           this.onSucessIntele.emit(true);
-          /* this.sessionService.provider(response.user.uuid).subscribe(
+          this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               this.authService.sendToken(response.user.sessionId);
               saveToStorage("user", response.user);
@@ -66,7 +66,9 @@ export class LoginPageComponent implements OnInit {
 
               if (provider.results[0].attributes.length === 0) {
                 this.router.navigate(["/myAccount"]);
-              } else {
+                //this.onSucess.emit(true);
+              }
+              /* else {
                 this.router.navigate(["/home"]);
               }
               this.snackbar.open(
@@ -75,13 +77,15 @@ export class LoginPageComponent implements OnInit {
                 {
                   duration: 4000,
                 }
-              );
+              );*/
+              this.onSucess.emit(true);
               saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
-              this.router.navigate(["home"]);
+              //this.router.navigate(["home"]);
+              this.showError = true;
             }
-          );*/
+          );
         } else {
           this.showError = true;
           /* this.snackbar.open("Username & Password doesn't match", null, {

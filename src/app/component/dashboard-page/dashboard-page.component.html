@@ -1,6 +1,5 @@
-<div class="body" [ngClass]="getBodyClass()">
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>Good Morning Dr. Sakshi! 👋</strong>
+    <strong>Good Morning Dr. {{ doctorName }}! 👋</strong>
     <p>Complete the following actions to start treating the patients</p>
     <img src="../../../assets/icons/dashboard-icons/Group 2608817.png" />
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -15,7 +14,7 @@
     </div>
     <div class="profile-pic">
       <img src="../../../assets/icons/dashboard-icons/Frame 2608562.png" />
-      <span class="text">Hello Dr. Sakshi 👋</span>
+      <span class="text">Hello Dr. {{ doctorName }} 👋</span>
       <button
         mat-icon-button
         aria-label="Example icon-button with a menu"
@@ -76,4 +75,3 @@
   <div class="help">
     <button type="button" class="btn-help">Help</button>
   </div>
-</div>

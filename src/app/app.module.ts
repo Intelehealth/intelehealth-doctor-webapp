@@ -116,6 +116,11 @@ import { SidenavComponent } from "./component/dashboard-page/sidenav/sidenav.com
 
 import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
+import { CalendarContainerComponent } from "./component/calendar-container/calendar-container.component";
+import { SetUpCalendarComponent } from "./component/calendar-container/set-up-calendar/set-up-calendar.component";
+import { ViewCalendarComponent } from "./component/calendar-container/view-calendar/view-calendar.component";
+import { DashboardBodyComponent } from "./component/dashboard/dashboard-body/dashboard-body.component";
+
 import { SetNewPasswordComponent } from "./component/set-new-password/set-new-password.component";
 import { PasswordStrengthComponent } from "./component/set-new-password/password-strength/password-strength.component";
 import { NgSelectModule } from "@ng-select/ng-select";
@@ -175,6 +180,10 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
     DashboardComponent,
     DashboardPageComponent,
     SidenavComponent,
+    CalendarContainerComponent,
+    SetUpCalendarComponent,
+    ViewCalendarComponent,
+    DashboardBodyComponent,
     ForgotPasswordComponent,
     ForgotUsernameComponent,
     SetNewPasswordComponent,
@@ -237,7 +246,22 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
             { path: "otp-verification", component: OtpVerificationComponent },
           ],
         },
-        { path: "dashboard", component: DashboardComponent },
+        {
+          path: "dashboard",
+          component: DashboardComponent,
+          children: [
+            {
+              path: "",
+              component: DashboardPageComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "calendar",
+              component: CalendarContainerComponent,
+              canActivate: [AuthGuard],
+            },
+          ],
+        },
         { path: "set-new/password", component: SetNewPasswordComponent },
         {
           path: "",

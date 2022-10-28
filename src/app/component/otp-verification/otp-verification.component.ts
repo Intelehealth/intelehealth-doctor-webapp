@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
@@ -11,7 +12,7 @@ import { OtpService } from "src/app/services/otp.service";
 export class OtpVerificationComponent implements OnInit {
   otp: string;
   verify: any;
-  constructor(private otpservice: OtpService) {}
+  constructor(private otpservice: OtpService, private router: Router) {}
   config = {
     allowNumbersOnly: true,
     length: 6,
@@ -42,7 +43,7 @@ export class OtpVerificationComponent implements OnInit {
       .then((response) => {
         console.log(response);
         localStorage.setItem("user_data", JSON.stringify(response));
-        //navigate to next screen
+        this.router.navigate(["/dashboard"]);
       })
       .catch((error) => {
         console.log(error);
