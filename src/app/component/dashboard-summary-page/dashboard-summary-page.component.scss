@@ -1,0 +1,61 @@
+.top {
+  padding: 16px;
+  gap: 16px;
+}
+
+.visit-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  width: 305px;
+  height: 86px;
+
+  padding: 16px;
+
+  border-radius: 12px;
+}
+
+.appointments {
+  background: #efe8ff;
+}
+
+.priority {
+  background: #ffe8e8;
+}
+
+.awaiting {
+  background: #e6fff3;
+}
+
+.progress {
+  background: #e6fff3;
+}
+
+.img {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+
+  width: 44px;
+  height: 44px;
+}
+
+.label {
+  margin-left: 12%;
+}
+
+.font-weight {
+  font-weight: 600;
+}
+
+.font-label-color {
+  color: #7f7b92;
+}
+
+.nav-collapsed {
+  .visit-section {
+    width: 242px;
+  }
+}

@@ -125,6 +125,9 @@ import { PasswordStrengthComponent } from "./component/set-new-password/password
 import { NgSelectModule } from "@ng-select/ng-select";
 import { CountryData } from "./component/country-data/country-data";
 import { FooterTermsConditionComponent } from "./component/footer-terms-condition/footer-terms-condition.component";
+import { SetUpProfileComponent } from './component/set-up-profile/set-up-profile.component';
+import { DashboardSummaryPageComponent } from './component/dashboard-summary-page/dashboard-summary-page.component';
+import { DashboardTableComponent } from './component/dashboard-table/dashboard-table.component';
 
 @NgModule({
   declarations: [
@@ -187,6 +190,9 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
     SetNewPasswordComponent,
     PasswordStrengthComponent,
     FooterTermsConditionComponent,
+    SetUpProfileComponent,
+    DashboardSummaryPageComponent,
+    DashboardTableComponent,
   ],
 
   imports: [

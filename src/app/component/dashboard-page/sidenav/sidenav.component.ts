@@ -29,7 +29,6 @@ export class SidenavComponent implements OnInit {
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
-    console.log("this.screenWidth: ", this.screenWidth);
   }
 
   toggleCollapse(): void {
@@ -40,6 +39,15 @@ export class SidenavComponent implements OnInit {
       collapsed: this.collapsed,
       screenWidth: this.screenWidth,
     });
+
+    if (this.collapsed) {
+      const dashboardContainer = document.querySelector(".dashboard-summary");
+      dashboardContainer && dashboardContainer.classList.add("nav-collapsed");
+    } else {
+      const dashboardContainer = document.querySelector(".dashboard-summary");
+      dashboardContainer &&
+        dashboardContainer.classList.remove("nav-collapsed");
+    }
   }
 
   get toggleImage() {
