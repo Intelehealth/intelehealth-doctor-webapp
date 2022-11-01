@@ -1,0 +1,106 @@
+.head-nav{
+    width: 1086px;
+    height: 26rem;
+}
+.logo{
+    .text{
+        font-size: 24px;  
+    }
+}
+.search-box{
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: #FAF9FF;
+    border: 2px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    width: 265px;
+    height: 40px;
+    position: relative;
+    left: 52rem;
+}
+.search-box > i {
+	font-size: 20px;
+	color: #2E1E91;
+}
+.search-box > input{
+	flex: 1;
+	height: 30px;
+	border: none;
+	outline: none;
+	font-size: 18px;
+	padding-left: 10px;
+    background: #FAF9FF;      
+}
+.health-container{
+    margin-top: 1rem;
+    background: white;
+    height: 292px;
+    padding: 16px;
+    border-radius: 12px;
+}
+.right-container{
+    width: 240px;
+    height: 192px;
+}
+.left-container{
+    position: relative;
+    width: 782px;
+    height: 192px;
+    left: 16rem;
+    bottom: 12rem;
+}
+.text{
+    position: relative;
+    bottom: 40px;
+    left: 64px;
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+}
+p{
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: #7F7B92;
+}
+.learn-container{
+    margin-top: 1rem;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+    border-radius: 12px;
+    .icon{
+        position: relative;
+        top: 10px;
+        left: 10px;
+    }
+    .text{
+        position: relative;
+        left: 74px;
+        bottom: 30px;
+    }
+}
+.videos-container{
+    height: 572px;
+}
+.video-size{
+    width: 340px;
+    height:260px;
+}
+.video-col-1{
+    margin-left: 1rem;
+}
+.video-col-2{
+    position: relative;
+    bottom: 32.5rem;
+    margin-left: 23rem;
+}
+.video-col-3{
+    position: relative;
+    bottom: 65rem;
+    margin-left: 45rem;
+}
