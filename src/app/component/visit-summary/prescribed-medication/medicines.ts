@@ -166,6 +166,7 @@ export default {
         'Oats Dosa|| ओट्स डोसा',
         'Poha|| पोहा',
         'Upma|| उपमा',
+        '1 glass of water with 1 Tbsp of Flaxseeds (roasted and powdered) || 1 बड़ा चम्मच अलसी के साथ 1 गिलास पानी (भुना और पाउडर)'
     ],
     midMorning: [
         'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit] || फल [केला, अंगूर, आम, चीकू, कटहल से परहेज करें]',
@@ -296,6 +297,7 @@ export default {
         'Fruit [Avoid banana, grapes, mango, cheeku, jackfruit] || फल [केला, अंगूर, आम, चीकू, कटहल से परहेज करें]',
         'Nuts [Avoid raisins/ dates/ cashewnuts] || मेवे/नट्स  [काजू /खजूरसे परहेज करें]',
         '1 Glass of water with 1 tablespoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 बड़ा चम्मच मेथी के बीज [रात भर भीगे हुए]',
-        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]'
+        '1 Glass of water with 1 teaspoon of Methi seeds [soaked overnight] || 1 गिलास पानी में 1 चम्मच मेथी दाना [रात भर भिगोया हुआ]',
+        '1 glass of water with 1 Tbsp of Flaxseeds (roasted and powdered) || 1 गिलास पानी में 1 बड़ा चम्मच अलसी (भुना और पाउडर)'
     ]
 }

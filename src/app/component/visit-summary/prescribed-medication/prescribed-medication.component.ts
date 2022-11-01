@@ -74,7 +74,10 @@ export class PrescribedMedicationComponent implements OnInit {
     'small bowl',
     'big bowl',
     'glass',
-    'teaspoon'
+    'teaspoon',
+    'piece',
+    'number',
+    'small glass'
   ]
 
   earlyMorning = [{
