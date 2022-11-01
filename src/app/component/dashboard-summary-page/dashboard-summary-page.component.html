@@ -29,15 +29,14 @@
       </div>
     </div>
 
-    <div class="visit-section progress">
+    <div class="visit-section awaiting">
       <img class="img" src="assets/svgs/pen-board.svg" />
       <div class="label">
         <div class="font-weight">15</div>
 
-        <label class="font-label-color">In-progress visits </label>
+        <label class="font-label-color">In-progress visits</label>
       </div>
     </div>
   </div>
-
-  <app-dashboard-table></app-dashboard-table>
+  <app-dashboard-table [tableConfig]="appointmentTable"></app-dashboard-table>
 </div>

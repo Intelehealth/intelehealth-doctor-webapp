@@ -1,1 +1,52 @@
-<p>dashboard-table works!</p>
+<div class="main ml-3">
+  <div class="header d-flex">
+    <img [src]="table?.lableIconPath" />
+    <div class="label">
+      {{ table?.label }} ({{ table?.dataCount }})
+      <img src="assets/svgs/info.svg" />
+    </div>
+
+    <button class="btn btn-light btn-filter mt-2">
+      <img src="assets/svgs/filter.svg" /> Filter
+    </button>
+  </div>
+
+  <div class="table">
+    <table class="table table-borderless w-100">
+      <tr class="table-color-th">
+        <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
+          {{ header?.name }}
+        </th>
+      </tr>
+      <tr
+        *ngFor="let data of table?.data"
+        [ngClass]="{ active: data?.isActive }"
+        class="table-height"
+      >
+        <td
+          *ngFor="let header of table?.headers"
+          class="vr {{ header?.headerClass }}"
+        >
+          <ng-container [ngSwitch]="true">
+            <div *ngSwitchCase="header?.type === 'stringwithimage'">
+              <img class="mr-1" [src]="data[header?.imageKey]" />
+              {{ data[header?.key] }}
+            </div>
+
+            <div *ngSwitchCase="header?.type === 'multibutton'">
+              <button
+                *ngFor="let btn of header?.buttons"
+                class="btn btn-light {{ btn?.btnClass }}"
+                (click)="btn?.onClick()"
+              >
+                {{ btn?.label }}
+              </button>
+            </div>
+
+            <div *ngSwitchDefault>{{ data[header?.key] }}</div>
+          </ng-container>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
