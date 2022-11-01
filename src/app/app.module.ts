@@ -126,6 +126,7 @@ import { PasswordStrengthComponent } from "./component/set-new-password/password
 import { NgSelectModule } from "@ng-select/ng-select";
 import { CountryData } from "./component/country-data/country-data";
 import { FooterTermsConditionComponent } from "./component/footer-terms-condition/footer-terms-condition.component";
+import { HelpContainerComponent } from './component/help-container/help-container.component';
 
 @NgModule({
   declarations: [
@@ -189,6 +190,7 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
     SetNewPasswordComponent,
     PasswordStrengthComponent,
     FooterTermsConditionComponent,
+    HelpContainerComponent,
   ],
 
   imports: [
@@ -258,6 +260,11 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
             {
               path: "calendar",
               component: CalendarContainerComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "help",
+              component: HelpContainerComponent,
               canActivate: [AuthGuard],
             },
           ],
