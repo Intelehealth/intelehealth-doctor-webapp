@@ -128,6 +128,7 @@ import { FooterTermsConditionComponent } from "./component/footer-terms-conditio
 import { SetUpProfileComponent } from './component/set-up-profile/set-up-profile.component';
 import { DashboardSummaryPageComponent } from './component/dashboard-summary-page/dashboard-summary-page.component';
 import { DashboardTableComponent } from './component/dashboard-table/dashboard-table.component';
+import { HelpContainerComponent } from './component/help-container/help-container.component';
 
 @NgModule({
   declarations: [
@@ -193,6 +194,7 @@ import { DashboardTableComponent } from './component/dashboard-table/dashboard-t
     SetUpProfileComponent,
     DashboardSummaryPageComponent,
     DashboardTableComponent,
+    HelpContainerComponent,
   ],
 
   imports: [
@@ -262,6 +264,11 @@ import { DashboardTableComponent } from './component/dashboard-table/dashboard-t
             {
               path: "calendar",
               component: CalendarContainerComponent,
+              canActivate: [AuthGuard],
+            },
+            {
+              path: "help",
+              component: HelpContainerComponent,
               canActivate: [AuthGuard],
             },
           ],
