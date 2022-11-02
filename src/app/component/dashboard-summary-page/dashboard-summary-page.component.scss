@@ -50,8 +50,43 @@
   color: #7f7b92;
 }
 
+.arrow {
+  display: none;
+}
+
 .nav-collapsed {
   .visit-section {
     width: 242px;
   }
+
+  .main {
+    width: 1017px !important;
+  }
+
+  .header {
+    width: 940px !important;
+  }
+
+  .appointment-label {
+    width: 745px !important;
+  }
+
+  .arrow {
+    display: block;
+
+    margin-top: 22px;
+    margin-left: 22px;
+  }
+}
+.pill-btn {
+  display: inline-block;
+  vertical-align: middle;
+
+  padding: 0.375rem 0.75rem;
+
+  line-height: 1.5;
+
+  font-weight: 400;
+
+  border: 1px solid transparent;
 }

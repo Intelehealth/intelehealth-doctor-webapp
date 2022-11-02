@@ -1,7 +1,7 @@
 <div class="main ml-3">
   <div class="header d-flex">
     <img [src]="table?.lableIconPath" />
-    <div class="label">
+    <div class="appointment-label">
       {{ table?.label }} ({{ table?.dataCount }})
       <img src="assets/svgs/info.svg" />
     </div>
@@ -9,9 +9,16 @@
     <button class="btn btn-light btn-filter mt-2">
       <img src="assets/svgs/filter.svg" /> Filter
     </button>
+    <div
+      data-toggle="collapse"
+      [attr.data-target]="'#' + table.id"
+      class="arrow"
+    >
+      <img class="" src="assets/svgs/filter-table-up-arrow.svg" />
+    </div>
   </div>
 
-  <div class="table">
+  <div [id]="table.id" class="table">
     <table class="table table-borderless w-100">
       <tr class="table-color-th">
         <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
@@ -31,6 +38,16 @@
             <div *ngSwitchCase="header?.type === 'stringwithimage'">
               <img class="mr-1" [src]="data[header?.imageKey]" />
               {{ data[header?.key] }}
+            </div>
+
+            <div *ngSwitchCase="header?.type === 'pill'">
+              <div
+                *ngFor="let btn of header?.buttons"
+                class="{{ btn?.btnClass }}"
+              >
+                <img class="mr-1" [src]="data[header?.imageKey]" />
+                {{ btn?.label }}
+              </div>
             </div>
 
             <div *ngSwitchCase="header?.type === 'multibutton'">
