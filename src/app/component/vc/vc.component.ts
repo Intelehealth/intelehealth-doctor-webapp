@@ -47,7 +47,7 @@ export class VcComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<VcComponent>,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   close() {
     this.dialogRef.close();
@@ -80,15 +80,12 @@ export class VcComponent implements OnInit, OnDestroy {
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
 
-    this.nurseId =
-      patientVisitProvider && patientVisitProvider.provider
-        ? patientVisitProvider.provider
-        : this.nurseId;
+    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
 
     this.socketService.initSocket(true);
     this.initSocketEvents();
     this.socketService.emitEvent("call", {
-      nurseId: this.nurseId.uuid,
+      nurseId: this.nurseId,
       doctorName: this.doctorName,
       roomId: this.room,
     });
@@ -140,7 +137,7 @@ export class VcComponent implements OnInit, OnDestroy {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
       audio: {
         echoCancellation: true,
@@ -349,7 +346,7 @@ export class VcComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
-    this.socketService.emitEvent("bye", this.room);
+    this.socketService.emitEvent("bye", { room: this.room, nurseId: this.nurseId });
     this.setSpiner = false;
     this.close();
   }
