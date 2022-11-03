@@ -1,0 +1,52 @@
+<div class="main-container mt-3 mb-2 ml-3">
+  <div class="input-group w">
+    <div class="input-group-prepend">
+      <span class="input-group-text search-img">
+        <img class="" src="assets/svgs/search-icon.svg"
+      /></span>
+    </div>
+    <input type="text" class="search-input" placeholder="Search" />
+  </div>
+
+  <div class="profile d-flex ml-auto">
+    <div class="notification-bell">
+      <img
+        class="p-2 click"
+        src="assets/svgs/notification-bell.svg"
+        (click)="notificationClick()"
+      />
+
+      <div
+        *ngIf="isShowNotification"
+        class="popup-message alert alert-success alert-dismissible fade show notification"
+        role="alert"
+      >
+        <div>
+          <strong>Notification</strong>
+          <p class="para">muskan kala's appointment start in 15mints</p>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+            style="color: #7f7b92"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ml-2">
+      <img class="img-size" src="assets/svgs/profile-image.svg" alt="" />
+    </div>
+    <div class="mt-2">
+      <label> Hello Dr.Sakshi </label>
+
+      <img class="mr-2 ml-1" src="assets/svgs/Hand-Emoji-hello.svg" alt="" />
+    </div>
+    <div class="">
+      <img src="assets/svgs/three-dot.svg" alt="" />
+    </div>
+  </div>
+</div>

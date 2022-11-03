@@ -272,21 +272,13 @@ export class DashboardSummaryPageComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onRescheduleClick(item) {
-    console.log("onRescheduleClick: ", item);
-  }
+  onRescheduleClick() {}
 
-  onCancelClick(item) {
-    console.log("onCancelClick: ", item);
-  }
+  onCancelClick() {}
 
-  onVisitCreatedClick(item) {
-    console.log("onVisitCreatedClick", item);
-  }
-  onAwaitingVisitClick(item) {
-    console.log("onAwaitingVisitClick", item);
-  }
-  onProgressVisitClick(item) {
-    console.log("oninProgressVisitClick", item);
-  }
+  onVisitCreatedClick() {}
+
+  onAwaitingVisitClick() {}
+
+  onProgressVisitClick() {}
 }

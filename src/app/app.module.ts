@@ -129,6 +129,7 @@ import { SetUpProfileComponent } from './component/set-up-profile/set-up-profile
 import { DashboardSummaryPageComponent } from './component/dashboard-summary-page/dashboard-summary-page.component';
 import { DashboardTableComponent } from './component/dashboard-table/dashboard-table.component';
 import { HelpContainerComponent } from './component/help-container/help-container.component';
+import { HeaderComponent } from './component/header/header.component';
 
 @NgModule({
   declarations: [
@@ -195,6 +196,7 @@ import { HelpContainerComponent } from './component/help-container/help-containe
     DashboardSummaryPageComponent,
     DashboardTableComponent,
     HelpContainerComponent,
+    HeaderComponent,
   ],
 
   imports: [

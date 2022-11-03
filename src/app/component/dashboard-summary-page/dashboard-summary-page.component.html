@@ -1,5 +1,5 @@
 <div class="dashboard-summary">
-  <div class="header"></div>
+  <div class="header"><app-header></app-header></div>
 
   <div class="d-flex top">
     <div class="visit-section appointments">
@@ -43,6 +43,6 @@
   <app-dashboard-table [tableConfig]="priorityVisits"></app-dashboard-table>
 
   <app-dashboard-table [tableConfig]="awaitingVisits"></app-dashboard-table>
-  
+
   <app-dashboard-table [tableConfig]="inProgressVisits"></app-dashboard-table>
 </div>
