@@ -61,9 +61,9 @@ export class VitalComponent implements OnInit {
                   obs.display.slice(17, obs.display.length)
                 );
               }
-              if (displayObs.match("Pulse") !== null) {
-                this.answer.pulse = Number(
-                  obs.display.slice(7, obs.display.length)
+              if (displayObs.match("Blood Glucose") !== null) {
+                this.answer.bloodGlucose = Number(
+                  obs.display.slice(14, obs.display.length)
                 );
               }
               if (displayObs.match("Respiratory rate") !== null) {

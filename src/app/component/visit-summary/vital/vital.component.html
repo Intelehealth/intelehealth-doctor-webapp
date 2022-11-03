@@ -24,8 +24,8 @@
       <td><span *ngIf="item.sp02">{{ item.sp02 }} % </span></td>
       <th>BP:</th>
       <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
-      <th>HR:</th>
-      <td>{{ item.pulse }}</td>
+      <th>BG:</th>
+      <td><span *ngIf="item.bloodGlucose">{{ item.bloodGlucose }}</span></td>
       <th>RR:</th>
       <td>{{ item.respiratoryRate }}</td>
     </tr>
