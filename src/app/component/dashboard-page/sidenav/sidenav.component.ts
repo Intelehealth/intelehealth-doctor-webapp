@@ -40,11 +40,11 @@ export class SidenavComponent implements OnInit {
       screenWidth: this.screenWidth,
     });
 
+    const dashboardContainer = document.querySelector(".dashboard-summary");
+    
     if (this.collapsed) {
-      const dashboardContainer = document.querySelector(".dashboard-summary");
       dashboardContainer && dashboardContainer.classList.add("nav-collapsed");
     } else {
-      const dashboardContainer = document.querySelector(".dashboard-summary");
       dashboardContainer &&
         dashboardContainer.classList.remove("nav-collapsed");
     }

@@ -1,6 +1,7 @@
 <app-sidenav (onToggleSideNav)="onToggleSideNav($event)"></app-sidenav>
 
 <div class="body" [ngClass]="bodyClass">
+  <app-header></app-header>
   <router-outlet></router-outlet>
 </div>
 <app-footer-terms-condition></app-footer-terms-condition>
