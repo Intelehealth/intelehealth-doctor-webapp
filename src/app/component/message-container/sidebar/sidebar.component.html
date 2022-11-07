@@ -1,0 +1,34 @@
+<div class="sidebar-container">
+  <div class="sidebar-header">
+    <span>Patients</span>
+    <div class="message">(Via Comunity health workers)</div>
+  </div>
+  <div class="search-box">
+      <div class="search">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input type="text" [(ngModel)]="searchText" class="txt" placeholder="Search or start the new chat"/>
+      </div>
+  </div>
+
+  <div class="sidebar">
+    <div
+      class="conversation"
+      *ngFor="
+        let conversation of !searchText ? conversations : filteredConversations
+      "
+      (click)="conversationClicked.emit(conversation)"
+    >
+      <div class="picture">
+        <img [src]="conversation.profileLink"/>
+      </div>
+      <div class="content">
+        <div class="conversationHeader">
+          <div class="name">{{ conversation.name }}</div>
+        </div>
+        <div class="message">
+          {{ conversation.latestMessage }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
