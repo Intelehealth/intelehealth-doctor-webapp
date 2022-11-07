@@ -1,0 +1,60 @@
+<div class="checkUpReason-main">
+  <div class="checkUpReason-header w-100">
+    <div class="checkUpReason-header-content w-100">
+      <img [src]="checkUpReason?.image" />
+      <div class="checkUpReason-img-title">{{ checkUpReason?.mainlable }}</div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + checkUpReason?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+
+  <div [id]="checkUpReason?.id" class="checkUpReason-details collapse">
+    <div class="chief-content">
+      <div class="chief-complaint-title">Chief complaint</div>
+      <div class="pill-item mt-1">
+        <span class="abdominal-pill">Abdominal pain</span>
+        <span class="abdominal-pill ml-2">Back pain</span>
+      </div>
+    </div>
+
+    <!-- ul caption -->
+
+    <div class="abdomin-captoin mt-3 mb-3">
+      <div class="abdomin-captoin-font">Abdominal pain</div>
+    </div>
+
+    <div class="d-flex ml-4">
+      <div class="p-0">
+        <ul *ngFor="let items of checkUpReason?.data" class="first-list p-0">
+          <li>{{ items?.label }}</li>
+        </ul>
+      </div>
+      <div class="second-list">
+        <div *ngFor="let data of checkUpReason?.data" class="">
+          <label class="margin" for="">
+            {{ data?.value }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="patient-reports">
+      <div class="associated-font mb-3">Associated symptoms</div>
+      <ul
+        *ngFor="let data of checkUpReason?.associatedData"
+        class="font-size-md font-bold"
+      >
+        <li>{{ data?.label }}</li>
+        <p class="font-size-md">
+          {{ data?.value }}
+        </p>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -119,3 +119,18 @@ body.font-lato td {
 .click {
   cursor: pointer !important;
 }
+
+.hr {
+  height: 0px;
+
+  border: 1px solid rgba(178, 175, 190, 0.2);
+}
+
+.font-size-md {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.font-bold {
+  font-weight: 600;
+}

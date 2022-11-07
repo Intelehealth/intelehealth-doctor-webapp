@@ -1,0 +1,45 @@
+.mat-tab-group {
+  margin-bottom: 48px;
+}
+
+.tabs-main-container {
+  height: 74px;
+
+  padding: 24px 0px 0px;
+
+  background: #ffffff;
+
+  box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.04);
+  border-bottom: 2px solid rgba(178, 175, 190, 0.2);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tabs-main-container {
+  .mat-tab-label-content {
+    width: 217px;
+    height: 30px;
+
+    margin-bottom: 10px;
+
+    color: black;
+    
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 150%;
+    text-align: center;
+  }
+
+  .mat-tab-label {
+    color: #1b163a;
+  }
+
+  .mat-ink-bar {
+    width: 220px;
+
+    visibility: visible;
+    left: 21px;
+
+    background-color: #ea315b !important;
+  }
+}

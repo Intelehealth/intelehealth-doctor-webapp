@@ -1,0 +1,41 @@
+<div class="consultation-main">
+  <div class="consult-header w-100">
+    <div class="consult-header-content w-100">
+      <img [src]="consultation?.image" />
+      <div class="consult-img-title">{{ consultation?.mainlable }}</div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + consultation?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+
+  <div [id]="consultation?.id" class="consult-details collapse">
+    <div class="d-flex ml-4">
+      <div class="p-0">
+        <ul *ngFor="let items of consultation?.data" class="first-list p-0">
+          <li>{{ items?.label }}</li>
+        </ul>
+      </div>
+      <div class="second-list">
+        <div *ngFor="let item of consultation?.data" class="">
+          <label class="margin {{ item?.redClass }}" for="">
+            {{ item?.value }}
+          </label>
+
+          <img class="ml-3" [src]="item?.image1" />
+
+          <img class="ml-2" [src]="item?.image2" />
+
+          <img class="ml-2" [src]="item?.image3" />
+
+          <span class="ml-2 chw-color">{{ item?.valueChw }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

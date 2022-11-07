@@ -1,0 +1,171 @@
+.person-header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 4px;
+
+  margin-top: 35px;
+
+  box-sizing: border-box;
+  background: #ffffff;
+
+  border: 1px solid #ffffff;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
+}
+
+.person-content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 24px;
+
+  width: 1038px;
+  height: 124px;
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.person-content-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 16px;
+
+  width: 313.67px;
+  height: 124px;
+
+  border-right: 1px solid rgba(178, 175, 190, 0.2);
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.person-title {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 16px;
+
+  width: 313.67px;
+  height: 56px;
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.person-name-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+
+  width: 241.67px;
+  height: 55px;
+
+  flex: none;
+  order: 1;
+  flex-grow: 1;
+
+  .person-name {
+    width: 241.67px;
+    height: 27px;
+
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+
+    color: #1b163a;
+  }
+
+  .person-INT {
+    width: 241.67px;
+    height: 24px;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 150%;
+
+    color: #7f7b92;
+  }
+}
+
+.person-age-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 4px;
+
+  width: 313.67px;
+  height: 52px;
+
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+
+  .person-age-font {
+    width: 313.67px;
+    height: 24px;
+
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+  }
+}
+
+.person-label-color {
+  color: #7f7b92;
+}
+
+.person-age-color {
+  color: #1b163a;
+}
+
+.v-line {
+  width: 124px;
+  height: 0px;
+
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  transform: rotate(90deg);
+}
+
+.occupation {
+  height: 120px;
+
+  flex: none;
+  order: 2;
+  flex-grow: 1;
+
+  border-right: 1px solid rgba(178, 175, 190, 0.2);
+
+  .occupation-label {
+    width: 314.17px;
+    height: 24px;
+
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+  }
+}
+
+.contact {
+  height: 104px;
+
+  flex: none;
+  order: 4;
+  flex-grow: 1;
+}
