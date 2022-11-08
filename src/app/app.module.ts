@@ -125,18 +125,10 @@ import { PasswordStrengthComponent } from "./component/set-new-password/password
 import { NgSelectModule } from "@ng-select/ng-select";
 import { CountryData } from "./component/country-data/country-data";
 import { FooterTermsConditionComponent } from "./component/footer-terms-condition/footer-terms-condition.component";
-import { SetUpProfileComponent } from "./component/set-up-profile/set-up-profile.component";
-import { DashboardSummaryPageComponent } from "./component/dashboard-summary-page/dashboard-summary-page.component";
-import { DashboardTableComponent } from "./component/dashboard-table/dashboard-table.component";
-import { HelpContainerComponent } from "./component/help-container/help-container.component";
-import { HeaderComponent } from "./component/header/header.component";
-
-import { VisitSummaryV4Component } from "./component/visit-summary-v4/visit-summary-v4.component";
-import { TabsV4Component } from "./component/tabs-v4/tabs-v4.component";
-import { ConsultationDetailsV4Component } from "./component/consultation-details-v4/consultation-details-v4.component";
-import { VitalsV4Component } from "./component/vitals-v4/vitals-v4.component";
-import { CheckUpReasonV4Component } from "./component/check-up-reason-v4/check-up-reason-v4.component";
-import { PatientDetailsComponent } from "./component/patient-details/patient-details.component";
+import { SetUpProfileComponent } from './component/set-up-profile/set-up-profile.component';
+import { DashboardSummaryPageComponent } from './component/dashboard-summary-page/dashboard-summary-page.component';
+import { DashboardTableComponent } from './component/dashboard-table/dashboard-table.component';
+import { HelpContainerComponent } from './component/help-container/help-container.component';
 
 @NgModule({
   declarations: [
@@ -203,14 +195,6 @@ import { PatientDetailsComponent } from "./component/patient-details/patient-det
     DashboardSummaryPageComponent,
     DashboardTableComponent,
     HelpContainerComponent,
-    HeaderComponent,
-
-    VisitSummaryV4Component,
-    TabsV4Component,
-    VitalsV4Component,
-    ConsultationDetailsV4Component,
-    CheckUpReasonV4Component,
-    PatientDetailsComponent,
   ],
 
   imports: [
@@ -288,8 +272,9 @@ import { PatientDetailsComponent } from "./component/patient-details/patient-det
               canActivate: [AuthGuard],
             },
             {
-              path: "visit-summary",
-              component: VisitSummaryV4Component,
+              path: "message",
+              component: MessageContainerComponent,
+              canActivate: [AuthGuard],
             },
           ],
         },

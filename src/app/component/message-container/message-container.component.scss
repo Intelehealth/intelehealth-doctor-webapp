@@ -1,0 +1,26 @@
+.chat-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  position: absolute;
+  width: 1086px;
+  height: 760px;
+  left: 20px;
+  top: 60px;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
+}
+
+#chat {
+  background-color: #FAF9FF;;
+  flex-grow: 1;
+  height: 100%;
+}  
+#chatPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top:10rem ;
+}

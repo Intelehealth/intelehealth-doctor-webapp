@@ -1,0 +1,40 @@
+<div id="container">
+    <div class="header">
+      <div class="profile-section">
+        <div class="picture">
+            <img src="../../../../assets/icons/message/Frame2608562.png">
+          <!-- <img [src]="pic.profileLink"/> -->
+        </div>
+        <div class="name">Muskan Kala</div>
+        <div class="id">ID-1223</div>
+      </div>
+      <div class="call-button">
+        <img src="../../../../assets/svgs/phone.svg" />
+      </div>
+    </div>
+    <div class="body">
+      <div
+        class="message"
+        [ngClass]="{ me: message.me }"
+        *ngFor="let message of conversation.messages"
+      >
+        <div class="messageContent">
+          {{ message.body }}
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="textarea">
+        <input
+        type="text"
+        [(ngModel)]="message"
+        (keyup.enter)="submitMessage($event)"
+        placeholder="Type here"
+        />
+      </div>
+      <div class="micIcon">
+        <img src="../../../../assets/svgs/sent.svg" />
+      </div>
+    </div>
+  </div>
+  
