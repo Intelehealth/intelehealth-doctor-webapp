@@ -5,10 +5,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -17,10 +17,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame2608562.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -29,10 +29,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame2608562(1).png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -41,10 +41,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame2608562(2).png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -53,10 +53,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -65,10 +65,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -77,10 +77,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame2608562(3).png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -89,10 +89,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -101,10 +101,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -113,10 +113,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -125,10 +125,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -137,10 +137,10 @@ export const conversations = [
       latestMessageRead: false,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -149,10 +149,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
     {
@@ -161,10 +161,10 @@ export const conversations = [
       latestMessageRead: true,
       profileLink:'/assets/icons/message/Frame1.png',
       messages: [
-        { id: 1, body: 'Hi! How is patient feeling now?', me: true },
-        { id: 2, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
-        { id: 3, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
-        { id: 4, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 1, body: 'Great to hear. Keep me posted on the patient.', me: true },
+        { id: 2, body: 'The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.', me: false },
+        { id: 3, body: 'The patient was not feeling good for 2-3 days but lately the patient is doing well.', me: false },
+        { id: 4, body: 'Hi! How is patient feeling now?', me: true },
       ],
     },
   ];
