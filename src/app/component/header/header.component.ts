@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { HeaderService } from "src/app/services/header.service";
 
 @Component({
   selector: "app-header",
@@ -34,11 +35,15 @@ export class HeaderComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor(public headerService: HeaderService) {}
 
   ngOnInit(): void {}
 
   notificationClick() {
     this.isShowNotification = !this.isShowNotification;
+  }
+
+  get showSearchBar() {
+    return this.headerService?.showSearchBar;
   }
 }

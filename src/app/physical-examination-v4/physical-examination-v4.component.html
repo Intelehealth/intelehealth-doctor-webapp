@@ -1,0 +1,63 @@
+<div class="physicalExaminaton-main box-shadow mt-4">
+  <div class="physicalExaminaton-header w-100">
+    <div class="physicalExaminaton-header-content w-100">
+      <img [src]="physicalExaminaton?.image" />
+      <div class="physicalExaminaton-img-title">
+        {{ physicalExaminaton?.mainlable }}
+      </div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + physicalExaminaton?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+
+  <div
+    [id]="physicalExaminaton?.id"
+    class="physicalExaminaton-details collapse show"
+  >
+    <!-- ul caption -->
+
+    <div class="abdomin-captoin mt-3 mb-3">
+      <div class="abdomin-captoin-font">General exams</div>
+    </div>
+
+    <div class="d-flex ml-4">
+      <div class="p-0">
+        <ul
+          *ngFor="let items of physicalExaminaton?.data"
+          class="first-list p-0"
+        >
+          <li>{{ items?.label }}</li>
+        </ul>
+      </div>
+      <div class="second-list">
+        <div *ngFor="let data of physicalExaminaton?.data" class="">
+          <label class="margin" for="">
+            {{ data?.value }}
+          </label>
+
+          <img class="mr-2" [src]="data?.imge1" alt="" />
+
+          <img class="mr-2" [src]="data?.imge2" alt="" />
+
+          <img class="" [src]="data?.imge3" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <div class="patient-reports mt-5">
+      <div class="associated-font mb-3">Abdomen</div>
+      <ul
+        *ngFor="let data of physicalExaminaton?.physicalExaminatonData"
+        class="font-size-md"
+      >
+        <li>{{ data?.label }}</li>
+      </ul>
+    </div>
+  </div>
+</div>

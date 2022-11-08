@@ -1,0 +1,53 @@
+<div class="refer-to-specailist-main box-shadow mt-4">
+  <div class="refer-to-specailist-header w-100">
+    <div class="refer-to-specailist-header-content w-100">
+      <img [src]="referToSpecailist?.image" />
+      <div class="refer-to-specailist-img-title">
+        {{ referToSpecailist?.mainlable }}
+      </div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + referToSpecailist?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+  <div
+    [id]="referToSpecailist?.id"
+    aria-expanded="true"
+    aria-controls="collapse"
+    class="refer-to-specailist-details collapse show"
+  >
+    <div class="d-flex ml-4">
+      <div class="first-list">
+        <div *ngFor="let item of referToSpecailist?.data" class="">
+          <label class="margin" for="">
+            {{ item?.label }}
+          </label>
+        </div>
+      </div>
+      <div>
+        <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
+        <label class="mr-3 radio-label">Yes</label>
+
+        <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
+        <label class="radio-label">No</label>
+
+        <div class="select">
+          <ng-select
+            class=""
+            [items]="list"
+            bindLabel="name"
+            [clearable]="false"
+            [(ngModel)]="selected"
+          >
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn ml-4 mt-1 font-bold">Re-assign</button>
+  </div>
+</div>

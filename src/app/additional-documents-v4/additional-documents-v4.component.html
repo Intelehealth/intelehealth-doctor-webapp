@@ -1,0 +1,37 @@
+<div class="Additional-documents-main box-shadow mt-4">
+  <div class="Additional-documents-header w-100">
+    <div class="Additional-documents-header-content w-100">
+      <img [src]="AdditionalDocuments?.image" />
+      <div class="Additional-documents-img-title">
+        {{ AdditionalDocuments?.mainlable }}
+      </div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + AdditionalDocuments?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+  <div
+    [id]="AdditionalDocuments?.id"
+    class="Additional-documents-details collapse show"
+  >
+    <div class="d-flex ml-4">
+      <div *ngFor="let image of AdditionalDocuments?.data" class="">
+        <img
+          *ngIf="image.includes('.pdf'); else elseBlock"
+          height="120px"
+          width="120px"
+          class="mr-3"
+          src="assets/svgs/blood-pdf.svg"
+        />
+        <ng-template #elseBlock>
+          <img height="120px" width="120px" class="mr-3" [src]="image" />
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<div class="vital-main">
+<div class="vital-main box-shadow mt-4">
   <div class="vital-header w-100">
     <div class="vital-header-content w-100">
       <img [src]="vital?.image" />
@@ -13,7 +13,7 @@
     </div>
     <hr class="hr" />
   </div>
-  <div [id]="vital?.id" class="vital-details collapse">
+  <div [id]="vital?.id" class="vital-details collapse show">
     <div class="d-flex ml-4">
       <div class="p-0">
         <ul *ngFor="let items of vital?.data" class="first-list p-0">

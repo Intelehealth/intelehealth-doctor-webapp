@@ -1,4 +1,4 @@
-<div class="consultation-main">
+<div class="consultation-main box-shadow mt-4">
   <div class="consult-header w-100">
     <div class="consult-header-content w-100">
       <img [src]="consultation?.image" />
@@ -14,7 +14,7 @@
     <hr class="hr" />
   </div>
 
-  <div [id]="consultation?.id" class="consult-details collapse">
+  <div [id]="consultation?.id" class="consult-details collapse show">
     <div class="d-flex ml-4">
       <div class="p-0">
         <ul *ngFor="let items of consultation?.data" class="first-list p-0">

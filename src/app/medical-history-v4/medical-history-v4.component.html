@@ -1,0 +1,63 @@
+<div class="medicalhistory-main box-shadow mt-4">
+  <div class="medicalhistory-header w-100">
+    <div class="medicalhistory-header-content w-100">
+      <img [src]="medicalHistory?.image" />
+      <div class="medicalhistory-img-title">
+        {{ medicalHistory?.mainlable }}
+      </div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + medicalHistory?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+
+  <div [id]="medicalHistory?.id" class="medicalHistory-details collapse show">
+    <!-- ul caption -->
+
+    <div class="abdomin-captoin mt-3 mb-3">
+      <div class="abdomin-captoin-font">Patient history</div>
+    </div>
+
+    <div class="d-flex ml-4">
+      <div class="p-0">
+        <ul *ngFor="let items of medicalHistory?.data" class="first-list p-0">
+          <li>{{ items?.label }}</li>
+        </ul>
+      </div>
+      <div class="second-list">
+        <div *ngFor="let data of medicalHistory?.data" class="">
+          <label class="margin" for="">
+            {{ data?.value }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="patient-reports mt-2">
+      <div class="associated-font mb-3">Family history</div>
+    </div>
+
+    <div class="d-flex ml-4">
+      <div class="p-0">
+        <ul
+          *ngFor="let items of medicalHistory?.medicalHistoryData"
+          class="first-list p-0"
+        >
+          <li>{{ items?.label }}</li>
+        </ul>
+      </div>
+      <div class="second-list">
+        <div *ngFor="let data of medicalHistory?.medicalHistoryData" class="">
+          <label class="margin" for="">
+            {{ data?.value }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
