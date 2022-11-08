@@ -2,14 +2,14 @@
     <div class="header">
       <div class="profile-section">
         <div class="picture">
-            <img src="../../../../assets/icons/message/Frame2608562.png">
+            <img src="assets/icons/message/Frame2608562.png">
           <!-- <img [src]="pic.profileLink"/> -->
         </div>
         <div class="name">Muskan Kala</div>
         <div class="id">ID-1223</div>
       </div>
       <div class="call-button">
-        <img src="../../../../assets/svgs/phone.svg" />
+        <img src="assets/svgs/phone.svg" />
       </div>
     </div>
     <div class="body">
@@ -29,11 +29,19 @@
         type="text"
         [(ngModel)]="message"
         (keyup.enter)="submitMessage($event)"
-        placeholder="Type here"
-        />
+        placeholder="Enter your message"
+      />
+      <img
+        class="attach-img click"
+        height="20px"
+        width="20px"
+        src="assets/svgs/attach.svg"
+        (click)="inputField.click()"
+      />
+      <input #inputField hidden type="file" />
       </div>
-      <div class="micIcon">
-        <img src="../../../../assets/svgs/sent.svg" />
+      <div class="sent-box" (click)="submitMessage($event)">
+        <img src="assets/svgs/sent.svg" />
       </div>
     </div>
   </div>

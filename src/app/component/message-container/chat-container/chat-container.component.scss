@@ -95,9 +95,15 @@
 .footer {
     display: flex;
     margin-bottom: 10px;
+    .attach-img {
+        position: absolute;
+        right: 8%;
+        bottom: 4%;
+        cursor: pointer;
+    }
 }
 
-.micIcon{
+.sent-box{
     display: flex;
     align-items: center;
     justify-content: center;
