@@ -142,6 +142,9 @@ import { MedicalHistoryV4Component } from './medical-history-v4/medical-history-
 import { AdditionalDocumentsV4Component } from './additional-documents-v4/additional-documents-v4.component';
 import { ReferToSpecialistV4Component } from './refer-to-specialist-v4/refer-to-specialist-v4.component';
 import { NotesV4Component } from './notes-v4/notes-v4.component';
+import { MessageContainerComponent } from './component/message-container/message-container.component';
+import { SidebarComponent } from './component/message-container/sidebar/sidebar.component';
+import { ChatContainerComponent } from './component/message-container/chat-container/chat-container.component';
 
 @NgModule({
   declarations: [
@@ -209,7 +212,6 @@ import { NotesV4Component } from './notes-v4/notes-v4.component';
     DashboardTableComponent,
     HelpContainerComponent,
     HeaderComponent,
-
     VisitSummaryV4Component,
     TabsV4Component,
     VitalsV4Component,
@@ -221,6 +223,9 @@ import { NotesV4Component } from './notes-v4/notes-v4.component';
     AdditionalDocumentsV4Component,
     ReferToSpecialistV4Component,
     NotesV4Component,
+    MessageContainerComponent,
+    SidebarComponent,
+    ChatContainerComponent,
   ],
 
   imports: [
@@ -298,8 +303,9 @@ import { NotesV4Component } from './notes-v4/notes-v4.component';
               canActivate: [AuthGuard],
             },
             {
-              path: "visit-summary",
-              component: VisitSummaryV4Component,
+              path: "message",
+              component: MessageContainerComponent,
+              canActivate: [AuthGuard],
             },
           ],
         },

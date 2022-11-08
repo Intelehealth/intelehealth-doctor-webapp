@@ -1,0 +1,15 @@
+<div class="chat-container">
+  <app-sidebar
+    (conversationClicked)="onConversationSelected($event)"
+  ></app-sidebar>
+  <div id="chat">
+    <div id="chatPlaceholder" *ngIf="!conversation">
+      <img width="400" src="assets/icons/message/Group2608897.png" />
+      <h2>No messages selected</h2>
+      <p>
+        Please select patient from the list to view the messages.
+      </p>
+    </div>
+    <app-chat-container [conversation]="conversation" *ngIf="conversation"></app-chat-container>
+  </div>
+</div>
