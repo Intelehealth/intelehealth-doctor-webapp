@@ -129,6 +129,9 @@ import { SetUpProfileComponent } from './component/set-up-profile/set-up-profile
 import { DashboardSummaryPageComponent } from './component/dashboard-summary-page/dashboard-summary-page.component';
 import { DashboardTableComponent } from './component/dashboard-table/dashboard-table.component';
 import { HelpContainerComponent } from './component/help-container/help-container.component';
+import { MessageContainerComponent } from './component/message-container/message-container.component';
+import { SidebarComponent } from './component/message-container/sidebar/sidebar.component';
+import { ChatContainerComponent } from './component/message-container/chat-container/chat-container.component';
 
 @NgModule({
   declarations: [
@@ -195,6 +198,9 @@ import { HelpContainerComponent } from './component/help-container/help-containe
     DashboardSummaryPageComponent,
     DashboardTableComponent,
     HelpContainerComponent,
+    MessageContainerComponent,
+    SidebarComponent,
+    ChatContainerComponent,
   ],
 
   imports: [
