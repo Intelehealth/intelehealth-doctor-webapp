@@ -76,6 +76,7 @@
           <a class="nav-link dropdown-toggle no-arrow" id="navbarDropdownMenuLink-4" data-toggle="dropdown">
             <i class="fas fa-bell bell-icn" *ngIf="!snoozeTimeout" (click)="toggleIcon()"></i>
             <i class="fas fa-bell-slash bell-icn" *ngIf="snoozeTimeout" (click)="toggleIcon()"></i>
+            {{ 'Notification' | translate }}
           </a>
           <div [class.d-block]="notificationMenu" class="bell-menu dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" (click)="setNotification('30m')">{{'Do not disturb' | translate}}

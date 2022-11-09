@@ -6,6 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { PushNotificationsService } from 'src/app/services/push-notification.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { AuthService } from 'src/app/services/auth.service';
 declare var getFromStorage: any
 @Component({
   selector: 'app-change-password',
@@ -21,7 +22,8 @@ export class ChangePasswordComponent implements OnInit {
               private http: HttpClient,
               private dialogRef: MatDialogRef<ChangePasswordComponent>,
               private pushNotificationsService: PushNotificationsService,
-              private translationService: TranslationService
+              private translationService: TranslationService,
+              private authService: AuthService
               ) {
     this.changePasswordForm = this.formBuilder.group({
       currentPassword: ['', Validators.required],
@@ -62,6 +64,7 @@ export class ChangePasswordComponent implements OnInit {
         if (response == null) {
           this.translationService.getTranslation('Password changed successfully.');
           this.dialogRef.close();
+          this.authService.logout();
           this.pushNotificationsService.changePassword(json1).subscribe((response)=>{
           })
         }

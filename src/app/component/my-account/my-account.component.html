@@ -2,11 +2,11 @@
 <ng-container *ngIf="!setSpiner">
   <div class="container">
     <div class="wrap-login100">
-      <div class="login100-form-title">
+      <div class="login100-form-title ">
         <span *ngIf="providerDetails.person.display">{{
           providerDetails.person.display
           }}</span>
-        <span *ngIf="providerDetails.address">{{
+        <span class="details" *ngIf="providerDetails.address">{{
           providerDetails.address.value
           }}</span>
       </div>
@@ -66,7 +66,7 @@
             <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
               <th>{{ 'Signature'| translate }} :</th>
               <td *ngIf="providerDetails.textOfSign" [class]="providerDetails?.fontOfSign?.value"
-                [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 50px">
+                [style.font-family]="providerDetails?.fontOfSign?.value" style="font-size: 50px; padding-top: 15px;">
                 {{ providerDetails?.textOfSign?.value }}
               </td>
               <td *ngIf="

@@ -93,13 +93,16 @@ mat-spinner {
 }
 
   @media only screen and (max-width: 768px) { 
+    .details {
+      width: 275px;
+    }
     .overlap{
       top: -100px;
       position: relative;
-      left: 8%;
-      width: 85%;
+      left: 0%;
+      width: 100%;
       border-radius: 10px;
-      padding-top: 140px;
+      padding-top: 100px;
       }
 
       .wrap-login100 {
