@@ -145,6 +145,8 @@ import { NotesV4Component } from './notes-v4/notes-v4.component';
 import { MessageContainerComponent } from './component/message-container/message-container.component';
 import { SidebarComponent } from './component/message-container/sidebar/sidebar.component';
 import { ChatContainerComponent } from './component/message-container/chat-container/chat-container.component';
+import { AdminContainerComponent } from './component/admin-container/admin-container.component';
+import { AdminTableComponent } from './component/admin-container/admin-table/admin-table.component';
 
 @NgModule({
   declarations: [
@@ -226,6 +228,8 @@ import { ChatContainerComponent } from './component/message-container/chat-conta
     MessageContainerComponent,
     SidebarComponent,
     ChatContainerComponent,
+    AdminContainerComponent,
+    AdminTableComponent,
   ],
 
   imports: [
@@ -306,6 +310,11 @@ import { ChatContainerComponent } from './component/message-container/chat-conta
               path: "message",
               component: MessageContainerComponent,
               canActivate: [AuthGuard],
+            },
+            { 
+              path: "admin", 
+              component: AdminContainerComponent,
+              canActivate: [AuthGuard], 
             },
           ],
         },

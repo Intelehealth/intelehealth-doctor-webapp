@@ -1,0 +1,82 @@
+@import "../../../assets/scss/main.scss";
+
+
+.main-container{
+    position: absolute;
+    width: 1086px;
+    height: 1242px;
+    left: 22px;
+    top: 108px;
+}
+// .body{
+//     display: flex;
+//     flex-direction: column;
+//     align-items: flex-start;
+//     padding: 24px;
+//     gap: 24px;
+//     width: 1086px;
+//     height: 1117px;
+//     background: #FFFFFF;
+//     box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+//     border-radius: 20px;
+//     margin-top: 2rem;
+// }
+.license-key{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 388px;
+    height: 48px;
+    .select{
+        width: 200px;
+    }
+}
+.expiry-date{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 56px;
+    width: 388px;
+    height: 29px;
+    margin-top: 1rem;
+    .date{
+        font-family: 'DM Sans';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 150%;
+        color: #1B163A;
+    }
+}
+.add-new-key {
+    position: absolute;
+    top: 0.5%;
+    right: 0%;
+    .add-btn{
+        width: 179px;
+        height: 48px;
+        background: #EFE8FF;
+        border-radius: 8px;
+        color: #2E1E91;
+        font-weight: 700;
+        font-size: 18px;
+        border: 1.33px solid #efe8ff;
+    }
+}
+.title{
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+}
+.edit{
+    font-weight: 400;
+    font-size: 14px;
+    color: #2E1E91;
+    width: 62px;
+    height: 29px;
+    border: 1px solid #EFE8FF;
+    border-radius: 4px;
+    margin-left: 1rem;
+}

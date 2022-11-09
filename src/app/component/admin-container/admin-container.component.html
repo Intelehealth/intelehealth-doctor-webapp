@@ -1,0 +1,40 @@
+<div class="main-container">
+    <div class="header">
+        <div class="license-key">
+            <div class="title">
+                Select license key
+            </div>
+            <div class="select">
+                <ng-select
+                    class=""
+                    [items]="LicenseList"
+                    bindLabel="name"
+                    [clearable]="false"
+                    [(ngModel)]="selectedLicense"
+                >
+                </ng-select>
+            </div>
+        </div>
+        <div class="expiry-date">
+            <div class="title">
+                Expiry date
+            </div>
+            <div class="date">
+                12 July, 223
+                <button class="edit">
+                    <img width="16px" src="assets/svgs/edit.svg">
+                    Edit
+                </button>
+            </div>
+        </div>
+        <div class="add-new-key">
+            <button type="submit" class="add-btn">
+                <img width="20px" src="assets/svgs/plus.svg"/>
+                Add new key
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <app-admin-table></app-admin-table>
+</div>
