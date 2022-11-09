@@ -1,6 +1,14 @@
 <h4><i class="fas fa-info-circle"></i> {{'Patient Information'| translate}}</h4>
 <div class="modal-body row">
     <div class="col-md-6">
+        <div *ngIf="profileImagePresent"  class="align">
+            <img [src]=image width="40%" height="40%" alt="">
+        </div>
+        <div *ngIf="!profileImagePresent" class="align">
+            <img src="assets/dummy profile image.jpg" width="40%" height="40%" alt="">
+        </div>
+    </div>
+    <div class="col-md-6">
         <table class="table table-borderless table-sm">
             <tbody *ngFor="let info of patientInfo">
                 <tr>
@@ -37,14 +45,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-    <div class="col-md-6">
-        <div *ngIf="profileImagePresent" style="text-align: center">
-            <img [src]=image width="40%" height="200" alt="">
-        </div>
-        <div *ngIf="!profileImagePresent" style="text-align: center">
-            <img src="assets/dummy profile image.jpg" width="40%" height="40%" alt="">
-        </div>
     </div>
 </div>
 <ng-template #noData>
