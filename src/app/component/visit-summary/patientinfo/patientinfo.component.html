@@ -13,31 +13,27 @@
                 </tr>
                 <tr>
                     <th scope="row">{{'Sex'|translate}}</th>
-                    <td>{{ info.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
+                    <td *ngIf="info.gender; else noData">{{ info.gender === 'M' ? ('Male'| translate ): ('Female'| translate) }}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'DOB'|translate}}</th>
-                    <td>{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
+                    <td *ngIf="info.birthdate; else noData">{{info.birthdate | date: 'dd-MMM-yyy'}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Age'|translate}}</th>
-                    <td>{{info.age}} {{'Years'| translate}}</td>
+                    <td *ngIf="info.age; else noData">{{info.age}} {{'Years'| translate}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Village'|translate}}</th>
-                    <td>{{info.preferredAddress.cityVillage}}</td>
+                    <td *ngIf="info.preferredAddress.cityVillage; else noData">{{info.preferredAddress.cityVillage}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Contact Info'|translate}}</th>
-                    <td *ngIf="info.telephone">{{info.telephone}}</td>
+                    <td *ngIf="info.telephone; else noData">{{info.telephone}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Occupation'|translate}}</th>
-                    <td *ngIf="info.occupation">{{info.occupation}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{{'Health Scheme Card'|translate}}</th>
-                    <td *ngIf="info.medicalInsurance">{{info.medicalInsurance}}</td>
+                    <td *ngIf="info.occupation; else noData">{{info.occupation}}</td>
                 </tr>
             </tbody>
         </table>
@@ -51,3 +47,6 @@
         </div>
     </div>
 </div>
+<ng-template #noData>
+    <div style="margin-left: 6px;">NA</div>
+</ng-template>
