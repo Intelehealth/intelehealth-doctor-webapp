@@ -9,6 +9,8 @@ import { HeaderService } from "src/app/services/header.service";
 export class HeaderComponent implements OnInit {
   isShowNotification: boolean = false;
 
+  showBreadCrumb: boolean = false;
+
   allNotification = [{}];
 
   showFourNotification = [
@@ -32,6 +34,17 @@ export class HeaderComponent implements OnInit {
       text: "muskan kala's",
       lableIconPath: "assets/svgs/progress-dilog.svg",
       isActive: false,
+    },
+  ];
+
+  breadCrumb = [
+    {
+      text: "Dashboard",
+      route: "/dashboard",
+    },
+    {
+      text: "Visit summary",
+      route: "/dashboard/visit-summary",
     },
   ];
 

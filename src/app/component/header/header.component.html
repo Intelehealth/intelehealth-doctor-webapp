@@ -8,6 +8,17 @@
     <input type="text" class="search-input" placeholder="Search" />
   </div>
 
+  <div class="d-flex" *ngFor="let list of breadCrumb; let i = index">
+    <span
+      [routerLink]="list.route"
+      routerLinkActive="font"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="mr-2 font-size-md grey-color"
+      >{{ list?.text }}
+    </span>
+    <img class="mr-2" src="assets/svgs/bread-crumb.svg" />
+  </div>
+
   <div class="profile d-flex ml-auto">
     <div class="notification-bell">
       <img

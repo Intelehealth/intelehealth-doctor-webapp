@@ -137,14 +137,19 @@ import { ConsultationDetailsV4Component } from "./component/consultation-details
 import { VitalsV4Component } from "./component/vitals-v4/vitals-v4.component";
 import { CheckUpReasonV4Component } from "./component/check-up-reason-v4/check-up-reason-v4.component";
 import { PatientDetailsComponent } from "./component/patient-details/patient-details.component";
-import { PhysicalExaminationV4Component } from './physical-examination-v4/physical-examination-v4.component';
-import { MedicalHistoryV4Component } from './medical-history-v4/medical-history-v4.component';
-import { AdditionalDocumentsV4Component } from './additional-documents-v4/additional-documents-v4.component';
-import { ReferToSpecialistV4Component } from './refer-to-specialist-v4/refer-to-specialist-v4.component';
-import { NotesV4Component } from './notes-v4/notes-v4.component';
-import { MessageContainerComponent } from './component/message-container/message-container.component';
-import { SidebarComponent } from './component/message-container/sidebar/sidebar.component';
-import { ChatContainerComponent } from './component/message-container/chat-container/chat-container.component';
+import { PhysicalExaminationV4Component } from "./physical-examination-v4/physical-examination-v4.component";
+import { MedicalHistoryV4Component } from "./medical-history-v4/medical-history-v4.component";
+import { AdditionalDocumentsV4Component } from "./additional-documents-v4/additional-documents-v4.component";
+import { ReferToSpecialistV4Component } from "./refer-to-specialist-v4/refer-to-specialist-v4.component";
+import { NotesV4Component } from "./notes-v4/notes-v4.component";
+import { MessageContainerComponent } from "./component/message-container/message-container.component";
+import { SidebarComponent } from "./component/message-container/sidebar/sidebar.component";
+import { ChatContainerComponent } from "./component/message-container/chat-container/chat-container.component";
+import { VisitNotesV4Component } from "./visit-notes-v4/visit-notes-v4.component";
+import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-interaction-v4.component";
+import { DiagnosisV4Component } from './diagnosis-v4/diagnosis-v4.component';
+import { InteractionNoteV4Component } from './interaction-note-v4/interaction-note-v4.component';
+import { MedicationV4Component } from './medication-v4/medication-v4.component';
 
 @NgModule({
   declarations: [
@@ -226,6 +231,11 @@ import { ChatContainerComponent } from './component/message-container/chat-conta
     MessageContainerComponent,
     SidebarComponent,
     ChatContainerComponent,
+    VisitNotesV4Component,
+    PatientInteractionV4Component,
+    DiagnosisV4Component,
+    InteractionNoteV4Component,
+    MedicationV4Component,
   ],
 
   imports: [
@@ -305,6 +315,12 @@ import { ChatContainerComponent } from './component/message-container/chat-conta
             {
               path: "message",
               component: MessageContainerComponent,
+              canActivate: [AuthGuard],
+            },
+
+            {
+              path: "visit-summary",
+              component: VisitSummaryV4Component,
               canActivate: [AuthGuard],
             },
           ],

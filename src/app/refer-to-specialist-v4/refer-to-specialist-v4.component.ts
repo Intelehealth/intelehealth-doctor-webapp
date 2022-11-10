@@ -7,7 +7,7 @@ import { Component, OnInit } from "@angular/core";
 })
 export class ReferToSpecialistV4Component implements OnInit {
   selected: any;
-  list = [{ name: "Cardiologist" }, { name: "" }];
+  list = [{ name: "Cardiologist" }];
 
   referToSpecailist = {
     id: "referToSpecailist",
@@ -15,7 +15,6 @@ export class ReferToSpecialistV4Component implements OnInit {
     mainlable: "Refer-to-specailist",
     collapse: "#collapseVital",
     toggle: "collapse",
-
     data: [
       {
         label: "Refer to another speciality",

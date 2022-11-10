@@ -13,6 +13,8 @@
 }
 .help {
   grid-area: help;
+
+  z-index: 1000;
 }
 .position {
   position: fixed;

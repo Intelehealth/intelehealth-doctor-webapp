@@ -1,0 +1,49 @@
+<div class="patient-interaction-main ">
+  <div class="patient-interaction-header w-100">
+    <div class="patient-interaction-header-content w-100">
+      <img [src]="patientInteraction?.image" />
+      <div class="patient-interaction-img-title">
+        {{ patientInteraction?.mainlable }}
+      </div>
+      <div
+        data-toggle="collapse"
+        [attr.data-target]="'#' + patientInteraction?.id"
+        class="click"
+      >
+        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+
+    <div [id]="patientInteraction?.id" class="consult-details collapse show">
+      <div class="d-flex ml-4">
+        <div class="p-0">
+          <ul
+            *ngFor="let items of patientInteraction?.data"
+            class="first-list p-0"
+          >
+            <li>{{ items?.label }}</li>
+          </ul>
+        </div>
+        <div class="second-list">
+          <div *ngFor="let item of patientInteraction?.data" class="">
+            <img *ngIf="item?.image1" class="" [src]="item?.image1" />
+
+            <img *ngIf="item?.image2" class="ml-2" [src]="item?.image2" />
+
+            <span *ngIf="item?.value" class="ml-2 chw-color">{{
+              item?.value
+            }}</span>
+          </div>
+          <div class="mt-3">
+            <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
+            <label class="mr-3 radio-label">Yes</label>
+
+            <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
+            <label class="radio-label">No</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

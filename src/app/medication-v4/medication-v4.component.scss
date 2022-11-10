@@ -1,4 +1,4 @@
-.note-main {
+.medication-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -7,14 +7,15 @@
 
   position: relative;
 
+  background: #faf9ff;
   border-radius: 12px;
 }
 
-.note-header {
+.medication-header {
   height: 64px;
 }
 
-.note-header-content {
+.medication-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -23,7 +24,7 @@
   height: 48px;
 }
 
-.note-img-title {
+.medication-img-title {
   display: flex;
   align-items: center;
 
@@ -45,14 +46,6 @@
   padding: 10px;
 }
 
-.no-info-color {
-  color: #7f7b92;
-}
-
-.first-list {
-  width: 96%;
-}
-
 .text-area-label {
   font-size: 14px;
 }
@@ -66,13 +59,13 @@
 
   height: 80px;
 
-  background: #faf9ff;
+  background: #ffffff;
 
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
 
-.cancel-add-note-btn {
+.cancel-save-btn {
   width: 112px;
   height: 45px;
 
@@ -85,8 +78,13 @@
   border-radius: 8px;
 }
 
-.add-note-btn {
+.save-btn {
   background: #efe8ff;
+}
+
+.border-top {
+  border-top: 0px !important;
+  border-bottom: 1px solid rgba(178, 175, 190, 0.2);
 }
 
 .btn-height {
