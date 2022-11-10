@@ -3,13 +3,12 @@
     <div class="mindmaps-label">
         Associated mindmaps(9 Modules)
     </div>
-
     <button class="add-btn mt-2">
       <img src="assets/svgs/plus.svg" /> Add Mindmaps
     </button>
   </div>
 
-  <div [id]="table.id" class="table">
+  <div class="table">
     <table class="table table-borderless w-100">
       <tr class="table-color-th">
         <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
@@ -26,32 +25,26 @@
           class="vr {{ header?.headerClass }}"
         >
           <ng-container [ngSwitch]="true">
-            <div *ngSwitchCase="header?.type === 'stringwithimage'">
-              <img class="mr-1" [src]="data[header?.imageKey]" />
-              {{ data[header?.key] }}
-            </div>
-
-            <div *ngSwitchCase="header?.type === 'pill'">
-              <div
-                *ngFor="let btn of header?.buttons"
-                class="{{ btn?.btnClass }}"
-              >
+            <div *ngSwitchCase="header?.type === 'fill'">
                 <img class="mr-1" [src]="data[header?.imageKey]" />
                 {{ btn?.label }}
-              </div>
-            </div>
-
-            <div *ngSwitchCase="header?.type === 'multibutton'">
-              <button
-                *ngFor="let btn of header?.buttons"
-                class="btn btn-light {{ btn?.btnClass }}"
-                (click)="btn?.onClick()"
-              >
-                {{ btn?.label }}
-              </button>
             </div>
 
             <div *ngSwitchDefault>{{ data[header?.key] }}</div>
+
+            
+            <div *ngSwitchCase="header?.type === 'boolean'">
+                <img class="mr-1" [src]="data[header?.imageKey]" />
+                {{ btn?.label }}
+            </div>
+            <div *ngSwitchCase="header?.type === 'file'">
+                <img class="mr-1" [src]="data[header?.imageKey]" />
+                {{ btn?.label }}
+            </div>
+            <div *ngSwitchCase="header?.type === 'data'">
+              <img class="mr-1" [src]="data[header?.imageKey]" />
+              {{ btn?.label }}
+          </div>
           </ng-container>
         </td>
       </tr>
