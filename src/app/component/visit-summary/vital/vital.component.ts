@@ -72,6 +72,12 @@ vitalsPresent = false;
                 if (displayObs.match('Total Chlolestrol') !== null ) {
                   this.dignosis.totalChlolestrol = Number(obs.display.slice(19, obs.display.length));
                 }
+                if (displayObs.match('BLOOD_GLUCOSE_RANDOM_ID') !== null ) {
+                  this.dignosis.glucoseRandom = Number(obs.display.slice(24, obs.display.length));
+                }
+                if (displayObs.match('BLOOD_GLUCOSE_POST_PRANDIAL_ID') !== null ) {
+                  this.dignosis.glucosePrandial = Number(obs.display.slice(31, obs.display.length));
+                }
               });
               this.v.push(this.answer);
               this.d.push(this.dignosis);
