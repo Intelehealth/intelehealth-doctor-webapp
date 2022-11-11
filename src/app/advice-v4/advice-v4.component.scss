@@ -1,21 +1,21 @@
-.medication-main {
+.advice-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
-
+  
   position: relative;
 
-  background: #faf9ff;
+  padding: 32px 24px;
+
   border-radius: 12px;
 }
 
-.medication-header {
+.advice-header {
   height: 64px;
 }
 
-.medication-header-content {
+.advice-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -24,18 +24,18 @@
   height: 48px;
 }
 
-.medication-img-title {
+.advice-img-title {
   display: flex;
   align-items: center;
 
   width: 196px;
   height: 30px;
 
+  color: #1b163a;
+
   font-weight: 700;
   font-size: 19px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .arrow {
@@ -44,6 +44,10 @@
   right: 36px;
 
   padding: 10px;
+}
+
+.first-list {
+  width: 96%;
 }
 
 .text-area-label {
@@ -59,47 +63,32 @@
 
   height: 80px;
 
-  background: #ffffff;
+  background: #faf9ff;
 
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
 
-.cancel-save-btn {
-  width: 112px;
+.cancel-add-advice-btn {
+  width: 140px;
   height: 45px;
+
+  color: #2e1e91;
+
+  background: #ffffff;
 
   font-size: 18px;
   line-height: 150%;
-
-  color: #2e1e91;
-  background: #ffffff;
+  
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
 
-.save-btn {
+.add-advice-btn {
   background: #efe8ff;
-}
-
-.border-top {
-  border-top: 0px !important;
-  border-bottom: 1px solid rgba(178, 175, 190, 0.2);
 }
 
 .btn-height {
   height: 24px;
   width: 24px;
-}
-
-.select {
-  width: 164px;
-
-  border: 0.770833px solid rgba(178, 175, 190, 0.2);
-  border-radius: 8px;
-}
-
-.remark-input {
-  height: 36px !important;
-  width: 200.8px !important;
 }

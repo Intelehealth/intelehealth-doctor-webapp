@@ -1,0 +1,53 @@
+<div class="advice-main box-shadow">
+
+  <div class="advice-header w-100">
+    
+    <div class="advice-header-content w-100">
+      <img src="assets/svgs/advice.svg" />
+      <div class="advice-img-title">Advice</div>
+      <div data-toggle="collapse" data-target="#advice" class="click">
+        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+  
+  <div id="advice" class="advice-details collapse show w-100">
+    <!-- ul caption -->
+    <div class="d-flex justify-content-center mb-2 w-100">
+      <ul class="first-list p-0 m-0">
+        <li *ngFor="let advice of adviceData" class="mb-2">
+          {{ advice?.label }}
+          <span class="btn-height click float-right">
+            <img src="assets/svgs/delete-icon.svg" />
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <span class="text-area-label font-bold">Advice </span>
+
+    <textarea
+      class="text-area mt-2 w-100"
+      name="advice"
+      id=""
+      cols="8"
+      rows="4"
+    >
+        Let the patient know that they cannot travel for atleast 2 weeks
+      </textarea
+    >
+
+    <button type="button" class="btn cancel-add-advice-btn font-bold mt-4">
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      class="btn cancel-add-advice-btn add-advice-btn font-bold mt-4 ml-3"
+    >
+      Add advice
+    </button>
+
+</div>
+</div>

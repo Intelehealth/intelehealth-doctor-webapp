@@ -1,27 +1,21 @@
-<div class="note-main box-shadow mt-4">
+<div class="note-main box-shadow">
   <div class="note-header w-100">
     <div class="note-header-content w-100">
-      <img [src]="note?.image" />
-      <div class="note-img-title">
-        {{ note?.mainlable }}
-      </div>
-      <div
-        data-toggle="collapse"
-        [attr.data-target]="'#' + note?.id"
-        class="click"
-      >
+      <img src="assets/svgs/note-icon.svg" />
+      <div class="note-img-title">Note</div>
+      <div data-toggle="collapse" data-target="#note" class="click">
         <img class="arrow" src="assets/svgs/minus-icon.svg" />
       </div>
     </div>
     <hr class="hr" />
   </div>
 
-  <div [id]="note?.id" class="note-details collapse show w-100">
+  <div id="note" class="note-details collapse show w-100">
     <!-- ul caption -->
 
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
-        <li *ngFor="let items of note?.data" class="mb-2">
+        <li *ngFor="let items of noteData" class="mb-2">
           {{ items?.label }}
           <span class="btn-height click float-right">
             <img src="assets/svgs/delete-icon.svg" />
@@ -47,5 +41,6 @@
     >
       Add note
     </button>
+    
   </div>
 </div>

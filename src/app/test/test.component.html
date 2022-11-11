@@ -1,0 +1,46 @@
+<div class="test-main box-shadow">
+  <div class="test-header w-100">
+    <div class="test-header-content w-100">
+      <img src="assets/svgs/test.svg" />
+      <div class="test-img-title">Test</div>
+      <div data-toggle="collapse" data-target="#test" class="click">
+        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      </div>
+    </div>
+    <hr class="hr" />
+  </div>
+
+  <div id="test" class="test-details collapse show w-100">
+    <!-- ul caption -->
+
+    <div class="d-flex justify-content-center mb-2 w-100">
+      <ul class="first-list p-0 m-0">
+        <li *ngFor="let test of testData" class="mb-2">
+          {{ test?.label }}
+          <span class="btn-height click float-right">
+            <img src="assets/svgs/delete-icon.svg" />
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <span class="text-area-label font-bold">Test </span>
+
+    <textarea class="text-area mt-2 w-100" name="test" id="" cols="8" rows="4">
+      Blood pressure test
+        </textarea
+    >
+
+    <button type="button" class="btn cancel-add-test-btn font-bold mt-4">
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
+    >
+      Add test
+    </button>
+    
+  </div>
+</div>

@@ -150,6 +150,9 @@ import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-
 import { DiagnosisV4Component } from './diagnosis-v4/diagnosis-v4.component';
 import { InteractionNoteV4Component } from './interaction-note-v4/interaction-note-v4.component';
 import { MedicationV4Component } from './medication-v4/medication-v4.component';
+import { AdviceV4Component } from './advice-v4/advice-v4.component';
+import { TestComponent } from './test/test.component';
+import { ReferalV4Component } from './referal-v4/referal-v4.component';
 
 @NgModule({
   declarations: [
@@ -236,6 +239,9 @@ import { MedicationV4Component } from './medication-v4/medication-v4.component';
     DiagnosisV4Component,
     InteractionNoteV4Component,
     MedicationV4Component,
+    AdviceV4Component,
+    TestComponent,
+    ReferalV4Component,
   ],
 
   imports: [
