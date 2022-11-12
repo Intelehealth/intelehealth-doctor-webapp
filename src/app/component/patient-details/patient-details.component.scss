@@ -2,10 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 24px;
   gap: 4px;
 
   margin-top: 35px;
+
+  padding: 24px;
 
   box-sizing: border-box;
   background: #ffffff;
@@ -19,11 +20,12 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0px;
   gap: 24px;
 
-  width: 1038px;
+  padding: 0px;
+
   height: 124px;
+  width: 1015px;
 
   flex: none;
   order: 0;
@@ -35,11 +37,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 16px;
 
-  width: 313.67px;
+  padding: 0px;
+
   height: 124px;
+  width: 313.67px;
 
   border-right: 1px solid rgba(178, 175, 190, 0.2);
 
@@ -52,11 +55,12 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0px;
   gap: 16px;
 
-  width: 313.67px;
+  padding: 0px;
+
   height: 56px;
+  width: 313.67px;
 
   flex: none;
   order: 0;
@@ -67,36 +71,37 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 4px;
 
-  width: 241.67px;
+  padding: 0px;
+
   height: 55px;
+  width: 241.67px;
 
   flex: none;
   order: 1;
   flex-grow: 1;
 
   .person-name {
-    width: 241.67px;
     height: 27px;
+    width: 241.67px;
+
+    color: #1b163a;
 
     font-weight: 700;
     font-size: 18px;
     line-height: 150%;
-
-    color: #1b163a;
   }
 
   .person-INT {
     width: 241.67px;
     height: 24px;
 
+    color: #7f7b92;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 150%;
-
-    color: #7f7b92;
   }
 }
 
@@ -104,11 +109,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 4px;
 
-  width: 313.67px;
+  padding: 0px;
+
   height: 52px;
+  width: 313.67px;
 
   flex: none;
   order: 1;
@@ -116,8 +122,8 @@
   flex-grow: 0;
 
   .person-age-font {
-    width: 313.67px;
     height: 24px;
+    width: 313.67px;
 
     font-weight: 400;
     font-size: 16px;

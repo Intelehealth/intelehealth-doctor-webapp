@@ -1,17 +1,28 @@
-<div class="test-main box-shadow">
+<div class="test-main box-shadow mt-4">
   <div class="test-header w-100">
     <div class="test-header-content w-100">
       <img src="assets/svgs/test.svg" />
       <div class="test-img-title">Test</div>
-      <div data-toggle="collapse" data-target="#test" class="click">
-        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      <div
+        data-toggle="collapse"
+        data-target="#test"
+        class="click"
+        (click)="isCollapsed = !isCollapsed"
+      >
+        <img
+          class="arrow"
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
       </div>
     </div>
-    <hr class="hr" />
   </div>
 
   <div id="test" class="test-details collapse show w-100">
-    <!-- ul caption -->
+    <hr class="hr" />
 
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
@@ -24,23 +35,43 @@
       </ul>
     </div>
 
-    <span class="text-area-label font-bold">Test </span>
+    <div *ngIf="showAddMore">
+      <img
+        src="assets/svgs/add-more-plus-icon.svg"
+        (click)="showAddMore = !showAddMore"
+      />
 
-    <textarea class="text-area mt-2 w-100" name="test" id="" cols="8" rows="4">
-      Blood pressure test
-        </textarea
-    >
+      <label class="ml-2 font-size-md"> Add more medicines</label>
+    </div>
 
-    <button type="button" class="btn cancel-add-test-btn font-bold mt-4">
-      Cancel
-    </button>
+    <ng-container *ngIf="!showAddMore">
+      <span class="text-area-label font-bold">Test </span>
 
-    <button
-      type="button"
-      class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
-    >
-      Add test
-    </button>
-    
+      <textarea
+        class="text-area mt-2 w-100"
+        name="test"
+        id=""
+        cols="8"
+        rows="4"
+      >
+    Blood pressure test
+    </textarea
+      >
+
+      <button
+        type="button"
+        class="btn cancel-add-test-btn font-bold mt-4"
+        (click)="showAddMore = !showAddMore"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
+      >
+        Add test
+      </button>
+    </ng-container>
   </div>
 </div>

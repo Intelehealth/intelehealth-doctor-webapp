@@ -8,29 +8,22 @@ import { Component, OnInit } from "@angular/core";
 export class DiagnosisV4Component implements OnInit {
   selected: any;
   list = [{ name: "Viral Flu" }];
+  isCollapsed = false;
 
-  diagnosis = {
-    id: "diagnosis",
-    image: "assets/svgs/diagnosis.svg",
-    mainlable: "Diagnosis",
-    collapse: "#collapseDiagnosis",
-    toggle: "collapse",
-
-    data: [
-      {
-        label: "Do you have enough information for diagnosis?",
-      },
-      {
-        label: "Select diagnosis",
-      },
-      {
-        label: "Diagnosis type",
-      },
-      {
-        label: "Select",
-      },
-    ],
-  };
+  diagnosisData = [
+    {
+      label: "Do you have enough information for diagnosis?",
+    },
+    {
+      label: "Select diagnosis",
+    },
+    {
+      label: "Diagnosis type",
+    },
+    {
+      label: "Select",
+    },
+  ];
 
   constructor() {}
 

@@ -3,9 +3,9 @@
 }
 
 .tabs-main-container {
-  height: 74px;
-
   padding: 24px 0px 0px;
+
+  height: 74px;
 
   background: #ffffff;
 
@@ -17,10 +17,10 @@
 
 .tabs-main-container {
   .mat-tab-label-content {
-    width: 217px;
-    height: 30px;
-
     margin-bottom: 10px;
+
+    height: 30px;
+    width: 217px;
 
     color: black;
 
@@ -42,10 +42,18 @@
 
     background-color: #ea315b !important;
   }
+}
 
-  .mat-tab-body-wrapper {
-    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08) !important;
-    border-radius: 12px !important;
-    padding: 20px;
-  }
+.share-btn {
+  height: 50px;
+  width: 210px;
+
+  background: #2e1e91;
+
+  color: #ffffff;
+
+  font-weight: 700;
+  font-size: 18px;
+
+  border-radius: 8px;
 }

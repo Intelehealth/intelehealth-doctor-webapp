@@ -2,17 +2,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
 
   position: relative;
+
+  padding: 32px 24px;
 
   background: #faf9ff;
   border-radius: 12px;
 }
 
 .medication-header {
-  height: 64px;
+  height: 39px;
 }
 
 .medication-header-content {
@@ -28,14 +29,14 @@
   display: flex;
   align-items: center;
 
-  width: 196px;
   height: 30px;
+  width: 196px;
+
+  color: #1b163a;
 
   font-weight: 700;
   font-size: 19px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .arrow {
@@ -66,14 +67,16 @@
 }
 
 .cancel-save-btn {
-  width: 112px;
   height: 45px;
+  width: 112px;
+
+  background: #ffffff;
+
+  color: #2e1e91;
 
   font-size: 18px;
   line-height: 150%;
 
-  color: #2e1e91;
-  background: #ffffff;
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
@@ -93,13 +96,17 @@
 }
 
 .select {
-  width: 164px;
-
-  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border: 1px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
 
 .remark-input {
-  height: 36px !important;
-  width: 200.8px !important;
+  height: 37px !important;
+
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 4px;
+}
+
+.thClass {
+  width: 182.8px;
 }

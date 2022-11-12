@@ -6,6 +6,10 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./referal-v4.component.scss"],
 })
 export class ReferalV4Component implements OnInit {
+  showAddMore = false;
+
+  isCollapsed = false;
+
   selected: any;
   referalList = [{ name: "select of type" }, { name: "500 Mg" }];
 
@@ -14,6 +18,7 @@ export class ReferalV4Component implements OnInit {
       name: "Referral facility",
       type: "string",
       key: "referal",
+      thClass: "referal-table",
     },
     { name: "Remarks", type: "remark", key: "remark" },
   ];

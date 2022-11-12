@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./notes-v4.component.scss"],
 })
 export class NotesV4Component implements OnInit {
+  isCollapsed = false;
   noteData = [
     {
       label: "Please make sure the patient takes all the medicines",

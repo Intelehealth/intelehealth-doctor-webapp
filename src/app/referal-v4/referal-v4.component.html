@@ -3,23 +3,39 @@
     <div class="referal-header-content w-100">
       <img src="assets/svgs/referal.svg" />
       <div class="referal-img-title">Referal</div>
-      <div data-toggle="collapse" data-target="#referalCollapse" class="click">
-        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      <div
+        data-toggle="collapse"
+        data-target="#referalCollapse"
+        class="click"
+        (click)="isCollapsed = !isCollapsed"
+      >
+        <img
+          class="arrow"
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
       </div>
     </div>
-    <hr class="hr" />
   </div>
 
   <div id="referalCollapse" class="referal-details collapse show w-100">
+    <hr class="hr" />
     <!-- ul caption -->
 
-    <div class="d-flex mb-2">
+    <div class="d-flex mb-2 table-responsive">
       <table class="table w-100">
         <thead class="font-sm">
-          <th class="border-top" *ngFor="let header of headers">
+          <th
+            class="border-top {{ header?.key }} {{ header?.thClass }}"
+            *ngFor="let header of headers"
+          >
             {{ header?.name }}
           </th>
         </thead>
+
         <tbody>
           <tr *ngFor="let row of data">
             <td *ngFor="let header of headers">
@@ -36,37 +52,53 @@
             </td>
           </tr>
 
-          <tr>
-            <td>
-              <div class="select">
-                <ng-select
-                  class=""
-                  [items]="referalList"
-                  bindLabel="name"
-                  [clearable]="false"
-                  [(ngModel)]="selected"
-                >
-                </ng-select>
-              </div>
-            </td>
+          <ng-container *ngIf="!showAddMore">
+            <tr>
+              <td>
+                <div class="select">
+                  <ng-select
+                    class=""
+                    [items]="referalList"
+                    bindLabel="name"
+                    [clearable]="false"
+                    [(ngModel)]="selected"
+                  >
+                  </ng-select>
+                </div>
+              </td>
 
-            <td>
-              <div class="remark-input">
-                <input
-                  class="form-control"
-                  type="text"
-                  name=""
-                  placeholder="Type here"
-                  id=""
-                />
-              </div>
-            </td>
-          </tr>
+              <td>
+                <div class="remark-input">
+                  <input
+                    class="form-control"
+                    type="text"
+                    name=""
+                    placeholder="Type here"
+                    id=""
+                  />
+                </div>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>
-    <div class="d-flex">
-      <button type="button" class="btn cancel-save-btn font-bold">
+
+    <div class="" *ngIf="showAddMore">
+      <img
+        src="assets/svgs/add-more-plus-icon.svg"
+        (click)="showAddMore = !showAddMore"
+      />
+
+      <label class="ml-2 font-size-md"> Add more medicines</label>
+    </div>
+
+    <div class="d-flex" *ngIf="!showAddMore">
+      <button
+        type="button"
+        class="btn cancel-save-btn font-bold"
+        (click)="showAddMore = !showAddMore"
+      >
         cancel
       </button>
 

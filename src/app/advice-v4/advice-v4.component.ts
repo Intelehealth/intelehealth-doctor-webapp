@@ -6,6 +6,9 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./advice-v4.component.scss"],
 })
 export class AdviceV4Component implements OnInit {
+  showAddMore = false;
+
+  isCollapsed = false;
   adviceData = [
     {
       label: "Please make sure the patient takes all the medicines",

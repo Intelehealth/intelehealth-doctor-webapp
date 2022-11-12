@@ -153,6 +153,7 @@ import { MedicationV4Component } from './medication-v4/medication-v4.component';
 import { AdviceV4Component } from './advice-v4/advice-v4.component';
 import { TestComponent } from './test/test.component';
 import { ReferalV4Component } from './referal-v4/referal-v4.component';
+import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
 
 @NgModule({
   declarations: [
@@ -242,6 +243,7 @@ import { ReferalV4Component } from './referal-v4/referal-v4.component';
     AdviceV4Component,
     TestComponent,
     ReferalV4Component,
+    FollowUpV4Component,
   ],
 
   imports: [

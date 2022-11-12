@@ -1,34 +1,43 @@
-<div class="diagnosis-main mt-4">
+<div class="diagnosis-main mt-4 section-odd">
   <div class="diagnosis-header w-100">
     <div class="diagnosis-header-content w-100">
-      <img [src]="diagnosis?.image" />
-      <div class="diagnosis-img-title">
-        {{ diagnosis?.mainlable }}
-      </div>
+      <img src="assets/svgs/diagnosis.svg" />
+      <div class="diagnosis-img-title">Diagnosis</div>
       <div
         data-toggle="collapse"
-        [attr.data-target]="'#' + diagnosis?.id"
+        data-target="#diagnosis"
         class="click"
+        (click)="isCollapsed = !isCollapsed"
       >
-        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+        <img
+          class="arrow"
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
       </div>
     </div>
-    <hr class="hr" />
   </div>
+
   <div
-    [id]="diagnosis?.id"
+    id="diagnosis"
     aria-expanded="true"
     aria-controls="collapse"
-    class="diagnosis-details collapse show"
+    class="diagnosis-details collapse show w-100"
   >
+    <hr class="hr" />
+
     <div class="d-flex ml-4 gap">
       <div class="first-list">
-        <ul *ngFor="let item of diagnosis?.data" class="">
-          <li class="margin">
+        <ul class="padding">
+          <li *ngFor="let item of diagnosisData" class="margin">
             {{ item?.label }}
           </li>
         </ul>
       </div>
+
       <div class="w">
         <div class="">
           <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
@@ -48,6 +57,7 @@
           >
           </ng-select>
         </div>
+
         <div>
           <input class="radio-box mr-1 mt-1" type="radio" name="radio1" id="" />
           <label class="mr-3 radio-label radio-width">Primary</label>

@@ -1,32 +1,40 @@
-<div class="patient-interaction-main ">
+<div class="patient-interaction-main">
+
   <div class="patient-interaction-header w-100">
+    
     <div class="patient-interaction-header-content w-100">
-      <img [src]="patientInteraction?.image" />
-      <div class="patient-interaction-img-title">
-        {{ patientInteraction?.mainlable }}
-      </div>
+      <img src="assets/svgs/patient-interaction.svg" />
+      <div class="patient-interaction-img-title">Patient interaction</div>
       <div
         data-toggle="collapse"
-        [attr.data-target]="'#' + patientInteraction?.id"
+        data-target="#patientInteraction"
         class="click"
+        (click)="isCollapsed = !isCollapsed"
       >
-        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      <img
+      class="arrow"
+      [src]="
+        isCollapsed
+          ? 'assets/svgs/plus-icon.svg'
+          : 'assets/svgs/minus-icon.svg'
+      "
+    />
       </div>
     </div>
-    <hr class="hr" />
 
-    <div [id]="patientInteraction?.id" class="consult-details collapse show">
+    <div id="patientInteraction" class="consult-details collapse show">
+      <hr class="hr" />
+
       <div class="d-flex ml-4">
         <div class="p-0">
-          <ul
-            *ngFor="let items of patientInteraction?.data"
-            class="first-list p-0"
-          >
-            <li>{{ items?.label }}</li>
+          <ul class="first-list p-0">
+            <li *ngFor="let patient of patientInteractionData" class="mb-4">
+              {{ patient?.label }}
+            </li>
           </ul>
         </div>
         <div class="second-list">
-          <div *ngFor="let item of patientInteraction?.data" class="">
+          <div *ngFor="let item of patientInteractionData" class="">
             <img *ngIf="item?.image1" class="" [src]="item?.image1" />
 
             <img *ngIf="item?.image2" class="ml-2" [src]="item?.image2" />

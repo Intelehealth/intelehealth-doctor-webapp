@@ -2,10 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
-
+  
   position: relative;
+  
+  padding: 32px 24px;
 
   background: #faf9ff;
 
@@ -13,7 +14,7 @@
 }
 
 .test-header {
-  height: 64px;
+  height: 39px;
 }
 
 .test-header-content {
@@ -21,16 +22,16 @@
   align-items: center;
   gap: 12px;
 
-  width: 256px;
   height: 48px;
+  width: 256px;
 }
 
 .test-img-title {
   display: flex;
   align-items: center;
 
-  width: 196px;
   height: 30px;
+  width: 196px;
 
   color: #1b163a;
 
@@ -60,11 +61,12 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 14px 16px;
   gap: 4px;
-
+  
   height: 80px;
-
+  
+  padding: 14px 16px;
+  
   background: #faf9ff;
 
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
@@ -72,8 +74,8 @@
 }
 
 .cancel-add-test-btn {
-  width: 107px;
   height: 45px;
+  width: 107px;
 
   color: #2e1e91;
   

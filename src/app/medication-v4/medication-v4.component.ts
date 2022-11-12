@@ -6,37 +6,25 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./medication-v4.component.scss"],
 })
 export class MedicationV4Component implements OnInit {
+  showAddMore = false;
+
+  isCollapsed = false;
+
   selectedDrugName: any;
-  drugNameList = [
-    { name: "Paracetamol" },
-    { name: "500 Mg" },
-   
-  ];
+  drugNameList = [{ name: "Paracetamol" }, { name: "" }];
 
   selectedStrength: any;
-  strengthList = [
-    { name: "500 Mg" },
-    { name: "1000 Mg" },
-    
-  ];
+  strengthList = [{ name: "500 Mg" }, { name: "1000 Mg" }];
 
   selectedDays: any;
-  daysList = [
-    { name: "14" },
-    { name: "20" },
-    { name: "25" },
-    
-  ];
+  daysList = [{ name: "14" }, { name: "20" }, { name: "25" }];
 
   selectedTiming: any;
   timingList = [
     { name: "1 - 0 - 1" },
     { name: "1 - 1 - 0" },
     { name: "0 - 1 - 1" },
-    
   ];
-
-  
 
   headers = [
     {
@@ -81,7 +69,5 @@ export class MedicationV4Component implements OnInit {
     this.selectedTiming = this.timingList[0];
 
     this.selectedDays = this.daysList[0];
-
-    
   }
 }

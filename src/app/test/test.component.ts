@@ -6,13 +6,16 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./test.component.scss"],
 })
 export class TestComponent implements OnInit {
+  showAddMore = false;
+
+  isCollapsed = false;
+
   testData = [
     {
       label: "Blood test",
     },
     {
-      label:
-        "Stool test",
+      label: "Stool test",
     },
   ];
 

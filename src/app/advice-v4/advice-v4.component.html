@@ -1,19 +1,31 @@
 <div class="advice-main box-shadow">
-
   <div class="advice-header w-100">
-    
     <div class="advice-header-content w-100">
       <img src="assets/svgs/advice.svg" />
       <div class="advice-img-title">Advice</div>
-      <div data-toggle="collapse" data-target="#advice" class="click">
-        <img class="arrow" src="assets/svgs/minus-icon.svg" />
+      <div
+        data-toggle="collapse"
+        data-target="#advice"
+        class="click"
+        (click)="isCollapsed = !isCollapsed"
+      >
+        <img
+          class="arrow"
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
       </div>
     </div>
-    <hr class="hr" />
   </div>
-  
+
   <div id="advice" class="advice-details collapse show w-100">
+    <hr class="hr" />
+
     <!-- ul caption -->
+
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
         <li *ngFor="let advice of adviceData" class="mb-2">
@@ -25,29 +37,42 @@
       </ul>
     </div>
 
-    <span class="text-area-label font-bold">Advice </span>
+    <div class="" *ngIf="showAddMore">
+      <img
+        src="assets/svgs/add-more-plus-icon.svg"
+        (click)="showAddMore = !showAddMore"
+      />
 
-    <textarea
-      class="text-area mt-2 w-100"
-      name="advice"
-      id=""
-      cols="8"
-      rows="4"
-    >
+      <label class="ml-2 font-size-md"> Add more medicines</label>
+    </div>
+
+    <ng-container *ngIf="!showAddMore">
+      <span class="text-area-label font-bold">Advice </span>
+
+      <textarea
+        class="text-area mt-2 w-100"
+        name="advice"
+        id=""
+        cols="8"
+        rows="4"
+      >
         Let the patient know that they cannot travel for atleast 2 weeks
-      </textarea
-    >
+      </textarea>
 
-    <button type="button" class="btn cancel-add-advice-btn font-bold mt-4">
-      Cancel
-    </button>
+      <button
+        type="button"
+        class="btn cancel-add-advice-btn font-bold mt-4"
+        (click)="showAddMore = !showAddMore"
+      >
+        Cancel
+      </button>
 
-    <button
-      type="button"
-      class="btn cancel-add-advice-btn add-advice-btn font-bold mt-4 ml-3"
-    >
-      Add advice
-    </button>
-
-</div>
+      <button
+        type="button"
+        class="btn cancel-add-advice-btn add-advice-btn font-bold mt-4 ml-3"
+      >
+        Add advice
+      </button>
+    </ng-container>
+  </div>
 </div>

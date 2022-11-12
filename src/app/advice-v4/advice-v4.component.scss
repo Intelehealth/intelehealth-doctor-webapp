@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
-  
+
   position: relative;
 
   padding: 32px 24px;
@@ -12,7 +12,7 @@
 }
 
 .advice-header {
-  height: 64px;
+  height: 39px;
 }
 
 .advice-header-content {
@@ -20,16 +20,16 @@
   align-items: center;
   gap: 12px;
 
-  width: 256px;
   height: 48px;
+  width: 256px;
 }
 
 .advice-img-title {
   display: flex;
   align-items: center;
 
-  width: 196px;
   height: 30px;
+  width: 196px;
 
   color: #1b163a;
 
@@ -58,8 +58,9 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 14px 16px;
   gap: 4px;
+
+  padding: 14px 16px;
 
   height: 80px;
 
@@ -73,13 +74,13 @@
   width: 140px;
   height: 45px;
 
-  color: #2e1e91;
-
   background: #ffffff;
+
+  color: #2e1e91;
 
   font-size: 18px;
   line-height: 150%;
-  
+
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
 }
