@@ -154,6 +154,7 @@ import { AdviceV4Component } from './advice-v4/advice-v4.component';
 import { TestComponent } from './test/test.component';
 import { ReferalV4Component } from './referal-v4/referal-v4.component';
 import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
+import { CommonModalComponent } from './modals/common-modal/common-modal.component';
 
 @NgModule({
   declarations: [
@@ -244,6 +245,7 @@ import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
     TestComponent,
     ReferalV4Component,
     FollowUpV4Component,
+    CommonModalComponent,
   ],
 
   imports: [
