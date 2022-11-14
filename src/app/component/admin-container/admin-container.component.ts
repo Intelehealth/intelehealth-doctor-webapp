@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { LicenseKeyFormComponent } from './../license-key-form/license-key-form.component'
 
 @Component({
   selector: 'app-admin-container',
@@ -12,10 +14,13 @@ export class AdminContainerComponent implements OnInit {
     { name: "Intehelathtest2021" },
     { name: "Intehelathtest2020" }
   ];
-  constructor() { }
+  constructor(private matDialog: MatDialog) { }
 
   ngOnInit(): void {
     this.selectedLicense = this.LicenseList[0];
   }
 
+  onOpenDialogClick(){
+    this.matDialog.open(LicenseKeyFormComponent);
+  }
 }

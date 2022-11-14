@@ -2,8 +2,8 @@
   <app-sidebar
     (conversationClicked)="onConversationSelected($event)"
   ></app-sidebar>
-  <div id="chat">
-    <div id="chatPlaceholder" *ngIf="!conversation">
+  <div class="chat">
+    <div class="chatPlaceholder" *ngIf="!conversation">
       <img width="400" src="assets/icons/message/Group2608897.png" />
       <h2>No messages selected</h2>
       <p>

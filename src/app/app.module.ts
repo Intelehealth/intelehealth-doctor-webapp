@@ -147,6 +147,7 @@ import { SidebarComponent } from './component/message-container/sidebar/sidebar.
 import { ChatContainerComponent } from './component/message-container/chat-container/chat-container.component';
 import { AdminContainerComponent } from './component/admin-container/admin-container.component';
 import { AdminTableComponent } from './component/admin-container/admin-table/admin-table.component';
+import { LicenseKeyFormComponent } from './component/license-key-form/license-key-form.component';
 
 @NgModule({
   declarations: [
@@ -230,6 +231,7 @@ import { AdminTableComponent } from './component/admin-container/admin-table/adm
     ChatContainerComponent,
     AdminContainerComponent,
     AdminTableComponent,
+    LicenseKeyFormComponent,
   ],
 
   imports: [
