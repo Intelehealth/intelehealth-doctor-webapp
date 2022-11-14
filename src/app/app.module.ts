@@ -154,6 +154,9 @@ import { AdviceV4Component } from './advice-v4/advice-v4.component';
 import { TestComponent } from './test/test.component';
 import { ReferalV4Component } from './referal-v4/referal-v4.component';
 import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
+import { AdminContainerComponent } from './component/admin-container/admin-container.component';
+import { AdminTableComponent } from './component/admin-container/admin-table/admin-table.component';
+import { LicenseKeyFormComponent } from './component/license-key-form/license-key-form.component';
 
 @NgModule({
   declarations: [
@@ -244,6 +247,9 @@ import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
     TestComponent,
     ReferalV4Component,
     FollowUpV4Component,
+    AdminContainerComponent,
+    AdminTableComponent,
+    LicenseKeyFormComponent,
   ],
 
   imports: [
@@ -330,6 +336,11 @@ import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
               path: "visit-summary",
               component: VisitSummaryV4Component,
               canActivate: [AuthGuard],
+            },
+            { 
+              path: "admin", 
+              component: AdminContainerComponent,
+              canActivate: [AuthGuard], 
             },
           ],
         },

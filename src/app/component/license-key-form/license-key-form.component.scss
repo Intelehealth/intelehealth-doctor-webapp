@@ -1,0 +1,134 @@
+.license-container{
+    width: 489px;
+    height: 390px;
+    background: #FFFFFF;
+    border-radius: 12px;
+}
+.header{
+    width: 536px;
+    height: 70px;
+    background: #EFE8FF;
+    position: relative;
+    right: 1.5rem;
+    bottom: 1.5rem;
+}
+.text{
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 1.2rem;
+    color: #1B163A;
+}
+.footer{
+    margin-top: 3rem;
+    margin-left: 7rem;
+}
+.txt{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 4px;
+    width: 490px;
+    height: 48px;
+    background: #FAF9FF;
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+.lbl{
+    position: relative;
+    bottom: 10px;
+}
+.btn{
+    gap: 4px;
+    width: 119px;
+    height: 48px;
+    border-radius: 8px;
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    margin:14px;
+}
+.addKey-btn{
+    background: #2E1E91;
+    color: #FFFFFF;
+}
+.cancel-btn{
+    color: #2E1E91;
+    background: #FFFFFF;
+    border: 0.770833px solid #EFE8FF;
+}
+.file-container{
+    width: 501px;
+    height: 322px;
+    background: #FFFFFF;
+    border-radius: 12px;
+}
+
+.file-container > img{
+    position: relative;
+    left: 27rem;
+}
+.add-file{
+    width: 80px;
+    height: 80px;
+    background: #EFE8FF;
+    border-radius: 50px;
+    margin-left: 14rem;
+    margin-top: -20px;
+}
+.add-file > img{
+    width: 40px;
+    margin: 1.2rem;
+}
+.file-body{
+    .text{
+        font-size: 24px;
+        margin-left: 10rem;
+    }
+}
+.file-body > p{
+    margin-left: 2rem;
+}
+.upload-container{
+    width: 489px;
+    height: 278px;
+    background: #FFFFFF;
+    border-radius: 12px;
+}
+.attach-file{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px;
+    gap: 12px;
+    width: 441px;
+    height: 72px;
+    background: #FAF9FF;
+    border-radius: 4px;
+    margin-left: 1.5rem;
+    margin-top: 1rem;
+}
+.attch-btn{
+    align-items: flex-start;
+    width: 48px;
+    height: 48px;
+    background: #2E1E91;
+    border-radius: 4px;
+}
+.attach-file > p{
+    margin-top: 1rem;
+}
+.attach-file > img{
+    margin-left: 13rem;
+}
+.upload-footer{
+    margin-top: 2rem;
+    margin-left: 6rem;
+}
