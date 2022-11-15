@@ -157,6 +157,7 @@ import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
 import { AdminContainerComponent } from './component/admin-container/admin-container.component';
 import { AdminTableComponent } from './component/admin-container/admin-table/admin-table.component';
 import { LicenseKeyFormComponent } from './component/license-key-form/license-key-form.component';
+import { CallStateComponent } from './component/call-state/call-state.component';
 
 @NgModule({
   declarations: [
@@ -250,6 +251,7 @@ import { LicenseKeyFormComponent } from './component/license-key-form/license-ke
     AdminContainerComponent,
     AdminTableComponent,
     LicenseKeyFormComponent,
+    CallStateComponent,
   ],
 
   imports: [
@@ -340,6 +342,11 @@ import { LicenseKeyFormComponent } from './component/license-key-form/license-ke
             { 
               path: "admin", 
               component: AdminContainerComponent,
+              canActivate: [AuthGuard], 
+            },
+            { 
+              path: "call-state", 
+              component: CallStateComponent,
               canActivate: [AuthGuard], 
             },
           ],
