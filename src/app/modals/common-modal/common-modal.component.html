@@ -1,0 +1,28 @@
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="modal-main-container">
+    <div class="cross position-absolute click">
+      <img src="assets/svgs/cross.svg" />
+    </div>
+    <div class="circle w-100 d-flex justify-content-center">
+      <img class="main-img-bg position-absolute" [src]="modal.circleIconPath" />
+    </div>
+
+    <div class="main-title w-100">
+      <div class="main-txt d-flex justify-content-center text-center">
+        {{ modal?.mainText }}
+      </div>
+      <div class="sub-text d-flex justify-content-center text-center">
+        {{ modal?.subText }}
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <div class="btns left-btn" (click)="modal.leftBtnOnClick()">
+        {{ modal?.leftBtnText }}
+      </div>
+      <div class="btns right-btn" (click)="modal.rightBtnOnClick()">
+        {{ modal?.rightBtnText }}
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -147,16 +147,18 @@ import { SidebarComponent } from "./component/message-container/sidebar/sidebar.
 import { ChatContainerComponent } from "./component/message-container/chat-container/chat-container.component";
 import { VisitNotesV4Component } from "./visit-notes-v4/visit-notes-v4.component";
 import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-interaction-v4.component";
-import { DiagnosisV4Component } from './diagnosis-v4/diagnosis-v4.component';
-import { InteractionNoteV4Component } from './interaction-note-v4/interaction-note-v4.component';
-import { MedicationV4Component } from './medication-v4/medication-v4.component';
-import { AdviceV4Component } from './advice-v4/advice-v4.component';
-import { TestComponent } from './test/test.component';
-import { ReferalV4Component } from './referal-v4/referal-v4.component';
-import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
-import { AdminContainerComponent } from './component/admin-container/admin-container.component';
-import { AdminTableComponent } from './component/admin-container/admin-table/admin-table.component';
-import { LicenseKeyFormComponent } from './component/license-key-form/license-key-form.component';
+import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
+import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
+import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
+import { DiagnosisV4Component } from "./diagnosis-v4/diagnosis-v4.component";
+import { InteractionNoteV4Component } from "./interaction-note-v4/interaction-note-v4.component";
+import { MedicationV4Component } from "./medication-v4/medication-v4.component";
+import { AdviceV4Component } from "./advice-v4/advice-v4.component";
+import { TestComponent } from "./test/test.component";
+import { ReferalV4Component } from "./referal-v4/referal-v4.component";
+import { FollowUpV4Component } from "./follow-up-v4/follow-up-v4.component";
+import { CommonModalComponent } from "./modals/common-modal/common-modal.component";
+import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-history-v4.component";
 
 @NgModule({
   declarations: [
@@ -250,6 +252,8 @@ import { LicenseKeyFormComponent } from './component/license-key-form/license-ke
     AdminContainerComponent,
     AdminTableComponent,
     LicenseKeyFormComponent,
+    CommonModalComponent,
+    PastVisitHistoryV4Component,
   ],
 
   imports: [
@@ -337,10 +341,10 @@ import { LicenseKeyFormComponent } from './component/license-key-form/license-ke
               component: VisitSummaryV4Component,
               canActivate: [AuthGuard],
             },
-            { 
-              path: "admin", 
+            {
+              path: "admin",
               component: AdminContainerComponent,
-              canActivate: [AuthGuard], 
+              canActivate: [AuthGuard],
             },
           ],
         },

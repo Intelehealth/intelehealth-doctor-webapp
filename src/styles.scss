@@ -73,16 +73,19 @@ body.font-lato td {
   border-radius: 0.25em 0.25em 0.4em 0.4em;
   padding: 0px;
 }
+
 .confirm-dialog-container .content-container {
   margin: 5px 5px 15px 5px;
   color: #8f9cb5;
   display: flex;
 }
+
 .confirm-dialog-container #close-icon {
   margin-left: auto;
   order: 2;
   font-weight: bolder;
 }
+
 .confirm-dialog-container #close-icon:hover {
   cursor: pointer;
 }
@@ -112,6 +115,7 @@ body.font-lato td {
 .cal-month-view .cal-open-day-events {
   padding: 0px;
 }
+
 .cdk-overlay-container {
   z-index: 1060;
 }
@@ -145,8 +149,6 @@ body.font-lato td {
 }
 
 .card-shadow {
-  margin: 20px;
-
   background: #ffffff;
   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
   border-radius: 12px;
@@ -154,4 +156,16 @@ body.font-lato td {
 
 .section-odd {
   background: #faf9ff;
+}
+
+.common-dialog-modal {
+  .modal-content {
+    border-radius: 12px;
+  }
+}
+
+.shared-successfull {
+  .modal-main-container {
+    height: 325px !important;
+  }
 }
