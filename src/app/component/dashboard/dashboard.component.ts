@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { HeaderService } from "src/app/services/header.service";
 
 interface SideNavToggle {
   screenWidth: number;
@@ -13,7 +14,9 @@ export class DashboardComponent implements OnInit {
   isSideNavCollapsed: boolean = false;
   screenWidth: number = 0;
 
-  constructor() {}
+  constructor(private headerSvc: HeaderService) {
+    this.headerSvc.showSearchBar = true;
+  }
 
   ngOnInit(): void {}
 

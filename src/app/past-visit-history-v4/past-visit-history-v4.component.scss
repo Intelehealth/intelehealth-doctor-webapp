@@ -1,0 +1,146 @@
+.past-visit-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 24px;
+
+  border-radius: 12px;
+}
+
+.img {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+
+  height: 44px;
+  width: 44px;
+}
+
+.label {
+  margin-left: 12%;
+}
+
+.font-weight {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.font-label-color {
+  color: #7f7b92;
+}
+
+.arrow {
+  display: none;
+}
+
+.nav-collapsed {
+  .visit-section {
+    width: 242px;
+  }
+
+  .main {
+    width: 1017px !important;
+  }
+
+  .header {
+    width: 940px !important;
+  }
+
+  .appointment-label {
+    width: 745px !important;
+  }
+
+  .arrow {
+    display: block;
+
+    margin-top: 22px;
+    margin-left: 22px;
+  }
+}
+.pill-btn {
+  display: inline-block;
+  vertical-align: middle;
+
+  padding: 0.375rem 0.75rem;
+
+  color: #2e1e91;
+  background: #efe8ff;
+
+  font-weight: 400;
+  line-height: 1.5;
+
+  border: 1px solid transparent;
+}
+
+.pill-blue-view-btn {
+  background: #efe8ff;
+
+  color: #2e1e91;
+
+  border: 1px solid #2e1e91;
+  border-radius: 4px;
+}
+
+.pill-green-view-btn {
+  background: #e6fff3;
+
+  color: #0fd197;
+
+  border: 1px solid #0fd197;
+  border-radius: 4px;
+}
+
+.reassigned-font {
+  padding-top: 8px;
+
+  position: relative;
+
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+}
+
+.alert-hint {
+  height: 72px;
+  width: 300px;
+
+  background: #ffffff;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+  border-left: 4px solid #2e1e91;
+
+  filter: drop-shadow(0px 4px 24px rgba(46, 30, 145, 0.16));
+}
+
+.hint-para {
+  color: #1b163a;
+
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+
+  letter-spacing: 0.25px;
+}
+
+.hint {
+  position: absolute;
+  bottom: 32px;
+  left: -32px;
+}
+
+.polygon-white {
+  position: absolute;
+  bottom: -10px;
+  right: 136px;
+}
+
+.stepper-line {
+  width: 5px;
+  height: 82px;
+  background: #0fd197;
+  left: 8px;
+  top: 22px;
+}

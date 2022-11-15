@@ -11,20 +11,20 @@
 
   background: #faf9ff;
 
-  border-right: none !important;
   border: 2px solid rgba(178, 175, 190, 0.2);
+  border-right: none !important;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
 .search-input {
-  width: 355px;
   height: 42px;
+  width: 355px;
 
   background: #faf9ff;
 
-  border-left: none !important;
   border: 2px solid rgba(178, 175, 190, 0.2);
+  border-left: none !important;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
@@ -32,8 +32,8 @@
 .notification-bell {
   position: relative;
 
-  width: 48px;
   height: 48px;
+  width: 48px;
 
   background: #efe8ff;
 
@@ -41,6 +41,8 @@
 }
 
 .notification-dilog-box {
+  z-index: 100;
+
   position: absolute;
   top: 72px;
   left: -108px;
@@ -64,13 +66,13 @@
 
   padding: 17px;
 
+  color: #ffffff;
+
   font-family: "DM Sans";
   font-style: normal;
   font-weight: 700;
   font-size: 18px;
   line-height: 24px;
-
-  color: #ffffff;
 }
 
 .alert-box {
