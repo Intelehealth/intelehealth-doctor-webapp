@@ -1,9 +1,16 @@
 <div class="checkUpReason-main box-shadow mt-4">
   <div class="checkUpReason-header w-100">
     <div class="checkUpReason-header-content w-100">
-      <img [src]="checkUpReason?.image" />
+      <img
+        [src]="
+          pastVisit
+            ? 'assets/svgs/check-up-reason-blue.svg'
+            : 'assets/svgs/check-up-reason.svg'
+        "
+      />
       <div class="checkUpReason-img-title">{{ checkUpReason?.mainlable }}</div>
       <div
+        *ngIf="!pastVisit"
         data-toggle="collapse"
         [attr.data-target]="'#' + checkUpReason?.id"
         class="click"
@@ -11,7 +18,7 @@
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
       </div>
     </div>
-    <hr class="hr" />
+    <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
   <div [id]="checkUpReason?.id" class="checkUpReason-details collapse show">

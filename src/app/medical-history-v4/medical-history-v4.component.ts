@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-medical-history-v4",
@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./medical-history-v4.component.scss"],
 })
 export class MedicalHistoryV4Component implements OnInit {
+  @Input() pastVisit = false;
   medicalHistory = {
     id: "Medicalhistory",
     image: "assets/svgs/medical-history.svg",

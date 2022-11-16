@@ -1,11 +1,18 @@
 <div class="physicalExaminaton-main box-shadow mt-4">
   <div class="physicalExaminaton-header w-100">
     <div class="physicalExaminaton-header-content w-100">
-      <img [src]="physicalExaminaton?.image" />
+      <img
+        [src]="
+          pastVisit
+            ? 'assets/svgs/physical-examination-blue.svg'
+            : 'assets/svgs/physical-examination.svg'
+        "
+      />
       <div class="physicalExaminaton-img-title">
         {{ physicalExaminaton?.mainlable }}
       </div>
       <div
+        *ngIf="!pastVisit"
         data-toggle="collapse"
         [attr.data-target]="'#' + physicalExaminaton?.id"
         class="click"
@@ -13,7 +20,7 @@
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
       </div>
     </div>
-    <hr class="hr" />
+    <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
   <div

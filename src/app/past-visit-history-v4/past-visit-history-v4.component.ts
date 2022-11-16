@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { CommonModalComponent } from "../modals/common-modal/common-modal.component";
+import { VisitSummaryAndPrescriptionModalComponent } from "../modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
 
 @Component({
   selector: "app-past-visit-history-v4",
@@ -8,6 +8,9 @@ import { CommonModalComponent } from "../modals/common-modal/common-modal.compon
   styleUrls: ["./past-visit-history-v4.component.scss"],
 })
 export class PastVisitHistoryV4Component implements OnInit {
+  @ViewChild("VisitSummaryModal")
+  VisitSummaryModal: VisitSummaryAndPrescriptionModalComponent;
+
   pastVisitHistory: any = {
     headers: [
       {
@@ -41,7 +44,9 @@ export class PastVisitHistoryV4Component implements OnInit {
         buttons: [
           {
             label: "View",
-            onClick: this.onVisitSummaryModal,
+            onClick: () => {
+              this.VisitSummaryModal.openVisitSummaryModal();
+            },
             btnClass: "pill-btn pill-blue-view-btn ",
           },
         ],
@@ -147,11 +152,11 @@ export class PastVisitHistoryV4Component implements OnInit {
 
   ngOnInit(): void {}
 
-  onVisitSummaryModal() {
-    console.table("summary");
-  }
-
   onPrescriptionModal() {
     console.table("second");
+  }
+
+  ngAfterViewInit() {
+    // this.VisitSummaryModal.openVisitSummaryModal();
   }
 }

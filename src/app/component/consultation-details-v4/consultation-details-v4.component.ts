@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-consultation-details-v4",
@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./consultation-details-v4.component.scss"],
 })
 export class ConsultationDetailsV4Component implements OnInit {
+  @Input() pastVisit = false;
   consultation = {
     id: "consultation",
     image: "assets/svgs/consultation-details-icon.svg",
