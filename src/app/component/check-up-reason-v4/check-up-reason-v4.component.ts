@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-check-up-reason-v4",
@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./check-up-reason-v4.component.scss"],
 })
 export class CheckUpReasonV4Component implements OnInit {
+  @Input() pastVisit = false;
   checkUpReason = {
     id: "checkUpReason",
     image: "assets/svgs/check-up-reason.svg",

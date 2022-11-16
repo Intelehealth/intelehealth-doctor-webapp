@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-additional-documents-v4",
@@ -6,6 +6,8 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./additional-documents-v4.component.scss"],
 })
 export class AdditionalDocumentsV4Component implements OnInit {
+  @Input() pastVisit = false;
+  
   AdditionalDocuments = {
     id: "Additional-documents",
     image: "assets/svgs/additional-document.svg",

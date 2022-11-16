@@ -1,11 +1,18 @@
 <div class="medicalhistory-main box-shadow mt-4">
   <div class="medicalhistory-header w-100">
     <div class="medicalhistory-header-content w-100">
-      <img [src]="medicalHistory?.image" />
+      <img
+        [src]="
+          pastVisit
+            ? 'assets/svgs/medical-history-blue.svg'
+            : 'assets/svgs/medical-history.svg'
+        "
+      />
       <div class="medicalhistory-img-title">
         {{ medicalHistory?.mainlable }}
       </div>
       <div
+        *ngIf="!pastVisit"
         data-toggle="collapse"
         [attr.data-target]="'#' + medicalHistory?.id"
         class="click"
@@ -13,7 +20,7 @@
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
       </div>
     </div>
-    <hr class="hr" />
+    <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
   <div [id]="medicalHistory?.id" class="medicalHistory-details collapse show">

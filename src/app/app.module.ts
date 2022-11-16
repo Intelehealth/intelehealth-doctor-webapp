@@ -156,6 +156,9 @@ import { ReferalV4Component } from "./referal-v4/referal-v4.component";
 import { FollowUpV4Component } from "./follow-up-v4/follow-up-v4.component";
 import { CommonModalComponent } from "./modals/common-modal/common-modal.component";
 import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-history-v4.component";
+import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
+import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
+import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
 
 @NgModule({
   declarations: [
@@ -248,6 +251,9 @@ import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-
     FollowUpV4Component,
     CommonModalComponent,
     PastVisitHistoryV4Component,
+    VisitSummaryAndPrescriptionModalComponent,
+    VisitSummaryReadonlyComponent,
+    PrescriptionReadonlyComponent,
   ],
 
   imports: [

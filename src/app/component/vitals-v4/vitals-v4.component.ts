@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-vitals-v4",
@@ -6,6 +6,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./vitals-v4.component.scss"],
 })
 export class VitalsV4Component implements OnInit {
+  @Input() pastVisit = false;
   vital = {
     id: "vital",
     image: "assets/svgs/vital.svg",
