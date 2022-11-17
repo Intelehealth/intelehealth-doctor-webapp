@@ -1,9 +1,10 @@
 <div class="follow-up-main mt-4">
   <div class="follow-up-header w-100">
     <div class="follow-up-header-content w-100">
-      <img src="assets/svgs/follow-up.svg" />
+      <img [src]="iconImg" />
       <div class="follow-up-img-title">Follow-up</div>
       <div
+        *ngIf="showToggle"
         data-toggle="collapse"
         data-target="#followUp"
         class="click"
@@ -29,7 +30,7 @@
     <hr class="hr" />
 
     <div class="d-flex gap w-100">
-      <div class="">
+      <div>
         <ul *ngFor="let follow of followUpData" class="padding">
           <li class="margin">
             {{ follow?.label }}
@@ -37,7 +38,7 @@
         </ul>
       </div>
 
-      <div class="w-100">
+      <div *ngIf="!readOnly" class="w-100">
         <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
         <label class="mr-3 radio-label">Yes</label>
 
@@ -48,13 +49,21 @@
           <input type="date" class="form-control" />
         </div>
 
-        <div class="">
+        <div>
           <input
             type="text"
             placeholder="Type here"
             class="form-control type-here-input"
           />
         </div>
+      </div>
+
+      <div *ngIf="readOnly" class="w-100">
+        <label class="mr-3 radio-label">Yes</label>
+
+        <div class="date-readonly">09/11/2022</div>
+
+        <div class="data-label">critical heart patient</div>
       </div>
     </div>
   </div>

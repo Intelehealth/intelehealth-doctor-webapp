@@ -61,7 +61,9 @@ export class PastVisitHistoryV4Component implements OnInit {
         buttons: [
           {
             label: "View",
-            onClick: this.onPrescriptionModal,
+            onClick: () => {
+              this.VisitSummaryModal.openVisitSummaryModal(false);
+            },
             btnClass: "pill-btn pill-green-view-btn ",
           },
         ],
@@ -154,9 +156,5 @@ export class PastVisitHistoryV4Component implements OnInit {
 
   onPrescriptionModal() {
     console.table("second");
-  }
-
-  ngAfterViewInit() {
-    // this.VisitSummaryModal.openVisitSummaryModal();
   }
 }

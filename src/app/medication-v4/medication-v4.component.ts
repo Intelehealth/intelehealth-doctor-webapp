@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-medication-v4",
@@ -6,6 +6,12 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./medication-v4.component.scss"],
 })
 export class MedicationV4Component implements OnInit {
+  @Input() iconImg = "assets/svgs/medication.svg";
+
+  @Input() readOnly = false;
+
+  @Input() showToggle = true;
+
   showAddMore = false;
 
   isCollapsed = false;

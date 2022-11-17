@@ -55,13 +55,11 @@
 
   <!-- visits-readonly -->
   <div class="visits-readonly ml-3 mt-2">
-    <!-- consultation header -->
-
-    <!-- consultation ul -->
     <div class="consult-details">
       <!-- selector -->
       <app-consultation-details-v4
-        [pastVisit]="true"
+        [showToggle]="false"
+        [iconImg]="'assets/svgs/consultation-blue-icon.svg'"
       ></app-consultation-details-v4>
 
       <app-vitals-v4 [pastVisit]="true"></app-vitals-v4>

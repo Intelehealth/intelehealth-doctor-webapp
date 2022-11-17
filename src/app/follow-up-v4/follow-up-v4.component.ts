@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-follow-up-v4",
@@ -6,6 +6,11 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./follow-up-v4.component.scss"],
 })
 export class FollowUpV4Component implements OnInit {
+  @Input() iconImg = "assets/svgs/follow-up.svg";
+
+  @Input() readOnly = false;
+
+  @Input() showToggle = true;
   isCollapsed = false;
 
   followUpData = [

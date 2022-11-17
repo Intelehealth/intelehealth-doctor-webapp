@@ -1,9 +1,10 @@
 <div class="medication-main mt-4">
   <div class="medication-header w-100">
     <div class="medication-header-content w-100">
-      <img src="assets/svgs/medication.svg" />
+      <img [src]="iconImg" />
       <div class="medication-img-title">Medication</div>
       <div
+        *ngIf="showToggle"
         data-toggle="collapse"
         data-target="#medicationCollapse"
         class="click"
@@ -41,7 +42,7 @@
               <ng-container *ngIf="header?.type === 'remark'; else elseBlock">
                 {{ row[header.key] }}
                 <span class="btn-height click float-right">
-                  <img src="assets/svgs/delete-icon.svg" />
+                  <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
                 </span>
               </ng-container>
 
@@ -52,7 +53,7 @@
           </tr>
 
           <ng-container *ngIf="!showAddMore">
-            <tr>
+            <tr *ngIf="!readOnly">
               <td class="pl-0">
                 <ng-select
                   class="select"
@@ -108,31 +109,36 @@
       </table>
     </div>
 
-    <div class="d-flex justify-content-end" *ngIf="!showAddMore">
-      <button
-        type="button"
-        class="btn cancel-save-btn font-bold"
-        (click)="showAddMore = !showAddMore"
-      >
-        cancel
-      </button>
+    <ng-container *ngIf="!readOnly">
+      <div class="d-flex justify-content-end" *ngIf="!showAddMore">
+        <button
+          type="button"
+          class="btn cancel-save-btn font-bold"
+          (click)="showAddMore = !showAddMore"
+        >
+          cancel
+        </button>
 
-      <button type="button" class="btn cancel-save-btn save-btn font-bold ml-3">
-        Save
-      </button>
-    </div>
+        <button
+          type="button"
+          class="btn cancel-save-btn save-btn font-bold ml-3"
+        >
+          Save
+        </button>
+      </div>
 
-    <div class="" *ngIf="showAddMore">
-      <img
-        class="click"
-        src="assets/svgs/add-more-plus-icon.svg"
-        (click)="showAddMore = !showAddMore"
-      />
+      <div *ngIf="showAddMore">
+        <img
+          class="click"
+          src="assets/svgs/add-more-plus-icon.svg"
+          (click)="showAddMore = !showAddMore"
+        />
 
-      <label class="ml-2 font-size-md"> Add more medicines</label>
-    </div>
+        <label class="ml-2 font-size-md"> Add more medicines</label>
+      </div>
+    </ng-container>
 
-    <div class="mt-4">
+    <div *ngIf="!readOnly" class="mt-4">
       <label class="text-area-label">Additional instructions</label>
 
       <textarea class="text-area w-100" name="note" id="" cols="8" rows="4">
@@ -149,6 +155,13 @@
       >
         Save
       </button>
+    </div>
+
+    <div *ngIf="readOnly" class="mt-4">
+      <div class="text-area-label mb-2">Additional instructions</div>
+      <div class="label-text-area">
+        Let the patient know that they cannot travel for atleast 2 weeks
+      </div>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 <div class="visit-readonly-main">
   <!-- header profile -->
   <div class="visit-header">
-    <img src="assets/svgs/prescription-modal.svg" alt="" class="w-100" />
+    <img src="assets/svgs/prescription-modal.svg" class="w-100" />
   </div>
 
   <!-- patient-detail -->
@@ -53,13 +53,62 @@
     </div>
   </div>
 
-  <!-- visits-readonly -->
+  <!-- prescription -->
   <div class="visits-readonly ml-3 mt-2">
-    <!-- consultation header -->
 
-    <!-- consultation ul -->
-    <div class="consult-details">
-      <!-- selector -->
-    </div>
+    <!-- selectors -->
+
+    <app-consultation-details-v4
+      [showToggle]="false"
+      [readOnly]="true"
+    ></app-consultation-details-v4>
+
+    <app-patient-interaction-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/patient-interaction-green.svg'"
+    ></app-patient-interaction-v4>
+
+    <app-diagnosis-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/diagnosis-green.svg'"
+    ></app-diagnosis-v4>
+
+    <app-notes-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/note-icon-green.svg'"
+    ></app-notes-v4>
+
+    <app-medication-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/medication-green.svg'"
+    ></app-medication-v4>
+
+    <app-advice-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/advice-green.svg'"
+    ></app-advice-v4>
+
+    <app-test
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/test-green.svg'"
+    ></app-test>
+
+    <app-referal-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/referal-green.svg'"
+    ></app-referal-v4>
+
+    <app-follow-up-v4
+      [readOnly]="true"
+      [showToggle]="false"
+      [iconImg]="'assets/svgs/follow-up-green.svg'"
+    ></app-follow-up-v4>
   </div>
 </div>

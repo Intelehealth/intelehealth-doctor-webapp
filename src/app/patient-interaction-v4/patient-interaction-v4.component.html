@@ -1,24 +1,23 @@
 <div class="patient-interaction-main">
-
   <div class="patient-interaction-header w-100">
-    
     <div class="patient-interaction-header-content w-100">
-      <img src="assets/svgs/patient-interaction.svg" />
+      <img [src]="iconImg" />
       <div class="patient-interaction-img-title">Patient interaction</div>
       <div
+        *ngIf="showToggle"
         data-toggle="collapse"
         data-target="#patientInteraction"
         class="click"
         (click)="isCollapsed = !isCollapsed"
       >
-      <img
-      class="arrow"
-      [src]="
-        isCollapsed
-          ? 'assets/svgs/plus-icon.svg'
-          : 'assets/svgs/minus-icon.svg'
-      "
-    />
+        <img
+          class="arrow"
+          [src]="
+            isCollapsed
+              ? 'assets/svgs/plus-icon.svg'
+              : 'assets/svgs/minus-icon.svg'
+          "
+        />
       </div>
     </div>
 
@@ -28,27 +27,36 @@
       <div class="d-flex ml-4">
         <div class="p-0">
           <ul class="first-list p-0">
-            <li *ngFor="let patient of patientInteractionData" class="mb-4">
-              {{ patient?.label }}
-            </li>
+            <li *ngIf="!readOnly" class="mb-4">Connect with patient</li>
+            <li class="mb-4">Have you spoken with the patient directly?</li>
           </ul>
         </div>
         <div class="second-list">
-          <div *ngFor="let item of patientInteractionData" class="">
-            <img *ngIf="item?.image1" class="" [src]="item?.image1" />
+          <div>
+            <img *ngIf="!readOnly" src="assets/svgs/interaction-phone.svg" />
 
-            <img *ngIf="item?.image2" class="ml-2" [src]="item?.image2" />
+            <img
+              *ngIf="!readOnly"
+              class="ml-2"
+              src="assets/svgs/interaction-whatapp.svg"
+            />
 
-            <span *ngIf="item?.value" class="ml-2 chw-color">{{
-              item?.value
-            }}</span>
+            <span *ngIf="!readOnly" class="ml-2 chw-color"
+              >Click here to connent with CHW</span
+            >
           </div>
-          <div class="mt-3">
+
+          <!-- edit field -->
+          <div *ngIf="!readOnly" class="mt-3">
             <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
             <label class="mr-3 radio-label">Yes</label>
 
             <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
             <label class="radio-label">No</label>
+          </div>
+
+          <div *ngIf="readOnly" class="mt-1">
+            <label class="mr-3 radio-label">Yes</label>
           </div>
         </div>
       </div>

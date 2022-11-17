@@ -17,20 +17,27 @@ export class VisitSummaryAndPrescriptionModalComponent implements OnInit {
 
   public modalRef = null;
 
-  @Input() modal: any;
-
-  isShowVisitSummary: boolean = true;
+  isShowVisitSummary: boolean;
 
   constructor(public modalSvc: NgbModal) {}
 
   ngOnInit(): void {}
 
-  public openVisitSummaryModal() {
+  public openVisitSummaryModal(isShowVisitSummary: boolean = true) {
+    this.isShowVisitSummary = isShowVisitSummary;
+
     const options: NgbModalOptions = {
       size: "xl",
       centered: true,
     };
 
     this.modalRef = this.modalSvc.open(this.modalContent, options);
+
+    /**
+     * Getting scroller in center, putting it to top
+     */
+    setTimeout(() => {
+      this.modalRef?._windowCmptRef?.location?.nativeElement?.scroll(0, 0);
+    }, 0);
   }
 }

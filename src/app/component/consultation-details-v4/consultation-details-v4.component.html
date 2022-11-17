@@ -1,46 +1,61 @@
 <div class="consultation-main">
   <div class="consult-header w-100">
     <div class="consult-header-content w-100">
-      <img
-        [src]="
-          pastVisit
-            ? 'assets/svgs/consultation-blue-icon.svg'
-            : 'assets/svgs/consultation-details-icon.svg'
-        "
-      />
-      <div class="consult-img-title">{{ consultation?.mainlable }}</div>
+      <img [src]="iconImg" />
+      <div class="consult-img-title">Consultation Details</div>
       <div
-        *ngIf="!pastVisit"
+        *ngIf="showToggle"
         data-toggle="collapse"
-        [attr.data-target]="'#' + consultation?.id"
+        data-target="#consultation"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
       </div>
     </div>
-    <hr *ngIf="!pastVisit" class="hr" />
+    <hr *ngIf="showToggle" class="hr" />
   </div>
 
-  <div [id]="consultation?.id" class="consult-details collapse show">
+  <div id="consultation" class="consult-details collapse show">
     <div class="d-flex ml-4">
       <div class="p-0">
-        <ul *ngFor="let items of consultation?.data" class="first-list p-0">
-          <li>{{ items?.label }}</li>
+        <ul class="p-1">
+          <li class="first-list mb-3">Visit ID</li>
+
+          <li class="first-list mb-3">Visit created</li>
+
+          <li class="first-list mb-3">Appointment on</li>
+
+          <li class="first-list mb-3">Status</li>
+
+          <li class="first-list mb-3">Provided by</li>
         </ul>
       </div>
       <div class="second-list">
-        <div *ngFor="let item of consultation?.data" class="">
-          <label class="margin {{ item?.redClass }}" for="">
-            {{ item?.value }}
-          </label>
+        <div>
+          <div>
+            <label class="margin"> VID123 </label>
+          </div>
+          <div>
+            <label class="margin mt-1"> 4 Aug 2022 </label>
+          </div>
+          <div>
+            <label class="margin mt-1"> 8 Aug 2022 </label>
+          </div>
+          <div>
+            <label class="margin pirorityRed mt-1"> Priority visit </label>
+          </div>
 
-          <img class="ml-3" [src]="item?.image1" />
+          <div>
+            <label class="mt-1"> Kiran Devi </label>
 
-          <img class="ml-2" [src]="item?.image2" />
+            <img *ngIf="!readOnly" class="ml-3" src="assets/svgs/dot.svg" />
+            <img *ngIf="!readOnly" class="ml-2" src="assets/svgs/num.svg" />
+            <img *ngIf="!readOnly" class="ml-2" src="assets/svgs/msg.svg" />
 
-          <img class="ml-2" [src]="item?.image3" />
-
-          <span class="ml-2 chw-color">{{ item?.valueChw }}</span>
+            <span *ngIf="!readOnly" class="ml-2 chw-color"
+              >Click here to connent with CHW</span
+            >
+          </div>
         </div>
       </div>
     </div>

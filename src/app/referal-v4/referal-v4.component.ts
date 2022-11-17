@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-referal-v4",
@@ -6,13 +6,14 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./referal-v4.component.scss"],
 })
 export class ReferalV4Component implements OnInit {
+  @Input() iconImg = "assets/svgs/referal.svg";
+  @Input() readOnly = false;
+  @Input() showToggle = true;
+
   showAddMore = false;
-
   isCollapsed = false;
-
   selected: any;
   referalList = [{ name: "select of type" }, { name: "500 Mg" }];
-
   headers = [
     {
       name: "Referral facility",

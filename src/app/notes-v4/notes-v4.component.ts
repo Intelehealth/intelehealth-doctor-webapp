@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-notes-v4",
@@ -6,6 +6,11 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./notes-v4.component.scss"],
 })
 export class NotesV4Component implements OnInit {
+  @Input() iconImg = "assets/svgs/note-icon.svg";
+  @Input() readOnly = false;
+
+  @Input() showToggle = true;
+
   isCollapsed = false;
   noteData = [
     {

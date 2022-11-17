@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-test",
@@ -6,10 +6,12 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./test.component.scss"],
 })
 export class TestComponent implements OnInit {
+  @Input() iconImg = "assets/svgs/test.svg";
+  @Input() readOnly = false;
+  @Input() showToggle = true;
+
   showAddMore = false;
-
   isCollapsed = false;
-
   testData = [
     {
       label: "Blood test",

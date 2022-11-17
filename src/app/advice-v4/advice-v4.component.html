@@ -1,9 +1,10 @@
 <div class="advice-main box-shadow">
   <div class="advice-header w-100">
     <div class="advice-header-content w-100">
-      <img src="assets/svgs/advice.svg" />
+      <img [src]="iconImg" />
       <div class="advice-img-title">Advice</div>
       <div
+        *ngIf="showToggle"
         data-toggle="collapse"
         data-target="#advice"
         class="click"
@@ -29,28 +30,30 @@
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
         <li *ngFor="let advice of adviceData" class="mb-2">
-          {{ advice?.label }}
+          {{ advice }}
           <span class="btn-height click float-right">
-            <img src="assets/svgs/delete-icon.svg" />
+            <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>
         </li>
       </ul>
     </div>
+    <ng-container *ngIf="!readOnly">
+      <div *ngIf="showAddMore">
+        <img
+          class="click"
+          src="assets/svgs/add-more-plus-icon.svg"
+          (click)="showAddMore = !showAddMore"
+        />
 
-    <div class="" *ngIf="showAddMore">
-      <img
-        class="click"
-        src="assets/svgs/add-more-plus-icon.svg"
-        (click)="showAddMore = !showAddMore"
-      />
-
-      <label class="ml-2 font-size-md"> Add more medicines</label>
-    </div>
+        <label class="ml-2 font-size-md"> Add more medicines</label>
+      </div>
+    </ng-container>
 
     <ng-container *ngIf="!showAddMore">
       <span class="text-area-label font-bold">Advice </span>
 
       <textarea
+        *ngIf="!readOnly"
         class="text-area mt-2 w-100"
         name="advice"
         id=""
@@ -61,6 +64,7 @@
       </textarea>
 
       <button
+        *ngIf="!readOnly"
         type="button"
         class="btn cancel-add-advice-btn font-bold mt-4"
         (click)="showAddMore = !showAddMore"
@@ -69,11 +73,16 @@
       </button>
 
       <button
+        *ngIf="!readOnly"
         type="button"
         class="btn cancel-add-advice-btn add-advice-btn font-bold mt-4 ml-3"
       >
         Add advice
       </button>
+
+      <div *ngIf="readOnly; &quot;ml-label&quot;">
+        Let the patient know that they cannot travel for atleast 2 weeks
+      </div>
     </ng-container>
   </div>
 </div>

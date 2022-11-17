@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-diagnosis-v4",
@@ -6,6 +6,13 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./diagnosis-v4.component.scss"],
 })
 export class DiagnosisV4Component implements OnInit {
+
+  @Input() readOnly = false;
+
+  @Input() showToggle = true;
+
+  @Input() iconImg = "assets/svgs/diagnosis.svg";
+
   selected: any;
   list = [{ name: "Viral Flu" }];
   isCollapsed = false;

@@ -1,12 +1,11 @@
 <ng-template #modalContent let-close="close" data-target="static">
-  <!-- both modal  -->
   <div>
     <div class="visit" *ngIf="isShowVisitSummary">
-      <!-- visit summary modal -->
+      <!-- visit summary component -->
       <app-visit-summary-readonly></app-visit-summary-readonly>
     </div>
 
-    <!-- prescription modal -->
+    <!-- prescription component -->
     <div class="prescription" *ngIf="!isShowVisitSummary">
       <app-prescription-readonly></app-prescription-readonly>
     </div>
