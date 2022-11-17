@@ -1,0 +1,63 @@
+<div id="printPageButton" class="header mt-1">
+    <div class="print d-flex justify-content-center mt-2">
+      <button (click)="print()">
+        Print
+        <i class="fa fa-print"></i>
+      </button>
+      <button class="ml-2" (click)="download()">
+        Download
+        <i class="fa fa-download"></i>
+      </button>
+    </div>
+</div>
+ <br>
+<div #prescription id="prescription" class="container bootstrap snippets bootdey">
+  <div style="border-top: 2px solid #321a94; text-align: center;">
+        <h3> Referred Patient Details </h3>
+  </div>
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div>
+          <div class="prescription-wrapper">
+            <div style="border-top: 2px solid #321a94" class="details-info">
+              <div class="row">
+                <div class="col-sm-6">
+                  <span class="d-flex"
+                    >Patient Name: &nbsp;&nbsp; <b>{{ data?.person?.name}}</b></span
+                  >
+                  <span class="d-flex"
+                  >OpenMRS ID: &nbsp;&nbsp; <b>{{ data?.person?.openMrsId }}</b></span
+                >
+                  <span class="d-flex"
+                    >Age: &nbsp;&nbsp; <b>{{ data?.person?.age }}</b></span
+                  >
+                  <span class="d-flex"
+                    >Sex: &nbsp;&nbsp; <b>{{ data?.person?.sex }}</b></span
+                  >
+                </div>
+            </div>
+            <div style="border-top: 2px solid #321a94" class="presc-details">
+              <div class="row">
+                <div class="col-sm-12">
+                  <h4><i class="fas fa-comment"></i> Presenting Complaints</h4>
+                  <ul [innerHTML]="data?.complaints"></ul>
+                </div>
+                <div style="border-top: 2px solid #321a94" class="col-sm-12">
+                  <h4><i class="fas fa-users"></i> Family History</h4>
+                  <ul [innerHTML]="data?.familyHistory"></ul>
+                </div>
+                <div style="border-top: 2px solid #321a94" class="col-sm-12">
+                  <h4><i class="fas fa-book-medical"></i> Past Medical History</h4>
+                    <ul [innerHTML]="data?.pastMedical"></ul>
+                  </div>
+                <div style="border-top: 2px solid #321a94" class="col-sm-12">
+                  <app-vital></app-vital>
+                </div>
+                <div style="border-top: 2px solid #321a94;border-bottom: 2px solid #321a94"  class="col-sm-12">
+                  <h4><i class="fas fa-stethoscope"></i> On Examination</h4>
+                  <ul [innerHTML]="data?.onExamination"></ul>
+                </div>
+               </div>
+               <br>
+            </div>
+</div>        
