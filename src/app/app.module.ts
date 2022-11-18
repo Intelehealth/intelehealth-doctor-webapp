@@ -162,6 +162,7 @@ import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-
 import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
 import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
 import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
+import { CallStateComponent } from './component/call-state/call-state.component';
 
 @NgModule({
   declarations: [
@@ -260,6 +261,7 @@ import { PrescriptionReadonlyComponent } from './prescription-readonly/prescript
     VisitSummaryAndPrescriptionModalComponent,
     VisitSummaryReadonlyComponent,
     PrescriptionReadonlyComponent,
+    CallStateComponent,
   ],
 
   imports: [
@@ -350,7 +352,12 @@ import { PrescriptionReadonlyComponent } from './prescription-readonly/prescript
             {
               path: "admin",
               component: AdminContainerComponent,
-              canActivate: [AuthGuard],
+              canActivate: [AuthGuard], 
+            },
+            { 
+              path: "call-state", 
+              component: CallStateComponent,
+              canActivate: [AuthGuard], 
             },
           ],
         },
