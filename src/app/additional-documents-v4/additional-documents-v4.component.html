@@ -1,11 +1,18 @@
 <div class="Additional-documents-main box-shadow mt-4">
   <div class="Additional-documents-header w-100">
     <div class="Additional-documents-header-content w-100">
-      <img [src]="AdditionalDocuments?.image" />
+      <img
+        [src]="
+          pastVisit
+            ? 'assets/svgs/additional-document-blue.svg'
+            : 'assets/svgs/additional-document.svg'
+        "
+      />
       <div class="Additional-documents-img-title">
         {{ AdditionalDocuments?.mainlable }}
       </div>
       <div
+        *ngIf="!pastVisit"
         data-toggle="collapse"
         [attr.data-target]="'#' + AdditionalDocuments?.id"
         class="click"
@@ -13,7 +20,7 @@
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
       </div>
     </div>
-    <hr class="hr" />
+    <hr *ngIf="!pastVisit" class="hr" />
   </div>
   <div
     [id]="AdditionalDocuments?.id"

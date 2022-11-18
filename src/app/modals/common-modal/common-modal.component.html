@@ -4,18 +4,14 @@
       <img src="assets/svgs/cross.svg" />
     </div>
     <div class="circle w-100 d-flex justify-content-center">
-      <img
-        class="main-img-bg position-absolute"
-        [src]="modal.circleBgIconPath"
-      />
-      <img class="main-img position-absolute" [src]="modal.circleIconPath" />
+      <img class="main-img-bg position-absolute" [src]="modal.circleIconPath" />
     </div>
 
     <div class="main-title w-100">
-      <div class="main-txt d-flex justify-content-center">
+      <div class="main-txt d-flex justify-content-center text-center">
         {{ modal?.mainText }}
       </div>
-      <div class="sub-text d-flex justify-content-center">
+      <div class="sub-text d-flex justify-content-center text-center">
         {{ modal?.subText }}
       </div>
     </div>

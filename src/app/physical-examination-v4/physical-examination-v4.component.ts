@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-physical-examination-v4",
@@ -6,6 +6,8 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./physical-examination-v4.component.scss"],
 })
 export class PhysicalExaminationV4Component implements OnInit {
+  @Input() pastVisit = false;
+
   physicalExaminaton = {
     id: "physicalExaminaton",
     image: "assets/svgs/physical-examination.svg",

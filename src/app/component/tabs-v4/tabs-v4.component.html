@@ -1,5 +1,6 @@
 <div class="tabs-main-container mt-3 card-shadow mb-0">
   <mat-tab-group mat-align-tabs="start">
+    <!-- Current visit summary -->
     <mat-tab label="Current visit summary">
       <div class="card-shadow">
         <app-consultation-details-v4></app-consultation-details-v4>
@@ -25,11 +26,18 @@
         <app-visit-notes-v4></app-visit-notes-v4>
       </div>
 
-      <div class="d-flex justify-content-center  mt-5 mb-5">
+      <div class="d-flex justify-content-center mt-5 mb-5">
         <button class="btn btn-lg share-btn">Share prescription</button>
       </div>
     </mat-tab>
 
-    <mat-tab label="Past visit summary">Content 2</mat-tab>
+    <!--Past visit history  -->
+
+    <mat-tab label="Past visit summary">
+      <!--past visit main cantainer  -->
+      <div class="">
+        <app-past-visit-history-v4></app-past-visit-history-v4>
+      </div>
+    </mat-tab>
   </mat-tab-group>
 </div>
