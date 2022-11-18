@@ -150,6 +150,10 @@ import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-
 import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
 import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
 import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
+import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
+import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
+import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
+import { MatTabsModule } from '@angular/material/tabs';
 import { DiagnosisV4Component } from "./diagnosis-v4/diagnosis-v4.component";
 import { InteractionNoteV4Component } from "./interaction-note-v4/interaction-note-v4.component";
 import { MedicationV4Component } from "./medication-v4/medication-v4.component";
@@ -262,9 +266,13 @@ import { CallStateComponent } from './component/call-state/call-state.component'
     VisitSummaryReadonlyComponent,
     PrescriptionReadonlyComponent,
     CallStateComponent,
+    ProfileContainerComponent,
+    PersonalInformationComponent,
+    ProfessionalDetailsComponent,
   ],
 
   imports: [
+    MatTabsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
@@ -358,6 +366,11 @@ import { CallStateComponent } from './component/call-state/call-state.component'
               path: "call-state", 
               component: CallStateComponent,
               canActivate: [AuthGuard], 
+            },
+            {
+              path: "profile",
+              component: ProfileContainerComponent,
+              canActivate: [AuthGuard],
             },
           ],
         },
