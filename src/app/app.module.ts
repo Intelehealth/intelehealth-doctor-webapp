@@ -155,6 +155,7 @@ import { TestComponent } from './test/test.component';
 import { ReferalV4Component } from './referal-v4/referal-v4.component';
 import { FollowUpV4Component } from './follow-up-v4/follow-up-v4.component';
 import { CommonModalComponent } from './modals/common-modal/common-modal.component';
+import { SetupCalendarV4Component } from './setup-calendar-v4/setup-calendar-v4.component';
 
 @NgModule({
   declarations: [
@@ -246,6 +247,7 @@ import { CommonModalComponent } from './modals/common-modal/common-modal.compone
     ReferalV4Component,
     FollowUpV4Component,
     CommonModalComponent,
+    SetupCalendarV4Component,
   ],
 
   imports: [
