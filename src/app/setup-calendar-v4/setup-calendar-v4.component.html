@@ -1,0 +1,237 @@
+<!-- Main container -->
+<div class="d-flex w-100">
+  <!-- Left side container -->
+  <div class="left-side-container">
+    <!-- Header -->
+    <div class="left-header">
+      <label class="month-header">Month</label>
+    </div>
+    <!-- Month wise -->
+    <div class="month-wise">
+      <!-- Month -->
+      <div class="month">
+        <!-- Details -->
+        <div class="details">
+          <div class="left-line"></div>
+          <span class="name">July</span>
+        </div>
+        <!-- Chevron -->
+        <div class="chevron-icon">
+          <img src="assets/svgs/chevron-down.svg" />
+        </div>
+      </div>
+      <!-- Divider -->
+      <div class="divider"></div>
+
+      <!-- Month -->
+      <div class="month">
+        <!-- Details -->
+        <div class="details">
+          <div class="left-line"></div>
+          <span class="name">August</span>
+        </div>
+        <!-- Chevron -->
+        <div class="chevron-icon">
+          <img src="assets/svgs/chevron-down.svg" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- For Add More -->
+      <div class="add-more-container">
+        <!-- Plus Icon -->
+        <div class="plus-icon">
+          <img src="assets/svgs/plus.svg" />
+        </div>
+        <div class="add-more-label">Add more months</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side container -->
+  <div class="right-side-container">
+    <!-- Right side content -->
+    <div class="right-main-content">
+      <!-- For right side header -->
+      <div class="working-days">
+        <span class="working-days-label">Working Days</span>
+      </div>
+      <!-- Line divider for right side -->
+      <div class="line-divider-right"></div>
+
+      <!-- For start date and end date -->
+      <div class="start-end-container d-flex">
+        <div class="date">
+          <div class="date-text">Start date</div>
+          <div class="date-content">
+            <span class="date-value">1 July, 2022</span>
+            <div class="date-icon">
+              <img src="assets/svgs/calendar-date.svg" />
+            </div>
+          </div>
+        </div>
+
+        <div class="date">
+          <div class="date-text">End date</div>
+          <div class="date-content">
+            <span class="end-date-value">8 July, 2022</span>
+            <div class="date-icon">
+              <img src="assets/svgs/calendar-date.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- For start end days -->
+      <div class="d-flex mt-5 mb-2">
+        <table class="table w-100">
+          <thead class="">
+            <th
+              class="border-custom {{ header?.key }} thClass"
+              *ngFor="let header of headers"
+            >
+              {{ header?.name }}
+            </th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of data">
+              <td *ngFor="let header of headers">
+                <ng-container *ngIf="header?.type === 'remark'; else elseBlock">
+                  {{ row[header.key] }}
+                </ng-container>
+
+                <ng-template #elseBlock>
+                  {{ row[header.key] }}
+                </ng-template>
+              </td>
+              <td>
+                <div class="delete-btn position-relative">
+                  <span class="delete-btn-label position-absolute">Delete</span>
+                  <img class="delete-icon" src="assets/svgs/delete-icon.svg" />
+                </div>
+              </td>
+            </tr>
+
+            <ng-container *ngIf="!showAddMore">
+              <tr class="schedule">
+                <td class="pl-0 mt-4">
+                  <div class="d-flex td-start-time">
+                    <ng-select
+                      class="select time-width"
+                      [items]="startTimeList"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [(ngModel)]="selectedStartTime"
+                    >
+                    </ng-select>
+
+                    <ng-select
+                      class="select duration-width"
+                      [items]="clockTimeAmPM"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [(ngModel)]="selectedStartAmPm"
+                    >
+                    </ng-select>
+                  </div>
+                </td>
+
+                <td class="mt-4">
+                  <div class="d-flex td-start-time">
+                    <ng-select
+                      class="select start-end-width"
+                      [items]="endTimeList"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [(ngModel)]="selectedEndTime"
+                    >
+                    </ng-select>
+
+                    <ng-select
+                      class="select duration-width"
+                      [items]="clockTimeAmPM"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [(ngModel)]="selectedEndAmPm"
+                    >
+                    </ng-select>
+                  </div>
+                </td>
+                <td>
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      readonly
+                      class="days-dropdown"
+                      [(ngModel)]="weekDays"
+                      (click)="showDays = !showDays"
+                    />
+                    <div class="position-absolute input-img">
+                      <img src="assets/svgs/chevron-down-input.svg" />
+                    </div>
+                    <ng-container *ngIf="showDays">
+                      <div class="days-container position-absolute">
+                        <div class="days-content" *ngFor="let days of daysList">
+                          <input
+                            type="checkbox"
+                            [checked]="days.checked"
+                            class="checkbox"
+                            (change)="onCheckboxChange($event, days)"
+                            id="weekdays"
+                            name="weekdays"
+                          />
+                          <span class="day-name">{{ days.name }}</span>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </td>
+                <td class="pr-0 d-flex justify-content-end save-cancel-td">
+                  <div class="save-btn position-relative">
+                    <span class="save-btn-label position-absolute">Save</span>
+                  </div>
+
+                  <div class="cancel-btn position-relative">
+                    <span class="cancel-btn-label position-absolute"
+                      >Cancel</span
+                    >
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+
+          <div class="add-more-timing" *ngIf="true">
+            <!-- Plus Icon -->
+            <div class="timing-plus-icon">
+              <img src="assets/svgs/plus.svg" />
+            </div>
+            <div class="timing-label">Add more timings</div>
+          </div>
+        </table>
+      </div>
+
+      <!-- For days off -->
+      <div class="days-off">
+        <span class="days-off-label">Days off</span>
+      </div>
+
+      <!-- Line divider for right side -->
+      <div class="line-divider-right"></div>
+
+      <!-- For dates -->
+      <div class="dates-container">
+        <div class="dates-content">
+          <div class="dates-label">Dates</div>
+          <div class="select-dates">
+            <span class="select-date-label">Select dates</span>
+            <div class="date-icon">
+              <img src="assets/svgs/calendar-date.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
