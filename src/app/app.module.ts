@@ -153,7 +153,6 @@ import { LicenseKeyFormComponent } from "./component/license-key-form/license-ke
 import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
 import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
 import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
-import { MatTabsModule } from '@angular/material/tabs';
 import { DiagnosisV4Component } from "./diagnosis-v4/diagnosis-v4.component";
 import { InteractionNoteV4Component } from "./interaction-note-v4/interaction-note-v4.component";
 import { MedicationV4Component } from "./medication-v4/medication-v4.component";
