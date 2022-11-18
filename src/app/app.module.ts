@@ -150,6 +150,9 @@ import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-
 import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
 import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
 import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
+import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
+import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
+import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
 import { DiagnosisV4Component } from "./diagnosis-v4/diagnosis-v4.component";
 import { InteractionNoteV4Component } from "./interaction-note-v4/interaction-note-v4.component";
 import { MedicationV4Component } from "./medication-v4/medication-v4.component";
@@ -162,6 +165,7 @@ import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-
 import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
 import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
 import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
+import { CallStateComponent } from './component/call-state/call-state.component';
 
 @NgModule({
   declarations: [
@@ -260,9 +264,14 @@ import { PrescriptionReadonlyComponent } from './prescription-readonly/prescript
     VisitSummaryAndPrescriptionModalComponent,
     VisitSummaryReadonlyComponent,
     PrescriptionReadonlyComponent,
+    CallStateComponent,
+    ProfileContainerComponent,
+    PersonalInformationComponent,
+    ProfessionalDetailsComponent,
   ],
 
   imports: [
+    MatTabsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
@@ -350,6 +359,16 @@ import { PrescriptionReadonlyComponent } from './prescription-readonly/prescript
             {
               path: "admin",
               component: AdminContainerComponent,
+              canActivate: [AuthGuard], 
+            },
+            { 
+              path: "call-state", 
+              component: CallStateComponent,
+              canActivate: [AuthGuard], 
+            },
+            {
+              path: "profile",
+              component: ProfileContainerComponent,
               canActivate: [AuthGuard],
             },
           ],

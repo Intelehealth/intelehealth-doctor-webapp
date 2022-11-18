@@ -1,0 +1,99 @@
+<div class="personal-info-container">
+  <div class="personal-info-form">
+    <div class="header">
+      <div class="col-left">
+        <span class="circle">1</span>
+        <label class="text">Personal information</label>
+      </div>
+      <img src="assets/icons/dashboard-icons/Vector2.png" alt="" />
+      <div class="col-right">
+        <div class="circle">2</div>
+        <label class="text">Professional details</label>
+      </div>
+      <hr />
+    </div>
+    <div class="form-body">
+      <form class="grid-container">
+        <div class="prefession">
+          <div class="typePrefession">
+            <label class="lbl lbl-firstName">Type of prefession *</label>
+            <mat-select placeholder="Eg. MBBS">
+              <mat-option value="option1">MBBS</mat-option>
+              <mat-option value="option2">MBBS, MD</mat-option>
+              <mat-option value="option3">Dentist</mat-option>
+              <mat-option value="option4">Other</mat-option>
+            </mat-select>
+          </div>
+          <div class="registration">
+            <label class="lbl lbl-middleName">Registration number *</label>
+            <mat-select placeholder="Enter registration number">
+              <mat-option value="option1">9896868609</mat-option>
+              <mat-option value="option2">8979739032</mat-option>
+              <!-- <mat-option value="option3">Dentist</mat-option>
+              <mat-option value="option4">Other</mat-option> -->
+            </mat-select>
+          </div>
+        </div>
+        <div class="section">
+          <div class="specialization">
+            <label class="lbl lbl-firstName">Specialization *</label>
+            <mat-select placeholder="Eg. General physician">
+              <mat-option value="option1">MBBS</mat-option>
+              <mat-option value="option2">MBBS, MD</mat-option>
+              <mat-option value="option3">Dentist</mat-option>
+              <mat-option value="option4">Other</mat-option>
+            </mat-select>
+          </div>
+          <div class="Consultation-language">
+            <label class="lbl lbl-middleName">Consultation language *</label>
+            <mat-select [formControl]="toppings" multiple placeholder="Consultation language">
+              <mat-option
+                *ngFor="let topping of toppingList"
+                [value]="topping"
+                >{{ topping }}</mat-option
+              >
+            </mat-select>
+          </div>
+        </div>
+        <div class="section">
+          <div class="work-experience">
+            <label class="lbl lbl-firstName">Work experience *</label>
+            <mat-select placeholder="Eg. General physician">
+              <mat-option value="option1">MBBS</mat-option>
+              <mat-option value="option2">MBBS, MD</mat-option>
+              <mat-option value="option3">Dentist</mat-option>
+              <mat-option value="option4">Other</mat-option>
+            </mat-select>
+          </div>
+          <div class="research-experience">
+            <label class="lbl lbl-middleName">Research experience *</label>
+            <mat-select [formControl]="toppings" multiple placeholder="select">
+              <mat-option
+                *ngFor="let topping of toppingList"
+                [value]="topping"
+                >{{ topping }}</mat-option
+              >
+            </mat-select>
+          </div>
+        </div>
+        <div class="section">
+          <div class="experience">
+            <label class="lbl lbl-firstName">Work experience *</label>
+            <textarea
+              mdbInput
+              class="form-control txt"
+              id="textAreaExample"
+              placeholder="Type here"
+            ></textarea>
+          </div>
+        </div>
+        <div class="savebtn">
+          <button type="submit" class="btn-darkblue save-btn">Save</button>
+        </div>
+        <div class="backbtn" (click)="toggleBack()">
+          <button mat-stroked-button class="back-btn">Back</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
