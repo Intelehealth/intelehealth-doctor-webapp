@@ -32,6 +32,9 @@
     height: 50px;
     box-shadow: rgba(31, 28, 58, 0.08);
 }
+.body{
+    border-radius: 12px 12px 0 0;
+}
 .menuBtn{
     grid-area: menu-btn;
     position: relative;
