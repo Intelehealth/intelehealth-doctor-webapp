@@ -7,22 +7,14 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class FollowUpV4Component implements OnInit {
   @Input() iconImg = "assets/svgs/follow-up.svg";
-
   @Input() readOnly = false;
-
   @Input() showToggle = true;
-  isCollapsed = false;
 
+  isCollapsed = false;
   followUpData = [
-    {
-      label: "Do you want to have follow up with the patient",
-    },
-    {
-      label: "Select date",
-    },
-    {
-      label: "Reason for follow-up",
-    },
+    "Do you want to have follow up with the patient",
+    "Select date",
+    "Reason for follow-up",
   ];
 
   constructor() {}

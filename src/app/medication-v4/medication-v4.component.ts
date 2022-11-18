@@ -7,30 +7,23 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class MedicationV4Component implements OnInit {
   @Input() iconImg = "assets/svgs/medication.svg";
-
   @Input() readOnly = false;
-
   @Input() showToggle = true;
 
   showAddMore = false;
-
   isCollapsed = false;
 
   selectedDrugName: any;
-  drugNameList = [{ name: "Paracetamol" }, { name: "" }];
+  drugNameList = ["Paracetamol", "100mg"];
 
   selectedStrength: any;
-  strengthList = [{ name: "500 Mg" }, { name: "1000 Mg" }];
+  strengthList = ["500 Mg", "1000 Mg"];
 
   selectedDays: any;
-  daysList = [{ name: "14" }, { name: "20" }, { name: "25" }];
+  daysList = ["14", "20", "25"];
 
   selectedTiming: any;
-  timingList = [
-    { name: "1 - 0 - 1" },
-    { name: "1 - 1 - 0" },
-    { name: "0 - 1 - 1" },
-  ];
+  timingList = ["1 - 0 - 1", "1 - 1 - 0", "0 - 1 - 1"];
 
   headers = [
     {

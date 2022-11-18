@@ -2,8 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
+
+  padding: 32px 24px;
 
   position: relative;
 
@@ -19,16 +20,16 @@
   align-items: center;
   gap: 12px;
 
-  width: 256px;
   height: 48px;
+  width: 256px;
 }
 
 .physicalExaminaton-img-title {
   display: flex;
   align-items: center;
 
-  width: 196px;
   height: 30px;
+  width: 196px;
 
   font-weight: 700;
   font-size: 19px;
@@ -38,11 +39,11 @@
 }
 
 .arrow {
+  padding: 8px;
+
   position: absolute;
   top: 45px;
   right: 45px;
-
-  padding: 8px;
 }
 
 .no-info-color {
@@ -54,13 +55,13 @@
 }
 
 .first-list {
-  width: 240px;
   height: 24px;
+  width: 240px;
 }
 
 .second-list {
-  width: 742px;
   height: 24px;
+  width: 742px;
 }
 
 .margin {
@@ -71,11 +72,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 12px;
 
-  width: 990px;
+  padding: 0px;
+
   height: 71px;
+  width: 990px;
 
   .chief-complaint-title {
     font-weight: 600;
@@ -88,6 +90,7 @@
   }
   .abdominal-pill {
     padding: 4px 8px;
+
     gap: 4px;
 
     height: 32px;
@@ -102,12 +105,12 @@
 }
 
 .abdomin-captoin {
-  width: 990px;
   height: 27px;
+  width: 990px;
 
   .abdomin-captoin-font {
-    width: 134px;
     height: 27px;
+    width: 134px;
 
     font-weight: 600;
     font-size: 18px;

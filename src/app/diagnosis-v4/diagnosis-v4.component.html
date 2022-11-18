@@ -33,25 +33,24 @@
     <div class="d-flex ml-4 gap">
       <div class="first-list">
         <ul class="padding">
-          <li *ngFor="let item of diagnosisData" class="margin">
-            {{ item?.label }}
+          <li *ngFor="let diagnosis of diagnosisData" class="margin">
+            {{ diagnosis }}
           </li>
         </ul>
       </div>
-      <!-- edit feild -->
+
       <div *ngIf="!readOnly" class="w">
-        <div class="">
-          <input class="radio-box mr-1 mt-1" type="radio" name="Yes" id="" />
+        <div>
+          <input class="radio-box mr-1 mt-1" type="radio" name="Yes" />
           <label class="mr-3 radio-label">Yes</label>
 
-          <input class="radio-box mr-1 mt-1" type="radio" name="Yes" id="" />
+          <input class="radio-box mr-1 mt-1" type="radio" name="Yes" />
           <label class="radio-label">No</label>
         </div>
 
         <div class="select">
           <ng-select
-            class=""
-            [items]="list"
+            [items]="diagnosisList"
             bindLabel="name"
             [clearable]="false"
             [(ngModel)]="selected"
@@ -60,24 +59,24 @@
         </div>
 
         <div>
-          <input class="radio-box mr-1 mt-1" type="radio" name="radio1" id="" />
+          <input class="radio-box mr-1 mt-1" type="radio" name="radio1" />
           <label class="mr-3 radio-label radio-width">Primary</label>
 
-          <input class="radio-box mr-1 mt-1" type="radio" name="radio1" id="" />
+          <input class="radio-box mr-1 mt-1" type="radio" name="radio1" />
           <label class="radio-label">Secondary</label>
         </div>
 
         <div class="mt-3">
-          <input class="radio-box mr-1 mt-1" type="radio" name="radio2" id="" />
+          <input class="radio-box mr-1 mt-1" type="radio" name="radio2" />
           <label class="mr-3 radio-label radio-width">Provisional</label>
 
-          <input class="radio-box mr-1 mt-1" type="radio" name="radio2" id="" />
+          <input class="radio-box mr-1 mt-1" type="radio" name="radio2" />
           <label class="radio-label">Confirmed</label>
         </div>
       </div>
 
       <div *ngIf="readOnly" class="w">
-        <div class="">
+        <div>
           <label class="mr-3 radio-label">Yes</label>
 
           <label class="radio-label">No</label>

@@ -8,12 +8,6 @@ import { Component, Input, OnInit } from "@angular/core";
 export class CheckUpReasonV4Component implements OnInit {
   @Input() pastVisit = false;
   checkUpReason = {
-    id: "checkUpReason",
-    image: "assets/svgs/check-up-reason.svg",
-    mainlable: "Check-up reason",
-    collapse: "#collapseCheckUpReason",
-    toggle: "collapse",
-
     data: [
       {
         label: "Site",

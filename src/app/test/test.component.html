@@ -28,7 +28,7 @@
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
         <li *ngFor="let test of testData" class="mb-2">
-          {{ test?.label }}
+          {{ test }}
           <span class="btn-height click float-right">
             <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>

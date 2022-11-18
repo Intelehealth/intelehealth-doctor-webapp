@@ -8,18 +8,13 @@ import { Component, Input, OnInit } from "@angular/core";
 export class NotesV4Component implements OnInit {
   @Input() iconImg = "assets/svgs/note-icon.svg";
   @Input() readOnly = false;
-
   @Input() showToggle = true;
 
   isCollapsed = false;
+
   noteData = [
-    {
-      label: "Please make sure the patient takes all the medicines",
-    },
-    {
-      label:
-        "Please let the patient know that taking proper rest is very important for atleast 1 week",
-    },
+    "Please make sure the patient takes all the medicines",
+    "Please let the patient know that taking proper rest is very important for atleast 1 week",
   ];
 
   constructor() {}

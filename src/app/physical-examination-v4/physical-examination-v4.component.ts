@@ -9,12 +9,6 @@ export class PhysicalExaminationV4Component implements OnInit {
   @Input() pastVisit = false;
 
   physicalExaminaton = {
-    id: "physicalExaminaton",
-    image: "assets/svgs/physical-examination.svg",
-    mainlable: "Physical examination",
-    collapse: "#collapsephysicalExaminaton",
-    toggle: "collapse",
-
     data: [
       {
         label: "In",
@@ -46,9 +40,11 @@ export class PhysicalExaminationV4Component implements OnInit {
       },
       {
         label: "Eye images",
-        imge1: "assets/svgs/eyes1.svg",
-        imge2: "assets/svgs/eyes2.svg",
-        imge3: "assets/svgs/eyes3.svg",
+        images: [
+          "assets/svgs/eyes1.svg",
+          "assets/svgs/eyes2.svg",
+          "assets/svgs/eyes3.svg",
+        ],
       },
     ],
     physicalExaminatonData: [

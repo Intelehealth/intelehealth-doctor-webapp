@@ -8,13 +8,11 @@
             : 'assets/svgs/medical-history.svg'
         "
       />
-      <div class="medicalhistory-img-title">
-        {{ medicalHistory?.mainlable }}
-      </div>
+      <div class="medicalhistory-img-title">Medical History</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        [attr.data-target]="'#' + medicalHistory?.id"
+        data-target="#medicalHistory"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -23,48 +21,36 @@
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
-  <div [id]="medicalHistory?.id" class="medicalHistory-details collapse show">
-    <!-- ul caption -->
+  <div id="medicalHistory" class="medicalHistory-details collapse show">
+    
 
     <div class="abdomin-captoin mt-3 mb-3">
       <div class="abdomin-captoin-font">Patient history</div>
     </div>
 
-    <div class="d-flex ml-4">
-      <div class="p-0">
-        <ul *ngFor="let items of medicalHistory?.data" class="first-list p-0">
-          <li>{{ items?.label }}</li>
-        </ul>
-      </div>
-      <div class="second-list">
-        <div *ngFor="let data of medicalHistory?.data" class="">
-          <label class="margin" for="">
-            {{ data?.value }}
-          </label>
-        </div>
-      </div>
+    <div class="ml-4">
+      <ul class="d-grid p-0">
+        <li class="d-flex mb-3" *ngFor="let item of medicalHistory?.data">
+          <div class="first-list-label">{{ item?.label }}</div>
+          <div class="second-list-label">{{ item?.value }}</div>
+        </li>
+      </ul>
     </div>
 
     <div class="patient-reports mt-2">
       <div class="associated-font mb-3">Family history</div>
     </div>
 
-    <div class="d-flex ml-4">
-      <div class="p-0">
-        <ul
+    <div class="ml-5">
+      <ul class="d-grib p-0">
+        <li
           *ngFor="let items of medicalHistory?.medicalHistoryData"
-          class="first-list p-0"
+          class="d-flex"
         >
-          <li>{{ items?.label }}</li>
-        </ul>
-      </div>
-      <div class="second-list">
-        <div *ngFor="let data of medicalHistory?.medicalHistoryData" class="">
-          <label class="margin" for="">
-            {{ data?.value }}
-          </label>
-        </div>
-      </div>
+          <div class="first-list-label">{{ items?.label }}</div>
+          <div class="second-list-label">{{ items?.value }}</div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

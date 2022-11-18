@@ -8,12 +8,6 @@ import { Component, Input, OnInit } from "@angular/core";
 export class VitalsV4Component implements OnInit {
   @Input() pastVisit = false;
   vital = {
-    id: "vital",
-    image: "assets/svgs/vital.svg",
-    mainlable: "Vitals",
-    collapse: "#collapseVital",
-    toggle: "collapse",
-
     data: [
       {
         label: "Height(cm)",

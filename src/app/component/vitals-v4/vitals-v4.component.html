@@ -1,4 +1,4 @@
-<div class="vital-main box-shadow mt-4">
+<div class="vital-main">
   <div class="vital-header w-100">
     <div class="vital-header-content w-100">
       <img
@@ -6,11 +6,12 @@
           pastVisit ? 'assets/svgs/vital-blue.svg' : 'assets/svgs/vital.svg'
         "
       />
-      <div class="vital-img-title">{{ vital?.mainlable }}</div>
+      <div class="vital-img-title">Vitals</div>
+
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        [attr.data-target]="'#' + vital?.id"
+        data-target="#vital"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -18,20 +19,17 @@
     </div>
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
-  <div [id]="vital?.id" class="vital-details collapse show">
-    <div class="d-flex ml-4">
-      <div class="p-0">
-        <ul *ngFor="let items of vital?.data" class="first-list p-0">
-          <li>{{ items?.label }}</li>
-        </ul>
-      </div>
-      <div class="second-list">
-        <div *ngFor="let item of vital?.data" class="">
-          <label class="margin {{ item?.noInfoClass }}" for="">
+
+  <div id="vital" class="vital-details collapse show">
+    <div class="ml-4">
+      <ul class="d-grid p-0">
+        <li class="d-flex mb-3" *ngFor="let item of vital?.data">
+          <div class="first-list-label">{{ item?.label }}</div>
+          <div class="second-list-label {{ item?.noInfoClass }}">
             {{ item?.value }}
-          </label>
-        </div>
-      </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

@@ -12,14 +12,7 @@ export class TestComponent implements OnInit {
 
   showAddMore = false;
   isCollapsed = false;
-  testData = [
-    {
-      label: "Blood test",
-    },
-    {
-      label: "Stool test",
-    },
-  ];
+  testData = ["Blood test", "Stool test"];
 
   constructor() {}
 

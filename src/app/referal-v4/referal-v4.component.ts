@@ -13,7 +13,7 @@ export class ReferalV4Component implements OnInit {
   showAddMore = false;
   isCollapsed = false;
   selected: any;
-  referalList = [{ name: "select of type" }, { name: "500 Mg" }];
+  referalList = ["select of type", "500 Mg"];
   headers = [
     {
       name: "Referral facility",

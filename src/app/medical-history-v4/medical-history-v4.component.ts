@@ -8,12 +8,6 @@ import { Component, Input, OnInit } from "@angular/core";
 export class MedicalHistoryV4Component implements OnInit {
   @Input() pastVisit = false;
   medicalHistory = {
-    id: "Medicalhistory",
-    image: "assets/svgs/medical-history.svg",
-    mainlable: "Medical history",
-    collapse: "#collapseMedicalhistory",
-    toggle: "collapse",
-
     data: [
       {
         label: "Pregnancy status",

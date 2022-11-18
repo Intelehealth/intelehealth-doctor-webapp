@@ -21,6 +21,7 @@
       </div>
     </div>
   </div>
+  
   <div
     id="followUp"
     aria-expanded="true"
@@ -33,7 +34,7 @@
       <div>
         <ul *ngFor="let follow of followUpData" class="padding">
           <li class="margin">
-            {{ follow?.label }}
+            {{ follow }}
           </li>
         </ul>
       </div>
@@ -60,9 +61,7 @@
 
       <div *ngIf="readOnly" class="w-100">
         <label class="mr-3 radio-label">Yes</label>
-
         <div class="date-readonly">09/11/2022</div>
-
         <div class="data-label">critical heart patient</div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 })
 export class TabsV4Component implements OnInit {
   constructor() {}
+  selectedIndex = 0;
 
   ngOnInit(): void {}
 }

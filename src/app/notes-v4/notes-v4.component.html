@@ -25,11 +25,10 @@
   <div id="note" class="note-details collapse show w-100">
     <hr class="hr" />
 
-    <!-- ul caption -->
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
-        <li *ngFor="let items of noteData" class="mb-2">
-          {{ items?.label }}
+        <li *ngFor="let note of noteData" class="mb-2">
+          {{ note }}
           <span class="btn-height click float-right">
             <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>
@@ -46,11 +45,10 @@
         *ngIf="!readOnly"
         class="text-area mt-2 w-100"
         name="note"
-        id=""
         cols="8"
         rows="4"
       >
-    Let the patient know that they cannot travel for atleast 2 weeks
+Let the patient know that they cannot travel for atleast 2 weeks
   </textarea
       >
       <div class="ml-label" *ngIf="readOnly">

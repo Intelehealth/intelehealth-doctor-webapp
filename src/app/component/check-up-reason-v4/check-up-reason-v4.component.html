@@ -8,11 +8,11 @@
             : 'assets/svgs/check-up-reason.svg'
         "
       />
-      <div class="checkUpReason-img-title">{{ checkUpReason?.mainlable }}</div>
+      <div class="checkUpReason-img-title">Check-up reason</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        [attr.data-target]="'#' + checkUpReason?.id"
+        data-target="#checkUpReason"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -21,7 +21,7 @@
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
-  <div [id]="checkUpReason?.id" class="checkUpReason-details collapse show">
+  <div id="checkUpReason" class="checkUpReason-details collapse show">
     <div class="chief-content">
       <div class="chief-complaint-title">Chief complaint</div>
       <div class="pill-item mt-1">
@@ -30,38 +30,33 @@
       </div>
     </div>
 
-    <!-- ul caption -->
-
     <div class="abdomin-captoin mt-3 mb-3">
       <div class="abdomin-captoin-font">Abdominal pain</div>
     </div>
 
-    <div class="d-flex ml-4">
-      <div class="p-0">
-        <ul *ngFor="let items of checkUpReason?.data" class="first-list p-0">
-          <li>{{ items?.label }}</li>
-        </ul>
-      </div>
-      <div class="second-list">
-        <div *ngFor="let data of checkUpReason?.data" class="">
-          <label class="margin" for="">
-            {{ data?.value }}
-          </label>
-        </div>
-      </div>
+    <div class="ml-4">
+      <ul class="d-grid p-0">
+        <li class="d-flex mb-3" *ngFor="let item of checkUpReason?.data">
+          <div class="first-list-label">{{ item?.label }}</div>
+          <div class="second-list-label">
+            {{ item?.value }}
+          </div>
+        </li>
+      </ul>
     </div>
 
     <div class="patient-reports">
       <div class="associated-font mb-3">Associated symptoms</div>
-      <ul
-        *ngFor="let data of checkUpReason?.associatedData"
-        class="font-size-md font-bold"
-      >
-        <li>{{ data?.label }}</li>
-        <p class="font-size-md">
-          {{ data?.value }}
-        </p>
-      </ul>
+      <div class="ml-5">
+        <ul class="d-grid p-0">
+          <li class="mb-3" *ngFor="let item of checkUpReason?.associatedData">
+            <div class="first-list-label mb-2 font-bold">{{ item?.label }}</div>
+            <p class="font-size-md">
+              {{ item?.value }}
+            </p>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

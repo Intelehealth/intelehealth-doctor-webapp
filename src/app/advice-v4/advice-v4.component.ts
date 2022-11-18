@@ -7,12 +7,10 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class AdviceV4Component implements OnInit {
   @Input() iconImg = "assets/svgs/advice.svg";
-
   @Input() readOnly = false;
-
   @Input() showToggle = true;
-  showAddMore = false;
 
+  showAddMore = false;
   isCollapsed = false;
   adviceData = [
     "Please make sure the patient takes all the medicines",

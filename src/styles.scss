@@ -173,3 +173,16 @@ body.font-lato td {
 .ml-label {
   margin-left: 22px;
 }
+
+.first-list-label {
+  display: list-item;
+
+  height: 24px;
+  width: 230px;
+}
+
+.second-list-label {
+  word-break: break-word;
+
+  width: 720px;
+}

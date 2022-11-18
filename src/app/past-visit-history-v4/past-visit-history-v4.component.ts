@@ -11,6 +11,7 @@ export class PastVisitHistoryV4Component implements OnInit {
   @ViewChild("VisitSummaryModal")
   VisitSummaryModal: VisitSummaryAndPrescriptionModalComponent;
 
+  itemHover: any = null;
   pastVisitHistory: any = {
     headers: [
       {
@@ -18,13 +19,11 @@ export class PastVisitHistoryV4Component implements OnInit {
         type: "stepper",
         imageKey: "stepper",
       },
-
       {
         name: "Created on",
         type: "string",
         key: "createdOn",
       },
-
       {
         name: "Consulted by",
         type: "stringwithimage",
@@ -32,15 +31,12 @@ export class PastVisitHistoryV4Component implements OnInit {
         imageKey: "profile",
         headerClass: "font-size-md font-bold",
       },
-
       { name: "Cheif complaint", type: "string", key: "complaint" },
-
       {
         name: "Summary",
         type: "button",
         headerClass: "text-center",
         imageKey: "summary",
-
         buttons: [
           {
             label: "View",
@@ -51,13 +47,11 @@ export class PastVisitHistoryV4Component implements OnInit {
           },
         ],
       },
-
       {
         name: "Prescription",
         type: "button",
         headerClass: "text-center ",
         imageKey: "PrescriptionIcon",
-
         buttons: [
           {
             label: "View",
@@ -68,7 +62,6 @@ export class PastVisitHistoryV4Component implements OnInit {
           },
         ],
       },
-
       {
         name: "Prescription sent",
         type: "pill",
@@ -85,41 +78,24 @@ export class PastVisitHistoryV4Component implements OnInit {
     data: [
       {
         patientName: "Muskan Kala (F,24)",
-
         profile: "assets/svgs/table-profile.svg",
-
         complaint: "Fever",
-
         PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-
         summary: "assets/svgs/summary-list-blue-icon.svg",
-
         PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-
         createdOn: "5 May, 2022",
-
         stepper: "assets/svgs/green-color-steper.svg",
-
         isActive: true,
       },
-
       {
         patientName: "Dr. Aman Sharma (M)",
-
         profile: "assets/svgs/table-profile.svg",
-
         complaint: "Fever & Cough",
-
         summary: "assets/svgs/summary-list-blue-icon.svg",
-
         PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-
         PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-
         createdOn: "21 Apr, 2022",
-
         stepper: "assets/svgs/green-color-steper.svg",
-
         isActive: true,
         isReassigned: true,
         reassignedHintText: {
@@ -129,32 +105,19 @@ export class PastVisitHistoryV4Component implements OnInit {
       },
       {
         patientName: "Dr. Aman Sharma (M)",
-
         profile: "assets/svgs/table-profile.svg",
-
         complaint: "Fever & Cough",
-
         summary: "assets/svgs/summary-list-blue-icon.svg",
-
         PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-
         PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-
         createdOn: "21 Apr, 2022",
-
         stepper: "assets/svgs/green-color-steper.svg",
-
         isActive: true,
       },
     ],
   };
-  itemHover: any = null;
 
   constructor(public modalSvc: NgbModal) {}
 
   ngOnInit(): void {}
-
-  onPrescriptionModal() {
-    console.table("second");
-  }
 }

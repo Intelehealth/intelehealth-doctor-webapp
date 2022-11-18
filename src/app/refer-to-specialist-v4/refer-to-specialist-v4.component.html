@@ -1,13 +1,11 @@
 <div class="refer-to-specailist-main box-shadow mt-4">
   <div class="refer-to-specailist-header w-100">
     <div class="refer-to-specailist-header-content w-100">
-      <img [src]="referToSpecailist?.image" />
-      <div class="refer-to-specailist-img-title">
-        {{ referToSpecailist?.mainlable }}
-      </div>
+      <img src="assets/svgs/refer-to-specialist.svg" />
+      <div class="refer-to-specailist-img-title">Refer-to-specailist</div>
       <div
         data-toggle="collapse"
-        [attr.data-target]="'#' + referToSpecailist?.id"
+        data-target="#referToSpecailist"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -16,19 +14,20 @@
     <hr class="hr" />
   </div>
   <div
-    [id]="referToSpecailist?.id"
+    id="referToSpecailist"
     aria-expanded="true"
     aria-controls="collapse"
     class="refer-to-specailist-details collapse show"
   >
     <div class="d-flex ml-4">
-      <div class="first-list">
-        <div *ngFor="let item of referToSpecailist?.data" class="">
-          <label class="margin" for="">
-            {{ item?.label }}
-          </label>
-        </div>
+      <div class="ml-4">
+        <ul class="d-grid p-0">
+          <li class="d-flex mb-3" *ngFor="let item of referToSpecailist?.data">
+            <div class="first-list-label">{{ item?.label }}</div>
+          </li>
+        </ul>
       </div>
+
       <div>
         <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
         <label class="mr-3 radio-label">Yes</label>
@@ -38,8 +37,7 @@
 
         <div class="select">
           <ng-select
-            class=""
-            [items]="list"
+            [items]="specaiList"
             bindLabel="name"
             [clearable]="false"
             [(ngModel)]="selected"

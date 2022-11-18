@@ -7,13 +7,8 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class AdditionalDocumentsV4Component implements OnInit {
   @Input() pastVisit = false;
-  
-  AdditionalDocuments = {
-    id: "Additional-documents",
-    image: "assets/svgs/additional-document.svg",
-    mainlable: "Additional documents",
-    collapse: "#collapseAdditionalDocuments",
-    toggle: "collapse",
+
+  additionalDocuments = {
     data: ["assets/svgs/eyes1.svg", "assets/svgs/eyes2.svg", "abc.pdf"],
   };
 
