@@ -118,7 +118,6 @@ import { NgOtpInputModule } from "ng-otp-input";
 import { OtpService } from "./services/otp.service";
 import { CalendarContainerComponent } from "./component/calendar-container/calendar-container.component";
 import { SetUpCalendarComponent } from "./component/calendar-container/set-up-calendar/set-up-calendar.component";
-import { ViewCalendarComponent } from "./component/calendar-container/view-calendar/view-calendar.component";
 
 import { SetNewPasswordComponent } from "./component/set-new-password/set-new-password.component";
 import { PasswordStrengthComponent } from "./component/set-new-password/password-strength/password-strength.component";
@@ -167,6 +166,10 @@ import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summar
 import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
 import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
 import { CallStateComponent } from './component/call-state/call-state.component';
+import { CalendarWeeklyComponent } from './component/calendar-v4/calendar-weekly/calendar-weekly.component';
+import { CalendarMonthlyComponent } from './component/calendar-v4/calendar-monthly/calendar-monthly.component';
+import { CalendarDailyComponent } from './component/calendar-v4/calendar-daily/calendar-daily.component';
+import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/view-calendar.component";
 
 @NgModule({
   declarations: [
@@ -270,6 +273,9 @@ import { CallStateComponent } from './component/call-state/call-state.component'
     ProfileContainerComponent,
     PersonalInformationComponent,
     ProfessionalDetailsComponent,
+    CalendarWeeklyComponent,
+    CalendarMonthlyComponent,
+    CalendarDailyComponent,
   ],
 
   imports: [
@@ -343,6 +349,11 @@ import { CallStateComponent } from './component/call-state/call-state.component'
               canActivate: [AuthGuard],
             },
             {
+              path: "view-calendar",
+              component: ViewCalendarComponent,
+              canActivate: [AuthGuard],
+            },
+            {
               path: "help",
               component: HelpContainerComponent,
               canActivate: [AuthGuard],
@@ -361,12 +372,12 @@ import { CallStateComponent } from './component/call-state/call-state.component'
             {
               path: "admin",
               component: AdminContainerComponent,
-              canActivate: [AuthGuard], 
+              canActivate: [AuthGuard],
             },
-            { 
-              path: "call-state", 
+            {
+              path: "call-state",
               component: CallStateComponent,
-              canActivate: [AuthGuard], 
+              canActivate: [AuthGuard],
             },
             {
               path: "profile",
@@ -466,4 +477,4 @@ import { CallStateComponent } from './component/call-state/call-state.component'
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

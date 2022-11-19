@@ -1,0 +1,36 @@
+.daily-view-containr {
+    .timings-container {
+        background: #fff;
+
+        .timing-list {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 32px;
+
+            margin-top: 32px;
+            margin-bottom: 32px;
+
+            width: 98px;
+
+            .time {
+                width: 74px;
+                height: 24px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 150%;
+
+                color: #7F7B92;
+
+                flex: none;
+                order: 0;
+                flex-grow: 0;
+            }
+        }
+    }
+
+    .daily-appointments {}
+}
