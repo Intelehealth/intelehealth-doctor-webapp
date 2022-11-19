@@ -47,19 +47,11 @@ export class PhysicalExaminationV4Component implements OnInit {
         ],
       },
     ],
-    physicalExaminatonData: [
-      {
-        label: "Distension seen",
-      },
-      {
-        label: "No scarring",
-      },
-      {
-        label: "Tenderness seen - Location - Upper(R)",
-      },
-      {
-        label: "No lumps",
-      },
+    physicalData: [
+      "Distension seen",
+      "No scarring",
+      "Tenderness seen - Location - Upper(R)",
+      "No lumps",
     ],
   };
 

@@ -1,19 +1,21 @@
-.Additional-documents-main {
+.additional-documents-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
 
   position: relative;
 
+  padding: 32px 24px;
+
   border-radius: 12px;
 }
-.Additional-documents-header {
+
+.additional-documents-header {
   height: 64px;
 }
 
-.Additional-documents-header-content {
+.additional-documents-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -22,18 +24,18 @@
   height: 48px;
 }
 
-.Additional-documents-img-title {
+.additional-documents-img-title {
   display: flex;
   align-items: center;
 
   width: 196px;
   height: 30px;
 
+  color: #1b163a;
+
   font-weight: 700;
   font-size: 19px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .arrow {
@@ -44,6 +46,6 @@
   padding: 8px;
 }
 
-.Additional-documents-details {
+.additional-documents-details {
   width: 990px;
 }

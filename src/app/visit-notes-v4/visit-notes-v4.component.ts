@@ -53,10 +53,4 @@ export class VisitNotesV4Component implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
-
-  ngAfterViewInit() {
-    // this.sharePrescription.openModal();
-    // this.sharedSuccessfully.openModal();
-    // this.cannotSharePrescription.openModal();
-  }
 }

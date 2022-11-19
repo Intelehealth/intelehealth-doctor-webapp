@@ -5,7 +5,7 @@
       <div class="refer-to-specailist-img-title">Refer-to-specailist</div>
       <div
         data-toggle="collapse"
-        data-target="#referToSpecailist"
+        data-target="#refer-to-specailist"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -14,7 +14,7 @@
     <hr class="hr" />
   </div>
   <div
-    id="referToSpecailist"
+    id="refer-to-specailist"
     aria-expanded="true"
     aria-controls="collapse"
     class="refer-to-specailist-details collapse show"
@@ -23,7 +23,7 @@
       <div class="ml-4">
         <ul class="d-grid p-0">
           <li class="d-flex mb-3" *ngFor="let item of referToSpecailist?.data">
-            <div class="first-list-label">{{ item?.label }}</div>
+            <div class="first-list-label mb-3">{{ item }}</div>
           </li>
         </ul>
       </div>

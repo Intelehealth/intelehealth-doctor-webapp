@@ -1,6 +1,6 @@
-<div class="checkUpReason-main box-shadow mt-4">
-  <div class="checkUpReason-header w-100">
-    <div class="checkUpReason-header-content w-100">
+<div class="check-up-reason-main">
+  <div class="check-up-reason-header w-100">
+    <div class="check-up-reason-header-content w-100">
       <img
         [src]="
           pastVisit
@@ -8,11 +8,11 @@
             : 'assets/svgs/check-up-reason.svg'
         "
       />
-      <div class="checkUpReason-img-title">Check-up reason</div>
+      <div class="check-up-reason-img-title">Check-up reason</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        data-target="#checkUpReason"
+        data-target="#check-up-reason"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -21,7 +21,7 @@
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
-  <div id="checkUpReason" class="checkUpReason-details collapse show">
+  <div id="check-up-reason" class="check-up-reason-details collapse show">
     <div class="chief-content">
       <div class="chief-complaint-title">Chief complaint</div>
       <div class="pill-item mt-1">

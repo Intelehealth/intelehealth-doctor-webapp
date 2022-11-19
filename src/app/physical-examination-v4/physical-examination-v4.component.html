@@ -1,6 +1,6 @@
-<div class="physicalExaminaton-main">
-  <div class="physicalExaminaton-header w-100">
-    <div class="physicalExaminaton-header-content w-100">
+<div class="physical-examinaton-main">
+  <div class="physical-examinaton-header w-100">
+    <div class="physical-examinaton-header-content w-100">
       <img
         [src]="
           pastVisit
@@ -8,11 +8,11 @@
             : 'assets/svgs/physical-examination.svg'
         "
       />
-      <div class="physicalExaminaton-img-title">Physical examination</div>
+      <div class="physical-examinaton-img-title">Physical examination</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        data-target="#physicalExaminaton"
+        data-target="#physical-examinaton"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -21,7 +21,7 @@
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
-  <div id="physicalExaminaton" class="physicalExaminaton-details collapse show">
+  <div id="physical-examinaton" class="physical-examinaton-details collapse show">
     <div class="abdomin-captoin mt-3 mb-3">
       <div class="abdomin-captoin-font">General exams</div>
     </div>
@@ -48,11 +48,11 @@
       <div class="associated-font mb-3">Abdomen</div>
       <ul>
         <li
-          *ngFor="let data of physicalExaminaton?.physicalExaminatonData"
+          *ngFor="let data of physicalExaminaton?.physicalData"
           class="font-size-md mb-1"
         >
           <label>
-            {{ data?.label }}
+            {{ data }}
           </label>
         </li>
       </ul>

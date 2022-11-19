@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class VitalsV4Component implements OnInit {
   @Input() pastVisit = false;
+  
   vital = {
     data: [
       {

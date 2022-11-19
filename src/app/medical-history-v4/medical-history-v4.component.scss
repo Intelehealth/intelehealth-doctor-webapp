@@ -1,40 +1,41 @@
-.medicalhistory-main {
+.medical-history-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
 
   position: relative;
 
+  padding: 32px 24px;
+
   border-radius: 12px;
 }
 
-.medicalhistory-header {
+.medical-history-header {
   height: 64px;
 }
 
-.medicalhistory-header-content {
+.medical-history-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
 
-  width: 256px;
   height: 48px;
+  width: 256px;
 }
 
-.medicalhistory-img-title {
+.medical-history-img-title {
   display: flex;
   align-items: center;
 
-  width: 196px;
   height: 30px;
+  width: 196px;
+
+  color: #1b163a;
 
   font-weight: 700;
   font-size: 19px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .arrow {
@@ -49,7 +50,7 @@
   color: #7f7b92;
 }
 
-.medicalhistory-details {
+.medical-history-details {
   width: 990px;
 }
 
@@ -61,11 +62,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 12px;
 
-  width: 990px;
+  padding: 0px;
+
   height: 71px;
+  width: 990px;
 
   .chief-complaint-title {
     font-weight: 600;
@@ -78,6 +80,7 @@
   }
   .abdominal-pill {
     padding: 4px 8px;
+
     gap: 4px;
 
     height: 32px;
@@ -92,12 +95,12 @@
 }
 
 .abdomin-captoin {
-  width: 990px;
   height: 27px;
+  width: 990px;
 
   .abdomin-captoin-font {
-    width: 134px;
     height: 27px;
+    width: 134px;
 
     font-weight: 600;
     font-size: 18px;

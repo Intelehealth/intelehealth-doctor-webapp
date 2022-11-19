@@ -10,17 +10,7 @@ export class ReferToSpecialistV4Component implements OnInit {
   specaiList = ["Cardiologist"];
 
   referToSpecailist = {
-    data: [
-      {
-        label: "Refer to another speciality",
-        value: "Yes",
-        id: "yes",
-      },
-      {
-        label: "Specialization",
-        value: "",
-      },
-    ],
+    data: ["Refer to another speciality", "Specialization"],
   };
 
   constructor() {}

@@ -1,4 +1,4 @@
-<div class="referal-main box-shadow mt-4">
+<div class="referal-main">
   <div class="referal-header w-100">
     <div class="referal-header-content w-100">
       <img [src]="iconImg" />
@@ -6,7 +6,7 @@
       <div
         *ngIf="showToggle"
         data-toggle="collapse"
-        data-target="#referalCollapse"
+        data-target="#referal"
         class="click"
         (click)="isCollapsed = !isCollapsed"
       >
@@ -22,9 +22,8 @@
     </div>
   </div>
 
-  <div id="referalCollapse" class="referal-details collapse show w-100">
+  <div id="referal" class="referal-details collapse show w-100">
     <hr class="hr" />
-    <!-- ul caption -->
 
     <div class="d-flex mb-2 table-responsive">
       <table class="table w-100">

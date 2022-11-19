@@ -2,10 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 32px 24px;
   gap: 16px;
 
   position: relative;
+
+  padding: 32px 24px;
 
   border-radius: 12px;
 }
@@ -57,33 +58,43 @@
   height: 22px;
 
   background-color: #0fd197;
+
   border: 2px solid #0fd197;
   border-radius: 80px;
 
   &:after {
-    width: 14px;
-    height: 14px;
-    border-radius: 15px;
-    top: 1px;
-    left: 4px;
-    position: relative;
-    background-color: #fff;
-    content: "";
     display: inline-block;
     visibility: visible;
+
+    position: relative;
+    top: 1px;
+    left: 4px;
+
+    width: 14px;
+    height: 14px;
+
+    background-color: #ffffff;
+
+    border-radius: 15px;
+    content: "";
   }
 
   &:checked:after {
-    width: 14px;
-    height: 14px;
-    border-radius: 15px;
-    top: 1px;
-    left: 4px;
-    position: relative;
-    background-color: #0fd197;
-    content: "";
     display: inline-block;
     visibility: visible;
+
+    position: relative;
+    top: 1px;
+    left: 4px;
+
+    width: 14px;
+    height: 14px;
+
+    background-color: #0fd197;
+
+    border-radius: 15px;
+
+    content: "";
   }
 }
 
@@ -93,12 +104,12 @@
 
   vertical-align: middle;
 
+  color: #1b163a;
+
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .first-list {
@@ -106,9 +117,9 @@
 }
 
 .select {
-  width: 193px;
-
   margin-top: 10px;
+
+  width: 193px;
 
   background: #faf9ff;
 
@@ -130,5 +141,6 @@
   color: #ffffff;
 
   background: #2e1e91;
+
   border-radius: 8px;
 }

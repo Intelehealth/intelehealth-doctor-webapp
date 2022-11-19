@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class CheckUpReasonV4Component implements OnInit {
   @Input() pastVisit = false;
+  
   checkUpReason = {
     data: [
       {

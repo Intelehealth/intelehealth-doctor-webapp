@@ -1,6 +1,6 @@
-<div class="Additional-documents-main box-shadow mt-4">
-  <div class="Additional-documents-header w-100">
-    <div class="Additional-documents-header-content w-100">
+<div class="additional-documents-main box-shadow mt-4">
+  <div class="additional-documents-header w-100">
+    <div class="additional-documents-header-content w-100">
       <img
         [src]="
           pastVisit
@@ -8,11 +8,11 @@
             : 'assets/svgs/additional-document.svg'
         "
       />
-      <div class="Additional-documents-img-title">Additional documents</div>
+      <div class="additional-documents-img-title">Additional documents</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        data-target="#AdditionalDocuments"
+        data-target="#additional-documents"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -22,8 +22,8 @@
   </div>
 
   <div
-    id="AdditionalDocuments"
-    class="Additional-documents-details collapse show"
+    id="additional-documents"
+    class="additional-documents-details collapse show"
   >
     <div class="d-flex ml-4">
       <div *ngFor="let image of additionalDocuments?.data">

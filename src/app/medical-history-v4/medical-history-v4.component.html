@@ -1,6 +1,6 @@
-<div class="medicalhistory-main box-shadow mt-4">
-  <div class="medicalhistory-header w-100">
-    <div class="medicalhistory-header-content w-100">
+<div class="medical-history-main box-shadow mt-4">
+  <div class="medical-history-header w-100">
+    <div class="medical-history-header-content w-100">
       <img
         [src]="
           pastVisit
@@ -8,11 +8,11 @@
             : 'assets/svgs/medical-history.svg'
         "
       />
-      <div class="medicalhistory-img-title">Medical History</div>
+      <div class="medical-history-img-title">Medical History</div>
       <div
         *ngIf="!pastVisit"
         data-toggle="collapse"
-        data-target="#medicalHistory"
+        data-target="#medical-history"
         class="click"
       >
         <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
@@ -21,7 +21,7 @@
     <hr *ngIf="!pastVisit" class="hr" />
   </div>
 
-  <div id="medicalHistory" class="medicalHistory-details collapse show">
+  <div id="medical-history" class="medical-history-details collapse show">
     
 
     <div class="abdomin-captoin mt-3 mb-3">

@@ -1,21 +1,21 @@
-.checkUpReason-main {
+.check-up-reason-main {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
 
-  padding: 32px 24px;
-
   position: relative;
+
+  padding: 32px 24px;
 
   border-radius: 12px;
 }
 
-.checkUpReason-header {
+.check-up-reason-header {
   height: 64px;
 }
 
-.checkUpReason-header-content {
+.check-up-reason-header-content {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -24,33 +24,33 @@
   width: 256px;
 }
 
-.checkUpReason-img-title {
+.check-up-reason-img-title {
   display: flex;
   align-items: center;
 
   height: 30px;
   width: 196px;
 
+  color: #1b163a;
+
   font-weight: 700;
   font-size: 19px;
   line-height: 150%;
-
-  color: #1b163a;
 }
 
 .arrow {
-  padding: 8px;
-
   position: absolute;
   top: 45px;
   right: 45px;
+
+  padding: 8px;
 }
 
 .no-info-color {
   color: #7f7b92;
 }
 
-.checkUpReason-details {
+.check-up-reason-details {
   width: 990px;
 }
 
