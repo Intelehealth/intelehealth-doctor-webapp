@@ -149,9 +149,9 @@ import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-
 import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
 import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
 import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
-import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
-import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
-import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
+import { ProfileContainerComponent } from "./component/profile-container/profile-container.component";
+import { PersonalInformationComponent } from "./component/profile-container/personal-information/personal-information.component";
+import { ProfessionalDetailsComponent } from "./component/profile-container/professional-details/professional-details.component";
 import { SetupCalendarV4Component } from "./setup-calendar-v4/setup-calendar-v4.component";
 import { DiagnosisV4Component } from "./diagnosis-v4/diagnosis-v4.component";
 import { InteractionNoteV4Component } from "./interaction-note-v4/interaction-note-v4.component";
@@ -163,13 +163,14 @@ import { FollowUpV4Component } from "./follow-up-v4/follow-up-v4.component";
 import { CommonModalComponent } from "./modals/common-modal/common-modal.component";
 import { PastVisitHistoryV4Component } from "./past-visit-history-v4/past-visit-history-v4.component";
 import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
-import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
-import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
-import { CallStateComponent } from './component/call-state/call-state.component';
-import { CalendarWeeklyComponent } from './component/calendar-v4/calendar-weekly/calendar-weekly.component';
-import { CalendarMonthlyComponent } from './component/calendar-v4/calendar-monthly/calendar-monthly.component';
-import { CalendarDailyComponent } from './component/calendar-v4/calendar-daily/calendar-daily.component';
+import { VisitSummaryReadonlyComponent } from "./visit-summary-readonly/visit-summary-readonly.component";
+import { PrescriptionReadonlyComponent } from "./prescription-readonly/prescription-readonly.component";
+import { CallStateComponent } from "./component/call-state/call-state.component";
+import { CalendarWeeklyComponent } from "./component/calendar-v4/calendar-weekly/calendar-weekly.component";
+import { CalendarMonthlyComponent } from "./component/calendar-v4/calendar-monthly/calendar-monthly.component";
+import { CalendarDailyComponent } from "./component/calendar-v4/calendar-daily/calendar-daily.component";
 import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/view-calendar.component";
+import { AppointmentDetailModalComponent } from './modals/appointment-detail-modal/appointment-detail-modal.component';
 
 @NgModule({
   declarations: [
@@ -276,6 +277,7 @@ import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/vie
     CalendarWeeklyComponent,
     CalendarMonthlyComponent,
     CalendarDailyComponent,
+    AppointmentDetailModalComponent,
   ],
 
   imports: [
@@ -477,4 +479,4 @@ import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/vie
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

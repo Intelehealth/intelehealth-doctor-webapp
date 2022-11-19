@@ -1,2 +1,13 @@
-<div class="view-calendar-main d-grid">
-</div>
+<div class="view-calendar-main d-grid"></div>
+
+<app-common-modal
+  #reschduleAppointment
+  [modal]="reschduleTheAppointmentModal"
+></app-common-modal>
+
+<app-common-modal
+  #cancelAppointment
+  [modal]="cancelAppointmentModal"
+></app-common-modal>
+
+<app-appointment-detail-modal #appointmentDetail></app-appointment-detail-modal>

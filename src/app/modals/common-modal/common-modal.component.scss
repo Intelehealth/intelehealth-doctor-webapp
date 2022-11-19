@@ -1,71 +1,78 @@
 .modal-main-container {
-    height: 295px;
-    width: 501px;
+  height: 295px;
+  width: 501px;
 
-    border-radius: 12px;
+  border-radius: 12px;
 
-    .circle {
-        margin-top: 32px;
+  .circle {
+    margin-top: 32px;
 
-        .main-img {
-            margin-top: 20px;
-        }
+    .main-img {
+      margin-top: 20px;
+    }
+  }
+
+  .cross {
+    right: 10px;
+    top: 10px;
+  }
+
+  .main-title {
+    margin-top: 118.5px;
+    font-family: "DM Sans";
+
+    .main-txt {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 150%;
     }
 
-    .cross {
-        right: 10px;
-        top: 10px;
+    .sub-text {
+      color: #7f7b92;
+
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 27px;
+      letter-spacing: 0em;
+    }
+  }
+
+  .btns {
+    margin-top: 10px;
+
+    padding: 10px 14px 0px 14px;
+
+    height: 48px;
+
+    border: 0.770833px solid #efe8ff;
+    border-radius: 8px;
+
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+
+    &.left-btn {
+      margin-right: 25px;
+
+      background: #ffffff;
+
+      color: #2e1e91;
     }
 
-    .main-title {
-        margin-top: 118.5px;
-        font-family: 'DM Sans';
+    &.right-btn {
+      background: #2e1e91;
 
-        .main-txt {
-            font-style: normal;
-            font-weight: 700;
-            font-size: 24px;
-            line-height: 150%;
-        }
-
-        .sub-text {
-            color: #7F7B92;
-
-            font-size: 18px;
-            font-weight: 400;
-            line-height: 27px;
-            letter-spacing: 0em;
-        }
+      color: #faf9ff;
     }
+  }
+}
 
-    .btns {
-        margin-top: 10px;
+.re-appointment {
+  align-items: center;
+  gap: 24px;
 
-        padding: 10px 14px 0px 14px;
-
-        height: 48px;
-
-        border: 0.770833px solid #EFE8FF;
-        border-radius: 8px;
-
-        font-family: 'DM Sans';
-        font-style: normal;
-        font-weight: 700;
-        font-size: 18px;
-        line-height: 150%;
-
-        &.left-btn {
-            margin-right: 25px;
-
-            background: #FFFFFF;
-
-            color: #2E1E91;
-        }
-
-        &.right-btn {
-            background: #2E1E91;
-
-            color: #FAF9FF;
-        }
-    }
+  height: 54px;
 }

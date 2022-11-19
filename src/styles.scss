@@ -169,6 +169,11 @@ body.font-lato td {
     height: 325px !important;
   }
 }
+.reschdule-appointment-height {
+  .modal-main-container {
+    height: 376px !important;
+  }
+}
 
 .ml-label {
   margin-left: 22px;
@@ -185,4 +190,8 @@ body.font-lato td {
   word-break: break-word;
 
   width: 720px;
+}
+
+.red-color {
+  color: #ea315b;
 }

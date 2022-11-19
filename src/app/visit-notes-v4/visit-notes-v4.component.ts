@@ -14,6 +14,7 @@ export class VisitNotesV4Component implements OnInit {
 
   @ViewChild("cannotSharePrescription")
   cannotSharePrescription: CommonModalComponent;
+  
 
   sharePrescModal: any = {
     mainText: "Share prescription",

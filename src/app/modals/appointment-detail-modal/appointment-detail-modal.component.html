@@ -1,0 +1,62 @@
+<ng-template #modalContent let-close="close" data-target="static">
+  <div (click)="close()" class="appointment-detail-modal-main w-100">
+    <div class="d-flex appointment-detail-modal-header position-relative">
+      <div class="appointment-detail-title ml-3 mt-4">
+        <div class="">Appointment details</div>
+      </div>
+      <div class="cross position-absolute click">
+        <img src="assets/svgs/cross-blue.svg" />
+      </div>
+    </div>
+
+    <div class="d-flex personal-person-detail-modal">
+      <div class="personal-person-img">
+        <img src="assets/svgs/personal-person.svg" />
+      </div>
+
+      <div class="d-grid">
+        <div class="font-bold">Muskan Kala (F, 32)</div>
+        <div class="view-detail-font grey-color">PID: P1244</div>
+        <div class="view-detail-font blue-color">
+          View details
+          <img src="assets/svgs/right-arrow-blue.svg" />
+        </div>
+      </div>
+
+      <div class="priority-pill ml-auto">
+        <div class="font-size-md red-color priority-pill-font mt-1">
+          Priority
+        </div>
+      </div>
+    </div>
+
+    <div class="d-grid p-0 w-100">
+      <div class="d-flex mb-3">
+        <div class="booked-on grey-color ml-4 font-size-md">Booked on:</div>
+        <div class="font-size-md">3 August, 2022</div>
+      </div>
+      <div class="d-flex">
+        <div class="booked-on grey-color ml-4 font-size-md">
+          Appointment on:
+        </div>
+        <div class="font-size-md d-grid mb-3">
+          <span> 5 August, 2022, 10:00 am - 10:30 am </span>
+          <div class="font-bold red-color">Starts in 3 days</div>
+        </div>
+      </div>
+      <div class="d-flex mb-4">
+        <div class="booked-on grey-color ml-4 font-size-md">
+          Chief complain:
+        </div>
+        <div class="font-size-md">Cough & Cold</div>
+      </div>
+
+      <div class="d-flex mb-2">
+        <div class="booked-on grey-color ml-4 font-size-md">Booked by:</div>
+        <div class="font-size-md">
+          <span>Kiran Devi</span> <img class="ml-2" src="assets/svgs/num.svg" />
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
