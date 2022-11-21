@@ -54,8 +54,8 @@ export class ViewCalendarComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    // this.reschduleAppointment.openModal();
-    // this.cancelAppointment.openModal();
-    // this.appointmentDetail.openAppointmentModal();
+    this.reschduleAppointment.openModal();
+    this.cancelAppointment.openModal();
+    this.appointmentDetail.openAppointmentModal();
   }
 }

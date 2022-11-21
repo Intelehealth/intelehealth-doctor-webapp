@@ -1,4 +1,38 @@
-<div class="view-calendar-main d-grid"></div>
+<div class="view-calendar-main d-grid">
+  <div class="ml-16 mr-20">
+    <div class="d-flex btn-logo-container">
+      <img src="assets/svgs/calender-dilog.svg" />
+      <div class="label">Your Calendar</div>
+      <button type="button" class="btn manage-calendar-btn ml-auto">
+        Manage Calendar
+      </button>
+    </div>
+
+    <div class="calendar-tab position-relative w-100">
+      <mat-tab-group mat-align-tabs="start">
+        <mat-tab label="Daily">
+          <app-calendar-daily></app-calendar-daily>
+        </mat-tab>
+        <mat-tab label="Weekly">
+          <app-calendar-weekly></app-calendar-weekly>
+        </mat-tab>
+        <mat-tab label="Monthly">
+          <app-calendar-monthly></app-calendar-monthly>
+        </mat-tab>
+      </mat-tab-group>
+      <div class="right-container d-flex position-absolute">
+        <div class="calendar-icon">
+          <img src="assets/svgs/calendar-white.svg" />
+        </div>
+        <div class="today-date">{{ todayDate }}</div>
+        <div class="arrow-icons">
+          <img src="assets/svgs/chevron-left.svg" class="left click" />
+          <img src="assets/svgs/chevron-right.svg" class="right click" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <app-common-modal
   #reschduleAppointment
@@ -9,5 +43,3 @@
   #cancelAppointment
   [modal]="cancelAppointmentModal"
 ></app-common-modal>
-
-<app-appointment-detail-modal #appointmentDetail></app-appointment-detail-modal>

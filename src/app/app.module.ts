@@ -356,6 +356,11 @@ import { AppointmentDetailModalComponent } from './modals/appointment-detail-mod
               canActivate: [AuthGuard],
             },
             {
+              path: "setup-calendar",
+              component: SetupCalendarV4Component,
+              canActivate: [AuthGuard],
+            },
+            {
               path: "help",
               component: HelpContainerComponent,
               canActivate: [AuthGuard],
