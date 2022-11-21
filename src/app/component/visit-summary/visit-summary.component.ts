@@ -145,57 +145,17 @@ export class VisitSummaryComponent implements OnInit {
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
       if (userDetails && providerDetails) {
-        const providerUuid = providerDetails.uuid;
-        const json = {
-          patient: patientUuid,
-          encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
-          encounterProviders: [
-            {
-              provider: providerUuid,
-              encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
-            },
-          ],
-          visit: visitUuid,
-          encounterDatetime: myDate,
-        };
-        this.service.postEncounter(json).subscribe((response) => {
-          if (response) {
-            this.visitService
-              .fetchVisitDetails(visitUuid)
-              .subscribe((visitDetails) => {
-                saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
-              });
-            this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
-            attributes.forEach((element) => {
-              if (
-                element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-                !element.voided
-              ) {
-                const payload = {
-                  speciality: element.value,
-                  patient: {
-                    name: response.patient.display,
-                    provider: response.encounterProviders[0].display,
-                  },
-                  skipFlag: true,
-                };
-                // if(!this.pushNotificationService.snoozeTimeout){
-                //   this.pushNotificationService.postNotification(payload).subscribe();
-                // }
-              }
-            });
-            setTimeout(() => {
-              this.showReminder(visitUuid);
-            }, 900000);
-          } else {
-            this.snackbar.open(`Visit Note Not Created`, null, {
-              duration: 4000,
-            });
+        this.setSpiner = true;
+        this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+         let visitNote =  visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
+          if(visitNote) {
+            this.diagnosisService.isSameDoctor();
+            this.setSpiner = false;
+          }else {
+            this.startVisitNote(providerDetails, patientUuid,visitUuid,myDate,attributes);
+            this.setSpiner = false;
           }
-          this.diagnosisService.isVisitSummaryChanged = false;
-        });
+          });
       } else {
         this.authService.logout();
       }
@@ -226,6 +186,7 @@ export class VisitSummaryComponent implements OnInit {
       this.getDoctorValue();
       const providerUuid = providerDetails.uuid;
       if (this.diagnosisService.isSameDoctor()) {
+        this.setSpiner = true;
         this.service.signRequest(providerUuid).subscribe((res) => {
           if (res.results.length) {
             res.results.forEach((element) => {
@@ -256,9 +217,11 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
+              this.setSpiner = false;
               this.snackbar.open("Visit Complete", null, { duration: 4000 });
             });
           } else {
+            this.setSpiner = false;
             if (
               window.confirm(
                 'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
@@ -338,6 +301,58 @@ export class VisitSummaryComponent implements OnInit {
       data: {
         patientUuid: this.patientId,
       },
+    });
+  }
+
+  private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
+    const providerUuid = providerDetails.uuid;
+    const json = {
+      patient: patientUuid,
+      encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
+      encounterProviders: [
+        {
+          provider: providerUuid,
+          encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
+        },
+      ],
+      visit: visitUuid,
+      encounterDatetime: myDate,
+    };
+    this.service.postEncounter(json).subscribe((response) => {
+      if (response) {
+        this.visitService
+          .fetchVisitDetails(visitUuid)
+          .subscribe((visitDetails) => {
+            saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
+          });
+        this.show = true;
+        this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
+        attributes.forEach((element) => {
+          if (element.attributeType.uuid ===
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            !element.voided) {
+            const payload = {
+              speciality: element.value,
+              patient: {
+                name: response.patient.display,
+                provider: response.encounterProviders[0].display,
+              },
+              skipFlag: true,
+            };
+            // if(!this.pushNotificationService.snoozeTimeout){
+            //   this.pushNotificationService.postNotification(payload).subscribe();
+            // }
+          }
+        });
+        setTimeout(() => {
+          this.showReminder(visitUuid);
+        }, 900000);
+      } else {
+        this.snackbar.open(`Visit Note Not Created`, null, {
+          duration: 4000,
+        });
+      }
+      this.diagnosisService.isVisitSummaryChanged = false;
     });
   }
 }
