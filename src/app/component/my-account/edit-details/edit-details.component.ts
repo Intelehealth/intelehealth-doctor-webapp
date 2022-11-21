@@ -23,6 +23,11 @@ export class EditDetailsComponent implements OnInit {
   "Neurologist",
   "Infectionist"
   ];
+  hospitalTypes = [
+    "Secondary",
+    "Tertiary"
+  ];
+
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null, Validators.required),
     phoneNumber: new FormControl(
@@ -41,6 +46,9 @@ export class EditDetailsComponent implements OnInit {
     ),
     specialization: new FormControl(
       this.data.specialization ? this.data.specialization.value : null
+    ),
+    hospitalType: new FormControl(
+      this.data.hospitalType ? this.data.hospitalType.value : null, Validators.required
     ),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
@@ -168,6 +176,18 @@ export class EditDetailsComponent implements OnInit {
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
+
+    if (value.hospitalType !== null) {
+      const URL = this.data.hospitalType
+        ? `${this.baseURLProvider}/${this.data.hospitalType.uuid}`
+        : this.baseURLProvider;
+      const json = {
+        attributeType: "bdb290d6-97e8-45df-83e6-cadcaf5dcd0f",
+        value: value.hospitalType,
+      };
+      this.http.post(URL, json).subscribe((response) => { });
+    }
+
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }

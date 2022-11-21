@@ -58,6 +58,12 @@
                 {{ (providerDetails.specialization.value) | translate }}
               </td>
             </tr>
+            <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
+              <th> {{ 'Hospital Type' | translate }} :</th>
+              <td *ngIf="providerDetails.hospitalType">
+                {{ (providerDetails.hospitalType.value) | translate }}
+              </td>
+            </tr>
             <tr>
               <th> {{ 'Registration No' | translate}}. :</th>
               <td *ngIf="providerDetails.registrationNumber">

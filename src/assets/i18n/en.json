@@ -220,6 +220,7 @@
   "years": "years",
   "months":"months",
   "days":"days",
+  "Hospital Type":"Hospital Type",
   "messages": {
     "welcome": "Welcome",
     "loginError": "Username & Password doesn't match",

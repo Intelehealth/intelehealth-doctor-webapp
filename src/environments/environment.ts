@@ -8,7 +8,7 @@ export const environment = {
   baseURLCoreApp:
     "https://uniceftraining.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://uniceftraining.intelehealth.org/openmrs",
-  mindmapURL: "http://localhost:3004/api",
+  mindmapURL: "https://uniceftraining.intelehealth.org:3004/api",
   notificationURL: "https://uniceftraining.intelehealth.org:3004/notification",
   socketURL: "https://uniceftraining.intelehealth.org:3004",
 };

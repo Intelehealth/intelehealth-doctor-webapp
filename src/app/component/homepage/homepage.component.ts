@@ -39,6 +39,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completedVisit: VisitData[] = [];
   setSpiner = true;
   specialization;
+  hostpitalType;
   systemAccess:boolean = false;
 
   constructor(
@@ -65,6 +66,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
             !element.voided
           ) {
             this.specialization = element.value;
+          }
+          if (
+            element.attributeType.uuid ===
+              "bdb290d6-97e8-45df-83e6-cadcaf5dcd0f" &&
+            !element.voided
+          ) {
+            this.hostpitalType = element.value;
           }
         });
         userDetails["roles"].forEach((role) => {
@@ -106,14 +114,19 @@ export class HomepageComponent implements OnInit, OnDestroy {
               this.visitCategory(active);
             }else if (active.attributes.length) {
               const attributes = active.attributes;
+              const hospitalType = attributes.filter(
+                (attr) =>
+                  attr.attributeType.uuid ===
+                  "f288fc8f-428a-4665-a1bd-7b08e64d66e1"
+              );
               const speRequired = attributes.filter(
                 (attr) =>
                   attr.attributeType.uuid ===
                   "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
               );
-              if (speRequired.length) {
+              if (speRequired.length && hospitalType.length) {
                 speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
+                  if (spe.value === this.specialization && this.hostpitalType === hospitalType[0].value) {
                     if (index === 0) {
                       this.visitCategory(active);
                     }
