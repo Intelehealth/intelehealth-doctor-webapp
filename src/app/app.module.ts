@@ -360,6 +360,11 @@ import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.co
               canActivate: [AuthGuard],
             },
             {
+              path: "setup-calendar",
+              component: SetupCalendarV4Component,
+              canActivate: [AuthGuard],
+            },
+            {
               path: "help",
               component: HelpContainerComponent,
               canActivate: [AuthGuard],
