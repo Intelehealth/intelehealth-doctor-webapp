@@ -171,6 +171,8 @@ import { CalendarMonthlyComponent } from "./component/calendar-v4/calendar-month
 import { CalendarDailyComponent } from "./component/calendar-v4/calendar-daily/calendar-daily.component";
 import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/view-calendar.component";
 import { AppointmentDetailModalComponent } from './modals/appointment-detail-modal/appointment-detail-modal.component';
+import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
+import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
 
 @NgModule({
   declarations: [
@@ -278,6 +280,8 @@ import { AppointmentDetailModalComponent } from './modals/appointment-detail-mod
     CalendarMonthlyComponent,
     CalendarDailyComponent,
     AppointmentDetailModalComponent,
+    RescheduleAppointmentModalComponent,
+    TimeOffModalComponent,
   ],
 
   imports: [

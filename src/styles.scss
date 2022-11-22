@@ -175,6 +175,18 @@ body.font-lato td {
   }
 }
 
+.mark-as-hours-off-height {
+  .modal-main-container {
+    height: 360px !important;
+  }
+}
+
+.mark-as-days-off-height {
+  .modal-main-container {
+    height: 345px !important;
+  }
+}
+
 .ml-label {
   margin-left: 22px;
 }

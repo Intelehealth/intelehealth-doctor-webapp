@@ -1,0 +1,126 @@
+::ng-deep {
+  .reschedule-time-slot-modal {
+    .modal-dialog {
+      min-width: 615px;
+    }
+  }
+}
+
+.reschedule-detail-modal-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: #ffffff;
+  border-radius: 5px;
+
+  .reschedule-detail-modal-header {
+    height: 70px;
+
+    background: #efe8ff;
+
+    border-radius: 5px;
+
+    .cross {
+      right: 15px;
+      top: 26px;
+    }
+
+    .reschedule-detail-title {
+      height: 30px;
+
+      font-weight: 700;
+      font-size: 20px;
+    }
+  }
+
+  .select-date-main {
+    align-items: center;
+    gap: 8px;
+
+    height: 48px;
+
+    .select-date-label {
+      height: 24px;
+    }
+
+    .select-input {
+      margin-right: 90px;
+
+      height: 48px;
+      width: 175px;
+    }
+  }
+
+  .select-timeslot {
+    height: 48px;
+  }
+
+  .morning {
+    height: 36px;
+  }
+
+  .morning-timeslot {
+    padding: 8px;
+
+    height: 40px;
+    width: 84.5px;
+
+    background: #efe8ff;
+
+    color: #1b163a;
+
+    font-size: 14px;
+    line-height: 150%;
+
+    text-align: center;
+
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 6px;
+  }
+
+  .btns {
+    margin-top: 10px;
+
+    padding: 10px 14px 0px 14px;
+
+    height: 48px;
+
+    border: 0.770833px solid #efe8ff;
+    border-radius: 8px;
+
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+
+    &.left-btn {
+      margin-right: 25px;
+
+      background: #ffe8e8;
+
+      color: #ff475d;
+    }
+
+    &.right-btn {
+      background: #2e1e91;
+
+      color: #faf9ff;
+    }
+  }
+
+  .active {
+    color: #ffffff;
+
+    background: #2e1e91;
+
+    font-weight: 600;
+
+    cursor: default !important;
+  }
+
+  .gap {
+    gap: 11.5px;
+  }
+}

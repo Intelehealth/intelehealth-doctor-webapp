@@ -1,0 +1,26 @@
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="time-off-modal-main w-100">
+    <div class="d-flex time-off-modal-header position-relative w-100">
+      <div class="time-off-title ml-3 mt-4">
+        <div>5 August, 2022</div>
+      </div>
+      <div (click)="close()" class="cross position-absolute click">
+        <img src="assets/svgs/cross-blue.svg" />
+      </div>
+    </div>
+
+    <div class="w-100 p-4">
+      <div class="ml-4">
+        <ul class="d-grid p-0">
+          <li class="d-flex mb-3 gap">
+            <div class="appointment-label font-size-md">Appointments(2)</div>
+
+            <div class="appointment-time font-size-md">
+              3:00 pm - 3:30 pm 4:00 pm - 4:30 pm
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</ng-template>

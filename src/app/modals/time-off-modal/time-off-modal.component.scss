@@ -1,19 +1,21 @@
-.appointment-detail-modal-main {
+::ng-deep {
+  .time-off-modal-height {
+    .modal-dialog {
+      min-width: 489px;
+    }
+  }
+}
+
+.time-off-modal-main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-
-  padding: 0px 0px 32px;
-
-  width: 615px !important;
 
   background: #ffffff;
   border-radius: 5px;
 
-  .appointment-detail-modal-header {
+  .time-off-modal-header {
     height: 70px;
-    width: 615px;
 
     background: #efe8ff;
 
@@ -24,45 +26,28 @@
       top: 26px;
     }
 
-    .appointment-detail-title {
+    .time-off-title {
       height: 30px;
-      width: 200px;
 
       font-weight: 700;
       font-size: 20px;
     }
   }
 
-  .personal-person-detail-modal {
-    gap: 10px;
+  .appointment-label {
+    display: list-item;
 
-    height: 70px;
-    width: 567px;
+    height: 24px;
+    width: 216.5px;
 
-    .view-detail-font {
-      font-size: 14px;
-      text-decoration-line: underline;
-    }
-    .blue-color {
-      color: #2e1e91;
-    }
-
-    .priority-pill {
-      width: 70px;
-      height: 34px;
-
-      background: #ffe8e8;
-      border-radius: 4px;
-
-      .priority-pill-font {
-        text-align: center;
-      }
-    }
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
   }
 
-  .booked-on {
-    width: 200px;
-    height: 24px;
+  .appointment-time {
+    height: 48px;
+    width: 180.5px;
   }
 
   .btns {
@@ -94,5 +79,9 @@
 
       color: #faf9ff;
     }
+  }
+
+  .gap {
+    gap: 10px;
   }
 }

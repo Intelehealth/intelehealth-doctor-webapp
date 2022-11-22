@@ -1,0 +1,79 @@
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="reschedule-detail-modal-main w-100">
+    <div class="d-flex reschedule-detail-modal-header position-relative w-100">
+      <div class="reschedule-detail-title ml-3 mt-4">
+        <div>{{ modal?.mainTitle }}</div>
+      </div>
+      <div (click)="close()" class="cross position-absolute click">
+        <img src="assets/svgs/cross-blue.svg" />
+      </div>
+    </div>
+
+    <div class="w-100 p-4">
+      <div class="d-flex select-date-main mb-4">
+        <div class="font-size-md font-bold">{{ modal?.selectDate }}</div>
+        <input class="form-control select-input ml-auto" type="date" />
+      </div>
+
+      <div class="select-timeslot font-size-md font-bold">
+        {{ modal?.timeSlot }}
+      </div>
+
+      <div class="morning">
+        <img src="assets/svgs/sunrise.svg" class="mr-2" />
+        <span class="font-size-md font-bold">{{ modal?.morningTitle }}</span>
+      </div>
+
+      <div class="row w-100 gap m-0">
+        <div
+          (click)="activeSlot = item"
+          *ngFor="let item of scheduleData?.morning"
+          [ngClass]="{ active: item === activeSlot }"
+          class="morning-timeslot text-center click font-bold"
+        >
+          {{ item }}
+        </div>
+      </div>
+
+      <!-- afternoon -->
+      <div class="morning mt-4">
+        <img src="assets/svgs/sun.svg" class="mr-2" />
+        <span class="font-size-md font-bold">{{ modal?.afterTitle }}</span>
+      </div>
+
+      <div class="row w-100 gap m-0">
+        <div
+          (click)="activeSlot = item"
+          *ngFor="let item of scheduleData?.afternoon"
+          [ngClass]="{ active: item === activeSlot }"
+          class="morning-timeslot text-center click font-bold"
+        >
+          {{ item }}
+        </div>
+      </div>
+
+      <!-- evening -->
+      <div class="morning mt-4">
+        <img src="assets/svgs/sunrise.svg" class="mr-2" />
+        <span class="font-size-md font-bold">{{ modal?.eveningTitle }}</span>
+      </div>
+
+      <div class="row w-100 gap m-0">
+        <div
+          (click)="activeSlot = item"
+          *ngFor="let item of scheduleData?.evening"
+          [ngClass]="{ active: item === activeSlot }"
+          class="morning-timeslot text-center click font-bold"
+        >
+          {{ item }}
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center mt-4">
+        <div class="btns right-btn" (click)="modal.rightBtnOnClick()">
+          {{ modal?.rightBtnText }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
