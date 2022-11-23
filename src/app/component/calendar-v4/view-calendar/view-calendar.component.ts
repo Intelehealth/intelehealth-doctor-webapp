@@ -33,6 +33,8 @@ export class ViewCalendarComponent implements OnInit {
 
   @ViewChild("timeOff") timeOff: TimeOffModalComponent;
 
+  @ViewChild("timeOffFromAndTo") timeOffFromAndTo: TimeOffModalComponent;
+
   reschduleTheAppointmentModal: any = {
     mainText: "Reschdule the appointment",
     subText:
@@ -121,6 +123,28 @@ export class ViewCalendarComponent implements OnInit {
     circleIconPath: "assets/svgs/cannot-share-prescription.svg",
   };
 
+  timeOffModal: any = {
+    mainText: "5 August, 2022",
+    appointmentTime: "3:00 pm - 3:30 pm 4:00 pm - 4:30 pm",
+    FollowUpTime: "3:00 pm",
+    isShowFromAndToFields: false,
+    leftBtnText: "Cancel",
+    leftBtnOnClick: () => {},
+    rightBtnText: "Continue",
+    rightBtnOnClick: () => {},
+  };
+
+  timeOffFromAndToModal: any = {
+    mainText: "5 August, 2022",
+    appointmentTime: "3:00 pm - 3:30 pm 4:00 pm - 4:30 pm",
+    FollowUpTime: "3:00 pm",
+    isShowFromAndToFields: true,
+    leftBtnText: "Cancel",
+    leftBtnOnClick: () => {},
+    rightBtnText: "Continue",
+    rightBtnOnClick: () => {},
+  };
+
   todayDate = null;
 
   constructor() {}
@@ -129,6 +153,9 @@ export class ViewCalendarComponent implements OnInit {
     this.todayDate = moment().format("DD MMMM, YYYY");
   }
 
+  /**
+   * @todo remove this ngAfterviewInit while implementaion, added just to test that modals are working fine
+   */
   ngAfterViewInit() {
     // this.appointmentDetail.openAppointmentModal();
     // this.editEditPrescription.openAppointmentModal();
@@ -136,6 +163,7 @@ export class ViewCalendarComponent implements OnInit {
     // this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
     // this.markAsHoursOff.openModal();
     // this.markAsDaysOff.openModal();
-    this.timeOff.openTimeOffModal();
+    // this.timeOff.openTimeOffModal();
+    // this.timeOffFromAndTo.openTimeOffModal();
   }
 }
