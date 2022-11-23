@@ -1,1 +1,96 @@
-<p>calendar-weekly works!</p>
+<div class="weekly-view-containr d-flex">
+  <div class="timings-container">
+    <div class="timing-list">
+      <div class="time position-relative" *ngFor="let time of timings">
+        {{ time }}
+        <span class="position-absolute scale-time"></span>
+      </div>
+    </div>
+  </div>
+  <div class="weekly-appointments w-100 h-100">
+    <div class="weekdays m-0 row">
+      <div
+        *ngFor="let day of weekDay"
+        [class.off]="day?.isDayOff"
+        class="col p-0"
+      >
+        <div class="d-grid">
+          <div class="day" [class.active]="day.isCurrentDay">
+            {{ day?.date }} {{ day?.day }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- half slot on the top -->
+    <div class="weekdays first-half-row m-0 row">
+      <div *ngFor="let day of weekDay" class="col p-0">
+        <div
+          *ngIf="offSlot(day?.date)"
+          class="hours-off h-100 w-100 position-relative"
+        ></div>
+      </div>
+    </div>
+
+    <!-- full actual slots -->
+    <div class="appointments-cell w-100" *ngFor="let time of timings; index as i">
+      <div class="full-rows h-100 m-0 row">
+        <div *ngFor="let day of weekDay" class="col p-0">
+          <div *ngIf="slot(day?.date, time)" class="appointment-date w-100">
+            <div class="d-grid wrapper">
+              <div
+                class="type"
+                [class.active]="slot(day?.date, time)?.isCurrentDay"
+              >
+                {{
+                  slot(day?.date, time)?.type === "appointment"
+                    ? "Appointment"
+                    : "Follow-up visit"
+                }}
+              </div>
+              <div class="slot-time">
+                <ng-container
+                  *ngIf="slot(day?.date, time)?.type === 'appointment'"
+                >
+                  {{ slot(day?.date, time)?.startTime }} -
+                  {{ slot(day?.date, time)?.endTime }}
+                </ng-container>
+                <ng-container
+                  *ngIf="slot(day?.date, time)?.type === 'followUp'"
+                >
+                  {{ slot(day?.date, time)?.startTime }}
+                </ng-container>
+              </div>
+              <div class="info d-flex">
+                <img src="assets/svgs/user-apnmnt.svg" />
+                <div class="name">{{ slot(day?.date, time)?.patientName }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- hours off -->
+          <div
+            *ngIf="offSlot(day?.date, time)"
+            class="hours-off h-100 w-100 position-relative"
+          >
+            <div
+              *ngIf="offSlot(day?.date, time) === 'day' && i === 0"
+              class="hours-off-label m-auto position-absolute"
+            >
+              Day off
+            </div>
+
+            <div
+              *ngIf="
+                offSlot(day?.date, time) && offSlot(day?.date, time) !== 'day'
+              "
+              class="hours-off-label m-auto position-absolute"
+            >
+              Hours off
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

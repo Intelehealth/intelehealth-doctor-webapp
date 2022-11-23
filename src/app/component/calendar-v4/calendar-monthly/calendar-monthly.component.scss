@@ -1,0 +1,267 @@
+.montly-view-containr {
+    .first-half-row {
+        background: #faf9fe !important;
+
+        .col {
+            border-right: 1px solid rgba(178, 175, 190, 0.2);
+            border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        }
+    }
+
+    .timings-container {
+        background: #fff;
+
+        .timing-list {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 32px;
+
+            margin-top: 64px;
+            margin-bottom: 32px;
+
+            width: 98px;
+
+            .time {
+                width: 74px;
+                height: 55px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 150%;
+
+                color: #7F7B92;
+
+                flex: none;
+                order: 0;
+                flex-grow: 0;
+            }
+        }
+    }
+
+    .scale-time {
+        top: 54px;
+        right: -1px;
+
+        width: 32px;
+        height: 0px;
+
+        border: 1px solid rgba(178, 175, 190, 0.2);
+    }
+
+    .montly-appointments {
+        .appointments-cell {
+            height: 144px;
+
+            border: 1px solid rgba(178, 175, 190, 0.2);
+        }
+    }
+
+    .available-slots {
+        margin-left: 24px;
+        margin-right: 24px;
+
+        width: calc(100% - 48px);
+
+        background-color: #fff;
+
+        box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+        border-radius: 8px;
+
+        .row {
+            .mt {
+                padding-top: 20px !important;
+            }
+
+            .label {
+                margin-left: 8px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 150%;
+
+                color: #1B163A;
+            }
+
+            .sub-text {
+                margin-left: 8px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 150%;
+
+                color: #7F7B92;
+            }
+
+            .col {
+
+                img {
+                    margin-left: 20px !important;
+                }
+            }
+        }
+    }
+
+    .off {
+        background: #f0eff69e !important;
+
+        opacity: 0.8;
+    }
+
+    .today {
+        background: #EFE8FF !important;
+
+        .date {
+            background: #2E1E91 !important;
+
+            color: #fff !important;
+        }
+    }
+
+    .have-apnmnt {
+        color: #1B163A;
+
+        background: #EFE8FF !important;
+    }
+
+    .hours-off {
+        background: #f0eff69e;
+
+        .hours-off-label {
+            top: 25px;
+            left: 20px;
+
+            padding: 4px 8px;
+
+            width: 84px;
+
+            color: #1B163A;
+
+            background: #EFE8FF;
+            box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+            border-radius: 4px;
+        }
+    }
+
+    .weekdays {
+        height: 52px;
+
+        background: #fff;
+
+        border-left: 1px solid rgba(178, 175, 190, 0.2);
+        border-right: 1px solid rgba(178, 175, 190, 0.2);
+
+        .day {
+            margin-top: 15px;
+
+            font-family: 'DM Sans';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 150%;
+
+            text-align: center;
+            text-transform: uppercase;
+
+            color: #7F7B92;
+
+            &.active {
+                color: #2E1E91;
+            }
+        }
+    }
+
+    .full-rows {
+        .date {
+            text-align: center;
+
+            margin-top: 12px;
+            margin-left: 12px;
+
+            padding-top: 5px;
+
+            width: 32px;
+            height: 32px;
+
+            background: #FFFFFF;
+
+            box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+            border-radius: 80px;
+        }
+
+        .col {
+            border-right: 1px solid rgba(178, 175, 190, 0.2);
+        }
+
+        .appointment-date {
+            background: #FFFFFF;
+            box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+            border-radius: 8px;
+
+            .wrapper {
+                flex-direction: column;
+                justify-content: end;
+
+                padding: 8px;
+            }
+
+            .type {
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 150%;
+
+                color: #2E1E91;
+            }
+
+            .slot-time {
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 150%;
+
+                color: #7F7B92;
+            }
+
+            .info {
+                margin-top: 5px;
+
+                .name {
+                    margin-left: 8px;
+
+                    width: 76px;
+
+                    font-family: 'DM Sans';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 14px;
+                    line-height: 150%;
+
+                    color: #1B163A;
+
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .slot-column {
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 150%;
+
+                color: #7F7B92;
+            }
+        }
+    }
+}

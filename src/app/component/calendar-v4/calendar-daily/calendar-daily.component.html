@@ -1,10 +1,92 @@
 <div class="daily-view-containr d-flex">
   <div class="timings-container">
     <div class="timing-list">
-      <div class="time" *ngFor="let time of timings">
+      <div class="time position-relative" *ngFor="let time of timings">
         {{ time }}
+        <span class="position-absolute scale-time"></span>
       </div>
     </div>
   </div>
-  <div class="daily-appointments"></div>
+  <div class="daily-appointments w-100 h-100">
+    <div class="appointments w-100" *ngFor="let time of timings">
+      <div *ngIf="slot(time)" class="available-slots h-100">
+        <div class="row h-100">
+          <ng-container *ngIf="slot(time)?.type === 'followUp'">
+            <div class="col h-100 visit-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/consultaion-light-bg.svg" />
+                <div class="d-grid">
+                  <div class="label">Follow-up Visit</div>
+                  <div class="sub-text">10:00 am</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col h-100 patient-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/user-light-bg.svg" />
+                <div class="d-grid">
+                  <div class="label">Rajesh Jaishan..(F,32)</div>
+                  <div class="sub-text">Patient</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col h-100 hw-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/hw.svg" />
+                <div class="d-grid">
+                  <div class="label">Kshitij Kaushik..(M,28)</div>
+                  <div class="sub-text">Health Worker</div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="slot(time)?.type === 'appointment'">
+            <div class="col h-100 visit-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/consultaion-light-bg.svg" />
+                <div class="d-grid">
+                  <div class="label">Appointment</div>
+                  <div class="sub-text">10:00 am</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col h-100 patient-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/user-light-bg.svg" />
+                <div class="d-grid">
+                  <div class="label">Rohan Joshi(M,32)</div>
+                  <div class="sub-text">Patient</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col h-100 hw-info mt">
+              <div class="d-flex">
+                <img src="assets/svgs/hw.svg" />
+                <div class="d-grid">
+                  <div class="label">Rajesh Jaishan..(F,32)</div>
+                  <div class="sub-text">Health Worker</div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div
+        *ngIf="offSlot(time)"
+        [class.pt]="hoursOffSlots?.[0] === offSlot(time)"
+        class="hours-off h-100 w-100"
+      >
+        <div
+          *ngIf="hoursOffSlots?.[0] === offSlot(time)"
+          class="hours-off-label m-auto"
+        >
+          Hours off
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

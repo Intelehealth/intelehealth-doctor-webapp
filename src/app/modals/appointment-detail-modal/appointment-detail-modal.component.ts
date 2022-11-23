@@ -26,7 +26,7 @@ export class AppointmentDetailModalComponent implements OnInit {
     const options: NgbModalOptions = {
       size: "md",
       windowClass: ``,
-      centered: true,
+      // centered: true,
     };
 
     this.modalRef = this.modalSvc.open(this.modalContent, options);

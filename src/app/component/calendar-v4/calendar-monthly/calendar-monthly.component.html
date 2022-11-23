@@ -1,1 +1,71 @@
-<p>calendar-monthly works!</p>
+<div class="montly-view-containr d-flex">
+  <div class="montly-appointments w-100 h-100">
+    <div class="weekdays m-0 row">
+      <div
+        *ngFor="let day of calendar?.[0].days"
+        [class.off]="day?.isWeekDayOff"
+        class="col p-0"
+      >
+        <div class="d-grid">
+          <div class="day" [class.active]="day.isCurrentDay">
+            {{ (day?.format ? day?.format("dddd") : "") | slice: 0:3 }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- full actual slots -->
+    <div
+      class="appointments-cell w-100"
+      *ngFor="let column of calendar; index as i"
+    >
+      <div class="full-rows h-100 m-0 row">
+        <div
+          *ngFor="let day of column.days; index as idx"
+          [class.off]="day?.isWeekDayOff"
+          [class.today]="day?.isToday"
+          class="col p-0 position-relative"
+        >
+          <div
+            [ngClass]="{ 'have-apnmnt': slot(day), off: day?.isWeekDayOff }"
+            class="date position-absolute"
+          >
+            {{ day.format("D") }}
+          </div>
+          <div *ngIf="slot(day)" class="appointment-date h-100 w-100">
+            <div class="d-flex wrapper h-100">
+              <div
+                class="type"
+                [class.active]="slot(day?.date, column)?.isCurrentDay"
+              >
+                {{
+                  slot(day)?.type === "appointment"
+                    ? "Appointment"
+                    : "Follow-up visit"
+                }}
+              </div>
+              <div class="slot-column d-grid">
+                <div *ngFor="let slot of slot(day)?.slots" class="timings">
+                  {{ slot.startTime }} - {{ slot.endTime }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- hours off -->
+          <div
+            *ngIf="offSlot(day) && idx === 0"
+            class="hours-off h-100 w-100 position-relative"
+          >
+            <div
+              *ngIf="offSlot(day)"
+              class="hours-off-label m-auto position-absolute"
+            >
+              Day off
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

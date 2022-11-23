@@ -12,17 +12,16 @@ export class ViewCalendarComponent implements OnInit {
   @ViewChild("reschduleAppointment") reschduleAppointment: CommonModalComponent;
   @ViewChild("cancelAppointment") cancelAppointment: CommonModalComponent;
 
-  @ViewChild("appointmentDetail")
-  appointmentDetail: AppointmentDetailModalComponent;
+  @ViewChild("appointmentDetail") appointmentDetail: AppointmentDetailModalComponent;
 
   reschduleTheAppointmentModal: any = {
     mainText: "Reschdule the appointment",
     subText:
       "Are you sure you want to reschedule muskan kala’s appointment from ",
     leftBtnText: "Go Back",
-    leftBtnOnClick: () => {},
+    leftBtnOnClick: () => { },
     rightBtnText: "Confirm",
-    rightBtnOnClick: () => {},
+    rightBtnOnClick: () => { },
     windowClass: "reschdule-appointment-height",
     circleIconPath: "assets/svgs/reschdule-the-appointment.svg",
     timings: {
@@ -38,24 +37,27 @@ export class ViewCalendarComponent implements OnInit {
     subText:
       "Are you sure you want to cancel your appointment on 5 August at 10:00 am",
     leftBtnText: "Go Back",
-    leftBtnOnClick: () => {},
+    leftBtnOnClick: () => { },
     rightBtnText: "Cancel",
-    rightBtnOnClick: () => {},
+    rightBtnOnClick: () => { },
     windowClass: "shared-successfull",
     circleIconPath: "assets/svgs/cancel-the-appointment.svg",
   };
 
   todayDate = null;
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.todayDate = moment().format("DD MMMM, YYYY");
   }
 
+  /**
+   * @todo added ngAfterViewInit just to test modal, remove it during implementation
+   */
   ngAfterViewInit() {
-    this.reschduleAppointment.openModal();
-    this.cancelAppointment.openModal();
-    this.appointmentDetail.openAppointmentModal();
+    // this.reschduleAppointment.openModal();
+    // this.cancelAppointment.openModal();
+    // this.appointmentDetail.openAppointmentModal();
   }
 }

@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from "@angular/animations";
 import { Component, Input, OnInit } from "@angular/core";
 
 @Component({
@@ -10,7 +11,7 @@ export class ConsultationDetailsV4Component implements OnInit {
   @Input() showToggle = true;
   @Input() readOnly = false;
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }

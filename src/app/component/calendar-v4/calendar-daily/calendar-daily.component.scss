@@ -15,7 +15,7 @@
 
             .time {
                 width: 74px;
-                height: 24px;
+                height: 55px;
 
                 font-family: 'DM Sans';
                 font-style: normal;
@@ -32,5 +32,92 @@
         }
     }
 
-    .daily-appointments {}
+    .scale-time {
+        top: 54px;
+        right: -1px;
+
+        width: 32px;
+        height: 0px;
+
+        border: 1px solid rgba(178, 175, 190, 0.2);
+    }
+
+    .daily-appointments {
+        margin-top: 42px;
+
+        .appointments {
+            height: 87px;
+
+            border: 1px solid rgba(178, 175, 190, 0.2);
+        }
+    }
+
+    .available-slots {
+        margin-left: 24px;
+        margin-right: 24px;
+
+        width: calc(100% - 48px);
+
+        background-color: #fff;
+
+        box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+        border-radius: 8px;
+
+        .row {
+            .mt {
+                padding-top: 20px !important;
+            }
+
+            .label {
+                margin-left: 8px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 16px;
+                line-height: 150%;
+
+                color: #1B163A;
+            }
+
+            .sub-text {
+                margin-left: 8px;
+
+                font-family: 'DM Sans';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 150%;
+
+                color: #7F7B92;
+            }
+
+            .col {
+
+                img {
+                    margin-left: 20px !important;
+                }
+            }
+        }
+    }
+
+    .hours-off {
+        background: #f0eff69e;
+
+        &.pt {
+            padding-top: 25px;
+        }
+
+        .hours-off-label {
+            padding: 4px 8px;
+
+            width: 84px;
+
+            color: #1B163A;
+
+            background: #EFE8FF;
+            box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
+            border-radius: 4px;
+        }
+    }
 }
