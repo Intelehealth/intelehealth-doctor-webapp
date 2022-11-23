@@ -44,4 +44,36 @@
   [modal]="cancelAppointmentModal"
 ></app-common-modal>
 
-<app-appointment-detail-modal #appointmentDetail></app-appointment-detail-modal>
+<app-appointment-detail-modal
+  #appointmentDetail
+  [modal]="appointmentDetailModal"
+></app-appointment-detail-modal>
+
+<app-appointment-detail-modal
+  #editEditPrescription
+  [modal]="editEditPrescriptionModal"
+></app-appointment-detail-modal>
+
+<app-appointment-detail-modal
+  #providePrescription
+  [modal]="providePrescriptionModal"
+></app-appointment-detail-modal>
+
+<app-reschedule-appointment-modal
+  #rescheduleTimeSlots
+  [modal]="rescheduleTimeSlotsModal"
+></app-reschedule-appointment-modal>
+
+<app-common-modal
+  #markAsHoursOff
+  [modal]="markAsHoursOffModal"
+></app-common-modal>
+
+<app-common-modal
+  #markAsDaysOff
+  [modal]="markAsDaysOffModal"
+></app-common-modal>
+
+<app-time-off-modal #timeOff [modal]="timeOffModal"> </app-time-off-modal>
+<app-time-off-modal #timeOffFromAndTo [modal]="timeOffFromAndToModal">
+</app-time-off-modal>

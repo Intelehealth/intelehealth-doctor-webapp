@@ -1,0 +1,93 @@
+<ng-template #modalContent let-close="close" data-target="static">
+  <div class="time-off-modal-main w-100">
+    <div class="d-flex time-off-modal-header position-relative w-100">
+      <div class="time-off-title ml-3 mt-4">
+        <div>{{ modal?.mainText }}</div>
+      </div>
+      <div (click)="close()" class="cross position-absolute click">
+        <img src="assets/svgs/cross-blue.svg" />
+      </div>
+    </div>
+
+    <div class="w-100 p-4">
+      <div class="ml-4">
+        <ul class="d-grid p-0">
+          <li class="d-flex mb-3 gap">
+            <div class="appointment-label font-size-md">Appointments(2)</div>
+
+            <div class="appointment-time font-size-md">
+              {{ modal?.appointmentTime }}
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ml-4">
+        <ul class="d-grid p-0">
+          <li class="d-flex mb-3 gap">
+            <div class="appointment-label font-size-md">Follow-ups(1)</div>
+
+            <div class="appointment-time font-size-md">
+              {{ modal?.FollowUpTime }}
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ml-2 mb-3">
+        <div class="d-flex gap align-items-center">
+          <div class="mark-label font-size-md">Mark as</div>
+
+          <input class="radio-box" type="radio" name="Yes" />
+          <span class="font-size-md">Day off</span>
+
+          <input class="radio-box ml-auto" type="radio" name="Yes" />
+          <span class="font-size-md">Hours off</span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="modal.isShowFromAndToFields">
+        <div class="ml-2 mb-3">
+          <div class="d-flex gap align-items-center">
+            <div class="mark-label font-size-md">From</div>
+
+            <div class="select-form">
+              <ng-select
+                [items]="fromTimeList"
+                bindLabel="name"
+                [clearable]="false"
+                [(ngModel)]="selectedFrom"
+              >
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-2 mb-3">
+          <div class="d-flex gap align-items-center">
+            <div class="mark-label font-size-md">To</div>
+
+            <div class="select-form">
+              <ng-select
+                [items]="toTimeList"
+                bindLabel="name"
+                [clearable]="false"
+                [(ngModel)]="selectedToTime"
+              >
+              </ng-select>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="d-flex justify-content-center">
+        <div class="btns left-btn" (click)="modal.leftBtnOnClick()">
+          {{ modal?.leftBtnText }}
+        </div>
+        <div class="btns right-btn" (click)="modal.rightBtnOnClick()">
+          {{ modal?.rightBtnText }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

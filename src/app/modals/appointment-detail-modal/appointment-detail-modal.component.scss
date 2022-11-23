@@ -4,8 +4,6 @@
   align-items: center;
   gap: 20px;
 
-  position: absolute;
-
   padding: 0px 0px 32px;
 
   width: 615px !important;
@@ -67,8 +65,34 @@
     height: 24px;
   }
 
-  .btn-cancel {
-    background: #ffe8e8;
+  .btns {
+    margin-top: 10px;
+
+    padding: 10px 14px 0px 14px;
+
+    height: 48px;
+
+    border: 0.770833px solid #efe8ff;
     border-radius: 8px;
+
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+
+    &.left-btn {
+      margin-right: 25px;
+
+      background: #ffe8e8;
+
+      color: #ff475d;
+    }
+
+    &.right-btn {
+      background: #2e1e91;
+
+      color: #faf9ff;
+    }
   }
 }
