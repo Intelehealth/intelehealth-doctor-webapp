@@ -147,8 +147,6 @@ import { ChatContainerComponent } from "./component/message-container/chat-conta
 import { VisitNotesV4Component } from "./visit-notes-v4/visit-notes-v4.component";
 import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-interaction-v4.component";
 import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
-import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
-import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
 import { ProfileContainerComponent } from "./component/profile-container/profile-container.component";
 import { PersonalInformationComponent } from "./component/profile-container/personal-information/personal-information.component";
 import { ProfessionalDetailsComponent } from "./component/profile-container/professional-details/professional-details.component";
@@ -173,6 +171,7 @@ import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/vie
 import { AppointmentDetailModalComponent } from './modals/appointment-detail-modal/appointment-detail-modal.component';
 import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
 import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
+import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
 
 @NgModule({
   declarations: [
@@ -264,8 +263,6 @@ import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.co
     ReferalV4Component,
     FollowUpV4Component,
     AdminContainerComponent,
-    AdminTableComponent,
-    LicenseKeyFormComponent,
     CommonModalComponent,
     SetupCalendarV4Component,
     PastVisitHistoryV4Component,
@@ -282,6 +279,7 @@ import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.co
     AppointmentDetailModalComponent,
     RescheduleAppointmentModalComponent,
     TimeOffModalComponent,
+    PopupFormComponent,
   ],
 
   imports: [

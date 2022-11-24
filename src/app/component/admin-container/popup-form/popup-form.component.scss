@@ -1,39 +1,20 @@
 .license-container{
     width: 489px;
-    height: 390px;
+    height: 310px;
     background: #FFFFFF;
     border-radius: 12px;
 }
 .header{
-    width: 536px;
+    width: 537px;
     height: 70px;
     background: #EFE8FF;
     position: relative;
     right: 1.5rem;
     bottom: 1.5rem;
-}
-.text{
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    padding: 1.2rem;
-    color: #1B163A;
-}
-.footer{
-    margin-top: 3rem;
-    margin-left: 7rem;
+    padding: 20px;
 }
 .txt{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
     padding: 14px 16px;
-    gap: 4px;
     width: 490px;
     height: 48px;
     background: #FAF9FF;
@@ -65,12 +46,11 @@
     border: 0.770833px solid #EFE8FF;
 }
 .file-container{
-    width: 501px;
-    height: 322px;
+    width: 489px;
+    height: 210px;
     background: #FFFFFF;
     border-radius: 12px;
 }
-
 .file-container > img{
     position: relative;
     left: 27rem;
@@ -80,8 +60,7 @@
     height: 80px;
     background: #EFE8FF;
     border-radius: 50px;
-    margin-left: 14rem;
-    margin-top: -20px;
+    margin-left: 13rem;
 }
 .add-file > img{
     width: 40px;
@@ -95,12 +74,20 @@
 }
 .file-body > p{
     margin-left: 2rem;
+    width: 410px;
+    display: flex;
+    align-items: center;
+    text-align: center;
 }
-.upload-container{
-    width: 489px;
-    height: 278px;
+.date-container{
+    width: 350px;
+    height: 120px;
     background: #FFFFFF;
     border-radius: 12px;
+}
+.date-picker{
+    margin-left: 70px;
+    margin-top: 24px;
 }
 .attach-file{
     display: flex;
@@ -126,9 +113,11 @@
     margin-top: 1rem;
 }
 .attach-file > img{
-    margin-left: 13rem;
+    margin-left: auto;
 }
-.upload-footer{
-    margin-top: 2rem;
-    margin-left: 6rem;
+.close-date{
+    position: relative;
+    bottom: 3rem;
+    left: 13rem;
+    width:60px;
 }
