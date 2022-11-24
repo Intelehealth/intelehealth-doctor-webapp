@@ -148,8 +148,6 @@ import { ChatContainerComponent } from "./component/message-container/chat-conta
 import { VisitNotesV4Component } from "./visit-notes-v4/visit-notes-v4.component";
 import { PatientInteractionV4Component } from "./patient-interaction-v4/patient-interaction-v4.component";
 import { AdminContainerComponent } from "./component/admin-container/admin-container.component";
-import { AdminTableComponent } from "./component/admin-container/admin-table/admin-table.component";
-import { LicenseKeyFormComponent } from "./component/license-key-form/license-key-form.component";
 import { ProfileContainerComponent } from './component/profile-container/profile-container.component';
 import { PersonalInformationComponent } from './component/profile-container/personal-information/personal-information.component';
 import { ProfessionalDetailsComponent } from './component/profile-container/professional-details/professional-details.component';
@@ -166,6 +164,7 @@ import { VisitSummaryAndPrescriptionModalComponent } from "./modals/visit-summar
 import { VisitSummaryReadonlyComponent } from './visit-summary-readonly/visit-summary-readonly.component';
 import { PrescriptionReadonlyComponent } from './prescription-readonly/prescription-readonly.component';
 import { CallStateComponent } from './component/call-state/call-state.component';
+import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
 
 @NgModule({
   declarations: [
@@ -257,8 +256,6 @@ import { CallStateComponent } from './component/call-state/call-state.component'
     ReferalV4Component,
     FollowUpV4Component,
     AdminContainerComponent,
-    AdminTableComponent,
-    LicenseKeyFormComponent,
     CommonModalComponent,
     PastVisitHistoryV4Component,
     VisitSummaryAndPrescriptionModalComponent,
@@ -268,6 +265,7 @@ import { CallStateComponent } from './component/call-state/call-state.component'
     ProfileContainerComponent,
     PersonalInformationComponent,
     ProfessionalDetailsComponent,
+    PopupFormComponent,
   ],
 
   imports: [

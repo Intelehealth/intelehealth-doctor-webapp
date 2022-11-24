@@ -1,0 +1,74 @@
+<div>
+    <div *ngIf="data.title === 'Add new key'" class="license-container">
+        <div class="header">
+            <h4>
+                Add license key
+                <span style="float: right;cursor: pointer;" (click)="close()">
+                    <img mat-button mat-dialog-close src="/assets/svgs/Close.svg">
+                </span>
+            </h4>
+        </div>
+        <div class="body">
+          <div class="license-key-name">
+            <label class="lbl lbl-username mt-4 mb-0 font-username font-weight-bold">License key name</label>
+            <input type="text" class="txt add-key" placeholder="Intelehealth_test2023" [(ngModel)]="data.key"/>
+          </div>
+          <div class="Expiry-date">
+            <label class="lbl lbl-username mt-4 mb-0 font-username font-weight-bold">Expiry date</label>
+            <input type="date" class="txt add-key" [(ngModel)]="data.expiryDate"/>
+          </div>
+        </div>
+    </div>
+
+    <div *ngIf="data.title === 'Edit Expiry Date'"  class="date-container">
+        <mat-form-field class="date-picker">
+            <img class="close-date" mat-button mat-dialog-close src="assets/svgs/CloseX.svg">
+            <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="{{ 'Date Of Expiry' }}" [(ngModel)]="data.expiryDate">
+            <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+            <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div>
+        <div *ngIf="data.title === 'Add Mindmaps'" class="file-container">
+            <div *ngIf="!onShowHideUpload">
+                <img class="close" mat-button mat-dialog-close src="assets/svgs/CloseX.svg">
+                <div class="add-file">
+                    <img class="attach click" src="assets/svgs/plus.svg" (click)="uploadMindmap()"/>
+                </div>
+                <div class="file-body">
+                    <span class="text">Upload json file</span>
+                    <p>
+                    Select a json file to upload or drag and drop the json file here    </p>
+                </div>
+            </div>    
+            <div class="upload-container" *ngIf="onShowHideUpload">
+                <div class="header">
+                    <h4>
+                        Add license key
+                        <span style="float: right;cursor: pointer;" (click)="close()">
+                            <img mat-button mat-dialog-close src="/assets/svgs/Close.svg">
+                        </span>
+                    </h4>
+                </div>
+                <div class="upload-body">
+                  <div class="attach-file">
+                    <button class="attch-btn">
+                      <img src="assets/svgs/White_plus.svg">
+                    </button>
+                    <p>{{data.filename}}</p>
+                    <img src="assets/svgs/x.svg">
+                  </div>
+                </div>
+              </div>
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <button class="btn cancel-btn" (click)="close()">{{ 'Cancel' }}</button>
+        <button [hidden]="data.title === 'Add new key' || data.title === 'Edit Expiry Date'" class="btn addKey-btn" (click)="onToggleNext()" *ngIf="!onShowHideUpload">Select</button>
+        <button [hidden]="data.title === 'Add new key' || data.title === 'Edit Expiry Date'" [mat-dialog-close]="data" class="btn addKey-btn" *ngIf="onShowHideUpload">Upload</button>
+        <button *ngIf="data.title === 'Add new key'" [mat-dialog-close]="data" class="btn addKey-btn">Add key</button>
+        <button *ngIf="data.title === 'Edit Expiry Date'" [mat-dialog-close]="data" class="btn addKey-btn">Update</button>
+    </div>
+</div>
+
+<input type="file" id="mindmapUpload" style="display:none;" (change)="fileHandler($event)" />

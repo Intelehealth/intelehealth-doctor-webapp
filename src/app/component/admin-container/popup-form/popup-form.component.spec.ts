@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LicenseKeyFormComponent } from './license-key-form.component';
+import { PopupFormComponent } from './popup-form.component';
 
-describe('LicenseKeyFormComponent', () => {
-  let component: LicenseKeyFormComponent;
-  let fixture: ComponentFixture<LicenseKeyFormComponent>;
+describe('PopupFormComponent', () => {
+  let component: PopupFormComponent;
+  let fixture: ComponentFixture<PopupFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LicenseKeyFormComponent ]
+      declarations: [ PopupFormComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LicenseKeyFormComponent);
+    fixture = TestBed.createComponent(PopupFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
