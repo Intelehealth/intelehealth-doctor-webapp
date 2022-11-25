@@ -1,11 +1,11 @@
 export const environment = {
   production: true,
-  baseURL: `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,
-  baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
-  baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
-  mindmapURL: `${window.location.protocol}//${window.location.hostname}:3005/api`,
-  notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
-  socketURL: `${window.location.protocol}//${window.location.hostname}:3005`,
+  baseURL: "https://demo.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://demo.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://demo.intelehealth.org/openmrs",
+  mindmapURL: "https://demo.intelehealth.org:3005/api",
+  notificationURL: "https://demo.intelehealth.org:3005/notification",
+  socketURL: "https://demo.intelehealth.org:3005",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",

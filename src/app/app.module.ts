@@ -456,7 +456,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
       { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
     ),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+    ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
@@ -474,7 +474,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
     MatNativeDateModule,
     SocketService,
     CountryData,
-    { provide: APP_BASE_HREF, useValue: "/" },
+    { provide: APP_BASE_HREF, useValue: "." },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
@@ -486,4 +486,4 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
