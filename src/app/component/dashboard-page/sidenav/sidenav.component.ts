@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from "@angular/animations";
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { AuthService } from "src/app/services/auth.service";
 
 interface SideNavToggle {
   screenWidth: number;
@@ -25,7 +26,7 @@ export class SidenavComponent implements OnInit {
   screenWidth = 0;
   changeSide: boolean = false;
 
-  constructor() {}
+  constructor( private authService: AuthService) {}
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
@@ -55,5 +56,9 @@ export class SidenavComponent implements OnInit {
     return `assets/icons/dashboard-icons/${
       this.changeSide ? "Vector.png" : "Vector2.png"
     }`;
+  }
+
+  logout(){
+    this.authService.logout();
   }
 }

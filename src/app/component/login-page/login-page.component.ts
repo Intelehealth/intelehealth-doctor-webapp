@@ -67,7 +67,7 @@ export class LoginPageComponent implements OnInit {
             (provider) => {
               this.authService.sendToken(response.user.sessionId);
               saveToStorage("user", response.user);
-
+              this.router.navigate(["/dashboard"]);
               this.pushNotificationsService
                 .getUserSettings(response.user.uuid)
                 .subscribe((response) => {

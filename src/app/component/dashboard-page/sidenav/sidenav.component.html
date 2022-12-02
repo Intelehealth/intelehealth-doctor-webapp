@@ -90,13 +90,10 @@
           </span>
         </a>
       </li>
-      <li class="sidenav-nav-item" style="margin-top: 18rem">
+      <li class="sidenav-nav-item" style="margin-top: 18rem"  (click)="logout()">
         <hr />
         <a
           class="sidenav-nav-link"
-          routerLink=""
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
         >
           <img src="assets/icons/dashboard-icons/power.png" />
           <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
