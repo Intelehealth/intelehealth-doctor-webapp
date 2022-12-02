@@ -87,7 +87,7 @@ export class SendSmsComponent implements OnInit {
   }
 
   getVisits() {
-    this.visitService.getVisits().subscribe(
+    this.visitService.getVisitForSms().subscribe(
       (response) => {
         this.visits = response.results;
       },

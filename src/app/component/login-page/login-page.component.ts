@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
+import { VisitService } from "src/app/services/visit.service";
 declare var saveToStorage: any,  getFromStorage: any
 @Component({
   selector: "app-login-page",
@@ -29,11 +30,12 @@ export class LoginPageComponent implements OnInit {
     private sessionService: SessionService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private authService: AuthService
+    private authService: AuthService,
+    private service: VisitService
   ) {}
 
   ngOnInit() {
-   
+    this.service.clearVisits();
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
       this.router.navigateByUrl("/home");

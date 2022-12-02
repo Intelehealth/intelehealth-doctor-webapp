@@ -38,3 +38,15 @@ mat-form-field {
 .text-align{
   text-align: center;
 }
+
+.my-float {
+  margin-top: 16px;
+}
+
+.count-label {
+  float: right;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #000;
+  border: 1px solid #fff;
+}

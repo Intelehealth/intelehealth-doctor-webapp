@@ -2,19 +2,38 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { HelperService } from "./helper.service";
+import { VisitData } from "../component/homepage/homepage.component";
+
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
   private baseURL = environment.baseURL;
+  public flagVisit: VisitData[] = [];
+  public waitingVisit: VisitData[] = [];
+  public progressVisit: VisitData[] = [];
+  public completedVisit: VisitData[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private helper: HelperService) { }
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  getVisits(): Observable<any> {
+  getVisits(params): Observable<any> {
+    const query = {
+      ...{
+        includeInactive: false,
+        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+      },
+      ...params,
+    };
+    const url = `${this.baseURL}/visit${this.helper.toParamString(query)}`;
+    return this.http.get(url);
+  }
+
+  getVisitForSms(): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
     return this.http.get(url);
@@ -83,4 +102,12 @@ export class VisitService {
       `${environment.mindmapURL}/openmrs/getDoctorVisits`
     );
   }
+
+  clearVisits() {
+    this.flagVisit = new Array();
+    this.waitingVisit = new Array();
+    this.progressVisit = new Array();
+    this.completedVisit = new Array();
+  }
+
 }

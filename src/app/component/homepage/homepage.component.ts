@@ -1,10 +1,11 @@
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AppointmentService } from "src/app/services/appointment.service";
 import * as moment from "moment";
+import { HelperService } from "src/app/services/helper.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -33,10 +34,6 @@ export class HomepageComponent implements OnInit {
   completeVisitNo = 0;
   endedVisitNo = 0;
   endVisitCount: any;
-  flagVisit: VisitData[] = [];
-  waitingVisit: VisitData[] = [];
-  progressVisit: VisitData[] = [];
-  completedVisit: VisitData[] = [];
   endVisits = [];
   setSpiner = true;
   specialization;
@@ -46,12 +43,18 @@ export class HomepageComponent implements OnInit {
   endVisitData: any;
   visits = []
   slots = []
+  allVisits = [];
+  limit = 100;
+  allVisitsLoaded = false;
+
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
     private service: VisitService,
     private snackbar: MatSnackBar,
-    private apnmntSvc: AppointmentService
+    private apnmntSvc: AppointmentService,
+    private helper: HelperService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -137,12 +140,51 @@ export class HomepageComponent implements OnInit {
   /**
    * Get all visits
    */
-  getVisits() {
-    this.service.getVisits().subscribe(
+  getVisits(query: any = {}, cb = () => {}) {
+    this.service.getVisits(query).subscribe(
       (response) => {
-        this.visits = response.results;
-        this.setVisits();
+        response.results.forEach((item) => {
+          this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
+        });
+        let stateVisits = [];
+        if (this.visitState && this.visitState !== "All") {
+          stateVisits = this.allVisits.filter(({ attributes }) => {
+            const visitState = this.getStateFromVisit(attributes);
+            return this.visitState === visitState;
+          });
+        } else if (this.visitState === "All") {
+          stateVisits = this.allVisits;
+        }
+
+        stateVisits.forEach((active) => {
+          if (active.encounters.length > 0) {
+            if (active.attributes.length) {
+              const attributes = active.attributes;
+              const speRequired = attributes.filter(
+                (attr) =>
+                  attr.attributeType.uuid ===
+                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+              );
+              if (speRequired.length) {
+                speRequired.forEach((spe, index) => {
+                  if (spe.value === this.specialization) {
+                    this.visitCategory(active);
+                  }
+                });
+              }
+            } else if (this.specialization === "General Physician") {
+              this.visitCategory(active);
+            }
+          }
+          this.value = {};
+        });
+        if (response.results.length === 0) {
+          this.setVisitlengthAsPerLoadedData();
+          this.allVisitsLoaded = true;
+        }
+        this.helper.refreshTable.next();
         this.setSpiner = false;
+        this.isLoadingNextSlot = false;
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -173,21 +215,21 @@ export class HomepageComponent implements OnInit {
     let encounter = null;
     if (encounter = this.checkVisit(encounters, "Visit Complete")) {
       const values = this.assignValueToProperty(active, encounter);
-      this.completedVisit.push(values);
+      this.service.completedVisit.push(values);
     } else if (encounter = this.checkVisit(encounters, "Visit Note")) {
       const values = this.assignValueToProperty(active, encounter);
-      this.progressVisit.push(values);
+      this.service.progressVisit.push(values);
     } else if (encounter = this.checkVisit(encounters, "Flagged")) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
-        this.flagVisit.push(values);
+        this.service.flagVisit.push(values);
       }
     } else if (
       (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
       (encounter = this.checkVisit(encounters, "Vitals"))
     ) {
       const values = this.assignValueToProperty(active, encounter);
-      this.waitingVisit.push(values);
+      this.service.waitingVisit.push(values);
     }
   }
 
@@ -215,7 +257,6 @@ export class HomepageComponent implements OnInit {
         this.activePatient = getTotal(data, "Awaiting Consult");
         this.visitNoteNo = getTotal(data, "Visit In Progress");
         this.completeVisitNo = getTotal(data, "Completed Visit");
-        localStorage.setItem('awaitingVisitsCount', this.activePatient.toString())
       }
     });
   }
@@ -292,4 +333,61 @@ export class HomepageComponent implements OnInit {
         },
       });
   }
+
+  ngAfterViewChecked() {
+    this.cdr.detectChanges();
+  }
+
+  get nextPage() {
+    return Number((this.allVisits.length / this.limit).toFixed()) + 2;
+  }
+
+  tableChange({ loadMore, refresh }) {
+    if (loadMore) {
+      if (!this.isLoadingNextSlot) this.setSpiner = true;
+      const query = {
+        limit: this.limit,
+        startIndex: this.allVisits.length,
+      };
+      this.getVisits(query, refresh);
+    }
+  }
+
+  isLoadingNextSlot = false;
+  loadNextSlot() {
+    if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
+      this.isLoadingNextSlot = true;
+      this.tableChange({ loadMore: true, refresh: () => {} });
+    }
+  }
+
+  setVisitlengthAsPerLoadedData() {
+    this.flagPatientNo = this.getLength(this.flagVisit);
+    this.activePatient = this.getLength(this.waitingVisit);
+    this.visitNoteNo = this.getLength(this.progressVisit);
+    this.completeVisitNo = this.getLength(this.completedVisit);
+  }
+
+  get completedVisit() {
+    return this.service.completedVisit;
+  }
+  get progressVisit() {
+    return this.service.progressVisit;
+  }
+
+  get flagVisit() {
+    return this.service.flagVisit;
+  }
+  get waitingVisit() {
+    return this.service.waitingVisit;
+  }
+
+  getLength(arr) {
+    let data = [];
+    arr.forEach((item) => {
+      data = this.helper.getUpdatedValue(data, item, "id");
+    });
+    return data.filter((i) => i).slice().length;
+  }
+
 }
