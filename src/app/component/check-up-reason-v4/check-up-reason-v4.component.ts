@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
 
 @Component({
   selector: "app-check-up-reason-v4",
@@ -7,70 +9,60 @@ import { Component, Input, OnInit } from "@angular/core";
 })
 export class CheckUpReasonV4Component implements OnInit {
   @Input() pastVisit = false;
-  
-  checkUpReason = {
-    data: [
-      {
-        label: "Site",
-        value: "Upper (R) - Right Hypohondrium",
-      },
-      {
-        label: "Pain radiates to",
-        value: "Upper (C) - Epigastric",
-      },
-      {
-        label: "Onset",
-        value: "Rapidly increasing",
-      },
-      {
-        label: "Timming",
-        value: "Morning",
-      },
-      {
-        label: "Character of pain",
-        value: "Cramping",
-      },
-      {
-        label: "Serverity",
-        value: "Moderate, 4-6",
-      },
-      {
-        label: "Exacerbating factors",
-        value: "Food movement",
-      },
-      {
-        label: "Relieving factor",
-        value: "Leaning forward",
-      },
-      {
-        label: "Menstrual history",
-        value: "Menstruating - 14,20 April 2022.",
-      },
-      {
-        label: "Prior treatment sought",
-        value: "None",
-      },
-      {
-        label: "Additonal Informaton",
-        value: "Trouble sleep",
-      },
-    ],
-    associatedData: [
-      {
-        label: "Patient reports:",
-        value:
-          "Nausea, Anorexia, Constipation, Abdominal distinction / bloating, passing GAS, Restlessness, Injury, Breathlessness, Wheezing, Shortness of breath, Pain/Tightness of chest, Hemoptysis, Hoarseness, Naval congestion/Stuffy nose, Runny nose, Recurrent Diarrhea.",
-      },
+  filters = [];
+  b: any;
+  complaintsData = [];
+  mainObs = {};
+  complaint: any = [];
+  conceptComplaint = "3edb0e09-9135-481e-b8f0-07a26fa9a5ce";
+  header: string = "";
+  symptoms: string = "";
+  symptomsData = [];
 
-      {
-        label: "Patient denies:",
-        value:
-          "Vomiting, Diarrhea, Fever, Belching/Burping, Blood in stool, change in frequency of urination, Color change in urine, Hiccups, Vaginal discharge(describe), Burning felling in a throat at night/early in the morning, Post nasal drip, Recent severe stress.",
-      },
-    ],
-  };
+  constructor(
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute
+  ) {}
 
-  constructor() {}
+  ngOnInit() {
+    const patientUuid = this.route.snapshot.paramMap.get("patient_id");
+    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.diagnosisService
+      .getObs(patientUuid, this.conceptComplaint)
+      .subscribe((response) => {
+        response.results.forEach((obs) => {
+          if (obs.encounter.visit.uuid === visitUuid) {
+            this.complaint.push(obs);
+          }
+        });
 
-  ngOnInit(): void {}
+        if (this.complaint.length > 0 && this.complaint !== undefined) {
+          this.filters = this.complaint[0].value.split("<br/>");
+          for (let i of this.filters) {
+            if (this.filters[0] == i) {
+              this.header = i.slice(4, -6);
+            } else if (i == " ►<b>Associated symptoms</b>: ") {
+              this.symptoms = i.slice(5, -6);
+              let Idex = this.filters.slice(this.filters.indexOf(i) + 1, -1);
+              for (let j of Idex) {
+                let obsData = {};
+                if (Idex.indexOf(j) % 2 == 0) {
+                  obsData["label"] = j.slice(2, -2);
+                } else {
+                  obsData["value"] = j;
+                }
+                this.symptomsData.push(obsData);
+              }
+              break;
+            } else {
+              this.b = i.split(" - ");
+              let obsData = {};
+              obsData["label"] = this.b[0].slice(1);
+              obsData["value"] = this.b[1];
+              this.complaintsData.push(obsData);
+            }
+          }
+        }
+      });
+  }
 }

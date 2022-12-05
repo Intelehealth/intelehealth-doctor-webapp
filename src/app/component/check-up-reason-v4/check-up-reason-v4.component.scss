@@ -55,12 +55,11 @@
 }
 
 .first-list {
-  height: 24px;
   width: 240px;
+  height: auto;
 }
 
 .second-list {
-  height: 24px;
   width: 742px;
 }
 
@@ -109,7 +108,7 @@
 
   .abdomin-captoin-font {
     height: 27px;
-    width: 134px;
+    // width: 134px;
 
     font-weight: 600;
     font-size: 18px;
