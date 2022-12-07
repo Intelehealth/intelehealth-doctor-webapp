@@ -31,12 +31,12 @@
     </div>
 
     <div class="abdomin-captoin mt-3 mb-3">
-      <div class="abdomin-captoin-font">Abdominal pain</div>
+      <div class="abdomin-captoin-font">{{header}}</div>
     </div>
 
     <div class="ml-4">
       <ul class="d-grid p-0">
-        <li class="d-flex mb-3" *ngFor="let item of checkUpReason?.data">
+        <li class="d-flex mb-3" *ngFor="let item of complaintsData">
           <div class="first-list-label">{{ item?.label }}</div>
           <div class="second-list-label">
             {{ item?.value }}
@@ -46,15 +46,13 @@
     </div>
 
     <div class="patient-reports">
-      <div class="associated-font mb-3">Associated symptoms</div>
+      <div class="associated-font mb-3">{{symptoms}}</div>
       <div class="ml-5">
-        <ul class="d-grid p-0">
-          <li class="mb-3" *ngFor="let item of checkUpReason?.associatedData">
-            <div class="first-list-label mb-2 font-bold">{{ item?.label }}</div>
+        <ul class="d-grid p-0" *ngFor="let item of symptomsData">
+            <div class="first-list-label mb-2 font-bold" *ngIf="item.label">{{ item.label }}</div>
             <p class="font-size-md">
-              {{ item?.value }}
+              {{ item.value }}
             </p>
-          </li>
         </ul>
       </div>
     </div>

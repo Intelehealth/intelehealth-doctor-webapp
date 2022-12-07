@@ -25,19 +25,22 @@
     id="additional-documents"
     class="additional-documents-details collapse show"
   >
-    <div class="d-flex ml-4">
-      <div *ngFor="let image of additionalDocuments?.data">
-        <img
+    <div class="d-flex ml-4" *ngIf="additionalDocumentPresent">
+      <div *ngFor="let image of images">
+        <!-- <img
           *ngIf="image.includes('.pdf'); else elseBlock"
           height="120px"
           width="120px"
           class="mr-3"
           src="assets/svgs/blood-pdf.svg"
-        />
+        /> -->
         <ng-template #elseBlock>
           <img height="120px" width="120px" class="mr-3" [src]="image" />
         </ng-template>
       </div>
+    </div>
+    <div *ngIf="!additionalDocumentPresent">
+    	{{ 'No Additional Documents available!'}}
     </div>
   </div>
 </div>

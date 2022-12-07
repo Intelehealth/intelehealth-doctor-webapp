@@ -30,8 +30,8 @@
 
     <div class="ml-4">
       <ul class="d-grid p-0">
-        <li class="d-flex mb-3" *ngFor="let item of medicalHistory?.data">
-          <div class="first-list-label">{{ item?.label }}</div>
+        <li class="d-flex mb-3" *ngFor="let item of patientHistory">
+          <div class="first-list-label" *ngIf="item?.label">{{ item?.label }}</div>
           <div class="second-list-label">{{ item?.value }}</div>
         </li>
       </ul>
@@ -44,7 +44,7 @@
     <div class="ml-5">
       <ul class="d-grib p-0">
         <li
-          *ngFor="let items of medicalHistory?.medicalHistoryData"
+          *ngFor="let items of familyHistory"
           class="d-flex"
         >
           <div class="first-list-label">{{ items?.label }}</div>

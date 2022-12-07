@@ -374,7 +374,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
             },
 
             {
-              path: "visit-summary",
+              path: "visit-summary/:patient_id/:visit_id",
               component: VisitSummaryV4Component,
               canActivate: [AuthGuard],
             },

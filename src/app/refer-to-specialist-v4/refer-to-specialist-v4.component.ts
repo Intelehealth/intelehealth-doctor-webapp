@@ -7,7 +7,13 @@ import { Component, OnInit } from "@angular/core";
 })
 export class ReferToSpecialistV4Component implements OnInit {
   selected: any;
-  specaiList = ["Cardiologist"];
+  specaiList = [
+    "General Physician",
+    "Dermatologist",
+    "Physiotherapist",
+    "Gynecologist",
+    "Pediatrician",
+  ];
 
   referToSpecailist = {
     data: ["Refer to another speciality", "Specialization"],

@@ -23,13 +23,13 @@
 
   <div id="physical-examinaton" class="physical-examinaton-details collapse show">
     <div class="abdomin-captoin mt-3 mb-3">
-      <div class="abdomin-captoin-font">General exams</div>
+      <div class="abdomin-captoin-font">{{header}}</div>
     </div>
 
     <div class="d-flex">
       <div class="ml-4">
         <ul class="d-grid p-0">
-          <li class="d-flex mb-3" *ngFor="let item of physicalExaminaton?.data">
+          <li class="d-flex mb-3" *ngFor="let item of generalExamsData">
             <div class="first-list-label">{{ item?.label }}</div>
             <div *ngIf="item?.value" class="second-list-label">
               {{ item?.value }}
@@ -45,10 +45,10 @@
     </div>
 
     <div class="patient-reports mt-4">
-      <div class="associated-font mb-3">Abdomen</div>
+      <div class="associated-font mb-3">{{abdomenHeader}}</div>
       <ul>
         <li
-          *ngFor="let data of physicalExaminaton?.physicalData"
+          *ngFor="let data of abdomenData"
           class="font-size-md mb-1"
         >
           <label>

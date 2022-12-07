@@ -1,43 +1,43 @@
 <div class="person-header-container card-shadow">
-  <div class="person-content">
+  <div class="person-content" *ngFor="let info of patientInfo">
     <div class="person-content-item">
       <div class="person-title">
-        <div class="">
+        <div class="" *ngIf="!profileImagePresent">
           <img src="assets/svgs/v-profile.svg" alt="" />
         </div>
+        <div class="" *ngIf="profileImagePresent">
+          <img src="" alt="">
+        </div>
         <div class="person-name-details">
-          <div class="person-name">Muskan Kala (F)</div>
-          <div class="person-INT">INT-1234</div>
+          <div class="person-name">{{info.display}}</div>
+          <div class="person-INT">{{patientIdentifier}}</div>
         </div>
       </div>
       <div class="person-age-details">
         <div class="person-age-font person-label-color">Age</div>
-        <div class="person-age-font person-age-color">32 Years</div>
+        <div class="person-age-font person-age-color">{{info.age}} {{'Years'}}</div>
       </div>
     </div>
 
     <div class="occupation">
       <div class="occupation-label person-label-color">Occupation</div>
-      <div class="occupation-label person-age-color">Farmer</div>
+      <div class="occupation-label person-age-color" *ngIf="info.occupation">{{info.occupation}}</div>
+      <div class="occupation-label person-age-color" *ngIf="!info.occupation">{{"Not Available"}}</div>
       <div class="mt-4">
         <div class="occupation-label person-label-color">Address</div>
-        <div class="occupation-label person-age-color">
-          444, kathe lane ,Dwarka ,Nasik
-        </div>
+        <div class="occupation-label person-age-color">{{info.preferredAddress.cityVillage}}</div>
       </div>
     </div>
 
     <div class="contact">
       <div class="occupation-label person-label-color">Contact No:</div>
       <div class="">
-        9993024800
-
+        {{info.telephone}}
         <img src="assets/svgs/whatsapp-icon.svg" alt="" />
       </div>
 
       <div class="mt-2">
-        9993024800
-
+        {{info.telephone}}
         <img src="assets/svgs/num.svg" alt="" />
       </div>
     </div>
