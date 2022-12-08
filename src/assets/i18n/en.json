@@ -250,6 +250,10 @@
     "You can not modify past schedule.":"You can not modify past schedule.",
     "Health Scheme Card":"Health Scheme Card",
     "NA":"NA",
+    "Remote": "Remote",
+    "Telemedicine Clinic 1":  "Telemedicine Clinic 1",
+    "Telemedicine Clinic 2":  "Telemedicine Clinic 2",
+    "Telemedicine Clinic 3":"Telemedicine Clinic 3",
     "messages": {
       "welcome": "Welcome",
       "loginError": "Username & Password doesn't match",

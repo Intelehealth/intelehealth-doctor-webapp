@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
@@ -27,6 +27,12 @@ export class EditDetailsComponent implements OnInit {
     "Infectionist",
     "Cardiologist"
   ];
+   locations = [
+    "Remote",
+    "Telemedicine Clinic 1",
+    "Telemedicine Clinic 2",
+    "Telemedicine Clinic 3"
+  ];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
@@ -43,6 +49,9 @@ export class EditDetailsComponent implements OnInit {
     ),
     specialization: new FormControl(
       this.data.specialization ? this.data.specialization.value : null
+    ),
+    location: new FormControl(
+      this.data.location ? this.data.location.value : null, Validators.required
     ),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
@@ -170,6 +179,18 @@ export class EditDetailsComponent implements OnInit {
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
+
+    if (value.location !== null) {
+      const URL = this.data.location
+        ? `${this.baseURLProvider}/${this.data.location.uuid}`
+        : this.baseURLProvider;
+      const json = {
+        attributeType: "0b862d3c-76b6-401b-baba-4affab5f999d",
+        value: value.location,
+      };
+      this.http.post(URL, json).subscribe((response) => { });
+    }
+
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }

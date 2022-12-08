@@ -37,6 +37,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   allVisits = [];
   limit = 100;
   allVisitsLoaded = false;
+  providerLocation;
 
   constructor(
     private sessionService: SessionService,
@@ -66,9 +67,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
           ) {
             this.specialization = element.value;
           }
+          if (
+            element.attributeType.uuid ===
+              "0b862d3c-76b6-401b-baba-4affab5f999d" &&
+            !element.voided
+          ) {
+            this.providerLocation = element.value;
+          }
         });
         this.getVisits();
-        this.getVisitCounts(this.specialization);
+        //this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -124,9 +132,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   attr.attributeType.uuid ===
                   "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
               );
-              if (speRequired.length) {
+              const location = active.location.display;
+              if (speRequired.length && location.length) {
                 speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
+                  if (spe.value === this.specialization  && this.providerLocation === location) {
                     this.visitCategory(active);
                   }
                 });
@@ -137,6 +146,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
           this.value = {};
         });
+        this.setVisitlengthAsPerLoadedData()
         if (response.results.length === 0) {
           this.setVisitlengthAsPerLoadedData();
           this.allVisitsLoaded = true;
