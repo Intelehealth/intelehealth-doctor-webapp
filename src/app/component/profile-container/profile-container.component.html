@@ -1,12 +1,26 @@
-<div class="calendar-container">
-  <div class="activePage">
-    Dashboard
-    <img class="text" src="assets/icons/dashboard-icons/Vector3.png" />
-    <span class="text">Profile</span>
+<div class="container">
+  <div style="margin-top: 1.5rem;">
+    <span 
+      routerLink="/dashboard"
+      routerLinkActive="font"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="mr-2 font-size-md grey-color"
+      >Dashboard
+    </span>
+    <img
+      class="mr-2"
+      src="assets/svgs/bread-crumb.svg"
+    />
+    <span 
+      routerLink="/dashboard/profile"
+      routerLinkActive="font"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="mr-2 font-size-md grey-color"
+      >Profile
+    </span>
   </div>
-
   <div class="profile-container">
-    <img class="pulse body" src="assets/images/profile/Group 2608886.png" />
+    <img class="pulse pulse-body" src="assets/images/profile/Group 2608886.png" />
     <img class="pulse" src="assets/images/profile/Group 2608887.png" />
     <button class="menuBtn" [matMenuTriggerFor]="menu" mat-icon-button>
       <mat-icon>more_vert</mat-icon>
@@ -28,7 +42,7 @@
         src="assets/images/profile/Frame 2609036.png"
       />
       <button class="camera" (click)="inputField.click()">
-        <i class="fas fa-camera"></i>
+        <img src="../../../assets/svgs/camera.svg" alt="">
       </button>
       <span class="txt">Dr. Sakshi Prabhat</span>
     </div>

@@ -1,48 +1,34 @@
-.calendar-container {
-    display: grid;
-    grid-template-areas:
-      'activePage activePage activePage'
-      'profile-container profile-container profile-container'
-      'setview setview setview'
-    ;
-      grid-template-columns: repeat(3, 1fr);
-      margin-top:4rem ;
-}
 .activePage{
-    grid-area: activePage;
     color: #7F7B92;
-    margin-top: -2.5rem;
+    margin-top: 2rem;
     .text{
         color: black;
         margin-left:10px;
     }
 }
 .profile-container{
-    grid-area:profile-container;
     width: 274px;
     height: 192px;
     background: #FFFFFF;
     box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
     border-radius: 12px;
+    margin-top: 1rem;
 }
 .pulse{
-    grid-area: pulse;
     background: #EFE8FF;
     width: 274px;
     height: 50px;
     box-shadow: rgba(31, 28, 58, 0.08);
 }
-.body{
+.pulse-body{
     border-radius: 12px 12px 0 0;
 }
 .menuBtn{
-    grid-area: menu-btn;
     position: relative;
     bottom: 6rem;
     left: 14rem;
 }
 .profilePic{
-    grid-area: profile-image;
     position: relative;
     width: 70px;
     height: 70px;
@@ -50,22 +36,29 @@
     left: 1rem;
 }
 .txt{
-    grid-area: txt;
     position: relative;
     right: 80px;
     bottom: 10px;
 }
 .camera{
-    grid-area: camera;
     position: relative;
     bottom: 54px;
     border-radius: 50px;
     border: none;
     right: 6px;
+    background: #EFE8FF;
+    width: 24px;
+    height: 24px;
+    img{
+        margin-bottom: 5px;
+    }
 }
 .setview{
-    grid-area:setview;
-    position: relative;
-    left: 18rem;
-    bottom: 12rem;
+    position: absolute;
+    left: 19rem;
+    top: 8rem;
+}
+
+.font {
+    color: #1b163a;
 }
