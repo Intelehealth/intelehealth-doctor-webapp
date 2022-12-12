@@ -13,7 +13,10 @@
       <hr />
     </div>
     <div class="form-body">
-      <form class="grid-container">
+      <form
+        [formGroup]="personalInfoForm" 
+        class="grid-container"
+      >
         <div class="user-name">
           <div class="first-name">
             <label class="lbl lbl-firstName">First name *</label>
@@ -108,25 +111,51 @@
         <div class="user-contact">
           <div class="phoneNo">
             <label class="lbl lbl-phoneNo">Phone Number</label>
-            <select name="mobilecode" id="mobilecode" class="code-dropdown">
-              <option value="" selected="selected">+ 91</option>
-              <option value="">+ 61</option>
-            </select>
+            <div class="vr-dropdown w mb-4">
+              <ng-select formControlName="selectedCode" [clearable]="false">
+                <ng-option
+                  *ngFor="let code of countryCode"
+                  [value]="code.dialling_code"
+                >
+                  <img
+                    title="{{ code.country_name }}"
+                    class="mb-1 mr click"
+                    height="16px"
+                    width="16px"
+                    [src]="code.img"
+                  />
+                  {{ code.dialling_code }}</ng-option
+                >
+              </ng-select>
+            </div>
             <input type="number" class="number-box" id="phoneNo" />
           </div>
           <div class="whatsappNo">
             <label class="lbl lbl-whatsappNo">Phone Number</label>
-            <select name="mobilecode" id="mobilecode" class="code-dropdown">
-              <option value="" selected="selected">+ 91</option>
-              <option value="">+ 61</option>
-            </select>
+            <div class="vr-dropdown w mb-4">
+              <ng-select formControlName="selectedCode" [clearable]="false">
+                <ng-option
+                  *ngFor="let code of countryCode"
+                  [value]="code.dialling_code"
+                >
+                  <img
+                    title="{{ code.country_name }}"
+                    class="mb-1 mr click"
+                    height="16px"
+                    width="16px"
+                    [src]="code.img"
+                  />
+                  {{ code.dialling_code }}</ng-option
+                >
+              </ng-select>
+            </div>
             <input type="number" class="number-box" id="whatsappNo" />
           </div>
         </div>
         <div class="user-emailID">
           <div class="emailID">
             <label class="lbl lbl-email">Email ID *</label>
-            <input type="text" class="email-box" id="email-ID" />
+            <input type="text" class="email-box" id="email-ID" placeholder="abc123@gmail.com"/>
           </div>
         </div>
         <div class="signature-header">
@@ -138,7 +167,7 @@
               <div class="draw-signature">
                 <label class="lbl lbl-email">Draw signature *</label>
                 <button (click)="clearPad()">clear sign</button>
-                <canvas #canvas (touchstart)="startDrawing($event)"></canvas>
+                <canvas #canvas (touchstart)="startDrawing($event)" class="canva-pad"></canvas>
               </div>
             </mat-tab>
             <mat-tab label="Generate">
@@ -149,55 +178,12 @@
                 </div>
                 <div class="signature-option">
                   <label class="lbl lbl-signature">Select signature</label>
-                  <select
-                    name="signature"
-                    id="signature-dropdown"
-                    class="signature-dropdown"
-                  >
-                    <option value="" selected="selected">
-                      <input type="radio" value="1" />
-                      <span
-                        style="font-family: arty; font-size: 50px; top: -20px"
-                      >
-                        intelehealth
-                      </span>
-                    </option>
-                    <option value="">
-                      <input type="radio" value="2" />
-                      <span
-                        style="font-family: asem; font-size: 50px; top: -25px"
-                      >
-                        intelehealth
-                      </span>
-                    </option>
-                    <option value="">
-                      <input type="radio" value="3" />
-                      <span
-                        style="
-                          font-family: youthness;
-                          font-size: 50px;
-                          top: -20px;
-                        "
-                      >
-                        intelehealth
-                      </span>
-                    </option>
-                    <option value="">
-                      <input type="radio" value="4" />
-                      <span
-                        style="
-                          font-family: almondita;
-                          font-size: 30px;
-                          top: -10px;
-                        "
-                      >
-                        intelehealth
-                      </span>
-                    </option>
-                    <option value="">intelehealth</option>
-                    <option value="">intelehealth</option>
-                    <option value="">intelehealth</option>
-                  </select>
+                  <mat-select placeholder="Eg. MBBS">
+                    <mat-option value="option1">MBBS</mat-option>
+                    <mat-option value="option2">MBBS, MD</mat-option>
+                    <mat-option value="option3">Dentist</mat-option>
+                    <mat-option value="option4">Other</mat-option>
+                  </mat-select>
                 </div>
               </div>
             </mat-tab>
