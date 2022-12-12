@@ -30,6 +30,8 @@ export class MonitoringComponent implements OnInit {
   ];
   hwColumns: any = [
     { label: "Name of HW", key: "name" },
+    { label: "Village", key: "village" },
+    { label: "Sanch", key: "sanch" },
     { label: "Last Sync", key: "lastSyncTimestamp" },
     { label: "Consultation Device", key: "device" },
     { label: "Android Version", key: "androidVersion" },
@@ -38,7 +40,7 @@ export class MonitoringComponent implements OnInit {
     { label: "Total Time", key: "totalTime" },
     { label: "Last Activity", key: "lastActivity" },
     { label: "No. of Days", key: "days", class: 'n-day' },
-    { label: "Current Status", key: "status" },
+    { label: "Current Status", key: "status" }
   ];
   data: any = [];
   allData: any = [];
@@ -147,7 +149,7 @@ export class MonitoringComponent implements OnInit {
     } else if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
-      return obj[key];
+      return obj[key] === null ? 'NA': obj[key];
     }
   }
 
