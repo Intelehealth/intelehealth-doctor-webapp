@@ -8,6 +8,7 @@ import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
+import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -41,7 +42,8 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private pushNotificationService: PushNotificationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogService: ConfirmDialogService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -52,7 +54,7 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-    this.checkProviderRole(); 
+    this.checkProviderRole();
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService
@@ -120,7 +122,7 @@ export class VisitSummaryComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -247,12 +249,17 @@ export class VisitSummaryComponent implements OnInit {
   };
 
   openVcModal() {
-    this.dialog.open(VcComponent, {
-      disableClose: true,
-      data: {
-        patientUuid: this.patientUuid,
-      },
-    });
+    const dialogRef = this.dialogService.openConfirmDialog("Confirm the strong 3G internet connection to make this call")
+      .afterClosed().subscribe(res => {
+        if (res) {
+          this.dialog.open(VcComponent, {
+            disableClose: true,
+            data: {
+              patientUuid: this.patientUuid,
+            },
+          });
+        }
+      });
   }
 
   private checkProviderRole() {
@@ -261,7 +268,7 @@ export class VisitSummaryComponent implements OnInit {
       const roles = userDetails['roles'];
       roles.forEach(role => {
         if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
-        role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2") {
+          role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2") {
           this.isManagerRole = true;
         }
       });
