@@ -456,7 +456,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
       { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
     ),
     // tslint:disable-next-line: max-line-length
-    ServiceWorkerModule.register("/ngsw-worker.js", {
+    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
