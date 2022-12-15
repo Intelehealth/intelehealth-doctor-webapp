@@ -26,7 +26,7 @@ export class LoginContainerComponent implements OnInit {
   ngOnInit() {
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
-      this.router.navigateByUrl("/home");
+      this.router.navigateByUrl("/dashboard");
     }
     this.selectedLanguage = this.languageList[0];
   }

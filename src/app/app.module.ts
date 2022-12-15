@@ -324,6 +324,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [
+        { path: "", redirectTo: "login", pathMatch: "full" },
         {
           path: "login",
           component: LoginContainerComponent,
@@ -396,61 +397,61 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
           ],
         },
         { path: "set-new/password", component: SetNewPasswordComponent },
-        {
-          path: "",
-          component: MainComponent,
-          children: [
-            {
-              path: "home",
-              component: HomepageComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "findPatient",
-              component: FindPatientComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "myAccount",
-              component: MyAccountComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-            {
-              path: "modals",
-              component: ModalsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "signature",
-              component: SignatureComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "editDetails",
-              component: EditDetailsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "changePassword",
-              component: ChangePasswordComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "visitSummary/:patient_id/:visit_id",
-              component: VisitSummaryComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "vc/call", component: VcComponent },
-            { path: "test/chat", component: TestChatComponent },
-            {
-              path: "appointment/schedule",
-              component: AppointmentScheduleComponent,
-            },
-            { path: "appointment/view", component: AppointmentViewComponent },
-            { path: "", redirectTo: "home", pathMatch: "full" },
-          ],
-        },
+        // {
+        //   path: "",
+        //   component: MainComponent,
+        //   children: [
+        //     {
+        //       path: "home",
+        //       component: HomepageComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "findPatient",
+        //       component: FindPatientComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "myAccount",
+        //       component: MyAccountComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+        //     {
+        //       path: "modals",
+        //       component: ModalsComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "signature",
+        //       component: SignatureComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "editDetails",
+        //       component: EditDetailsComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "changePassword",
+        //       component: ChangePasswordComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     {
+        //       path: "visitSummary/:patient_id/:visit_id",
+        //       component: VisitSummaryComponent,
+        //       canActivate: [AuthGuard],
+        //     },
+        //     { path: "vc/call", component: VcComponent },
+        //     { path: "test/chat", component: TestChatComponent },
+        //     {
+        //       path: "appointment/schedule",
+        //       component: AppointmentScheduleComponent,
+        //     },
+        //     { path: "appointment/view", component: AppointmentViewComponent },
+        //     { path: "", redirectTo: "home", pathMatch: "full" },
+        //   ],
+        // },
         { path: "**", component: Page404Component },
       ],
       { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
