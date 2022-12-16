@@ -29,6 +29,8 @@ export class DashboardComponent implements OnInit {
     let styleClass = "";
     if (this.isSideNavCollapsed && this.screenWidth > 768) {
       styleClass = "body-trimmed";
+    }else {
+      styleClass = "body-extend"
     }
     return styleClass;
   }

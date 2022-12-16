@@ -46,9 +46,13 @@ export class SidenavComponent implements OnInit {
     
     if (this.collapsed) {
       dashboardContainer && dashboardContainer.classList.add("nav-collapsed");
+      if(dashboardContainer?.classList?.contains('nav-opened')) {
+         dashboardContainer.classList.remove("nav-opened");
+      }
     } else {
       dashboardContainer &&
         dashboardContainer.classList.remove("nav-collapsed");
+        dashboardContainer.classList.add("nav-opened");
     }
   }
 

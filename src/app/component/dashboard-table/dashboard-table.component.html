@@ -1,5 +1,5 @@
 <div class="main ml-3">
-  <div class="header d-flex">
+  <div class="d-flex">
     <img [src]="table?.lableIconPath" />
     <div class="appointment-label">
       {{ table?.label }} ({{ table?.dataCount }})
@@ -12,7 +12,7 @@
     <div
       data-toggle="collapse"
       [attr.data-target]="'#' + table.id"
-      class="arrow click"
+      class="arrow"
     >
       <img class="" src="assets/svgs/filter-table-up-arrow.svg" />
     </div>

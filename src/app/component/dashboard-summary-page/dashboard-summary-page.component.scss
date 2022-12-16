@@ -1,6 +1,6 @@
 .top {
-  padding: 16px;
-  gap: 16px;
+  padding: 30px;
+  gap: 30px;
 }
 
 .visit-section {
@@ -55,29 +55,19 @@
 }
 
 .nav-collapsed {
-  .visit-section {
-    width: 242px;
-  }
-
-  .main {
-    width: 1017px !important;
-  }
-
-  .header {
-    width: 940px !important;
-  }
-
-  .appointment-label {
-    width: 745px !important;
-  }
-
-  .arrow {
-    display: block;
-
-    margin-top: 22px;
-    margin-left: 22px;
-  }
+  width: 1200px;
 }
+
+.nav-opened {
+  width: 1370px;
+}
+
+.arrow {
+  display: block;
+  margin-top: 22px;
+  margin-left: 170px;
+}
+
 .pill-btn {
   display: inline-block;
   vertical-align: middle;

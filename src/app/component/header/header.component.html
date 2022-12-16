@@ -2,42 +2,25 @@
   <div class="input-group w" *ngIf="showSearchBar">
     <div class="input-group-prepend">
       <span class="input-group-text search-img">
-        <img class="" src="assets/svgs/search-icon.svg"
-      /></span>
+        <img class="" src="assets/svgs/search-icon.svg" /></span>
     </div>
-    <input type="text" class="search-input" placeholder="Search by patient name or ID" />
+    <input type="text" class="search-input"  placeholder="Search by patient name or ID" />
   </div>
 
   <ng-container *ngIf="!showSearchBar">
     <div class="d-flex" *ngFor="let list of breadCrumb; index as i">
-      <span
-        [routerLink]="list.route"
-        routerLinkActive="font"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="mr-2 font-size-md grey-color"
-        >{{ list?.text }}
+      <span [routerLink]="list.route" routerLinkActive="font" [routerLinkActiveOptions]="{ exact: true }"
+        class="mr-2 font-size-md grey-color">{{ list?.text }}
       </span>
-      <img
-        *ngIf="i !== breadCrumb.length - 1"
-        class="mr-2"
-        src="assets/svgs/bread-crumb.svg"
-      />
+      <img *ngIf="i !== breadCrumb.length - 1" class="mr-2" src="assets/svgs/bread-crumb.svg" />
     </div>
   </ng-container>
 
   <div class="profile d-flex ml-auto">
     <div class="notification-bell">
-      <img
-        class="p-2 click"
-        src="assets/svgs/notification-bell.svg"
-        (click)="notificationClick()"
-      />
+      <img class="p-2 click" src="assets/svgs/notification-bell.svg" (click)="notificationClick()" />
 
-      <div
-        *ngIf="isShowNotification"
-        class="popup-message alert-box fade show notification-dilog-box"
-        role="alert"
-      >
+      <div *ngIf="isShowNotification" class="popup-message alert-box fade show notification-dilog-box" role="alert">
         <img class="polygon" src="assets/svgs/Polygon.svg" alt="" />
 
         <div class="alert-box-header">
@@ -46,35 +29,19 @@
         <div class="">
           <div class="">
             <div *ngFor="let data of showFourNotification">
-              <div
-                class="alert-para d-flex"
-                [ngClass]="data?.isActive ? 'acitve' : 'in-active'"
-              >
-                <img
-                  class="p-1 ml-3"
-                  height="46px"
-                  [src]="data?.lableIconPath"
-                  alt=""
-                />
+              <div class="alert-para d-flex" [ngClass]="data?.isActive ? 'acitve' : 'in-active'">
+                <img class="p-1 ml-3" height="46px" [src]="data?.lableIconPath" alt="" />
 
                 <div class="ml-2">{{ data?.text }}</div>
               </div>
             </div>
             <div class="">
-              <button
-                type="button"
-                class="btn btn-secondary w-100 btn-view-more"
-              >
+              <button type="button" class="btn btn-secondary w-100 btn-view-more">
                 View more
               </button>
             </div>
           </div>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="close()">
             <span class="alert-cross-arrow" aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -85,12 +52,22 @@
       <img class="img-size" src="assets/svgs/profile-image.svg" alt="" />
     </div>
     <div class="mt-2">
-      <label class="mr-2 ml-2"> Hello Dr.Sakshi </label>
+      <label class="mr-2 ml-2"> Hello {{ userName }} </label>
 
       <img class="mr-4" src="assets/svgs/Hand-Emoji-hello.svg" alt="" />
     </div>
     <div class="mr-3 mt-2">
-      <img src="assets/svgs/three-dot.svg" alt="" />
+      <div id="profileDropdown" style="cursor: pointer;" href="" data-toggle="dropdown">
+        <img src="assets/svgs/three-dot.svg" alt="" />
+      </div>
+      <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
+      <a class="dropdown-item" routerLink="/set-new/password">
+        Change Password
+      </a>
+      <a class="dropdown-item"> Change Language
+      </a>
+      <a class="dropdown-item" href="" routerLink="/dashboard/profile"> Settings </a>
+    </div>
     </div>
   </div>
 </div>

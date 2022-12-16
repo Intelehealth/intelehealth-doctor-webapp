@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { HeaderService } from "src/app/services/header.service";
+declare var getFromStorage : any;
 
 @Component({
   selector: "app-header",
@@ -48,9 +49,13 @@ export class HeaderComponent implements OnInit {
     },
   ];
 
+  userName: string;
   constructor(public headerService: HeaderService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let user = getFromStorage("user");
+    this.userName = user?.person?.display;
+  }
 
   notificationClick() {
     this.isShowNotification = !this.isShowNotification;
@@ -58,5 +63,9 @@ export class HeaderComponent implements OnInit {
 
   get showSearchBar() {
     return this.headerService?.showSearchBar;
+  }
+
+  close() {
+    this.isShowNotification =  false;
   }
 }
