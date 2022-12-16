@@ -1,5 +1,10 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { HeaderService } from "src/app/services/header.service";
+import { environment } from "src/environments/environment";
+import { FindPatientComponent } from "../find-patient/find-patient.component";
 declare var getFromStorage : any;
 
 @Component({
@@ -8,6 +13,7 @@ declare var getFromStorage : any;
   styleUrls: ["./header.component.scss"],
 })
 export class HeaderComponent implements OnInit {
+  baseURL = environment.baseURL;
   isShowNotification: boolean = false;
 
   showBreadCrumb: boolean = false;
@@ -50,7 +56,12 @@ export class HeaderComponent implements OnInit {
   ];
 
   userName: string;
-  constructor(public headerService: HeaderService) {}
+  values: any = [];
+  searchValue:string;
+  constructor(public headerService: HeaderService,
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private http: HttpClient  ) {}
 
   ngOnInit(): void {
     let user = getFromStorage("user");
@@ -67,5 +78,39 @@ export class HeaderComponent implements OnInit {
 
   close() {
     this.isShowNotification =  false;
+  }
+
+  search() {
+    if (this.searchValue === null || this.searchValue.length < 3) {
+      this.dialog.open(FindPatientComponent, {
+        width: "50%",
+        data: { value: "Please enter min 3 characters" },
+      });
+    } else {
+      const url = `${this.baseURL}/patient?q=${this.searchValue}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      this.http.get(url).subscribe(
+        (response) => {
+          this.values = [];
+          response["results"].forEach((value) => {
+            if (value) {
+              if (value.identifiers.length) {
+                this.values.push(value);
+              }
+            }
+          });
+          this.dialog.open(FindPatientComponent, {
+            width: "90%",
+            data: { value: this.values },
+          });
+        },
+        (err) => {
+          if (err.error instanceof Error) {
+            this.snackbar.open("Client-side error", null, { duration: 2000 });
+          } else {
+            this.snackbar.open("Server-side error", null, { duration: 2000 });
+          }
+        }
+      );
+    }
   }
 }

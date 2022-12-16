@@ -4,7 +4,9 @@
       <span class="input-group-text search-img">
         <img class="" src="assets/svgs/search-icon.svg" /></span>
     </div>
-    <input type="text" class="search-input"  placeholder="Search by patient name or ID" />
+    <form (submit)="search()">
+      <input type="text" class="search-input" [(ngModel)]="searchValue" [ngModelOptions]="{standalone: true}" placeholder="Search by patient name or ID" />
+   </form>
   </div>
 
   <ng-container *ngIf="!showSearchBar">
@@ -18,7 +20,7 @@
 
   <div class="profile d-flex ml-auto">
     <div class="notification-bell">
-      <img class="p-2 click" src="assets/svgs/notification-bell.svg" (click)="notificationClick()" />
+      <img class="p-2 click" src="assets/svgs/notification-bell.svg" />
 
       <div *ngIf="isShowNotification" class="popup-message alert-box fade show notification-dilog-box" role="alert">
         <img class="polygon" src="assets/svgs/Polygon.svg" alt="" />
