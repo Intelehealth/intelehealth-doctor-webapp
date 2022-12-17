@@ -2,7 +2,7 @@
   <div class="header d-flex">
     <img [src]="table?.lableIconPath" />
     <div class="appointment-label">
-      {{ table?.label }} ({{ table?.dataCount }})
+      {{ table?.label }} ({{ visitCounts }})
       <img src="assets/svgs/info.svg" />
     </div>
 
@@ -18,50 +18,70 @@
     </div>
   </div>
 
-  <div [id]="table.id" class="table">
+  <div [id]="table.id" class="table" *ngIf="table.id !== 'appointmentTable'">
     <table class="table table-borderless w-100">
       <tr class="table-color-th">
         <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
           {{ header?.name }}
         </th>
       </tr>
-      <tr
-        *ngFor="let data of table?.data"
-        [ngClass]="{ active: data?.isActive }"
-        class="table-height"
-      >
-        <td
-          *ngFor="let header of table?.headers"
-          class="vr {{ header?.headerClass }}"
-        >
-          <ng-container [ngSwitch]="true">
-            <div *ngSwitchCase="header?.type === 'stringwithimage'">
-              <img class="mr-1" [src]="data[header?.imageKey]" />
-              {{ data[header?.key] }}
-            </div>
+      <tr class="table-height" *ngFor="let value of data">
+        <td class="vr">
+          <img class="mr-1" src="" />
+          <div>{{ value.name }}</div>
+        </td>
+        <td class="vr">
+          <div>{{ value.age }}{{"y"}}</div>
+        </td>
+        <td class="vr">
+          <div>{{ value.location }}</div>
+        </td>
+        <td class="vr">
+          <div>{{ value.complaints[0] }}</div>
+        </td>
+        <td class="vr vr-position">
+          <div class="summay-btn pill-btn">
+            <img class="mr-1" src="assets/svgs/summary-list.svg" />
+            {{ value.visitCreated }}
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 
-            <div *ngSwitchCase="header?.type === 'pill'">
-              <div
-                *ngFor="let btn of header?.buttons"
-                class="{{ btn?.btnClass }}"
-              >
-                <img class="mr-1" [src]="data[header?.imageKey]" />
-                {{ btn?.label }}
-              </div>
-            </div>
-
-            <div *ngSwitchCase="header?.type === 'multibutton'">
-              <button
-                *ngFor="let btn of header?.buttons"
-                class="btn btn-light {{ btn?.btnClass }}"
-                (click)="btn?.onClick()"
-              >
-                {{ btn?.label }}
-              </button>
-            </div>
-
-            <div *ngSwitchDefault>{{ data[header?.key] }}</div>
-          </ng-container>
+  <div [id]="table.id" class="table" *ngIf="table.id === 'appointmentTable'">
+    <table class="table table-borderless w-100">
+      <tr class="table-color-th">
+        <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
+          {{ header?.name }}
+        </th>
+      </tr>
+      <tr class="table-height" *ngFor="let value of drSlots">
+        <td class="vr">
+          <img class="mr-1" src="" />
+          <div>{{ value.patientName }}</div>
+        </td>
+        <td class="vr">
+          <div>{{ value.age }}{{"y"}}</div>
+        </td>
+        <td class="vr">
+          <div>{{ "" }}</div>
+        </td>
+        <td class="vr">
+          <div>{{ value.location }}</div>
+        </td>
+        <td class="vr">
+          <div>{{ "" }}</div>
+        </td>
+        <td class="vr vr-position">
+          <div class="pill-btn">
+            <button class="mr-3 btn re-btn" (click)="rescheduleClick(e1)">
+              {{ " Reschedule " }}
+            </button>
+            <button class="btn ce-btn" (click)="cancelAppointment(e1)">
+              {{ " Cancel " }}
+            </button>
+          </div>
         </td>
       </tr>
     </table>
