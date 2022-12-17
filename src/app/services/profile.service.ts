@@ -10,6 +10,11 @@ export class ProfileService {
   baseURL = environment.baseURL;
   constructor(private http: HttpClient) { }
 
+  getProfileImage(uuid): Observable<any> {
+    const url = `${this.baseURL}/personimage/${uuid}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
   updateName(uuid: string, firstName: string, middleName: string, familyName: string, nameUuid: string): Observable<any> {
     const URL = `${this.baseURL}/person/${uuid}/name/${nameUuid}`;
     const json = {
@@ -29,17 +34,18 @@ export class ProfileService {
     return this.http.post(URL, json);
   }
 
-  updateProviderAttribute(uuid: string, attributeTypeUuid:string, attributeValue: string, isExistingPresent: boolean, existingUuid: string): Observable<any> {
+  updateProviderAttribute(uuid: string, attributeTypeUuid: string, attributeValue: string, isExistingPresent: boolean, existingUuid: string): Observable<any> {
     const URL = isExistingPresent ? `${this.baseURL}/provider/${uuid}/attribute/${existingUuid}`
       : `${this.baseURL}/provider/${uuid}/attribute`;
     const json = {
       attributeType: attributeTypeUuid,
       value: attributeValue,
+      voided: false
     };
     return this.http.post(URL, json);
   }
 
-  updateProfileImage(json:object): Observable<any> {
+  updateProfileImage(json: object): Observable<any> {
     const URL = `${this.baseURL}/personimage`;
     var header = {
       headers: new HttpHeaders({
@@ -50,8 +56,8 @@ export class ProfileService {
     return this.http.post(URL, json, header);
   }
 
-  getProfileImage(uuid): Observable<any> {
-    const url = `${this.baseURL}/personimage/${uuid}`;
-    return this.http.get(url, { responseType: 'blob' });
+  deleteProviderAttribute(uuid: string, existingUuid: string): Observable<any> {
+    const URL = `${this.baseURL}/provider/${uuid}/attribute/${existingUuid}`
+    return this.http.delete(URL);
   }
 }

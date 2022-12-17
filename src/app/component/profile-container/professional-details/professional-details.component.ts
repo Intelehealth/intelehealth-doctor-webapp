@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
@@ -11,7 +11,7 @@ export class ProfessionalDetailsComponent implements OnInit {
   @Input() newUserDetails;
   @Input() userDetails;
   @Output() onToggleBack: EventEmitter<boolean> = new EventEmitter();
-  
+
   disableSelect = new FormControl(false);
   toppingList: string[] = ['Hindi', 'English', 'Gujrati', 'Tamil', 'Bangla'];
   specializations = [
@@ -23,9 +23,9 @@ export class ProfessionalDetailsComponent implements OnInit {
   ];
   moveTo: boolean = false;
   professionalForm: FormGroup;
-  selected = []; selected1=[];
+  selected = []; selected1 = [];
   constructor(private profileService: ProfileService) {
-   }
+  }
 
   ngOnInit(): void {
     this.setUserDetails();
@@ -55,85 +55,105 @@ export class ProfessionalDetailsComponent implements OnInit {
   }
 
   private setUserDetails() {
+    this.userDetails["researchExperience1"] = [], this.userDetails["consultationLanguage1"] = [];
     this.userDetails?.attributes.forEach((attribute) => {
       this.userDetails[attribute.attributeType.display] = {
         value: attribute.value,
         uuid: attribute.uuid,
       };
-      if(attribute.attributeType.display === "researchExperience") {
+      if (attribute.attributeType.display === "researchExperience" && !attribute.voided) {
+        this.userDetails["researchExperience1"].push({ value: attribute.value, uuid: attribute.uuid });
         this.selected1.push(attribute.value);
       }
-      if(attribute.attributeType.display === "consultationLanguage") {
+      if (attribute.attributeType.display === "consultationLanguage" && !attribute.voided) {
+        this.userDetails["consultationLanguage1"].push({ value: attribute.value, uuid: attribute.uuid })
         this.selected.push(attribute.value);
       }
     });
-    console.log("newUserDetails", this.newUserDetails);
-    console.log("userDetails", this.userDetails);
   }
 
-  toggleBack(){
+  toggleBack() {
     this.onToggleBack.emit(false);
   }
 
-  save(){
-    let professionalFormValues =  this.professionalForm.value;
+  save() {
+    let professionalFormValues = this.professionalForm.value;
     if ((this.newUserDetails.gender !== null && this.newUserDetails.gender !== this.userDetails.person.gender) ||
-    this.newUserDetails.birthDate !== null && this.newUserDetails.birthDate !== this.userDetails.person.birthdate) {
-     this.profileService.updateGenderAndBirthDate(this.userDetails.person.uuid, this.newUserDetails.gender, this.newUserDetails.birthDate)
-     .subscribe(() => { })
+      this.newUserDetails.birthDate !== null && this.newUserDetails.birthDate !== this.userDetails.person.birthdate) {
+      this.profileService.updateGenderAndBirthDate(this.userDetails.person.uuid, this.newUserDetails.gender, this.newUserDetails.birthDate)
+        .subscribe(() => { })
     }
 
     if ((this.newUserDetails.firstName !== null && this.newUserDetails.firstName !== this.userDetails.firstName) ||
-    (this.newUserDetails.middleName !== null && this.newUserDetails.middleName !== this.userDetails.middleName) ||
-    this.newUserDetails.lastName !== null && this.newUserDetails.lastName !== this.userDetails.lastName) {
-  
-     this.profileService.updateName(this.userDetails.person.uuid,this.newUserDetails.firstName, this.newUserDetails.middleName , this.newUserDetails.lastName, this.userDetails.nameUuid)
-     .subscribe(() => { })
+      (this.newUserDetails.middleName !== null && this.newUserDetails.middleName !== this.userDetails.middleName) ||
+      this.newUserDetails.lastName !== null && this.newUserDetails.lastName !== this.userDetails.lastName) {
+
+      this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName, this.newUserDetails.lastName, this.userDetails.nameUuid)
+        .subscribe(() => { })
     }
 
     if (this.newUserDetails.emailId !== null && this.newUserDetails.emailId !== this.userDetails?.emailId?.value) {
-      this.updateAttribute( this.userDetails.emailId, "226c0494-d67e-47b4-b7ec-b368064844bd", this.newUserDetails.emailId);
+      this.updateAttribute(this.userDetails.emailId, "226c0494-d67e-47b4-b7ec-b368064844bd", this.newUserDetails.emailId);
     }
 
     if (this.newUserDetails.phoneNumber !== null && this.newUserDetails.phoneNumber !== this.userDetails?.phoneNumber?.value) {
-      this.updateAttribute( this.userDetails.phoneNumber, "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37", this.newUserDetails.phoneNumber);
+      this.updateAttribute(this.userDetails.phoneNumber, "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37", this.newUserDetails.phoneNumber);
     }
 
     if (this.newUserDetails.whatsapp !== null && this.newUserDetails.whatsapp !== this.userDetails?.whatsapp?.value) {
-      this.updateAttribute( this.userDetails.whatsapp, "fccc49f1-49ca-44bb-9e61-21c88ae6dd64", this.newUserDetails.whatsapp);
+      this.updateAttribute(this.userDetails.whatsapp, "fccc49f1-49ca-44bb-9e61-21c88ae6dd64", this.newUserDetails.whatsapp);
     }
 
     if (professionalFormValues.registrationNumber !== null && professionalFormValues.registrationNumber !== this.userDetails?.registrationNumber?.value) {
-      this.updateAttribute( this.userDetails.emailId, "992ccbdd-201a-44ef-8abb-c2eee079886d", professionalFormValues.registrationNumber);
+      this.updateAttribute(this.userDetails.emailId, "992ccbdd-201a-44ef-8abb-c2eee079886d", professionalFormValues.registrationNumber);
     }
 
     if (professionalFormValues.specialization !== null && professionalFormValues.specialization !== this.userDetails?.specialization?.value) {
-      this.updateAttribute( this.userDetails.specialization,"ed1715f5-93e2-404e-b3c9-2a2d9600f062", professionalFormValues.specialization);
+      this.updateAttribute(this.userDetails.specialization, "ed1715f5-93e2-404e-b3c9-2a2d9600f062", professionalFormValues.specialization);
     }
 
     if (professionalFormValues.typeOfProfession !== null && professionalFormValues.typeOfProfession !== this.userDetails?.typeOfProfession?.value) {
-      this.updateAttribute( this.userDetails.typeOfProfession, "61ae7fb9-f216-4784-a700-9daddd7aa4ed", professionalFormValues.typeOfProfession);
+      this.updateAttribute(this.userDetails.typeOfProfession, "61ae7fb9-f216-4784-a700-9daddd7aa4ed", professionalFormValues.typeOfProfession);
     }
 
     if (professionalFormValues.consultationLanguage !== null && professionalFormValues.consultationLanguage !== this.userDetails?.consultationLanguage?.value) {
-     // this.updateAttribute( this.userDetails.consultationLanguage, "c1d6df5d-882c-4edf-86d6-823bdae98caa", professionalFormValues.consultationLanguage);
+      professionalFormValues.consultationLanguage.forEach(selected => {
+        let selectedExp = this.userDetails?.consultationLanguage1?.find((m) => m.value.includes(selected));
+        if (!selectedExp) {
+          this.updateAttribute(null, "c1d6df5d-882c-4edf-86d6-823bdae98caa", selected);
+        }
+      });
+      let deletedExp = this.userDetails?.consultationLanguage1.filter(x => !professionalFormValues.consultationLanguage.includes(x.value));
+      if (deletedExp && deletedExp.length > 0) {
+        deletedExp.forEach(element => {
+          this.profileService.deleteProviderAttribute(this.userDetails.uuid, element.uuid)
+            .subscribe(() => { });
+        });
+      }
     }
 
     if (professionalFormValues.workExperience !== null && professionalFormValues.workExperience !== this.userDetails?.workExperience?.value) {
-      this.updateAttribute( this.userDetails.workExperience, "e4c35cd7-1c06-4d47-9f40-641e35fada4c", professionalFormValues.workExperience);
+      this.updateAttribute(this.userDetails.workExperience, "e4c35cd7-1c06-4d47-9f40-641e35fada4c", professionalFormValues.workExperience);
     }
 
-    if (professionalFormValues.researchExperience !== null && professionalFormValues.researchExperience !== this.userDetails?.researchExperience?.value) {
-      // professionalFormValues.researchExperience.forEach(selected => {
-      //   let selectedSpeciality = this.userDetails?.researchExperience?.find((m) => m.value.includes(selected));
-      //   if (!selectedSpeciality) {
-      //     this.updateAttribute( this.userDetails.researchExperience, "86318ff8-25ca-445a-830f-2981e9d3ca46",selected);
-      //   }
-      // });
+    if (professionalFormValues.researchExperience !== null) {
+      professionalFormValues.researchExperience.forEach(selected => {
+        let selectedExp = this.userDetails?.researchExperience1?.find((m) => m.value.includes(selected));
+        if (!selectedExp) {
+          this.updateAttribute(null, "86318ff8-25ca-445a-830f-2981e9d3ca46", selected);
+        }
+      });
+      let deletedExp = this.userDetails?.researchExperience1.filter(x => !professionalFormValues.researchExperience.includes(x.value));
+      if (deletedExp && deletedExp.length > 0) {
+        deletedExp.forEach(element => {
+          this.profileService.deleteProviderAttribute(this.userDetails.uuid, element.uuid)
+            .subscribe(() => { });
+        });
+      }
     }
 
     if (professionalFormValues.workExperienceDetails !== null && professionalFormValues.workExperienceDetails !== this.userDetails?.workExperienceDetails?.value) {
-      this.updateAttribute( this.userDetails.workExperienceDetails, "c2404185-133f-4aef-aa03-32a1ec7ee1ae", professionalFormValues.workExperienceDetails);
+      this.updateAttribute(this.userDetails.workExperienceDetails, "c2404185-133f-4aef-aa03-32a1ec7ee1ae", professionalFormValues.workExperienceDetails);
     }
     setTimeout(() => window.location.reload(), 2000);
   }
@@ -141,6 +161,6 @@ export class ProfessionalDetailsComponent implements OnInit {
   private updateAttribute(attribute, attributeUuid, updatedAttribute) {
     let flag = attribute ? true : false;
     this.profileService.updateProviderAttribute(this.userDetails.uuid, attributeUuid, updatedAttribute, flag, attribute?.uuid)
-      .subscribe((response) => { });
+      .subscribe(() => { });
   }
 }
