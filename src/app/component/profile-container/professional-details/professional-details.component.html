@@ -13,61 +13,53 @@
       <hr />
     </div>
     <div class="form-body">
-      <form class="grid-container">
+      <form class="grid-container" [formGroup]="professionalForm">
         <div class="prefession">
           <div class="typePrefession">
-            <label class="lbl lbl-firstName">Type of prefession *</label>
-            <mat-select placeholder="Eg. MBBS">
-              <mat-option value="option1">MBBS</mat-option>
-              <mat-option value="option2">MBBS, MD</mat-option>
-              <mat-option value="option3">Dentist</mat-option>
-              <mat-option value="option4">Other</mat-option>
+            <label class="lbl lbl-firstName">Type of profession</label>
+            <mat-select placeholder="Eg. MBBS" formControlName="typeOfProfession">
+              <mat-option value="MBBS">MBBS</mat-option>
+              <mat-option value="MBBS, MD">MBBS, MD</mat-option>
+              <mat-option value="Dentist">Dentist</mat-option>
+              <mat-option value="Other">Other</mat-option>
             </mat-select>
           </div>
           <div class="registration">
-            <label class="lbl lbl-middleName">Registration number *</label>
-            <mat-select placeholder="Enter registration number">
-              <mat-option value="option1">9896868609</mat-option>
-              <mat-option value="option2">8979739032</mat-option>
-              <!-- <mat-option value="option3">Dentist</mat-option>
-              <mat-option value="option4">Other</mat-option> -->
+            <label class="lbl lbl-middleName">Registration number</label>
+            <mat-select placeholder="Enter registration number" formControlName="registrationNumber">
+              <mat-option value="9896868609">9896868609</mat-option>
+              <mat-option value="8979739032">8979739032</mat-option>
             </mat-select>
           </div>
         </div>
         <div class="section">
           <div class="specialization">
-            <label class="lbl lbl-firstName">Specialization *</label>
-            <mat-select placeholder="Eg. General physician">
-              <mat-option value="option1">MBBS</mat-option>
-              <mat-option value="option2">MBBS, MD</mat-option>
-              <mat-option value="option3">Dentist</mat-option>
-              <mat-option value="option4">Other</mat-option>
-            </mat-select>
+            <label class="lbl lbl-firstName">Specialization</label>
+              <mat-select placeholder="Eg. General physician" formControlName="specialization">
+                <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{ specialization }}
+                </mat-option>
+              </mat-select>
           </div>
           <div class="Consultation-language">
-            <label class="lbl lbl-middleName">Consultation language *</label>
-            <mat-select [formControl]="toppings" multiple placeholder="Consultation language">
+            <label class="lbl lbl-middleName">Consultation language</label>
+            <mat-select multiple placeholder="Consultation language" [(ngModel)]="selected" formControlName="consultationLanguage">
               <mat-option
                 *ngFor="let topping of toppingList"
-                [value]="topping"
-                >{{ topping }}</mat-option
-              >
+                [value]="topping">{{ topping }}</mat-option>
             </mat-select>
           </div>
         </div>
         <div class="section">
           <div class="work-experience">
-            <label class="lbl lbl-firstName">Work experience *</label>
-            <mat-select placeholder="Eg. General physician">
-              <mat-option value="option1">MBBS</mat-option>
-              <mat-option value="option2">MBBS, MD</mat-option>
-              <mat-option value="option3">Dentist</mat-option>
-              <mat-option value="option4">Other</mat-option>
+            <label class="lbl lbl-firstName">Work experience</label>
+            <mat-select placeholder="Eg. General physician" formControlName="workExperience">
+              <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{ specialization }}
+              </mat-option>
             </mat-select>
           </div>
           <div class="research-experience">
-            <label class="lbl lbl-middleName">Research experience *</label>
-            <mat-select [formControl]="toppings" multiple placeholder="select">
+            <label class="lbl lbl-middleName">Research experience</label>
+            <mat-select multiple placeholder="select" [(ngModel)]="selected1" formControlName="researchExperience">
               <mat-option
                 *ngFor="let topping of toppingList"
                 [value]="topping"
@@ -78,17 +70,18 @@
         </div>
         <div class="section">
           <div class="experience">
-            <label class="lbl lbl-firstName">Work experience *</label>
+            <label class="lbl lbl-firstName">Work experience</label>
             <textarea
               mdbInput
               class="form-control txt"
               id="textAreaExample"
               placeholder="Type here"
+              formControlName="workExperienceDetails"
             ></textarea>
           </div>
         </div>
         <div class="savebtn">
-          <button type="submit" class="btn-darkblue save-btn">Save</button>
+          <button type="submit" (click)="save()" class="btn-darkblue save-btn">Save</button>
         </div>
         <div class="backbtn" (click)="toggleBack()">
           <button mat-stroked-button class="back-btn">Back</button>

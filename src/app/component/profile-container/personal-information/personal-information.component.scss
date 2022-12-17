@@ -297,3 +297,7 @@ canvas {
     bottom: 20px;
     border: none;
 }
+
+input.ng-invalid.ng-touched {
+    border: red 1px solid;
+}

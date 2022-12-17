@@ -190,3 +190,13 @@ margin-left: 1rem;
   color: var(--color-darkestBlue);
   line-height: 150%;
 }
+
+.btn-gray {
+  @include margintop(1.0rem);
+  background: var(--color-gray);
+  border-radius: 0.75rem;
+  @include font(700, 1.125rem);
+  color: var(--color-white);
+
+  height: 3.0rem;
+}

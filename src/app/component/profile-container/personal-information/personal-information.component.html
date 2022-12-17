@@ -3,17 +3,17 @@
     <div class="header">
       <div class="col-left">
         <span class="circle">1</span>
-        <label class="text">Personal information</label>
+        <label class="text click" (click)="onToggleBack(false)">Personal information</label>
       </div>
       <img src="assets/icons/dashboard-icons/Vector2.png" alt="" />
       <div class="col-right">
         <div class="circle">2</div>
-        <label class="text" (click)="onToggleBack(true)">Professional details</label>
+        <label class="text click" (click)="onToggleBack(true)">Professional details</label>
       </div>
       <hr />
     </div>
     <div class="form-body">
-      <form class="grid-container">
+      <form class="grid-container" [formGroup]="profileForm">
         <div class="user-name">
           <div class="first-name">
             <label class="lbl lbl-firstName">First name *</label>
@@ -21,7 +21,7 @@
               type="text"
               class="txt"
               id="firstName"
-              name="firstName"
+              formControlName="firstName"
               placeholder="Enter first name"
             />
           </div>
@@ -31,7 +31,7 @@
               type="text"
               class="txt"
               id="middleName"
-              name="middleName"
+              formControlName="middleName"
               placeholder="Enter middle name"
             />
           </div>
@@ -41,7 +41,7 @@
               type="text"
               class="txt"
               id="lastName"
-              name="lastName"
+              formControlName="lastName"
               placeholder="Enter last name"
             />
           </div>
@@ -54,9 +54,9 @@
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="inlineRadioOptions"
+                  formControlName="gender"
                   id="inlineRadio1"
-                  value="option1"
+                  value="M"
                 />
                 <label class="form-check-label" for="inlineRadio1">Male</label>
               </div>
@@ -64,9 +64,9 @@
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="inlineRadioOptions"
+                  formControlName="gender"
                   id="inlineRadio2"
-                  value="option2"
+                  value="F"
                 />
                 <label class="form-check-label" for="inlineRadio2"
                   >Female</label
@@ -76,9 +76,9 @@
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="inlineRadioOptions"
+                  formControlName="gender"
                   id="inlineRadio3"
-                  value="option3"
+                  value="Other"
                 />
                 <label class="form-check-label" for="inlineRadio3">Other</label>
               </div>
@@ -92,6 +92,7 @@
                 class="txt"
                 id="user-dob"
                 placeholder="Date of birth"
+                formControlName="birthDate"
               />
             </div>
             <div class="age">
@@ -101,32 +102,33 @@
                 class="total-age"
                 id="user-age"
                 placeholder="Age"
+                formControlName="age"
               />
             </div>
           </div>
         </div>
         <div class="user-contact">
           <div class="phoneNo">
-            <label class="lbl lbl-phoneNo">Phone Number</label>
+            <label class="lbl lbl-phoneNo">Phone Number *</label>
             <select name="mobilecode" id="mobilecode" class="code-dropdown">
-              <option value="" selected="selected">+ 91</option>
-              <option value="">+ 61</option>
+              <option value="" selected="selected"> 🇮🇳 91 +</option>
+              <option value=""> 🇦🇺 61 + </option>
             </select>
-            <input type="number" class="number-box" id="phoneNo" />
+            <input type="number" class="number-box" id="phoneNo"  formControlName="phoneNumber" />
           </div>
           <div class="whatsappNo">
-            <label class="lbl lbl-whatsappNo">Phone Number</label>
+            <label class="lbl lbl-whatsappNo">Whatsapp Number *</label>
             <select name="mobilecode" id="mobilecode" class="code-dropdown">
-              <option value="" selected="selected">+ 91</option>
-              <option value="">+ 61</option>
+              <option value="" selected="selected"> 🇮🇳 91 +</option>
+              <option value=""> 🇦🇺 61 + </option>
             </select>
-            <input type="number" class="number-box" id="whatsappNo" />
+            <input type="number" class="number-box" id="whatsappNo"  formControlName="whatsapp" />
           </div>
         </div>
         <div class="user-emailID">
           <div class="emailID">
             <label class="lbl lbl-email">Email ID *</label>
-            <input type="text" class="email-box" id="email-ID" />
+            <input type="text" class="email-box" id="email-ID"  formControlName="emailId"/>
           </div>
         </div>
         <div class="signature-header">
@@ -220,7 +222,7 @@
           </p>
         </div>
         <div class="nextbtn" (click)="toggleCollapse()">
-          <button type="submit" class="btn-darkblue next-btn">Next</button>
+          <button type="submit" [disabled]="!profileForm.valid"  [ngClass]="!profileForm.valid ? 'btn-gray next-btn' : 'btn-darkblue next-btn'">Next</button>
         </div>
       </form>
     </div>
@@ -228,5 +230,5 @@
 </div>
 <div>
   <!-- professional form -->
-  <app-professional-details *ngIf="moveTo" (onToggleBack)="onToggleBack($event)"></app-professional-details>
+  <app-professional-details *ngIf="moveTo" (onToggleBack)="onToggleBack($event)" [newUserDetails]="profileForm.value" [userDetails]="userDetails"></app-professional-details>
 </div>

@@ -43,7 +43,7 @@ export class LoginPageComponent implements OnInit {
     private service: VisitService,
     private dialog: MatDialog,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit() {
     localStorage.setItem("selectedLanguage", "en");
@@ -66,6 +66,7 @@ export class LoginPageComponent implements OnInit {
           this.onSucessIntele.emit(true);
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
+              saveToStorage("provider", provider.results[0]);
               this.authService.sendToken(response.user.sessionId);
               saveToStorage("user", response.user);
               this.router.navigate(["/dashboard"]);

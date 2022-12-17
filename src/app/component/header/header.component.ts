@@ -3,9 +3,10 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { HeaderService } from "src/app/services/header.service";
+import { ProfileService } from "src/app/services/profile.service";
 import { environment } from "src/environments/environment";
 import { FindPatientComponent } from "../find-patient/find-patient.component";
-declare var getFromStorage : any;
+declare var getFromStorage: any;
 
 @Component({
   selector: "app-header",
@@ -57,15 +58,19 @@ export class HeaderComponent implements OnInit {
 
   userName: string;
   values: any = [];
-  searchValue:string;
+  searchValue: string;
+  personImgURL = "assets/images/profile/Frame 2609036.png";
   constructor(public headerService: HeaderService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private http: HttpClient  ) {}
+    private http: HttpClient,
+    private profileService: ProfileService) { }
 
   ngOnInit(): void {
     let user = getFromStorage("user");
     this.userName = user?.person?.display;
+    let provider = getFromStorage("provider");
+    this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;
   }
 
   notificationClick() {
@@ -77,7 +82,7 @@ export class HeaderComponent implements OnInit {
   }
 
   close() {
-    this.isShowNotification =  false;
+    this.isShowNotification = false;
   }
 
   search() {

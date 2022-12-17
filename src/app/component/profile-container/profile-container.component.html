@@ -8,31 +8,17 @@
   <div class="profile-container">
     <img class="pulse body" src="assets/images/profile/Group 2608886.png" />
     <img class="pulse" src="assets/images/profile/Group 2608887.png" />
-    <button class="menuBtn" [matMenuTriggerFor]="menu" mat-icon-button>
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>
-        <span>Change password</span>
-      </button>
-      <button mat-menu-item>
-        <span>Change language</span>
-      </button>
-      <button mat-menu-item>
-        <span>Settings</span>
-      </button>
-    </mat-menu>
     <div class="profileImg">
       <img
         class="profilePic"
-        src="assets/images/profile/Frame 2609036.png"
+        [src]="personImageURL"
       />
       <button class="camera" (click)="inputField.click()">
         <i class="fas fa-camera"></i>
       </button>
-      <span class="txt">Dr. Sakshi Prabhat</span>
+      <span class="txt">{{userName}}</span>
     </div>
-    <input #inputField hidden type="file" />
+    <input #inputField hidden type="file" (change)="onSelectFile($event)"/>
   </div>
 
   <div class="setview">

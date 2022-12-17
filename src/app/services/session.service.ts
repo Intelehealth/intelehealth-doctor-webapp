@@ -31,7 +31,7 @@ export class SessionService {
   }
 
   provider(userId): Observable<any> {
-    const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender),attributes)`;
+    const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate),attributes)`;
     return this.http.get(url);
   }
 }
