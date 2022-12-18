@@ -64,7 +64,7 @@ export class PersonalInformationComponent{
     .provider(this.userDetails.uuid)
     .subscribe((provider) => {
      saveToStorage("provider",  provider.results[0]);
-      this.setUserDetails();
+      this.setUserDetails(true);
     });
   }
 
@@ -88,7 +88,7 @@ export class PersonalInformationComponent{
     this.moveTo = data;
   }
 
-  private setUserDetails() {
+  private setUserDetails(flag?) {
     this.userDetails = getFromStorage('provider');
     this.userDetails.person.birthdate = moment(this.userDetails.person.birthdate).format("YYYY-MM-DD");
     let name = this.userDetails?.person?.display.split(" ");
@@ -106,6 +106,20 @@ export class PersonalInformationComponent{
         uuid: attribute.uuid,
       };
     });
+    if(flag) this.updateFormValue(this.userDetails);
   }
 
+  updateFormValue(data: any) {
+    this.profileForm?.setValue({
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName,
+      gender: data.person.gender,
+      birthDate: data.person.birthdate,
+      age: data.person.age,
+      phoneNumber: data.phoneNumber.value,
+      whatsapp: data.whatsapp.value,
+      emailId: data.emailId.value
+    });
+  }
 }

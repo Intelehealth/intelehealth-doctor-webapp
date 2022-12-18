@@ -87,9 +87,12 @@ export class ProfessionalDetailsComponent implements OnInit {
     if ((this.newUserDetails.firstName !== null && this.newUserDetails.firstName !== this.userDetails.firstName) ||
       (this.newUserDetails.middleName !== null && this.newUserDetails.middleName !== this.userDetails.middleName) ||
       this.newUserDetails.lastName !== null && this.newUserDetails.lastName !== this.userDetails.lastName) {
-
-      this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName, this.newUserDetails.lastName, this.userDetails.nameUuid)
+       this.profileService.getPersonName(this.userDetails.person.uuid)
+       .subscribe((response) => {
+        this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName, 
+          this.newUserDetails.lastName, response?.results[0]?.uuid)
         .subscribe(() => { })
+       });
     }
 
     if (this.newUserDetails.emailId !== null && this.newUserDetails.emailId !== this.userDetails?.emailId?.value) {
@@ -97,11 +100,11 @@ export class ProfessionalDetailsComponent implements OnInit {
     }
 
     if (this.newUserDetails.phoneNumber !== null && this.newUserDetails.phoneNumber !== this.userDetails?.phoneNumber?.value) {
-      this.updateAttribute(this.userDetails.phoneNumber, "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37", this.newUserDetails.phoneNumber);
+      this.updateAttribute(this.userDetails.phoneNumber, "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37", this.newUserDetails.phoneNumber?.toString());
     }
 
     if (this.newUserDetails.whatsapp !== null && this.newUserDetails.whatsapp !== this.userDetails?.whatsapp?.value) {
-      this.updateAttribute(this.userDetails.whatsapp, "fccc49f1-49ca-44bb-9e61-21c88ae6dd64", this.newUserDetails.whatsapp);
+      this.updateAttribute(this.userDetails.whatsapp, "fccc49f1-49ca-44bb-9e61-21c88ae6dd64", this.newUserDetails.whatsapp?.toString());
     }
 
     if (professionalFormValues.registrationNumber !== null && professionalFormValues.registrationNumber !== this.userDetails?.registrationNumber?.value) {
@@ -155,6 +158,7 @@ export class ProfessionalDetailsComponent implements OnInit {
     if (professionalFormValues.workExperienceDetails !== null && professionalFormValues.workExperienceDetails !== this.userDetails?.workExperienceDetails?.value) {
       this.updateAttribute(this.userDetails.workExperienceDetails, "c2404185-133f-4aef-aa03-32a1ec7ee1ae", professionalFormValues.workExperienceDetails);
     }
+    
     setTimeout(() => window.location.reload(), 2000);
   }
 

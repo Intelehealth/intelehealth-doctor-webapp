@@ -10,9 +10,14 @@ export class ProfileService {
   baseURL = environment.baseURL;
   constructor(private http: HttpClient) { }
 
-  getProfileImage(uuid): Observable<any> {
+  getProfileImage(uuid:string): Observable<any> {
     const url = `${this.baseURL}/personimage/${uuid}`;
     return this.http.get(url, { responseType: 'blob' });
+  }
+
+  getPersonName(uuid:string) :  Observable<any> {
+    const url = `${this.baseURL}/person/${uuid}/name`;
+    return this.http.get(url);
   }
 
   updateName(uuid: string, firstName: string, middleName: string, familyName: string, nameUuid: string): Observable<any> {
