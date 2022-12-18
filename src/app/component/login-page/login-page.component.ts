@@ -82,13 +82,12 @@ export class LoginPageComponent implements OnInit {
                 });
 
               if (provider.results[0].attributes.length === 0) {
-                this.router.navigate(["/myAccount"]);
+                this.router.navigate(["/set-profile"]);
                 //this.onSucess.emit(true);
+              }else {
+                this.router.navigate(["/dashboard"]);
               }
-              /* else {
-                this.router.navigate(["/home"]);
-              }
-              this.snackbar.open(
+              /*this.snackbar.open(
                 `Welcome ${provider.results[0].person.display}`,
                 null,
                 {

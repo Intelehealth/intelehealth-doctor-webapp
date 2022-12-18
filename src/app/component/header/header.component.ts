@@ -70,7 +70,11 @@ export class HeaderComponent implements OnInit {
     let user = getFromStorage("user");
     this.userName = user?.person?.display;
     let provider = getFromStorage("provider");
-    this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;
+    this.profileService.getProfileImage(provider.person.uuid).subscribe((response) => {
+      this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;
+    }, (err) => {
+      this.personImgURL = this.personImgURL;
+    });
   }
 
   notificationClick() {

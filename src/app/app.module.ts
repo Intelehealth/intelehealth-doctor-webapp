@@ -394,6 +394,11 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
               component: ProfileContainerComponent,
               canActivate: [AuthGuard],
             },
+            {
+              path: "set-profile",
+              component: SetUpProfileComponent,
+              canActivate: [AuthGuard],
+            },
           ],
         },
         { path: "set-new/password", component: SetNewPasswordComponent },
