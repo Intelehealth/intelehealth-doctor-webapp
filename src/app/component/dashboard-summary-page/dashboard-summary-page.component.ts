@@ -1,12 +1,21 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
+import * as moment from "moment";
+import { AppointmentService } from "src/app/services/appointment.service";
+import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
+export const reasons = [
+  "Doctor Not available",
+  "Patient Not Available",
+  "Other",
+];
 @Component({
   selector: "app-dashboard-summary-page",
   templateUrl: "./dashboard-summary-page.component.html",
@@ -15,63 +24,150 @@ declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 })
 export class DashboardSummaryPageComponent implements OnInit {
   value: any = {};
-  flagPatientNo = 0;
-  activePatient = 0;
-  visitNoteNo = 0;
-  completeVisitNo = 0;
   setSpiner = true;
   specialization;
   allVisits = [];
+  selectedReason = "";
+  otherReason = "";
+  reasons = reasons;
+  @ViewChild("modalContent") modalContent: TemplateRef<any>;
+  @ViewChild("rescheduleModal") rescheduleModal: TemplateRef<any>;
   appointmentTable: any = {
     id: "appointmentTable",
     label: "Appointments",
     lableIconPath: "assets/svgs/video-frame.svg",
+    collapse: "#collapseAppointment",
+    toggle: "collapse",
+    dataCount: 0,
     headers: [
-      { name: "Patient", imageKey: "profile"},
-      { name: "Age" },
-      { name: "Start In" },
-      { name: "Location" },
-      { name: "Cheif complaint" },
-      { name: "Action", headerClass: "text-center" },
+      {
+        name: "Patient",
+        type: "stringwithimage",
+        key: "patientName",
+        imageKey: "profile",
+      },
+      { name: "Age", type: "number", key: "age" },
+      { name: "Start In", type: "string", key: "startIn" },
+      { name: "Location", type: "string", key: "location" },
+      { name: "Cheif complaint", type: "array", key: "complaint" },
+      {
+        name: "Action",
+        type: "multibutton",
+        headerClass: "text-center",
+        id:[],
+        buttons: [
+          {
+            label: "Reschedule",
+            onClick: this.onRescheduleClick,
+            btnClass: "mr-3 re-btn",
+          },
+          {
+            label: "Cancel",
+            onClick: this.onCancelClick,
+            btnClass: "ce-btn",
+          },
+        ],
+      },
     ],
+    data: [],
   };
 
   priorityVisits: any = {
+    id: "priorityTable",
     label: "Priority Visits",
     lableIconPath: "assets/svgs/red-profile.svg",
+    dataCount: 0,
     headers: [
-      { name: "Patient" },
-      { name: "Age" },
-      { name: "Location" },
-      { name: "Cheif complaint" },
-      { name: "Visit Created", headerClass: "text-center" },
+      {
+        name: "Patient",
+        type: "stringwithimage",
+        key: "patientName",
+        imageKey: "profile",
+      },
+      { name: "Age", type: "number", key: "age" },
+      { name: "Location", type: "string", key: "location" },
+      { name: "Cheif complaint", type: "array", key: "complaint" },
+      {
+        name: "Visit Created",
+        type: "pill",
+        headerClass: "text-center",
+        imageKey: "summaryListIcon",
+
+        buttons: [
+          { btnClass: "summay-btn pill-btn" },
+        ],
+      },
     ],
+    data: [],
   };
 
   awaitingVisits: any = {
+    id: "awaitingTable",
     label: "Awaiting Visits",
     lableIconPath: "assets/svgs/green-profile.svg",
+    dataCount: 0,
     headers: [
-      { name: "Patient" },
-      { name: "Age" },
-      { name: "Location" },
-      { name: "Cheif complaint" },
-      { name: "Visit Created", headerClass: "text-center" },
+      {
+        name: "Patient",
+        type: "stringwithimage",
+        key: "patientName",
+        imageKey: "profile",
+      },
+      { name: "Age", type: "number", key: "age" },
+      { name: "Location", type: "string", key: "location" },
+      { name: "Cheif complaint", type: "array", key: "complaint" },
+      {
+        name: "Visit Created",
+        type: "pill",
+        headerClass: "text-center",
+        imageKey: "summaryListIcon",
+
+        buttons: [
+          {
+            label: "16 hr ago",
+
+            btnClass: "summay-btn pill-btn",
+          },
+        ],
+      },
     ],
+    data: [],
   };
 
   inProgressVisits: any = {
+    id: "inProgressTable",
     label: "In-progress visits",
     lableIconPath: "assets/svgs/pen-board.svg",
+    dataCount: 0,
     headers: [
-      { name: "Patient" },
-      { name: "Age" },
-      { name: "Location" },
-      { name: "Cheif complaint" },
-      { name: "Prescription started", headerClass: "text-center" },
-    ],
-  };
+      {
+        name: "Patient",
+        type: "stringwithimage",
+        key: "patientName",
+        imageKey: "profile",
+      },
+      { name: "Age", type: "number", key: "age" },
+      { name: "Location", type: "string", key: "location" },
+      { name: "Cheif complaint", type: "array", key: "complaint" },
+      {
+        name: "Prescription started",
+        type: "pill",
+        headerClass: "text-center",
+        imageKey: "summaryListIcon",
 
+        buttons: [
+          {
+            label: "16 hr ago",
+
+            btnClass: "summay-btn pill-btn",
+          },
+        ],
+      },
+    ],
+    data: [],
+  };
+  viewDate: Date = new Date();
+  drSlots = [];
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -79,6 +175,9 @@ export class DashboardSummaryPageComponent implements OnInit {
     private snackbar: MatSnackBar,
     private socket: SocketService,
     private helper: HelperService,
+    private appointmentService: AppointmentService,
+    private dialogService: ConfirmDialogService,
+    private modal: NgbModal,
   ) {}
 
   ngOnInit() {
@@ -113,6 +212,8 @@ export class DashboardSummaryPageComponent implements OnInit {
         timestamp: new Date(data.createdAt).getTime(),
       });
     });
+    let endOfMonth = moment(this.viewDate).endOf("month").format("YYYY-MM-DD hh:mm");
+    this.getDrSlots(endOfMonth);
   }
 
   getVisitCounts(speciality) {
@@ -122,12 +223,12 @@ export class DashboardSummaryPageComponent implements OnInit {
     };
     this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
       if (data.length) {
-        this.flagPatientNo = getTotal(data, "Priority");
-        this.activePatient = getTotal(data, "Awaiting Consult");
-        this.visitNoteNo = getTotal(data, "Visit In Progress");
-        this.completeVisitNo = getTotal(data, "Completed Visit");
+        this.inProgressVisits.dataCount = getTotal(data, "Visit In Progress");
+        this.priorityVisits.dataCount = getTotal(data, "Priority");
+        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");
+        this.appointmentTable.dataCount = getTotal(data, "Completed Visit");
       }
-    });
+    });    
   }
 
   getVisits(query: any = {}, cb = () => {}) {
@@ -153,13 +254,14 @@ export class DashboardSummaryPageComponent implements OnInit {
                 });
               }
             } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
+              this.visitCategory(active)
+
             }
           }
           this.value = {};
         });
         if (response.results.length === 0) {
-          this.setVisitlengthAsPerLoadedData();
+          // this.setVisitlengthAsPerLoadedData();
         }
         this.helper.refreshTable.next();
         this.setSpiner = false;
@@ -174,64 +276,39 @@ export class DashboardSummaryPageComponent implements OnInit {
     );
   }
 
-  getLength(arr) {
-    let data = [];
-    arr.forEach((item) => {
-      data = this.helper.getUpdatedValue(data, item, "id");
-    });
-    return data.filter((i) => i).slice().length;
-  }
-
-  setVisitlengthAsPerLoadedData() {
-    this.flagPatientNo = this.getLength(this.flagVisit);
-    this.activePatient = this.getLength(this.waitingVisit);
-    this.visitNoteNo = this.getLength(this.progressVisit);
-    this.completeVisitNo = this.getLength(this.completedVisit);
-  }
-
-  get completedVisit() {
-    return this.service.completedVisit;
-  }
-  get progressVisit() {
-    return this.service.progressVisit;
-  }
-
-  get flagVisit() {
-    return this.service.flagVisit;
-  }
-  get waitingVisit() {
-    return this.service.waitingVisit;
-  }
-
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  visitCategory(active) {
+  visitCategory(active) {   
     const { encounters = [] } = active;
     let encounter;
-    if (
-      (encounter =
-        this.checkVisit(encounters, "Visit Complete") ||
-        this.checkVisit(encounters, "Patient Exit Survey"))
-    ) {
+    if ((encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey"))) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.completedVisit.push(values);
+      // this.service.completedVisit.push(values);
     } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.progressVisit.push(values);
+      // this.service.progressVisit.push(values);
+      this.inProgressVisits.data.push(values);
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
-        this.service.flagVisit.push(values);
+        // this.service.flagVisit.push(values);
+        this.priorityVisits.data.push(values);
       }
-    } else if (
-      (encounter =
-        this.checkVisit(encounters, "ADULTINITIAL") ||
-        this.checkVisit(encounters, "Vitals"))
-    ) {
+    } else if ((encounter = this.checkVisit(encounters, "ADULTINITIAL") || this.checkVisit(encounters, "Vitals"))) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.waitingVisit.push(values);
+      // this.service.waitingVisit.push(values);
+      this.awaitingVisits.data.push(values);
+    } 
+    let e = encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey") || this.checkVisit(encounters, "Visit Note") || this.checkVisit(encounters, "Flagged") || this.checkVisit(encounters, "ADULTINITIAL")
+    const values = this.assignValueToProperty(active, e);
+    for(let i = 0; i < this.drSlots.length; i++) {
+      if(values.patientId === this.drSlots[i]["patientId"]){
+        this.appointmentTable.headers[5].id.push(this.drSlots[i]);        
+        const value = this.assignValueToProperty(active, e, this.drSlots[i]);
+        this.appointmentTable.data.push(value);
+      };
     }
   }
 
@@ -279,7 +356,7 @@ export class DashboardSummaryPageComponent implements OnInit {
     
   }
   
-  assignValueToProperty(active, encounter) {
+  assignValueToProperty(active, encounter, drSlots={}) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -293,6 +370,46 @@ export class DashboardSummaryPageComponent implements OnInit {
     this.value.lastSeen = encounter.encounterDatetime;
     this.value.complaints = this.getComplaints(active);
     this.value.visitCreated = this.getVisisCreated(active);
+    this.value.startIn = this.startIn(drSlots);    
     return this.value;
+  }
+  
+  onRescheduleClick() {}
+
+  onCancelClick() {}
+
+  getDrSlots(toDate) {
+    this.appointmentService
+      .getUserSlots(
+        this.userId,
+        moment('2022-01-01 12:00').format("DD/MM/YYYY"),
+        moment(toDate).format("DD/MM/YYYY")
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.drSlots = res.data;
+        },
+      });
+  }
+
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
+  }
+
+  startIn(data){
+    if(Object.keys(data).length !== 0){
+      for(let i in data){
+        const start = new Date().getTime();
+        const end = new Date(data['slotJsDate']).getTime();
+        let time = start - end;  
+        let diffDays = Math.floor(time /  86400000)
+        let diffHours = Math.floor(time %  86400000 / 3600000)
+        if( String(diffDays)[0] == "-"){
+          return moment(data['slotJsDate']).format("DD MMM, h:mm a");
+        }else{
+          return(moment(data['slotJsDate']).format("DD MMM, h:mm a"));
+        }
+      };     
+    } 
   }
 }

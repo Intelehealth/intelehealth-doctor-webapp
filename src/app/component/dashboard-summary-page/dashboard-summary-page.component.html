@@ -3,7 +3,7 @@
     <div class="visit-section appointments">
       <img class="img" src="assets/svgs/video-frame.svg" />
       <div class="label">
-        <div class="font-weight">{{completeVisitNo}}</div>
+        <div class="font-weight">{{appointmentTable.dataCount}}</div>
 
         <label class="font-label-color">Appointments </label>
       </div>
@@ -12,7 +12,7 @@
     <div class="visit-section priority">
       <img class="img" src="assets/svgs/red-profile.svg" />
       <div class="label">
-        <div class="font-weight">{{flagPatientNo}}</div>
+        <div class="font-weight">{{priorityVisits.dataCount}}</div>
 
         <label class="font-label-color">Priority visits </label>
       </div>
@@ -21,7 +21,7 @@
     <div class="visit-section awaiting">
       <img class="img" src="assets/svgs/green-profile.svg" />
       <div class="label">
-        <div class="font-weight">{{activePatient}}</div>
+        <div class="font-weight">{{awaitingVisits.dataCount}}</div>
 
         <label class="font-label-color">Awaiting visits </label>
       </div>
@@ -30,7 +30,7 @@
     <div class="visit-section awaiting">
       <img class="img" src="assets/svgs/pen-board.svg" />
       <div class="label">
-        <div class="font-weight">{{visitNoteNo}}</div>
+        <div class="font-weight">{{inProgressVisits.dataCount}}</div>
 
         <label class="font-label-color">In-progress visits</label>
       </div>
@@ -38,26 +38,18 @@
   </div>
 
   <app-dashboard-table
-      [visitCounts]="completeVisitNo"
-      [data]="completedVisit"
       [tableConfig]="appointmentTable"
   ></app-dashboard-table>
   <br>
   <app-dashboard-table
-    [visitCounts]="flagPatientNo"
-    [data]="flagVisit"
     [tableConfig]="priorityVisits"
   ></app-dashboard-table>
   <br>
   <app-dashboard-table
-    [visitCounts]="activePatient"
-    [data]="waitingVisit"
     [tableConfig]="awaitingVisits"
   ></app-dashboard-table>
   <br>
   <app-dashboard-table
-    [visitCounts]="visitNoteNo"
-    [data]="progressVisit"
     [tableConfig]="inProgressVisits"
   ></app-dashboard-table>
 </div>
