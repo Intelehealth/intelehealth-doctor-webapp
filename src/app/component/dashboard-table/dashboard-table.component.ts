@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 
 @Component({
   selector: "app-dashboard-table",
@@ -10,8 +10,12 @@ export class DashboardTableComponent implements OnInit {
     this.table = tableConfig;
   }
   table: any;
+  viewDate: Date = new Date();
+  drSlots = [];
+  setSpiner = false;
+  constructor(  ) { }
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    
+  }
 }

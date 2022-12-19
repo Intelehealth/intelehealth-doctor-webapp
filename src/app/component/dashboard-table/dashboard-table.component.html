@@ -37,7 +37,7 @@
           <ng-container [ngSwitch]="true">
             <div *ngSwitchCase="header?.type === 'stringwithimage'">
               <img class="mr-1" [src]="data[header?.imageKey]" />
-              {{ data[header?.key] }}
+              {{ data.name }}
             </div>
 
             <div *ngSwitchCase="header?.type === 'pill'">
@@ -46,7 +46,7 @@
                 class="{{ btn?.btnClass }}"
               >
                 <img class="mr-1" [src]="data[header?.imageKey]" />
-                {{ btn?.label }}
+                {{ data?.visitCreated }}
               </div>
             </div>
 
@@ -58,6 +58,16 @@
               >
                 {{ btn?.label }}
               </button>
+            </div>
+            
+            <div *ngSwitchCase="header?.type === 'array'">
+              <div *ngFor="let i of data?.complaints">
+                {{ i }}
+              </div>
+            </div>
+            
+            <div *ngSwitchCase="header?.type === 'number'">
+                {{ data.age }}{{"y"}}
             </div>
 
             <div *ngSwitchDefault>{{ data[header?.key] }}</div>

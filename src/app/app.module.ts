@@ -349,6 +349,11 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
               canActivate: [AuthGuard],
             },
             {
+              path: "getting-started",
+              component: SetUpProfileComponent,
+              canActivate: [AuthGuard],
+            },
+            {
               path: "calendar",
               component: CalendarContainerComponent,
               canActivate: [AuthGuard],

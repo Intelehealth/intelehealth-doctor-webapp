@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { SelectLanguageComponent } from './select-language/select-language.component';
 declare const getFromStorage: Function;
 
 @Component({
@@ -9,11 +11,14 @@ declare const getFromStorage: Function;
 export class SetUpProfileComponent implements OnInit {
   doctorName = "";
   greeting = "";
-  constructor() { }
+  constructor(
+    private matDialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName;
+    this.selectLanguage()
     var today = new Date()
     var curHr = today.getHours()
 
@@ -26,6 +31,11 @@ export class SetUpProfileComponent implements OnInit {
     }
   }
 
+  selectLanguage(): void {
+    const dialogRef = this.matDialog.open(SelectLanguageComponent,{
+      data: {},
+    });
+  }
 }
 
 
