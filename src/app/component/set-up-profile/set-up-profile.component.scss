@@ -1,126 +1,125 @@
 @mixin size($width, $height) {
-    position: absolute;
-    display: flex;
-    width: $width;
-    height: $height;
+  position: absolute;
+  display: flex;
+  width: $width;
+  height: $height;
+}
+@mixin font($weight, $size) {
+  font-family: var(--font-family);
+  font-style: var(--font-style);
+  font-weight: $weight;
+  font-size: $size;
+}
+.alert {
+  position: absolute;
+  width: 630px;
+  height: 100px;
+  top: 30px;
+  background: #e6fff3;
+  border-radius: 12px;
+  img {
+    @include size(122px, 78px);
+    right: 52px;
+    top: 20px;
   }
-  @mixin font($weight, $size) {
-    font-family: var(--font-family);
-    font-style: var(--font-style);
-    font-weight: $weight;
-    font-size: $size;
-  }
-  .alert {
-    position: absolute;
-    width: 630px;
-    height: 100px;
-    top: 30px;
-    background: #e6fff3;
-    border-radius: 12px;
-    img {
-      @include size(122px, 78px);
-      right: 52px;
-      top: 20px;
-    }
-  }
-  strong {
-    @include font(500, 20px);
+}
+strong {
+  @include font(500, 20px);
+  line-height: 150%;
+  color: #1b163a;
+}
+.setup-your-profile {
+  @include size(630px, 184px);
+  left: auto;
+  top: 194px;
+  padding: 22px;
+  gap: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
+  border-radius: 12px;
+}
+.setup-your-calendar {
+  @include size(630px, 184px);
+  left: auto;
+  top: 413px;
+  padding: 22px;
+  gap: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
+  border-radius: 12px;
+}
+.profile {
+  @include size(350px, 60px);
+  flex-direction: row;
+  align-items: flex-start;
+  right: 1px;
+  top: 32px;
+  .text {
+    margin-left: 0.8rem;
+    @include font(500, 16px);
     line-height: 150%;
     color: #1b163a;
   }
-  .setup-your-profile {
-    @include size(630px, 184px);
-    left: auto;
-    top: 194px;
-    padding: 22px;
-    gap: 20px;
-    background: #ffffff;
-    box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
-    border-radius: 12px;
+}
+.notification {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #efe8ff;
+  img {
+    @include size(24px, 24px);
+    left: 12px;
+    top: 12px;
   }
-  .setup-your-calendar {
-    @include size(630px, 184px);
-    left: auto;
-    top: 413px;
-    padding: 22px;
-    gap: 20px;
-    background: #ffffff;
-    box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
-    border-radius: 12px;
-  }
-  .profile {
-    @include size(350px, 60px);
-    flex-direction: row;
-    align-items: flex-start;
-    right: 1px;
-    top: 32px;
-    .text {
-      margin-left: 0.8rem;
-      @include font(500, 16px);
-      line-height: 150%;
-      color: #1b163a;
-    }
-  }
-  .notification {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: #efe8ff;
-    img {
-      @include size(24px, 24px);
-      left: 12px;
-      top: 12px;
-    }
-  }
-  .profile-pic img {
-    width: 52px;
-    height: 52px;
-    border-radius: 52px;
-    margin-left: 1.5rem;
-  }
-  .profile-pic button {
-    left: 10px;
-  }
-  .header {
-    @include font(700, 15px);
+}
+.profile-pic img {
+  width: 52px;
+  height: 52px;
+  border-radius: 52px;
+  margin-left: 1.5rem;
+}
+.profile-pic button {
+  left: 10px;
+}
+.header {
+  @include font(700, 15px);
+  line-height: 150%;
+  color: #1b163a;
+}
+.para {
+  @include font(400, 14px);
+  line-height: 150%;
+  color: #7f7b92;
+}
+.btn {
+  padding: 10px 32px;
+  gap: 4px;
+  background: #2e1e91;
+  border-radius: 8px;
+  .text {
+    @include font(700, 16px);
     line-height: 150%;
-    color: #1b163a;
+    text-align: center;
+    color: #ffffff;
   }
-  .para {
-    @include font(400, 14px);
-    line-height: 150%;
-    color: #7f7b92;
-  }
-  .btn {
-    padding: 10px 32px;
-    gap: 4px;
-    background: #2e1e91;
-    border-radius: 8px;
-    .text {
-      @include font(700, 16px);
-      line-height: 150%;
-      text-align: center;
-      color: #ffffff;
-    }
-  }
-  .icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1px 10px;
-    gap: 4px;
-    width: 40px;
-    height: 40px;
-    background: #ffe8e8;
-    border-radius: 200px;
-  }
-  .popup-message {
-    @include size(320px, 80px);
-    right: 30px;
-    background: #ffffff;
-    top: 124px;
-    border-radius: 6px;
-    filter: drop-shadow(0px 4px 16px rgba(14, 134, 98, 0.12));
-    border-left: 6px solid #0fd197;
-  }
-  
+}
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px 10px;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  background: #ffe8e8;
+  border-radius: 200px;
+}
+.popup-message {
+  @include size(320px, 80px);
+  right: 30px;
+  background: #ffffff;
+  top: 124px;
+  border-radius: 6px;
+  filter: drop-shadow(0px 4px 16px rgba(14, 134, 98, 0.12));
+  border-left: 6px solid #0fd197;
+}
