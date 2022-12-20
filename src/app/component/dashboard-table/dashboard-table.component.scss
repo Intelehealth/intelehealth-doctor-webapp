@@ -16,10 +16,16 @@
 }
 
 .appointment-label {
+  display: flex;
+  gap: 6px;
   width: 900px;
   padding: 26px;
 
   font-weight: 600;
+
+  img{
+    cursor: pointer;
+  }
 }
 .btn-filter {
   width: 115px;

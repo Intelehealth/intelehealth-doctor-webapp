@@ -11,11 +11,6 @@ import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confi
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
-export const reasons = [
-  "Doctor Not available",
-  "Patient Not Available",
-  "Other",
-];
 @Component({
   selector: "app-dashboard-summary-page",
   templateUrl: "./dashboard-summary-page.component.html",
@@ -27,11 +22,9 @@ export class DashboardSummaryPageComponent implements OnInit {
   setSpiner = true;
   specialization;
   allVisits = [];
-  selectedReason = "";
-  otherReason = "";
-  reasons = reasons;
-  @ViewChild("modalContent") modalContent: TemplateRef<any>;
-  @ViewChild("rescheduleModal") rescheduleModal: TemplateRef<any>;
+  viewDate: Date = new Date();
+  drSlots = [];
+
   appointmentTable: any = {
     id: "appointmentTable",
     label: "Appointments",
@@ -166,8 +159,6 @@ export class DashboardSummaryPageComponent implements OnInit {
     ],
     data: [],
   };
-  viewDate: Date = new Date();
-  drSlots = [];
   constructor(
     private sessionService: SessionService,
     private authService: AuthService,
@@ -176,8 +167,6 @@ export class DashboardSummaryPageComponent implements OnInit {
     private socket: SocketService,
     private helper: HelperService,
     private appointmentService: AppointmentService,
-    private dialogService: ConfirmDialogService,
-    private modal: NgbModal,
   ) {}
 
   ngOnInit() {
@@ -204,14 +193,6 @@ export class DashboardSummaryPageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
-    this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
-    });
     let endOfMonth = moment(this.viewDate).endOf("month").format("YYYY-MM-DD hh:mm");
     this.getDrSlots(endOfMonth);
   }
@@ -225,8 +206,7 @@ export class DashboardSummaryPageComponent implements OnInit {
       if (data.length) {
         this.inProgressVisits.dataCount = getTotal(data, "Visit In Progress");
         this.priorityVisits.dataCount = getTotal(data, "Priority");
-        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");
-        this.appointmentTable.dataCount = getTotal(data, "Completed Visit");
+        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");        
       }
     });    
   }
@@ -308,6 +288,7 @@ export class DashboardSummaryPageComponent implements OnInit {
         this.appointmentTable.headers[5].id.push(this.drSlots[i]);        
         const value = this.assignValueToProperty(active, e, this.drSlots[i]);
         this.appointmentTable.data.push(value);
+        this.appointmentTable.dataCount = this.appointmentTable.data.length
       };
     }
   }
@@ -403,7 +384,6 @@ export class DashboardSummaryPageComponent implements OnInit {
         const end = new Date(data['slotJsDate']).getTime();
         let time = start - end;  
         let diffDays = Math.floor(time /  86400000)
-        let diffHours = Math.floor(time %  86400000 / 3600000)
         if( String(diffDays)[0] == "-"){
           return moment(data['slotJsDate']).format("DD MMM, h:mm a");
         }else{
