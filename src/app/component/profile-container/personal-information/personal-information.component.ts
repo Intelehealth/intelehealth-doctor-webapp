@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import SignaturePad from 'signature_pad';
 import { ProfileService } from 'src/app/services/profile.service';
 import { SessionService } from 'src/app/services/session.service';
+import countryCodes from "./countryCode";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -24,6 +25,7 @@ export class PersonalInformationComponent {
   signatureURL;
   signatureType: string = "Draw";
   currentTabIndex = 0;
+  country=[];
 
   constructor(private sessionService: SessionService, private profileService: ProfileService) {
     this.setUserDetails();
@@ -58,6 +60,9 @@ export class PersonalInformationComponent {
         this.userDetails?.whatsapp ? this.userDetails.whatsapp.value : null,
         [Validators.required, Validators.pattern("^[0-9]{10,12}$")]
       ),
+      countryCode: new FormControl(
+        this.userDetails?.countryCode ? this.userDetails.countryCode.value : "+91",
+      ),
       emailId: new FormControl(
         this.userDetails?.emailId ? this.userDetails.emailId.value : null,
         Validators.required
@@ -82,6 +87,7 @@ export class PersonalInformationComponent {
         this.setUserDetails(true);
       });
       this.clearPad();
+      this.country = countryCodes;
   }
 
   getSelectedIndex(): number {
@@ -207,7 +213,8 @@ export class PersonalInformationComponent {
       whatsapp: data.whatsapp?.value,
       emailId: data.emailId?.value,
       signature: null,
-      signatureText: data?.signatureText
+      signatureText: data?.signatureText,
+      countryCode: data?.countryCode?.value
     });
   }
 

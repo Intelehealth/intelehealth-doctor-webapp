@@ -107,6 +107,10 @@ export class ProfessionalDetailsComponent implements OnInit {
       this.updateAttribute(this.userDetails.whatsapp, "fccc49f1-49ca-44bb-9e61-21c88ae6dd64", this.newUserDetails.whatsapp?.toString());
     }
 
+    if (this.newUserDetails.countryCode !== null && this.newUserDetails.countryCode !== this.userDetails?.countryCode?.value) {
+      this.updateAttribute(this.userDetails?.countryCode, "2d4d8e6d-21c4-4710-a3ad-4daf5c0dfbbb", this.newUserDetails.countryCode);
+    }
+
     if (professionalFormValues.registrationNumber !== null && professionalFormValues.registrationNumber !== this.userDetails?.registrationNumber?.value) {
       this.updateAttribute(this.userDetails.emailId, "992ccbdd-201a-44ef-8abb-c2eee079886d", professionalFormValues.registrationNumber);
     }
