@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ProfileService {
+  base = environment.base;
   baseURL = environment.baseURL;
   constructor(private http: HttpClient) { }
 
@@ -19,6 +20,11 @@ export class ProfileService {
     const url = `${this.baseURL}/person/${uuid}/name`;
     return this.http.get(url);
   }
+
+  getSignture(uuid: string) {
+    const url = `${this.base}/ds/${uuid}_sign.png`;
+    return this.http.get(url, { responseType: 'blob' });
+  } 
 
   updateName(uuid: string, firstName: string, middleName: string, familyName: string, nameUuid: string): Observable<any> {
     const URL = `${this.baseURL}/person/${uuid}/name/${nameUuid}`;
@@ -59,6 +65,21 @@ export class ProfileService {
       }),
     };
     return this.http.post(URL, json, header);
+  }
+
+ creatSignature(providerId:string, textOfSign:string, fontName:string) : Observable<any> {
+    const URL = `${this.base}/createsign`;
+    const json = {
+      textOfSign: textOfSign, 
+      fontName : fontName,
+      providerId: providerId
+    };
+    return this.http.post(URL, json);
+  }
+
+  updateSignature(body:Object) : Observable<any> {
+    const URL = `${this.base}/uploadsign`;
+    return this.http.post(URL, body);
   }
 
   deleteProviderAttribute(uuid: string, existingUuid: string): Observable<any> {

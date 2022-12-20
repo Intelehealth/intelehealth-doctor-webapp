@@ -6,6 +6,7 @@ import { HeaderService } from "src/app/services/header.service";
 import { ProfileService } from "src/app/services/profile.service";
 import { environment } from "src/environments/environment";
 import { FindPatientComponent } from "../find-patient/find-patient.component";
+import { SelectLanguageComponent } from "../set-up-profile/select-language/select-language.component";
 declare var getFromStorage: any;
 
 @Component({
@@ -121,5 +122,11 @@ export class HeaderComponent implements OnInit {
         }
       );
     }
+  }
+
+  selectLanguage(): void {
+    const dialogRef = this.dialog.open(SelectLanguageComponent,{
+      data: {},
+    });
   }
 }

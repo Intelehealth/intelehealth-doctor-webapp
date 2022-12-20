@@ -1,5 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
@@ -28,7 +29,6 @@ export class ProfessionalDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setUserDetails();
     this.professionalForm = new FormGroup({
       typeOfProfession: new FormControl(
         this.userDetails?.typeOfProfession ? this.userDetails.typeOfProfession.value : null
@@ -80,19 +80,19 @@ export class ProfessionalDetailsComponent implements OnInit {
     let professionalFormValues = this.professionalForm.value;
     if ((this.newUserDetails.gender !== null && this.newUserDetails.gender !== this.userDetails.person.gender) ||
       this.newUserDetails.birthDate !== null && this.newUserDetails.birthDate !== this.userDetails.person.birthdate) {
-      this.profileService.updateGenderAndBirthDate(this.userDetails.person.uuid, this.newUserDetails.gender, this.newUserDetails.birthDate)
+      this.profileService.updateGenderAndBirthDate(this.userDetails.person.uuid, this.newUserDetails.gender, moment(new Date(this.newUserDetails.birthDate.toString())).format("YYYY-MM-DD"))
         .subscribe(() => { })
     }
 
     if ((this.newUserDetails.firstName !== null && this.newUserDetails.firstName !== this.userDetails.firstName) ||
       (this.newUserDetails.middleName !== null && this.newUserDetails.middleName !== this.userDetails.middleName) ||
       this.newUserDetails.lastName !== null && this.newUserDetails.lastName !== this.userDetails.lastName) {
-       this.profileService.getPersonName(this.userDetails.person.uuid)
-       .subscribe((response) => {
-        this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName, 
-          this.newUserDetails.lastName, response?.results[0]?.uuid)
-        .subscribe(() => { })
-       });
+      this.profileService.getPersonName(this.userDetails.person.uuid)
+        .subscribe((response) => {
+          this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName,
+            this.newUserDetails.lastName, response?.results[0]?.uuid)
+            .subscribe(() => { })
+        });
     }
 
     if (this.newUserDetails.emailId !== null && this.newUserDetails.emailId !== this.userDetails?.emailId?.value) {
@@ -126,7 +126,7 @@ export class ProfessionalDetailsComponent implements OnInit {
           this.updateAttribute(null, "c1d6df5d-882c-4edf-86d6-823bdae98caa", selected);
         }
       });
-      let deletedExp = this.userDetails?.consultationLanguage1.filter(x => !professionalFormValues.consultationLanguage.includes(x.value));
+      let deletedExp = this.userDetails?.consultationLanguage1?.filter(x => !professionalFormValues.consultationLanguage.includes(x.value));
       if (deletedExp && deletedExp.length > 0) {
         deletedExp.forEach(element => {
           this.profileService.deleteProviderAttribute(this.userDetails.uuid, element.uuid)
@@ -146,7 +146,7 @@ export class ProfessionalDetailsComponent implements OnInit {
           this.updateAttribute(null, "86318ff8-25ca-445a-830f-2981e9d3ca46", selected);
         }
       });
-      let deletedExp = this.userDetails?.researchExperience1.filter(x => !professionalFormValues.researchExperience.includes(x.value));
+      let deletedExp = this.userDetails?.researchExperience1?.filter(x => !professionalFormValues.researchExperience.includes(x.value));
       if (deletedExp && deletedExp.length > 0) {
         deletedExp.forEach(element => {
           this.profileService.deleteProviderAttribute(this.userDetails.uuid, element.uuid)
@@ -158,7 +158,20 @@ export class ProfessionalDetailsComponent implements OnInit {
     if (professionalFormValues.workExperienceDetails !== null && professionalFormValues.workExperienceDetails !== this.userDetails?.workExperienceDetails?.value) {
       this.updateAttribute(this.userDetails.workExperienceDetails, "c2404185-133f-4aef-aa03-32a1ec7ee1ae", professionalFormValues.workExperienceDetails);
     }
-    
+
+    if (this.newUserDetails.signature !== null && this.newUserDetails.signatureText !== null) {
+      this.profileService.creatSignature(this.userDetails.person.uuid, this.newUserDetails.signatureText, this.newUserDetails.signature)
+        .subscribe((res) => { 
+          this.updateAttribute(this.userDetails?.signatureType, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", 'Generate');
+        })
+    }
+
+    if (this.newUserDetails.signature !== null && this.newUserDetails.signatureText === null) {
+      this.profileService.updateSignature(this.newUserDetails.signature)
+        .subscribe((res) => { 
+          this.updateAttribute(this.userDetails?.signatureType, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", this.newUserDetails.signature?.type);
+        })
+    }
     setTimeout(() => window.location.reload(), 2000);
   }
 

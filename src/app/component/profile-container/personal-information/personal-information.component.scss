@@ -213,7 +213,7 @@
     left: 390px;
     top: 10px;
     .signature-dropdown{
-        padding: 14px 16px;
+       // padding: 14px 16px;
         gap: 4px;
         width: 360px;
         height: 48px;
@@ -300,4 +300,8 @@ canvas {
 
 input.ng-invalid.ng-touched {
     border: red 1px solid;
+}
+
+#close-icon {
+    cursor: pointer;
 }

@@ -22,4 +22,8 @@ export class SelectLanguageComponent implements OnInit {
     this.active = "active";
   }
 
+  setLanguage() {
+     alert("Language upadated");
+     this.dialogRef.close();
+  }
 }
