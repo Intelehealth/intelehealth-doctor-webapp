@@ -86,13 +86,13 @@
         <div class="add-signature">
           <mat-tab-group [selectedIndex]="getSelectedIndex()" (selectedTabChange)="onTabChange($event)">
             <mat-tab label="Draw">
-              <div *ngIf="!isSignaturePresent" class="draw-signature">
+              <div *ngIf="!isSignaturePresent" class="draw-signature"> 
                 <label class="lbl lbl-email">Draw signature *</label>
                 <button (click)="clearPad()">clear sign</button>
                 <canvas #canvas  id="signature-pad" class="signature-pad" ></canvas>
               </div>
-              <div style="border: 0.770833px solid rgba(178, 175, 190, 0.2);" *ngIf="isSignaturePresent && signatureType === 'Draw'">
-                <img [src]="signatureURL">
+              <div *ngIf="isSignaturePresent && signatureType === 'Draw'">
+                <img class="signatureImg" [src]="signatureURL">
                 <mat-icon id="close-icon" (click)="clearSign()">close</mat-icon>
               </div>
             </mat-tab>
@@ -123,7 +123,7 @@
                 </div>
               </div>
               <div *ngIf="isSignaturePresent && signatureType === 'Generate'">
-                <img [src]="signatureURL">
+                <img class="signatureImg" [src]="signatureURL">
                 <mat-icon id="close-icon" (click)="clearSign()">close</mat-icon>
               </div>
             </mat-tab>
@@ -135,11 +135,11 @@
                 <div class="text-content">
                   <p class="text">Upload a scanned image of your signature. Image size(5kb to 50kb)</p>
                 </div>
-                <input #inputField hidden type="file" (change)="onSelectFile($event)" />
+                <input #inputField hidden type="file" (change)="onSelectFile($event)"/>
               </div>
               <!-- {{signatureImgName}} -->
               <div *ngIf="isSignaturePresent && signatureType === 'Upload'">
-                <img [src]="signatureURL">
+                <img class="signatureImg" [src]="signatureURL">
                 <mat-icon id="close-icon" (click)="clearSign()">close</mat-icon>
               </div>
             </mat-tab>

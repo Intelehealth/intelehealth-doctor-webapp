@@ -77,9 +77,13 @@ export class ProfileService {
     return this.http.post(URL, json);
   }
 
-  updateSignature(body:Object) : Observable<any> {
+  updateSignature(file, providerId:string) : Observable<any> {
     const URL = `${this.base}/uploadsign`;
-    return this.http.post(URL, body);
+    const json = {
+      file: file,
+      providerid: providerId
+    };
+    return this.http.post(URL, json);
   }
 
   deleteProviderAttribute(uuid: string, existingUuid: string): Observable<any> {

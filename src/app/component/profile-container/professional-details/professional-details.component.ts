@@ -29,6 +29,7 @@ export class ProfessionalDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setUserDetails();
     this.professionalForm = new FormGroup({
       typeOfProfession: new FormControl(
         this.userDetails?.typeOfProfession ? this.userDetails.typeOfProfession.value : null
@@ -56,10 +57,10 @@ export class ProfessionalDetailsComponent implements OnInit {
 
   private setUserDetails() {
     this.userDetails["researchExperience1"] = [], this.userDetails["consultationLanguage1"] = [];
-    this.userDetails?.attributes.forEach((attribute) => {
+    this.userDetails?.attributes?.forEach((attribute) => {
       this.userDetails[attribute.attributeType.display] = {
         value: attribute.value,
-        uuid: attribute.uuid,
+        uuid: attribute.uuid      
       };
       if (attribute.attributeType.display === "researchExperience" && !attribute.voided) {
         this.userDetails["researchExperience1"].push({ value: attribute.value, uuid: attribute.uuid });
@@ -112,7 +113,7 @@ export class ProfessionalDetailsComponent implements OnInit {
     }
 
     if (professionalFormValues.registrationNumber !== null && professionalFormValues.registrationNumber !== this.userDetails?.registrationNumber?.value) {
-      this.updateAttribute(this.userDetails.emailId, "992ccbdd-201a-44ef-8abb-c2eee079886d", professionalFormValues.registrationNumber);
+      this.updateAttribute(this.userDetails?.registrationNumber, "992ccbdd-201a-44ef-8abb-c2eee079886d", professionalFormValues.registrationNumber);
     }
 
     if (professionalFormValues.specialization !== null && professionalFormValues.specialization !== this.userDetails?.specialization?.value) {
@@ -164,16 +165,16 @@ export class ProfessionalDetailsComponent implements OnInit {
     }
 
     if (this.newUserDetails.signature !== null && this.newUserDetails.signatureText !== null) {
-      this.profileService.creatSignature(this.userDetails.person.uuid, this.newUserDetails.signatureText, this.newUserDetails.signature)
+      this.profileService.creatSignature(this.userDetails.uuid, this.newUserDetails.signatureText, this.newUserDetails.signature)
         .subscribe((res) => { 
-          this.updateAttribute(this.userDetails?.signatureType, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", 'Generate');
+          this.updateAttribute(null, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", 'Generate');
         })
     }
 
     if (this.newUserDetails.signature !== null && this.newUserDetails.signatureText === null) {
-      this.profileService.updateSignature(this.newUserDetails.signature)
+      this.profileService.updateSignature(this.newUserDetails.signature.file, this.newUserDetails.signature.providerid)
         .subscribe((res) => { 
-          this.updateAttribute(this.userDetails?.signatureType, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", this.newUserDetails.signature?.type);
+          this.updateAttribute(null, "1d1c9e99-48cf-4e0e-9294-89ab81d7652a", this.newUserDetails.signature?.type);
         })
     }
     setTimeout(() => window.location.reload(), 2000);

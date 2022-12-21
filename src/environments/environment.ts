@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  base:"https://uiux.intelehealth.org",
   baseURL: "https://uiux.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://uiux.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://uiux.intelehealth.org/openmrs",

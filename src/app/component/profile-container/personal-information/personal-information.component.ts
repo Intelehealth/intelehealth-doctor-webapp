@@ -116,8 +116,8 @@ export class PersonalInformationComponent {
     this.moveTo = !this.moveTo;
     if (this.currentTabIndex === 0 && !this.signaturePad.isEmpty()) {
       let json = {
-        providerid: this.userDetails.person.uuid,
-        file: this.signaturePad.toDataURL(),
+        providerid: this.userDetails.uuid,
+        file: this.signaturePad.toDataURL().split(',')[1],
         type: "Draw"
       }
       this.profileForm.value.signature = json;
@@ -146,7 +146,7 @@ export class PersonalInformationComponent {
         let url: any = event.target.result;
         let imageBolb = url.split(',');
         let json = {
-          providerid: this.userDetails.person.uuid,
+          providerid: this.userDetails.uuid,
           file: imageBolb[1],
           type: "Upload"
         }
@@ -173,17 +173,18 @@ export class PersonalInformationComponent {
         this.userDetails[attribute.attributeType.display] = {
           value: attribute.value,
           uuid: attribute.uuid,
+          voided: attribute.voided
         };
       }
     });
-    this.signatureType = this.userDetails?.signatureType?.value
-    if (this.userDetails?.signatureType) {
+    if (this.userDetails?.signatureType && !this.userDetails?.signatureType?.voided) {
       this.userDetails.signatureText = this.signatureType;
+      this.signatureType = this.userDetails?.signatureType?.value
       this.profileService.getSignture(this.userDetails.person.uuid)
         .subscribe((res) => {
           if (res) {
             this.isSignaturePresent = true;
-            this.signatureURL = `${this.profileService.base}/ds/${this.userDetails.person.uuid}_sign.png`
+            this.signatureURL = `${this.profileService.base}/ds/${this.userDetails.uuid}_sign.png`
             switch (this.userDetails?.signatureType?.value) {
               case "Draw":
                 this.currentTabIndex = 0;
@@ -197,6 +198,9 @@ export class PersonalInformationComponent {
             }
           }
         });
+    } else {
+      this.userDetails.signatureText = this.sign;
+      this.isSignaturePresent = false;
     }
     if (flag) this.updateFormValue(this.userDetails);
   }
@@ -225,5 +229,6 @@ export class PersonalInformationComponent {
         this.isSignaturePresent = false;
         this.signatureURL = null;
       });
+      setTimeout(() => window.location.reload(), 2000);  
   }
 }
