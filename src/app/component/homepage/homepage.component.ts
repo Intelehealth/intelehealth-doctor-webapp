@@ -67,13 +67,13 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
         });
         userDetails["roles"].forEach((role) => {
-          if (role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
-              role.uuid === "90ec258d-f82b-4f4a-8e10-32e4b3cc38a2") {
+          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
+              role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
             this.systemAccess = true;
           }
         });
         this.getVisits();
-        this.getVisitCounts(this.specialization);
+      //  this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -137,12 +137,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   }
                 });
               }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
             }
           }
           this.value = {};
         });
+        this.setVisitlengthAsPerLoadedData();
         if (response.results.length === 0) {
           this.setVisitlengthAsPerLoadedData();
           this.allVisitsLoaded = true;
