@@ -12,7 +12,7 @@
   <ng-container *ngIf="!showSearchBar">
     <div class="d-flex" *ngFor="let list of breadCrumb; index as i">
       <span [routerLink]="list.route" routerLinkActive="font" [routerLinkActiveOptions]="{ exact: true }"
-        class="mr-2 font-size-md grey-color">{{ list?.text }}
+        class="mr-2 font-size-md grey-color click">{{ list?.text }}
       </span>
       <img *ngIf="i !== breadCrumb.length - 1" class="mr-2" src="assets/svgs/bread-crumb.svg" />
     </div>

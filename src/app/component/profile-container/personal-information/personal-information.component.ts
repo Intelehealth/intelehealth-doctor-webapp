@@ -218,7 +218,7 @@ export class PersonalInformationComponent {
       emailId: data.emailId?.value,
       signature: null,
       signatureText: data?.signatureText,
-      countryCode: data?.countryCode?.value
+      countryCode: data?.countryCode?.value ?  data?.countryCode?.value : "+91"
     });
   }
 

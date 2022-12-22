@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
+declare var getFromStorage: any;
 
 @Component({
   selector: 'app-set-new-password',
@@ -10,6 +11,7 @@ export class SetNewPasswordComponent implements OnInit {
   signupForm: FormGroup;
   passwordIsValid = false;
   showPassword: boolean = false;
+  userName: string;
 
   constructor(private fb: FormBuilder) {}
   onSubmit(){ }
@@ -23,6 +25,8 @@ export class SetNewPasswordComponent implements OnInit {
       password: ['', Validators.required],
       confirmPassword: new FormControl("", [Validators.required])
     });
+    let user = getFromStorage("user");
+    this.userName = user?.person?.display;
   }
 
   passwordValid(event) {

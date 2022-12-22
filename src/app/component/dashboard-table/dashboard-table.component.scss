@@ -99,3 +99,8 @@ tr:nth-child(even) {
 .vr-position{
   text-align: center;
 }
+.table > tr:hover {
+  background-color: #E6FFF3;
+  border-radius: 8px;
+  cursor: pointer;
+}
