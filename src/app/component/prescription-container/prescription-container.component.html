@@ -1,0 +1,19 @@
+<div class="main-container">
+  <div class="chips-container">
+    <div class="chip-item chip-item-blue" routerLink="/dashboard/prescription" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+      <img class="chip-img" src="assets/svgs/pad.svg" alt="" />
+      <div class="chip-info">
+        <h6>32</h6>
+        <span>Prescription Sent</span>
+      </div>
+    </div>
+    <div class="chip-item chip-item-green" routerLink="/dashboard/prescription/completed" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+      <img class="chip-img" src="assets/svgs/completed-2.svg" alt="" />
+      <div class="chip-info">
+        <h6>40</h6>
+        <span>Completed Visits</span>
+      </div>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+</div>

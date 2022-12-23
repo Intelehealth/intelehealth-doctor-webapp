@@ -67,9 +67,8 @@
       <li class="sidenav-nav-item">
         <a
           class="sidenav-nav-link"
-          routerLink=""
+          routerLink="/dashboard/prescription"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
         >
           <img src="assets/icons/dashboard-icons/icons8-treatment 1.png" />
           <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
@@ -90,11 +89,9 @@
           </span>
         </a>
       </li>
-      <li class="sidenav-nav-item" style="margin-top: 18rem"  (click)="logout()">
+      <li class="sidenav-nav-item" style="margin-top: 18rem" (click)="logout()">
         <hr />
-        <a
-          class="sidenav-nav-link"
-        >
+        <a class="sidenav-nav-link">
           <img src="assets/icons/dashboard-icons/power.png" />
           <span class="sidenav-link-text" @fadeInOut *ngIf="collapsed">
             Log-out
