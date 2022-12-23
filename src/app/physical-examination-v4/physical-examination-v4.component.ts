@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { environment } from "src/environments/environment";
 import { DiagnosisService } from "../services/diagnosis.service";
 
 @Component({
@@ -9,15 +10,17 @@ import { DiagnosisService } from "../services/diagnosis.service";
 })
 export class PhysicalExaminationV4Component implements OnInit {
   @Input() pastVisit = false;
+  baseURL = environment.baseURL;
   filtersExamination = [];
   abdomenData = [];
   generalExamsData = [];
   header: string = "";
   abdomenHeader: string = "";
-  b: any;
   onExam: any = [];
   onExamPresent = false;
+  images: any = [];
   conceptOnExam = "e1761e85-9b50-48ae-8c4d-e6b7eeeba084";
+  conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -47,18 +50,38 @@ export class PhysicalExaminationV4Component implements OnInit {
                 this.filtersExamination.indexOf(i) + 1
               );
               for (let j of Idex) {
-                this.abdomenData.push(j.slice(2));
+                if(!j.includes("<b>")) {
+                  this.abdomenData.push(j.slice(2));
+                } else{
+                  this.abdomenData.push(j);
+                }
               }
               break;
             } else {
-              this.b = i.split("-");
+              let b = i.split("-");
               let obsData = {};
-              obsData["label"] = this.b[0].slice(1);
-              obsData["value"] = this.b[1];
+              if(!b[0].includes("<b>")) {
+                obsData["label"] = b[0].slice(1);
+                obsData["value"] = b[1] ? b[1] : 'None';
+              } else {
+                obsData["label"] = b[0];
+              }
               this.generalExamsData.push(obsData);
             }
           }
         }
+      });
+
+      this.diagnosisService.getObs(patientUuid, this.conceptPhysicalExamination)
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter !== null && obs.encounter.visit.uuid === visitUuid) {
+            const data = {
+              image: `${this.baseURL}/obs/${obs.uuid}/value`
+              };
+            this.images.push(data);
+          }
+        });
       });
   }
 }

@@ -83,7 +83,7 @@
   flex-grow: 1;
 
   .person-name {
-    height: 27px;
+    //height: 27px;
     width: 241.67px;
 
     color: #1b163a;
@@ -174,4 +174,13 @@
   flex: none;
   order: 4;
   flex-grow: 1;
+}
+
+.profilePic {
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }

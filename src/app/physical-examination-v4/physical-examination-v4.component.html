@@ -30,16 +30,17 @@
       <div class="ml-4">
         <ul class="d-grid p-0">
           <li class="d-flex mb-3" *ngFor="let item of generalExamsData">
-            <div class="first-list-label">{{ item?.label }}</div>
+            <div class="first-list-label" [innerHTML]='item?.label'></div>
             <div *ngIf="item?.value" class="second-list-label">
               {{ item?.value }}
             </div>
-            <img
-              *ngFor="let imgSrc of item?.images || []"
-              class="mr-2"
-              [src]="imgSrc"
-            />
           </li>
+          <div  class="d-flex mb-3">
+            <div class="first-list-label">Images</div>
+          <div *ngFor="let image of images">
+            <a href={{image.image}}><img class="image" src= {{image.image}} alt=""></a>
+          </div>
+        </div>
         </ul>
       </div>
     </div>
@@ -51,8 +52,7 @@
           *ngFor="let data of abdomenData"
           class="font-size-md mb-1"
         >
-          <label>
-            {{ data }}
+          <label  [innerHTML]='data'>
           </label>
         </li>
       </ul>

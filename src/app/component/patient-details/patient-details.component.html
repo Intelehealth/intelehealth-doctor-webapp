@@ -2,14 +2,14 @@
   <div class="person-content" *ngFor="let info of patientInfo">
     <div class="person-content-item">
       <div class="person-title">
-        <div class="" *ngIf="!profileImagePresent">
-          <img src="assets/svgs/v-profile.svg" alt="" />
-        </div>
-        <div class="" *ngIf="profileImagePresent">
-          <img src="" alt="">
+        <div>
+          <img
+          class="profilePic"
+          [src]="personImageURL"
+        />
         </div>
         <div class="person-name-details">
-          <div class="person-name">{{info.display}}</div>
+          <div class="person-name">{{info.display}}({{info.gender}})</div>
           <div class="person-INT">{{patientIdentifier}}</div>
         </div>
       </div>
@@ -31,15 +31,20 @@
 
     <div class="contact">
       <div class="occupation-label person-label-color">Contact No:</div>
-      <div class="">
-        {{info.telephone}}
-        <img src="assets/svgs/whatsapp-icon.svg" alt="" />
-      </div>
-
-      <div class="mt-2">
-        {{info.telephone}}
-        <img src="assets/svgs/num.svg" alt="" />
+      <div *ngIf="info.telephone;else notAvailable">
+        <div class="">
+          {{info.telephone}}
+          <a href="{{ whatsappLink }}" target="_blank"><img src="assets/svgs/whatsapp-icon.svg" alt="" /></a>
+        </div>
+  
+        <div class="mt-2">
+          {{info.telephone}}
+          <a href="tel:{{ info.telephone }}"><img src="assets/svgs/num.svg" alt="" /></a>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<ng-template #notAvailable>
+  Not Available
+</ng-template>

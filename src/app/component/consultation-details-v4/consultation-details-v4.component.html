@@ -42,14 +42,18 @@
             <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }}</label>
           </div>
           <div>
-            <label class="margin pirorityRed mt-1"> Priority visit </label>
+            <label class="margin  mt-1" [ngClass]="{
+              'pirorityRed': visitStatus === 'Priority visit',
+              'light-green':
+              visitStatus === 'Awaiting visit' || visitStatus === 'In-progress visit'
+            }"> {{visitStatus}} </label>
           </div>
 
           <div>
             <label class="mt-1">{{ providerName }}</label>
 
             <img *ngIf="!readOnly" class="ml-3" src="assets/svgs/dot.svg" />
-            <img *ngIf="!readOnly" class="ml-2" src="assets/svgs/num.svg" />
+            <a *ngIf="!readOnly" class="ml-2" href="tel:{{ hwPhoneNo }}"><img src="assets/svgs/num.svg" alt="" /></a>
             <img *ngIf="!readOnly" class="ml-2" src="assets/svgs/msg.svg" />
 
             <span *ngIf="!readOnly" class="ml-2 chw-color"

@@ -25,19 +25,16 @@
     <div class="chief-content">
       <div class="chief-complaint-title">Chief complaint</div>
       <div class="pill-item mt-1">
-        <span class="abdominal-pill">Abdominal pain</span>
-        <span class="abdominal-pill ml-2">Back pain</span>
+       <span *ngFor="let header of headers; index as i">
+        <span class="abdominal-pill ml-{{i+1}}">{{header}}</span>
+       </span>
       </div>
     </div>
-
-    <div class="abdomin-captoin mt-3 mb-3">
-      <div class="abdomin-captoin-font">{{header}}</div>
-    </div>
-
+    <br>
     <div class="ml-4">
       <ul class="d-grid p-0">
         <li class="d-flex mb-3" *ngFor="let item of complaintsData">
-          <div class="first-list-label">{{ item?.label }}</div>
+          <div class="first-list-label" [innerHTML]='item?.label'></div>
           <div class="second-list-label">
             {{ item?.value }}
           </div>

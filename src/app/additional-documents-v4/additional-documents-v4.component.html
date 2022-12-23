@@ -34,9 +34,7 @@
           class="mr-3"
           src="assets/svgs/blood-pdf.svg"
         /> -->
-        <ng-template #elseBlock>
-          <img height="120px" width="120px" class="mr-3" [src]="image" />
-        </ng-template>
+          <a href={{image.image}}><img class="mr-3 docImg" src= {{image.image}} alt=""></a>
       </div>
     </div>
     <div *ngIf="!additionalDocumentPresent">
