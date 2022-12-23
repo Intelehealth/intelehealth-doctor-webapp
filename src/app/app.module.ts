@@ -176,6 +176,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
 import { PrescriptionContainerComponent } from "./component/prescription-container/prescription-container.component";
 import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
 import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
+import { ChatbotComponent } from './component/chatbot/chatbot.component';
 
 @NgModule({
   declarations: [
@@ -288,7 +289,8 @@ import { PrescriptionCompletedComponent } from './component/prescription-contain
     PrescriptionSentComponent,
     PrescriptionCompletedComponent,
     PrescriptionCompletedComponent,
-    PrescriptionSentComponent
+    PrescriptionSentComponent,
+    ChatbotComponent
   ],
 
   imports: [

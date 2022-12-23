@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
+import {MatDialog} from '@angular/material/dialog';
+import { ChatbotComponent } from "../chatbot/chatbot.component";
 
 @Component({
   selector: "app-footer-terms-condition",
@@ -8,7 +10,15 @@ import { Component, Input, OnInit } from "@angular/core";
 export class FooterTermsConditionComponent implements OnInit {
   @Input() showTermsAndCondition: boolean = false;
 
-  constructor() {}
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {}
+
+  openDialog() {
+    const dialogRef = this.dialog.open(ChatbotComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" } });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 }
