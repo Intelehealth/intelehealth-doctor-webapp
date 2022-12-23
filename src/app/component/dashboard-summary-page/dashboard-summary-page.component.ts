@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { VisitService } from "src/app/services/visit.service";
@@ -7,8 +7,6 @@ import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
 import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
-import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 @Component({
@@ -193,8 +191,22 @@ export class DashboardSummaryPageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
+    this.socket.initSocket(true);
+    this.socket.onEvent("updateMessage").subscribe((data) => {
+      this.socket.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+      this.playNotify();
+    });
     let endOfMonth = moment(this.viewDate).endOf("month").format("YYYY-MM-DD hh:mm");
     this.getDrSlots(endOfMonth);
+  }
+
+  ngOnDestroy() {
+    if (this.socket.socket && this.socket.socket.close)
+      this.socket.socket.close();
   }
 
   getVisitCounts(speciality) {
@@ -234,15 +246,11 @@ export class DashboardSummaryPageComponent implements OnInit {
                 });
               }
             } else if (this.specialization === "General Physician") {
-              this.visitCategory(active)
-
+              this.visitCategory(active);
             }
           }
           this.value = {};
         });
-        if (response.results.length === 0) {
-          // this.setVisitlengthAsPerLoadedData();
-        }
         this.helper.refreshTable.next();
         this.setSpiner = false;
       },
@@ -391,5 +399,10 @@ export class DashboardSummaryPageComponent implements OnInit {
         }
       };     
     } 
+  }
+
+  playNotify() {
+    const audioUrl = "../../../../intelehealth/assets/notification.mp3";
+    new Audio(audioUrl).play();
   }
 }

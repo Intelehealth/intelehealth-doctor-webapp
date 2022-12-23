@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { PagerService } from '../../services/pager.service'
 
 @Component({
   selector: "app-dashboard-table",
@@ -9,13 +10,23 @@ export class DashboardTableComponent implements OnInit {
   @Input("tableConfig") set tableConfig(tableConfig) {
     this.table = tableConfig;
   }
+  @Input() data;
+  @Input() visitCounts;
   table: any;
-  viewDate: Date = new Date();
   drSlots = [];
-  setSpiner = false;
-  constructor(  ) { }
+  allItems: any[];
+  pager: any = {};
+  pagedItems: any[];
 
-  ngOnInit(): void {
-    
+  constructor( private pagerService: PagerService) {}
+ 
+  ngOnInit(){
+    this.allItems = this.data
+    this.setPage(1);    
+  }
+
+  setPage(page: number) {
+    this.pager = this.pagerService.getPager(this.allItems.length, page);
+    this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
   }
 }

@@ -172,6 +172,7 @@ import { AppointmentDetailModalComponent } from './modals/appointment-detail-mod
 import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
 import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
 import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
+import { PagerService } from './services/pager.service';
 
 @NgModule({
   declarations: [
@@ -477,6 +478,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
     }),
   ],
   providers: [
+    PagerService,
     OtpService,
     CookieService,
     AuthGuard,
