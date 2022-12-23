@@ -1,4 +1,5 @@
-<div class="dashboard-summary">
+<mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
+<div class="dashboard-summary" [ngClass]="setSpiner ? 'spin' : ''">
   <div class="d-flex top">
     <div class="visit-section appointments">
       <img class="img" src="assets/svgs/video-frame.svg" />
