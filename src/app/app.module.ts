@@ -61,6 +61,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
+import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -172,6 +173,9 @@ import { AppointmentDetailModalComponent } from './modals/appointment-detail-mod
 import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
 import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
 import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
+import { PrescriptionContainerComponent } from "./component/prescription-container/prescription-container.component";
+import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
+import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
 
 @NgModule({
   declarations: [
@@ -280,9 +284,15 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
     RescheduleAppointmentModalComponent,
     TimeOffModalComponent,
     PopupFormComponent,
+    PrescriptionContainerComponent,
+    PrescriptionSentComponent,
+    PrescriptionCompletedComponent,
+    PrescriptionCompletedComponent,
+    PrescriptionSentComponent
   ],
 
   imports: [
+    CdkAccordionModule,
     MatTabsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
@@ -403,6 +413,21 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
               path: "set-profile",
               component: SetUpProfileComponent,
               canActivate: [AuthGuard],
+            },
+            {
+              path: "prescription",
+              component: PrescriptionContainerComponent,
+              canActivate: [AuthGuard],
+              children: [
+                {
+                  path: '',
+                  component: PrescriptionSentComponent
+                },
+                {
+                  path: 'completed',
+                  component: PrescriptionCompletedComponent
+                }
+              ]
             },
           ],
         },
