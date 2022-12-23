@@ -49,7 +49,7 @@ export class VisitService {
 
   fetchVisitDetails(
     uuid,
-    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
@@ -64,6 +64,11 @@ export class VisitService {
   postAttribute(visitId, json): Observable<any> {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.post(url, json);
+  }
+
+  updateAttribute(visitId, attributeUuid,json) {
+    const url = `${this.baseURL}/visit/${visitId}/attribute/${attributeUuid}`;
+    return this.http.post(url, json)
   }
 
   deleteAttribute(visitId, uuid) {
@@ -81,5 +86,11 @@ export class VisitService {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
     );
+  }
+
+  getWhatsappLink(whatsapp:Number,msg:string) {
+    let text = encodeURI(msg);
+    let whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+    return whatsappLink;
   }
 }

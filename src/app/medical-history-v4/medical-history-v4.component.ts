@@ -62,8 +62,8 @@ export class MedicalHistoryV4Component implements OnInit {
           this.familyHistoryData !== undefined &&
           this.familyHistoryData.length > 0
         ) {
-          let a = this.familyHistoryData[0].value.split(":");
-          this.filterFamily = a[1].split(", ");
+          let a = this.familyHistoryData[0].value.split("*");
+          this.filterFamily = a[1].split(":");
           let obsData = {};
           if (this.filterFamily.length >= 2) {
             if (this.filterFamily[1].slice(0, 7) == "Father.") {
@@ -71,7 +71,7 @@ export class MedicalHistoryV4Component implements OnInit {
               obsData["value"] = this.filterFamily[1].slice(0, 7);
               this.familyHistory.push(obsData);
             } else {
-              obsData["label"] = this.filterFamily[0];
+              obsData["label"] = this.filterFamily[0].split(">")[1];
               obsData["value"] = this.filterFamily[1].slice(0, -5);
               this.familyHistory.push(obsData);
             }
