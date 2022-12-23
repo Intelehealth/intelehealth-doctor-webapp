@@ -25,7 +25,7 @@
       </div>
 
       <div *ngIf="!show" class="d-flex justify-content-center">
-        <button class="btn btn-lg share-btn my-5">Start visit note</button>
+        <button (click)="onStartVisitNote()" class="btn btn-lg share-btn my-5">Start visit note</button>
       </div>
 
       <div *ngIf="show" class="card-shadow">

@@ -29,9 +29,9 @@
 
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
-        <li *ngFor="let advice of adviceData" class="mb-2">
-          {{ advice }}
-          <span class="btn-height click float-right">
+        <li *ngFor="let advice of adviceData, index as i" class="mb-2">
+          {{ advice.value}}
+          <span (click)="delete(i)" class="btn-height click float-right">
             <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>
         </li>
@@ -45,29 +45,30 @@
           (click)="showAddMore = !showAddMore"
         />
 
-        <label class="ml-2 font-size-md"> Add more medicines</label>
+        <label class="ml-2 font-size-md"> Add more Advice</label>
       </div>
     </ng-container>
 
     <ng-container *ngIf="!showAddMore">
       <span class="text-area-label font-bold">Advice </span>
-
-      <textarea
+        <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newAdvice">
+      <!-- <textarea
         *ngIf="!readOnly"
+        matInput
         class="text-area mt-2 w-100"
         name="advice"
         id=""
+        [ngbTypeahead]="search" 
+        [(ngModel)]="newAdvice"
         cols="8"
         rows="4"
-      >
-        Let the patient know that they cannot travel for atleast 2 weeks
-      </textarea>
+      ></textarea> -->
 
       <button
         *ngIf="!readOnly"
         type="button"
         class="btn cancel-add-advice-btn font-bold mt-4"
-        (click)="showAddMore = !showAddMore"
+        (click)="showAddMore = !showAddMore; newAdvice=''"
       >
         Cancel
       </button>
@@ -75,6 +76,7 @@
       <button
         *ngIf="!readOnly"
         type="button"
+        (click)="submit()" 
         class="btn cancel-add-advice-btn add-advice-btn font-bold mt-4 ml-3"
       >
         Add advice

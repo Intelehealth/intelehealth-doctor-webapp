@@ -43,11 +43,11 @@ export class DiagnosisService {
         response.forEach((element: any) => {
           element.concept.conceptMappings.forEach(name => {
             if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-              const diagnosis = {
-                name: element.concept.preferredName,
-                code: name.conceptReferenceTerm.code
-              };
-              this.diagnosisArray.push(diagnosis);
+              // const diagnosis = {
+              //   name: element.concept.preferredName,
+              //   code: name.conceptReferenceTerm.code
+              // };
+              this.diagnosisArray.push(element.concept.preferredName);
             }
           });
         });

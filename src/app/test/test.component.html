@@ -27,9 +27,9 @@
 
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
-        <li *ngFor="let test of testData" class="mb-2">
-          {{ test }}
-          <span class="btn-height click float-right">
+        <li *ngFor="let test of testData, index as i" class="mb-2">
+          {{ test.value }}
+          <span (click)="delete(i)" class="btn-height click float-right">
             <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>
         </li>
@@ -44,14 +44,14 @@
           (click)="showAddMore = !showAddMore"
         />
 
-        <label class="ml-2 font-size-md"> Add more medicines</label>
+        <label class="ml-2 font-size-md"> Add more tests</label>
       </div>
     </ng-container>
 
     <ng-container *ngIf="!showAddMore">
       <span class="text-area-label font-bold">Test </span>
-
-      <textarea
+      <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newTest">
+      <!-- <textarea
         *ngIf="!readOnly"
         class="text-area mt-2 w-100"
         name="test"
@@ -61,13 +61,13 @@
       >
     Blood pressure test
     </textarea
-      >
+      > -->
 
       <button
         *ngIf="!readOnly"
         type="button"
         class="btn cancel-add-test-btn font-bold mt-4"
-        (click)="showAddMore = !showAddMore"
+        (click)="showAddMore = !showAddMore; newTest=''"
       >
         Cancel
       </button>
@@ -75,6 +75,7 @@
       <button
         *ngIf="!readOnly"
         type="button"
+        (click)="submit()" 
         class="btn cancel-add-test-btn add-test-btn font-bold mt-4 ml-3"
       >
         Add test

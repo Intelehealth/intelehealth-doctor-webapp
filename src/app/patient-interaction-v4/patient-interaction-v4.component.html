@@ -3,21 +3,13 @@
     <div class="patient-interaction-header-content w-100">
       <img [src]="iconImg" />
       <div class="patient-interaction-img-title">Patient interaction</div>
-      <div
-        *ngIf="showToggle"
-        data-toggle="collapse"
-        data-target="#patient-interaction"
-        class="click"
-        (click)="isCollapsed = !isCollapsed"
-      >
-        <img
-          class="arrow"
-          [src]="
+      <div *ngIf="showToggle" data-toggle="collapse" data-target="#patient-interaction" class="click"
+        (click)="isCollapsed = !isCollapsed">
+        <img class="arrow" [src]="
             isCollapsed
               ? 'assets/svgs/plus-icon.svg'
               : 'assets/svgs/minus-icon.svg'
-          "
-        />
+          " />
       </div>
     </div>
 
@@ -32,25 +24,19 @@
           </ul>
         </div>
         <div class="second-list">
-          <div>
-            <img *ngIf="!readOnly" src="assets/svgs/interaction-phone.svg" />
-
-            <img
-              *ngIf="!readOnly"
-              class="ml-2"
-              src="assets/svgs/interaction-whatapp.svg"
-            />
-
-            <span *ngIf="!readOnly" class="ml-2 chw-color"
-              >Click here to connent with CHW</span
-            >
+          <div *ngIf="phoneNo;else notAvailable">
+            <a href="tel:{{ phoneNo }}"> <img *ngIf="!readOnly"
+                src="assets/svgs/interaction-phone.svg" /></a>
+            <a href="{{ whatsappLink }}" target="_blank"><img  class="ml-2" *ngIf="!readOnly"
+                src="assets/svgs/interaction-whatapp.svg" /></a>
+            <span *ngIf="!readOnly" class="ml-2 chw-color">Click here to connent with patient</span>
           </div>
 
           <div *ngIf="!readOnly" class="mt-3">
-            <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
+            <input class="radio-box mr-1 mt-1" type="radio" value="Yes" [(ngModel)]="selected" name="radio" />
             <label class="mr-3 radio-label">Yes</label>
 
-            <input class="radio-box mr-1 mt-1" type="radio" name="radio" />
+            <input class="radio-box mr-1 mt-1" type="radio" value="No" [(ngModel)]="selected" name="radio" />
             <label class="radio-label">No</label>
           </div>
 
@@ -59,6 +45,18 @@
           </div>
         </div>
       </div>
+      <button
+      *ngIf="!readOnly"
+      [disabled]="isDataPresent"
+      type="button"
+      (click)="save()"
+      class="btn cancel-add-note-btn add-note-btn font-bold mt-2 ml-3"
+    >
+     Submit
+    </button>
     </div>
   </div>
+  <ng-template #notAvailable>
+    Patient Mobile number is not Available
+  </ng-template>
 </div>
