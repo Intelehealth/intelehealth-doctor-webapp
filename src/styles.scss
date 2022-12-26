@@ -216,26 +216,47 @@ body.font-lato td {
 
 .chatbot-container .mat-dialog-container {
 
+  overflow: visible;
+  position: relative;
   padding: 0px;
   font-family: DM Sans;
   border-radius: 12px;
   box-shadow: 0px 4px 24px rgb(31 28 58 / 8%);
+
+  .modal-close-btn {
+    position: absolute;
+    top: -35px;
+    right: 0;
+    z-index: 1066;
+    width: 32px;
+    height: 32px;
+    padding: 0px;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: none;
+  }
 
   .mat-dialog-title {
     margin: 0px;
     padding: 20px;
     background: #0FD197;
     color: #FFFFFF;
+    border-radius: 12px 12px 0px 0px;
+
+    img {
+      cursor: pointer;
+    }
   }
 
   .mat-dialog-content {
     margin: 0px;
     padding: 0px 20px;
-    max-height: 300px;
+    max-height: 330px;
 
     ul.chat-item-list {
       list-style: none;
-      min-height: 300px;
+      min-height: 320px;
       padding: 0px;
       margin: 0px;
 
@@ -260,8 +281,17 @@ body.font-lato td {
         width: 100%;
         padding: 0px;
         color: #7F7B92;
-        border-radius: 8px 8px 0px 8px;
         text-align: center;
+        font-size: 12px;
+      }
+
+      li.chat-item.read-status {
+        background: #FFFFFF;
+        max-width: 100%;
+        width: 100%;
+        padding: 0px;
+        color: #7F7B92;
+        text-align: right;
         font-size: 12px;
       }
     }
