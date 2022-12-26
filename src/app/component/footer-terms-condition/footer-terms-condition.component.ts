@@ -9,16 +9,19 @@ import { ChatbotComponent } from "../chatbot/chatbot.component";
 })
 export class FooterTermsConditionComponent implements OnInit {
   @Input() showTermsAndCondition: boolean = false;
+  dialogRef: any;
 
   constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {}
 
   openDialog() {
-    const dialogRef = this.dialog.open(ChatbotComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" } });
+    if (this.dialogRef) return;
+    this.dialogRef = this.dialog.open(ChatbotComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" }, hasBackdrop: false });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+    this.dialogRef.afterClosed().subscribe(result => {
+      // console.log(`Dialog result: ${result}`);
+      this.dialogRef = undefined;
     });
   }
 }
