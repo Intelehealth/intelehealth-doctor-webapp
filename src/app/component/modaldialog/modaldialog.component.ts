@@ -8,7 +8,10 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 })
 export class ModaldialogComponent implements OnInit {
   @Input() public title: string = "";
-  @Input() public btnname: string = "";
+  @Input() public content: string = "";
+  @Input() public btnname1: string = "";
+  @Input() public btnname2: string = "";
+  @Input() public  imgpath: string = "";
   constructor(public modal: NgbActiveModal) {}
 
   ngOnInit(): void {}

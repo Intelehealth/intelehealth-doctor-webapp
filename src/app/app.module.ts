@@ -45,7 +45,7 @@ import { ModalsComponent } from "./component/ayu/modals/modals.component";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
@@ -512,6 +512,7 @@ import { PrescriptionCompletedComponent } from './component/prescription-contain
     MatNativeDateModule,
     SocketService,
     CountryData,
+    NgbActiveModal,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

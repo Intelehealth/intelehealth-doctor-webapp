@@ -46,14 +46,14 @@
       </div>
 
       <div *ngIf="!readOnly" class="w-100">
-        <input class="radio-box mr-1 mt-1" type="radio" value="Yes" (change)="type = 'Y'" name="radio" id="" />
+        <input class="radio-box mr-1 mt-1" type="radio" value="Y" [(ngModel)]="type" name="radio" id="" />
         <label class="mr-3 radio-label">Yes</label>
 
-        <input class="radio-box mr-1 mt-1" type="radio" value="No" (change)="type = 'N'" name="radio" id="" />
+        <input class="radio-box mr-1 mt-1" type="radio" value="N"  [(ngModel)]="type" name="radio" id="" />
         <label class="radio-label">No</label>
 
         <div *ngIf="type == 'Y'" class="date">
-          <input type="date"   [min]="minDate" [(ngModel)]="selecteDate" class="form-control" />
+          <input type="date"   [min]="minDate"  [(ngModel)]="selecteDate"  class="form-control" />
         </div>
 
         <div *ngIf="type == 'Y'">
@@ -64,20 +64,20 @@
             class="form-control type-here-input"
           />
         </div>
-        <button
-        *ngIf="type == 'Y'"
-        type="button"
-        [disabled]="isDataPresent"
-        (click)="submit()" 
-        class="btn add-followup-btn font-bold  mt-4"
-      >Add follow up</button>
       </div>
-
       <div *ngIf="readOnly" class="w-100">
         <label class="mr-3 radio-label">Yes</label>
         <div class="date-readonly">09/11/2022</div>
         <div class="data-label">critical heart patient</div>
       </div>
     </div>
+    <button
+    *ngIf="type == 'Y'"
+    type="button"
+    [disabled]="isDataPresent"
+    (click)="submit()" 
+    class="btn add-followup-btn font-bold  mt-4"
+  >Add follow up</button>
+
   </div>
 </div>

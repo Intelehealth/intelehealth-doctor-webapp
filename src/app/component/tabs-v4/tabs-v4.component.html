@@ -1,5 +1,5 @@
 <div class="tabs-main-container mt-3 mb-0">
-  <mat-tab-group [(selectedIndex)]="selectedIndex" mat-align-tabs="start">
+  <mat-tab-group mat-align-tabs="start">
     <!-- Current visit summary -->
     <mat-tab label="Current visit summary">
       <div class="card-shadow">
@@ -31,7 +31,7 @@
       <div *ngIf="show" class="card-shadow">
         <app-visit-notes-v4></app-visit-notes-v4>
         <div class="d-flex justify-content-center">
-          <button class="btn btn-lg share-btn my-5">Share prescription</button>
+          <button [disabled]="visitCompletePresent" (click)="sign()" class="btn btn-lg share-btn my-5">Share prescription</button>
         </div>
       </div>
     </mat-tab>
@@ -45,3 +45,7 @@
     </mat-tab>
   </mat-tab-group>
 </div>
+
+<app-visit-summary-and-prescription-modal
+  #VisitSummaryModal
+></app-visit-summary-and-prescription-modal>

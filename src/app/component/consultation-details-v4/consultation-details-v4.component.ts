@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { VisitService } from 'src/app/services/visit.service';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { SocketService } from "src/app/services/socket.service";
+import { ChatComponent } from "../chat/chat.component";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 @Component({
@@ -12,6 +13,7 @@ declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
   styleUrls: ["./consultation-details-v4.component.scss"],
 })
 export class ConsultationDetailsV4Component implements OnInit {
+  @ViewChild(ChatComponent) chatComponent: ChatComponent;
   @Input() iconImg = "assets/svgs/consultation-details-icon.svg";
   @Input() showToggle = true;
   @Input() readOnly = false;
@@ -24,6 +26,7 @@ export class ConsultationDetailsV4Component implements OnInit {
   visitStatus: string;
   hwPhoneNo: number;
   specialization;
+  isOpenChat : boolean = false;
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
@@ -101,5 +104,9 @@ export class ConsultationDetailsV4Component implements OnInit {
         break;
     }
     return statusName;
+  }
+
+  getChat() {
+    this.chatComponent.chatLaunch();
   }
 }

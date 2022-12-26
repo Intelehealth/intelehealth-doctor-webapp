@@ -20,11 +20,11 @@
         <div class="p-0">
           <ul class="first-list p-0">
             <li *ngIf="!readOnly" class="mb-4">Connect with patient</li>
-            <li class="mb-4">Have you spoken with the patient directly?</li>
+            <li *ngIf="phoneNo"class="mb-4">Have you spoken with the patient directly?</li>
           </ul>
         </div>
-        <div class="second-list">
-          <div *ngIf="phoneNo;else notAvailable">
+        <div *ngIf="phoneNo;else notAvailable" class="second-list">
+          <div >
             <a href="tel:{{ phoneNo }}"> <img *ngIf="!readOnly"
                 src="assets/svgs/interaction-phone.svg" /></a>
             <a href="{{ whatsappLink }}" target="_blank"><img  class="ml-2" *ngIf="!readOnly"
@@ -46,7 +46,7 @@
         </div>
       </div>
       <button
-      *ngIf="!readOnly"
+      *ngIf="!readOnly && phoneNo"
       [disabled]="isDataPresent"
       type="button"
       (click)="save()"
@@ -57,6 +57,6 @@
     </div>
   </div>
   <ng-template #notAvailable>
-    Patient Mobile number is not Available
+    Patient Mobile number is not available
   </ng-template>
 </div>

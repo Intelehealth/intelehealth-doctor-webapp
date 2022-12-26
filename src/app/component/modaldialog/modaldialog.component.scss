@@ -41,6 +41,8 @@ left: calc(50% - 280px);
     grid-area: para;
     align-self: left;
     margin-left: 1rem;
+    align-items: center;
+    text-align: center;
  }
  .popup-buttton{
     grid-area: btntry;

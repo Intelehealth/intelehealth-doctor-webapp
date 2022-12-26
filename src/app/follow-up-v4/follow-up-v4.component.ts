@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import * as moment from "moment";
 import { DiagnosisService } from "../services/diagnosis.service";
 import { EncounterService } from "../services/encounter.service";
 declare var getEncounterUUID: any;
@@ -21,7 +22,7 @@ export class FollowUpV4Component implements OnInit {
   patientId: string;
   visitUuid: string;
   followUp = [];
-  selecteDate:Date;
+  selecteDate;
   selecteAdvice:string;
   isDataPresent:boolean=false;
   followUpData = [
@@ -42,9 +43,12 @@ export class FollowUpV4Component implements OnInit {
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.selecteDate = obs.value.split(", Remark: ")[0];
+          let date1 = obs.value.split(", Remark: ")[0].replaceAll('-','/');
+           let selecteDate = moment(date1,'DD/MM/YYYY').toISOString();
+          this.selecteDate = this.datepipe.transform(selecteDate, 'yyyy-MM-dd');
           this.selecteAdvice = obs.value.split(", Remark: ")[1];
           this.isDataPresent = true;
+          this.type = "Y";
         }
       });
     });
