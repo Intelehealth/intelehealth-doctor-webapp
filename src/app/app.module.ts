@@ -176,7 +176,7 @@ import { PopupFormComponent } from './component/admin-container/popup-form/popup
 import { PrescriptionContainerComponent } from "./component/prescription-container/prescription-container.component";
 import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
 import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
-import { ChatbotComponent } from './component/chatbot/chatbot.component';
+import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
 
 @NgModule({
   declarations: [
@@ -290,7 +290,7 @@ import { ChatbotComponent } from './component/chatbot/chatbot.component';
     PrescriptionCompletedComponent,
     PrescriptionCompletedComponent,
     PrescriptionSentComponent,
-    ChatbotComponent
+    HelpmenuComponent
   ],
 
   imports: [

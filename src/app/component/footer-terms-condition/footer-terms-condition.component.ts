@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import {MatDialog} from '@angular/material/dialog';
-import { ChatbotComponent } from "../chatbot/chatbot.component";
+import { HelpmenuComponent } from "../helpmenu/helpmenu.component";
 
 @Component({
   selector: "app-footer-terms-condition",
@@ -17,7 +17,7 @@ export class FooterTermsConditionComponent implements OnInit {
 
   openDialog() {
     if (this.dialogRef) return;
-    this.dialogRef = this.dialog.open(ChatbotComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" }, hasBackdrop: false });
+    this.dialogRef = this.dialog.open(HelpmenuComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" }, hasBackdrop: false });
 
     this.dialogRef.afterClosed().subscribe(result => {
       // console.log(`Dialog result: ${result}`);
