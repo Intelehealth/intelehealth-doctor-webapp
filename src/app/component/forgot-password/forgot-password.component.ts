@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { OtpService } from "src/app/services/otp.service";
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,10 +15,25 @@ export class ForgotPasswordComponent implements OnInit {
     username: new FormControl("", [Validators.required]),
   });
 
-  constructor() {}
+  constructor(     
+    private router: Router,
+    private otpservice: OtpService,
+  ) {}
   ngOnInit() {
   }
   onSubmit() {
     this.onSucess.emit(true);
+    this.router.navigateByUrl("/login/otp-verification");
+    // this.otpservice
+    //   .getOTP("sign-in-button", this.drPhoneNumber)
+    //   .subscribe((confimationResult) => {
+    //     localStorage.setItem(
+    //       "verificationId",
+    //       JSON.stringify(confimationResult.verificationId)
+    //     );
+    //     localStorage.setItem("mobilenumber", this.drPhoneNumber);
+    //     this.onSucess.emit(true);
+    //     this.router.navigateByUrl("/login/otp-verification");
+    //   });
   }
 }
