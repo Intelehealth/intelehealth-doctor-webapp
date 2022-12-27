@@ -14,6 +14,7 @@ export class NotesV4Component implements OnInit {
   @Input() readOnly = false;
   @Input() showToggle = true;
 
+  showAddMore = false;
   isCollapsed = false;
   conceptNote = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   patientId: string;

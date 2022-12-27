@@ -49,7 +49,7 @@ export class VisitService {
 
   fetchVisitDetails(
     uuid,
-    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;

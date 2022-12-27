@@ -7,6 +7,7 @@ import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
 import * as moment from "moment";
 import { AppointmentService } from "src/app/services/appointment.service";
+import { HeaderService } from "src/app/services/header.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 @Component({
@@ -165,7 +166,10 @@ export class DashboardSummaryPageComponent implements OnInit {
     private socket: SocketService,
     private helper: HelperService,
     private appointmentService: AppointmentService,
-  ) {}
+    private headerSvc :HeaderService
+  ) {
+    this.headerSvc.showSearchBar = true;
+  }
 
   ngOnInit() {
     if (getFromStorage("visitNoteProvider")) {
@@ -354,9 +358,9 @@ export class DashboardSummaryPageComponent implements OnInit {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = encounter.encounterType.display;
-    this.value.provider = encounter.encounterProviders[0].provider.display.split("- ")[1];
-    this.value.lastSeen = encounter.encounterDatetime;
+    this.value.status = encounter?.encounterType.display;
+    this.value.provider = encounter?.encounterProviders[0].provider.display.split("- ")[1];
+    this.value.lastSeen = encounter?.encounterDatetime;
     this.value.complaints = this.getComplaints(active);
     this.value.visitCreated = this.getVisisCreated(active);
     this.value.startIn = this.startIn(drSlots);    

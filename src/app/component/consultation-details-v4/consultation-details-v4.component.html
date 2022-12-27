@@ -23,7 +23,7 @@
 
           <li class="first-list mb-3">Visit created</li>
 
-          <li class="first-list mb-3">Appointment on</li>
+          <!-- <li class="first-list mb-3">Appointment on</li> -->
 
           <li class="first-list mb-3">Status</li>
 
@@ -39,13 +39,13 @@
             <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }} </label>
           </div>
           <div>
-            <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }}</label>
+            <!-- <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }}</label> -->
           </div>
           <div>
             <label class="margin  mt-1" [ngClass]="{
               'pirorityRed': visitStatus === 'Priority visit',
               'light-green':
-              visitStatus === 'Awaiting visit' || visitStatus === 'In-progress visit'
+              visitStatus === 'Awaiting visit' || visitStatus === 'In-progress visit' || visitStatus === 'Completed visit'
             }"> {{visitStatus}} </label>
           </div>
 

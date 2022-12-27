@@ -1,5 +1,5 @@
 <div class="past-visit-main w-100">
-  <div class="table">
+  <div class="table" *ngIf="isPastVisitsPresent">
     <table class="table table-borderless w-100">
       <tr class="grey-color">
         <th
@@ -36,7 +36,7 @@
             <div *ngSwitchCase="header?.type === 'pill'">
               <div *ngFor="let btn of header?.pill" class="{{ btn?.btnClass }}">
                 <img class="mr-1" [src]="data[header?.imageKey]" />
-                {{ btn?.label }}
+                {{ data?.label }}
               </div>
             </div>
 
@@ -109,6 +109,9 @@
         </td>
       </tr>
     </table>
+  </div>
+  <div *ngIf="!isPastVisitsPresent">
+      No past visit history available
   </div>
 </div>
 

@@ -16,7 +16,7 @@
       <button class="camera" (click)="inputField.click()">
         <i class="fas fa-camera"></i>
       </button>
-      <span class="txt">{{userName}}</span>
+      <p class="txt">{{drName}} <br> (Username: {{userName}})</p> 
     </div>
     <input #inputField hidden type="file" (change)="onSelectFile($event)"/>
   </div>

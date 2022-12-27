@@ -26,22 +26,22 @@ export class ConsultationDetailsV4Component implements OnInit {
   visitStatus: string;
   hwPhoneNo: number;
   specialization;
-  isOpenChat : boolean = false;
+  isOpenChat: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
     private sessionService: SessionService,
     private authService: AuthService,
     private socket: SocketService
-    ) { }
+  ) { }
 
   ngOnInit() {
     const visitId = this.route.snapshot.params['visit_id'];
     this.visitService.fetchVisitDetails(visitId)
       .subscribe(visitDetailData => {
         this.visitDetail = visitDetailData;
-        this.visitCreated = this.visitDetail.startDatetime
-        this.visitID = visitDetailData.patient.identifiers[0].identifier
+        this.visitCreated = this.visitDetail.startDatetime;
+        this.visitID = visitId.replace(/.(?=.{4})/g, 'x');
         this.clinicName = visitDetailData.display.split('@ ')[1].split(' -')[0];
         visitDetailData.encounters.forEach(encounter => {
           if (encounter.display.match('ADULTINITIAL') !== null) {
@@ -101,6 +101,9 @@ export class ConsultationDetailsV4Component implements OnInit {
         break;
       case 'Visit Note':
         statusName = 'In-progress visit'
+        break;
+      case 'Visit Complete':
+        statusName = 'Completed visit'
         break;
     }
     return statusName;

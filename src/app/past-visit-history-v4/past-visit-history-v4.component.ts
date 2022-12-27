@@ -1,6 +1,9 @@
+import { DatePipe } from "@angular/common";
 import { Component, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { VisitSummaryAndPrescriptionModalComponent } from "../modals/visit-summary-and-prescription-modal/visit-summary-and-prescription-modal.component";
+import { VisitService } from "../services/visit.service";
 
 @Component({
   selector: "app-past-visit-history-v4",
@@ -27,7 +30,7 @@ export class PastVisitHistoryV4Component implements OnInit {
       {
         name: "Consulted by",
         type: "stringwithimage",
-        key: "patientName",
+        key: "drName",
         imageKey: "profile",
         headerClass: "font-size-md font-bold",
       },
@@ -75,49 +78,82 @@ export class PastVisitHistoryV4Component implements OnInit {
         ],
       },
     ],
-    data: [
-      {
-        patientName: "Muskan Kala (F,24)",
-        profile: "assets/svgs/table-profile.svg",
-        complaint: "Fever",
-        PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-        summary: "assets/svgs/summary-list-blue-icon.svg",
-        PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-        createdOn: "5 May, 2022",
-        stepper: "assets/svgs/green-color-steper.svg",
-        isActive: true,
-      },
-      {
-        patientName: "Dr. Aman Sharma (M)",
-        profile: "assets/svgs/table-profile.svg",
-        complaint: "Fever & Cough",
-        summary: "assets/svgs/summary-list-blue-icon.svg",
-        PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-        PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-        createdOn: "21 Apr, 2022",
-        stepper: "assets/svgs/green-color-steper.svg",
-        isActive: true,
-        isReassigned: true,
-        reassignedHintText: {
-          speciality: "Pediatrician",
-          date: "10 June",
-        },
-      },
-      {
-        patientName: "Dr. Aman Sharma (M)",
-        profile: "assets/svgs/table-profile.svg",
-        complaint: "Fever & Cough",
-        summary: "assets/svgs/summary-list-blue-icon.svg",
-        PrescriptionSentIcon: "assets/svgs/Prescription-sent-icon.svg",
-        PrescriptionIcon: "assets/svgs/Prescription-green-Icon.svg",
-        createdOn: "21 Apr, 2022",
-        stepper: "assets/svgs/green-color-steper.svg",
-        isActive: true,
-      },
-    ],
+    data: [],
   };
+  isPastVisitsPresent:boolean = false;
 
-  constructor(public modalSvc: NgbModal) {}
+  constructor(public modalSvc: NgbModal,
+    private route: ActivatedRoute,
+    private service: VisitService,
+    private datepipe: DatePipe) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const patientUuid = this.route.snapshot.paramMap.get('patient_id');
+    const visitUuid = this.route.snapshot.paramMap.get('visit_id');
+    this.service.recentVisits(patientUuid)
+      .subscribe(response => {
+        const visits = response.results;
+        if (visits.length > 1) {
+          this.isPastVisitsPresent = true;
+          visits.forEach(visit => {
+            if (visit.uuid !== visitUuid)
+              this.service.fetchVisitDetails(visit.uuid)
+                .subscribe(visitDetails => {
+                  let recentVisit: any = { };
+                  recentVisit.createdOn = this.datepipe.transform(new Date(visitDetails.startDatetime), 'dd MMM, yyyy');
+                  const encounters = visitDetails.encounters;
+                  encounters.forEach(encounter => {
+                    const display = encounter.display;
+                    if (display.match('ADULTINITIAL') !== null) {
+                      const obs = encounter.obs;
+                      obs.forEach(res => {
+                        if (res.display.match('CURRENT COMPLAINT') !== null) {
+                          const currentComplaint = res.display.split('<b>');
+                          for (let i = 1; i < currentComplaint.length; i++) {
+                            const obs1 = currentComplaint[i].split('<');
+                            if (!obs1[0].match('Associated symptoms')) {
+                              recentVisit.complaint = obs1[0];
+                            }
+                          }
+                        }
+                      });
+                    }
+                    if (display.match("Visit Complete") !== null) {
+                      recentVisit.drName = encounter.encounterProviders[0].display;
+                      recentVisit["label"] = this.getPrescriptionsentTime(encounter.encounterDatetime);
+                      console.log("recentVisit",recentVisit)
+                      recentVisit = this.getObj(recentVisit);
+                      this.pastVisitHistory.data.push(recentVisit)
+                    }
+                  });
+                });
+          });
+        }
+      });
+  }
+
+  getPrescriptionsentTime(date) {
+    const start = new Date().getTime();
+    const end = new Date(date).getTime();
+    let time = start - end;  
+    let diffDays = Math.floor(time /  86400000)
+    var diff =(new Date().getTime() - new Date(date).getTime()) / 1000;
+      diff /= (60 * 60);
+     let diffHours =  Math.abs(Math.round(diff));
+    if(diffHours < 24){
+      return  diffHours + " hr ago";
+    } else {
+      return this.datepipe.transform(new Date(date), 'dd MMM, yyyy');
+    }
+  }
+
+  getObj(recentVisit) {
+    let visit = recentVisit;
+    visit.profile = "assets/svgs/table-profile.svg";
+    visit.summary = "assets/svgs/summary-list-blue-icon.svg";
+    visit.PrescriptionSentIcon = "assets/svgs/Prescription-sent-icon.svg";
+    visit.PrescriptionIcon = "assets/svgs/Prescription-green-Icon.svg";
+    visit.stepper = "assets/svgs/green-color-steper.svg";
+    return visit;
+  }
 }
