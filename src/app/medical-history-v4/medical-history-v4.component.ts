@@ -71,7 +71,7 @@ export class MedicalHistoryV4Component implements OnInit {
               obsData["value"] = this.filterFamily[1].slice(0, 7);
               this.familyHistory.push(obsData);
             } else {
-              obsData["label"] = this.filterFamily[0];
+              obsData["label"] = this.filterFamily[0].includes(">") ? this.filterFamily[0].split(">")[1]: this.filterFamily[0];
               obsData["value"] = this.filterFamily[1].slice(0, -5);
               this.familyHistory.push(obsData);
             }

@@ -27,18 +27,18 @@
 
     <div class="d-flex justify-content-center mb-2 w-100">
       <ul class="first-list p-0 m-0">
-        <li *ngFor="let note of noteData" class="mb-2">
-          {{ note }}
-          <span class="btn-height click float-right">
+        <li *ngFor="let note of noteData, index as i" class="mb-2">
+          {{ note.value }}
+          <span (click)="delete(i)" class="btn-height click float-right">
             <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
           </span>
         </li>
       </ul>
     </div>
-    <ng-container *ngIf="noteData.length < 3">
+    <ng-container *ngIf="noteData.length < 3 && !showAddMore">
       <span class="text-area-label font-bold">Note</span>
       <span class="text-area-label no-info-color"
-        >(Not shared with patient)</span
+        > (Not shared with patient)</span
       >
 
       <textarea
@@ -47,17 +47,18 @@
         name="note"
         cols="8"
         rows="4"
+        [(ngModel)]="noteValue"
       >
-Let the patient know that they cannot travel for atleast 2 weeks
   </textarea
       >
+      {{error}}
       <div class="ml-label" *ngIf="readOnly">
         Let the patient know that they cannot travel for atleast 2 weeks
       </div>
-
       <button
         *ngIf="!readOnly"
         type="button"
+        (click)="showAddMore = !showAddMore;noteValue = ''"
         class="btn cancel-add-note-btn font-bold mt-4"
       >
         Cancel
@@ -66,10 +67,22 @@ Let the patient know that they cannot travel for atleast 2 weeks
       <button
         *ngIf="!readOnly"
         type="button"
+        (click)="submit()"
         class="btn cancel-add-note-btn add-note-btn font-bold mt-4 ml-3"
       >
         Add note
       </button>
+    </ng-container>
+    <ng-container *ngIf="!readOnly">
+      <div *ngIf="showAddMore">
+        <img
+          class="click"
+          src="assets/svgs/add-more-plus-icon.svg"
+          (click)="showAddMore = !showAddMore"
+        />
+
+        <label class="ml-2 font-size-md"> Add more note</label>
+      </div>
     </ng-container>
   </div>
 </div>

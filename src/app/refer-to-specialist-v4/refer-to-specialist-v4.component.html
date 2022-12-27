@@ -2,7 +2,7 @@
   <div class="refer-to-specailist-header w-100">
     <div class="refer-to-specailist-header-content w-100">
       <img src="assets/svgs/refer-to-specialist.svg" />
-      <div class="refer-to-specailist-img-title">Refer-to-specailist</div>
+      <div class="refer-to-specailist-img-title">Refer-to-specialist</div>
       <div
         data-toggle="collapse"
         data-target="#refer-to-specailist"
@@ -22,8 +22,11 @@
     <div class="d-flex ml-4">
       <div class="ml-4">
         <ul class="d-grid p-0">
-          <li class="d-flex mb-3" *ngFor="let item of referToSpecailist?.data">
-            <div class="first-list-label mb-3">{{ item }}</div>
+          <li class="d-flex mb-3">
+            <div class="first-list-label mb-3">{{ referToSpecailist?.data[0] }}</div>
+          </li>
+          <li class="d-flex mb-3" *ngIf="type == 'Y'">
+            <div class="first-list-label mb-3">{{ referToSpecailist?.data[1] }}</div>
           </li>
         </ul>
       </div>
@@ -35,7 +38,7 @@
         <input class="radio-box mr-1 mt-1" type="radio" (change)="type = 'N'" name="radio" id="" />
         <label class="radio-label">No</label>
 
-        <div class="select">
+        <div class="select" *ngIf="type == 'Y'">
           <ng-select
             [items]="specaiList"
             bindLabel="name"
@@ -46,6 +49,6 @@
         </div>
       </div>
     </div>
-    <button type="button" class="btn ml-4 mt-1 font-bold">Re-assign</button>
+    <button *ngIf="type == 'Y'" type="button"(click)="Submit()"  class="btn ml-4 mt-1 font-bold">Re-assign</button>
   </div>
 </div>

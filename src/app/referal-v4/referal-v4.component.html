@@ -2,7 +2,7 @@
   <div class="referal-header w-100">
     <div class="referal-header-content w-100">
       <img [src]="iconImg" />
-      <div class="referal-img-title">Referal</div>
+      <div class="referal-img-title">Referral</div>
       <div
         *ngIf="showToggle"
         data-toggle="collapse"
@@ -37,17 +37,17 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let row of data">
+          <tr *ngFor="let row of referralData, index as i">
             <td *ngFor="let header of headers">
               <ng-container *ngIf="header?.type === 'remark'; else elseBlock">
                 {{ row[header.key] }}
-                <span class="btn-height click float-right">
+                <span (click)="delete(i)" class="btn-height click float-right">
                   <img *ngIf="!readOnly" src="assets/svgs/delete-icon.svg" />
                 </span>
               </ng-container>
 
               <ng-template #elseBlock>
-                {{ row[header.key] }}
+               {{i+1}}. {{ row[header.key] }}
               </ng-template>
             </td>
           </tr>
@@ -60,7 +60,7 @@
                     [items]="referalList"
                     bindLabel="name"
                     [clearable]="false"
-                    [(ngModel)]="selected"
+                    [(ngModel)]="referal"
                   >
                   </ng-select>
                 </div>
@@ -73,6 +73,7 @@
                     type="text"
                     name=""
                     placeholder="Type here"
+                    [(ngModel)]="remark"
                     id=""
                   />
                 </div>
@@ -91,7 +92,7 @@
           (click)="showAddMore = !showAddMore"
         />
 
-        <label class="ml-2 font-size-md"> Add more medicines</label>
+        <label class="ml-2 font-size-md"> Add more referral</label>
       </div>
     </ng-container>
 
@@ -102,14 +103,15 @@
           class="btn cancel-save-btn font-bold"
           (click)="showAddMore = !showAddMore"
         >
-          cancel
+          Cancel
         </button>
 
         <button
           type="button"
+          (click)="submit()"
           class="btn cancel-save-btn save-btn font-bold ml-3"
         >
-          Save
+          Add referral
         </button>
       </div>
     </ng-container>

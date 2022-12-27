@@ -28,8 +28,8 @@
         </th>
       </tr>
       <tr
-        *ngFor="let data of table?.data"
-        [ngClass]="{ active: data?.isActive }"
+        *ngFor="let data of pagedItems"
+        [ngClass]="{ actives: data?.isActive }"
         class="table-height"
         [routerLink]="['/dashboard/visit-summary', data?.patientId, data?.visitId]" 
       >
@@ -78,8 +78,27 @@
         </td>
       </tr>
     </table>
+
+    <!-- pager -->
+    <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+      <li>{{1}} of {{allItems.length}} Patient</li>
+      <li [ngClass]="{disabled:pager.currentPage === 1}" >
+          <a (click)="setPage(pager.currentPage - 1)">
+            <img src="assets/svgs/Vector_left.svg" style="cursor: pointer;">
+          </a>
+      </li>
+      <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}" style="cursor: pointer;">
+          <a (click)="setPage(page)">{{page}}</a>
+      </li>
+      <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+          <a (click)="setPage(pager.currentPage + 1)">
+            <img src="assets/svgs/Vector_right.svg" style="cursor: pointer;">
+          </a>
+      </li>
+    </ul>
   </div>
 
+  <!-- modal -->
   <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

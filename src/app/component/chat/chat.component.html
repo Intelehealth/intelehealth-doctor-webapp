@@ -1,6 +1,3 @@
-<div class="chat-button" id="chat-button" (click)="chatLaunch()">
-  <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
-</div>
 <div [class.active]="classFlag" class="chat card container col-md-3">
   <div class="card-header" (click)="chatClose()">
     <h6>Chat &nbsp;{{ isOnline ? "" : "(you are offline)" }}</h6>

@@ -10,12 +10,11 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 export class CheckUpReasonV4Component implements OnInit {
   @Input() pastVisit = false;
   filters = [];
-  b: any;
   complaintsData = [];
   mainObs = {};
   complaint: any = [];
   conceptComplaint = "3edb0e09-9135-481e-b8f0-07a26fa9a5ce";
-  header: string = "";
+  headers =[];
   symptoms: string = "";
   symptomsData = [];
 
@@ -37,11 +36,16 @@ export class CheckUpReasonV4Component implements OnInit {
         });
 
         if (this.complaint.length > 0 && this.complaint !== undefined) {
+            const currentComplaint = this.complaint[0].value.split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                this.headers.push(obs1[0]);
+              } 
+            }
           this.filters = this.complaint[0].value.split("<br/>");
           for (let i of this.filters) {
-            if (this.filters[0] == i) {
-              this.header = i.slice(4, -6);
-            } else if (i == " ►<b>Associated symptoms</b>: ") {
+            if (i == " ►<b>Associated symptoms</b>: ") {
               this.symptoms = i.slice(5, -6);
               let Idex = this.filters.slice(this.filters.indexOf(i) + 1, -1);
               for (let j of Idex) {
@@ -55,10 +59,14 @@ export class CheckUpReasonV4Component implements OnInit {
               }
               break;
             } else {
-              this.b = i.split(" - ");
+              let b = i.split(" - ");
               let obsData = {};
-              obsData["label"] = this.b[0].slice(1);
-              obsData["value"] = this.b[1];
+              if(!b[0].includes("<b>")) {
+                obsData["label"] = b[0].slice(1);
+                obsData["value"] = b[1] ? b[1] : 'None';
+              } else {
+                obsData["label"] = b[0];
+              }
               this.complaintsData.push(obsData);
             }
           }

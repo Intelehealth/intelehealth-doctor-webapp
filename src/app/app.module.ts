@@ -45,7 +45,7 @@ import { ModalsComponent } from "./component/ayu/modals/modals.component";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
@@ -173,6 +173,7 @@ import { AppointmentDetailModalComponent } from './modals/appointment-detail-mod
 import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
 import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
 import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
+import { PagerService } from './services/pager.service';
 import { PrescriptionContainerComponent } from "./component/prescription-container/prescription-container.component";
 import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
 import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
@@ -509,6 +510,7 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
     }),
   ],
   providers: [
+    PagerService,
     OtpService,
     CookieService,
     AuthGuard,
@@ -517,6 +519,7 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
     MatNativeDateModule,
     SocketService,
     CountryData,
+    NgbActiveModal,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

@@ -41,11 +41,11 @@
 }
 
 .arrow {
-  
+
   position: absolute;
   top: 45px;
   right: 45px;
-  
+
   padding: 8px;
 }
 
@@ -124,4 +124,14 @@
 .associated-font {
   font-weight: 600;
   font-size: 18px;
+}
+
+.image {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin-left: 5px;
 }

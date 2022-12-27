@@ -32,38 +32,52 @@
 
     <div class="d-flex gap w-100">
       <div>
-        <ul *ngFor="let follow of followUpData" class="padding">
+        <ul class="padding">
           <li class="margin">
-            {{ follow }}
+            {{ followUpData[0] }}
+          </li>
+          <li  class="margin" *ngIf="type == 'Y'">
+            {{ followUpData[1] }}
+          </li>
+          <li class="margin" *ngIf="type == 'Y'">
+            {{ followUpData[2] }}
           </li>
         </ul>
       </div>
 
       <div *ngIf="!readOnly" class="w-100">
-        <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
+        <input class="radio-box mr-1 mt-1" type="radio" value="Y" [(ngModel)]="type" name="radio" id="" />
         <label class="mr-3 radio-label">Yes</label>
 
-        <input class="radio-box mr-1 mt-1" type="radio" name="radio" id="" />
+        <input class="radio-box mr-1 mt-1" type="radio" value="N"  [(ngModel)]="type" name="radio" id="" />
         <label class="radio-label">No</label>
 
-        <div class="date">
-          <input type="date" class="form-control" />
+        <div *ngIf="type == 'Y'" class="date">
+          <input type="date"   [min]="minDate"  [(ngModel)]="selecteDate"  class="form-control" />
         </div>
 
-        <div>
+        <div *ngIf="type == 'Y'">
           <input
             type="text"
+            [(ngModel)]="selecteAdvice"
             placeholder="Type here"
             class="form-control type-here-input"
           />
         </div>
       </div>
-
       <div *ngIf="readOnly" class="w-100">
         <label class="mr-3 radio-label">Yes</label>
         <div class="date-readonly">09/11/2022</div>
         <div class="data-label">critical heart patient</div>
       </div>
     </div>
+    <button
+    *ngIf="type == 'Y'"
+    type="button"
+    [disabled]="isDataPresent"
+    (click)="submit()" 
+    class="btn add-followup-btn font-bold  mt-4"
+  >Add follow up</button>
+
   </div>
 </div>

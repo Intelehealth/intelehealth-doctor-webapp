@@ -4,6 +4,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { environment } from "../../../environments/environment";
 import * as moment from "moment";
 import { DatePipe } from "@angular/common";
+import { ProfileService } from "src/app/services/profile.service";
 
 @Component({
   selector: "app-patient-details",
@@ -18,11 +19,14 @@ export class PatientDetailsComponent implements OnInit {
   info = {};
   age: any = {};
   now: any;
+  whatsappLink: string;
+  personImageURL = 'assets/svgs/v-profile.svg';
 
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private profileService: ProfileService
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +39,7 @@ export class PatientDetailsComponent implements OnInit {
       this.info["attributes"].forEach((attri) => {
         if (attri.attributeType.display.match("Telephone Number")) {
           this.info["telephone"] = attri.value;
+          this.whatsappLink = this.visitService.getWhatsappLink(this.info["telephone"],`Hello I'm calling for consultation`);
         } else if (attri.attributeType.display.match("occupation")) {
           this.info["occupation"] = attri.value;
         } else if (attri.attributeType.display.match("Health Scheme Card")) {
@@ -42,6 +47,11 @@ export class PatientDetailsComponent implements OnInit {
         }
       });
       this.patientInfo.push(this.info);
+    });
+    this.profileService.getProfileImage(uuid).subscribe((response) => {
+      this.personImageURL = `${this.profileService.baseURL}/personimage/${uuid}`;
+    }, (err) => {
+      this.personImageURL = this.personImageURL;
     });
   }
 

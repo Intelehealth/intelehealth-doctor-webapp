@@ -8,12 +8,14 @@ declare var getFromStorage: any;
 })
 export class ProfileContainerComponent implements OnInit {
   userName: string;
+  drName:string;
   providerInfo;
   personImageURL = "assets/images/profile/Frame 2609036.png";
   constructor(private profileService: ProfileService) { }
 
   ngOnInit(): void {
-    this.userName = getFromStorage("doctorName");
+    this.drName = getFromStorage("doctorName");
+    this.userName = getFromStorage("user").display;
     this.providerInfo = getFromStorage("provider");
     this.profileService.getProfileImage(this.providerInfo.person.uuid).subscribe((response) => {
       this.personImageURL = `${this.profileService.baseURL}/personimage/${this.providerInfo.person.uuid}`;
