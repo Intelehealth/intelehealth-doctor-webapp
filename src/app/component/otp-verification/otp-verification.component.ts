@@ -10,6 +10,9 @@ import { OtpService } from "src/app/services/otp.service";
   styleUrls: ["./otp-verification.component.scss"],
 })
 export class OtpVerificationComponent implements OnInit {
+  time = new Date().getTime()+180000;
+  mins: number;
+  secs:number;
   otp: string;
   verify: any;
   constructor(private otpservice: OtpService, private router: Router) {}
@@ -43,7 +46,8 @@ export class OtpVerificationComponent implements OnInit {
       .then((response) => {
         console.log(response);
         localStorage.setItem("user_data", JSON.stringify(response));
-        this.router.navigate(["/dashboard"]);
+        // this.router.navigate(["/dashboard"]);
+        this.router.navigateByUrl("/login/set-new-password");
       })
       .catch((error) => {
         console.log(error);
@@ -56,4 +60,13 @@ export class OtpVerificationComponent implements OnInit {
       alert("OTP resend sucessfully");
     });
   }
+  x = setInterval(()=>{
+    var today = new Date().getTime();
+    var differ = this.time - today;
+    this.mins = Math.floor((differ % (1000 * 60 * 60)) / (1000 * 60));
+    this.secs = Math.floor((differ % (1000 * 60)) / (1000));  
+    if(differ < 0){
+      clearInterval(this.x)
+    }
+  },1000)
 }

@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, AfterViewInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 import { OtpService } from "src/app/services/otp.service";
 import { CountryData } from "../country-data/country-data";
 
@@ -8,7 +9,7 @@ import { CountryData } from "../country-data/country-data";
   templateUrl: "./forgot-username.component.html",
   styleUrls: ["./forgot-username.component.scss"],
 })
-export class ForgotUsernameComponent implements OnInit {
+export class ForgotUsernameComponent implements OnInit, AfterViewInit {
   @Output() onSucess = new EventEmitter<boolean>();
 
   countryCode: any = this.country.country_Codes.map((code: any) => {
@@ -25,22 +26,29 @@ export class ForgotUsernameComponent implements OnInit {
   });
 
   showEmail: boolean = false;
-  // reCaptchaVerifier: any;
+  reCaptchaVerifier: any;
   auth: any;
   windowRef: any;
-  constructor(private otpservice: OtpService, private country: CountryData) {
+  constructor(
+    private otpservice: OtpService,
+    private country: CountryData,
+    private router: Router
+  ) {
     this.verificationForm.controls["selectedCode"].setValue(this.default, {
       onlySelf: true,
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    //firebase.initializeApp(config);
+  }
+  ngAfterViewInit() {}
   setShowEmail(show: boolean) {
     this.showEmail = show;
   }
   onSubmit() {
     var value = this.verificationForm.value;
-    var mobileNumber = value.code + value.phoneNumber;
+    var mobileNumber = value.selectedCode + value.phoneNumber;
     this.otpservice
       .getOTP("sign-in-button", mobileNumber)
       .subscribe((confimationResult) => {
@@ -50,6 +58,7 @@ export class ForgotUsernameComponent implements OnInit {
         );
         localStorage.setItem("mobilenumber", mobileNumber);
         this.onSucess.emit(true);
+        this.router.navigateByUrl("/login/otp-verification");
       });
   }
 }

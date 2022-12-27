@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from "@angular/forms";
+import { MustMatch } from './password.validator';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../environments/environment';
+import { SessionService } from 'src/app/services/session.service';
+import { PushNotificationsService } from 'src/app/services/push-notification.service';
 declare var getFromStorage: any;
 
 @Component({
@@ -8,25 +14,67 @@ declare var getFromStorage: any;
   styleUrls: ['./set-new-password.component.scss']
 })
 export class SetNewPasswordComponent implements OnInit {
-  signupForm: FormGroup;
+  baseURL = environment.baseURL;
+  setNewPasswordForm: FormGroup;
+  userUuid: string;
   passwordIsValid = false;
   showPassword: boolean = false;
   userName: string;
 
-  constructor(private fb: FormBuilder) {}
-  onSubmit(){ }
-
-  showHidePassword() {
-    this.showPassword = !this.showPassword;
+  constructor(
+    private formBuilder: FormBuilder,
+    private http: HttpClient,
+    private snackbar: MatSnackBar,
+    private pushNotificationsService: PushNotificationsService,
+  ) {
+    this.setNewPasswordForm = this.formBuilder.group({
+      newPassword: ['', Validators.required],
+      confirmPassword: new FormControl("", [Validators.required])
+    }, {
+      validator: MustMatch('newPassword', 'repeatPassword')
+    });
   }
 
   ngOnInit() {
-    this.signupForm = this.fb.group({
-      password: ['', Validators.required],
-      confirmPassword: new FormControl("", [Validators.required])
-    });
     let user = getFromStorage("user");
     this.userName = user?.person?.display;
+    this.userUuid = user.uuid;
+  }
+
+  onSubmit(){ 
+    const value = this.setNewPasswordForm.value;
+    const url = `${this.baseURL}/password`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Basic my-auth-token'
+      })
+    };
+
+    const json = {
+      'oldPassword': value.currentPassword,
+      'newPassword': value.newPassword
+    };
+
+    const json1 = {
+      'userId': this.userUuid
+    }
+    this.http.post(url, json, httpOptions)
+    .subscribe(response => {
+      if (response == null) {
+        this.pushNotificationsService.changePassword(json1).subscribe((response)=>{
+          this.snackbar.open('Password changed successfully.', null, { duration: 4000 });
+        })
+      }
+    }, error => {
+      if (error.error.message.match('Old password is not correct.')) {
+        this.snackbar.open('Old password is incorrect.', null, { duration: 4000 });
+      }
+    });
+  }
+
+  showHidePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   passwordValid(event) {

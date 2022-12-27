@@ -338,6 +338,7 @@ import { PagerService } from './services/pager.service';
               component: LoginVerificationComponent,
             },
             { path: "otp-verification", component: OtpVerificationComponent },
+            { path: "set-new-password", component: SetNewPasswordComponent },
           ],
         },
         {
@@ -407,7 +408,7 @@ import { PagerService } from './services/pager.service';
             },
           ],
         },
-        { path: "set-new/password", component: SetNewPasswordComponent },
+        // { path: "set-new/password", component: SetNewPasswordComponent },
         // {
         //   path: "",
         //   component: MainComponent,
