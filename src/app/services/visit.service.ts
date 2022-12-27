@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
@@ -15,13 +15,20 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
 
+  private presCompleteSubject: BehaviorSubject<any> = new BehaviorSubject<number>(0);
+  public $presComplete: Observable<number> = this.presCompleteSubject.asObservable();
+
   constructor(private http: HttpClient, private helper: HelperService) {}
+
+  addCompltedVisitsCount(count: number) {
+    this.presCompleteSubject.next(count);
+  }
 
   getVisits(params): Observable<any> {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",      
+        v: "custom:(uuid,startDatetime,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
       },
       ...params,
     };

@@ -6,7 +6,7 @@
     <div class="example-accordion-item-header" (click)="accordionItem.toggle()">
       <div class="header-title">
         <img src="assets/svgs/completed.svg" alt="" width="44px">
-        <h6 class="mb-0 ml-2">Completed Visits (40)</h6>
+        <h6 class="mb-0 ml-2">Completed Visits ( {{completedVisits.length ? completedVisits.length : 0}} )</h6>
         <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
       </div>
       <span class="example-accordion-item-description">
@@ -21,6 +21,10 @@
       [attr.id]="'accordion-body-1'" [attr.aria-labelledby]="'accordion-header-1'">
       <mat-divider></mat-divider>
       <div class="mat-elevation-z8">
+        <div class="loader-wrapper" *ngIf="isLoading">
+          <mat-spinner [diameter]="32"></mat-spinner>
+        </div>
+
         <table mat-table [dataSource]="dataSource">
 
           <!-- Name Column -->
@@ -29,8 +33,8 @@
             <td mat-cell *matCellDef="let element">
 
               <div class="d-flex align-items-center">
-                <img src="assets/svgs/user.svg" alt="" width="32px">
-                <span class="font-bold ml-2">{{element.name}}</span>
+                <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                <span class="font-bold ml-2">{{element.patient.person.display}} ({{element.patient.person.gender}})</span>
               </div>
             </td>
           </ng-container>
@@ -38,19 +42,19 @@
           <!-- Age Column -->
           <ng-container matColumnDef="age">
             <th mat-header-cell *matHeaderCellDef> Age </th>
-            <td mat-cell *matCellDef="let element"> {{element.age}}y </td>
+            <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
           </ng-container>
 
           <!-- Visit Created Column -->
           <ng-container matColumnDef="visit_created">
             <th mat-header-cell *matHeaderCellDef> Visit Created </th>
-            <td mat-cell *matCellDef="let element"> {{element.visit_created}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
           </ng-container>
 
           <!-- Location Column -->
           <ng-container matColumnDef="location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let element"> {{element.location}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.location.display}} </td>
           </ng-container>
 
           <!-- Cheif Complaint Column -->
@@ -69,6 +73,12 @@
               </div>
             </td>
           </ng-container>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+              No data to display.
+            </td>
+          </tr>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

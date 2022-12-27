@@ -28,7 +28,7 @@
             <td mat-cell *matCellDef="let element">
 
               <div class="d-flex align-items-center">
-                <img src="assets/svgs/user.svg" alt="" width="32px">
+                <img src="assets/svgs/user.svg" alt="" width="32px" height="32px" style="border-radius: 50%;">
                 <span class="font-bold ml-2">{{element.name}}</span>
               </div>
             </td>
@@ -68,6 +68,12 @@
               </div>
             </td>
           </ng-container>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+              No data to display.
+            </td>
+          </tr>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

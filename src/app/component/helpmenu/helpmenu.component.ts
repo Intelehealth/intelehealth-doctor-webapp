@@ -7,9 +7,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HelpmenuComponent implements OnInit {
 
+  messages: any = [];
+  message: string = "";
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  addMessage() {
+    if (this.message) {
+      this.messages.push(this.message);
+      this.message = "";
+    }
   }
 
 }

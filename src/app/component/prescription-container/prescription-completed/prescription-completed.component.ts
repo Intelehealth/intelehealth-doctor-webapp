@@ -2,25 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-
-export interface PeriodicElement {
-  id: string;
-  name: string;
-  age: number;
-  visit_created: string;
-  location: string;
-  cheif_complaint: string;
-  prescription_sent: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {id: "1", name: 'Anurag Sangale (M)', age: 32, visit_created: '22 Dec, 2022', location: 'TM Clinic 1', cheif_complaint: 'Fever & Cough', prescription_sent: '1 hr ago'},
-  {id: "2", name: 'Muskan Kala (M)', age: 24, visit_created: '1 Dec, 2022', location: 'TM Clinic 2', cheif_complaint: 'Runny Nose', prescription_sent: '12 Dec, 2022'},
-  {id: "3", name: 'Muskan Kala (M)', age: 19, visit_created: '15 Nov, 2022', location: 'TM Clinic 3', cheif_complaint: 'Fever, Headache & Cough', prescription_sent: '1 Oct 2022'},
-  {id: "4", name: 'Muskan Kala (M)', age: 45, visit_created: '5 Oct, 2022', location: 'TM Clinic 4', cheif_complaint: 'Back Pain', prescription_sent: '27 Sep 2022'},
-  {id: "5", name: 'Muskan Kala (M)', age: 35, visit_created: '1 Aug, 2022', location: 'TM Clinic 5', cheif_complaint: 'Fever', prescription_sent: '10 Aug 2022'}
-];
-
+import { VisitService } from 'src/app/services/visit.service';
+import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-prescription-completed',
   templateUrl: './prescription-completed.component.html',
@@ -31,7 +15,10 @@ export class PrescriptionCompletedComponent implements OnInit {
   items = ["Completed Visits"];
   expandedIndex = 0;
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
+  dataSource = new MatTableDataSource<any>();
+  completedVisits: any = [];
+  baseUrl: string = environment.baseURL;
+  isLoading: boolean = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -39,9 +26,70 @@ export class PrescriptionCompletedComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  constructor() { }
+  constructor(private visitService: VisitService) { }
 
   ngOnInit(): void {
+    this.getCompletedVisits();
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
+  }
+
+  getCompletedVisits() {
+    this.isLoading = true;
+    this.visitService.getVisits({}).subscribe((res: any) =>{
+      if (res) {
+        res.results.forEach((visit: any) => {
+          visit.encounters.forEach((encounter: any) => {
+            if (encounter.encounterType.display == 'Visit Complete') {
+              visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+              visit.cheif_complaint = this.getCheifComplaint(visit);
+              this.completedVisits.push(visit);
+            }
+          });
+        });
+        this.dataSource = new MatTableDataSource(this.completedVisits);
+        this.dataSource.paginator = this.paginator;
+        this.visitService.addCompltedVisitsCount(this.completedVisits.length);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  checkIfDateOldThanOneDay(data: any) {
+    let hours = moment().diff(moment(data), 'hours');
+    let minutes = moment().diff(moment(data), 'minutes');
+    if(hours > 24) {
+      return moment(data).format('DD MMM, YYYY');
+    };
+    if (hours < 1) {
+      return `${minutes} minutes ago`;
+    }
+    return `${hours} hrs ago`;
+  }
+
+  getCheifComplaint(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.display;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+            const currentComplaint = currentObs.display.split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
   }
 
 }

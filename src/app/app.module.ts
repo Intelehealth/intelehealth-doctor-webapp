@@ -423,6 +423,11 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
               children: [
                 {
                   path: '',
+                  redirectTo: '/dashboard/prescription/completed',
+                  pathMatch: 'full'
+                },
+                {
+                  path: 'sent',
                   component: PrescriptionSentComponent
                 },
                 {

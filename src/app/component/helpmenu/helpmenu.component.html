@@ -17,12 +17,13 @@
     <li class="chat-item">Go to My profile where there is a Change language option. From that list select the preferred language.</li>
     <li class="chat-item timestamp-item">Mon at 5:41 PM</li>
     <li class="chat-item left">Hey! I am unable send prescriptions</li>
+    <li class="chat-item left" *ngFor="let m of messages;">{{m}}</li>
     <li class="chat-item read-status"><img src="assets/svgs/read-status.svg" alt="" width="12px"> Read</li>
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="Type Here" class="mr-2">
-  <button class="send-btn">
+  <input type="text" placeholder="Type Here" class="mr-2" [(ngModel)]="message" (keyup.enter)="addMessage()">
+  <button class="send-btn" (click)="addMessage()">
     <mat-icon aria-hidden="false" aria-label="send icon">send</mat-icon>
   </button>
 </mat-dialog-actions>
