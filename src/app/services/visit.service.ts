@@ -97,7 +97,7 @@ export class VisitService {
 
   getWhatsappLink(whatsapp:Number,msg:string) {
     let text = encodeURI(msg);
-    let whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+    let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
   }
 }

@@ -72,7 +72,7 @@
       </div>
     </div>
     <button
-    *ngIf="type == 'Y'"
+    *ngIf="type == 'Y' && !readOnly"
     type="button"
     [disabled]="isDataPresent"
     (click)="submit()" 

@@ -35,7 +35,7 @@
         </li>
       </ul>
     </div>
-    <ng-container *ngIf="noteData.length < 3 && !showAddMore">
+    <ng-container *ngIf="noteData.length < 3 && !showAddMore && !readOnly">
       <span class="text-area-label font-bold">Note</span>
       <span class="text-area-label no-info-color"
         > (Not shared with patient)</span
@@ -51,12 +51,8 @@
       >
   </textarea
       >
-      {{error}}
-      <div class="ml-label" *ngIf="readOnly">
-        Let the patient know that they cannot travel for atleast 2 weeks
-      </div>
       <button
-        *ngIf="!readOnly"
+        *ngIf="!readOnly" 
         type="button"
         (click)="showAddMore = !showAddMore;noteValue = ''"
         class="btn cancel-add-note-btn font-bold mt-4"
