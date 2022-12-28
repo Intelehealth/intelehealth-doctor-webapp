@@ -1,19 +1,29 @@
 <div class="main-container">
+  <div class="loader-wrapper" *ngIf="!isLoaded">
+    <div class="spinner">
+      <mat-spinner [diameter]="50"></mat-spinner>
+    </div>
+  </div>
   <div class="chips-container">
-    <!-- <div class="chip-item chip-item-blue" routerLink="/dashboard/prescription" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+    <div class="chip-item chip-item-blue" (click)="activeTab='sent'" [class.active]="activeTab=='sent'">
       <img class="chip-img" src="assets/svgs/pad.svg" alt="" />
       <div class="chip-info">
-        <h6>32</h6>
+        <h6>{{prescriptionSent.length?prescriptionSent.length:0 }}</h6>
         <span>Prescription Sent</span>
       </div>
-    </div> -->
-    <div class="chip-item chip-item-green" routerLink="/dashboard/prescription/completed" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+    </div>
+    <div class="chip-item chip-item-green" (click)="activeTab='completed'" [class.active]="activeTab=='completed'">
       <img class="chip-img" src="assets/svgs/completed-2.svg" alt="" />
       <div class="chip-info">
-        <h6>{{completedVisitsCount}}</h6>
+        <h6>{{completedVisits.length?completedVisits.length:0}}</h6>
         <span>Completed Visits</span>
       </div>
     </div>
   </div>
-  <router-outlet></router-outlet>
+  <ng-container *ngIf="activeTab == 'sent' && isLoaded">
+    <app-prescription-sent [prescriptionsSent]="prescriptionSent"></app-prescription-sent>
+  </ng-container>
+  <ng-container *ngIf="activeTab == 'completed' && isLoaded">
+    <app-prescription-completed [completedVisits]="completedVisits"></app-prescription-completed>
+  </ng-container>
 </div>

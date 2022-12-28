@@ -1,25 +1,29 @@
 <cdk-accordion class="example-accordion">
   <cdk-accordion-item #accordionItem="cdkAccordionItem"
     class="example-accordion-item" role="button" tabindex="0" [attr.id]="'accordion-header-0'"
-    [attr.aria-expanded]="accordionItem.expanded" [attr.aria-controls]="'accordion-body-0'" [expanded]="true" [disabled]="true">
+    [attr.aria-expanded]="accordionItem.expanded" [attr.aria-controls]="'accordion-body-0'" [expanded]="true" [disabled]="false">
     <div class="example-accordion-item-header" (click)="accordionItem.toggle()">
       <div class="header-title">
         <img src="assets/svgs/pad-2.svg" alt="" width="44px">
-        <h6 class="mb-0 ml-2">Prescription Sent (32)</h6>
-        <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
+        <h6 class="mb-0 ml-2">Prescription Sent ({{prescriptionsSent.length ? prescriptionsSent.length : 0}})</h6>
+        <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Visits that shared prescription with patients" matTooltipPosition="right">help_outline</mat-icon>
       </div>
-      <span class="example-accordion-item-description">
+      <!-- <span class="example-accordion-item-description">
         <button mat-button color="primary">
           <img src="assets/svgs/filter.svg" alt="filter" width="14px">
           Filter
         </button>
-        <!-- Click to {{ accordionItem.expanded ? "close" : "open" }} -->
-      </span>
+        Click to {{ accordionItem.expanded ? "close" : "open" }}
+      </span> -->
     </div>
     <div class="example-accordion-item-body" role="region" [style.display]="accordionItem.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-0'" [attr.aria-labelledby]="'accordion-header-0'">
       <mat-divider></mat-divider>
       <div class="mat-elevation-z8">
+        <div class="loader-wrapper" *ngIf="isLoading">
+          <mat-spinner [diameter]="32"></mat-spinner>
+        </div>
+
         <table mat-table [dataSource]="dataSource">
 
           <!-- Name Column -->
@@ -28,8 +32,8 @@
             <td mat-cell *matCellDef="let element">
 
               <div class="d-flex align-items-center">
-                <img src="assets/svgs/user.svg" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                <span class="font-bold ml-2">{{element.name}}</span>
+                <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                <span class="font-bold ml-2">{{element.patient.person.display}} ({{element.patient.person.gender}})</span>
               </div>
             </td>
           </ng-container>
@@ -37,19 +41,19 @@
           <!-- Age Column -->
           <ng-container matColumnDef="age">
             <th mat-header-cell *matHeaderCellDef> Age </th>
-            <td mat-cell *matCellDef="let element"> {{element.age}}y </td>
+            <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
           </ng-container>
 
           <!-- Visit Created Column -->
           <ng-container matColumnDef="visit_created">
             <th mat-header-cell *matHeaderCellDef> Visit Created </th>
-            <td mat-cell *matCellDef="let element"> {{element.visit_created}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
           </ng-container>
 
           <!-- Location Column -->
           <ng-container matColumnDef="location">
             <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let element"> {{element.location}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.location.display}} </td>
           </ng-container>
 
           <!-- Cheif Complaint Column -->
@@ -76,7 +80,7 @@
           </tr>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"   [routerLink]="['/dashboard/visit-summary', row?.patient?.uuid, row?.uuid]" ></tr>
         </table>
 
         <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons

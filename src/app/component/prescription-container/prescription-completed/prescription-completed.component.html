@@ -2,11 +2,11 @@
   <cdk-accordion-item #accordionItem="cdkAccordionItem"
     class="example-accordion-item" role="button" tabindex="0" [attr.id]="'accordion-header-1'"
     [attr.aria-expanded]="accordionItem.expanded" [attr.aria-controls]="'accordion-body-1'"
-    [expanded]="true" [disabled]="true">
+    [expanded]="true" [disabled]="false">
     <div class="example-accordion-item-header" (click)="accordionItem.toggle()">
       <div class="header-title">
         <img src="assets/svgs/completed.svg" alt="" width="44px">
-        <h6 class="mb-0 ml-2">Completed Visits ( {{completedVisits.length ? completedVisits.length : 0}} )</h6>
+        <h6 class="mb-0 ml-2">Completed Visits ({{completedVisits.length ? completedVisits.length : 0}})</h6>
         <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Ended visits after prescription" matTooltipPosition="right">help_outline</mat-icon>
       </div>
       <!-- <span class="example-accordion-item-description">

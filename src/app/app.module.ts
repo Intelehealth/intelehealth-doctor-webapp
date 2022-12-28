@@ -420,22 +420,7 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
             {
               path: "prescription",
               component: PrescriptionContainerComponent,
-              canActivate: [AuthGuard],
-              children: [
-                {
-                  path: '',
-                  redirectTo: '/dashboard/prescription/completed',
-                  pathMatch: 'full'
-                },
-                {
-                  path: 'sent',
-                  component: PrescriptionSentComponent
-                },
-                {
-                  path: 'completed',
-                  component: PrescriptionCompletedComponent
-                }
-              ]
+              canActivate: [AuthGuard]
             },
           ],
         },
