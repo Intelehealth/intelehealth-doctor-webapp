@@ -3,7 +3,7 @@
     <img [src]="table?.lableIconPath" />
     <div class="appointment-label">
       {{ table?.label }} ({{ table?.dataCount }})
-      <div data-toggle="modal" data-target="#exampleModalLong">
+      <div [matTooltip]="table.info" matTooltipPosition="right" [matTooltipClass]="{'info-message-tooltip': true}">
         <img src="assets/svgs/info.svg" />
       </div>
     </div>
@@ -31,7 +31,7 @@
         *ngFor="let data of pagedItems"
         [ngClass]="{ actives: data?.isActive }"
         class="table-height"
-        [routerLink]="['/dashboard/visit-summary', data?.patientId, data?.visitId]" 
+        [routerLink]="['/dashboard/visit-summary', data?.patientId, data?.visitId]"
       >
         <td
           *ngFor="let header of table?.headers"
@@ -62,13 +62,13 @@
                 {{ btn?.label }}
               </button>
             </div>
-            
+
             <div *ngSwitchCase="header?.type === 'array'">
               <div *ngFor="let i of data?.complaints">
                 {{ i }}
               </div>
             </div>
-            
+
             <div *ngSwitchCase="header?.type === 'number'">
                 {{ data.age }}{{"y"}}
             </div>

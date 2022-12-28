@@ -38,11 +38,11 @@ export class PrescriptionCompletedComponent implements OnInit {
 
   getCompletedVisits() {
     this.isLoading = true;
-    this.visitService.getVisits({}).subscribe((res: any) =>{
+    this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         res.results.forEach((visit: any) => {
           visit.encounters.forEach((encounter: any) => {
-            if (encounter.encounterType.display == 'Visit Complete') {
+            if (encounter.encounterType.display == 'Patient Exit Survey') {
               visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
               visit.cheif_complaint = this.getCheifComplaint(visit);
               this.completedVisits.push(visit);

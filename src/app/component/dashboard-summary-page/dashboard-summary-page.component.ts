@@ -28,6 +28,7 @@ export class DashboardSummaryPageComponent implements OnInit {
     id: "appointmentTable",
     label: "Appointments",
     lableIconPath: "assets/svgs/video-frame.svg",
+    info: "Scheduled appointments",
     collapse: "#collapseAppointment",
     toggle: "collapse",
     dataCount: 0,
@@ -68,6 +69,7 @@ export class DashboardSummaryPageComponent implements OnInit {
     id: "priorityTable",
     label: "Priority Visits",
     lableIconPath: "assets/svgs/red-profile.svg",
+    info: "High priority visits",
     dataCount: 0,
     headers: [
       {
@@ -95,8 +97,9 @@ export class DashboardSummaryPageComponent implements OnInit {
 
   awaitingVisits: any = {
     id: "awaitingTable",
-    label: "Awaiting Visits",
+    label: "Awaiting visits",
     lableIconPath: "assets/svgs/green-profile.svg",
+    info: "General Uploaded Visits",
     dataCount: 0,
     headers: [
       {
@@ -130,6 +133,7 @@ export class DashboardSummaryPageComponent implements OnInit {
     id: "inProgressTable",
     label: "In-progress visits",
     lableIconPath: "assets/svgs/pen-board.svg",
+    info: "Visits going through the consultations",
     dataCount: 0,
     headers: [
       {
@@ -222,9 +226,9 @@ export class DashboardSummaryPageComponent implements OnInit {
       if (data.length) {
         this.inProgressVisits.dataCount = getTotal(data, "Visit In Progress");
         this.priorityVisits.dataCount = getTotal(data, "Priority");
-        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");        
+        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");
       }
-    });    
+    });
   }
 
   getVisits(query: any = {}, cb = () => {}) {
@@ -272,7 +276,7 @@ export class DashboardSummaryPageComponent implements OnInit {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  visitCategory(active) {   
+  visitCategory(active) {
     const { encounters = [] } = active;
     let encounter;
     if ((encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey"))) {
@@ -292,12 +296,12 @@ export class DashboardSummaryPageComponent implements OnInit {
       const values = this.assignValueToProperty(active, encounter);
       // this.service.waitingVisit.push(values);
       this.awaitingVisits.data.push(values);
-    } 
+    }
     let e = encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey") || this.checkVisit(encounters, "Visit Note") || this.checkVisit(encounters, "Flagged") || this.checkVisit(encounters, "ADULTINITIAL")
     const values = this.assignValueToProperty(active, e);
     for(let i = 0; i < this.drSlots.length; i++) {
       if(values.patientId === this.drSlots[i]["patientId"]){
-        this.appointmentTable.headers[5].id.push(this.drSlots[i]);        
+        this.appointmentTable.headers[5].id.push(this.drSlots[i]);
         const value = this.assignValueToProperty(active, e, this.drSlots[i]);
         this.appointmentTable.data.push(value);
         this.appointmentTable.dataCount = this.appointmentTable.data.length
@@ -338,7 +342,7 @@ export class DashboardSummaryPageComponent implements OnInit {
   getVisisCreated(visitDetails){
     const start = new Date().getTime();
     const end = new Date(visitDetails.encounters[0].encounterDatetime).getTime();
-    let time = start - end;  
+    let time = start - end;
     let diffDays = Math.floor(time /  86400000)
     let diffHours = Math.floor(time %  86400000 / 3600000)
     if(diffDays > 0){
@@ -346,9 +350,9 @@ export class DashboardSummaryPageComponent implements OnInit {
     }else{
       return diffHours + " hr ago";
     }
-    
+
   }
-  
+
   assignValueToProperty(active, encounter, drSlots={}) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
@@ -363,10 +367,10 @@ export class DashboardSummaryPageComponent implements OnInit {
     this.value.lastSeen = encounter?.encounterDatetime;
     this.value.complaints = this.getComplaints(active);
     this.value.visitCreated = this.getVisisCreated(active);
-    this.value.startIn = this.startIn(drSlots);    
+    this.value.startIn = this.startIn(drSlots);
     return this.value;
   }
-  
+
   onRescheduleClick() {}
 
   onCancelClick() {}
@@ -394,15 +398,15 @@ export class DashboardSummaryPageComponent implements OnInit {
       for(let i in data){
         const start = new Date().getTime();
         const end = new Date(data['slotJsDate']).getTime();
-        let time = start - end;  
+        let time = start - end;
         let diffDays = Math.floor(time /  86400000)
         if( String(diffDays)[0] == "-"){
           return moment(data['slotJsDate']).format("DD MMM, h:mm a");
         }else{
           return(moment(data['slotJsDate']).format("DD MMM, h:mm a"));
         }
-      };     
-    } 
+      };
+    }
   }
 
   playNotify() {
