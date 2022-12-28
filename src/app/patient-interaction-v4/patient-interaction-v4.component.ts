@@ -17,7 +17,7 @@ export class PatientInteractionV4Component implements OnInit {
   isCollapsed = false;
   phoneNo;
   whatsappLink: string;
-  selected: string;
+  selectedValue: string;
   isDataPresent:boolean=false;
   visitId: string;
 
@@ -34,8 +34,8 @@ export class PatientInteractionV4Component implements OnInit {
           this.whatsappLink = this.visitService.getWhatsappLink(this.phoneNo, `Hello I'm calling for consultation`);
         }
       });
+      this.getAttributes();
     });
-    this.getAttributes();
   }
 
   getAttributes() {
@@ -45,14 +45,14 @@ export class PatientInteractionV4Component implements OnInit {
         ["Yes", "No"].includes(pType.value)
       );
       if (tempMsg.length !== 0) {
-        this.selected = tempMsg[tempMsg.length-1].value;
+        this.selectedValue = tempMsg[tempMsg.length-1].value;
         this.isDataPresent = true;
       }
     });
   }
 
   save() {
-    let value = this.selected;
+    let value = this.selectedValue;
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
     if (this.diagnosisService.isSameDoctor()) {
@@ -67,7 +67,7 @@ export class PatientInteractionV4Component implements OnInit {
           this.visitService
             .postAttribute(this.visitId, json)
             .subscribe((response1) => {
-              this.selected = value;
+              this.selectedValue = value;
               this.isDataPresent = true;
             });
         }

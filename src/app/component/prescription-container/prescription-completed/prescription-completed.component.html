@@ -9,13 +9,13 @@
         <h6 class="mb-0 ml-2">Completed Visits ( {{completedVisits.length ? completedVisits.length : 0}} )</h6>
         <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Ended visits after prescription" matTooltipPosition="right">help_outline</mat-icon>
       </div>
-      <span class="example-accordion-item-description">
+      <!-- <span class="example-accordion-item-description">
         <button mat-button color="primary">
           <img src="assets/svgs/filter.svg" alt="filter" width="14px">
           Filter
         </button>
-        <!-- Click to {{ accordionItem.expanded ? "close" : "open" }} -->
-      </span>
+        Click to {{ accordionItem.expanded ? "close" : "open" }}
+      </span> -->
     </div>
     <div class="example-accordion-item-body" role="region" [style.display]="accordionItem.expanded ? '' : 'none'"
       [attr.id]="'accordion-body-1'" [attr.aria-labelledby]="'accordion-header-1'">
@@ -81,7 +81,7 @@
           </tr>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"   [routerLink]="['/dashboard/visit-summary', row?.patient?.uuid, row?.uuid]" ></tr>
         </table>
 
         <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons

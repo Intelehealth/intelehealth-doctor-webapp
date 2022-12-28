@@ -190,7 +190,8 @@ export class TabsV4Component implements OnInit {
       "emailId",
       "registrationNumber",
       "specialization",
-      "address"
+      "address",
+      "countryCode"
     ];
     doctorAttributes.forEach((attr) => {
       const details = this.filterAttributes(

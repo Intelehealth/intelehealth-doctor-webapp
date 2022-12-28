@@ -79,9 +79,9 @@ export class PersonalInformationComponent {
   }
 
   ngOnInit(): void {
-    this.userDetails = getFromStorage("user");
+    let userDetails = getFromStorage("user");
     this.sessionService
-      .provider(this.userDetails.uuid)
+      .provider(userDetails.uuid)
       .subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
         this.setUserDetails(true);

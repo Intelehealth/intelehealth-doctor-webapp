@@ -298,14 +298,12 @@ export class DashboardSummaryPageComponent implements OnInit {
       this.awaitingVisits.data.push(values);
     }
     let e = encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey") || this.checkVisit(encounters, "Visit Note") || this.checkVisit(encounters, "Flagged") || this.checkVisit(encounters, "ADULTINITIAL")
-    const values = this.assignValueToProperty(active, e);
     for(let i = 0; i < this.drSlots.length; i++) {
-      if(values.patientId === this.drSlots[i]["patientId"]){
-        this.appointmentTable.headers[5].id.push(this.drSlots[i]);
-        const value = this.assignValueToProperty(active, e, this.drSlots[i]);
-        this.appointmentTable.data.push(value);
-        this.appointmentTable.dataCount = this.appointmentTable.data.length
-      };
+      this.appointmentTable.headers[5].id.push(this.drSlots[i]);
+      const value = this.assignValueToProperty(active, e, this.drSlots[i]);
+      this.appointmentTable.data.push(value);
+      this.appointmentTable.dataCount = this.appointmentTable.data.length
+      break
     }
   }
 
@@ -345,12 +343,15 @@ export class DashboardSummaryPageComponent implements OnInit {
     let time = start - end;
     let diffDays = Math.floor(time /  86400000)
     let diffHours = Math.floor(time %  86400000 / 3600000)
+    let diffmins = Math.floor((time %  (1000 * 60 * 60)) / (1000 * 60))
     if(diffDays > 0){
-      return diffDays + " day ago";
-    }else{
-      return diffHours + " hr ago";
+      return `${diffDays} day ago`;
     }
-
+    if (diffHours < 1) {
+      return `${diffmins} minutes ago`;
+    }else{
+      return `${diffHours} hr ago`;
+    }
   }
 
   assignValueToProperty(active, encounter, drSlots={}) {
