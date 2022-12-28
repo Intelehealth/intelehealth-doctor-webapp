@@ -31,12 +31,12 @@ export class SetNewPasswordComponent implements OnInit {
       newPassword: ['', Validators.required],
       confirmPassword: new FormControl("", [Validators.required])
     }, {
-      validator: MustMatch('newPassword', 'repeatPassword')
+      validator: MustMatch('newPassword', 'confirmPassword')
     });
   }
 
   ngOnInit() {
-    let user = getFromStorage("user");
+    const user = getFromStorage("user");
     this.userName = user?.person?.display;
     this.userUuid = user.uuid;
   }
@@ -52,8 +52,8 @@ export class SetNewPasswordComponent implements OnInit {
     };
 
     const json = {
-      'oldPassword': value.currentPassword,
-      'newPassword': value.newPassword
+      'oldPassword': value.newPassword,
+      'newPassword': value.confirmPassword
     };
 
     const json1 = {
@@ -79,7 +79,6 @@ export class SetNewPasswordComponent implements OnInit {
 
   passwordValid(event) {
     this.passwordIsValid = event;
-  }
-  
+  }  
 }
 
