@@ -47,18 +47,23 @@ export class ForgotUsernameComponent implements OnInit, AfterViewInit {
     this.showEmail = show;
   }
   onSubmit() {
-    var value = this.verificationForm.value;
-    var mobileNumber = value.selectedCode + value.phoneNumber;
-    this.otpservice
-      .getOTP("sign-in-button", mobileNumber)
-      .subscribe((confimationResult) => {
-        localStorage.setItem(
-          "verificationId",
-          JSON.stringify(confimationResult.verificationId)
-        );
-        localStorage.setItem("mobilenumber", mobileNumber);
-        this.onSucess.emit(true);
-        this.router.navigateByUrl("/login/otp-verification");
-      });
+    this.onSucess.emit(true);
+    this.router.navigateByUrl("/login/otp-verification");
+    const phoneNumber = this.verificationForm.value.phoneNumber
+    localStorage.setItem('session',phoneNumber);
+    
+    // var value = this.verificationForm.value;
+    // var mobileNumber = value.selectedCode + value.phoneNumber;
+    // this.otpservice
+    //   .getOTP("sign-in-button", mobileNumber)
+    //   .subscribe((confimationResult) => {
+    //     localStorage.setItem(
+    //       "verificationId",
+    //       JSON.stringify(confimationResult.verificationId)
+    //     );
+    //     localStorage.setItem("mobilenumber", mobileNumber);
+    //     this.onSucess.emit(true);
+    //     this.router.navigateByUrl("/login/otp-verification");
+    //   });
   }
 }

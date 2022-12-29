@@ -24,6 +24,9 @@ export class ForgotPasswordComponent implements OnInit {
   onSubmit() {
     this.onSucess.emit(true);
     this.router.navigateByUrl("/login/otp-verification");
+    const username = this.forgotpasswordForm.value.username
+    localStorage.setItem('session',username);
+        
     // this.otpservice
     //   .getOTP("sign-in-button", this.drPhoneNumber)
     //   .subscribe((confimationResult) => {

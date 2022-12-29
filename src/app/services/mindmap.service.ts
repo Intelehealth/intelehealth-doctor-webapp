@@ -11,6 +11,16 @@ export class MindmapService {
 
   constructor(private http: HttpClient) {}
 
+  changePassword(value, key): Observable<any> {
+    const url = `${this.baseURL}/openmrs/forgetPassword/resetPassword/${key}`;
+    return this.http.post(url, value);
+  }
+
+  postMindmapOTP(value): Observable<any> {
+    const url = `${this.baseURL}/openmrs/forgetPassword/requestOtp`;
+    return this.http.post(url, value);
+  }
+
   getMindmapKey(): Observable<any> {
     const url = `${this.baseURL}/mindmap`;
     return this.http.get(url);
