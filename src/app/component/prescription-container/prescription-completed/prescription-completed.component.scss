@@ -100,7 +100,7 @@ table {
 
 th.mat-header-cell {
   border: none;
-  font-size: 14px;
+  font-size: 14px !important;
   font-weight: 700;
   color: #7F7B92;
   height: 21px;
@@ -108,6 +108,10 @@ th.mat-header-cell {
 
 th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   border: none;
+}
+
+td.mat-cell {
+  font-size: 16px;
 }
 
 tr.mat-row, tr.mat-footer-row {
