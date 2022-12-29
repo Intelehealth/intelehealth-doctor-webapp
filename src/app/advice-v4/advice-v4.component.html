@@ -49,7 +49,7 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="!showAddMore">
+    <ng-container *ngIf="!showAddMore && !readOnly">
       <span class="text-area-label font-bold">Advice </span>
         <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newAdvice">
       <!-- <textarea
@@ -82,9 +82,9 @@
         Add advice
       </button>
 
-      <div *ngIf="readOnly; &quot;ml-label&quot;">
+      <!-- <div *ngIf="readOnly; &quot;ml-label&quot;">
         Let the patient know that they cannot travel for atleast 2 weeks
-      </div>
+      </div> -->
     </ng-container>
   </div>
 </div>

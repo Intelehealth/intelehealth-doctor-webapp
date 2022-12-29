@@ -39,7 +39,7 @@
         </ul>
       </div>
 
-      <div *ngIf="!readOnly" class="w">
+      <div class="w">
         <div>
           <input class="radio-box mr-1 mt-1" type="radio"   value="Yes" [(ngModel)]="selectedOption" name="Yes" />
           <label class="mr-3 radio-label">Yes</label>
@@ -77,7 +77,7 @@
       </div>
 
 
-      <div *ngIf="readOnly" class="w">
+      <!-- <div *ngIf="readOnly" class="w">
         <div>
           <label class="mr-3 radio-label">Yes</label>
 
@@ -95,7 +95,7 @@
         <div class="mt-3">
           <label class="mr-3 radio-label radio-width">Provisional</label>
         </div>
-      </div>
+      </div> -->
     </div>
     <button
     *ngIf="!readOnly"

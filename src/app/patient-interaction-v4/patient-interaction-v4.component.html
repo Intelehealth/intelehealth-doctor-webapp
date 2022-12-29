@@ -32,7 +32,7 @@
             <span *ngIf="!readOnly" class="ml-2 chw-color">Click here to connent with patient</span>
           </div>
 
-          <div *ngIf="!readOnly" class="mt-3">
+          <div class="mt-3">
             <input class="radio-box mr-1 mt-1" type="radio" value="Yes" [(ngModel)]="selectedValue" name="radio" />
             <label class="mr-3 radio-label">Yes</label>
 
@@ -40,9 +40,9 @@
             <label class="radio-label">No</label>
           </div>
 
-          <div *ngIf="readOnly" class="mt-1">
+          <!-- <div *ngIf="readOnly" class="mt-1">
             <label class="mr-3 radio-label">Yes</label>
-          </div>
+          </div> -->
         </div>
       </div>
       <button

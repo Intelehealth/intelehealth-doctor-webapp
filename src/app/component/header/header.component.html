@@ -52,10 +52,10 @@
     </div>
 
     <div class="ml-4">
-      <img class="img-size" [src]="personImgURL" alt="" />
+      <img class="img-size click" routerLink="/dashboard/profile" [src]="personImgURL" alt="" />
     </div>
     <div class="mt-2">
-      <label class="mr-2 ml-2"> Hello {{ userName }} </label>
+      <label class="mr-2 ml-2 click" routerLink="/dashboard/profile" > Hello {{ userName }} </label>
 
       <img class="mr-4" src="assets/svgs/Hand-Emoji-hello.svg" alt="" />
     </div>

@@ -45,11 +45,11 @@
         </ul>
       </div>
 
-      <div *ngIf="!readOnly" class="w-100">
-        <input class="radio-box mr-1 mt-1" type="radio" value="Y" [(ngModel)]="type" name="radio" id="" />
+      <div  class="w-100">
+        <input class="radio-box mr-1 mt-1" type="radio" value="Y" [(ngModel)]="type" name="Y" id="" />
         <label class="mr-3 radio-label">Yes</label>
 
-        <input class="radio-box mr-1 mt-1" type="radio" value="N"  [(ngModel)]="type" name="radio" id="" />
+        <input class="radio-box mr-1 mt-1" type="radio" value="N"  [(ngModel)]="type" name="N" id="" />
         <label class="radio-label">No</label>
 
         <div *ngIf="type == 'Y'" class="date">
@@ -65,11 +65,11 @@
           />
         </div>
       </div>
-      <div *ngIf="readOnly" class="w-100">
+      <!-- <div *ngIf="readOnly" class="w-100">
         <label class="mr-3 radio-label">Yes</label>
         <div class="date-readonly">09/11/2022</div>
         <div class="data-label">critical heart patient</div>
-      </div>
+      </div> -->
     </div>
     <button
     *ngIf="type == 'Y' && !readOnly"
