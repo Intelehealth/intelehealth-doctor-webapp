@@ -17,7 +17,7 @@ export class HelpmenuComponent implements OnInit {
 
   addMessage() {
     if (this.message) {
-      this.messages.push(this.message);
+      this.messages.splice(0, 0, this.message);
       this.message = "";
     }
   }

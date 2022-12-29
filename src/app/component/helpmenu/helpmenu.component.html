@@ -12,13 +12,13 @@
 </div>
 <mat-dialog-content>
   <ul class="chat-item-list">
-    <li class="chat-item timestamp-item">Mon at 5:30 PM</li>
+    <!-- <li class="chat-item timestamp-item">Mon at 5:30 PM</li>
     <li class="chat-item left">Hi! How to change language?</li>
     <li class="chat-item">Go to My profile where there is a Change language option. From that list select the preferred language.</li>
     <li class="chat-item timestamp-item">Mon at 5:41 PM</li>
-    <li class="chat-item left">Hey! I am unable send prescriptions</li>
+    <li class="chat-item left">Hey! I am unable send prescriptions</li> -->
+    <li class="chat-item read-status" *ngIf="messages.length"><img src="assets/svgs/read-status.svg" alt="" width="12px"> Read</li>
     <li class="chat-item left" *ngFor="let m of messages;">{{m}}</li>
-    <li class="chat-item read-status"><img src="assets/svgs/read-status.svg" alt="" width="12px"> Read</li>
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>

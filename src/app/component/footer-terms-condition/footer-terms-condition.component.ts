@@ -16,7 +16,10 @@ export class FooterTermsConditionComponent implements OnInit {
   ngOnInit(): void {}
 
   openDialog() {
-    if (this.dialogRef) return;
+    if (this.dialogRef) {
+      this.dialog.closeAll();
+      return;
+    };
     this.dialogRef = this.dialog.open(HelpmenuComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "60px" }, hasBackdrop: false });
 
     this.dialogRef.afterClosed().subscribe(result => {

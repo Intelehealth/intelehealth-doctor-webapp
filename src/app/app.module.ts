@@ -178,6 +178,7 @@ import { PrescriptionContainerComponent } from "./component/prescription-contain
 import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
 import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
 import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
+import { AppointmentContainerComponent } from './component/appointment-container/appointment-container.component';
 
 @NgModule({
   declarations: [
@@ -291,7 +292,8 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
     PrescriptionCompletedComponent,
     PrescriptionCompletedComponent,
     PrescriptionSentComponent,
-    HelpmenuComponent
+    HelpmenuComponent,
+    AppointmentContainerComponent
   ],
 
   imports: [
@@ -420,6 +422,11 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
             {
               path: "prescription",
               component: PrescriptionContainerComponent,
+              canActivate: [AuthGuard]
+            },
+            {
+              path: "appointments",
+              component: AppointmentContainerComponent,
               canActivate: [AuthGuard]
             },
           ],

@@ -265,14 +265,19 @@ body.font-lato td {
 
   .mat-dialog-content {
     margin: 0px;
-    padding: 0px 20px;
     max-height: 330px;
+    padding: 0px;
 
     ul.chat-item-list {
       list-style: none;
       min-height: 320px;
+      max-height: 320px;
       padding: 0px;
       margin: 0px;
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 0px 20px;
+      overflow: auto;
 
       li.chat-item {
         max-width: 90%;
@@ -282,6 +287,7 @@ body.font-lato td {
         font-size: 14px;
         margin: 8px 0px;
         background: #FAF9FF;
+        text-overflow: wrap;
       }
 
       li.chat-item.left {
