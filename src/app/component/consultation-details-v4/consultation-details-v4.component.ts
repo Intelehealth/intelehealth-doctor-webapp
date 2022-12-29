@@ -105,6 +105,9 @@ export class ConsultationDetailsV4Component implements OnInit {
       case 'Visit Complete':
         statusName = 'Completed visit'
         break;
+      case 'Patient Exit Survey':
+        statusName = 'Ended visit'
+        break;
     }
     return statusName;
   }

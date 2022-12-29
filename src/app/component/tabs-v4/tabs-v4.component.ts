@@ -124,7 +124,7 @@ export class TabsV4Component implements OnInit {
             this.encounterService.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
               const modalRef = this.openModal('Shared prescription successfully', 'The prescription has been succsessfully sent. View prescription or go to dashboard'
-                , 'View Prescription', 'Go to dashboard', "/assets/svgs/pre-successfully.svg");
+                , 'View Prescription', 'Go to dashboard', "assets/svgs/pre-successfully.svg");
               modalRef.result.then((result) => {
                 this.router.navigateByUrl("/dashboard");
               }, (reason) => {
@@ -133,7 +133,7 @@ export class TabsV4Component implements OnInit {
             },
               (error) => {
                 const modalRef = this.openModal('Cannot share prescription', 'Unable to send prescription due to poor network connection. Please try again or come back later'
-                  , 'Go Back', 'Try again', "/assets/svgs/fail.svg");
+                  , 'Go Back', 'Try again', "assets/svgs/fail.svg");
                 modalRef.result.then((result) => {
 
                 }, (reason) => {

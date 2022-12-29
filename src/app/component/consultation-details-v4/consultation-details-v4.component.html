@@ -45,7 +45,8 @@
             <label class="margin  mt-1" [ngClass]="{
               'pirorityRed': visitStatus === 'Priority visit',
               'light-green':
-              visitStatus === 'Awaiting visit' || visitStatus === 'In-progress visit' || visitStatus === 'Completed visit'
+              visitStatus === 'Awaiting visit' || visitStatus === 'In-progress visit' 
+              || visitStatus === 'Completed visit' || visitStatus === 'Ended visit'
             }"> {{visitStatus}} </label>
           </div>
 
