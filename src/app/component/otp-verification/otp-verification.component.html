@@ -21,7 +21,7 @@
     <p class="login-para">
       Didn’t receive OTP ?
       <a class="font-color" [routerLink]="[]" (click)="resendOTP()"
-        ><u>Resend in 3:00</u></a
+        ><u>Resend in {{mins}}:{{secs}}</u></a
       >
     </p>
   </div>

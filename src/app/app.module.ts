@@ -352,6 +352,7 @@ import { AppointmentContainerComponent } from './component/appointment-container
               component: LoginVerificationComponent,
             },
             { path: "otp-verification", component: OtpVerificationComponent },
+            { path: "set-new-password", component: SetNewPasswordComponent },
           ],
         },
         {
@@ -431,7 +432,7 @@ import { AppointmentContainerComponent } from './component/appointment-container
             },
           ],
         },
-        { path: "set-new/password", component: SetNewPasswordComponent },
+        // { path: "set-new/password", component: SetNewPasswordComponent },
         // {
         //   path: "",
         //   component: MainComponent,
