@@ -30,7 +30,6 @@
       <tr
         *ngFor="let data of pagedItems"
         [ngClass]="{ actives: data?.isActive }"
-        class="table-height"
         [routerLink]="['/dashboard/visit-summary', data?.patientId, data?.visitId]"
       >
         <td
@@ -39,8 +38,8 @@
         >
           <ng-container [ngSwitch]="true">
             <div *ngSwitchCase="header?.type === 'stringwithimage'">
-              <img class="mr-1" [src]="data[header?.imageKey]" />
-              {{ data.name }}
+              <img src="{{ baseUrl + '/personimage/' + data.patient}}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+              <span class="font-bold ml-2">{{ data.name }}</span>
             </div>
 
             <div *ngSwitchCase="header?.type === 'pill'">

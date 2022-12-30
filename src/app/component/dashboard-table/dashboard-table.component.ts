@@ -29,4 +29,8 @@ export class DashboardTableComponent implements OnInit {
     this.pager = this.pagerService.getPager(this.allItems.length, page);
     this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
   }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
+  }
 }
