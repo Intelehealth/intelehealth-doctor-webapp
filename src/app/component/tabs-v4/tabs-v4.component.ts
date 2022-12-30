@@ -144,7 +144,7 @@ export class TabsV4Component implements OnInit {
             if (window.confirm(
               'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
             )) {
-              this.router.navigateByUrl("/myAccount");
+              this.router.navigateByUrl("/dashboard/profile");
             }
           }
         });
@@ -183,6 +183,7 @@ export class TabsV4Component implements OnInit {
   getDoctorValue = (doctorDetails) => {
     const doctor = {};
     doctor["name"] = doctorDetails.person.display;
+    doctor["uuid"] = doctorDetails.uuid;
     const doctorAttributes = [
       "phoneNumber",
       "qualification",
