@@ -17,6 +17,7 @@ export class DashboardTableComponent implements OnInit {
   allItems: any[];
   pager: any = {};
   pagedItems: any[];
+  changeSide:boolean = false;
 
   constructor( private pagerService: PagerService) {}
  
@@ -32,5 +33,13 @@ export class DashboardTableComponent implements OnInit {
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
+  }
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }
