@@ -77,7 +77,6 @@ export class DietTypeComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.value);
     const json = {
       concept: this.dietTypeConcept,
       person: this.patientId,

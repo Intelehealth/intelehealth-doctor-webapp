@@ -109,7 +109,6 @@ export class HomepageComponent implements OnInit {
       (response) => {
         const pVisits = response.results;
         const userRoles = this.userDetails.roles.filter(a => a.name == "Project Manager")
-        console.log('userRoles:---110 ', userRoles);
         //const visits1 = userRoles.length > 0 ? pVisits : pVisits.filter(a => a.attributes.length > 0 ? (a.attributes.find(b => b.value == this.specialization)) : "")
         let visits1 = [];
         if (this.specialization && this.specialization.toLowerCase() == "all") {
@@ -128,9 +127,10 @@ export class HomepageComponent implements OnInit {
         }
         const setObj = new Set();
         var visits = visits1.reduce((acc, item) => {
-          if (!setObj.has(item.patient.identifiers[0].identifier)) {
-            setObj.add(item.patient.identifiers[0].identifier)
-            acc.push(item)
+          const identifier = item.patient?.identifiers?.[0]?.identifier;
+          if (!setObj.has(identifier)) {
+            setObj.add(identifier)
+            acc.push(item);
           }
           return acc;
         }, []);
@@ -258,7 +258,6 @@ export class HomepageComponent implements OnInit {
       var dateAfterTenDays = new Date(followUpDate); 
       dateAfterTenDays.setDate(followUpDate.getDate() + 10); // Set now + 10 days as the new date
       if(dateAfterTenDays.setHours(0,0,0,0) >= new Date().setHours(0,0,0,0)) {
-        console.log(type, followUpDate, " ", dateAfterTenDays, " ", " ", this.getDays(dateAfterTenDays), [2,4,6,8,10].indexOf(this.getDays(dateAfterTenDays)) != -1)
           if([2,4,6,8,10].indexOf(this.getDays(dateAfterTenDays)) != -1) {
             return true;
           }
@@ -279,7 +278,7 @@ export class HomepageComponent implements OnInit {
   assignValueToProperty(active, status?, followUpDate?) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
-    this.value.id = active.patient.identifiers[0].identifier;
+    this.value.id = active.patient?.identifiers?.[0]?.identifier;
     this.value.name = active.patient.person.display;
     this.value.gender = active.patient.person.gender;
     this.value.telephone = active.patient.attributes[0].attributeType.display == "Telephone Number" ? active.patient.attributes[0].value : "Not Provided" ;
