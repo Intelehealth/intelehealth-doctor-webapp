@@ -74,7 +74,7 @@ export class TabsV4Component implements OnInit {
   }
 
   sign() {
-    const modalRef = this.openModal('Share prescription', 'Are you sure you want to share this prescription?', 'Go Back', 'Confirm', "/assets/svgs/prescription.svg");
+    const modalRef = this.openModal('Share prescription', 'Are you sure you want to share this prescription?', 'Go Back', 'Confirm', "assets/svgs/prescription.svg");
     modalRef.result.then((result) => {
       this.signPrescription();
     }, (reason) => {

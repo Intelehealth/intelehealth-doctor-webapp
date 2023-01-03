@@ -14,7 +14,8 @@ export class AdditionalDocumentsV4Component implements OnInit {
   images: any = [];
   additionalDocumentPresent = false;
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
-
+  selectedIndex: number = 0;
+  selectedImageName: string;
   constructor(
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute
@@ -39,5 +40,20 @@ export class AdditionalDocumentsV4Component implements OnInit {
           }
         });
       });
+  }
+
+  setIndex(index,flag?) {
+    if(flag) {
+      this.selectedIndex = index;
+    }else{
+      this.selectedIndex =  this.selectedIndex + index;
+    }
+    this.getImage();
+  }
+
+  getImage() {
+    let str = this.images.filter((f,i) => i === this.selectedIndex)[0]?.image;
+    this.selectedImageName = str?.substring(str?.indexOf("obs/") + 4, str?.indexOf("/value")) + ".jpg";
+    return str;
   }
 }

@@ -26,7 +26,7 @@
     class="additional-documents-details collapse show"
   >
     <div class="d-flex ml-4" *ngIf="additionalDocumentPresent">
-      <div *ngFor="let image of images">
+      <div *ngFor="let image of images; let i = index">
         <!-- <img
           *ngIf="image.includes('.pdf'); else elseBlock"
           height="120px"
@@ -34,11 +34,71 @@
           class="mr-3"
           src="assets/svgs/blood-pdf.svg"
         /> -->
-          <a href={{image.image}}><img class="mr-3 docImg" src= {{image.image}} alt=""></a>
+        <div class="container1">
+          <img class="mr-3 docImg" src= {{image.image}} alt=""/>
+          <div class="overlay"></div>
+          <div class="button click" (click)="setIndex(i, true)"  data-toggle="modal" data-backdrop="false" data-target="#ModalCarousel" ><a><img style="background: #FFFFFF;
+            opacity: 0.64; width: 25px;"src="assets/images/expand.png"/> </a></div>
+        </div>
       </div>
     </div>
     <div *ngIf="!additionalDocumentPresent">
     	{{ 'No Additional Documents available!'}}
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade modalStyle" id="ModalCarousel" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="header">
+        <i data-dismiss="modal" class="fa fa-arrow-left back click" aria-hidden="true"></i> 
+        <span class="imageName"> {{selectedImageName}}</span> 
+        <a [href]="getImage()"><img class="attach click" src="assets/svgs/downloading.svg"/></a>
+      </div>
+      <div class="modal-body">
+         <!-- carousel -->
+        <div
+             id='carouselExampleIndicators'
+             class='carousel slide'
+             >
+          <div class='carousel-inner'>
+            <div *ngFor="let image of images; let i = index">
+              <div class='imgSize'  [ngClass]="i == selectedIndex ? 'carousel-item active' : 'carousel-item'" >
+                <img class='img-size' src={{image.image}} alt='First slide' />
+              </div>
+            </div>
+          </div>
+          <button
+             class='icon1 carousel-control-prev-icon carousel-control-prev'
+             href='#carouselExampleIndicators'
+             role='button'
+             data-slide='prev'
+             (click)="setIndex(-1)"
+             [disabled]="selectedIndex == 0"
+             >
+            <img   src='assets/icons/dashboard-icons/Vector.png'
+                  aria-hidden='true'
+                  />
+            <span class='sr-only'>Previous</span>
+          </button>
+          <button
+             class='icon1 carousel-control-next-icon carousel-control-next'
+             href='#carouselExampleIndicators'
+             role='button'
+             data-slide='next'
+             (click)="setIndex(1)"
+             [disabled]="selectedIndex >= images.length-1"
+             >
+            <img
+                 src='assets/icons/dashboard-icons/Vector2.png'
+                  aria-hidden='true'
+                  />
+            <span class='sr-only'>Next</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
