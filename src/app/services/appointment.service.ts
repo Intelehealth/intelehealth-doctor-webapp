@@ -34,6 +34,12 @@ export class AppointmentService {
     );
   }
 
+  getAppointment(visitId) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getAppointment/${visitId}`
+    );
+  }
+
   rescheduleAppointment(payload) {
     return this.http.post(
       `${this.baseURL}/appointment/rescheduleAppointment`,

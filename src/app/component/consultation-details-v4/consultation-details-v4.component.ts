@@ -5,6 +5,7 @@ import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "./../../services/session.service";
 import { SocketService } from "src/app/services/socket.service";
 import { ChatComponent } from "../chat/chat.component";
+import { AppointmentService } from "src/app/services/appointment.service";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 @Component({
@@ -19,6 +20,7 @@ export class ConsultationDetailsV4Component implements OnInit {
   @Input() readOnly = false;
 
   visitCreated: any;
+  visitAppointment: Date;
   visitID: string;
   visitDetail;
   providerName: string;
@@ -32,7 +34,8 @@ export class ConsultationDetailsV4Component implements OnInit {
     private visitService: VisitService,
     private sessionService: SessionService,
     private authService: AuthService,
-    private socket: SocketService
+    private socket: SocketService,
+    private appointmentService: AppointmentService
   ) { }
 
   ngOnInit() {
@@ -55,6 +58,7 @@ export class ConsultationDetailsV4Component implements OnInit {
         });
         this.visitStatus = this.getVisitStatus(visitDetailData.encounters[0].encounterType.display);
       });
+    this.getAppointmentDetails(visitId);
   }
 
   ngOnInits() {
@@ -114,5 +118,14 @@ export class ConsultationDetailsV4Component implements OnInit {
 
   getChat() {
     this.chatComponent.chatLaunch();
+  }
+
+  getAppointmentDetails(visitId) {
+    this.appointmentService.getAppointment(visitId)
+      .subscribe((res: any) => {
+        if (res) {
+          this.visitAppointment = res?.data?.slotDate
+        }
+      });
   }
 }
