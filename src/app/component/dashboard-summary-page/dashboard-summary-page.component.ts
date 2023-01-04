@@ -299,11 +299,12 @@ export class DashboardSummaryPageComponent implements OnInit {
     }
     let e = encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey") || this.checkVisit(encounters, "Visit Note") || this.checkVisit(encounters, "Flagged") || this.checkVisit(encounters, "ADULTINITIAL")
     for(let i = 0; i < this.drSlots.length; i++) {
-      this.appointmentTable.headers[5].id.push(this.drSlots[i]);
-      const value = this.assignValueToProperty(active, e, this.drSlots[i]);
-      this.appointmentTable.data.push(value);
-      this.appointmentTable.dataCount = this.appointmentTable.data.length
-      break
+      if(active.patient.uuid === this.drSlots[i].patientId ){
+        this.appointmentTable.headers[5].id.push(this.drSlots[i]);
+        const value = this.assignValueToProperty(active, e, this.drSlots[i]);
+        this.appointmentTable.data.push(value);
+        this.appointmentTable.dataCount = this.appointmentTable.data.length
+      }
     }
   }
 
