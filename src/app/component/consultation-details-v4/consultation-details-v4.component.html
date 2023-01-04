@@ -23,7 +23,7 @@
 
           <li class="first-list mb-3">Visit created</li>
 
-          <!-- <li class="first-list mb-3">Appointment on</li> -->
+          <li class="first-list mb-3">Appointment on</li>
 
           <li class="first-list mb-3">Status</li>
 
@@ -36,10 +36,11 @@
             <label class="margin">{{ visitID }}</label>
           </div>
           <div>
-            <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }} </label>
+            <label class="margin mt-1">{{ visitCreated | date: 'dd MMM, yyyy' }} </label>
           </div>
           <div>
-            <!-- <label class="margin mt-1">{{ visitCreated | date: 'dd MMM yyyy' }}</label> -->
+            <label *ngIf="visitAppointment" class="margin mt-1">{{ visitAppointment | date: 'dd MMM, yyyy' }}</label>
+            <label *ngIf="!visitAppointment" class="chw-color margin mt-1">No appointment</label>
           </div>
           <div>
             <label class="margin  mt-1" [ngClass]="{
