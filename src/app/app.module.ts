@@ -432,6 +432,7 @@ import { AppointmentContainerComponent } from './component/appointment-container
             },
           ],
         },
+        { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
         // { path: "set-new/password", component: SetNewPasswordComponent },
         // {
         //   path: "",

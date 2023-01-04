@@ -1,0 +1,81 @@
+<mat-drawer-container class="sidenav-container" autosize>
+  <mat-drawer #drawer class="admin-sidenav" mode="side" [opened]="true">
+    <div class="menu-items-wrapper" [ngClass]="{ 'collapsed' : collapsed }">
+      <div class="sidenav-logo">
+        <div class="sidenav-toggle">
+          <button type="button" (click)="collapsed = !collapsed">
+            <img [src]="getUrl()" alt="">
+          </button>
+        </div>
+        <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed">
+        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
+      </div>
+      <!-- <div class="sidenav-logo">
+        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%">
+      </div> -->
+      <ul class="admin-nav">
+        <li class="nav-item">
+          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img src="assets/svgs/warning.svg" alt="">
+            <span>Ayu</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-item-link" href="javascript:void(0)">
+            <img src="assets/svgs/user-settings.svg" alt="">
+            <span>System Admin</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-item-link" href="javascript:void(0)">
+            <img src="assets/svgs/add-user.svg" alt="">
+            <span>User Creation</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-item-link" href="javascript:void(0)">
+            <img src="assets/svgs/report.svg" alt="">
+            <span>Report</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <mat-divider class="mb-2"></mat-divider>
+          <a class="nav-item-link" href="javascript:void(0)">
+            <img src="assets/svgs/power.svg" alt="">
+            <span>Log-out</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </mat-drawer>
+
+  <div class="admin-sidenav-content">
+    <div class="header-main">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="header-title d-flex justify-content-between align-items-center py-2">
+          <img src="assets/svgs/ayu.svg" alt="" width="44px">
+          <h6 class="mb-0 ml-2">Ayu</h6>
+          <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-2">
+          <button mat-button class="notification-button mr-3">
+            <mat-icon>notifications_none</mat-icon>
+          </button>
+          <div class="user-info-wrap mr-3">
+            <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider.person.uuid }}" (error) ="onImgError($event)" alt="">
+            <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+          </div>
+          <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="main-container">
+      <router-outlet></router-outlet>
+    </div>
+    <!-- <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button> -->
+  </div>
+</mat-drawer-container>

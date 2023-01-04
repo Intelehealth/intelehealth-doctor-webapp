@@ -1,0 +1,150 @@
+.top {
+  padding: 0px;
+  position: relative;
+}
+
+.license-key {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 388px;
+  height: 48px;
+
+  .select {
+    width: 200px;
+  }
+}
+
+.expiry-date {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 56px;
+  width: 388px;
+  height: 29px;
+  margin-top: 1rem;
+
+  .date {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    color: #1B163A;
+  }
+}
+
+.add-new-key {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  .add-btn {
+    width: 179px;
+    height: 48px;
+    background: #EFE8FF;
+    border-radius: 8px;
+    color: #2E1E91;
+    font-weight: 700;
+    font-size: 18px;
+    border: 1.33px solid #efe8ff;
+  }
+}
+
+.title {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.edit {
+  font-weight: 400;
+  font-size: 14px;
+  color: #2E1E91;
+  width: 62px;
+  height: 29px;
+  border: 1px solid #EFE8FF;
+  border-radius: 4px;
+  margin-left: 1rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 20px;
+}
+
+.mindmaps-label {
+  padding: 26px;
+  font-weight: 600;
+  margin-left: -1rem;
+}
+
+.add-btn {
+  width: 200px;
+  height: 48px;
+  color: #2E1E91;
+  background: #FFFFFF;
+  border: 1.33px solid #efe8ff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  position: absolute;
+  right: 2%;
+}
+
+.table-color-th {
+  color: #7f7b92;
+}
+
+tr:nth-child(even) {
+  background: #f7f7fa;
+}
+
+.table-height {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 150%;
+  height: 88px;
+  border-radius: 8px;
+}
+
+.vr {
+  vertical-align: middle;
+}
+
+.patientName {
+  text-align: left;
+}
+
+.download {
+  text-align: center;
+}
+
+.lastUpdate {
+  text-align: right;
+}
+
+.activeStatus {
+  text-align: right;
+}
+
+.vr-date {
+  text-align: end;
+}
+
+.vr-select {
+  text-align: center;
+}
+
+.vr-number {
+  text-align: center;
+}
