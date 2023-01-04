@@ -13,6 +13,7 @@ export class AdminComponent implements OnInit {
   provider: any;
   username: string = '';
   baseUrl: string = environment.baseURL;
+  baseURLLegacy = environment.baseURLLegacy;
 
   constructor() { }
 
