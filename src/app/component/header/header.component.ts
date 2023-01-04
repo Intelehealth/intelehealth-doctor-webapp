@@ -7,6 +7,7 @@ import { ProfileService } from "src/app/services/profile.service";
 import { environment } from "src/environments/environment";
 import { FindPatientComponent } from "../find-patient/find-patient.component";
 import { SelectLanguageComponent } from "../set-up-profile/select-language/select-language.component";
+import { SetNewPasswordComponent } from "../set-new-password/set-new-password.component";
 declare var getFromStorage: any;
 
 @Component({
@@ -127,6 +128,12 @@ export class HeaderComponent implements OnInit {
   selectLanguage(): void {
     const dialogRef = this.dialog.open(SelectLanguageComponent,{
       data: {},
+    });
+  }
+
+  changePassword(){
+    this.dialog.open(SetNewPasswordComponent,{
+      width: "40%"
     });
   }
 }

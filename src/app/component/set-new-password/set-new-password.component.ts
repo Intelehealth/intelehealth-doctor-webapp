@@ -40,12 +40,14 @@ export class SetNewPasswordComponent implements OnInit {
   onSubmit(){ 
     const value = this.setNewPasswordForm.value.newPassword;
     let data = {"newPassword":value, "otp":"111111"}
-    console.log(data,this.userUuid);
     
     this.mindmap.changePassword(data,this.userUuid).subscribe((response)=>{
-      console.log(response,'Password changed successfully.');
-      this.router.navigate(["/login"]);
-      
+      if(response.success === true) {
+        console.log(response,'Password changed successfully.');
+        this.router.navigate(["/login"]);
+      }else{
+        console.log(response,'Password changed failed.');
+      }
     })
   }
 
