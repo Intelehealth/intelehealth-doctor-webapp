@@ -11,11 +11,11 @@
     <div class="key-item d-flex flex-row align-items-center">
       <h6 class="key-title mb-0">Expiry Date</h6>
       <span>{{ expiryDate ? (expiryDate|date:'dd MMM, yyyy') : '' }}</span>
-      <button type="button" class="action-btn sm-btn ml-2" (click)="editExpiryDate()"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
+      <button type="button" class="action-btn sm-btn ml-2" (click)="openAddLicenseKeyModal('edit')"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
     </div>
   </div>
   <div class="align-self-start">
-    <button type="button" class="action-btn bg-blue mr-2" (click)="addKey()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add New Key</button>
+    <button type="button" class="action-btn bg-blue mr-2" (click)="openAddLicenseKeyModal('add')"><img src="assets/svgs/plus-transparent.svg" alt=""> Add New Key</button>
   </div>
 </div>
 
@@ -24,7 +24,7 @@
     <div class="d-flex align-items-center justify-content-between">
       <div class="intelehealth-card-title">
         <img src="assets/svgs/ayu.svg" alt="" width="44px">
-        <h6 class="mb-0 ml-2">Associated Mindmaps ({{mindmaps.length ? mindmaps.length : 0}} modules)</h6>
+        <h6 class="mb-0 ml-2">Associated Mindmaps ({{mindmapDatas.length ? mindmapDatas.length : 0}} modules)</h6>
       </div>
       <div class="intelehealth-card-title-actions">
         <button mat-icon-button [color]="'primary'" class="mr-2">
@@ -35,7 +35,7 @@
     </div>
   </mat-card-title>
   <mat-card-content>
-    <div class="mat-elevation-z8 mt-3">
+    <div class="mat-elevation-z8">
       <table mat-table [dataSource]="dataSource">
 
         <!-- Checkbox Column -->

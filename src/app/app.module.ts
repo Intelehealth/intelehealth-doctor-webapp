@@ -179,6 +179,7 @@ import { PrescriptionSentComponent } from './component/prescription-container/pr
 import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
 import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
 import { AppointmentContainerComponent } from './component/appointment-container/appointment-container.component';
+import { ModalComponentsModule } from "./modal-components/modal-components.module";
 
 @NgModule({
   declarations: [
@@ -297,6 +298,7 @@ import { AppointmentContainerComponent } from './component/appointment-container
   ],
 
   imports: [
+    ModalComponentsModule,
     CdkAccordionModule,
     MatTabsModule,
     AngularFireModule.initializeApp(environment.firebase),

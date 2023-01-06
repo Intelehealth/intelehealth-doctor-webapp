@@ -6,6 +6,7 @@ import { MindmapService } from 'src/app/services/mindmap.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-ayu',
@@ -27,19 +28,8 @@ export class AyuComponent implements OnInit {
   addKeyValue: string;
   newExpiryDate: string;
   mindmapUploadJson: any;
-  table: any = {
-    headers: [
-      { name: "Select", type: "fill", imageKey: "selectIcon", headerClass: "col-1" },
-      { name: "Sr. No", type: "number", key: "sequence", headerClass: "col-1" },
-      { name: "Patient", type: "stringwithimage", key: "patientName", headerClass: "patientName" },
-      { name: "Last Updated", type: "string", key: "LastUpdated", headerClass: "lastUpdate" },
-      { name: "Active", type: "boolean", imageKey: "ActiveStatusIcon", headerClass: "activeStatus" },
-      { name: "Download", type: "file", imageKey: "DownloadIcon", headerClass: "download" },
-      { name: "Info", type: "data", imageKey: "InfoDataIcon" },
-    ]
-  };
 
-  constructor(private mindmapService: MindmapService, private matDialog: MatDialog, private snackbar: MatSnackBar) { }
+  constructor(private mindmapService: MindmapService, private matDialog: MatDialog, private snackbar: MatSnackBar, private coreService: CoreService) { }
 
   ngOnInit(): void {
     this.fetchMindmaps();
@@ -84,29 +74,24 @@ export class AyuComponent implements OnInit {
     );
   }
 
-  addKey() {
-    const dialogRef = this.matDialog.open(PopupFormComponent, {
-      data: {
-        title: "Add new key",
-        key: this.addKeyValue,
-        expiryDate: this.newExpiryDate,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.addKeyValue = result.key;
-      this.newExpiryDate = result.expiryDate;
-      this.mindmapService.addUpdateLicenseKey(result).subscribe((response) => {
-        if (response) {
-          if (response.success) {
-            this.fetchMindmaps();
-          } else {
-            const message = response.message || "Something went wrong.";
-            console.log(message);
-            this.addKeyValue = "";
-          }
+  openAddLicenseKeyModal(mode: string) {
+    let licKey = this.mindmaps.find((m) => m.keyName === this.selectedLicense);
+    this.coreService.openAddLicenseKeyModal((mode == 'edit') ? licKey : null ).subscribe((result: any) => {
+      if (result) {
+        if (mode == 'edit') {
+          this.mindmaps.forEach(m => {
+            if (m.keyName == result.keyName) {
+              m = result;
+              this.expiryDate = result.expiry;
+            }
+          });
+        } else {
+          this.mindmaps.push(result);
         }
-      });
+        this.snackbar.open(`License Key ${mode == 'add' ? 'Added' : 'Updated' } Successfully!`, null, {
+          duration: 4000,
+        });
+      }
     });
   }
 
