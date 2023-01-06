@@ -1,150 +1,144 @@
-.top {
-  padding: 0px;
-  position: relative;
-}
+.select-key-wrapper {
+  font-family: DM Sans;
 
-.license-key {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  width: 388px;
-  height: 48px;
-
-  .select {
-    width: 200px;
-  }
-}
-
-.expiry-date {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 56px;
-  width: 388px;
-  height: 29px;
-  margin-top: 1rem;
-
-  .date {
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 150%;
-    color: #1B163A;
-  }
-}
-
-.add-new-key {
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  .add-btn {
-    width: 179px;
+  .key-item {
     height: 48px;
-    background: #EFE8FF;
-    border-radius: 8px;
-    color: #2E1E91;
-    font-weight: 700;
-    font-size: 18px;
-    border: 1.33px solid #efe8ff;
+    margin-bottom: 10px;
+
+    .key-title {
+      min-width: 150px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    span {
+      font-size: 16px;
+    }
   }
 }
 
-.title {
-  font-family: 'DM Sans';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.edit {
-  font-weight: 400;
-  font-size: 14px;
-  color: #2E1E91;
-  width: 62px;
-  height: 29px;
-  border: 1px solid #EFE8FF;
-  border-radius: 4px;
-  margin-left: 1rem;
-}
-
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-  padding: 24px;
-  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
-  border-radius: 20px;
-}
-
-.mindmaps-label {
-  padding: 26px;
-  font-weight: 600;
-  margin-left: -1rem;
-}
-
-.add-btn {
-  width: 200px;
+::ng-deep .ng-select.ng-select-single .ng-select-container {
   height: 48px;
-  color: #2E1E91;
-  background: #FFFFFF;
-  border: 1.33px solid #efe8ff;
+  width: 236px;
+  background: #FAF9FF;
+  border: 1px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
-  font-weight: 700;
+}
+
+.action-btn.sm-btn {
+  height: 30px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.action-btn {
+  height: 48px;
+  background: #FFFFFF;
+  border: 1.33px solid #EFE8FF;
+  border-radius: 8px;
+  color: #2E1E91;
   font-size: 18px;
-  position: absolute;
-  right: 2%;
+  font-weight: bold;
+  padding: 10px 20px;
 }
 
-.table-color-th {
-  color: #7f7b92;
+.action-btn.bg-blue {
+  background: #EFE8FF !important;
 }
 
-tr:nth-child(even) {
-  background: #f7f7fa;
+.mat-elevation-z8 {
+  box-shadow: none;
 }
 
-.table-height {
-  font-family: "DM Sans";
-  font-style: normal;
-  font-weight: 600;
+table {
+  width: 100%;
+  font-family: DM Sans;
+}
+
+th.mat-header-cell {
+  border: none;
+  font-size: 14px !important;
+  font-weight: 700;
+  color: #7F7B92;
+  height: 21px;
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  border: none;
+  min-width: 60px;
+}
+
+td.mat-cell {
   font-size: 16px;
-  line-height: 150%;
+}
+
+tr.mat-row, tr.mat-footer-row {
   height: 88px;
   border-radius: 8px;
 }
 
-.vr {
-  vertical-align: middle;
+tr.mat-row:nth-child(odd){
+  background: #F7F7FA;
 }
 
-.patientName {
-  text-align: left;
+tr.mat-row.selected {
+  background: #E6FFF3;
 }
 
-.download {
-  text-align: center;
+td:first-child,
+th:first-child {
+  border-radius: 8px 0 0 8px;
 }
 
-.lastUpdate {
-  text-align: right;
+// Set border-radius on the top-right and bottom-right of the last table data on the table row
+td:last-child,
+th:last-child {
+  border-radius: 0 8px 8px 0;
 }
 
-.activeStatus {
-  text-align: right;
+.intelehealth-card {
+  background: #FFFFFF;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 20px;
+
+  .mat-card-title {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #EFE8FF;
+  }
+
+  .intelehealth-card-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    h6 {
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+    }
+  }
+
+  .intelehealth-card-title-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
-.vr-date {
-  text-align: end;
-}
+.delete-mindmaps-wrapper {
+  position: fixed;
+  bottom: 30px;
+  font-family: DM Sans;
+  font-size: 16px;
+  left: 0;
+  right: 0;
 
-.vr-select {
-  text-align: center;
-}
-
-.vr-number {
-  text-align: center;
+  .delete-mindmap-item {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
 }

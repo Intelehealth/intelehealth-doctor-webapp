@@ -2,6 +2,7 @@
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~angular-calendar/css/angular-calendar.css";
+@import '~pretty-checkbox/src/pretty-checkbox.scss';
 
 @font-face {
   font-family: arty;
@@ -371,3 +372,32 @@ body.font-lato td {
 .sidenav-container .mat-drawer-inner-container {
   overflow: visible !important;
 }
+
+.pretty.p-switch .state label:after {
+  background-color: #2E1E91 !important;
+}
+
+.pretty.p-switch.p-fill input ~ .state:before {
+  background-color: #E4D7FF;
+  border-color: #E4D7FF;
+}
+
+.pretty.p-switch.p-fill input:checked ~ .state:before {
+  border-color: #2E1E91;
+  background-color: #2E1E91 !important;
+}
+
+.mat-checkbox-checked .mat-checkbox-background,.mat-checkbox-indeterminate .mat-checkbox-background {
+  background-color: #0FD197 !important;
+}
+
+.mat-checkbox-frame, .mat-checkbox-background {
+  border-radius: 4px !important;
+}
+
+.mat-checkbox-frame {
+  border: 2px solid #B0ADBE;
+}
+
+
+

@@ -10,6 +10,7 @@ import { ChangePasswordComponent } from "../change-password/change-password.comp
 import { VisitService } from "src/app/services/visit.service";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ModalinternetconnectionComponent } from "../modalinternetconnection/modalinternetconnection.component";
+import { HelperService } from "src/app/services/helper.service";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -42,7 +43,8 @@ export class LoginPageComponent implements OnInit {
     private pushNotificationsService: PushNotificationsService,
     private service: VisitService,
     private dialog: MatDialog,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private helperService: HelperService
   ) { }
 
   ngOnInit() {
@@ -69,7 +71,11 @@ export class LoginPageComponent implements OnInit {
               saveToStorage("provider", provider.results[0]);
               this.authService.sendToken(response.user.sessionId);
               saveToStorage("user", response.user);
-              this.router.navigate(["/dashboard"]);
+              if (this.helperService.checkIfRoleExists('Organizational: System Administrator', response.user.roles)) {
+                this.router.navigate(["/admin"]);
+              } else {
+                this.router.navigate(["/dashboard"]);
+              }
               this.pushNotificationsService
                 .getUserSettings(response.user.uuid)
                 .subscribe((response) => {
@@ -85,7 +91,11 @@ export class LoginPageComponent implements OnInit {
                 this.router.navigate(["/set-profile"]);
                 //this.onSucess.emit(true);
               }else {
-                this.router.navigate(["/dashboard"]);
+                if (this.helperService.checkIfRoleExists('Organizational: System Administrator', response.user.roles)) {
+                  this.router.navigate(["/admin"]);
+                } else {
+                  this.router.navigate(["/dashboard"]);
+                }
               }
               /*this.snackbar.open(
                 `Welcome ${provider.results[0].person.display}`,

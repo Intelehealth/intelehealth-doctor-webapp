@@ -30,4 +30,14 @@ export class HelperService {
     if (!isExist) arr.push(item);
     return [...arr];
   }
+
+  checkIfRoleExists(role: string, roles: any) {
+    let exists = false;
+    roles.forEach((r: any) => {
+      if (r.name == role) {
+        exists = true;
+      }
+    });
+    return exists;
+  }
 }

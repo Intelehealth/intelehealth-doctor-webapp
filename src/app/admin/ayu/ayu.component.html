@@ -1,72 +1,137 @@
-<div class="admin-form">
-  <div class="header top">
-    <div class="license-key">
-      <div class="title">Select license key</div>
-      <div class="select">
-        <ng-select [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
-          <ng-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
-            {{ mindmap.keyName }}
-          </ng-option>
-        </ng-select>
-      </div>
+<div class="d-flex flex-row justify-content-between align-items-center">
+  <div class="select-key-wrapper d-flex flex-column">
+    <div class="key-item d-flex flex-row align-items-center">
+      <h6 class="key-title mb-0">Select License Key</h6>
+      <ng-select [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
+        <ng-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
+          {{ mindmap.keyName }}
+        </ng-option>
+      </ng-select>
     </div>
-    <div class="expiry-date">
-      <div class="title">Expiry date</div>
-      <div class="date">
-        {{ expiryDate | date: "dd MMM, yyyy" }}
-        <button class="edit" (click)="editExpiryDate()">
-          <img width="16px" src="assets/svgs/edit.svg" />
-          Edit
-        </button>
-      </div>
-    </div>
-    <div class="add-new-key">
-      <button type="submit" class="add-btn" (click)="addKey()">
-        <img width="20px" src="assets/svgs/plus.svg" />
-        Add new key
-      </button>
+    <div class="key-item d-flex flex-row align-items-center">
+      <h6 class="key-title mb-0">Expiry Date</h6>
+      <span>{{ expiryDate ? (expiryDate|date:'dd MMM, yyyy') : '' }}</span>
+      <button type="button" class="action-btn sm-btn ml-2" (click)="editExpiryDate()"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
     </div>
   </div>
+  <div class="align-self-start">
+    <button type="button" class="action-btn bg-blue mr-2" (click)="addKey()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add New Key</button>
+  </div>
+</div>
 
-  <div class="main mt-3">
-    <div class="header d-flex">
-      <div class="mindmaps-label">Associated mindmaps(9 Modules)</div>
-      <button class="add-btn mt-2" type="submit" class="add-btn" (click)="addMindmap()">
-        <img src="assets/svgs/plus.svg" /> Add Mindmaps
-      </button>
+<mat-card class="intelehealth-card mt-3">
+  <mat-card-title>
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="intelehealth-card-title">
+        <img src="assets/svgs/ayu.svg" alt="" width="44px">
+        <h6 class="mb-0 ml-2">Associated Mindmaps ({{mindmaps.length ? mindmaps.length : 0}} modules)</h6>
+      </div>
+      <div class="intelehealth-card-title-actions">
+        <button type="button" class="action-btn mr-2" (click)="addMindmap()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
+      </div>
     </div>
-    <div class="table">
-      <table class="table table-borderless w-100">
-        <tr class="table-color-th">
-          <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
-            {{ header?.name }}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="mat-elevation-z8 mt-3">
+      <table mat-table [dataSource]="dataSource">
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox [color]="'primary'" (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
           </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> Sr. No. </th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}}
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- Last Updated Column -->
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef> Last Updated </th>
+          <td mat-cell *matCellDef="let element">{{element.updatedAt|date:'dd MMM, yyyy'}}</td>
+        </ng-container>
+
+        <!-- Active Column -->
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef> Active </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="pretty p-switch p-fill">
+              <input type="checkbox" checked/>
+              <div class="state">
+                  <label></label>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Download Column -->
+        <ng-container matColumnDef="download">
+          <th mat-header-cell *matHeaderCellDef> Download </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button type="button" (click)="downloadMindmap(element.json, element.name)">
+              <img src="assets/svgs/downloading.svg" alt="">
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Info Column -->
+        <ng-container matColumnDef="info">
+          <th mat-header-cell *matHeaderCellDef> Info </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button>
+              <img src="assets/svgs/info.svg" alt="">
+            </button>
+          </td>
+        </ng-container>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+            No data to display.
+          </td>
         </tr>
-        <tr class="table-height" *ngFor="let value of mindmapDatas">
-          <td class="vr vr-select">
-            <img src="/assets/svgs/frame.svg" />
-          </td>
-          <td class="vr vr-number">
-            <div>{{ value.id }}</div>
-          </td>
-          <td class="vr patientName">
-            <div>{{ value.name }}</div>
-          </td>
-          <td class="vr vr-date">
-            <div>{{ value.updatedAt | date: "dd MMM, yyyy" }}</div>
-          </td>
-          <td class="vr activeStatus">
-            <img src="/assets/svgs/toggle.svg" />
-          </td>
-          <td class="vr download">
-            <img src="/assets/svgs/downloading.svg" />
-          </td>
-          <td class="vr">
-            <img src="assets/svgs/info.svg" />
-          </td>
-        </tr>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="selection.isSelected(row)"></tr>
       </table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>
+
+      <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+        aria-label="Select page of periodic elements">
+      </mat-paginator>
     </div>
+  </mat-card-content>
+</mat-card>
+
+<div class="delete-mindmaps-wrapper d-flex justify-content-center align-items-center" *ngIf="selection.selected.length">
+  <div class="delete-mindmap-item d-flex align-items-center">
+    <h6 class="mb-0"><b>{{selection.selected.length}}</b> Mindmap selected</h6>
+    <button mat-flat-button color="warn" class="mx-2" (click)="deleteMindmap()">
+      <img src="assets/svgs/delete-white.svg" alt="">
+      Delete
+    </button>
+    <button mat-icon-button (click)="clearSelection()">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 </div>

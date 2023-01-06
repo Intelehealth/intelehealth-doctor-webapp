@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
+import { HelperService } from "src/app/services/helper.service";
 
 @Component({
   selector: "app-login-container",
@@ -22,11 +23,16 @@ export class LoginContainerComponent implements OnInit {
   selectedLanguage: any;
   languageList = [{ name: "English" }, { name: "Hindi" }];
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService, private helperService: HelperService) {}
   ngOnInit() {
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
-      this.router.navigateByUrl("/dashboard");
+      let user = JSON.parse(localStorage.getItem('user'));
+      if (this.helperService.checkIfRoleExists('Organizational: System Administrator', (user) ? user.roles : [])) {
+        this.router.navigate(["/admin"]);
+      } else {
+        this.router.navigate(["/dashboard"]);
+      }
     }
     this.selectedLanguage = this.languageList[0];
   }

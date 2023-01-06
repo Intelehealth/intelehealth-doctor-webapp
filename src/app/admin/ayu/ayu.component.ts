@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { PopupFormComponent } from 'src/app/component/admin-container/popup-form/popup-form.component';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-ayu',
@@ -9,6 +12,11 @@ import { MindmapService } from 'src/app/services/mindmap.service';
   styleUrls: ['./ayu.component.scss']
 })
 export class AyuComponent implements OnInit {
+
+  displayedColumns: string[] = ['select', 'id', 'name', 'updatedAt', 'active', 'download', 'info'];
+  dataSource = new MatTableDataSource<any>();
+  selection = new SelectionModel<any>(true, []);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   mindmaps = [];
   mindmapDatas = [];
@@ -20,7 +28,7 @@ export class AyuComponent implements OnInit {
   mindmapUploadJson: any;
   table: any = {
     headers: [
-      { name: "Select", type: "fill", imageKey: "selectIcon",headerClass: "col-1" },
+      { name: "Select", type: "fill", imageKey: "selectIcon", headerClass: "col-1" },
       { name: "Sr. No", type: "number", key: "sequence", headerClass: "col-1" },
       { name: "Patient", type: "stringwithimage", key: "patientName", headerClass: "patientName" },
       { name: "Last Updated", type: "string", key: "LastUpdated", headerClass: "lastUpdate" },
@@ -36,12 +44,20 @@ export class AyuComponent implements OnInit {
     this.fetchMindmaps();
   }
 
+  downloadMindmap(json: string, name: string) {
+    let sJson = JSON.stringify(JSON.parse(json));
+    let element = document.createElement('a');
+    element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
+    element.setAttribute('download', name);
+    element.click();
+  }
+
   fetchMindmaps(): void {
     this.mindmapService.getMindmapKey().subscribe(
       (response) => {
         this.mindmaps = response.data;
         this.selectedLicense = this.mindmaps[0].keyName
-        this.licenceKeySelecter()
+        this.licenceKeySelecter();
       },
       (err) => {
         console.log("Something went wrong");
@@ -54,6 +70,8 @@ export class AyuComponent implements OnInit {
     this.mindmapService.detailsMindmap(this.selectedLicense).subscribe(
       (response) => {
         this.mindmapDatas = response.data;
+        this.dataSource = new MatTableDataSource(this.mindmapDatas);
+        this.dataSource.paginator = this.paginator;
         const { expiry } = this.mindmaps.find(
           (m) => m.keyName === this.selectedLicense
         );
@@ -65,8 +83,8 @@ export class AyuComponent implements OnInit {
     );
   }
 
-  addKey(){
-    const dialogRef = this.matDialog.open(PopupFormComponent,{
+  addKey() {
+    const dialogRef = this.matDialog.open(PopupFormComponent, {
       data: {
         title: "Add new key",
         key: this.addKeyValue,
@@ -91,7 +109,7 @@ export class AyuComponent implements OnInit {
     });
   }
 
-  addMindmap(){
+  addMindmap() {
     const dialogRef = this.matDialog.open(PopupFormComponent, {
       data: {
         title: "Add Mindmaps",
@@ -109,7 +127,7 @@ export class AyuComponent implements OnInit {
           console.log(res.message);
           this.licenceKeySelecter();
         },
-        (err) =>{
+        (err) => {
           console.log('somethingWentWrong');
         }
       );
@@ -141,6 +159,39 @@ export class AyuComponent implements OnInit {
           }
         );
     });
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+
+  deleteMindmap() {
+
+  }
+
+  clearSelection() {
+    this.selection.clear();
   }
 
 }

@@ -46,6 +46,7 @@
     "ngx-cookie-service": "^2.1.0",
     "ngx-spinner": "^10.0.1",
     "popper.js": "^1.14.3",
+    "pretty-checkbox": "^3.0.3",
     "rxjs": "~6.6.2",
     "serialize-javascript": "^2.1.2",
     "signature_pad": "^4.0.10",
