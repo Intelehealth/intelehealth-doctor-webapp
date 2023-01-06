@@ -23,6 +23,9 @@ export class DashboardSummaryPageComponent implements OnInit {
   allVisits = [];
   viewDate: Date = new Date();
   drSlots = [];
+  isLoaded: boolean = false;
+  isLoad: boolean = false;
+  getVisitsData = [];
 
   appointmentTable: any = {
     id: "appointmentTable",
@@ -195,6 +198,7 @@ export class DashboardSummaryPageComponent implements OnInit {
         });
         this.getVisits();
         this.getVisitCounts(this.specialization);
+        this.getDrSlots();
       });
     } else {
       this.authService.logout();
@@ -208,8 +212,6 @@ export class DashboardSummaryPageComponent implements OnInit {
       });
       this.playNotify();
     });
-    let endOfMonth = moment(this.viewDate).endOf("month").format("YYYY-MM-DD hh:mm");
-    this.getDrSlots(endOfMonth);
   }
 
   ngOnDestroy() {
@@ -261,6 +263,7 @@ export class DashboardSummaryPageComponent implements OnInit {
         });
         this.helper.refreshTable.next();
         this.setSpiner = false;
+        this.isLoaded = true;
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -296,15 +299,6 @@ export class DashboardSummaryPageComponent implements OnInit {
       const values = this.assignValueToProperty(active, encounter);
       // this.service.waitingVisit.push(values);
       this.awaitingVisits.data.push(values);
-    }
-    let e = encounter = this.checkVisit(encounters, "Visit Complete") || this.checkVisit(encounters, "Patient Exit Survey") || this.checkVisit(encounters, "Visit Note") || this.checkVisit(encounters, "Flagged") || this.checkVisit(encounters, "ADULTINITIAL")
-    for(let i = 0; i < this.drSlots.length; i++) {
-      if(active.patient.uuid === this.drSlots[i].patientId ){
-        this.appointmentTable.headers[5].id.push(this.drSlots[i]);
-        const value = this.assignValueToProperty(active, e, this.drSlots[i]);
-        this.appointmentTable.data.push(value);
-        this.appointmentTable.dataCount = this.appointmentTable.data.length
-      }
     }
   }
 
@@ -377,16 +371,31 @@ export class DashboardSummaryPageComponent implements OnInit {
 
   onCancelClick() {}
 
-  getDrSlots(toDate) {
+  getDrSlots() {
     this.appointmentService
       .getUserSlots(
         this.userId,
-        moment('2022-01-01 12:00').format("DD/MM/YYYY"),
-        moment(toDate).format("DD/MM/YYYY")
+        moment().startOf('year').format('MM/DD/YYYY'),
+        moment().endOf('year').format('MM/DD/YYYY')
       )
       .subscribe({
         next: (res: any) => {
           this.drSlots = res.data;
+          this.service.getVisits({ includeInactive: false }).subscribe((res: any) =>{
+            this.getVisitsData = res.results
+            for(let i of this.drSlots){
+              for(let j of this.getVisitsData){
+                if(i.patientId === j.patient.uuid){
+                  let encounter;
+                  const values = this.assignValueToProperty(j, encounter, i);
+                  this.appointmentTable.data.push(values);
+                  this.appointmentTable.dataCount = this.appointmentTable.data.length
+                  break
+                }
+              }
+            }
+            this.isLoad = true;
+          })          
         },
       });
   }

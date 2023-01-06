@@ -39,28 +39,28 @@
   </div>
 
   <!-- tables -->
-  <ng-container *ngIf="appointmentTable.data.length > 0">
+  <ng-container *ngIf="isLoad">
     <app-dashboard-table
       [tableConfig]="appointmentTable"
       [data]="appointmentTable.data"
     ></app-dashboard-table>
   </ng-container>
   <br>
-  <ng-container *ngIf="priorityVisits.data.length > 0">
+  <ng-container *ngIf="isLoaded">
     <app-dashboard-table
     [tableConfig]="priorityVisits"
     [data]="priorityVisits.data"
     ></app-dashboard-table>
   </ng-container>
   <br>
-  <ng-container  *ngIf="awaitingVisits.data.length > 0">
+  <ng-container  *ngIf="isLoaded">
     <app-dashboard-table
       [tableConfig]="awaitingVisits"
       [data]="awaitingVisits.data"
    ></app-dashboard-table>
   </ng-container>
   <br>
-  <ng-container *ngIf="inProgressVisits.data.length > 0">
+  <ng-container *ngIf="isLoaded">
     <app-dashboard-table
       [tableConfig]="inProgressVisits"
       [data]="inProgressVisits.data"
