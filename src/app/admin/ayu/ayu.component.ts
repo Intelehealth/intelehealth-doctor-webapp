@@ -5,6 +5,7 @@ import { PopupFormComponent } from 'src/app/component/admin-container/popup-form
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ayu',
@@ -15,7 +16,7 @@ export class AyuComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'id', 'name', 'updatedAt', 'active', 'download', 'info'];
   dataSource = new MatTableDataSource<any>();
-  selection = new SelectionModel<any>(true, []);
+  selection = new SelectionModel<any>(false, []);
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   mindmaps = [];
@@ -38,7 +39,7 @@ export class AyuComponent implements OnInit {
     ]
   };
 
-  constructor(private mindmapService: MindmapService, private matDialog: MatDialog) { }
+  constructor(private mindmapService: MindmapService, private matDialog: MatDialog, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.fetchMindmaps();
@@ -187,7 +188,16 @@ export class AyuComponent implements OnInit {
   }
 
   deleteMindmap() {
-
+    this.mindmapService.deleteMindmap(this.selection.selected[0].keyName, { mindmapName: this.selection.selected[0].name })
+    .subscribe((res: any) => {
+      if (res) {
+        this.snackbar.open(res.message, null, {
+          duration: 4000,
+        });
+        this.selection.clear();
+        this.licenceKeySelecter();
+      }
+    });
   }
 
   clearSelection() {
