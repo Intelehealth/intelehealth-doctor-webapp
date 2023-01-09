@@ -40,6 +40,12 @@ export class AppointmentService {
     );
   }
 
+  getScheduledMonths(userUuid, year) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getScheduledMonths/${userUuid}?year=${year}`
+    );
+  }
+
   rescheduleAppointment(payload) {
     return this.http.post(
       `${this.baseURL}/appointment/rescheduleAppointment`,

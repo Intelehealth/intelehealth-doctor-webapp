@@ -8,6 +8,7 @@ import { environment } from "src/environments/environment";
 import { FindPatientComponent } from "../find-patient/find-patient.component";
 import { SelectLanguageComponent } from "../set-up-profile/select-language/select-language.component";
 import { SetNewPasswordComponent } from "../set-new-password/set-new-password.component";
+import { Router } from "@angular/router";
 declare var getFromStorage: any;
 
 @Component({
@@ -18,11 +19,9 @@ declare var getFromStorage: any;
 export class HeaderComponent implements OnInit {
   baseURL = environment.baseURL;
   isShowNotification: boolean = false;
-
   showBreadCrumb: boolean = false;
-
   allNotification = [{}];
-
+  selectedIndex: number = 0;
   showFourNotification = [
     {
       text: "muskan kala's appointment start in 15mints",
@@ -51,11 +50,7 @@ export class HeaderComponent implements OnInit {
     {
       text: "Dashboard",
       route: "/dashboard",
-    },
-    {
-      text: "Visit summary",
-      route: "/dashboard/visit-summary",
-    },
+    }
   ];
 
   userName: string;
@@ -66,7 +61,9 @@ export class HeaderComponent implements OnInit {
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
     private http: HttpClient,
-    private profileService: ProfileService) { }
+    private profileService: ProfileService,
+    private router: Router) {
+  }
 
   ngOnInit(): void {
     let user = getFromStorage("user");
@@ -76,6 +73,22 @@ export class HeaderComponent implements OnInit {
       this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;
     }, (err) => {
       this.personImgURL = this.personImgURL;
+    });
+    this.router.events.subscribe(() => {
+      if (this.breadCrumb.length == 2) {
+        this.breadCrumb.pop();
+      }
+      if (this.router.url.includes("visit-summary")) {
+        this.breadCrumb.push({
+          text: "Visit summary",
+          route: "/dashboard/visit-summary",
+        });
+      } else if (this.router.url.includes("calendar")) {
+        this.breadCrumb.push({
+          text: "Calendar",
+          route: "/dashboard/calendar",
+        });
+      }
     });
   }
 
@@ -126,13 +139,13 @@ export class HeaderComponent implements OnInit {
   }
 
   selectLanguage(): void {
-    const dialogRef = this.dialog.open(SelectLanguageComponent,{
+    const dialogRef = this.dialog.open(SelectLanguageComponent, {
       data: {},
     });
   }
 
-  changePassword(){
-    this.dialog.open(SetNewPasswordComponent,{
+  changePassword() {
+    this.dialog.open(SetNewPasswordComponent, {
       width: "40%"
     });
   }

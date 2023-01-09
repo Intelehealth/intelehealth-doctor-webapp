@@ -26,7 +26,7 @@ export class SidenavComponent implements OnInit {
   screenWidth = 0;
   changeSide: boolean = false;
 
-  constructor( private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
@@ -43,26 +43,34 @@ export class SidenavComponent implements OnInit {
     });
 
     const dashboardContainer = document.querySelector(".dashboard-summary");
-    
+    const calendarContainer = document.querySelector(".right-side-container");
+
     if (this.collapsed) {
       dashboardContainer && dashboardContainer.classList.add("nav-collapsed");
-      if(dashboardContainer?.classList?.contains('nav-opened')) {
-         dashboardContainer.classList.remove("nav-opened");
+      if (dashboardContainer?.classList?.contains('nav-opened')) {
+        dashboardContainer?.classList.remove("nav-opened");
+      }
+
+      calendarContainer && calendarContainer.classList.add("nav-collapsed");
+      if (calendarContainer?.classList?.contains('nav-opened')) {
+        calendarContainer.classList.remove("nav-opened");
       }
     } else {
       dashboardContainer &&
-        dashboardContainer.classList.remove("nav-collapsed");
-        dashboardContainer.classList.add("nav-opened");
+        dashboardContainer?.classList.remove("nav-collapsed");
+      dashboardContainer?.classList.add("nav-opened");
+      calendarContainer &&
+        calendarContainer?.classList.remove("nav-collapsed");
+      calendarContainer?.classList.add("nav-opened");
     }
   }
 
   get toggleImage() {
-    return `assets/icons/dashboard-icons/${
-      this.changeSide ? "Vector.png" : "Vector2.png"
-    }`;
+    return `assets/icons/dashboard-icons/${this.changeSide ? "Vector.png" : "Vector2.png"
+      }`;
   }
 
-  logout(){
+  logout() {
     this.authService.logout();
   }
 }
