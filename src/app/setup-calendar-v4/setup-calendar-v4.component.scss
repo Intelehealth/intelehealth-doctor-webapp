@@ -19,7 +19,7 @@
   gap: 20px;
 
   width: 274px;
-  height: 307px;
+  // height: 307px;
 
   background: #ffffff;
   box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
@@ -27,7 +27,7 @@
 }
 
 .right-side-container {
-  width: 830px;
+  width: 1115px;
   height: 740px;
 
   background: #ffffff;
@@ -80,7 +80,7 @@
   gap: 16px;
 
   width: 234px;
-  height: 200px;
+  // height: 200px;
 
   flex: none;
   order: 1;
@@ -168,6 +168,7 @@
   flex: none;
   order: 0;
   flex-grow: 0;
+  margin-bottom: 10px;
 }
 
 .add-more-container {
@@ -176,7 +177,7 @@
   align-items: center;
   padding: 0px;
   gap: 16px;
-
+  margin-right: 50px;
   width: 182px;
   height: 32px;
 
@@ -547,7 +548,7 @@
   padding: 0px;
   gap: 8px;
 
-  width: 249px;
+  width: 255px;
   height: 77px;
 
   .dates-label {
@@ -574,7 +575,7 @@
     padding: 14px 16px;
     gap: 8px;
 
-    width: 249px;
+    width: 255px;
     height: 48px;
 
     background: #faf9ff;
@@ -880,4 +881,63 @@
 
 .duration-width {
   width: 62px;
+}
+
+.nav-opened {
+  width: 1115px;
+}
+
+.nav-collapsed {
+  width: 1100px;
+}
+
+.input1 {
+  background-color: #faf9ff;
+  border: none;
+}
+
+.btn-logo-container {
+
+  .label1 {
+    margin-left: 0;
+
+    padding-top: 15px;
+    padding-left: 15px;
+
+    color: #1B163A;
+
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+  }
+
+  .manage-calendar-btn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 164px;
+    height: 48px;
+    padding: 14px 20px;
+    background: #EFE8FF;
+    border-radius: 8px;
+  }
+
+  .text {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #7F7B92;
+
+  }
+}
+
+.msg {
+  color: red;
+  font-weight: bold;
+  font-size: 1rem;
 }

@@ -1,5 +1,15 @@
 <!-- Main container -->
-<div class="d-flex w-100">
+
+<div class="d-flex btn-logo-container">
+  <img src="assets/svgs/calender-dilog.svg" />
+  <div class="label1">Setup your calendar<br>
+    <span class="text">Please set up your scedule for the month according to your availability</span>
+  </div>
+  <button type="button" class="btn manage-calendar-btn ml-auto" routerLink="/dashboard/view-calendar">
+    View calendar
+  </button>
+</div>
+<div class="d-flex w-100 mt-24">
   <!-- Left side container -->
   <div class="left-side-container">
     <!-- Header -->
@@ -7,45 +17,31 @@
       <label class="month-header">Month</label>
     </div>
     <!-- Month wise -->
-    <div class="month-wise">
-      <!-- Month -->
-      <div class="month">
-        <!-- Details -->
-        <div class="details">
-          <div class="left-line"></div>
-          <span class="name">July</span>
+    <div>
+      <div *ngFor="let month of months" class="month-wise">
+        <!-- Month -->
+        <div class="month">
+          <!-- Details -->
+          <div class="details click" (click)="getMonthDetails(month)">
+            <div class="left-line"></div>
+            <span class="name">{{month.name}}</span>
+          </div>
+          <!-- Chevron -->
+          <div>
+            <img src="assets/svgs/Vector_right.svg" />
+          </div>
         </div>
-        <!-- Chevron -->
-        <div class="chevron-icon">
-          <img src="assets/svgs/chevron-down.svg" />
-        </div>
-      </div>
-      <!-- Divider -->
-      <div class="divider"></div>
-
-      <!-- Month -->
-      <div class="month">
-        <!-- Details -->
-        <div class="details">
-          <div class="left-line"></div>
-          <span class="name">August</span>
-        </div>
-        <!-- Chevron -->
-        <div class="chevron-icon">
-          <img src="assets/svgs/chevron-down.svg" />
-        </div>
+        <div class="divider"></div>
       </div>
 
-      <div class="divider"></div>
-
-      <!-- For Add More -->
-      <div class="add-more-container">
-        <!-- Plus Icon -->
-        <div class="plus-icon">
-          <img src="assets/svgs/plus.svg" />
-        </div>
-        <div class="add-more-label">Add more months</div>
+    </div>
+    <!-- For Add More -->
+    <div class="add-more-container click" (click)="addMonth()">
+      <!-- Plus Icon -->
+      <div class="plus-icon">
+        <img src="assets/svgs/plus.svg" />
       </div>
+      <div class="add-more-label">Add more months</div>
     </div>
   </div>
 
@@ -65,20 +61,32 @@
         <div class="date">
           <div class="date-text">Start date</div>
           <div class="date-content">
-            <span class="date-value">1 July, 2022</span>
-            <div class="date-icon">
-              <img src="assets/svgs/calendar-date.svg" />
-            </div>
+            <input class="input1" matInput readonly [matDatepicker]="dp1" [min]="minDate" [(ngModel)]="startDate">
+            <mat-datepicker-toggle matSuffix [for]="dp1">
+              <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #dp1 disabled="false">
+              <mat-datepicker-actions>
+                <button mat-button matDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" matDatepickerApply>Okay</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
           </div>
         </div>
 
         <div class="date">
           <div class="date-text">End date</div>
           <div class="date-content">
-            <span class="end-date-value">8 July, 2022</span>
-            <div class="date-icon">
-              <img src="assets/svgs/calendar-date.svg" />
-            </div>
+            <input class="input1" matInput readonly [matDatepicker]="dp2" [min]="minDate" [(ngModel)]="endDate">
+            <mat-datepicker-toggle matSuffix [for]="dp2">
+              <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #dp2 disabled="false">
+              <mat-datepicker-actions>
+                <button mat-button matDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" matDatepickerApply>Okay</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
           </div>
         </div>
       </div>
@@ -87,122 +95,101 @@
       <div class="d-flex mt-5 mb-2">
         <table class="table w-100">
           <thead class="">
-            <th
-              class="border-custom {{ header?.key }} thClass"
-              *ngFor="let header of headers"
-            >
+            <th class="border-custom {{ header?.key }} thClass" *ngFor="let header of headers">
               {{ header?.name }}
             </th>
           </thead>
           <tbody>
-            <tr *ngFor="let row of data">
-              <td *ngFor="let header of headers">
-                <ng-container *ngIf="header?.type === 'remark'; else elseBlock">
-                  {{ row[header.key] }}
-                </ng-container>
+            <ng-container *ngIf="data.length > 0">
+              <tr class="schedule" *ngFor="let row of data">
+                <td class="pl-0 mt-4" *ngFor="let header of headers">
+                  <ng-container *ngIf="header?.type === 'remark'; else elseBlock">
+                    <div class="position-relative">
+                      <input type="text" readonly class="days-dropdown" [(ngModel)]="row[header.key1]" />
+                      <div class="position-absolute input-img">
+                        <img src="assets/svgs/chevron-down-input.svg" />
+                      </div>
+                    </div>
 
-                <ng-template #elseBlock>
-                  {{ row[header.key] }}
-                </ng-template>
-              </td>
-              <td>
-                <div class="delete-btn position-relative">
-                  <span class="delete-btn-label position-absolute">Delete</span>
-                  <img class="delete-icon" src="assets/svgs/delete-icon.svg" />
-                </div>
-              </td>
-            </tr>
+                  </ng-container>
 
-            <ng-container *ngIf="!showAddMore">
+                  <ng-template #elseBlock>
+                    <div class="d-flex td-start-time">
+                      <ng-select class="select time-width" [items]="startTimeList" bindLabel="name" [clearable]="false"
+                        [(ngModel)]="row[header.key1]" [disabled]="true">
+                      </ng-select>
+
+                      <ng-select class="select duration-width" [items]="clockTimeAmPM" bindLabel="name"
+                        [clearable]="false" [(ngModel)]="row[header.key2]" [disabled]="true">
+                      </ng-select>
+                    </div>
+                  </ng-template>
+                </td>
+                <td>
+                  <div class="delete-btn position-relative click" (click)="deleteSlots(row.ids)">
+                    <span class="delete-btn-label position-absolute">Delete</span>
+                    <img class="delete-icon" src="assets/svgs/delete-icon.svg" />
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="showAddMore">
               <tr class="schedule">
                 <td class="pl-0 mt-4">
                   <div class="d-flex td-start-time">
-                    <ng-select
-                      class="select time-width"
-                      [items]="startTimeList"
-                      bindLabel="name"
-                      [clearable]="false"
-                      [(ngModel)]="selectedStartTime"
-                    >
+                    <ng-select class="select time-width" [items]="timeList" bindLabel="name" [clearable]="false"
+                      [(ngModel)]="selectedStartTime">
                     </ng-select>
 
-                    <ng-select
-                      class="select duration-width"
-                      [items]="clockTimeAmPM"
-                      bindLabel="name"
-                      [clearable]="false"
-                      [(ngModel)]="selectedStartAmPm"
-                    >
+                    <ng-select class="select duration-width" [items]="clockTimeAmPM" bindLabel="name"
+                      [clearable]="false" [(ngModel)]="selectedStartAmPm">
                     </ng-select>
                   </div>
                 </td>
 
                 <td class="mt-4">
                   <div class="d-flex td-start-time">
-                    <ng-select
-                      class="select start-end-width"
-                      [items]="endTimeList"
-                      bindLabel="name"
-                      [clearable]="false"
-                      [(ngModel)]="selectedEndTime"
-                    >
+                    <ng-select class="select start-end-width" [items]="timeList" bindLabel="name" [clearable]="false"
+                      [(ngModel)]="selectedEndTime">
                     </ng-select>
 
-                    <ng-select
-                      class="select duration-width"
-                      [items]="clockTimeAmPM"
-                      bindLabel="name"
-                      [clearable]="false"
-                      [(ngModel)]="selectedEndAmPm"
-                    >
+                    <ng-select class="select duration-width" [items]="clockTimeAmPM" bindLabel="name"
+                      [clearable]="false" [(ngModel)]="selectedEndAmPm">
                     </ng-select>
                   </div>
                 </td>
                 <td>
                   <div class="position-relative">
-                    <input
-                      type="text"
-                      readonly
-                      class="days-dropdown"
-                      [(ngModel)]="weekDays"
-                      (click)="showDays = !showDays"
-                    />
+                    <input type="text" readonly class="days-dropdown" [(ngModel)]="weekDays"
+                      (click)="showDays = !showDays" />
                     <div class="position-absolute input-img">
                       <img src="assets/svgs/chevron-down-input.svg" />
                     </div>
                     <ng-container *ngIf="showDays">
                       <div class="days-container position-absolute">
                         <div class="days-content" *ngFor="let days of daysList">
-                          <input
-                            type="checkbox"
-                            [checked]="days.checked"
-                            class="checkbox"
-                            (change)="onCheckboxChange($event, days)"
-                            id="weekdays"
-                            name="weekdays"
-                          />
+                          <input type="checkbox" [checked]="days.checked" class="checkbox"
+                            (change)="onCheckboxChange($event, days)" id="weekdays" name="weekdays" />
                           <span class="day-name">{{ days.name }}</span>
                         </div>
                       </div>
                     </ng-container>
                   </div>
                 </td>
-                <td class="pr-0 d-flex justify-content-end save-cancel-td">
-                  <div class="save-btn position-relative">
+                <td class="pr-0 d-flex save-cancel-td">
+                  <div class="save-btn position-relative click" (click)="save()">
                     <span class="save-btn-label position-absolute">Save</span>
                   </div>
 
-                  <div class="cancel-btn position-relative">
-                    <span class="cancel-btn-label position-absolute"
-                      >Cancel</span
-                    >
+                  <div class="cancel-btn position-relative click" (click)="removeTiming()">
+                    <span class="cancel-btn-label position-absolute">Cancel</span>
                   </div>
                 </td>
               </tr>
             </ng-container>
+            <p class="msg" *ngIf="errorMsg!== null">{{errorMsg}}</p>
           </tbody>
-
-          <div class="add-more-timing" *ngIf="true">
+          <div class="add-more-timing" *ngIf="data.length >= 1" (click)="addTiming()">
             <!-- Plus Icon -->
             <div class="timing-plus-icon">
               <img src="assets/svgs/plus.svg" />
@@ -225,10 +212,17 @@
         <div class="dates-content">
           <div class="dates-label">Dates</div>
           <div class="select-dates">
-            <span class="select-date-label">Select dates</span>
-            <div class="date-icon">
-              <img src="assets/svgs/calendar-date.svg" />
-            </div>
+            <input class="input1" matInput placeholder="Select dates" readonly [matDatepicker]="dp3" [min]="minDate"
+              [(ngModel)]="data.daysOff">
+            <mat-datepicker-toggle matSuffix [for]="dp3">
+              <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
+            </mat-datepicker-toggle>
+            <mat-datepicker #dp3 disabled="false">
+              <mat-datepicker-actions>
+                <button mat-button matDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" matDatepickerApply>Okay</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
           </div>
         </div>
       </div>
