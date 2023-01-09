@@ -50,4 +50,9 @@ export class MindmapService {
     const url = `${this.baseURL}/mindmap/delete/${key}`;
     return this.http.post(url, data);
   }
+
+  toggleMindmapStatus(data: any): Observable<any> {
+    const url = `${this.baseURL}/mindmap/toggleStatus`;
+    return this.http.post(url, data);
+  }
 }

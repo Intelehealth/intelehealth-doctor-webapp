@@ -1,0 +1,109 @@
+.hiddenFileInput > input{
+  height: 0px;
+  width: 0px;
+  opacity: 0;
+  cursor: none;
+}
+
+.hiddenFileInput{
+  height: 0px;
+}
+
+.close-btn-wrapper {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+
+  .modal-close-btn {
+    border: none;
+    background: transparent;
+  }
+}
+
+.upload-json-input {
+  padding: 24px;
+  position: relative;
+}
+
+::ng-deep .expandable {
+  border: none !important;
+}
+
+.dropzone {
+  font-family: DM Sans;
+  h6 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 18px;
+    color: #7F7B92;
+  }
+}
+
+.upload-json-modal {
+  font-family: DM Sans;
+
+  .modal-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    width: 489px;
+    height: 70px;
+    background: #EFE8FF;
+
+    h6 {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+    }
+  }
+
+  .modal-body {
+    padding: 24px;
+
+    .upload-item {
+      background: #FAF9FF;
+      border-radius: 4px;
+      padding: 12px;
+
+      span {
+        font-size: 16px;
+        color: #1B163A;
+      }
+    }
+  }
+}
+
+.cancel-btn {
+  padding: 8px 24px;
+  width: 119px;
+  height: 48px;
+  background: #FFFFFF;
+  border: 1px solid #EFE8FF;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 150%;
+  color: #2E1E91;
+  font-weight: bold;
+}
+
+.confirm-btn {
+  padding: 8px 24px;
+  width: 119px;
+  height: 48px;
+  background: #2E1E91;
+  border: 1px solid #2E1E91;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FFFFFF;
+  font-weight: bold;
+}

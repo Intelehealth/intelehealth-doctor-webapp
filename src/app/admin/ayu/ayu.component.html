@@ -30,7 +30,7 @@
         <button mat-icon-button [color]="'primary'" class="mr-2">
           <img src="assets/svgs/search-icon.svg" alt="">
         </button>
-        <button type="button" class="action-btn mr-2" (click)="addMindmap()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
+        <button type="button" class="action-btn mr-2" (click)="openUploadMindmapModal()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
       </div>
     </div>
   </mat-card-title>
@@ -81,7 +81,7 @@
           <th mat-header-cell *matHeaderCellDef> Active </th>
           <td mat-cell *matCellDef="let element">
             <div class="pretty p-switch p-fill">
-              <input type="checkbox" checked/>
+              <input type="checkbox" [checked]="element.isActive" (change)="toggleStatus(element)"/>
               <div class="state">
                   <label></label>
               </div>

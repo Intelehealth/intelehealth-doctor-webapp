@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { PopupFormComponent } from 'src/app/component/admin-container/popup-form/popup-form.component';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
@@ -24,10 +23,6 @@ export class AyuComponent implements OnInit {
   mindmapDatas = [];
   selectedLicense: string;
   expiryDate: string;
-  LicenseList = [];
-  addKeyValue: string;
-  newExpiryDate: string;
-  mindmapUploadJson: any;
 
   constructor(private mindmapService: MindmapService, private matDialog: MatDialog, private snackbar: MatSnackBar, private coreService: CoreService) { }
 
@@ -35,6 +30,7 @@ export class AyuComponent implements OnInit {
     this.fetchMindmaps();
   }
 
+  /** Download JSON mindmap. */
   downloadMindmap(json: string, name: string) {
     let sJson = JSON.stringify(JSON.parse(json));
     let element = document.createElement('a');
@@ -43,6 +39,7 @@ export class AyuComponent implements OnInit {
     element.click();
   }
 
+  /** Get lsit of available license keys. */
   fetchMindmaps(): void {
     this.mindmapService.getMindmapKey().subscribe(
       (response) => {
@@ -56,7 +53,7 @@ export class AyuComponent implements OnInit {
     );
   }
 
-
+  /** Get lsit of available mindmaps for the selected license key. */
   licenceKeySelecter(): void {
     this.mindmapService.detailsMindmap(this.selectedLicense).subscribe(
       (response) => {
@@ -74,6 +71,28 @@ export class AyuComponent implements OnInit {
     );
   }
 
+  /** Open Upload Json Mindmap Modal. */
+  openUploadMindmapModal() {
+    this.coreService.openUploadMindmapModal().subscribe((result: any) => {
+      if (result) {
+        if (result.filename && result.value) {
+          result.key = this.selectedLicense;
+          this.mindmapService.postMindmap(result).subscribe((res: any) => {
+            if (res.success) {
+              this.mindmapDatas.push(res.data);
+              this.dataSource = new MatTableDataSource(this.mindmapDatas);
+              this.dataSource.paginator = this.paginator;
+              this.snackbar.open('Mindmap Added Successfully!', null, {
+                duration: 4000
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  /** Open the Add/Edit License Key Modal. */
   openAddLicenseKeyModal(mode: string) {
     let licKey = this.mindmaps.find((m) => m.keyName === this.selectedLicense);
     this.coreService.openAddLicenseKeyModal((mode == 'edit') ? licKey : null ).subscribe((result: any) => {
@@ -92,58 +111,6 @@ export class AyuComponent implements OnInit {
           duration: 4000,
         });
       }
-    });
-  }
-
-  addMindmap() {
-    const dialogRef = this.matDialog.open(PopupFormComponent, {
-      data: {
-        title: "Add Mindmaps",
-        mindmapJson: this.mindmapUploadJson
-      },
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      const data = {
-        filename: result.filename,
-        value: result.mindmapJson,
-        key: this.selectedLicense,
-      };
-      this.mindmapService.postMindmap(data).subscribe(
-        (res) => {
-          console.log(res.message);
-          this.licenceKeySelecter();
-        },
-        (err) => {
-          console.log('somethingWentWrong');
-        }
-      );
-    });
-  }
-
-  editExpiryDate(): void {
-    const dialogRef = this.matDialog.open(PopupFormComponent, {
-      data: { title: "Edit Expiry Date", expiryDate: this.expiryDate },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      const newExpiryDate = result.expiryDate;
-      this.mindmapService
-        .addUpdateLicenseKey({
-          key: this.selectedLicense,
-          expiryDate: newExpiryDate,
-        })
-        .subscribe(
-          (response) => {
-            if (response.success) {
-              this.expiryDate = response?.data?.expiry;
-            }
-            console.log(response.message)
-          },
-          (err) => {
-            const message = err?.error?.message || err?.message || "Something went wrong";
-            console.log(message);
-          }
-        );
     });
   }
 
@@ -172,6 +139,7 @@ export class AyuComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
+  /** Delete selected mindmap protocol. */
   deleteMindmap() {
     this.mindmapService.deleteMindmap(this.selection.selected[0].keyName, { mindmapName: this.selection.selected[0].name })
     .subscribe((res: any) => {
@@ -181,6 +149,18 @@ export class AyuComponent implements OnInit {
         });
         this.selection.clear();
         this.licenceKeySelecter();
+      }
+    });
+  }
+
+  /** Toggle status selected mindmap protocol. */
+  toggleStatus(mindmap: any) {
+    this.mindmapService.toggleMindmapStatus({ mindmapName: mindmap.name, keyName: mindmap.keyName })
+    .subscribe((res: any) => {
+      if (res.success) {
+        this.snackbar.open(res.message, null, {
+          duration: 4000,
+        });
       }
     });
   }

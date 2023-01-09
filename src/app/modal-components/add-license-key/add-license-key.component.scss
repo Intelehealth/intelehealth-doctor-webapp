@@ -48,6 +48,12 @@
           border-radius: 8px;
           outline: none;
         }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          content: url(../../../assets/svgs/calendar-date.svg);
+          border: none;
+          background: transparent;
+        }
       }
 
       .cancel-btn {

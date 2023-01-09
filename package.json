@@ -44,6 +44,7 @@
     "ng2-tel-input": "^2.3.0",
     "ngx-captcha": "^10.0.0",
     "ngx-cookie-service": "^2.1.0",
+    "ngx-dropzone": "^3.1.0",
     "ngx-spinner": "^10.0.1",
     "popper.js": "^1.14.3",
     "pretty-checkbox": "^3.0.3",
