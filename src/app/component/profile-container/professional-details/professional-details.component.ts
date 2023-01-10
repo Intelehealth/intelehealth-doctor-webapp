@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { ProfileService } from 'src/app/services/profile.service';
+declare var saveToStorage;
 
 @Component({
   selector: 'app-professional-details',
@@ -92,7 +93,9 @@ export class ProfessionalDetailsComponent implements OnInit {
         .subscribe((response) => {
           this.profileService.updateName(this.userDetails.person.uuid, this.newUserDetails.firstName, this.newUserDetails.middleName,
             this.newUserDetails.lastName, response?.results[0]?.uuid)
-            .subscribe(() => { })
+            .subscribe(() => { 
+              saveToStorage("doctorName", `${this.newUserDetails.firstName} ${this.newUserDetails.middleName} ${this.newUserDetails.lastName}`);
+            })
         });
     }
 

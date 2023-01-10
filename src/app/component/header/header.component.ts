@@ -66,8 +66,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let user = getFromStorage("user");
-    this.userName = user?.person?.display;
+    this.userName = getFromStorage("doctorName");
     let provider = getFromStorage("provider");
     this.profileService.getProfileImage(provider.person.uuid).subscribe((response) => {
       this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;

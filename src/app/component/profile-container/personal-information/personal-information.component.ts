@@ -15,6 +15,7 @@ declare var getFromStorage: any, saveToStorage: any;
 })
 export class PersonalInformationComponent {
   @ViewChild('canvas') canvasEl: ElementRef;
+  maxDate = new Date();
   signatureImgName: string;
   signaturePad: SignaturePad;
   moveTo: boolean = false;
@@ -54,11 +55,11 @@ export class PersonalInformationComponent {
       ),
       phoneNumber: new FormControl(
         this.userDetails?.phoneNumber ? this.userDetails.phoneNumber.value : null,
-        [Validators.required, Validators.pattern("^[0-9]{10,12}$")]
+        [Validators.required, Validators.pattern("^[0-9]{10}$")]
       ),
       whatsapp: new FormControl(
         this.userDetails?.whatsapp ? this.userDetails.whatsapp.value : null,
-        [Validators.required, Validators.pattern("^[0-9]{10,12}$")]
+        [Validators.required, Validators.pattern("^[0-9]{10}$")]
       ),
       countryCode: new FormControl(
         this.userDetails?.countryCode ? this.userDetails.countryCode.value : "+91",
@@ -79,6 +80,7 @@ export class PersonalInformationComponent {
   }
 
   ngOnInit(): void {
+    this.maxDate.setDate(this.maxDate.getDate() - 1);
     let userDetails = getFromStorage("user");
     this.sessionService
       .provider(userDetails.uuid)

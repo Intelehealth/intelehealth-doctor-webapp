@@ -50,11 +50,16 @@
           <div class="user-age">
             <div class="userDOB">
               <label class="lbl-age lbl-userDOB">Date of birth</label>
-              <input type="text" class="txt" id="user-dob" placeholder="Date of birth" formControlName="birthDate" />
+              <div class="date-content">
+                <input class="text1" id="user-dob" matInput readonly [matDatepicker]="dp3" [max]="maxDate" formControlName="birthDate">
+                <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+              </div>
+            
             </div>
             <div class="age">
               <label for="age" class="lbl-age lbl-userAge">Age</label>
-              <input type="text" class="total-age" id="user-age" placeholder="Age" formControlName="age" />
+              <input type="number" class="total-age" id="user-age" placeholder="Age" formControlName="age" />
             </div>
           </div>
         </div>
@@ -77,7 +82,7 @@
         <div class="user-emailID">
           <div class="emailID">
             <label class="lbl lbl-email">Email ID *</label>
-            <input type="text" class="email-box" id="email-ID" placeholder="Email Id" formControlName="emailId" />
+            <input type="email" class="email-box" id="email-ID" placeholder="Email Id" formControlName="emailId" email/>
           </div>
         </div>
         <div class="signature-header">

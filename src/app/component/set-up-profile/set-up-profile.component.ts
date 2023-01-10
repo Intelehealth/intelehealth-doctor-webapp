@@ -16,8 +16,7 @@ export class SetUpProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const doctorName = getFromStorage("doctorName");
-    this.doctorName = doctorName;
+    this.doctorName = getFromStorage("doctorName");
     this.selectLanguage()
     var today = new Date()
     var curHr = today.getHours()

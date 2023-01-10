@@ -276,7 +276,40 @@ canvas {
         right: 10px;
     }
 }
+.date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 12px;
+  
+    width: 249px;
+    height: 81px;
+  }
+.date-content {
+    box-sizing: border-box;
 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 12px;
+    gap: 4px;
+  
+    width: 249px;
+    height: 48px;
+  
+    background: #faf9ff;
+  
+    border: 0.770833px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+}
+
+.text1 {
+    background: #FAF9FF;
+    border: none
+}
 .text-content{
     position: relative;
     width:260px;
