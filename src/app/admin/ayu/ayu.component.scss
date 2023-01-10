@@ -102,6 +102,7 @@ th:last-child {
   background: #FFFFFF;
   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
   border-radius: 20px;
+  font-family: DM Sans;
 
   .mat-card-title {
     padding-bottom: 16px;
@@ -124,6 +125,19 @@ th:last-child {
     display: flex;
     flex-direction: row;
     align-items: center;
+
+    input[type=text] {
+      height: 48px;
+      border: 0.770833px solid rgba(178, 175, 190, 0.2);
+      border-radius: 8px;
+      padding: 14px 36px 14px 16px;
+      outline: none;
+      font-size: 16px;
+      background: #FAF9FF url(../../../assets/svgs/search-icon.svg);
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      background-position: 95% center;
+    }
   }
 }
 

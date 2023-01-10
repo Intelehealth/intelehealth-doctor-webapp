@@ -60,6 +60,7 @@ export class AyuComponent implements OnInit {
         this.mindmapDatas = response.data;
         this.dataSource = new MatTableDataSource(this.mindmapDatas);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.filterPredicate = (data: any, filter: string) => data.name.toLowerCase().includes(filter);
         const { expiry } = this.mindmaps.find(
           (m) => m.keyName === this.selectedLicense
         );
@@ -163,6 +164,14 @@ export class AyuComponent implements OnInit {
         });
       }
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   clearSelection() {

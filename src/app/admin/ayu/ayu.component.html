@@ -27,9 +27,10 @@
         <h6 class="mb-0 ml-2">Associated Mindmaps ({{mindmapDatas.length ? mindmapDatas.length : 0}} modules)</h6>
       </div>
       <div class="intelehealth-card-title-actions">
-        <button mat-icon-button [color]="'primary'" class="mr-2">
+        <input type="text" class="search-input mr-2" placeholder="Search" (keyup)="applyFilter($event)">
+        <!-- <button mat-icon-button [color]="'primary'" class="mr-2">
           <img src="assets/svgs/search-icon.svg" alt="">
-        </button>
+        </button> -->
         <button type="button" class="action-btn mr-2" (click)="openUploadMindmapModal()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
       </div>
     </div>
