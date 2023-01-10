@@ -75,17 +75,14 @@ export class PatientinfoComponent implements OnInit {
 
   getAge(dateString) {
     //------sol 1 ---------------
-    var mydate = dateString.replace(
-      /^(\d{2})\/(\d{2})\/(\d{4})$/,
-      "$3, $2, $1"
-    );
+    // var mydate = dateString.replace(
+    //   /^(\d{2})\/(\d{2})\/(\d{4})$/,
+    //   "$3, $2, $1"
+    // );
 
-    this.now = new Date();
-    var todayDate = this.datePipe.transform(this.now, "yyyy, MM, dd");
-
-    var a = moment(todayDate);
-    var b = moment(mydate);
-    var diffDuration = moment.duration(a.diff(b));
+    // var b = moment(mydate);
+    // var diffDuration = moment.duration(moment().diff(b));
+    var diffDuration = moment.duration(moment().diff(moment(dateString, 'DD/MM/YYYY')));
     var ageString =
       diffDuration.years() +
       " years - " +
