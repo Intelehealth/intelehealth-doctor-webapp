@@ -151,11 +151,11 @@ export class AyuComponent implements OnInit {
     this.mindmapService.deleteMindmap(this.selection.selected[0].keyName, { mindmapName: this.selection.selected[0].name })
     .subscribe((res: any) => {
       if (res) {
-        this.snackbar.open(res.message, null, {
-          duration: 4000,
-        });
+        this.toastr.success(res.message, "Mindmap Deleted");
         this.selection.clear();
         this.licenceKeySelecter();
+      } else {
+        this.toastr.error("Something went wrong", "Mindmap Delete Failed");
       }
     });
   }
