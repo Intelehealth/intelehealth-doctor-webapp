@@ -165,9 +165,9 @@ export class AyuComponent implements OnInit {
     this.mindmapService.toggleMindmapStatus({ mindmapName: mindmap.name, keyName: mindmap.keyName })
     .subscribe((res: any) => {
       if (res.success) {
-        this.snackbar.open(res.message, null, {
-          duration: 4000,
-        });
+        this.toastr.success(res.message, "Mindmap Status Updated");
+      } else {
+        this.toastr.error("Something went wrong", "Mindmap Update Failed");
       }
     });
   }
