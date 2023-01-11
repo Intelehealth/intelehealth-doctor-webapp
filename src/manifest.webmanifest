@@ -1,6 +1,6 @@
 {
-  "name": "Smart Care Doc",
-  "short_name": "Smart Care Doc",
+  "name": "MySmartCareDoc",
+  "short_name": "MySmartCareDoc",
   "theme_color": "#2e1e91",
   "background_color": "#fafafa",
   "display": "standalone",
