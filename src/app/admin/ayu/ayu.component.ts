@@ -6,6 +6,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoreService } from 'src/app/services/core/core.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-ayu',
@@ -24,7 +25,12 @@ export class AyuComponent implements OnInit {
   selectedLicense: string;
   expiryDate: string;
 
-  constructor(private mindmapService: MindmapService, private matDialog: MatDialog, private snackbar: MatSnackBar, private coreService: CoreService) { }
+  constructor(
+    private mindmapService: MindmapService,
+    private matDialog: MatDialog,
+    private snackbar: MatSnackBar,
+    private coreService: CoreService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.fetchMindmaps();
@@ -83,9 +89,9 @@ export class AyuComponent implements OnInit {
               this.mindmapDatas.push(res.data);
               this.dataSource = new MatTableDataSource(this.mindmapDatas);
               this.dataSource.paginator = this.paginator;
-              this.snackbar.open('Mindmap Added Successfully!', null, {
-                duration: 4000
-              });
+              this.toastr.success(`${result.filename} has been uploaded successfully!`, "Mindmap Uploaded");
+            } else {
+              this.toastr.error(`Failed to upload ${result.filename}`, "Mindmap Upload Failed");
             }
           });
         }
@@ -108,9 +114,9 @@ export class AyuComponent implements OnInit {
         } else {
           this.mindmaps.push(result);
         }
-        this.snackbar.open(`License Key ${mode == 'add' ? 'Added' : 'Updated' } Successfully!`, null, {
-          duration: 4000,
-        });
+        this.toastr.success(`License Key ${result.keyName} has been ${mode == 'add' ? 'added' : 'updated' } successfully!`, `License Key ${mode == 'add' ? 'Added' : 'Updated' }`);
+      } else {
+        this.toastr.success(`Something went wrong!`, "Operation Failed");
       }
     });
   }

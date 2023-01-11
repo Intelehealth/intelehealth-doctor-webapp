@@ -48,6 +48,8 @@ export class AddLicenseKeyComponent implements OnInit {
     this.mindmapService.addUpdateLicenseKey(this.licenseForm.value).subscribe((res: any) => {
       if (res.success) {
         this.dialogRef.close(res.data);
+      } else {
+        this.dialogRef.close(false);
       }
     });
   }

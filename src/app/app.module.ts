@@ -180,6 +180,7 @@ import { PrescriptionCompletedComponent } from './component/prescription-contain
 import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
 import { AppointmentContainerComponent } from './component/appointment-container/appointment-container.component';
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
+import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [
@@ -298,6 +299,12 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
   ],
 
   imports: [
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
+    }),
     ModalComponentsModule,
     CdkAccordionModule,
     MatTabsModule,
