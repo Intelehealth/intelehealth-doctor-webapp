@@ -35,6 +35,7 @@ export class NotesV4Component implements OnInit {
           if (obs.encounter.visit.uuid === this.visitUuid) {
             this.noteData.push(obs);
           }
+          this.noteData.push(obs);
         });
       });
   }

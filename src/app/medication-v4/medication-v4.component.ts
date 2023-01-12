@@ -72,8 +72,8 @@ export class MedicationV4Component implements OnInit {
             } else {
               this.instructions.push(obs);
             }
-           
           }
+          this.instructions.push(obs);
         });
       });
      this.setDefaultValues();

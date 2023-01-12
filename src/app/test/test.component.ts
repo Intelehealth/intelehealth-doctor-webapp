@@ -54,6 +54,7 @@ export class TestComponent implements OnInit {
           if (obs.encounter.visit.uuid === this.visitUuid) {
             this.testData.push(obs);
           }
+          this.testData.push(obs);
         });
       });
   }
