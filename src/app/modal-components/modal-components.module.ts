@@ -9,22 +9,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 
 @NgModule({
-  declarations: [
-    AddLicenseKeyComponent,
-    UploadMindmapJsonComponent
-  ],
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    NgxDropzoneModule
-  ],
-  entryComponents: [
-    AddLicenseKeyComponent,
-    UploadMindmapJsonComponent
-  ]
+    declarations: [
+        AddLicenseKeyComponent,
+        UploadMindmapJsonComponent
+    ],
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        NgxDropzoneModule
+    ]
 })
 export class ModalComponentsModule { }
