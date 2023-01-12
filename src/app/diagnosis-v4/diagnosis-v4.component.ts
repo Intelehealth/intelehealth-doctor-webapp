@@ -45,6 +45,8 @@ export class DiagnosisV4Component implements OnInit {
             this.setDiagnosis(obs);
             this.isDiagnosisPresent = true;
           }
+          this.setDiagnosis(obs);
+          this.isDiagnosisPresent = true;
         });
       });
   }

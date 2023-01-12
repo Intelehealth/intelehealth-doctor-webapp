@@ -55,6 +55,7 @@ export class AdviceV4Component implements OnInit {
               this.adviceData.push(obs);
             }
           }
+          this.adviceData.push(obs);
         });
       });
   }
