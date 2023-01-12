@@ -181,6 +181,7 @@ import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
 import { AppointmentContainerComponent } from './component/appointment-container/appointment-container.component';
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { ToastrModule } from "ngx-toastr";
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -346,163 +347,6 @@ import { ToastrModule } from "ngx-toastr";
     MatMenuModule,
     NgSelectModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
-    RouterModule.forRoot(
-      [
-        { path: "", redirectTo: "login", pathMatch: "full" },
-        {
-          path: "login",
-          component: LoginContainerComponent,
-          children: [
-            { path: "", component: LoginPageComponent },
-            { path: "forget-username", component: ForgotUsernameComponent },
-            { path: "forgot-password", component: ForgotPasswordComponent },
-            {
-              path: "login-verification",
-              component: LoginVerificationComponent,
-            },
-            { path: "otp-verification", component: OtpVerificationComponent },
-            { path: "set-new-password", component: SetNewPasswordComponent },
-          ],
-        },
-        {
-          path: "dashboard",
-          component: DashboardComponent,
-          children: [
-            {
-              path: "",
-              component: DashboardPageComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "getting-started",
-              component: SetUpProfileComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "calendar",
-              component: CalendarContainerComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "view-calendar",
-              component: ViewCalendarComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "setup-calendar",
-              component: SetupCalendarV4Component,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "help",
-              component: HelpContainerComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "message",
-              component: MessageContainerComponent,
-              canActivate: [AuthGuard],
-            },
-
-            {
-              path: "visit-summary/:patient_id/:visit_id",
-              component: VisitSummaryV4Component,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "admin",
-              component: AdminContainerComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "call-state",
-              component: CallStateComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "profile",
-              component: ProfileContainerComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "set-profile",
-              component: SetUpProfileComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "prescription",
-              component: PrescriptionContainerComponent,
-              canActivate: [AuthGuard]
-            },
-            {
-              path: "appointments",
-              component: AppointmentContainerComponent,
-              canActivate: [AuthGuard]
-            },
-          ],
-        },
-        { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
-        // { path: "set-new/password", component: SetNewPasswordComponent },
-        // {
-        //   path: "",
-        //   component: MainComponent,
-        //   children: [
-        //     {
-        //       path: "home",
-        //       component: HomepageComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "findPatient",
-        //       component: FindPatientComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "myAccount",
-        //       component: MyAccountComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-        //     {
-        //       path: "modals",
-        //       component: ModalsComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "signature",
-        //       component: SignatureComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "editDetails",
-        //       component: EditDetailsComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "changePassword",
-        //       component: ChangePasswordComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     {
-        //       path: "visitSummary/:patient_id/:visit_id",
-        //       component: VisitSummaryComponent,
-        //       canActivate: [AuthGuard],
-        //     },
-        //     { path: "vc/call", component: VcComponent },
-        //     { path: "test/chat", component: TestChatComponent },
-        //     {
-        //       path: "appointment/schedule",
-        //       component: AppointmentScheduleComponent,
-        //     },
-        //     { path: "appointment/view", component: AppointmentViewComponent },
-        //     { path: "", redirectTo: "home", pathMatch: "full" },
-        //   ],
-        // },
-        { path: "**", component: Page404Component },
-      ],
-      { scrollPositionRestoration: "enabled", relativeLinkResolution: "legacy" }
-    ),
-    // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
@@ -511,6 +355,7 @@ import { ToastrModule } from "ngx-toastr";
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
+    AppRoutingModule,
   ],
   providers: [
     PagerService,
