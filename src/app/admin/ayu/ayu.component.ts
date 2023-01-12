@@ -115,8 +115,6 @@ export class AyuComponent implements OnInit {
           this.mindmaps.push(result);
         }
         this.toastr.success(`License Key ${result.keyName} has been ${mode == 'add' ? 'added' : 'updated' } successfully!`, `License Key ${mode == 'add' ? 'Added' : 'Updated' }`);
-      } else {
-        this.toastr.success(`Something went wrong!`, "Operation Failed");
       }
     });
   }
