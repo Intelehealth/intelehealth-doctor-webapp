@@ -14,8 +14,9 @@
         data-toggle="collapse"
         data-target="#additional-documents"
         class="click"
+        (click)="toggleCollapse()"
       >
-        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+        <img class="arrow" [src]="toggleImage"/>
       </div>
     </div>
     <hr *ngIf="!pastVisit" class="hr" />

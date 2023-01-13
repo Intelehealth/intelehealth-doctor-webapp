@@ -66,14 +66,13 @@ export class MedicationV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptMed)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
             if(obs.value.includes(":")) {
               this.data.push(this.getObsData(obs));
             } else {
               this.instructions.push(obs);
             }
           }
-          this.instructions.push(obs);
         });
       });
      this.setDefaultValues();

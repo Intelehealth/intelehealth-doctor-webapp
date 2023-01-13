@@ -42,7 +42,7 @@ export class FollowUpV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
     .subscribe(response => {
       response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
+        if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
           let date1 = obs.value.split(", Remark: ")[0].replaceAll('-','/');
            let selecteDate = moment(date1,'DD/MM/YYYY').toISOString();
           this.selecteDate = this.datepipe.transform(selecteDate, 'yyyy-MM-dd');

@@ -17,6 +17,7 @@ export class CheckUpReasonV4Component implements OnInit {
   headers =[];
   symptoms: string = "";
   symptomsData = [];
+  changeSide:boolean = false;
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -72,5 +73,14 @@ export class CheckUpReasonV4Component implements OnInit {
           }
         }
       });
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

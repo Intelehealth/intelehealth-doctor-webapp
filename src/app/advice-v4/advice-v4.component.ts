@@ -50,12 +50,11 @@ export class AdviceV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
             if (!obs.value.includes('</a>')) {
               this.adviceData.push(obs);
             }
           }
-          this.adviceData.push(obs);
         });
       });
   }

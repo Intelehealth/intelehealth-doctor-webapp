@@ -7,8 +7,9 @@
         data-toggle="collapse"
         data-target="#refer-to-specailist"
         class="click"
+        (click)="toggleCollapse()"
       >
-        <img class="arrow" src="assets/svgs/filter-table-up-arrow.svg" />
+        <img class="arrow" [src]="toggleImage"/>
       </div>
     </div>
     <hr class="hr" />

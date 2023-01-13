@@ -29,6 +29,8 @@ export class ConsultationDetailsV4Component implements OnInit {
   hwPhoneNo: number;
   specialization;
   isOpenChat: boolean = false;
+  changeSide:boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
@@ -127,5 +129,14 @@ export class ConsultationDetailsV4Component implements OnInit {
           this.visitAppointment = res?.data?.slotDate
         }
       });
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

@@ -16,6 +16,7 @@ export class AdditionalDocumentsV4Component implements OnInit {
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
   selectedIndex: number = 0;
   selectedImageName: string;
+  changeSide:boolean = false;
   constructor(
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute
@@ -55,5 +56,14 @@ export class AdditionalDocumentsV4Component implements OnInit {
     let str = this.images.filter((f,i) => i === this.selectedIndex)[0]?.image;
     this.selectedImageName = str?.substring(str?.indexOf("obs/") + 4, str?.indexOf("/value")) + ".jpg";
     return str;
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }
