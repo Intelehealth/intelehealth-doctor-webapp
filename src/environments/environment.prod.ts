@@ -23,4 +23,5 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
+  siteKey: "6LdUIXgjAAAAAJyQHOTzABeaNV0_LhKHtWULv63t"
 };

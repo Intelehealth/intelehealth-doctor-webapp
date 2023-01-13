@@ -1,1 +1,65 @@
-<p>login works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>Login</h6>
+      <p>
+        Login with your provided username and password then you can choose the verification method.
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4">
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form-group">
+          <label for="username">
+            Username
+            <span class="link"><a routerLink="/session/forgot-username">Forgot Username ?</a></span>
+          </label>
+          <input type="text" class="form-control" formControlName="username" placeholder="Enter username">
+          <div *ngIf="submitted && f.username.errors">
+            <small *ngIf="f.username.errors.required" class="error-msg">Please enter valid username</small>
+            <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">
+            Password
+            <span class="link"><a routerLink="/session/forgot-password">Forgot Password ?</a></span>
+          </label>
+          <div class="password-field">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password">
+            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible">
+              <img src="assets/svgs/icon-eye.svg" alt="">
+            </button>
+          </div>
+          <div *ngIf="submitted && f.password.errors">
+            <small *ngIf="f.password.errors.required" class="error-msg">Please enter valid password</small>
+            <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="capcha">Before logging in, please confirm you are not a robot</label>
+          <ngx-recaptcha2 #captchaElem
+            [siteKey]="siteKey"
+            (reset)="handleReset()"
+            (expire)="handleExpire()"
+            (load)="handleLoad()"
+            (success)="handleSuccess($event)"
+            [useGlobalDomain]="false"
+            formControlName="recaptcha">
+          </ngx-recaptcha2>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-block next-btn">
+            Next
+            <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12">
+      <p class="section-terms-conditions">
+        Intelehealth <a href="https://intelehealth.org/terms-of-use" target="_blank">Terms & Conditions</a>  and <a href="https://intelehealth.org/privacy-policy" target="_blank">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+</div>
+

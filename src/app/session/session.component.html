@@ -1,10 +1,44 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
-
+    <div class="col-md-6 p-0">
+      <div class="login-info-wrapper">
+        <div class="info-banner">
+          <div class="grid-icon">
+            <img  src="assets/svgs/grid-dots.svg" alt="grid-icon" width="100%">
+            <img class="logo-icon "src="assets/images/login/Intelehealth-logo-white 1.png" alt="">
+          </div>
+        </div>
+        <div class="carousel-container flex-fill">
+          <ngb-carousel [showNavigationArrows]="false" [showNavigationIndicators]="true">
+            <ng-template ngbSlide *ngFor="let slide of slides">
+              <div class="picsum-img-wrapper">
+                <img class="hb1" [src]="slide.heartbeat1" alt="">
+                <img class="main" [src]="slide.img_url" alt="Random slide">
+                <img class="hb2" [src]="slide.heartbeat2" alt="">
+              </div>
+              <div class="carousel-caption">
+                <h3>{{slide.title}}</h3>
+              </div>
+            </ng-template>
+          </ngb-carousel>
+        </div>
+        <div class="copy-right-footer justify-self-end">
+          <span>Copyright ©2021 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation</span>
+        </div>
+      </div>
     </div>
-    <div class="col-md-6">
-      <router-outlet></router-outlet>
+    <div class="col-md-6 p-0">
+      <div class="main-container">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12 px-0 py-2">
+              <ng-select class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="id" [searchable]="true" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
 </div>

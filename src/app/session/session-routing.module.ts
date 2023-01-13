@@ -4,6 +4,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { ForgotUsernameComponent } from './forgot-username/forgot-username.component';
 import { LoginComponent } from './login/login.component';
 import { OtpVerificationComponent } from './otp-verification/otp-verification.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SessionComponent } from './session.component';
 import { SetupNewPasswordComponent } from './setup-new-password/setup-new-password.component';
 import { VerificationMethodComponent } from './verification-method/verification-method.component';
@@ -43,6 +44,10 @@ const routes: Routes = [
         component: SetupNewPasswordComponent
       }
     ]
+  },
+  {
+    path: 'page-not-found',
+    component: PageNotFoundComponent
   }
 ];
 

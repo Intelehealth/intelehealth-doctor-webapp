@@ -3,6 +3,8 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~angular-calendar/css/angular-calendar.css";
 @import '~pretty-checkbox/src/pretty-checkbox.scss';
+/* Importing Bootstrap SCSS file. */
+// @import '~bootstrap/scss/bootstrap';
 
 @font-face {
   font-family: arty;
@@ -32,6 +34,7 @@
 body {
   background-color: #ffffff;
   margin: 0;
+  font-family: DM Sans;
 }
 
 html,
@@ -413,9 +416,3 @@ body.font-lato td {
 .mt-24 {
   margin-top: 24px;
 }
-
-/* Importing Bootstrap SCSS file. */
-@import '~bootstrap/scss/bootstrap';
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
