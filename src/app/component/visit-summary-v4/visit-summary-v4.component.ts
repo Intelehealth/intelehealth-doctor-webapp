@@ -8,9 +8,16 @@ import { VisitService } from "src/app/services/visit.service";
   styleUrls: ["./visit-summary-v4.component.scss"],
 })
 export class VisitSummaryV4Component implements OnInit {
-  constructor(private headerSvc: HeaderService,private visitService:VisitService) {
+  constructor(
+    private headerSvc: HeaderService,
+    public visitService: VisitService
+  ) {
     this.headerSvc.showSearchBar = false;
   }
 
   ngOnInit(): void {}
+
+  get isVisitSummaryShow() {
+    return this.visitService.isVisitSummaryShow;
+  }
 }

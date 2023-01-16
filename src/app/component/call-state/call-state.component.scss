@@ -178,8 +178,9 @@
 }
 
 .remoteVideo {
-  width: 75vw;
-  // height: 79vh;
+  width: 77vw;
+  height: 80vh;
+  object-fit: cover;
 }
 
 .localVideo {
