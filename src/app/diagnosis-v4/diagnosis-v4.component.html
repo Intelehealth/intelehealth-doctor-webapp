@@ -99,7 +99,7 @@
     </div>
     <button
     *ngIf="!readOnly"
-    [disabled]="isDiagnosisPresent"
+    [hidden]="isDiagnosisPresent"
     type="button"
     (click)="save()"
     class="btn cancel-add-note-btn add-note-btn font-bold mt-2 "

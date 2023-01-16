@@ -2,11 +2,13 @@
   <div>
     <div class="visit" *ngIf="isShowVisitSummary">
       <!-- visit summary component -->
+      <img class="colse-btn" (click)="colseVisitSummaryModal()" src="assets/svgs/Close.svg" alt=""/>
       <app-visit-summary-readonly></app-visit-summary-readonly>
     </div>
 
     <!-- prescription component -->
     <div class="prescription" *ngIf="!isShowVisitSummary">
+      <img class="colse-btn" (click)="colseVisitSummaryModal()" src="assets/svgs/Close.svg" alt=""/>
       <app-prescription-readonly></app-prescription-readonly>
     </div>
   </div>

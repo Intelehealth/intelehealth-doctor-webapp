@@ -1,234 +1,317 @@
 .call-state {
-    width: 99%;
-    height: 768px;
-    margin-left: 1rem;
-    margin-top: 2rem;
-    background: #EFE8FF;
-    border: 8px solid #FFFFFF;
-    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
-    border-radius: 12px;
-    .back-cover {
-        position: absolute;
-        left: 39.87%;
-        top:  320px;
-    }
-    .call-features{
-        position: absolute;
-        left: 38.87%;
-        top: 780px;
-    }
-    .call-person{
-        position: absolute;
-        width: 293px;
-        height: 177px;
-        right: 16px;
-        top: 118px;
-        background: #EFE8FF;
-        border: 8px solid #FFFFFF;
-        box-shadow: 0px 4px 20px rgb(31 28 58 / 8%);
-        border-radius: 8px;
-        .dots{
-            position: absolute;
-            width: 146px;
-            height: 146px;
-            left: 25%;
-            top: 6%;
-        } 
-        .frame{
-            position: absolute;
-            left: 39%;
-            top: 30%;
-        }
-        .voice{
-            position: absolute;
-            left: 88%;
-            top: 6%;
-        }
-    }
-}
-.call-state-collapsed {    
-    width: 65%;
-    .back-cover{
-        left: 22%;
-    }
-    .call-features{
-        left: 20%;
-    }
-    .call-person{
-        width: 225px;
-        height: 136px;
-        right: 35%;
-        .dots{
-            left: 15%;
-            top: -10%;
-        } 
-        .frame{
-            left: 34%;
-            top: 23%;
-        }
-        .voice{
-            left: 86%;
-            top: 4%;
-        }
-    }
-    .call-time{
-        left: 28%;
-    }
-    .zoom-icon{
-        left: 59%;
-    }
-}
-.call-voice{
-    margin: 1.4%;
-}
-.call-time{
+  width: 100%;
+  //   margin-left: 1rem;
+  //   margin-top: 2rem;
+  background: #efe8ff;
+  border: 8px solid #ffffff;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
+  .back-cover {
     position: absolute;
-    left: 46%;
-    top: 116px;
-    .time{
-        display: flex;
-        padding: 4px 12px;
-        width: 61px;
-        height: 32px;
-        background: #FFFFFF;
-        box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
-        border-radius: 20px;
-        color: #2E1E91;
-        margin-left: 10px;
+    left: 39.87%;
+    top: 150px;
+  }
+  .call-features {
+    position: absolute;
+    bottom: 3%;
+    left: calc(50% - 228px / 2);
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 0px;
+
+    width: 280px;
+    height: 60px;
+  }
+
+  .call-person {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    width: 293px;
+    height: 177px;
+
+    background: #efe8ff;
+    border: 8px solid #ffffff;
+    box-shadow: 0px 4px 20px rgb(31 28 58 / 8%);
+    border-radius: 8px;
+    .dots {
+      position: absolute;
+      width: 146px;
+      height: 146px;
+      left: 25%;
+      top: 6%;
     }
+    .frame {
+      position: absolute;
+      left: 39%;
+      top: 30%;
+    }
+    .voice {
+      position: absolute;
+      left: 88%;
+      top: 6%;
+    }
+  }
 }
-.text{
-    font-family: 'DM Sans';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 16px;
+.call-state-collapsed {
+  width: 65%;
+  .back-cover {
+    left: 38%;
+  }
+  // .call-features {
+  //  // left: 38%;
+  // }
+  .call-person {
+    width: 225px;
+    height: 136px;
+    // right: 35%;
+    .dots {
+      left: 15%;
+      top: -10%;
+    }
+    .frame {
+      left: 34%;
+      top: 23%;
+    }
+    .voice {
+      left: 86%;
+      top: 4%;
+    }
+  }
+  .call-time {
+    left: 38%;
+  }
+  .zoom-icon {
+    left: 59%;
+  }
+}
+.call-voice {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+
+  width: 24px;
+  height: 24px;
+}
+.call-time {
+  position: absolute;
+  top: 24px;
+  gap: 5px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 0px;
+
+  width: 88px;
+  height: 61px;
+  left: calc(50% - 88px / 2);
+  .time {
+    display: flex;
+    padding: 4px 12px;
+    width: 61px;
+    height: 32px;
+    background: #ffffff;
+    box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
+    border-radius: 20px;
+    color: #2e1e91;
+    margin-left: 10px;
+  }
+}
+.text {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
 }
 .logo {
-    height: 48px;
-    width: 48px;
-    background: #FFFFFF;
-    box-shadow: 0px 4px 16px rgba(27, 22, 58, 0.08);
-    border-radius: 100px;
-    border: none;
-    margin: 6px;
+  height: 48px;
+  width: 48px;
+  background: #ffffff;
+  box-shadow: 0px 4px 16px rgba(27, 22, 58, 0.08);
+  border-radius: 100px;
+  border: none;
+  margin: 6px;
 }
-.call-icon{
-    background:  #FF475D;
+.call-icon {
+  background: #ff475d;
 }
-.zoom-icon{
-    position: absolute;
-    left: 93%;
-    top: 780px;
+
+.no-video-icon {
+  margin: 6px;
+
+  width: 48px;
+  height: 48px;
+
+  background: #b0adbe;
+  box-shadow: 0px 4px 16px rgba(27, 22, 58, 0.08);
+  border-radius: 100px;
+  border: none;
+}
+
+.no-mic-icon {
+  margin: 6px;
+
+  width: 48px;
+  height: 48px;
+
+  background: #b0adbe;
+  box-shadow: 0px 4px 16px rgba(27, 22, 58, 0.08);
+  border-radius: 100px;
+  border: none;
+}
+
+.mute-mic {
+  width: 24px;
+  height: 24px;
+
+  background: #faf9ff;
+
+  border: 1px solid #ff475d;
+  border-radius: 20px;
+}
+
+.remoteVideo {
+  width: 77vw;
+  height: 80vh;
+  object-fit: cover;
+}
+
+.localVideo {
+  height: 160px;
+}
+
+.collapse-localVideo {
+  height: 121px;
+}
+
+.zomm {
+  position: absolute;
+  bottom: 3%;
+  right: 2%;
+  box-shadow: 0px 4px 16px rgb(27 22 58 / 8%);
+  border-radius: 100px;
 }
 
 // Message Screen
-.message-container{
-    width: 33%;
-    height: 768px;
-    background: #FAF9FF;
-    border: 8px solid #FFFFFF;
-    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
-    border-radius: 12px;
-    position: absolute;
-    right: 0%;
-    top: 95px;
+.message-container {
+  position: absolute;
+  top: 8px;
+  right: 0%;
+
+  margin-right: 10px;
+
+  width: 33%;
+  height: 100%;
+
+  background: #faf9ff;
+  border: 8px solid #ffffff;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
 }
 .picture {
-    margin: 10px;
-    img{
-        width: 32px;
-        height: 32px;
-    }
+  margin: 10px;
+  img {
+    width: 32px;
+    height: 32px;
+  }
 }
 .profile-section {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 68px;
-    background: #FFFFFF;
-    .name {
-        font-family: 'DM Sans';
-        font-style: normal;
-        font-weight: 700;
-        font-size: 16px;    
-    }
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 68px;
+  background: #ffffff;
+  .name {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+  }
 }
 .body {
-    padding: 18px 16px; 
-    height: 630px; 
+  padding: 18px 16px;
+
+  height: 75%;
 }
-.message{
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column-reverse;
-    margin-top: 2rem;
+.message {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  margin-top: 2rem;
 }
 .conversation {
-    margin-top: 10px;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    .messageContent {
-        background: #FFFFFF;
-        border: 1px solid rgba(178, 175, 190, 0.2);
-        border-radius: 1px 8px 8px 8px;
-        padding: 10px;
-        font-family: 'DM Sans';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-    }
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  .messageContent {
+    background: #ffffff;
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 1px 8px 8px 8px;
+    padding: 10px;
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+  }
 
-    &.me {
-      align-items: flex-end;
-      .messageContent {
-        background: #EFE8FF;
-        border-radius: 8px 8px 0px 8px;
-        font-family: 'DM Sans';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        color: #1B163A;
-      }
+  &.me {
+    align-items: flex-end;
+    .messageContent {
+      background: #efe8ff;
+      border-radius: 8px 8px 0px 8px;
+      font-family: "DM Sans";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      color: #1b163a;
     }
+  }
 }
 
-.chat-time{
-    position: absolute;
-    left: 38%;
-    top: 13%;
-    font-size: 12px;
-    letter-spacing: -0.139286px;
-    color: #7F7B92;
+.chat-time {
+  position: absolute;
+  left: 38%;
+  top: 13%;
+  font-size: 12px;
+  letter-spacing: -0.139286px;
+  color: #7f7b92;
 }
 .footer {
-    display: flex;
-    .attach-img {
-        position: absolute;
-        right: 20%;
-        bottom: 3%;
-        cursor: pointer;
-    }
-}
-.sent-box{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #2E1E91;
-    border-radius: 8px;
-    margin-right: 8px;
-    width: 44px;
+  display: flex;
+  .attach-img {
+    position: absolute;
+    right: 8%;
+    bottom: 22%;
     cursor: pointer;
+  }
+}
+.sent-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2e1e91;
+  border-radius: 8px;
+  margin-right: 8px;
+  width: 44px;
+  cursor: pointer;
 }
 .textarea {
-    width: 100%;
-    input {
-        padding: 12px 16px;
-        width: 94%;
-        height: 44px;
-        background: #EFE8FF;
-        border: 1px solid rgba(178, 175, 190, 0.2);
-        border-radius: 8px;
-        margin-left: 10px;
-    }
+  width: 100%;
+  input {
+    padding: 12px 16px;
+    width: 94%;
+    height: 44px;
+    background: #efe8ff;
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    margin-left: 10px;
+  }
 }

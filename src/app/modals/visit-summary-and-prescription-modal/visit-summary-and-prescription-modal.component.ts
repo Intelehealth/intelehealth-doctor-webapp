@@ -40,4 +40,8 @@ export class VisitSummaryAndPrescriptionModalComponent implements OnInit {
       this.modalRef?._windowCmptRef?.location?.nativeElement?.scroll(0, 0);
     }, 0);
   }
+
+  colseVisitSummaryModal(){
+    this.modalRef.close();
+  }
 }

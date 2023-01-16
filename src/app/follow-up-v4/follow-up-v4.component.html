@@ -74,7 +74,7 @@
     <button
     *ngIf="type == 'Y' && !readOnly"
     type="button"
-    [disabled]="isDataPresent"
+    [hidden]="isDataPresent"
     (click)="submit()" 
     class="btn add-followup-btn font-bold  mt-4"
   >Add follow up</button>

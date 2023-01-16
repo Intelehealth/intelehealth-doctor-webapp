@@ -16,6 +16,13 @@ export class AppointmentService {
     );
   }
 
+  updateDaysOff(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/updateDaysOff`,
+      payload
+    );
+  }
+
   getUserAppoitment(userUuid, year, month) {
     return this.http.get(
       `${this.baseURL}/appointment/getSchedule/${userUuid}?year=${year}&month=${month}`

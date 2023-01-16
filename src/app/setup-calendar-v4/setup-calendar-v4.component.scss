@@ -1,3 +1,4 @@
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 ::ng-deep {
   .schedule {
     .ng-select-container {
@@ -531,11 +532,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
   gap: 40px;
-
-  margin-top: 20px;
-
   width: 249px;
   height: 77px;
 }
@@ -940,4 +937,77 @@
   color: red;
   font-weight: bold;
   font-size: 1rem;
+}
+
+.daysoff {
+  width: 663px;
+  height: 21px;
+  .mat-chip.mat-standard-chip {
+    
+box-sizing: border-box;
+
+/* Auto layout */
+
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px 16px;
+gap: 8px;
+
+width: 154px;
+height: 48px;
+
+/* Accent/Light blue */
+
+background: #EFE8FF;
+/* Divider */
+
+border: 0.770833px solid rgba(178, 175, 190, 0.2);
+border-radius: 8px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 2;
+flex-grow: 0;
+color: #2E1E91;
+  }
+
+.mat-chip.mat-standard-chip .mat-chip-remove  {
+  color: #2E1E91;
+}
+}
+.daysoff-label {
+  color: #7F7B92;
+  font-size: 14px;
+}
+
+
+.daysoff-btn {
+  width: 100px;
+  height: 48px;
+  text-align: center;
+  padding-top: 10px;
+  flex-grow: 0;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.mat-chip.mat-standard-chip {
+  background-color: transparent;
+  color: rgba(0,0,0,.87);
+}
+.mat-standard-chip {
+  padding: 0px;
+  border-radius: initial;
+  min-height: 32px;
+  height: 1px;
+}
+
+::ng-deep .mat-calendar-body-cell.selected > .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-cell.selected:hover > .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-cell.selected > .mat-calendar-body-cell-content:hover {
+  background-color: #0FD197 !important;
+  color: #19181A !important;
 }

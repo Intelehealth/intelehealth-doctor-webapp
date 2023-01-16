@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl, FormArray, FormBuilder } from "@angular/forms";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { MatDatepicker, MatDatepickerInputEvent } from "@angular/material/datepicker";
 import * as moment from "moment";
 import { AppointmentService } from "../services/appointment.service";
 
@@ -9,7 +9,7 @@ import { AppointmentService } from "../services/appointment.service";
   styleUrls: ["./setup-calendar-v4.component.scss"],
 })
 export class SetupCalendarV4Component implements OnInit {
-  showAddMore = false;
+  showAddMore = false; showSaveButton = false;
   minDate = new Date();
   startDate: Date;
   endDate: Date;
@@ -61,6 +61,12 @@ export class SetupCalendarV4Component implements OnInit {
 
   showDays: boolean = false;
   userSchedule: any = Object;
+  public CLOSE_ON_SELECTED = false;
+  public init = new Date();
+  public resetModel = new Date(0);
+  public model = []; daysOff = [];
+  @ViewChild('picker', { static: true }) _picker: MatDatepicker<Date>;
+
   constructor(private appointmentService: AppointmentService) { }
 
   ngOnInit(): void {
@@ -188,6 +194,27 @@ export class SetupCalendarV4Component implements OnInit {
     this.saveSchedule(body);
   }
 
+  saveDaysOff() {
+    let array1 = this.model.filter(val => !this.daysOff.includes(moment(val).format("YYYY-MM-DD HH:mm:ss")));
+    let array3 = [];
+    this.daysOff.concat(array1).forEach(arr => {
+      array3.push(moment(arr).format("DD/MM/YYYY"));
+    })
+
+    let body = {
+      userUuid: this.userId,
+      daysOff: array3
+    }
+    this.appointmentService.updateDaysOff(body).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.getDaysOff(array3);
+          this.model = [];
+        }
+      },
+    });
+  }
+
   private setData(schedule) {
     if (!this.months.some(month => month.name === schedule.month)) {
       this.months.push({ name: schedule.month, year: schedule.year });
@@ -220,7 +247,15 @@ export class SetupCalendarV4Component implements OnInit {
         }
       })
     });
+    this.getDaysOff(schedule.daysOff);
+  }
 
+
+  private getDaysOff(daysOff) {
+    this.daysOff = [];
+    daysOff.forEach(arr => {
+      this.daysOff.push(moment(arr, "DD/MM/YYYY").format("YYYY-MM-DD HH:mm:ss"));
+    });
   }
 
   private saveSchedule(body: {
@@ -297,7 +332,7 @@ export class SetupCalendarV4Component implements OnInit {
     while (currentDay < end) {
       if (currentDay > todaysDate) {
         const day = currentDay.format("dddd");
-        if (days.includes(day)) {
+        if (days.includes(day) && !this.daysOff.includes(moment(currentDay).format("YYYY-MM-DD HH:mm:ss"))) {
           schedules.push({
             day,
             endTime: selectedSlots.endTime,
@@ -325,4 +360,52 @@ export class SetupCalendarV4Component implements OnInit {
   getUniqueId() {
     return Math.random().toString(36).substr(2, 9);
   };
+
+  public dateClass = (date: Date) => {
+    if (this._findDate(date) !== -1) {
+      return ['selected'];
+    }
+    return [];
+  }
+
+  public dateChanged(event: MatDatepickerInputEvent<Date>): void {
+    if (event.value) {
+      const date = event.value;
+      const index = this._findDate(date);
+      if (index === -1) {
+        this.model.push(date);
+      } else {
+        this.model.splice(index, 1)
+      }
+      this.resetModel = new Date(0);
+      if (!this.CLOSE_ON_SELECTED) {
+        const closeFn = this._picker.close;
+        this._picker.close = () => { };
+        this._picker['_popupComponentRef']?.instance._calendar.monthView._createWeekCells()
+        setTimeout(() => {
+          this._picker.close = closeFn;
+        });
+      }
+      this.showSaveButton = true;
+    }
+  }
+
+  public remove(index: number): void {
+    this.daysOff.splice(index, 1)
+    let body = {
+      userUuid: this.userId,
+      daysOff: this.daysOff
+    }
+    this.appointmentService.updateDaysOff(body).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.daysOff = this.daysOff;
+        }
+      },
+    });
+  }
+
+  private _findDate(date: Date): number {
+    return this.model.map((m) => +m).indexOf(+date);
+  }
 }

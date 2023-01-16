@@ -56,7 +56,8 @@
             <label class="mt-1">{{ providerName }}</label>
 
             <img *ngIf="!readOnly" class="ml-3" src="assets/svgs/dot.svg" />
-            <a *ngIf="!readOnly" class="ml-2" href="tel:{{ hwPhoneNo }}"><img src="assets/svgs/num.svg" alt="" /></a>
+            <!-- <a *ngIf="!readOnly" class="ml-2" href="tel:{{ hwPhoneNo }}"><img src="assets/svgs/num.svg" alt="" /></a> -->
+            <a *ngIf="!readOnly" class="ml-2" (click)="openModal()"><img src="assets/svgs/num.svg" alt="" /></a>
             <a (click)="getChat()"><img *ngIf="!readOnly" class="ml-2 click" src="assets/svgs/msg.svg" /></a>
 
             <span *ngIf="!readOnly" class="ml-2 chw-color"
@@ -69,3 +70,5 @@
     </div>
   </div>
 </div>
+
+
