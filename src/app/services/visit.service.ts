@@ -15,6 +15,8 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
 
+  public isVisitSummaryShow: boolean = false;
+
   constructor(private http: HttpClient, private helper: HelperService) {}
 
   getVisits(params): Observable<any> {
@@ -66,9 +68,9 @@ export class VisitService {
     return this.http.post(url, json);
   }
 
-  updateAttribute(visitId, attributeUuid,json) {
+  updateAttribute(visitId, attributeUuid, json) {
     const url = `${this.baseURL}/visit/${visitId}/attribute/${attributeUuid}`;
-    return this.http.post(url, json)
+    return this.http.post(url, json);
   }
 
   deleteAttribute(visitId, uuid) {
@@ -88,7 +90,7 @@ export class VisitService {
     );
   }
 
-  getWhatsappLink(whatsapp:Number,msg:string) {
+  getWhatsappLink(whatsapp: Number, msg: string) {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;

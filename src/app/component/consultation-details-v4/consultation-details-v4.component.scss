@@ -77,3 +77,6 @@
   color: #0FD197;
 }
 
+::ng-deep.mat-dialog-container {
+  padding: 0px !important;
+}

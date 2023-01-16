@@ -61,7 +61,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
-import { CdkAccordionModule } from '@angular/cdk/accordion';
+import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -169,16 +169,16 @@ import { CalendarWeeklyComponent } from "./component/calendar-v4/calendar-weekly
 import { CalendarMonthlyComponent } from "./component/calendar-v4/calendar-monthly/calendar-monthly.component";
 import { CalendarDailyComponent } from "./component/calendar-v4/calendar-daily/calendar-daily.component";
 import { ViewCalendarComponent } from "./component/calendar-v4/view-calendar/view-calendar.component";
-import { AppointmentDetailModalComponent } from './modals/appointment-detail-modal/appointment-detail-modal.component';
-import { RescheduleAppointmentModalComponent } from './modals/reschedule-appointment-modal/reschedule-appointment-modal.component';
-import { TimeOffModalComponent } from './modals/time-off-modal/time-off-modal.component';
-import { PopupFormComponent } from './component/admin-container/popup-form/popup-form.component';
-import { PagerService } from './services/pager.service';
+import { AppointmentDetailModalComponent } from "./modals/appointment-detail-modal/appointment-detail-modal.component";
+import { RescheduleAppointmentModalComponent } from "./modals/reschedule-appointment-modal/reschedule-appointment-modal.component";
+import { TimeOffModalComponent } from "./modals/time-off-modal/time-off-modal.component";
+import { PopupFormComponent } from "./component/admin-container/popup-form/popup-form.component";
+import { PagerService } from "./services/pager.service";
 import { PrescriptionContainerComponent } from "./component/prescription-container/prescription-container.component";
-import { PrescriptionSentComponent } from './component/prescription-container/prescription-sent/prescription-sent.component';
-import { PrescriptionCompletedComponent } from './component/prescription-container/prescription-completed/prescription-completed.component';
-import { HelpmenuComponent } from './component/helpmenu/helpmenu.component';
-import { AppointmentContainerComponent } from './component/appointment-container/appointment-container.component';
+import { PrescriptionSentComponent } from "./component/prescription-container/prescription-sent/prescription-sent.component";
+import { PrescriptionCompletedComponent } from "./component/prescription-container/prescription-completed/prescription-completed.component";
+import { HelpmenuComponent } from "./component/helpmenu/helpmenu.component";
+import { AppointmentContainerComponent } from "./component/appointment-container/appointment-container.component";
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 
 @NgModule({
@@ -294,7 +294,7 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
     PrescriptionCompletedComponent,
     PrescriptionSentComponent,
     HelpmenuComponent,
-    AppointmentContainerComponent
+    AppointmentContainerComponent,
   ],
 
   imports: [
@@ -342,6 +342,7 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
     RouterModule.forRoot(
       [
         { path: "", redirectTo: "login", pathMatch: "full" },
+        { path: "test/chat", component: TestChatComponent },
         {
           path: "login",
           component: LoginContainerComponent,
@@ -425,16 +426,20 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
             {
               path: "prescription",
               component: PrescriptionContainerComponent,
-              canActivate: [AuthGuard]
+              canActivate: [AuthGuard],
             },
             {
               path: "appointments",
               component: AppointmentContainerComponent,
-              canActivate: [AuthGuard]
+              canActivate: [AuthGuard],
             },
           ],
         },
-        { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
+        {
+          path: "admin",
+          loadChildren: () =>
+            import("./admin/admin.module").then((m) => m.AdminModule),
+        },
         // { path: "set-new/password", component: SetNewPasswordComponent },
         // {
         //   path: "",
@@ -528,4 +533,4 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -14,8 +14,9 @@ export class TestChatComponent implements OnInit {
   @ViewChild("chatBox") chatBox: ElementRef;
   data = {
     to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
-    from: "28cea4ab-3188-434a-82f0-055133090a38",
-    patientId: "a286e0de-eba0-4ad5-b698-900657d8ac75",
+    from: "5a700f00-eca8-4fe2-bbbd-a2d4e5c3622a",
+    patientId: "e5ec6a24-c350-4f66-a991-f0610962996b",
+    connectToDrId: '67bfd7f0-0508-11e3-8ffd-0800200c9a66'//dr 1 id by default to test
   };
   classFlag = false;
   chats = [];
@@ -28,7 +29,7 @@ export class TestChatComponent implements OnInit {
     private chatService: ChatService,
     private route: ActivatedRoute,
     private socket: SocketService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
@@ -42,10 +43,6 @@ export class TestChatComponent implements OnInit {
   reInitSocket() {
     localStorage.socketQuery = `userId=${this.data.from}&name=mobile`;
     this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe(() => {
-      this.updateMessages();
-      this.playNotify();
-    });
   }
 
   get chatElem() {
@@ -112,6 +109,7 @@ export class TestChatComponent implements OnInit {
     this.classFlag = true;
     this.scroll();
   }
+  
   chatClose() {
     this.classFlag = false;
   }
@@ -122,7 +120,9 @@ export class TestChatComponent implements OnInit {
     }, 0);
   }
 
-  playNotify() {
-    new Audio("../../../../intelehealth/assets/notification.mp3").play();
+  callDoctor() {
+    localStorage.patientUuid = this.data.patientId;
+    localStorage.connectToDrId = this.data.connectToDrId;
+    this.socket.openVcModal("hw");
   }
 }

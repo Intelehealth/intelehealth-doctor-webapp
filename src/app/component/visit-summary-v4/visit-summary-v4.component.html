@@ -1,3 +1,3 @@
-<app-patient-details></app-patient-details>
+<app-patient-details *ngIf="!visitService.isVisitSummaryShow"></app-patient-details>
 
-<app-tabs-v4></app-tabs-v4>
+<app-tabs-v4 *ngIf="!visitService.isVisitSummaryShow"></app-tabs-v4>
