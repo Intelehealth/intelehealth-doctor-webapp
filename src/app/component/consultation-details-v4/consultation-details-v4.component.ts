@@ -34,6 +34,8 @@ export class ConsultationDetailsV4Component implements OnInit {
   patientUuid: any;
   provider: any;
   currentTheme: "overflow-y";
+  changeSide:boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
@@ -148,5 +150,14 @@ export class ConsultationDetailsV4Component implements OnInit {
     localStorage.connectToDrId = this.provider?.person?.uuid;
 
     this.socket.openNewVCModal();
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

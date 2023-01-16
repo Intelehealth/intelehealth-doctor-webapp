@@ -39,7 +39,9 @@
               "node_modules/bootstrap/scss/bootstrap.scss",
               "src/assets/scss/main.scss",
               "src/styles.scss",
-              "node_modules/intro.js/introjs.css"],
+              "node_modules/intro.js/introjs.css",
+              "src/assets/scss/toastr.css"
+            ],
             "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"],
             "aot": false,
             "vendorChunk": true,

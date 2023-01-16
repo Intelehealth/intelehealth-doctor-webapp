@@ -50,7 +50,7 @@ export class ReferalV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptReferral)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
             this.referralData.push(this.getObj(obs));
           }
         });

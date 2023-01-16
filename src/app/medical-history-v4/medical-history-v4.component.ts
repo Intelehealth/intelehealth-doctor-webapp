@@ -20,7 +20,7 @@ export class MedicalHistoryV4Component implements OnInit {
   familyHistoryData: any = [];
   familyHistoryDataPresent = false;
   conceptFamilyHistoryData = "d63ae965-47fb-40e8-8f08-1f46a8a60b2b";
-
+  changeSide:boolean = false;
   constructor(
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute
@@ -81,5 +81,14 @@ export class MedicalHistoryV4Component implements OnInit {
           }
         }
       });
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

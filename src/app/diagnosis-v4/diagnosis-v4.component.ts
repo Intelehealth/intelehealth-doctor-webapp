@@ -41,7 +41,7 @@ export class DiagnosisV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
             this.setDiagnosis(obs);
             this.isDiagnosisPresent = true;
           }
