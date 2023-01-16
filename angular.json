@@ -41,9 +41,16 @@
               "src/assets/scss/main.scss",
               "src/styles.scss",
               "node_modules/intro.js/introjs.css",
-              "src/assets/scss/toastr.css"
+              "src/assets/scss/toastr.css",
+              "node_modules/intl-tel-input/build/css/intlTelInput.css"
             ],
-            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"],
+            "scripts": [
+              "src/app/js/util.js",
+              "node_modules/intro.js/intro.js",
+              "node_modules/jquery/dist/jquery.slim.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/intl-tel-input/build/js/intlTelInput.min.js"
+            ],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,

@@ -1,1 +1,34 @@
-<p>otp-verification works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>OTP verification</h6>
+      <p>
+        Please enter the verification code which is sent to your mobile number +91-98******2 and email
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4">
+      <form [formGroup]="otpVerificationForm" (ngSubmit)="verify()">
+        <div class="form-group">
+          <label for="email">
+            Enter OTP
+          </label>
+          <ng-otp-input [formCtrl]="fCtrl"  [config]="{ length: 6, placeholder: '_', inputClass: 'otp-input-box' }"></ng-otp-input>
+          <div *ngIf="submitted && fCtrl.errors">
+            <small *ngIf="fCtrl.errors.required" class="error-msg">Please enter otp</small>
+            <small *ngIf="fCtrl.errors.minlength || fCtrl.errors.maxlength" class="error-msg">Please enter valid otp</small>
+          </div>
+        </div>
+        <div class="resend-otp-text">
+          Didn’t receive OTP ?
+          <a href="javascript:void(0)" *ngIf="counter > 0">Resend in {{resendIn}}</a>
+          <a href="javascript:void(0)" *ngIf="counter == 0" (click)="resendOtp()">Resend</a>
+        </div>
+        <div class="form-group mt-5">
+          <button type="submit" class="btn btn-block next-btn">
+            Verify
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

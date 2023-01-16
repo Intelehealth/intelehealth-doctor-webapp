@@ -8,6 +8,9 @@ import { Router } from '@angular/router';
 import { PushNotificationsService } from './services/push-notification.service';
 import { GlobalConstants } from './js/global-constants';
 import { SwPush, SwUpdate } from '@angular/service-worker';
+import { MatDialogRef } from '@angular/material/dialog';
+import { HelpMenuComponent } from './modal-components/help-menu/help-menu.component';
+import { CoreService } from './services/core/core.service';
 declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -16,8 +19,25 @@ declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveTo
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
-  ngOnInit () {   
+
+  dialogRef: MatDialogRef<HelpMenuComponent>;
+
+  constructor(private cs: CoreService) {
+
+  }
+
+  ngOnInit () {
+  }
+
+  openHelpMenu() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+      return;
+    };
+    this.dialogRef = this.cs.openHelpMenuModal();
+    this.dialogRef.afterClosed().subscribe(result => {
+      this.dialogRef = undefined;
+    });
   }
 
 }

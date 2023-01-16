@@ -1,1 +1,83 @@
-<p>verification-method works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>Choose verification method</h6>
+      <p>
+        Choose your email or phone number through which you want to verify your identity. We will send a verification code to confirm your entry.
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4">
+
+      <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Mobile number</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="verificationForm" (ngSubmit)="verify()">
+              <div class="form-group">
+                <label for="phone">
+                  Mobile number
+                </label>
+                <div class="phone-field">
+                  <input type="text"
+                    ng2TelInput
+                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true}"
+                    (hasError)="hasError($event)"
+                    (ng2TelOutput)="getNumber($event)"
+                    (intlTelInputObject)="telInputObject($event)"
+                    (countryChange)="onCountryChange($event)"
+                    placeholder="Enter Mobile Number"
+                    class="form-control"
+                    formControlName="phone"/>
+                  <button class="btn toggle-password-btn" type="button">
+                    <img src="assets/svgs/mobile.svg" alt="">
+                  </button>
+                </div>
+                <div *ngIf="submitted && f.phone.errors">
+                  <small *ngIf="f.phone.errors.required" class="error-msg">Please enter mobile number</small>
+                </div>
+                <div *ngIf="submitted && !phoneIsValid && !f.phone.errors">
+                  <small class="error-msg">Please enter valid mobile number</small>
+                </div>
+              </div>
+              <div class="form-group mt-5">
+                <button type="submit" class="btn btn-block next-btn">
+                  Next
+                  <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <a ngbNavLink>Email ID</a>
+          <ng-template ngbNavContent>
+            <form [formGroup]="verificationForm" (ngSubmit)="verify()">
+              <div class="form-group">
+                <label for="email">
+                  Email ID
+                </label>
+                <div class="email-id-field">
+                  <input type="email" class="form-control" formControlName="email" placeholder="Enter Email ID">
+                  <button class="btn toggle-password-btn" type="button">
+                    <img src="assets/svgs/email.svg" alt="">
+                  </button>
+                </div>
+                <div *ngIf="submitted && f.email.errors">
+                  <small *ngIf="f.email.errors.required" class="error-msg">Please enter email</small>
+                  <small *ngIf="f.email.errors.email" class="error-msg">Please enter valid email</small>
+                </div>
+              </div>
+              <div class="form-group mt-5">
+                <button type="submit" class="btn btn-block next-btn">
+                  Next
+                  <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav" class="mt-5"></div>
+    </div>
+  </div>
+</div>

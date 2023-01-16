@@ -1,0 +1,112 @@
+.section-title {
+  font-family: DM Sans;
+  h6 {
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 150%;
+    color: #2E1E91;
+  }
+
+  p {
+    font-weight: 500;
+    font-size: 16px;
+    color: #7F7B92;
+    line-height: 150%;
+  }
+}
+
+::ng-deep .ng-otp-input-wrapper .otp-input-box {
+  background: #FAF9FF;
+  border: 1px solid rgba(178, 175, 190, 0.2) !important;
+  border-radius: 8px !important;
+  outline: none;
+  color: #1B163A !important;
+  font-size: 16px !important;
+}
+
+.resend-otp-text {
+  font-size: 16px;
+  color: #7F7B92;
+  padding: 8px 0px;
+
+  a {
+    text-decoration: underline;
+    color: #2E1E91;
+  }
+}
+
+.form-group {
+  label {
+    font-size: 14px;
+    color: #1B163A;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .link {
+      a {
+        text-decoration: underline;
+        font-size: 14px;
+        color: #7F7B92;
+        font-weight: normal;
+      }
+    }
+  }
+
+  .next-btn {
+    height: 56px;
+    background: #2E1E91;
+    border-radius: 8px;
+    font-size: 18px;
+    color: #FFFFFF;
+    position: relative;
+
+    .btn-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .next-btn:focus {
+    box-shadow: none;
+  }
+
+  .error-msg {
+    color: red;
+    padding: 10px 0px;
+  }
+
+  .password-field, .email-id-field, .phone-field {
+    position: relative;
+
+    .btn {
+      position: absolute;
+      right: 2px;
+      bottom: 6px;
+      background-color: #FAF9FF;
+    }
+
+    .btn:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+.form-control {
+  padding: 14px 16px;
+  background: #FAF9FF;
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: #1B163A;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}

@@ -248,6 +248,10 @@ body.font-lato td {
     color: #FFFFFF;
     border-radius: 12px 12px 0px 0px;
 
+    h6 {
+      font-size: 18px;
+    }
+
     img {
       cursor: pointer;
     }
@@ -485,4 +489,26 @@ body.font-lato td {
 
 .mt-24 {
   margin-top: 24px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height:6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #B0ADBE;
+  border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

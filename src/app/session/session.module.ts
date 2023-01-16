@@ -9,13 +9,14 @@ import { OtpVerificationComponent } from './otp-verification/otp-verification.co
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { SetupNewPasswordComponent } from './setup-new-password/setup-new-password.component';
 import { ForgotUsernameComponent } from './forgot-username/forgot-username.component';
-import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxCaptchaModule } from 'ngx-captcha';
-
+import { Ng2TelInputModule } from 'ng2-tel-input';
+import { NgOtpInputModule } from  'ng-otp-input';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,10 @@ import { NgxCaptchaModule } from 'ngx-captcha';
     FormsModule,
     MatIconModule,
     ReactiveFormsModule,
-    NgxCaptchaModule
+    NgxCaptchaModule,
+    NgbNavModule,
+    Ng2TelInputModule,
+    NgOtpInputModule
   ]
 })
 export class SessionModule { }
