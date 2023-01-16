@@ -7,11 +7,15 @@ import { UploadMindmapJsonComponent } from './upload-mindmap-json/upload-mindmap
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { NoInternetComponent } from './no-internet/no-internet.component';
+import { PasswordResetSuccessComponent } from './password-reset-success/password-reset-success.component';
 
 @NgModule({
     declarations: [
         AddLicenseKeyComponent,
-        UploadMindmapJsonComponent
+        UploadMindmapJsonComponent,
+        NoInternetComponent,
+        PasswordResetSuccessComponent
     ],
     imports: [
         CommonModule,

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
+import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
 import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mindmap-json/upload-mindmap-json.component';
 
 @Injectable({
@@ -18,6 +20,16 @@ export class CoreService {
 
   openUploadMindmapModal(): Observable<any> {
     const dialogRef = this.dialog.open(UploadMindmapJsonComponent, { panelClass: 'modal-md' });
+    return dialogRef.afterClosed();
+  }
+
+  openNoInternetConnectionModal(): Observable<any> {
+    const dialogRef = this.dialog.open(NoInternetComponent, { panelClass: 'modal-md' });
+    return dialogRef.afterClosed();
+  }
+
+  openPasswordResetSuccessModal(): Observable<any> {
+    const dialogRef = this.dialog.open(PasswordResetSuccessComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 }
