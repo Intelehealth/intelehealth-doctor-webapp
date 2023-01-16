@@ -32,10 +32,9 @@ export class NotesV4Component implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptNote)
       .subscribe(response => {
         response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
             this.noteData.push(obs);
           }
-          this.noteData.push(obs);
         });
       });
   }

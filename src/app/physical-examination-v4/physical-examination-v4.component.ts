@@ -21,6 +21,7 @@ export class PhysicalExaminationV4Component implements OnInit {
   images: any = [];
   conceptOnExam = "e1761e85-9b50-48ae-8c4d-e6b7eeeba084";
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
+  changeSide:boolean = false;
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -83,5 +84,14 @@ export class PhysicalExaminationV4Component implements OnInit {
           }
         });
       });
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

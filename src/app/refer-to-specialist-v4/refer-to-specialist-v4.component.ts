@@ -35,6 +35,7 @@ export class ReferToSpecialistV4Component implements OnInit {
   referToSpecailist = {
     data: ["Refer to another speciality", "Specialization"],
   };
+  changeSide:boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -114,5 +115,14 @@ export class ReferToSpecialistV4Component implements OnInit {
         }
       }
     );
+  }
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
   }
 }

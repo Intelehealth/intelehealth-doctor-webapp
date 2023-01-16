@@ -84,7 +84,7 @@ export class TabsV4Component implements OnInit {
   }
 
   private openModal(title, content, btnname1, btnname2, imgpath) {
-    const modalRef = this.modalService.open(ModaldialogComponent);
+    const modalRef = this.modalService.open(ModaldialogComponent, { centered: true });
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.content = content;
     modalRef.componentInstance.btnname1 = btnname1;

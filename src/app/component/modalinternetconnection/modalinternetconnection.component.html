@@ -1,7 +1,23 @@
-<app-modaldialog title="No internet connection" btnname="Try again">
+<!-- <app-modaldialog title="No internet connection" btnname="Try again">
   <div>
     <p class="login-para">
       Please make sure you have good internet connection and try again
     </p>
   </div>
-</app-modaldialog>
+</app-modaldialog> -->
+
+<div class="popup-modal d-flex flex-column justify-content-center align-items-center">
+  <div class="close-btn-wrapper">
+    <button class="modal-close-btn" (click)="modal.dismiss('Cross click')"><img src="assets/svgs/CloseX.svg" alt=""></button>
+  </div>
+  <div class="mt-4">
+    <div class="body-content d-flex flex-column justify-content-center align-items-center">
+      <img src="assets/svgs/warning-circle.svg" alt="" width="80px" height="80px">
+      <h6 class="mt-3">No internet connection</h6>
+      <p class="mt-2 text-center">Please make sure you have good internet connection and try again</p>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <button class="confirm-btn" type="button" (click)="modal.close('Ok click')">Try again</button>
+  </div>
+</div>
