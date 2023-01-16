@@ -203,28 +203,53 @@
       <div class="days-off">
         <span class="days-off-label">Days off</span>
       </div>
+      <div class="d-flex">
+        <table class="table w-100">
+          <tr class="schedule">
+            <td class="pl-0 mt-4">
+                    <mat-form-field class="example-full-width" appearance="fill">
+                      <mat-label>Select dates</mat-label>
+                        <input [value]="resetModel" matInput [matDatepicker]="picker" [min]="minDate"
+                          (dateChange)="dateChanged($event)" hidden />
+                        <mat-chip *ngFor="let value of model" [selectable]="false" [removable]="true" (removed)="remove(value)">
+                          {{ value |   date: 'dd MMM,' }}
+                        </mat-chip>
+                      <mat-datepicker-toggle matSuffix [for]="picker">
+                        <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
+                      </mat-datepicker-toggle>
+                      <mat-datepicker #picker [startAt]="init" [dateClass]="dateClass">
+                        <mat-datepicker-actions>
+                          <button mat-button matDatepickerCancel>Cancel</button>
+                          <button mat-raised-button color="primary" matDatepickerApply>Okay</button>
+                        </mat-datepicker-actions>
+                      </mat-datepicker>
+                    </mat-form-field>
+                 </td>
+                 <td *ngIf="showSaveButton" class="d-flex save-cancel-td">
+                  <div class="save-btn position-relative click" (click)="saveDaysOff()">
+                    <span class="save-btn-label position-absolute">Save</span>
+                  </div>
 
-      <!-- Line divider for right side -->
-      <div class="line-divider-right"></div>
-
-      <!-- For dates -->
-      <div class="dates-container">
-        <div class="dates-content">
-          <div class="dates-label">Dates</div>
-          <div class="select-dates">
-            <input class="input1" matInput placeholder="Select dates" readonly [matDatepicker]="dp3" [min]="minDate">
-            <mat-datepicker-toggle matSuffix [for]="dp3">
-              <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
-            </mat-datepicker-toggle>
-            <mat-datepicker #dp3 disabled="false">
-              <mat-datepicker-actions>
-                <button mat-button matDatepickerCancel>Cancel</button>
-                <button mat-raised-button color="primary" matDatepickerApply>Okay</button>
-              </mat-datepicker-actions>
-            </mat-datepicker>
-          </div>
-        </div>
+                  <div class="cancel-btn position-relative click" (click)="model = [];showSaveButton=false">
+                    <span class="cancel-btn-label position-absolute">Cancel</span>
+                  </div>
+                </td>
+          </table>
       </div>
+      <div *ngIf="daysOff.length > 0" class="daysoff">
+            <div class="daysOff-label">Your days off</div>
+            <mat-chip-list>
+              <mat-chip
+                *ngFor="let value of daysOff, index as i"
+                [selectable]="false"
+                [removable]="true"
+                (removed)="remove(i)"
+              >
+                {{ value |  date: 'dd MMM, yyyy' }}
+                <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+          </div>
     </div>
   </div>
 </div>
