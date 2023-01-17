@@ -145,3 +145,9 @@
     transform: translateY(-50%);
  }
 }
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 20px 30px;
+  }
+}

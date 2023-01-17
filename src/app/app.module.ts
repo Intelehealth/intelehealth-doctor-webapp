@@ -46,7 +46,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbActiveModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { CookieService } from "ngx-cookie-service";
+import { CookieService } from 'ngx-cookie-service';
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
@@ -182,6 +182,8 @@ import { AppointmentContainerComponent } from "./component/appointment-container
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { ToastrModule } from "ngx-toastr";
 import { AppRoutingModule } from './app-routing.module';
+import { MatSidenavModule } from "@angular/material/sidenav";
+import { MainContainerComponent } from './main-container/main-container.component';
 
 @NgModule({
   declarations: [
@@ -297,9 +299,11 @@ import { AppRoutingModule } from './app-routing.module';
     PrescriptionSentComponent,
     HelpmenuComponent,
     AppointmentContainerComponent,
+    MainContainerComponent,
   ],
 
   imports: [
+    MatSidenavModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,

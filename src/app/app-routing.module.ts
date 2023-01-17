@@ -1,16 +1,47 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
+import { MainContainerComponent } from './main-container/main-container.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'session',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   {
     path: 'session',
     loadChildren: () => import('./session/session.module').then(m => m.SessionModule)
+  },
+  {
+    path: '',
+    component: MainContainerComponent,
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
+      },
+      {
+        path: 'messages',
+        loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
+      },
+      {
+        path: 'calendar',
+        loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
+      },
+      {
+        path: 'appointments',
+        loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
+      },
+      {
+        path: 'prescription',
+        loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
+      },
+      {
+        path: 'help',
+        loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
+      }
+    ]
   },
   {
     path: 'admin',
