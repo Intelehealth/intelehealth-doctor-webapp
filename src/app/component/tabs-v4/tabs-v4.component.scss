@@ -54,3 +54,24 @@
 
   border-radius: 8px;
 }
+
+.hide-all-btn{
+  position: absolute;
+  right: 46px;
+  padding: 8px;
+
+  cursor: pointer;
+  z-index: 1000;
+}
+.text{
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+
+  display: flex;
+  gap: 10px;
+
+  color: #7F7B92;
+}

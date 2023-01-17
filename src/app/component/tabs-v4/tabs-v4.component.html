@@ -1,4 +1,13 @@
 <div class="tabs-main-container mt-3 mb-0">
+  <div 
+    class="hide-all-btn text"
+    data-toggle="collapse" 
+    data-target=".multi-collapse" 
+    (click)="toggleCollapse()"
+  >
+    Hide all 
+    <img class="arrow" [src]="toggleImage"/>
+  </div>
   <mat-tab-group mat-align-tabs="start">
     <!-- Current visit summary -->
     <mat-tab label="Current visit summary">

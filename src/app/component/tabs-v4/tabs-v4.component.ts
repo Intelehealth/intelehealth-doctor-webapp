@@ -25,6 +25,8 @@ export class TabsV4Component implements OnInit {
   patientUuid: string;
   visitUuid: string;
   setSpiner = true;
+  changeSide:boolean = false;
+
   constructor(private route: ActivatedRoute,
     private authService: AuthService,
     private visitService: VisitService,
@@ -212,4 +214,13 @@ export class TabsV4Component implements OnInit {
         attr.attributeType["display"].toLowerCase() === text.toLowerCase()
     );
   };
+
+  toggleCollapse(){
+    this.changeSide = !this.changeSide;
+  }
+  get toggleImage() {
+    return `assets/svgs/${
+      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+    }`;
+  }
 }
