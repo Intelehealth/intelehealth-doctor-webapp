@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-forgot-username',
@@ -8,12 +10,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class ForgotUsernameComponent implements OnInit {
 
-  active = 1;
+  active = 'phone';
   forgotUsernameForm: FormGroup;
   submitted: boolean = false;
   phoneIsValid: boolean = false;
+  phoneNumber: string;
 
-  constructor() {
+  constructor(private toastr: ToastrService, private router: Router) {
     this.forgotUsernameForm = new FormGroup({
       phone: new FormControl('', Validators.required),
       email: new FormControl(''),
@@ -27,7 +30,7 @@ export class ForgotUsernameComponent implements OnInit {
   get f() { return this.forgotUsernameForm.controls; }
 
   reset() {
-    if (this.active == 1 ) {
+    if (this.active == 'phone' ) {
       this.forgotUsernameForm.get('phone').setValidators([Validators.required]);
       this.forgotUsernameForm.get('phone').updateValueAndValidity();
       this.forgotUsernameForm.get('email').clearValidators();
@@ -53,7 +56,13 @@ export class ForgotUsernameComponent implements OnInit {
     if (this.forgotUsernameForm.invalid) {
       return;
     }
-    console.log(this.forgotUsernameForm.value);
+    this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");
+    this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-username', via: this.active, val: (this.active == 'phone') ? this.phoneNumber : this.forgotUsernameForm.value.email } });
+  }
+
+  replaceWithStar(str: string) {
+    let n = str.length;
+    return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
   hasError($event: any) {
@@ -62,6 +71,7 @@ export class ForgotUsernameComponent implements OnInit {
 
   getNumber($event: any) {
     console.log($event);
+    this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 

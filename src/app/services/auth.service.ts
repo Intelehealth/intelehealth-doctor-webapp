@@ -7,6 +7,7 @@ import { environment } from "src/environments/environment";
 import { map } from "rxjs/operators";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
+import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 @Injectable({
@@ -17,16 +18,22 @@ export class AuthService {
   private baseUrl = environment.baseURL;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
+  private base64Cred: string;
 
   constructor(
     private myRoute: Router,
     private sessionService: SessionService,
     private cookieService: CookieService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private rolesService: NgxRolesService
   ) {
+    let localStorageUser = JSON.parse(localStorage.getItem('currentUser'));
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
+    if (localStorageUser) {
+      this.rolesService.addRoles(this.extractRolesAndPermissions(localStorageUser.user.privileges, localStorageUser.user.roles));
+    }
   }
   public fingerPrint;
 
@@ -70,35 +77,54 @@ export class AuthService {
   }
 
   login(credBase64: string) {
+    this.base64Cred = credBase64;
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
     return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
-      map(async (user: any) => {
+      map((user: any) => {
         if (user.authenticated) {
           user.verified = false;
-          let provider: any = await this.getProvider(user.user.uuid);
-          if (provider?.results.length) {
-            user.isProvider = true;
-            localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-            localStorage.setItem('user', JSON.stringify(user.user));
-            this.currentUserSubject.next(user);
-            this.cookieService.set('JSESSIONID', user.sessionId);
-          }
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(user.user));
+          this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
+          this.currentUserSubject.next(user);
+          this.cookieService.set('JSESSIONID', user.sessionId);
         }
         return user;
       }));
   }
 
   getProvider(userId: string) {
-    return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate),attributes)`).toPromise();
+    return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate),attributes)`);
   }
 
   logOut() {
     // remove user from local storage to log user out
-    localStorage.removeItem('user');
-    localStorage.removeItem('provider');
-    this.cookieService.delete('JSESSIONID');
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/session/login']);
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.set('cookie', `JSESSIONID=${this.cookieService.get('JSESSIONID')}`);
+    this.http.delete(`${this.baseUrl}/session`).subscribe((res: any) =>{
+      console.log(res);
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('user');
+      localStorage.removeItem('provider');
+      this.cookieService.delete('JSESSIONID');
+      this.currentUserSubject.next(null);
+      this.rolesService.flushRolesAndPermissions();
+      this.router.navigate(['/session/login']);
+    });
+  }
+
+  extractRolesAndPermissions(perm: any[], roles: any[]) {
+    let extractedPermissions = perm.map((val)=>{
+      return val.name;
+    });
+    let extractedRoles = roles.map((val)=>{
+      return val.name.toUpperCase();
+    });
+    let rolesObj = {};
+    extractedRoles.forEach(r => {
+      rolesObj[r] = extractedPermissions;
+    });
+    return rolesObj;
   }
 }

@@ -3,7 +3,7 @@
     <div class="col-md-12 p-0 section-title">
       <h6>OTP verification</h6>
       <p>
-        Please enter the verification code which is sent to your mobile number +91-98******2 and email
+        Please enter the verification code which is sent to your {{ via == 'phone' ? 'mobile number' : 'email id' }} {{ replaceWithStar(cred) }}
       </p>
     </div>
     <div class="col-md-12 px-0 py-4">

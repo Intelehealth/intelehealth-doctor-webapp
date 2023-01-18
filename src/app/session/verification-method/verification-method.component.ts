@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-verification-method',
@@ -8,12 +11,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class VerificationMethodComponent implements OnInit {
 
-  active = 1;
+  active = 'phone';
   verificationForm: FormGroup;
   submitted: boolean = false;
   phoneIsValid: boolean = false;
+  phoneNumber: string;
 
-  constructor() {
+  constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) {
     this.verificationForm = new FormGroup({
       phone: new FormControl('', Validators.required),
       email: new FormControl(''),
@@ -27,7 +31,7 @@ export class VerificationMethodComponent implements OnInit {
   get f() { return this.verificationForm.controls; }
 
   reset() {
-    if (this.active == 1 ) {
+    if (this.active == 'phone' ) {
       this.verificationForm.get('phone').setValidators([Validators.required]);
       this.verificationForm.get('phone').updateValueAndValidity();
       this.verificationForm.get('email').clearValidators();
@@ -53,7 +57,13 @@ export class VerificationMethodComponent implements OnInit {
     if (this.verificationForm.invalid) {
       return;
     }
-    console.log(this.verificationForm.value);
+    this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
+    this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'login', via: this.active, val: (this.active == 'phone') ? this.phoneNumber : this.verificationForm.value.email } });
+  }
+
+  replaceWithStar(str: string) {
+    let n = str.length;
+    return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
   hasError($event: any) {
@@ -61,7 +71,7 @@ export class VerificationMethodComponent implements OnInit {
   }
 
   getNumber($event: any) {
-    console.log($event);
+    this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
@@ -70,6 +80,7 @@ export class VerificationMethodComponent implements OnInit {
   }
 
   onCountryChange($event: any) {
+    console.log($event);
     this.verificationForm.patchValue({
       countryCode: $event.dialCode
     });

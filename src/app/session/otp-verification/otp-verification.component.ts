@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
@@ -15,8 +17,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   counter = 60;
   tick = 1000;
   resendIn: string = '01:00';
+  verificationFor: string;
+  via: string;
+  cred: string;
 
-  constructor() {
+  constructor(private toastr: ToastrService, private router: Router) {
     this.otpVerificationForm = new FormGroup({
       otp: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(6)])
     });
@@ -29,6 +34,12 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         this.resendIn = ('00' + minutes).slice(-2) + ':' + ('00' + Math.floor(this.counter - minutes * 60)).slice(-2);
         if(this.counter > 0) --this.counter;
       });
+
+    const { verificationFor, via, val } = window.history.state;
+    this.verificationFor = verificationFor;
+    this.via = via;
+    this.cred = val;
+
   }
 
   get fCtrl() { return this.otpVerificationForm.get('otp') }
@@ -42,12 +53,36 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     if (this.otpVerificationForm.invalid) {
       return;
     }
-    console.log(this.otpVerificationForm.value);
+    switch (this.verificationFor) {
+      case 'login':
+        this.toastr.success("You have sucessfully logged in.", "Login Successful");
+        this.router.navigate(['/dashboard']);
+        break;
+
+      case 'forgot-username':
+        this.toastr.success("Username has been successfully sent on your email and mobile number", "Username Sent");
+        this.router.navigate(['/session/login']);
+        break;
+
+      case 'forgot-password':
+        this.router.navigate(['/session/setup-password']);
+        break;
+
+      default:
+        break;
+    }
+
   }
 
   resendOtp() {
     this.counter = 60;
     this.resendIn = '01:00';
+    this.toastr.success(`OTP re-sent on ${ (this.via == 'username') ? 'mobile number and email' :this.replaceWithStar(this.cred)} successfully!`, 'OTP Sent')
+  }
+
+  replaceWithStar(str: string) {
+    let n = str.length;
+    return str.replace(str.substring(5, (this.via == 'phone') ? n-2 : n-4), "*****");
   }
 
   ngOnDestroy(): void {

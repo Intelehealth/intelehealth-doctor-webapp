@@ -11,7 +11,7 @@ export class DashboardComponent implements OnInit {
   constructor(private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-home.svg" });
+    this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
   }
 
 }

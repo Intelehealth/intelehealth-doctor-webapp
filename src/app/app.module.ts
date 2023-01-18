@@ -185,6 +185,29 @@ import { AppRoutingModule } from './app-routing.module';
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MainContainerComponent } from './main-container/main-container.component';
 
+import {
+  NgxUiLoaderModule,
+  NgxUiLoaderConfig,
+  SPINNER,
+  POSITION,
+  PB_DIRECTION,
+  NgxUiLoaderHttpModule,
+} from "ngx-ui-loader";
+import { NgxPermissionsModule } from "ngx-permissions";
+import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
+import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
+
+const ngxUiLoaderConfig: NgxUiLoaderConfig = {
+  bgsColor: "#2E1E91",
+  bgsPosition: POSITION.bottomCenter,
+  bgsSize: 40,
+  bgsType: SPINNER.fadingCircle, // background spinner type
+  fgsColor: "#FFFFFF",
+  fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
+  pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
+  pbThickness: 3, // progress bar thickness
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -360,6 +383,11 @@ import { MainContainerComponent } from './main-container/main-container.componen
       useFactory: adapterFactory,
     }),
     AppRoutingModule,
+    NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
+    NgxUiLoaderHttpModule.forRoot({
+      showForeground: true
+    }),
+    NgxPermissionsModule.forRoot()
   ],
   providers: [
     PagerService,
@@ -378,9 +406,14 @@ import { MainContainerComponent } from './main-container/main-container.componen
     { provide: MatDialogRef, useValue: {} },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: InternetconnectionInterceptor,
+      useClass: NetworkInterceptor,
       multi: true,
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    }
   ],
   bootstrap: [AppComponent],
 })

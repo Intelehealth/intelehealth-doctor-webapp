@@ -415,6 +415,7 @@ body.font-lato td {
 
 .modal-md {
   width: 490px;
+  max-width: 90%;
 
   .mat-dialog-container {
     padding: 0px;
@@ -451,11 +452,15 @@ body.font-lato td {
         h6 {
           font-size: 24px;
           font-weight: bold;
+          text-align: center;
+          line-height: 150%;
         }
 
         p {
           font-size: 18px;
           color: #7F7B92;
+          text-align: center;
+          line-height: 150%;
         }
       }
 

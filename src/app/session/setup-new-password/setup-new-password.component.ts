@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-setup-new-password',
@@ -13,7 +15,7 @@ export class SetupNewPasswordComponent implements OnInit {
   visible1: boolean = false;
   visible2: boolean = false;
 
-  constructor() {
+  constructor(private coreService: CoreService, private router: Router) {
     this.resetPasswordForm = new FormGroup({
       password: new FormControl('', [Validators.required]),
       confirmPassword: new FormControl('', [Validators.required]),
@@ -30,7 +32,24 @@ export class SetupNewPasswordComponent implements OnInit {
     if (this.resetPasswordForm.invalid) {
       return;
     }
-    console.log(this.resetPasswordForm.value);
+    this.coreService.openPasswordResetSuccessModal().subscribe((res: any) => {
+      this.router.navigate(['/session/login']);
+    });
+  }
+
+  generatePassword() {
+    let passwd = '';
+    let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*@$&';
+    for (let i = 0; i < 8; i++) {
+      var c = Math.floor(Math.random()*chars.length + 1);
+      passwd += chars.charAt(c)
+    }
+    this.visible1 = true;
+    this.resetPasswordForm.patchValue({
+      password: passwd,
+      confirmPassword: passwd
+    });
+    return passwd;
   }
 
 }

@@ -9,7 +9,7 @@
     <div class="col-md-12 px-0 py-4">
 
       <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
-        <li [ngbNavItem]="1">
+        <li [ngbNavItem]="'phone'">
           <a ngbNavLink>Mobile number</a>
           <ng-template ngbNavContent>
             <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
@@ -48,7 +48,7 @@
             </form>
           </ng-template>
         </li>
-        <li [ngbNavItem]="2">
+        <li [ngbNavItem]="'email'">
           <a ngbNavLink>Email ID</a>
           <ng-template ngbNavContent>
             <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
