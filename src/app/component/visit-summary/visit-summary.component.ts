@@ -70,7 +70,7 @@ export class VisitSummaryComponent implements OnInit {
       this.setSpiner = false;
     }, 1000);
     const userDetails = getFromStorage("user");
-   
+
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
@@ -78,28 +78,28 @@ export class VisitSummaryComponent implements OnInit {
           this.managerRoleAccess = true;
         }
       });
-    } 
+    }
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     this.diagnosisService
       .getObsAll(this.patientId)
       .subscribe((response) => {
-      const ObsData = response.results.filter(a=>this.conceptIds.includes(a.concept.uuid))
-      if(ObsData.length>0){
-        this.diagnosisService.isVisitSummaryChanged = true
-      }
-      else{
-        this.diagnosisService.isVisitSummaryChanged = false
-      }
-       
-     });
+        const ObsData = response.results.filter(a => this.conceptIds.includes(a.concept.uuid))
+        if (ObsData.length > 0) {
+          this.diagnosisService.isVisitSummaryChanged = true
+        }
+        else {
+          this.diagnosisService.isVisitSummaryChanged = false
+        }
+
+      });
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       if (Array.isArray(visitDetails.attributes)) {
         this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value === 'Specialist doctor not needed')
       }
       visitDetails.encounters.forEach((visit) => {
-        if (visit.display.match("Visit Note") !== null  ) {
+        if (visit.display.match("Visit Note") !== null) {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
@@ -132,7 +132,7 @@ export class VisitSummaryComponent implements OnInit {
     return !this.diagnosisService.isVisitSummaryChanged;
   }
 
-  get requiredNotFilled(){
+  get requiredNotFilled() {
     return !this.diagnosisService.diagnosisExists;
   }
 
@@ -147,15 +147,15 @@ export class VisitSummaryComponent implements OnInit {
       if (userDetails && providerDetails) {
         this.setSpiner = true;
         this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-         let visitNote =  visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
-          if(visitNote) {
+          let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
+          if (visitNote) {
             this.diagnosisService.isSameDoctor();
             this.setSpiner = false;
-          }else {
-            this.startVisitNote(providerDetails, patientUuid,visitUuid,myDate,attributes);
+          } else {
+            this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
             this.setSpiner = false;
           }
-          });
+        });
       } else {
         this.authService.logout();
       }
@@ -163,16 +163,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   sign() {
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-        if (response) {
-          this.signandsubmit();
-        }
-       
-      });
+    this.signandsubmit();
   }
 
   signandsubmit() {
@@ -271,19 +262,19 @@ export class VisitSummaryComponent implements OnInit {
     );
   };
 
-   /**
-   * show reminder to doctor if he is idle after starting the visit
-   * @param visitUuid string
-   */
-    showReminder(visitUuid:string) {
-      this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+  /**
+  * show reminder to doctor if he is idle after starting the visit
+  * @param visitUuid string
+  */
+  showReminder(visitUuid: string) {
+    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       if (!this.checkVisit(visitDetails.encounters, "Visit Complete") && this.router.url.includes('visitSummary')
-         && visitUuid === this.router.url.split('/')[3]) {
-          var data = "Patient "+ visitDetails.patient.person.display +" is waiting, Please provide prescription.";
-          window.confirm(data);
-        }
-      });
-    }
+        && visitUuid === this.router.url.split('/')[3]) {
+        var data = "Patient " + visitDetails.patient.person.display + " is waiting, Please provide prescription.";
+        window.confirm(data);
+      }
+    });
+  }
 
   /**
    * Check for encounter as per visit type passed
