@@ -10,7 +10,6 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
 declare var getEncounterProviderUUID: any,
   getFromStorage: any,
   getEncounterUUID: any;
@@ -61,23 +60,18 @@ export class DiagnosisComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptDiagnosis)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosis.push(obs);
-          }
-        });
-        this.checkDiagnosis();
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("TELEMEDICINE DIAGNOSIS"));
+    obsData.forEach(obs=> {
+      this.diagnosis.push({uuid: obs.uuid, value :obs.value});
+    });
+    this.checkDiagnosis();
   }
 
   search(event) {
@@ -117,7 +111,6 @@ export class DiagnosisComponent implements OnInit {
     } else {
       this.diagnosisService.diagnosisExists = false;
     }
-    console.log('this.diagnosisService.diagnosisExists: ', this.diagnosisService.diagnosisExists);
   }
 
   delete(i) {

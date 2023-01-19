@@ -55,7 +55,6 @@ export class PatientinfoComponent implements OnInit {
 
   getLocationAndSetSanch() {
     this.visitService.getLocations().subscribe((res: any) => {
-      console.log('this.info: ', this.info);
       const state = res.states.find(state => state?.name === this.info?.preferredAddress?.stateProvince);
       if (state) {
         state.districts.forEach(district => {

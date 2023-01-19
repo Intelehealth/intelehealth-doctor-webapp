@@ -73,7 +73,7 @@ export class PatientInteractionComponent implements OnInit {
     this.patientId = this.route.snapshot.params["patient_id"];
     this.fetchVisitDetails();
     this.getAttributes();
-    this.getAdviceObs();
+  //  this.getAdviceObs();
   }
 
   fetchVisitDetails() {
@@ -178,7 +178,7 @@ export class PatientInteractionComponent implements OnInit {
           };
           this.encounterService.postObs(json).subscribe((response) => {
             this.diagnosisService.isVisitSummaryChanged = true;
-            this.getAdviceObs();
+           // this.getAdviceObs();
           });
         }
       }

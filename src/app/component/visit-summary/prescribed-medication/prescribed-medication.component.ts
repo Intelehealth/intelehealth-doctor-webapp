@@ -179,15 +179,11 @@ export class PrescribedMedicationComponent implements OnInit {
     });
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptMed)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.meds.push(obs);
-          }
-        });
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("JSV MEDICATIONS"));
+    obsData.forEach(obs=> {
+      this.meds.push({uuid: obs.uuid, value :obs.value});
+    })
   }
 
   onSubmit() {

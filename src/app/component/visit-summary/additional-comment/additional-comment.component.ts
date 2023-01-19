@@ -11,8 +11,7 @@ import {
   keyframes,
 } from "@angular/animations";
 import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -65,15 +64,11 @@ export class AdditionalCommentComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptComment)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.comment.push(obs);
-          }
-        });
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("Additional Comments"));
+    obsData.forEach(obs=> {
+      this.comment.push({uuid: obs.uuid, value :obs.value});
+    })
   }
 
   Submit() {

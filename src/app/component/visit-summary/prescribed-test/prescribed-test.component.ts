@@ -89,15 +89,11 @@ export class PrescribedTestComponent implements OnInit {
     });
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptTest)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.tests.push(obs);
-          }
-        });
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("REQUESTED TESTS"));
+    obsData.forEach(obs=> {
+      this.tests.push({uuid: obs.uuid, value :obs.value});
+    })
   }
 
   submit() {

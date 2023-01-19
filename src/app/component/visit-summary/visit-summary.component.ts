@@ -9,8 +9,7 @@ import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { MatDialog } from "@angular/material/dialog";
 import { VcComponent } from "../vc/vc.component";
 declare var getFromStorage: any,
-  saveToStorage: any,
-  getEncounterProviderUUID: any;
+  saveToStorage: any;
 
 @Component({
   selector: "app-visit-summary",
@@ -78,21 +77,7 @@ export class VisitSummaryComponent implements OnInit {
           this.managerRoleAccess = true;
         }
       });
-    }
-    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObsAll(this.patientId)
-      .subscribe((response) => {
-        const ObsData = response.results.filter(a => this.conceptIds.includes(a.concept.uuid))
-        if (ObsData.length > 0) {
-          this.diagnosisService.isVisitSummaryChanged = true
-        }
-        else {
-          this.diagnosisService.isVisitSummaryChanged = false
-        }
-
-      });
+    } 
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       if (Array.isArray(visitDetails.attributes)) {
@@ -103,6 +88,13 @@ export class VisitSummaryComponent implements OnInit {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
+          const ObsData = visit.obs.filter(a=> a.display.match("TELEMEDICINE DIAGNOSIS"));
+          if(ObsData.length>0){
+            this.diagnosisService.isVisitSummaryChanged = true
+          }
+          else{
+            this.diagnosisService.isVisitSummaryChanged = false
+          }
         }
         if (visit.display.match("Visit Complete") !== null) {
           this.visitCompletePresent = true;

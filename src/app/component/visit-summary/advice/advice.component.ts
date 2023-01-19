@@ -12,9 +12,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -62,7 +60,6 @@ export class AdviceComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute
   ) { }
 
@@ -89,17 +86,12 @@ export class AdviceComponent implements OnInit {
     });
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptAdvice)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
-            if (!obs.value.includes("</a>")) {
-              this.advice.push(obs);
-            }
-          }
-        });
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("MEDICAL ADVICE"));
+    obsData.forEach(obs=> {
+      if(!obs.value.includes("<a href="))
+      this.advice.push({uuid: obs.uuid, value :obs.value});
+    })
   }
 
   submit() {

@@ -11,9 +11,7 @@ import {
   animate,
   keyframes,
 } from "@angular/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any,
+declare var getFromStorage: any,
   getEncounterUUID: any;
 
 @Component({
@@ -62,7 +60,6 @@ export class FollowUpComponent implements OnInit {
   constructor(
     private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private datepipe: DatePipe
   ) { }
@@ -70,15 +67,11 @@ export class FollowUpComponent implements OnInit {
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
-    this.diagnosisService
-      .getObs(this.patientId, this.conceptFollow)
-      .subscribe((response) => {
-        response.results.forEach((obs) => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.followUp.push(obs);
-          }
-        });
-      });
+    let visitNoteProvider = getFromStorage('visitNoteProvider');
+    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("Follow up visit"));
+    obsData.forEach(obs=> {
+      this.followUp.push({uuid: obs.uuid, value :obs.value});
+    })
   }
 
   Submit() {
