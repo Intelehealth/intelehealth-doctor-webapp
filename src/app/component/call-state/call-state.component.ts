@@ -69,7 +69,7 @@ export class CallStateComponent implements OnInit {
     public dialogRef: MatDialogRef<CallStateComponent>,
     private snackbar: MatSnackBar,
     private visitSvc: VisitService
-  ) {}
+  ) { }
 
   toast({
     message,
@@ -119,15 +119,28 @@ export class CallStateComponent implements OnInit {
   async connect() {
     console.log("this.initiator: ", this.initiator);
 
-    this.socketService.emitEvent("create_or_join_hw", {
-      room: this.room,
-      connectToDrId: this.connectToDrId,
-    });
-
     console.log("Attempted to create or  join room", this.room);
     if (this.initiator === "dr") {
       this.toast({ message: "Calling....", duration: 3000 });
+      this.call();
+    } else {
+      this.socketService.emitEvent("create_or_join_hw", {
+        room: this.room,
+        connectToDrId: this.connectToDrId,
+      });
     }
+  }
+
+  call() {
+    this.socketService.emitEvent("call", {
+      nurseId: this.nurseId.uuid,
+      doctorName: this.doctorName,
+      roomId: this.room,
+    });
+
+    setTimeout(() => {
+      this.socketService.emitEvent("create or join", this.room);
+    }, 500);
   }
 
   async changeVoiceCallIcons() {

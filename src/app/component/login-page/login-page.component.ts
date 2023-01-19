@@ -8,9 +8,9 @@ import { PushNotificationsService } from "src/app/services/push-notification.ser
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
-import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ModalinternetconnectionComponent } from "../modalinternetconnection/modalinternetconnection.component";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HelperService } from "src/app/services/helper.service";
+import { environment } from "../../../environments/environment";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -30,8 +30,7 @@ export class LoginPageComponent implements OnInit {
   });
   showError: boolean = false;
   showPassword: boolean = false;
-  //siteKey: string = "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k"; // local
-  siteKey: string = "6LdUIXgjAAAAAJyQHOTzABeaNV0_LhKHtWULv63t" // uiux.intelehealth.org
+  siteKey: string = environment.captchaSiteKey;
 
   submitted = false;
   fieldTextType: boolean;
@@ -90,7 +89,7 @@ export class LoginPageComponent implements OnInit {
               if (provider.results[0].attributes.length === 0) {
                 this.router.navigate(["/set-profile"]);
                 //this.onSucess.emit(true);
-              }else {
+              } else {
                 if (this.helperService.checkIfRoleExists('Organizational: System Administrator', response.user.roles)) {
                   this.router.navigate(["/admin"]);
                 } else {
