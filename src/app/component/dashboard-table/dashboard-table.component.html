@@ -83,28 +83,28 @@
       <tr class="table_height" *ngIf="data.length === 0">
         <ng-container *ngIf="table?.label == 'Appointments'">
           <td [attr.colspan]="table?.headers.length">
-            <div class="text">
+            <div class="no-data">
               No any appointment scheduled
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'Priority Visits'">
           <td [attr.colspan]="table?.headers.length">
-            <div class="text">
+            <div class="no-data">
               No any priority visits
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'Awaiting visits'">
           <td [attr.colspan]="table?.headers.length">
-            <div class="text">
+            <div class="no-data">
               No any awaiting visits
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'In-progress visits'">
           <td [attr.colspan]="table?.headers.length">
-            <div class="text">
+            <div class="no-data">
               No any in-progress visits
             </div>
           </td>
