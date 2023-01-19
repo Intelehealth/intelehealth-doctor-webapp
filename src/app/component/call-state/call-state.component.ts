@@ -137,6 +137,10 @@ export class CallStateComponent implements OnInit {
       doctorName: this.doctorName,
       roomId: this.room,
     });
+
+    setTimeout(() => {
+      this.socketService.emitEvent("create or join", this.room);
+    }, 500);
   }
 
   async changeVoiceCallIcons() {
