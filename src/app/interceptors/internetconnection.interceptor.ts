@@ -21,6 +21,7 @@ export class InternetconnectionInterceptor implements HttpInterceptor {
       const modalRef = this.modalService.open(
         ModalinternetconnectionComponent,
         {
+          centered: true,
           backdrop: true,
           size: "s",
         }
