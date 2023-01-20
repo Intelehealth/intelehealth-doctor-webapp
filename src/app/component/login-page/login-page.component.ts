@@ -30,8 +30,8 @@ export class LoginPageComponent implements OnInit {
   });
   showError: boolean = false;
   showPassword: boolean = false;
-  //siteKey: string = "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k"; // local
-  siteKey: string = "6LdUIXgjAAAAAJyQHOTzABeaNV0_LhKHtWULv63t" // uiux.intelehealth.org
+  siteKey: string = "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k"; // local
+  // siteKey: string = "6LdUIXgjAAAAAJyQHOTzABeaNV0_LhKHtWULv63t" // uiux.intelehealth.org
 
   submitted = false;
   fieldTextType: boolean;

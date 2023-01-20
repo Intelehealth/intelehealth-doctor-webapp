@@ -26,12 +26,14 @@ export class AuthService {
     private cookieService: CookieService,
     private http: HttpClient,
     private router: Router,
-    private rolesService: NgxRolesService
+    private rolesService: NgxRolesService,
+    private permissionsService: NgxPermissionsService
   ) {
     let localStorageUser = JSON.parse(localStorage.getItem('currentUser'));
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
     if (localStorageUser) {
+      this.permissionsService.loadPermissions(this.extractPermissions(localStorageUser.user.privileges));
       this.rolesService.addRoles(this.extractRolesAndPermissions(localStorageUser.user.privileges, localStorageUser.user.roles));
     }
   }
@@ -86,6 +88,7 @@ export class AuthService {
           user.verified = false;
           localStorage.setItem('currentUser', JSON.stringify(user));
           localStorage.setItem('user', JSON.stringify(user.user));
+          this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
           this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
           this.currentUserSubject.next(user);
           this.cookieService.set('JSESSIONID', user.sessionId);
@@ -94,24 +97,33 @@ export class AuthService {
       }));
   }
 
-  getProvider(userId: string) {
+  getProvider(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate),attributes)`);
   }
 
   logOut() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.set('cookie', `JSESSIONID=${this.cookieService.get('JSESSIONID')}`);
-    this.http.delete(`${this.baseUrl}/session`).subscribe((res: any) =>{
-      console.log(res);
+    // headers = headers.set('cookie', `JSESSIONID=${id}`);
+    headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
+      localStorage.removeItem('doctorName');
       this.cookieService.delete('JSESSIONID');
       this.currentUserSubject.next(null);
-      this.rolesService.flushRolesAndPermissions();
+      this.permissionsService.flushPermissions();
+      this.rolesService.flushRoles();
       this.router.navigate(['/session/login']);
     });
+  }
+
+  extractPermissions(perm: any[]) {
+    let extractedPermissions = perm.map((val)=>{
+      return val.name;
+    });
+    return extractedPermissions;
   }
 
   extractRolesAndPermissions(perm: any[], roles: any[]) {
@@ -126,5 +138,14 @@ export class AuthService {
       rolesObj[r] = extractedPermissions;
     });
     return rolesObj;
+  }
+
+  updateVerificationStatus() {
+    this.currentUserSubject.next({ ...this.currentUserValue, verified: true });
+    localStorage.setItem('currentUser', JSON.stringify({ ...this.currentUserValue, verified: true }));
+  }
+
+  checkIfUsernameExists(username: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/provider?q=${username}&v=default`);
   }
 }

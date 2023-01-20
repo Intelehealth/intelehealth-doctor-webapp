@@ -2,10 +2,11 @@ import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angu
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { SetNewPasswordComponent } from '../component/set-new-password/set-new-password.component';
-import { SelectLanguageComponent } from '../component/set-up-profile/select-language/select-language.component';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { AuthService } from '../services/auth.service';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { CoreService } from '../services/core/core.service';
 
 @Component({
   selector: 'app-main-container',
@@ -16,18 +17,25 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
 
   collapsed = false;
   baseUrl: string = environment.baseURL;
-  baseURLLegacy = environment.baseURLLegacy;
+  baseURLLegacy: string = environment.baseURLLegacy;
   user: any;
   provider: any;
   username: string = '';
   header: PageTitleItem;
-  _mode: string = 'side';
+  _mode                  : string = 'side';
+  isMobile               : boolean = false;
+  _opened                : boolean = true;
+	_showBackdrop          : boolean = false;
+	_closeOnClickOutside   : boolean = false;
+  sidebarClosed          : boolean = false;
 
   constructor(
     private cdref: ChangeDetectorRef,
     private authService: AuthService,
     private dialog: MatDialog,
-    private pageTitleService: PageTitleService) { }
+    private pageTitleService: PageTitleService,
+    private breakpointObserver: BreakpointObserver,
+    private coreService: CoreService) { }
 
   ngOnInit(): void {
     this.user = JSON.parse(localStorage.getItem('user'));
@@ -36,6 +44,19 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
 			this.header = val;
 		});
+
+    this.breakpointObserver.observe(["(max-width: 768px)"]).subscribe((result: BreakpointState) => {
+      if (result.matches) {
+        this.isMobile = true;
+      } else {
+        this.isMobile = false;
+      }
+      this._mode = (this.isMobile) ? 'over' : 'side';
+      this._closeOnClickOutside = (this.isMobile) ? true : false;
+			this._showBackdrop = (this.isMobile) ? true : false;
+			this._opened = !this.isMobile;
+			this.sidebarClosed = false;
+    });
   }
 
   ngAfterContentChecked(): void {
@@ -47,8 +68,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
   }
 
   selectLanguage(): void {
-    const dialogRef = this.dialog.open(SelectLanguageComponent, {
-      data: {},
+    this.coreService.openSelectLanguageModal().subscribe((res: any) => {
+      console.log(res);
     });
   }
 
@@ -63,7 +84,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
   }
 
   logout(){
-    this.authService.logout();
+    this.authService.logOut();
   }
 
 }

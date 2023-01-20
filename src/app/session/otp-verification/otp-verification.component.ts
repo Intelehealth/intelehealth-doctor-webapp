@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, timer } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-otp-verification',
@@ -21,7 +23,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   via: string;
   cred: string;
 
-  constructor(private toastr: ToastrService, private router: Router) {
+  constructor(
+    private toastr: ToastrService,
+    private router: Router,
+    private authService: AuthService,
+    private rolesService: NgxRolesService) {
     this.otpVerificationForm = new FormGroup({
       otp: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(6)])
     });
@@ -55,8 +61,14 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
     switch (this.verificationFor) {
       case 'login':
+        this.authService.updateVerificationStatus();
         this.toastr.success("You have sucessfully logged in.", "Login Successful");
-        this.router.navigate(['/dashboard']);
+        let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+        if (role) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
         break;
 
       case 'forgot-username':

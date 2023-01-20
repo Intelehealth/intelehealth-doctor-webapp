@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -13,7 +14,7 @@ export class ForgotPasswordComponent implements OnInit {
   forgotPasswordForm: FormGroup;
   submitted: boolean = false;
 
-  constructor(private toastr: ToastrService, private router: Router) {
+  constructor(private toastr: ToastrService, private router: Router, private authService: AuthService) {
     this.forgotPasswordForm = new FormGroup({
       username: new FormControl('', Validators.required)
     });

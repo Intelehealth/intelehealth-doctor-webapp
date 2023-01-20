@@ -1,0 +1,142 @@
+<div class="select-lang-modal">
+  <div class="modal-title-con">
+    <h6 class="mb-0">Select Language</h6>
+    <div class="close-btn-con">
+      <button class="modal-close-btn" (click)="close(false)"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    </div>
+  </div>
+  <div class="modal-con">
+    <div class="container-fluid">
+      <div class="row">
+        <form [formGroup]="languageForm" (ngSubmit)="select()" class="col-md-12 p-0">
+          <div class="row">
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="en" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>English</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="hn" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>हिंदी</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="mr" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>मराठी</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="1" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>தமிழ்</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="2" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>ગુજરાતી</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="3" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>ਪੰਜਾਬੀ</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="4" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>తెలుగు</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="5" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>বাংলা</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="6" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>Assamese</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="7" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>ಕನ್ನಡ</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="8" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>മലയാളം</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 p-1">
+              <div class="lang-item">
+                <div class="pretty p-default p-round">
+                  <input type="radio" value="9" formControlName="language"/>
+                  <div class="state p-success-o">
+                    <label>Кыргызча</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 text-center py-2">
+              <button class="modal-btn blue-btn" type="submit">Select</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

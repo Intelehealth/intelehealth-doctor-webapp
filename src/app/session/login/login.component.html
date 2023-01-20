@@ -15,8 +15,8 @@
           </label>
           <input type="text" class="form-control" formControlName="username" placeholder="Enter username">
           <div *ngIf="submitted && f.username.errors">
-            <small *ngIf="f.username.errors.required" class="error-msg">Please enter valid username</small>
-            <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
+            <small *ngIf="f.username.errors.required" class="error-msg">Please enter username</small>
+            <small *ngIf="f.username.errors.usernameExists" class="error-msg">Couldn’t find you, please enter valid username</small>
           </div>
         </div>
         <div class="form-group">

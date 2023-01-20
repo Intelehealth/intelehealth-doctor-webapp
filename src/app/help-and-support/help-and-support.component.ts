@@ -8,6 +8,8 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 })
 export class HelpAndSupportComponent implements OnInit {
 
+  panelOpenState = false;
+
   constructor(private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {

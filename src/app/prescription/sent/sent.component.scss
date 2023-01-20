@@ -70,6 +70,18 @@ th:last-child {
   border-radius: 0 8px 8px 0;
 }
 
+.green-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #E6FFF3;
+  border-radius: 4px;
+  height: 32px;
+  color: #0FD197;
+  padding: 4px 6px;
+  width: fit-content;
+}
+
 .actions-btn-wrap {
   .action-btn {
     outline: none;

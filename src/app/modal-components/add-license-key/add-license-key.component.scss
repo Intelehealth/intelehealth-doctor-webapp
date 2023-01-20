@@ -8,6 +8,7 @@
     justify-content: space-between;
     padding: 24px;
     width: 489px;
+    max-width: 100%;
     height: 70px;
     background: #EFE8FF;
 
@@ -58,7 +59,7 @@
 
       .cancel-btn {
         padding: 8px 24px;
-        width: 119px;
+        min-width: 119px;
         height: 48px;
         background: #FFFFFF;
         border: 1px solid #EFE8FF;
@@ -71,7 +72,7 @@
 
       .confirm-btn {
         padding: 8px 24px;
-        width: 119px;
+        min-width: 119px;
         height: 48px;
         background: #2E1E91;
         border: 1px solid #2E1E91;

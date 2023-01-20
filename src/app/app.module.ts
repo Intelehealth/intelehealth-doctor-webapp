@@ -322,7 +322,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     PrescriptionSentComponent,
     HelpmenuComponent,
     AppointmentContainerComponent,
-    MainContainerComponent,
+    MainContainerComponent
   ],
 
   imports: [
@@ -387,7 +387,11 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true
     }),
-    NgxPermissionsModule.forRoot()
+    NgxPermissionsModule.forRoot({
+      permissionsIsolate: false,
+      rolesIsolate: false,
+      configurationIsolate: false
+    })
   ],
   providers: [
     PagerService,

@@ -1,5 +1,5 @@
 <mat-drawer-container class="sidenav-container" autosize>
-  <mat-drawer #drawer class="admin-sidenav" [mode]="_mode" [opened]="true">
+  <mat-drawer #drawer class="admin-sidenav" [mode]="_mode" [opened]="_opened">
     <div class="menu-items-wrapper" [ngClass]="{ 'collapsed' : collapsed }">
       <div class="sidenav-logo">
         <div class="sidenav-toggle">
@@ -47,6 +47,30 @@
             <span>Help & Support</span>
           </a>
         </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img src="assets/svgs/warning.svg" alt="">
+            <span>Ayu</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
+            <img src="assets/svgs/user-settings.svg" alt="">
+            <span>System Admin</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank">
+            <img src="assets/svgs/add-user.svg" alt="">
+            <span>User Creation</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+          <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank">
+            <img src="assets/svgs/report.svg" alt="">
+            <span>Report</span>
+          </a>
+        </li>
         <li class="nav-item">
           <mat-divider class="mb-2"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()">
@@ -60,36 +84,48 @@
 
   <div class="admin-sidenav-content">
     <div class="header-main">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="header-title d-flex justify-content-between align-items-center py-2">
-          <img src="{{header?.imgUrl}}" alt="" width="44px">
-          <h6 class="mb-0 ml-2">{{header?.title}}</h6>
-          <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
-        </div>
-        <div class="d-flex justify-content-between align-items-center py-2">
-          <button mat-button class="notification-button mr-3">
-            <mat-icon>notifications_none</mat-icon>
-          </button>
-          <div class="user-info-wrap mr-3">
-            <img class="user-img mr-3" src="" (error) ="onImgError($event)" alt="">
-            <h6 class="user-title mb-0">Hello, User <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="javascript:void(0)">
+          <div class="header-title d-flex justify-content-between align-items-center">
+            <button class="mr-2" mat-icon-button (click)="drawer.toggle()">
+              <mat-icon>menu</mat-icon>
+            </button>
+            <img src="{{header?.imgUrl}}" alt="" width="44px">
+            <h6 class="mb-0 ml-2">{{header?.title}}</h6>
+            <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
           </div>
-          <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #beforeMenu="matMenu" xPosition="before">
-            <button mat-menu-item (click)="changePassword()">Change Password</button>
-            <button mat-menu-item (click)="selectLanguage()">Change Language</button>
-            <button mat-menu-item routerLink="/profile">Settings</button>
-          </mat-menu>
+        </a>
+        <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <div class="d-flex align-items-center justify-content-end">
+                <button mat-button class="notification-button mr-3">
+                  <mat-icon>notifications_none</mat-icon>
+                </button>
+                <div class="user-info-wrap mr-3">
+                  <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider.person.uuid }}" (error) ="onImgError($event)" alt="">
+                  <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+                </div>
+                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
+                  <button mat-menu-item>Change Password</button>
+                  <button mat-menu-item (click)="selectLanguage()">Change Language</button>
+                  <button mat-menu-item routerLink="/dashboard/profile">Settings</button>
+                </mat-menu>
+              </div>
+            </li>
+          </ul>
         </div>
-      </div>
+      </nav>
     </div>
     <div class="main-container">
       <router-outlet></router-outlet>
     </div>
-    <!-- <button type="button" mat-button (click)="drawer.toggle()">
-      Toggle sidenav
-    </button> -->
   </div>
 </mat-drawer-container>

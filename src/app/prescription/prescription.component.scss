@@ -1,0 +1,84 @@
+.nav-tabs {
+  border: none;
+
+  .nav-item {
+    .nav-link {
+      border-radius: 0px;
+      border: none;
+      padding: 0px;
+
+      .chip-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        height: 86px;
+        width: fit-content;
+        margin: 0px 20px 20px 0px;
+        border-radius: 12px;
+        align-items: center;
+        padding: 16px;
+
+        .chip-img {
+          width: 44px;
+        }
+
+        .chip-info {
+          font-family: 'DM Sans';
+          font-style: normal;
+          color: black;
+          padding: 16px;
+        }
+
+        .chip-info h6 {
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 8px;
+          margin-top: 8px;
+        }
+
+        .chip-info span {
+          font-size: 16px;
+          color: #7F7B92;
+        }
+      }
+
+      .chip-item-blue {
+        background: #EFE8FF;
+      }
+
+      .chip-item-green {
+        background: #E6FFF3;
+      }
+
+    }
+
+    .nav-link.active {
+      background: transparent;
+
+      .chip-item .chip-info h6, .chip-item .chip-info span {
+        color: white;
+      }
+
+      .chip-item-blue {
+        background: #2E1E91;
+      }
+
+      .chip-item-green {
+        background: #0FD197;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-tabs {
+    .nav-item {
+      width: 100%;
+
+      .chip-item {
+        width: 100% !important;
+        margin: 0px 0px 10px !important;
+      }
+    }
+  }
+}

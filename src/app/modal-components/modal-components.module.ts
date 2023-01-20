@@ -10,6 +10,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { NoInternetComponent } from './no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from './password-reset-success/password-reset-success.component';
 import { HelpMenuComponent } from './help-menu/help-menu.component';
+import { SelectLanguageComponent } from './select-language/select-language.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { HelpMenuComponent } from './help-menu/help-menu.component';
         UploadMindmapJsonComponent,
         NoInternetComponent,
         PasswordResetSuccessComponent,
-        HelpMenuComponent
+        HelpMenuComponent,
+        SelectLanguageComponent
     ],
     imports: [
         CommonModule,

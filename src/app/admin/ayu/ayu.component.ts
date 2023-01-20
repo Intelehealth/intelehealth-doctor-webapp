@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 
 @Component({
   selector: 'app-ayu',
@@ -30,9 +31,11 @@ export class AyuComponent implements OnInit {
     private matDialog: MatDialog,
     private snackbar: MatSnackBar,
     private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {
+    this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg' })
     this.fetchMindmaps();
   }
 

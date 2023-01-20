@@ -1,131 +1,133 @@
-<div class="d-flex flex-row justify-content-between align-items-center">
-  <div class="select-key-wrapper d-flex flex-column">
-    <div class="key-item d-flex flex-row align-items-center">
-      <h6 class="key-title mb-0">Select License Key</h6>
-      <ng-select [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
-        <ng-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
-          {{ mindmap.keyName }}
-        </ng-option>
-      </ng-select>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 p-0 select-key-wrapper">
+      <div class="form-group row">
+        <label for="selectLicenseKey" class="col-sm-3 col-form-label">Select License Key</label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
+            <ng-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
+              {{ mindmap.keyName }}
+            </ng-option>
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+        <div class="col-sm-9">
+          <span>{{ expiryDate ? (expiryDate|date:'dd MMM, yyyy') : '' }}</span>
+          <button type="button" class="action-btn sm-btn ml-2" (click)="openAddLicenseKeyModal('edit')"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
+        </div>
+      </div>
     </div>
-    <div class="key-item d-flex flex-row align-items-center">
-      <h6 class="key-title mb-0">Expiry Date</h6>
-      <span>{{ expiryDate ? (expiryDate|date:'dd MMM, yyyy') : '' }}</span>
-      <button type="button" class="action-btn sm-btn ml-2" (click)="openAddLicenseKeyModal('edit')"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
+    <div class="col-md-6 p-0">
+      <button type="button" class="action-btn bg-blue float-right" (click)="openAddLicenseKeyModal('add')"><img src="assets/svgs/plus-transparent.svg" alt=""> Add New Key</button>
     </div>
   </div>
-  <div class="align-self-start">
-    <button type="button" class="action-btn bg-blue mr-2" (click)="openAddLicenseKeyModal('add')"><img src="assets/svgs/plus-transparent.svg" alt=""> Add New Key</button>
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="card intel-card">
+        <div class="card-header">
+          <img class="mr-2" src="assets/svgs/ayu.svg" alt="" height="44px">
+          <h6 class="mb-0">Associated Mindmaps ({{mindmapDatas.length ? mindmapDatas.length : 0}} modules)</h6>
+          <div class="card-header-actions">
+            <input type="text" class="search-input mr-2 my-1" placeholder="Search" (keyup)="applyFilter($event)">
+            <button type="button" class="action-btn mr-2 my-1" (click)="openUploadMindmapModal()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource">
+
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                  <!-- <mat-checkbox [color]="'primary'" (change)="$event ? masterToggle() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                  </mat-checkbox> -->
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+
+              <!-- Position Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> Sr. No. </th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}}
+                </td>
+              </ng-container>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              </ng-container>
+
+              <!-- Last Updated Column -->
+              <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef> Last Updated </th>
+                <td mat-cell *matCellDef="let element">{{element.updatedAt|date:'dd MMM, yyyy'}}</td>
+              </ng-container>
+
+              <!-- Active Column -->
+              <ng-container matColumnDef="active">
+                <th mat-header-cell *matHeaderCellDef> Active </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="pretty p-switch p-fill">
+                    <input type="checkbox" [checked]="element.isActive" (change)="toggleStatus(element)"/>
+                    <div class="state">
+                        <label></label>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Download Column -->
+              <ng-container matColumnDef="download">
+                <th mat-header-cell *matHeaderCellDef> Download </th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button type="button" (click)="downloadMindmap(element.json, element.name)">
+                    <img src="assets/svgs/downloading.svg" alt="">
+                  </button>
+                </td>
+              </ng-container>
+
+              <!-- Info Column -->
+              <ng-container matColumnDef="info">
+                <th mat-header-cell *matHeaderCellDef> Info </th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button [matTooltip]="element.name" matTooltipPosition="right">
+                    <img src="assets/svgs/info.svg" alt="">
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                  No data to display.
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="selection.isSelected(row)"></tr>
+            </table>
+
+            <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+              aria-label="Select page of periodic elements">
+            </mat-paginator>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<mat-card class="intelehealth-card mt-3">
-  <mat-card-title>
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="intelehealth-card-title">
-        <img src="assets/svgs/ayu.svg" alt="" width="44px">
-        <h6 class="mb-0 ml-2">Associated Mindmaps ({{mindmapDatas.length ? mindmapDatas.length : 0}} modules)</h6>
-      </div>
-      <div class="intelehealth-card-title-actions">
-        <input type="text" class="search-input mr-2" placeholder="Search" (keyup)="applyFilter($event)">
-        <!-- <button mat-icon-button [color]="'primary'" class="mr-2">
-          <img src="assets/svgs/search-icon.svg" alt="">
-        </button> -->
-        <button type="button" class="action-btn mr-2" (click)="openUploadMindmapModal()"><img src="assets/svgs/plus-transparent.svg" alt=""> Add Mindmap</button>
-      </div>
-    </div>
-  </mat-card-title>
-  <mat-card-content>
-    <div class="mat-elevation-z8">
-      <table mat-table [dataSource]="dataSource">
-
-        <!-- Checkbox Column -->
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <!-- <mat-checkbox [color]="'primary'" (change)="$event ? masterToggle() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()"
-                          [aria-label]="checkboxLabel()">
-            </mat-checkbox> -->
-          </th>
-          <td mat-cell *matCellDef="let row">
-            <mat-checkbox [color]="'primary'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
-
-        <!-- Position Column -->
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef> Sr. No. </th>
-          <td mat-cell *matCellDef="let element; let i = index">
-            {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}}
-          </td>
-        </ng-container>
-
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-        </ng-container>
-
-        <!-- Last Updated Column -->
-        <ng-container matColumnDef="updatedAt">
-          <th mat-header-cell *matHeaderCellDef> Last Updated </th>
-          <td mat-cell *matCellDef="let element">{{element.updatedAt|date:'dd MMM, yyyy'}}</td>
-        </ng-container>
-
-        <!-- Active Column -->
-        <ng-container matColumnDef="active">
-          <th mat-header-cell *matHeaderCellDef> Active </th>
-          <td mat-cell *matCellDef="let element">
-            <div class="pretty p-switch p-fill">
-              <input type="checkbox" [checked]="element.isActive" (change)="toggleStatus(element)"/>
-              <div class="state">
-                  <label></label>
-              </div>
-            </div>
-          </td>
-        </ng-container>
-
-        <!-- Download Column -->
-        <ng-container matColumnDef="download">
-          <th mat-header-cell *matHeaderCellDef> Download </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button type="button" (click)="downloadMindmap(element.json, element.name)">
-              <img src="assets/svgs/downloading.svg" alt="">
-            </button>
-          </td>
-        </ng-container>
-
-        <!-- Info Column -->
-        <ng-container matColumnDef="info">
-          <th mat-header-cell *matHeaderCellDef> Info </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button [matTooltip]="element.name" matTooltipPosition="right">
-              <img src="assets/svgs/info.svg" alt="">
-            </button>
-          </td>
-        </ng-container>
-
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-            No data to display.
-          </td>
-        </tr>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.selected]="selection.isSelected(row)"></tr>
-      </table>
-
-      <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-        aria-label="Select page of periodic elements">
-      </mat-paginator>
-    </div>
-  </mat-card-content>
-</mat-card>
 
 <div class="delete-mindmaps-wrapper d-flex justify-content-center align-items-center" *ngIf="selection.selected.length">
   <div class="delete-mindmap-item d-flex align-items-center">

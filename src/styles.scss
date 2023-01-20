@@ -415,13 +415,72 @@ body.font-lato td {
 
 .modal-md {
   width: 490px;
-  max-width: 90%;
+  max-width: 90% !important;
 
   .mat-dialog-container {
     padding: 0px;
     background: #ffffff;
     border-radius: 12px;
     position: relative;
+
+    .select-lang-modal {
+      padding: 24px;
+
+      .modal-title-con {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0px 0px 24px;
+
+        h6 {
+          font-size: 24px;
+          line-height: 150%;
+          font-weight: bold;
+          color: #1B163A;
+        }
+
+        .close-btn-con {
+          .modal-close-btn {
+            border: none;
+            background: transparent;
+            outline: none;
+          }
+        }
+      }
+
+      .modal-con {
+        .lang-item {
+          background: #FFFFFF;
+          border: 1px solid rgba(178, 175, 190, 0.2);
+          border-radius: 8px;
+          padding: 12px;
+          font-size: 16px;
+          line-height: 150%;
+          color: #1B163A;
+          margin-bottom: 5px;
+        }
+
+        .modal-btn {
+          padding: 8px 24px;
+          min-width: 119px;
+          height: 48px;
+          background: #FFFFFF;
+          border: 1px solid #EFE8FF;
+          border-radius: 8px;
+          font-size: 18px;
+          line-height: 150%;
+          color: #2E1E91;
+          font-weight: bold;
+        }
+
+        .modal-btn.blue-btn {
+          background: #2E1E91;
+          border: 1px solid #2E1E91;
+          color: #FFFFFF;
+        }
+      }
+    }
 
     .intel-con-modal {
       display: flex;
@@ -493,6 +552,113 @@ body.font-lato td {
   }
 }
 
+.intel-accordion-con {
+  .mat-expansion-panel {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+    border-radius: 20px !important;
+    padding: 24px;
+
+    .mat-expansion-panel-header {
+      padding: 0px;
+    }
+
+    .mat-expansion-panel-header.mat-expanded {
+      height: 48px;
+    }
+
+    .mat-expansion-panel-header:hover {
+      background: transparent !important;
+    }
+
+    .intel-accordion-title {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+
+      .mat-icon {
+        height: 20px;
+        width: 20px;
+        font-size: 20px;
+        color: #2E1E91;
+        margin-left: 8px;
+      }
+
+      h6 {
+        font-size: 18px;
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    .mat-expansion-panel-content {
+      .mat-expansion-panel-body {
+        padding: 0px;
+        margin-top: 24px;
+        position: relative;
+      }
+
+      .mat-expansion-panel-body::after {
+        content: '';
+        position: absolute;
+        top: 0px;
+        height: 1px;
+        left: 0px;
+        right: 0px;
+        background: #EFE8FF;
+      }
+    }
+  }
+}
+
+.intel-card {
+  background: #FFFFFF;
+  box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
+  width: 100%;
+  border: none;
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    font-size: 18px;
+    line-height: 150%;
+    font-weight: bold;
+    color: #1B163A;
+    background: none;
+    border: none;
+    position: relative;
+    flex-wrap: wrap;
+
+    h6 {
+      font-size: 18px;
+      line-height: 150%;
+      font-weight: bold;
+    }
+
+    .card-header-actions {
+      margin-left: auto;
+    }
+  }
+
+  .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: 24px;
+    right: 24px;
+    height: 1px;
+    background: #EFE8FF;
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+}
+
 .mt-24 {
   margin-top: 24px;
 }
@@ -506,6 +672,7 @@ body.font-lato td {
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  border-radius: 3px;
 }
 
 /* Handle */

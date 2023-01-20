@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from './main-container/main-container.component';
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
+import { NgxPermissionsGuard } from 'ngx-permissions';
 
 const routes: Routes = [
   {
@@ -21,7 +22,14 @@ const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
+        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+        // canActivate: [NgxPermissionsGuard],
+        // data: {
+        //   permissions: {
+        //     except: ['ORGANIZATIONAL: SYSTEM ADMINISTRATOR'],
+        //     redirectTo: '/admin'
+        //   }
+        // }
       },
       {
         path: 'messages',
@@ -42,12 +50,19 @@ const routes: Routes = [
       {
         path: 'help',
         loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+        canActivate: [NgxPermissionsGuard],
+        data: {
+          permissions: {
+            only: ['ORGANIZATIONAL: SYSTEM ADMINISTRATOR'],
+            redirectTo: '/dashboard'
+          }
+        }
       }
     ]
-  },
-  {
-    path: 'admin',
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   },
   {
     path: '**',

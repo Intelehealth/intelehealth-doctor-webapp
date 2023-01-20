@@ -6,14 +6,15 @@
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div class="intel-accordion-title">
-                <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">Appointments ({{appointments.length ? appointments.length : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Scheduled appointments" matTooltipPosition="right">help_outline</mat-icon>
+                <img src="assets/svgs/pad-2.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">Prescription Sent ({{prescriptionsSent.length ? prescriptionsSent.length : 0}})</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Visits that shared prescription with patients" matTooltipPosition="right">help_outline</mat-icon>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
 
           <div class="mat-elevation-z8">
+
             <table mat-table [dataSource]="dataSource">
 
               <!-- Name Column -->
@@ -22,8 +23,8 @@
                 <td mat-cell *matCellDef="let element">
 
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.visit_info.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.visit_info.patient.person.display}} ({{element.visit_info.patient.person.gender}})</span>
+                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patient.person.display}} ({{element.patient.person.gender}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -31,34 +32,34 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
               </ng-container>
 
-              <!-- Starts In Column -->
-              <ng-container matColumnDef="starts_in">
-                <th mat-header-cell *matHeaderCellDef> Starts in </th>
-                <td mat-cell *matCellDef="let element"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+              <!-- Visit Created Column -->
+              <ng-container matColumnDef="visit_created">
+                <th mat-header-cell *matHeaderCellDef> Visit Created </th>
+                <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
               </ng-container>
 
               <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> Location </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.location.display}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.location.display}} </td>
               </ng-container>
 
               <!-- Cheif Complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> Cheif Complaint </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.cheif_complaint}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.cheif_complaint}} </td>
               </ng-container>
 
               <!-- Prescription Sent Column -->
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <ng-container matColumnDef="prescription_sent">
+                <th mat-header-cell *matHeaderCellDef> Prescription Sent </th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="actions-btn-wrap d-flex align-items-center">
-                    <button class="action-btn blue-btn mr-2" type="button" (click)="reschedule()">Reschedule</button>
-                    <button class="action-btn pink-btn " type="button" (click)="cancel()">Cancel</button>
+                  <div class="green-pill">
+                    <img src="assets/svgs/green-pad.svg" alt="">
+                    <span class="ml-2">{{element.prescription_sent}}</span>
                   </div>
                 </td>
               </ng-container>
@@ -70,7 +71,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.upcoming]="row.starts_in.includes('hours')||row.starts_in.includes('minutes')"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"   [routerLink]="['/dashboard/visit-summary', row?.patient?.uuid, row?.uuid]" ></tr>
             </table>
 
             <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons

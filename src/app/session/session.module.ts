@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgOtpInputModule } from  'ng-otp-input';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { NgOtpInputModule } from  'ng-otp-input';
     NgxCaptchaModule,
     NgbNavModule,
     Ng2TelInputModule,
-    NgOtpInputModule
+    NgOtpInputModule,
+    NgxPermissionsModule.forChild()
   ]
 })
 export class SessionModule { }
