@@ -1,0 +1,37 @@
+.welcome-banner-con {
+  font-family: DM Sans;
+  background: #E6FFF3 url('../../../assets/images/welcome-bg.png') no-repeat;
+  border-radius: 12px;
+  width: 100%;
+  padding: 24px;
+  position: relative;
+  background-position: 95% 100%;
+
+  span {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    font-weight: bold;
+    color: #7F7B92;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  h6 {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 150%;
+    font-weight: bold;
+    color: #1B163A;
+    margin-bottom: 0px;
+    max-width: 60%;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 150%;
+    color: #7F7B92;
+    margin-bottom: 0px;
+    max-width: 60%;
+  }
+}

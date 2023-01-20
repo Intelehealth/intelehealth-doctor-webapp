@@ -558,6 +558,7 @@ body.font-lato td {
     box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
     border-radius: 20px !important;
     padding: 24px;
+    margin-bottom: 24px;
 
     .mat-expansion-panel-header {
       padding: 0px;
@@ -657,6 +658,48 @@ body.font-lato td {
   .card-body {
     padding: 24px;
   }
+}
+
+.intel-horz-card {
+  background: #FFFFFF;
+  box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.12);
+  border-radius: 12px;
+  padding: 24px;
+  border: none;
+
+  .card-body {
+    h6 {
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 150%;
+      color: #1B163A;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 150%;
+      color: #7F7B92;
+    }
+  }
+
+}
+
+.intel-horz-card.disabled {
+  opacity: 0.5;
+}
+
+.intel-blue-btn {
+  background: #2E1E91;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-family: DM Sans;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  font-weight: bold;
+  color: white;
+  border: none;
+  outline: none;
 }
 
 .mt-24 {

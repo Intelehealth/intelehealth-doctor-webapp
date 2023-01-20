@@ -12,7 +12,7 @@
       </div>
       <ul class="admin-nav">
         <li class="nav-item">
-          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
             <img src="assets/svgs/menu-home.svg" alt="">
             <span>Dashboard</span>
           </a>
@@ -86,13 +86,13 @@
     <div class="header-main">
       <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="javascript:void(0)">
-          <div class="header-title d-flex justify-content-between align-items-center">
-            <button class="mr-2" mat-icon-button (click)="drawer.toggle()">
-              <mat-icon>menu</mat-icon>
-            </button>
+          <button class="mr-2" mat-icon-button (click)="drawer.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <div class="header-title d-flex justify-content-between align-items-center" *ngIf="header?.title">
             <img src="{{header?.imgUrl}}" alt="" width="44px">
             <h6 class="mb-0 ml-2">{{header?.title}}</h6>
-            <mat-icon aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
+            <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
           </div>
         </a>
         <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

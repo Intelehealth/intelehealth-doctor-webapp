@@ -5,6 +5,12 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
 import { GetStartedComponent } from './get-started/get-started.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -15,7 +21,13 @@ import { GetStartedComponent } from './get-started/get-started.component';
   ],
   imports: [
     CommonModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+    MatExpansionModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonModule
   ]
 })
 export class DashboardModule { }

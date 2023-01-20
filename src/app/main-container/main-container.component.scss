@@ -9,7 +9,7 @@
   height: 100%;
   padding: 0px;
   font-family: DM Sans;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   .header-main {
     position: sticky;
@@ -20,6 +20,12 @@
 
     .navbar {
       padding: 10px 20px;
+
+      .navbar-brand {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
     }
 
     .header-title {

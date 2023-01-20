@@ -1,1 +1,166 @@
-<p>dashboard works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 p-1">
+      <div class="chip-item chip-item-blue">
+        <img class="chip-img" src="assets/svgs/video-frame.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{appointments.length ? appointments.length : 0}}</h6>
+          <span>Appointments</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 p-1">
+      <div class="chip-item chip-item-red">
+        <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{priorityVisitsCount}}</h6>
+          <span>Priority visits</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 p-1">
+      <div class="chip-item chip-item-green">
+        <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{awaitingVisitsCount}}</h6>
+          <span>Awaiting visits</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 p-1">
+      <div class="chip-item chip-item-green">
+        <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{inprogressVisitsCount}}</h6>
+          <span>In-progress visits</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-12 p-0">
+      <div class="text-right my-2">
+        <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll"><span class="text-muted">Show all</span> <mat-icon>expand_more</mat-icon> </button>
+        <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">Hide all</span> <mat-icon>expand_less</mat-icon></button>
+      </div>
+      <mat-accordion class="intel-accordion-con" multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">Appointments ({{appointments.length ? appointments.length : 0}})</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Scheduled appointments" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource">
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Patient </th>
+                <td mat-cell *matCellDef="let element">
+
+                  <div class="d-flex align-items-center">
+                    <img src="{{ baseUrl + '/personimage/' + element.visit_info.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.visit_info.patient.person.display}} ({{element.visit_info.patient.person.gender}})</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Age Column -->
+              <ng-container matColumnDef="age">
+                <th mat-header-cell *matHeaderCellDef> Age </th>
+                <td mat-cell *matCellDef="let element"> {{element.visit_info.patient.person.age}}y </td>
+              </ng-container>
+
+              <!-- Starts In Column -->
+              <ng-container matColumnDef="starts_in">
+                <th mat-header-cell *matHeaderCellDef> Starts in </th>
+                <td mat-cell *matCellDef="let element"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+              </ng-container>
+
+              <!-- Location Column -->
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef> Location </th>
+                <td mat-cell *matCellDef="let element"> {{element.visit_info.location.display}} </td>
+              </ng-container>
+
+              <!-- Cheif Complaint Column -->
+              <ng-container matColumnDef="cheif_complaint">
+                <th mat-header-cell *matHeaderCellDef> Cheif Complaint </th>
+                <td mat-cell *matCellDef="let element"> {{element.visit_info.cheif_complaint}} </td>
+              </ng-container>
+
+              <!-- Prescription Sent Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="actions-btn-wrap d-flex align-items-center">
+                    <button class="action-btn blue-btn mr-2" type="button" (click)="reschedule()">Reschedule</button>
+                    <button class="action-btn pink-btn " type="button" (click)="cancel()">Cancel</button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                  No any appointments scheduled.
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.upcoming]="row.starts_in.includes('hours')||row.starts_in.includes('minutes')"></tr>
+            </table>
+
+            <mat-paginator #appointmentPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+              aria-label="Select page of periodic elements">
+            </mat-paginator>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/red-profile.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">Priority Visits (0)</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="High priority visit" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/green-profile.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">Awaiting Visits (0)</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="General Uploaded Visits" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/pen-board.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">In-progress Visits (0)</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Visits going through the consultation" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+        </mat-expansion-panel>
+
+
+      </mat-accordion>
+    </div>
+  </div>
+</div>

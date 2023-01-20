@@ -35,7 +35,7 @@ export class AyuComponent implements OnInit {
     private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg' })
+    this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
     this.fetchMindmaps();
   }
 
