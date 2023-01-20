@@ -4,13 +4,14 @@
 
 export const environment = {
   production: false,
-  base:"https://uiux.intelehealth.org",
+  base: "https://uiux.intelehealth.org",
   baseURL: "https://uiux.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://uiux.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://uiux.intelehealth.org/openmrs",
   mindmapURL: "https://uiux.intelehealth.org:3004/api",
   notificationURL: "https://uiux.intelehealth.org:3004/notification",
   socketURL: "https://uiux.intelehealth.org:3004",
+  captchaSiteKey: "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",
