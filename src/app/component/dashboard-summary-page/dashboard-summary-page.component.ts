@@ -197,7 +197,7 @@ export class DashboardSummaryPageComponent implements OnInit {
           }
         });
         this.getVisits();
-        this.getVisitCounts(this.specialization);
+        // this.getVisitCounts(this.specialization);
         this.getDrSlots();
       });
     } else {
@@ -219,19 +219,19 @@ export class DashboardSummaryPageComponent implements OnInit {
       this.socket.socket.close();
   }
 
-  getVisitCounts(speciality) {
-    const getTotal = (data, type) => {
-      const item = data.find(({ Status }: any) => Status === type);
-      return item?.Total || 0;
-    };
-    this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
-      if (data.length) {
-        this.inProgressVisits.dataCount = getTotal(data, "Visit In Progress");
-        this.priorityVisits.dataCount = getTotal(data, "Priority");
-        this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");
-      }
-    });
-  }
+  // getVisitCounts(speciality) {
+  //   const getTotal = (data, type) => {
+  //     const item = data.find(({ Status }: any) => Status === type);
+  //     return item?.Total || 0;
+  //   };
+  //   this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
+  //     if (data.length) {
+  //       // this.inProgressVisits.dataCount = getTotal(data, "Visit In Progress");
+  //       // this.priorityVisits.dataCount = getTotal(data, "Priority");
+  //       // this.awaitingVisits.dataCount = getTotal(data, "Awaiting Consult");
+  //     }
+  //   });
+  // }
 
   getVisits(query: any = {}, cb = () => {}) {
     this.service.getVisits(query).subscribe(
@@ -289,16 +289,19 @@ export class DashboardSummaryPageComponent implements OnInit {
       const values = this.assignValueToProperty(active, encounter);
       // this.service.progressVisit.push(values);
       this.inProgressVisits.data.push(values);
+      this.inProgressVisits.dataCount = this.inProgressVisits.data.length;
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
         // this.service.flagVisit.push(values);
         this.priorityVisits.data.push(values);
+        this.priorityVisits.dataCount = this.priorityVisits.data.length;
       }
     } else if ((encounter = this.checkVisit(encounters, "ADULTINITIAL") || this.checkVisit(encounters, "Vitals"))) {
       const values = this.assignValueToProperty(active, encounter);
       // this.service.waitingVisit.push(values);
       this.awaitingVisits.data.push(values);
+      this.awaitingVisits.dataCount = this.awaitingVisits.data.length;
     }
   }
 
