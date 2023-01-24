@@ -18,8 +18,16 @@ import { Router } from '@angular/router';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   showAll: boolean = true;
-  displayedColumns: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
-  dataSource = new MatTableDataSource<any>();
+  displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
+  displayedColumns2: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
+  displayedColumns3: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
+  displayedColumns4: string[] = ['name', 'age', 'location', 'cheif_complaint', 'prescription_started'];
+
+  dataSource1 = new MatTableDataSource<any>();
+  dataSource2 = new MatTableDataSource<any>();
+  dataSource3 = new MatTableDataSource<any>();
+  dataSource4 = new MatTableDataSource<any>();
+
   baseUrl: string = environment.baseURL;
   appointments: any = [];
   priorityVisits: any = [];
@@ -33,6 +41,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('appointmentPaginator') appointmentPaginator: MatPaginator;
+  @ViewChild('priorityPaginator') priorityPaginator: MatPaginator;
+  @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
+  @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
+
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -50,7 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      this.getAppointments();
+      // this.getAppointments();
       this.getVisits();
       this.getVisitCounts(this.specialization);
     }
@@ -67,9 +79,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getVisits(query: any = {}, cb = () => {}) {
-    this.visitService.getVisits(query).subscribe(
-      (response) => {
+  getVisits() {
+    this.visitService.getVisits({ includeInactive: false }).subscribe(
+      (response: any) => {
         let visits = response.results;
         visits.forEach((visit: any) => {
           // Check if visit has encounters
@@ -91,6 +103,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
             } else if(this.specialization == 'General Physician') {
               this.processVisit(visit);
             }
+
+
+            // Check appointments
+            this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
+            .subscribe((res: any) => {
+              let appointmentsdata = res.data;
+              appointmentsdata.forEach(appointment => {
+                if (appointment.status == 'booked') {
+                  let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
+                  if (matchedVisit) {
+                    matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
+                  }
+                  appointment.visit_info = matchedVisit;
+                  appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+                  this.appointments.push(appointment);
+                }
+              });
+              this.dataSource1 = new MatTableDataSource(this.appointments);
+              this.dataSource1.paginator = this.appointmentPaginator;
+            });
           }
         });
       }
@@ -103,15 +135,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   processVisit(visit: any) {
     const { encounters } = visit;
+    visit.cheif_complaint = this.getCheifComplaint(visit);
+    visit.visit_created = this.getEncounterCreated(visit, 'ADULTINITIAL');
     if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
 
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      this.inProgressVisits.data.push(visit);
+      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
+      this.inProgressVisits.push(visit);
     } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
-      this.priorityVisits.data.push(visit);
+      this.priorityVisits.push(visit);
     } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
-      this.awaitingVisits.data.push(visit);
+      this.awaitingVisits.push(visit);
     }
+
+    this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+    this.dataSource2.paginator = this.priorityPaginator;
+    this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+    this.dataSource3.paginator = this.awaitingPaginator;
+    this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+    this.dataSource4.paginator = this.inprogressPaginator;
   }
 
   getVisitCounts(specialization: string) {
@@ -128,35 +170,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAppointments() {
-    this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
-      if (res) {
-        let visits = res.results;
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
-        .subscribe((res: any) => {
-          let appointmentsdata = res.data;
-          appointmentsdata.forEach(appointment => {
-            if (appointment.status == 'booked') {
-              let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-              if (matchedVisit) {
-                matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-              }
-              appointment.visit_info = matchedVisit;
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-              this.appointments.push(appointment);
-            }
-          });
-          this.dataSource = new MatTableDataSource(this.appointments);
-          this.dataSource.paginator = this.appointmentPaginator;
-        });
-      }
-    });
-  }
+  // getAppointments() {
+  //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
+  //     if (res) {
+  //       let visits = res.results;
+  //       this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
+  //       .subscribe((res: any) => {
+  //         let appointmentsdata = res.data;
+  //         appointmentsdata.forEach(appointment => {
+  //           if (appointment.status == 'booked') {
+  //             let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
+  //             if (matchedVisit) {
+  //               matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
+  //             }
+  //             appointment.visit_info = matchedVisit;
+  //             appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+  //             this.appointments.push(appointment);
+  //           }
+  //         });
+  //         this.dataSource1 = new MatTableDataSource(this.appointments);
+  //         this.dataSource1.paginator = this.appointmentPaginator;
+  //       });
+  //     }
+  //   });
+  // }
 
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
-    console.log(hours, minutes);
     if(hours > 24) {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };
@@ -165,6 +206,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return `${minutes} minutes`;
     }
     return `${hours} hrs`;
+  }
+
+  getCreatedAt(data: any) {
+    let hours = moment().diff(moment(data), 'hours');
+    let minutes = moment().diff(moment(data), 'minutes');
+    if(hours > 24) {
+      return moment(data).format('DD MMM, YYYY');
+    };
+    if (hours < 1) {
+      return `${minutes} minutes ago`;
+    }
+    return `${hours} hrs ago`;
+  }
+
+  getEncounterCreated(visit: any, encounterName: string) {
+    let created_at = '';
+    const encounters = visit.encounters;
+    encounters.forEach((encounter: any) => {
+      const display = encounter.display;
+      if (display.match(encounterName) !== null) {
+        created_at = this.getCreatedAt(encounter.encounterDatetime);
+      }
+    });
+    return created_at;
   }
 
   getCheifComplaint(visit: any) {

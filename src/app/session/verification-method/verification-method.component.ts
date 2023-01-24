@@ -54,7 +54,7 @@ export class VerificationMethodComponent implements OnInit {
 
   verify() {
     this.submitted = true;
-    if (this.verificationForm.invalid) {
+    if (this.verificationForm.invalid || !this.phoneIsValid) {
       return;
     }
     this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");

@@ -53,7 +53,7 @@ export class ForgotUsernameComponent implements OnInit {
 
   forgotUsername() {
     this.submitted = true;
-    if (this.forgotUsernameForm.invalid) {
+    if (this.forgotUsernameForm.invalid || !this.phoneIsValid) {
       return;
     }
     this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");

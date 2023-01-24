@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import {
   CommonModule,
   APP_BASE_HREF,
@@ -419,6 +419,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
       multi: true,
     }
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
