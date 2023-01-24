@@ -123,4 +123,9 @@
   .gap {
     gap: 11.5px;
   }
+  
+  .isDisabled {
+    pointer-events: none;
+    background-color: lightgray;
+  }
 }

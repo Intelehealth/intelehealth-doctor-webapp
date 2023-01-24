@@ -6,6 +6,8 @@ import {
   ViewChild,
 } from "@angular/core";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
+import * as moment from "moment";
+import { AppointmentService } from "src/app/services/appointment.service";
 
 @Component({
   selector: "app-reschedule-appointment-modal",
@@ -23,30 +25,15 @@ export class RescheduleAppointmentModalComponent implements OnInit {
    * @todo while implementation fetch this data from API directly in this component in Init method
    */
   scheduleData: any = {
-    morning: [
-      "9:00 am",
-      "9:30 am",
-      "10:00 am",
-      "10:30 am",
-      "11:00 am",
-      "11:30 am",
-    ],
-    afternoon: [
-      "12:00 pm",
-      "12:30 pm",
-      "1:00 pm",
-      "1:30 pm",
-      "2:00 pm",
-      "2:30 pm",
-      "3:00 pm",
-      "3:30 pm",
-      "4:00 pm",
-      "4:30 pm",
-    ],
-    evening: ["5:00 am", "5:30 am", "6:00 am", "6:30 am", "7:00 am", "7:30 am"],
+    morning: [],
+    afternoon: [],
+    evening: []
   };
-
-  constructor(public modalSvc: NgbModal) {}
+  minDate = moment().format("YYYY-MM-DD");
+  todaysDate = moment().format("YYYY-MM-DD");
+  slots = [];
+  constructor(public modalSvc: NgbModal,
+    private appointmentService: AppointmentService) {}
 
   ngOnInit(): void {}
 
@@ -58,11 +45,47 @@ export class RescheduleAppointmentModalComponent implements OnInit {
       windowClass: `reschedule-time-slot-modal`,
       centered: true,
     };
-
     this.modalRef = this.modalSvc.open(this.modalContent, options);
   }
 
   init() {
-    this.activeSlot = "9:30 am";
+    //this.activeSlot = this.modal?.data?.startTime;
+    this.getAppointmentSlots();
+  }
+
+  changeCalender(e) {
+    this.todaysDate = e.target.value;
+    this.activeSlot = null;
+    this.getAppointmentSlots();
+  }
+
+  getAppointmentSlots(
+    fromDate = this.todaysDate,
+    toDate = this.todaysDate,
+    speciality = this.modal?.data?.speciality
+  ) {
+    this.scheduleData = {
+      morning: [],
+      afternoon: [],
+      evening: []};
+    this.appointmentService
+      .getAppointmentSlots(
+        moment(fromDate).format("DD/MM/YYYY"),
+        moment(toDate).format("DD/MM/YYYY"),
+        speciality
+      )
+      .subscribe((res: any) => {
+        this.slots = res.dates;
+        this.slots.forEach(slot => {
+          if(moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))){
+            this.scheduleData.morning.push(slot.slotTime);
+          } else  if(moment(slot.slotTime, "LT").isBetween(moment("11:30 AM", "LT"), moment("5:00 PM", "LT"))){
+            this.scheduleData.afternoon.push(slot.slotTime);
+          } else {
+            this.scheduleData.evening.push(slot.slotTime);
+          }
+
+        })
+      });
   }
 }

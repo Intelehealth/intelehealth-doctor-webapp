@@ -26,7 +26,7 @@
     <div class="weekdays first-half-row m-0 row">
       <div *ngFor="let day of weekDay" class="col p-0">
         <div
-          *ngIf="offSlot(day?.date)"
+          *ngIf="offSlot(day?.appointmenDate)"
           class="hours-off h-100 w-100 position-relative"
         ></div>
       </div>
@@ -36,8 +36,8 @@
     <div class="appointments-cell w-100" *ngFor="let time of timings; index as i">
       <div class="full-rows h-100 m-0 row">
         <div *ngFor="let day of weekDay" class="col p-0">
-          <div *ngIf="slot(day?.date, time)" class="appointment-date w-100">
-            <div class="d-grid wrapper">
+          <div *ngIf="slot(day?.date, time)" class="appointment-date w-100 click">
+            <div class="d-grid wrapper" (click)="handleClick(slot(day?.date, time))">
               <div
                 class="type"
                 [class.active]="slot(day?.date, time)?.isCurrentDay"
@@ -69,7 +69,7 @@
           </div>
 
           <!-- hours off -->
-          <div
+          <!-- <div
             *ngIf="offSlot(day?.date, time)"
             class="hours-off h-100 w-100 position-relative"
           >
@@ -88,7 +88,7 @@
             >
               Hours off
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

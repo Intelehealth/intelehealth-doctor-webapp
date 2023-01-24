@@ -28,7 +28,6 @@ export class AppointmentDetailModalComponent implements OnInit {
       windowClass: ``,
       // centered: true,
     };
-
     this.modalRef = this.modalSvc.open(this.modalContent, options);
   }
 }

@@ -121,7 +121,6 @@ export class PastVisitHistoryV4Component implements OnInit {
                     if (display.match("Visit Complete") !== null) {
                       recentVisit.drName = encounter.encounterProviders[0].display;
                       recentVisit["label"] = this.getPrescriptionsentTime(encounter.encounterDatetime);
-                      console.log("recentVisit",recentVisit)
                       recentVisit = this.getObj(recentVisit);
                       this.pastVisitHistory.data.push(recentVisit)
                     }
