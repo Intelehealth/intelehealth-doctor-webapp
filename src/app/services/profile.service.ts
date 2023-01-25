@@ -24,7 +24,7 @@ export class ProfileService {
   getSignture(uuid: string) {
     const url = `${this.base}/ds/${uuid}_sign.png`;
     return this.http.get(url, { responseType: 'blob' });
-  } 
+  }
 
   updateName(uuid: string, firstName: string, middleName: string, familyName: string, nameUuid: string): Observable<any> {
     const URL = `${this.baseURL}/person/${uuid}/name/${nameUuid}`;
@@ -60,8 +60,7 @@ export class ProfileService {
     const URL = `${this.baseURL}/personimage`;
     var header = {
       headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Basic " + btoa("nurse:Nurse123"),
+        "Content-Type": "application/json"
       }),
     };
     return this.http.post(URL, json, header);
@@ -70,7 +69,7 @@ export class ProfileService {
  creatSignature(providerId:string, textOfSign:string, fontName:string) : Observable<any> {
     const URL = `${this.base}/createsign`;
     const json = {
-      textOfSign: textOfSign, 
+      textOfSign: textOfSign,
       fontName : fontName,
       providerId: providerId
     };

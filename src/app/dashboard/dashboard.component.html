@@ -13,7 +13,7 @@
       <div class="chip-item chip-item-red">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
         <div class="chip-info">
-          <h6>{{priorityVisitsCount}}</h6>
+          <h6>{{priorityVisits.length ? priorityVisits.length : 0}}</h6>
           <span>Priority visits</span>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <div class="chip-item chip-item-green">
         <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" />
         <div class="chip-info">
-          <h6>{{awaitingVisitsCount}}</h6>
+          <h6>{{awaitingVisits.length ? awaitingVisits.length : 0}}</h6>
           <span>Awaiting visits</span>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <div class="chip-item chip-item-green">
         <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
         <div class="chip-info">
-          <h6>{{inprogressVisitsCount}}</h6>
+          <h6>{{inProgressVisits.length ? inProgressVisits.length : 0}}</h6>
           <span>In-progress visits</span>
         </div>
       </div>

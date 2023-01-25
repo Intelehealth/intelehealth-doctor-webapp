@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       // this.getAppointments();
       this.getVisits();
-      this.getVisitCounts(this.specialization);
+      // this.getVisitCounts(this.specialization);
     }
 
 
@@ -156,19 +156,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dataSource4.paginator = this.inprogressPaginator;
   }
 
-  getVisitCounts(specialization: string) {
-    const getTotal = (data, type) => {
-      const item = data.find(({ Status }: any) => Status === type);
-      return item?.Total || 0;
-    };
-    this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
-      if (data.length) {
-        this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
-        this.priorityVisitsCount = getTotal(data, "Priority");
-        this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
-      }
-    });
-  }
+  // getVisitCounts(specialization: string) {
+  //   const getTotal = (data, type) => {
+  //     const item = data.find(({ Status }: any) => Status === type);
+  //     return item?.Total || 0;
+  //   };
+  //   this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
+  //     if (data.length) {
+  //       this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
+  //       this.priorityVisitsCount = getTotal(data, "Priority");
+  //       this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
+  //     }
+  //   });
+  // }
 
   // getAppointments() {
   //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{

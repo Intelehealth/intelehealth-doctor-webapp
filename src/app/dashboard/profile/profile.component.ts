@@ -28,26 +28,33 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
+  mimeTypes = {
+    JVBERi0: "application/pdf",
+    R0lGODdh: "image/gif",
+    R0lGODlh: "image/gif",
+    iVBORw0KGgo: "image/png",
+    "/9j/": "image/jpg"
+  };
 
   fonts: any[] = [
     {
       id: 1,
-      name: 'arty',
+      name: 'Arty',
       text: 'arty'
     },
     {
       id: 2,
-      name: 'asem',
+      name: 'Asem',
       text: 'asem'
     },
     {
       id: 3,
-      name: 'youthness',
+      name: 'Youthness',
       text: 'youthness'
     },
     {
       id: 4,
-      name: 'almondita',
+      name: 'Almondita',
       text: 'almondita'
     }
   ];
@@ -193,17 +200,41 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
   formControlValueChanges() {
     this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
-      this.fonts.map((f: any) => f.text = val);
+      if (val) {
+        this.fonts.map((f: any) => f.text = val);
+      } else {
+        this.fonts.map((f: any) => f.text = f.name);
+      }
     });
 
     this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
       let tabs = ['Draw', 'Generate', 'Upload'];
       if (val) {
+        this.signatureType = val;
+        if (val == 'Generate') {
+          this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
+          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+          this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
+          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+        } else {
+          this.personalInfoForm.get('textOfSign').clearValidators();
+          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+          this.personalInfoForm.get('fontOfSign').clearValidators();
+          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+        }
         if (this.selectedSignatureTabIndex != tabs.indexOf(val)) {
           setTimeout(() => {
             this.selectedSignatureTabIndex = tabs.indexOf(val);
           }, 1000);
         }
+      } else {
+        this.personalInfoForm.get('textOfSign').clearValidators();
+        this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+        this.personalInfoForm.get('fontOfSign').clearValidators();
+        this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+        setTimeout(() => {
+          this.personalInfoForm.patchValue({ signatureType: 'Draw' });
+        }, 1000);
       }
     });
   }
@@ -219,8 +250,10 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
   patchFormValues() {
     if (this.provider) {
+
       let personalFormValues: any = {};
       let professionalFormValues: any = {};
+
       personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
       personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
       personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
@@ -258,10 +291,11 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display).split(',');
             break;
           case 'signature':
-            personalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display);
+            personalFormValues.signature = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'signatureType':
-            personalFormValues.signatureType = this.getAttributeValue(attrType.uuid, attrType.display);
+            this.signatureType = this.getAttributeValue(attrType.uuid, attrType.display);
+            personalFormValues.signatureType = this.signatureType;
             break;
           case 'specialization':
               professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -287,13 +321,33 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       });
       this.personalInfoForm.patchValue(personalFormValues);
       this.professionalInfoForm.patchValue(professionalFormValues);
+      let signature = this.personalInfoForm.value.signature;
+      switch (this.signatureType) {
+        case 'Draw':
+          this.signaturePad.clear();
+          this.signaturePad.fromDataURL(signature);
+          break;
+        case 'Generate':
+
+          break;
+        case 'Upload':
+          this.signaturePicUrl = signature;
+          fetch(signature)
+            .then(res => res.blob())
+            .then(blob => {
+              this.signatureFile = new File([blob], "inetelehealth",{ type: this.detectMimeType(signature.split(',')[0]) });
+            });
+          break;
+        default:
+          break;
+      }
     }
   }
 
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
-      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid) {
+      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid && this.provider.attributes[i].voided == false) {
         attrValue = this.provider.attributes[i].value;
         break;
       }
@@ -309,6 +363,11 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   preview(event: any) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
+      console.log(this.file.name);
+      if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
+        this.toastr.warning("Upload JPG/JPEG format image only.", "Upload error!");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.profilePicUrl = reader.result;
@@ -333,10 +392,10 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     // console.log(event);
     switch (errorFor) {
       case 'phoneNumber':
-        this.phoneNumberValid = !event;
+        this.phoneNumberValid = event;
         break;
       case 'whatsAppNumber':
-        this.whatsAppNumberValid = !event;
+        this.whatsAppNumberValid = event;
         break;
     }
   }
@@ -397,6 +456,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
   signatureTabChanged(event: any) {
     this.selectedSignatureTabIndex = event.index;
+    this.signatureType = event.tab.textLabel;
     this.personalInfoForm.patchValue({ signatureType: event.tab.textLabel });
   }
 
@@ -439,6 +499,14 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid) {
       return;
     }
+    if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
+      this.toastr.warning("Please draw your signature.", "Draw Signature");
+      return;
+    }
+    if (this.selectedSignatureTabIndex == 2 && !this.signatureFile) {
+      this.toastr.warning("Please upload signature.", "Upload Signature");
+      return;
+    }
     this.stepper.next();
     this.submitted = false;
   }
@@ -448,22 +516,65 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     if (this.professionalInfoForm.invalid) {
       return;
     }
+
     let pf1 = this.personalInfoForm.value;
+
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate ).subscribe(res1 => {
-      console.log(res1);
+      // console.log(res1);
       if (this.provider.person?.names[0]) {
         this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.names[0].uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
-          console.log(res2);
-          this.updateProviderAttributes();
+          // console.log(res2);
+          this.updateSignature();
         });
       } else {
         this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
-          console.log(res2);
-          this.updateProviderAttributes();
+          // console.log(res2);
+          this.updateSignature();
         });
       }
     });
     this.submitted = false;
+  }
+
+  updateSignature() {
+    let signature: string;
+
+    switch (this.signatureType) {
+      case 'Draw':
+        signature = this.signaturePad.toDataURL("image/jpeg");
+        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+          this.personalInfoForm.patchValue({ signature });
+          this.updateProviderAttributes();
+        });
+        break;
+
+      case 'Generate':
+        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
+          if (res.fname) {
+            fetch(res.fname).then(res => res.blob()).then(blob => {
+              let reader = new FileReader();
+              reader.onload = () =>{
+                signature = reader.result.toString();
+                this.personalInfoForm.patchValue({ signature });
+                this.updateProviderAttributes();
+              }
+              reader.readAsDataURL(blob);
+            });
+          }
+        });
+        break;
+
+      case 'Upload':
+        signature = this.signaturePicUrl;
+        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+          this.personalInfoForm.patchValue({ signature });
+          this.updateProviderAttributes();
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 
   updateProviderAttributes() {
@@ -534,7 +645,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   getAttributeUuid(uuid: string, display: string) {
     let attrUuid = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
-      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid) {
+      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid && this.provider.attributes[i].voided == false) {
         attrUuid = this.provider.attributes[i].uuid;
         break;
       }
@@ -545,6 +656,14 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   getAttributeValueFromForm(key: string) {
     const formValue = { ...this.personalInfoForm.value, ...this.professionalInfoForm.value };
     return formValue[key];
+  }
+
+  detectMimeType(b64: string) {
+    for (var s in this.mimeTypes) {
+      if (b64.indexOf(s) === 0) {
+        return this.mimeTypes[s];
+      }
+    }
   }
 
 }

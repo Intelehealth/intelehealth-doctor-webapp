@@ -9,7 +9,7 @@
               <label for="profile-pic">
                 <img src="assets/svgs/camera.svg" alt="">
               </label>
-              <input id="profile-pic" type="file" accept="image/*" (change)="preview($event)">
+              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)">
             </div>
           </div>
         </div>
@@ -81,14 +81,14 @@
                   </div>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="birthdate">Date of birth</label>
+                  <label for="birthdate">Date of birth *</label>
                   <input type="date" class="form-control" formControlName="birthdate" placeholder="Enter DOB">
                   <div *ngIf="submitted && f1.birthdate.errors">
                     <small class="error-msg" *ngIf="f1.birthdate.errors.required">Enter DOB</small>
                   </div>
                 </div>
                 <div class="form-group col-md-2">
-                  <label for="age">Age</label>
+                  <label for="age">Age *</label>
                   <input type="number" class="form-control" formControlName="age" placeholder="Enter age">
                   <div *ngIf="submitted && f1.age.errors">
                     <small class="error-msg" *ngIf="f1.age.errors.required">Enter age</small>

@@ -231,6 +231,6 @@ export class PersonalInformationComponent {
         this.isSignaturePresent = false;
         this.signatureURL = null;
       });
-      setTimeout(() => window.location.reload(), 2000);  
+      setTimeout(() => window.location.reload(), 2000);
   }
 }
