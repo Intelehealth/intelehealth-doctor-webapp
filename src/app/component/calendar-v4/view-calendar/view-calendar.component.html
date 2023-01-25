@@ -9,25 +9,48 @@
     </div>
 
     <div class="calendar-tab position-relative w-100">
-      <mat-tab-group mat-align-tabs="start">
+      <mat-tab-group mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
         <mat-tab label="Daily">
-          <app-calendar-daily></app-calendar-daily>
+          <app-calendar-daily 
+          [data]="appointments"
+          (openModal)="openModal($event)"></app-calendar-daily>
         </mat-tab>
         <mat-tab label="Weekly">
-          <app-calendar-weekly></app-calendar-weekly>
+          <app-calendar-weekly
+          [data]="appointments"
+          [selectedDate]="dates"
+          (openModal)="openModal($event)"></app-calendar-weekly>
         </mat-tab>
         <mat-tab label="Monthly">
-          <app-calendar-monthly></app-calendar-monthly>
+          <app-calendar-monthly
+          [data]="appointments"
+          [selectedDate]="dates"
+          (openModal)="openMonthlyModal($event)"></app-calendar-monthly>
         </mat-tab>
       </mat-tab-group>
       <div class="right-container d-flex position-absolute">
         <div class="calendar-icon">
           <img src="assets/svgs/calendar-white.svg" />
         </div>
-        <div class="today-date">{{ todayDate }}</div>
+        <div class="today-date">{{ todayDate | calendarDate: view + "ViewTitle":locale }}</div>
         <div class="arrow-icons">
-          <img src="assets/svgs/chevron-left.svg" class="left click" />
-          <img src="assets/svgs/chevron-right.svg" class="right click" />
+          <span
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="todayDate"
+          (viewDateChange)="getData()">
+          <img src="assets/svgs/chevron-left.svg" 
+          class="left click" />
+          </span>
+          <span
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="todayDate"
+          (viewDateChange)="getData()"
+        >
+        <img src="assets/svgs/chevron-right.svg" class="right click"/>
+        </span>
+      
         </div>
       </div>
     </div>

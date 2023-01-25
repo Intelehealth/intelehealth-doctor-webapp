@@ -25,21 +25,21 @@
         class="d-flex justify-content-center re-appointment my-1"
       >
         <div class="d-grid gap-2">
-          <div class="font-bold">{{ modal?.timings?.fromDate }}</div>
+          <div class="font-bold">{{ modal?.timings?.fromDate | date: 'dd MMMM'}}</div>
           <div class="font-bold">{{ modal?.timings?.fromTime }}</div>
         </div>
         <div class="grey-color font-bold">to</div>
         <div class="d-grid gap-2">
-          <div class="font-bold">{{ modal?.timings?.toDate }}</div>
-          <div class="font-bold">{{ modal?.timings?.toTime }}</div>
+          <div class="font-bold">{{ modal?.timings?.toDate | date: 'dd MMMM'}}</div>
+          <div class="font-bold">{{ modal?.timings?.toTime  | lowercase}}</div>
         </div>
       </div>
 
       <div class="d-flex justify-content-center">
-        <div class="btns left-btn" (click)="modal.leftBtnOnClick()">
+        <div class="btns left-btn click" (click)="modal.leftBtnOnClick();close()">
           {{ modal?.leftBtnText }}
         </div>
-        <div class="btns right-btn" (click)="modal.rightBtnOnClick()">
+        <div class="btns right-btn click" (click)="modal.rightBtnOnClick();close()">
           {{ modal?.rightBtnText }}
         </div>
       </div>

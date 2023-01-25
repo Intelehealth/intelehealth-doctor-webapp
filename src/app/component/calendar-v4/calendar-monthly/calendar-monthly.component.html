@@ -33,11 +33,11 @@
             {{ day.format("D") }}
           </div>
           <div *ngIf="slot(day)" class="appointment-date h-100 w-100">
-            <div class="d-flex wrapper h-100">
+            <div class="d-flex wrapper h-100" (click)="handleClick(slot(day))">
               <div
                 class="type"
                 [class.active]="slot(day?.date, column)?.isCurrentDay"
-              >
+              > {{slot(day)?.slots?.length}}
                 {{
                   slot(day)?.type === "appointment"
                     ? "Appointment"

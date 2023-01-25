@@ -49,9 +49,7 @@ export class ConsultationDetailsV4Component implements OnInit {
   ngOnInit() {
     const visitId = this.route.snapshot.params["visit_id"];
     this.patientUuid = this.route.snapshot.params["patient_id"];
-    console.log("patientId: ", this.patientUuid);
     this.provider = getFromStorage("provider");
-    console.log("provider: ", this.provider);
     this.visitService
       .fetchVisitDetails(visitId)
       .subscribe((visitDetailData) => {

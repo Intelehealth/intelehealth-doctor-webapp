@@ -24,7 +24,7 @@
   <div [id]="table.id" class="table">
     <hr/>
     <table class="table table-borderless w-100">
-      <tr class="table-color-th">
+      <tr class="table-color-th" *ngIf="data.length !== 0">
         <th [class]="header?.headerClass" *ngFor="let header of table?.headers">
           {{ header?.name }}
         </th>
@@ -82,28 +82,28 @@
       
       <tr class="table_height" *ngIf="data.length === 0">
         <ng-container *ngIf="table?.label == 'Appointments'">
-          <td [attr.colspan]="table?.headers.length">
+          <td class="area-color" [attr.colspan]="table?.headers.length">
             <div class="no-data">
               No any appointment scheduled
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'Priority Visits'">
-          <td [attr.colspan]="table?.headers.length">
+          <td class="area-color" [attr.colspan]="table?.headers.length">
             <div class="no-data">
               No any priority visits
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'Awaiting visits'">
-          <td [attr.colspan]="table?.headers.length">
+          <td class="area-color" [attr.colspan]="table?.headers.length">
             <div class="no-data">
               No any awaiting visits
             </div>
           </td>
         </ng-container>
         <ng-container *ngIf="table?.label == 'In-progress visits'">
-          <td [attr.colspan]="table?.headers.length">
+          <td class="area-color" [attr.colspan]="table?.headers.length">
             <div class="no-data">
               No any in-progress visits
             </div>

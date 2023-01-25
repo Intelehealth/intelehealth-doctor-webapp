@@ -15,9 +15,10 @@
       </div>
 
       <div class="d-grid">
-        <div class="font-bold">Muskan Kala (F, 32)</div>
-        <div class="view-detail-font grey-color">PID: P1244</div>
-        <div class="view-detail-font blue-color">
+        <div class="font-bold">{{modal?.data?.patientName}} ({{modal?.data?.gender}}, {{modal?.data?.age}})</div>
+        <div class="view-detail-font grey-color">PID: {{modal?.data?.openMrsId}}</div>
+        <div class="view-detail-font blue-color click" 
+        [routerLink]="['/dashboard/visit-summary', modal?.data?.patientId, modal?.data?.visitId]">
           <span> View details </span>
           <img src="assets/svgs/right-arrow-blue.svg" />
         </div>
@@ -25,7 +26,7 @@
 
       <div class="priority-pill ml-auto">
         <div class="font-size-md red-color priority-pill-font mt-1">
-          Priority
+          {{modal?.data?.visitStatus}}
         </div>
       </div>
     </div>
@@ -33,14 +34,14 @@
     <div class="d-grid p-0 w-100">
       <div class="d-flex mb-3">
         <div class="booked-on grey-color ml-4 font-size-md">Booked on:</div>
-        <div class="font-size-md">3 August, 2022</div>
+        <div class="font-size-md">{{modal?.data?.createdAt | date: 'dd MMM, yyyy' }}</div>
       </div>
       <div class="d-flex">
         <div class="booked-on grey-color ml-4 font-size-md">
           Appointment on:
         </div>
         <div class="font-size-md d-grid mb-3">
-          <span> 5 August, 2022, 10:00 am - 10:30 am </span>
+          <span>{{modal?.data?.appointmentDate | date: 'dd MMM, yyyy'}},{{modal?.data?.startTime}} - {{modal?.data?.endTime}} </span>
           <div class="font-bold red-color">{{ modal?.AppointmentOn }}</div>
         </div>
       </div>
@@ -48,13 +49,13 @@
         <div class="booked-on grey-color ml-4 font-size-md">
           Chief complain:
         </div>
-        <div class="font-size-md">Cough & Cold</div>
+        <div class="font-size-md">{{ modal?.data?.complaints }}</div>
       </div>
 
       <div class="d-flex mb-2">
         <div class="booked-on grey-color ml-4 font-size-md">Booked by:</div>
         <div class="font-size-md">
-          <span>Kiran Devi</span> <img class="ml-2" src="assets/svgs/num.svg" />
+          <span>{{modal?.data?.healthWorker}}</span><a href="tel:{{ modal?.data?.hwPhoneNo }}"><img class="ml-2" src="assets/svgs/num.svg"/></a> 
         </div>
       </div>
     </div>
@@ -62,7 +63,7 @@
     <div class="d-flex justify-content-center">
       <div
         *ngIf="modal.leftBtnText"
-        class="btns left-btn"
+        class="btns left-btn click"
         (click)="modal.leftBtnOnClick()"
       >
         {{ modal?.leftBtnText }}
@@ -72,7 +73,7 @@
           backgroundColor: modal.btnColor || '#2e1e91',
           color: modal.btnFtColor || '#faf9ff'
         }"
-        class="btns right-btn"
+        class="btns right-btn click"
         (click)="modal.rightBtnOnClick()"
       >
         {{ modal?.rightBtnText }}
