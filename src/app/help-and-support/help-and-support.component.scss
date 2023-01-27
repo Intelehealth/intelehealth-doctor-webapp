@@ -1,6 +1,10 @@
 ::ng-deep .mat-tab-group {
   font-family: DM Sans;
 
+  .mat-tab-header {
+    padding: 0px;
+  }
+
   .mat-tab-body-wrapper {
     .mat-tab-body {
       .mat-tab-body-content {

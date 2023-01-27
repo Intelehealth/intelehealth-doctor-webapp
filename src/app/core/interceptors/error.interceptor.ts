@@ -18,7 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       }
 
       if ([404].indexOf(err.status) != -1) {
-        this.toastr.info('API not found', '404 Not Found');
+        this.toastr.error('Not found', '404 Not Found');
         return throwError(err.error.message || err.statusText);
       }
 

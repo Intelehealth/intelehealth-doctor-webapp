@@ -1,0 +1,301 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 p-0 mb-5">
+      <div class="intel-card">
+        <div class="card-body">
+          <div class="row patient-info-wrapper" *ngIf="patient">
+            <div class="col-md-4 patient-info-section p-3">
+              <div class="patient-img-item mb-2">
+                <div class="patient-img">
+                  <img src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}" (error) ="onImgError($event)" alt="" width="100%" height="100%">
+                </div>
+                <div class="ml-3">
+                  <h6>{{patient?.person.display}} ({{patient?.person.gender}})</h6>
+                  <p>{{getPatientIdentifier('OpenMRS ID')}}</p>
+                </div>
+              </div>
+              <div class="patient-info-item">
+                <h6>Age</h6>
+                <p>{{ (patient?.person.birthdate) ? getAge(patient?.person.birthdate) : patient?.person.age }}</p>
+              </div>
+            </div>
+            <div class="col-md-4 patient-info-section p-3">
+              <div class="patient-info-item mb-3">
+                <h6>Occupation</h6>
+                <p>{{getPersonAttributeValue('occupation')}}</p>
+              </div>
+              <div class="patient-info-item">
+                <h6>Address</h6>
+                <p>{{patient?.person.preferredAddress.cityVillage}}</p>
+              </div>
+            </div>
+            <div class="col-md-4 patient-info-section p-3">
+              <div class="patient-info-item">
+                <h6>Contact no.</h6>
+                <p>
+                  {{getPersonAttributeValue('Telephone Number')}}
+                  <a href="{{getWhatsAppLink()}}" target="_blank" class="icon-btn">
+                    <img src="assets/svgs/whatsapp-icon.svg" alt="">
+                  </a>
+                </p>
+                <p>
+                  {{getPersonAttributeValue('Telephone Number')}}
+                  <a href="tel:{{getPersonAttributeValue('Telephone Number')}}" target="_blank" class="icon-btn">
+                    <img src="assets/svgs/phone-circle.svg" alt="">
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 p-0 mb-5">
+      <div class="intel-card">
+        <mat-tab-group mat-align-tabs="start" [disableRipple]="true">
+          <mat-tab label="Current visit summary">
+            <mat-accordion class="intel-accordion-con" multi>
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/consultation-details.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Consultation details</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <ul class="items-list">
+                  <li>
+                    <div class="list-item">
+                      <label>Visit ID</label>
+                      <div class="list-item-content">
+                        {{visit?.uuid|uppercase}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Visit created</label>
+                      <div class="list-item-content">
+                        {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Appointment on</label>
+                      <div class="list-item-content">
+                        8 Aug, 2022
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Status</label>
+                      <div class="list-item-content">
+                        <span class="text-important-red">Priority visit</span>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Provided by</label>
+                      <div class="list-item-content">
+                        Kiran Devi
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true" class="bg-gray">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/vitals.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Vitals</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/check-up-reason.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Check-up reason</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true" class="bg-gray">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/physical-examination.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Physical examination</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+              </mat-expansion-panel>
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/medical-history.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Medical history</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true" class="bg-gray">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/additional-documents.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Additional documents</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img src="assets/svgs/refer-specialist.svg" alt="" width="44px">
+                      <h6 class="mb-0 ml-2">Refer to specialist</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+              </mat-expansion-panel>
+            </mat-accordion>
+          </mat-tab>
+
+          <mat-tab label="Past visit history">
+
+          </mat-tab>
+
+        </mat-tab-group>
+      </div>
+    </div>
+    <div class="col-md-12 p-0 mb-5">
+      <div class="intel-card">
+        <div class="card-body">
+          <p class="note-con">
+            <span class="important-text">Note:</span> This history note and physical exam note was generated by a community health worker with the support of the Intelehealth mobile application and Ayu, a digital assistant. It collects only preliminary findings and may not gather all of the patient's clinical information, especially sensitive information or complex physical exam information which is hard for the health worker to collect. Please verify crucial clinical information and collect any additional information you require by speaking with the patient directly.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 p-0 mb-5">
+      <div class="intel-card">
+        <div class="card-body">
+          <mat-accordion class="intel-accordion-con" multi>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/patient-interaction.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Patient interaction</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false" class="bg-gray">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/diagnosis.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Diagnosis</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/note.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Note</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false" class="bg-gray">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/medication.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Medication</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+            <mat-expansion-panel [expanded]="false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/advice.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Advice</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false" class="bg-gray">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/test.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Test</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/referral.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Referral</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel [expanded]="false" class="bg-gray">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img src="assets/svgs/follow-up.svg" alt="" width="44px">
+                    <h6 class="mb-0 ml-2">Follow-up</h6>
+                  </div>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

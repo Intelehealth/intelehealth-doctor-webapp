@@ -78,9 +78,9 @@ export class VisitService {
     return this.http.delete(url);
   }
 
-  patientInfo(id): Observable<any> {
+  patientInfo(id, v = 'custom:(identifiers,person:(uuid,display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))'): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `${this.baseURL}/patient/${id}?v=${v}`;
     return this.http.get(url);
   }
 
@@ -90,7 +90,7 @@ export class VisitService {
     );
   }
 
-  getWhatsappLink(whatsapp: Number, msg: string) {
+  getWhatsappLink(whatsapp: any, msg: string) {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;

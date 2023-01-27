@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   getProvider(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,names),attributes)`);
+    return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,preferredName),attributes)`);
   }
 
   logOut() {

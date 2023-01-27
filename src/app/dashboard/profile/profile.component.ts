@@ -254,9 +254,12 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       let personalFormValues: any = {};
       let professionalFormValues: any = {};
 
-      personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
-      personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
-      personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
+      // personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
+      // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
+      // personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
+      personalFormValues.givenName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.givenName : null,
+      personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
+      personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
@@ -521,8 +524,8 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate ).subscribe(res1 => {
       // console.log(res1);
-      if (this.provider.person?.names[0]) {
-        this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.names[0].uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
+      if (this.provider.person?.preferredName) {
+        this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
           // console.log(res2);
           this.updateSignature();
         });

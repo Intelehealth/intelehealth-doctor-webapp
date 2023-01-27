@@ -18,12 +18,14 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
     ProfileComponent,
-    GetStartedComponent
+    GetStartedComponent,
+    VisitSummaryComponent
   ],
   imports: [
     CommonModule,

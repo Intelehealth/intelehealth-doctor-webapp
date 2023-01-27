@@ -15,7 +15,7 @@
         <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
         <div class="col-sm-9">
           <span>{{ expiryDate ? (expiryDate|date:'dd MMM, yyyy') : '' }}</span>
-          <button type="button" class="action-btn sm-btn ml-2" (click)="openAddLicenseKeyModal('edit')"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
+          <button *ngIf="selectedLicense" type="button" class="action-btn sm-btn ml-2" (click)="openAddLicenseKeyModal('edit')"><img src="assets/svgs/edit.svg" alt=""> Edit</button>
         </div>
       </div>
     </div>

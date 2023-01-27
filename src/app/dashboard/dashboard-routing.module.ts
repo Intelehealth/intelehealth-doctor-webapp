@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
+import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'get-started',
     component: GetStartedComponent
+  },
+  {
+    path: 'visit-summary/:id',
+    component: VisitSummaryComponent
   }
 ];
 
