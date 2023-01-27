@@ -1,31 +1,39 @@
 <div id="container">
-    <div class="header">
-      <div class="profile-section">
-        <div class="picture">
-            <img src="assets/icons/message/Frame2608562.png">
-          <!-- <img [src]="pic.profileLink"/> -->
-        </div>
-        <div class="name">Muskan Kala</div>
-        <div class="id">ID-1223</div>
+  <div class="header">
+    <div class="profile-section">
+      <div class="picture">
+        <img src="assets/icons/message/Frame2608562.png" />
+        <!-- <img [src]="pic.profileLink"/> -->
       </div>
-      <div class="call-button">
-        <img src="assets/svgs/phone.svg" />
-      </div>
+      <div class="name">{{ latestChat?.hwName }}</div>
+      <div class="id">ID-1223</div>
     </div>
-    <div class="body">
-      <div
-        class="message"
-        [ngClass]="{ me: message.me }"
-        *ngFor="let message of conversation.messages"
+    <div class="visits">
+      <select
+        name="visit"
+        id="visit"
+        class="visit-dropdown"
+        [(ngModel)]="visitId"
+        (change)="onVisitChange($event.target.value)"
       >
-        <div class="messageContent">
-          {{ message.body }}
-        </div>
+        <option [value]="visit.visitId" *ngFor="let visit of visits">
+          {{moment(visit?.createdAt).format('DD MMM YYYY')}} ({{ visit.visitId }}) 
+        </option>
+      </select>
+    </div>
+    <!-- <div class="call-button">
+      <img src="assets/svgs/phone.svg" />
+    </div> -->
+  </div>
+  <div class="body">
+    <div class="message" [ngClass]="{ me: message.me }">
+      <div class="messageContent">
       </div>
     </div>
-    <div class="footer">
-      <div class="textarea" style="width: 100%;">
-        <input
+  </div>
+  <div class="footer">
+    <div class="textarea" style="width: 100%">
+      <input
         type="text"
         [(ngModel)]="message"
         (keyup.enter)="submitMessage($event)"
@@ -39,10 +47,9 @@
         (click)="inputField.click()"
       />
       <input #inputField hidden type="file" />
-      </div>
-      <div class="sent-box" (click)="submitMessage($event)">
-        <img src="assets/svgs/sent.svg" />
-      </div>
+    </div>
+    <div class="sent-box" (click)="sendMessage($event)">
+      <img src="assets/svgs/sent.svg" />
     </div>
   </div>
-  
+</div>

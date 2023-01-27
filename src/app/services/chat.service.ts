@@ -22,13 +22,30 @@ export class ChatService {
     return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
   }
 
-  getPatientMessages(toUser, patientId, fromUser = this.user.uuid) {
+  getPatientMessages(
+    toUser,
+    patientId,
+    fromUser = this.user.uuid,
+    visitId: string = ""
+  ) {
     return this.http.get(
-      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}`
+      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?visitId=${visitId}`
     );
   }
 
-  get user() {
+  getAllMessages(toUser, fromUser = this.user.uuid) {
+    return this.http.get(`${this.baseURL}/messages/${fromUser}/${toUser}`);
+  }
+
+  getPatientList() {
+    return this.http.get(`${this.baseURL}/messages/getPatientMessageList`);
+  }
+
+  getPatientAllVisits(patientId) {
+    return this.http.get(`${this.baseURL}/messages/${patientId}`);
+  }
+
+  public get user() {
     try {
       return JSON.parse(localStorage.user);
     } catch (error) {

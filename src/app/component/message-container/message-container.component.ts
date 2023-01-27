@@ -1,20 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
 @Component({
-  selector: 'app-message-container',
-  templateUrl: './message-container.component.html',
-  styleUrls: ['./message-container.component.scss']
+  selector: "app-message-container",
+  templateUrl: "./message-container.component.html",
+  styleUrls: ["./message-container.component.scss"],
 })
 export class MessageContainerComponent implements OnInit {
+  latestChat;
+  constructor() {}
 
-  constructor() { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-  }
-  conversation;
-
-
-  onConversationSelected(conversation){
-    this.conversation = conversation;
+  onConversationSelected(latestChat) {
+    this.latestChat = latestChat;
   }
 }
