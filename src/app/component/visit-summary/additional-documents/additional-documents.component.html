@@ -1,12 +1,32 @@
 <h4>Additional Documents</h4>
 <hr>
 <div *ngIf="additionalDocumentPresent">
-    <div class="row">
-    <div *ngFor="let image of images" class="col">
-    <a href={{image.image}}><img src= {{image.image}} [ngClass]="{'image1' : images.length > 1, 'image2' : images.length == 1}" alt=""></a>
+  <div class="row">
+    <div *ngFor="let image of images; let i=index" class="col">
+      <!-- <a href="{{ image.image }}"><img src="{{ image.image }}" [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt=""/></a> -->
+      <img (click)="onPreviewImage(i)" src="{{ image.image }}" [ngClass]="{ image1: images.length > 1, image2: images.length == 1 }" alt=""/>
+    </div>
+  </div>
+  <div *ngIf="showMask" class="lightbox" @animation2>
+    <span class="count">
+        {{currentIndex + 1}}/{{totalImageCount}}
+    </span>
+    <button *ngIf="previewImage" class="close-btn" (click)="onClosePreview()">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn-lightbox-carousel btn-prev" (click)="prev()">
+      <i class="fas fa-arrow-circle-left icon-lightbox-carousel icon-prev"></i>
+    </button>
+    <button class="btn-lightbox-carousel btn-next" (click)="next()">
+      <i class="fas fa-arrow-circle-right icon-lightbox-carousel icon-next"></i>
+    </button>
+
+    <div *ngIf="previewImage" 
+        [@animation]="{value: 'visible'}"
+        (@animation.done)="onAnimationEnd($event)"
+        class="lightbox-img">
+        <img [src]="currentLightboxImage.image">
+    </div>
+  </div>
 </div>
-</div>
-</div>
-<div *ngIf="!additionalDocumentPresent">
-    	No Additional Documents available!
-</div>
+<div *ngIf="!additionalDocumentPresent">No Additional Documents available!</div>

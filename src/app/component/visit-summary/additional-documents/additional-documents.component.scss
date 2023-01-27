@@ -1,0 +1,101 @@
+.image1 {
+    width: 60%
+}
+
+.image2 {
+    width: 25%
+}
+
+.lightbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .85);
+
+    .count {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 7%;
+        height: 10%;
+        color: #fff;
+        opacity: 0.7;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 5px;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0;
+        color: #fff;
+        background: 0 0;
+        border: 0;
+        cursor: pointer;
+        width: 7%;
+        height: 10%;
+        z-index: 2;
+
+        .fa-times {
+            font-size: 25px;
+        }
+    }
+
+    .btn-lightbox-carousel {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        width: 8%;
+        height: 8%;
+        padding: 0;
+        color: #fff;
+        text-align: center;
+        background: 0 0;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-prev {
+        left: 0;
+    }
+
+    .btn-next {
+        right: 0;
+    }
+
+    .icon-lightbox-carousel {
+        color: #fff;
+        opacity: 0.5;
+        transition: all 0.15s ease;
+    }
+
+    .icon-lightbox-carousel:hover {
+        opacity: 0.9;
+    }
+
+    .icon-lightbox-carousel:active {
+        opacity: 0.5;
+    }
+
+    .icon-prev,
+    .icon-next {
+        font-size: 30px;
+    }
+
+    .lightbox-img img {
+        width: 100%;
+        border-radius: .35rem;
+    }
+
+}
