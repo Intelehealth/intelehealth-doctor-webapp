@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
@@ -14,6 +15,11 @@ import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mind
 export class CoreService {
 
   constructor(private dialog: MatDialog) { }
+
+  openConfirmationDialog(data: { confirmationMsg: string }): MatDialogRef<ConfirmDialogComponent> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { panelClass: 'modal-md', data } );
+    return dialogRef;
+  }
 
   openHelpMenuModal(): MatDialogRef<HelpMenuComponent> {
     const dialogRef = this.dialog.open(HelpMenuComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false } );

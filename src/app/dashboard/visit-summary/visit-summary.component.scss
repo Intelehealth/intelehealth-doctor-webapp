@@ -1,3 +1,38 @@
+.appointment-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: DM Sans;
+  background: #E6FFF3;
+  border-radius: 12px;
+  padding: 16px 24px;
+
+  h6 {
+    font-size: 16px;
+    line-height: 150%;
+    color: #1B163A;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 150%;
+    color: #0FD197;
+  }
+
+  .start-call-btn {
+    border: none;
+    outline: none;
+    background: #0FD197;
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-size: 18px;
+    line-height: 150%;
+    color: #FFFFFF;
+    font-weight: bold;
+  }
+}
+
 .patient-info-wrapper {
   font-family: DM Sans;
 
@@ -128,6 +163,8 @@
   li .list-item {
     display: flex;
     flex-wrap: nowrap;
+    align-items: center;
+
     label {
       width: 25%;
       margin-bottom: 0px;
@@ -138,6 +175,17 @@
       padding: 5px 0px;
     }
   }
+
+  li .list-item-col {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+  }
+}
+
+.visit-provider-con {
+  display: flex;
+  align-items: center;
 }
 
 .note-con {
@@ -162,10 +210,174 @@
   font-weight: bold;
 }
 
+.cheif-complaint-wrapper {
+  padding: 24px 0px 0px;
+
+  h6 {
+    font-size: 18px;
+    line-height: 150%;
+    color: #1B163A;
+    font-weight: bold;
+  }
+
+  .complaint-chips {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+
+    .chip-item {
+      padding: 4px 8px;
+      background: #EA315B;
+      border-radius: 4px;
+      color: #FFFFFF;
+      margin: 5px 5px 5px 0px;
+      font-size: 16px;
+      line-height: 150%;
+    }
+  }
+}
+
+.eye-images-con {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .eye-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    margin: 5px;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.additional-doc-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 24px 0px 0px;
+
+
+  .doc-item {
+    width: 120px;
+    height: 120px;
+    background: #EFE8FF;
+    border: 1px solid #2E1E91;
+    border-radius: 8px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .other-doc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        font-size: 14px;
+        line-height: 150%;
+        text-align: center;
+        color: #1B163A;
+      }
+
+      img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+    }
+  }
+}
+
+.no-docs {
+  padding: 24px 0px;
+  font-size: 16px;
+}
+
+.refer-form {
+  padding-top: 24px;
+
+  .form-group {
+    label {
+      font-size: 16px;
+      color: #1B163A;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .next-btn {
+      height: 56px;
+      background: #2E1E91;
+      border-radius: 8px;
+      font-size: 18px;
+      color: #FFFFFF;
+      position: relative;
+      outline: none;
+      border: none;
+      padding: 0px 24px;
+    }
+  }
+}
+
+
+
+::ng-deep .ng-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.ng-select-multiple .ng-select-container {
+  height: 48px;
+  width: 100%;
+  background: #FAF9FF;
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  box-shadow: none;
+
+  .ng-value-container {
+    position: relative;
+  }
+
+  .ng-value-container .ng-input {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+::ng-deep .ng-select.ng-select-single.ng-select-container:hover, ::ng-deep .ng-select.ng-select-single.ng-select-container:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.blue-btn {
+  padding: 14px 24px;
+  background: #2E1E91;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-family: DM Sans;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FFFFFF;
+}
+
 @media (max-width: 768px) {
   .patient-info-section {
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
     border-right: none !important;
+  }
+
+  .visit-provider-con {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .items-list {
@@ -174,6 +386,16 @@
 
     li .list-item {
       flex-direction: column;
+      align-items: flex-start;
+
+      label {
+        width: 100%;
+        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        font-weight: bold;
+      }
+    }
+
+    li .list-item-col {
       label {
         width: 100%;
         border-bottom: 1px solid rgba(178, 175, 190, 0.2);

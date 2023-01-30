@@ -1,5 +1,20 @@
 <div class="container-fluid">
   <div class="row">
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
+      <div class="appointment-banner">
+        <div>
+          <h6>Appointment starts in</h6>
+          <p>
+            <img src="assets/svgs/clock-green.svg" alt="">
+            {{ checkIfDateOldThanOneDay(visitAppointment) }}
+          </p>
+        </div>
+        <div>
+          <button type="button" class="start-call-btn">Start call</button>
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-12 p-0 mb-5">
       <div class="intel-card">
         <div class="card-body">
@@ -50,10 +65,15 @@
         </div>
       </div>
     </div>
+
     <div class="col-md-12 p-0 mb-5">
       <div class="intel-card">
-        <mat-tab-group mat-align-tabs="start" [disableRipple]="true">
+        <mat-tab-group mat-align-tabs="start" [disableRipple]="true" (selectedIndexChange)="onTabChange($event)">
           <mat-tab label="Current visit summary">
+            <div class="text-right">
+              <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll"><span class="text-muted">Show all</span> <mat-icon>expand_more</mat-icon> </button>
+              <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">Hide all</span> <mat-icon>expand_less</mat-icon></button>
+            </div>
             <mat-accordion class="intel-accordion-con" multi>
               <mat-expansion-panel [expanded]="true">
                 <mat-expansion-panel-header>
@@ -70,7 +90,7 @@
                     <div class="list-item">
                       <label>Visit ID</label>
                       <div class="list-item-content">
-                        {{visit?.uuid|uppercase}}
+                        {{(visit?.uuid)?(replaceWithStar(visit?.uuid)|uppercase):''}}
                       </div>
                     </div>
                   </li>
@@ -86,7 +106,7 @@
                     <div class="list-item">
                       <label>Appointment on</label>
                       <div class="list-item-content">
-                        8 Aug, 2022
+                        <span [class.text-muted]="!visitAppointment">{{(visitAppointment)?(visitAppointment|date:'dd MMM, yyyy'):'No appointment' }}</span>
                       </div>
                     </div>
                   </li>
@@ -94,7 +114,15 @@
                     <div class="list-item">
                       <label>Status</label>
                       <div class="list-item-content">
-                        <span class="text-important-red">Priority visit</span>
+                        <span [ngClass]="{ 'text-important-red': visitStatus == 'Priority Visit', 'text-important-green': ['Awaiting Visit', 'In-progress Visit', 'Completed Visit', 'Ended Visit'].indexOf(visitStatus) != -1 }">{{visitStatus}}</span>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Location</label>
+                      <div class="list-item-content">
+                        {{clinicName|titlecase}}
                       </div>
                     </div>
                   </li>
@@ -102,7 +130,19 @@
                     <div class="list-item">
                       <label>Provided by</label>
                       <div class="list-item-content">
-                        Kiran Devi
+                        <div class="visit-provider-con">
+                          <span>{{providerName}}</span>
+                          <div>
+                            <img class="mx-3" src="assets/svgs/dot.svg" />
+                            <a href="javascript:void(0)" class="icon-btn" (click)="startChat()">
+                              <img src="assets/svgs/whatsapp-icon.svg" alt="">
+                            </a>
+                            <a href="javascript:void(0)" class="icon-btn" (click)="startCall()">
+                              <img src="assets/svgs/phone-circle.svg" alt="">
+                            </a>
+                          </div>
+                          <span class="text-muted">Click here to connent with CHW</span>
+                        </div>
                       </div>
                     </div>
                   </li>
@@ -119,6 +159,73 @@
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
+
+                <ul class="items-list">
+                  <li>
+                    <div class="list-item">
+                      <label>Height (cm)</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)')">
+                        {{(getObsValue('Height (cm)'))?getObsValue('Height (cm)'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Weight (kg)</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
+                        {{(getObsValue('Weight (kg)'))?getObsValue('Weight (kg)'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>BMI</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)') || !getObsValue('Weight (kg)')">
+                        {{(getObsValue('Height (cm)') && getObsValue('Weight (kg)'))? ((getObsValue('Weight (kg)')/((getObsValue('Height (cm)')/100)*(getObsValue('Height (cm)')/100)))|number:'1.2-2') :'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>BP</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('SYSTOLIC BLOOD PRESSURE')">
+                        {{getObsValue('SYSTOLIC BLOOD PRESSURE') ? getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Pulse</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('Pulse')">
+                        {{(getObsValue('Pulse'))?getObsValue('Pulse'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Temprature (F)</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('TEMP')">
+                        {{(getObsValue('TEMP'))?getObsValue('TEMP'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>SpO2 (%)</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('BLOOD OXYGEN SATURATION')">
+                        {{(getObsValue('BLOOD OXYGEN SATURATION'))?getObsValue('BLOOD OXYGEN SATURATION'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Respiratory Rate</label>
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('Respiratory rate')">
+                        {{(getObsValue('Respiratory rate'))?getObsValue('Respiratory rate'):'No information'}}
+                      </div>
+                    </div>
+                  </li>
+                </ul>
               </mat-expansion-panel>
 
               <mat-expansion-panel [expanded]="true">
@@ -130,6 +237,45 @@
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
+
+                <div class="cheif-complaint-wrapper">
+                  <h6>Cheif Complaint</h6>
+                  <div class="complaint-chips">
+                    <div class="chip-item" *ngFor="let c of cheifComplaints;">
+                      {{c}}
+                    </div>
+                  </div>
+                  <div class="check-up-reason-con">
+                    <ng-container *ngFor="let ckr of checkUpReasonData;">
+                      <ng-container *ngIf="ckr.title != 'Associated symptoms'">
+                        <h6 class="my-3">{{ckr.title}}</h6>
+                        <ul class="items-list pt-0">
+                          <li *ngFor="let ckri of ckr.data">
+                            <div class="list-item">
+                              <label>{{ckri.key}}</label>
+                              <div class="list-item-content" [class.text-muted]="!ckri.value">
+                                {{(ckri.value)?ckri.value:'None'}}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </ng-container>
+                      <ng-container *ngIf="ckr.title == 'Associated symptoms'">
+                        <h6 class="my-3">{{ckr.title}}</h6>
+                        <ul class="items-list pt-0">
+                          <li *ngFor="let ckri of ckr.data">
+                            <div class="list-item-col">
+                              <label>{{ckri.key}}</label>
+                              <div class="list-item-content" [class.text-muted]="!ckri.value">
+                                {{(ckri.value)?ckri.value:'None'}}
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
               </mat-expansion-panel>
 
               <mat-expansion-panel [expanded]="true" class="bg-gray">
@@ -142,6 +288,44 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
+                <ng-container *ngFor="let pe of physicalExaminationData;">
+                  <div class="cheif-complaint-wrapper">
+                    <ng-container *ngIf="pe.title != 'Abdomen'">
+                      <h6 class="my-3">{{pe.title}}</h6>
+                      <ul class="items-list pt-0">
+                        <li *ngFor="let pei of pe.data">
+                          <div class="list-item">
+                            <label>{{pei.key}}</label>
+                            <div class="list-item-content" [class.text-muted]="!pei.value">
+                              {{(pei.value)?pei.value:'None'}}
+                            </div>
+                          </div>
+                        </li>
+                        <li *ngIf="eyeImages.length">
+                          <div class="list-item">
+                            <label>Eye images</label>
+                            <div class="list-item-content">
+                              <div class="eye-images-con">
+                                <div class="eye-item" *ngFor="let e of eyeImages;">
+                                  <img [src]="e.src" alt="">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-container *ngIf="pe.title == 'Abdomen'">
+                      <h6 class="my-3">{{pe.title}}</h6>
+                      <ul class="items-list pt-0">
+                        <li *ngFor="let pei of pe.data">
+                          {{pei.key}}
+                        </li>
+                      </ul>
+                    </ng-container>
+                  </div>
+                </ng-container>
+
               </mat-expansion-panel>
               <mat-expansion-panel [expanded]="true">
                 <mat-expansion-panel-header>
@@ -152,6 +336,23 @@
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
+
+                <ng-container *ngFor="let ph of patientHistoryData;">
+                  <div class="cheif-complaint-wrapper">
+                    <h6 class="my-3">{{ph.title}}</h6>
+                    <ul class="items-list pt-0">
+                      <li *ngFor="let phi of ph.data">
+                        <div class="list-item">
+                          <label>{{phi.key}}</label>
+                          <div class="list-item-content" [class.text-muted]="!phi.value">
+                            {{(phi.value)?phi.value:'None'}}
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+
+                  </div>
+                </ng-container>
 
               </mat-expansion-panel>
 
@@ -165,9 +366,29 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
+                <ng-container *ngIf="additionalDocs.length; else noAdditionaDocs;">
+                  <div class="additional-doc-container">
+                    <div class="doc-item" *ngFor="let d of additionalDocs;">
+                      <img [src]="d.src" alt="">
+                    </div>
+                    <div class="doc-item">
+                      <div class="other-doc">
+                        <img src="assets/svgs/pdf-doc.svg" alt="">
+                        <span>Blood test report.pdf</span>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-template #noAdditionaDocs>
+                  <div class="no-docs">
+                    No additional docs available!
+                  </div>
+                </ng-template>
+
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel [expanded]="!visitNotePresent" [disabled]="visitNotePresent">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     <div class="intel-accordion-title">
@@ -177,6 +398,38 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
+                <form [formGroup]="referSpecialityForm" (ngSubmit)="referSpecialist()" class="refer-form">
+                  <div class="form-group row">
+                    <label for="refer" class="col-sm-3 col-form-label">Refer to another speciality</label>
+                    <div class="col-sm-9 d-flex align-items-center">
+                      <div class="pretty p-default p-round">
+                        <input type="radio" [value]="true" formControlName="refer"/>
+                        <div class="state p-success">
+                          <label>Yes</label>
+                        </div>
+                      </div>
+                      <div class="pretty p-default p-round">
+                        <input type="radio" [value]="false" formControlName="refer"/>
+                        <div class="state p-success">
+                          <label>No</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-container *ngIf="referSpecialityForm.value.refer">
+                    <div class="form-group row">
+                      <label for="refer" class="col-sm-3 col-form-label">Specialization</label>
+                      <div class="col-sm-3">
+                        <ng-select formControlName="specialization" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                        </ng-select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="next-btn">Re-assign</button>
+                    </div>
+                  </ng-container>
+
+                </form>
               </mat-expansion-panel>
             </mat-accordion>
           </mat-tab>
@@ -188,6 +441,7 @@
         </mat-tab-group>
       </div>
     </div>
+
     <div class="col-md-12 p-0 mb-5">
       <div class="intel-card">
         <div class="card-body">
@@ -197,10 +451,15 @@
         </div>
       </div>
     </div>
-    <div class="col-md-12 p-0 mb-5">
+
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent">
+      <button type="button" class="blue-btn" (click)="startVisitNote()">Start visit note</button>
+    </div>
+
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent">
       <div class="intel-card">
         <div class="card-body">
-          <mat-accordion class="intel-accordion-con" multi>
+          <mat-accordion class="intel-accordion-con">
             <mat-expansion-panel [expanded]="true">
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -296,6 +555,10 @@
           </mat-accordion>
         </div>
       </div>
+    </div>
+
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="visitNotePresent">
+      <button type="button" class="blue-btn" >Share prescription</button>
     </div>
   </div>
 </div>

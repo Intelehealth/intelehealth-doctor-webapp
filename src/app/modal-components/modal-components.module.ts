@@ -11,6 +11,7 @@ import { NoInternetComponent } from './no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from './password-reset-success/password-reset-success.component';
 import { HelpMenuComponent } from './help-menu/help-menu.component';
 import { SelectLanguageComponent } from './select-language/select-language.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { SelectLanguageComponent } from './select-language/select-language.compo
         NoInternetComponent,
         PasswordResetSuccessComponent,
         HelpMenuComponent,
-        SelectLanguageComponent
+        SelectLanguageComponent,
+        ConfirmDialogComponent
     ],
     imports: [
         CommonModule,

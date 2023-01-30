@@ -42,7 +42,8 @@
               "src/styles.scss",
               "node_modules/intro.js/introjs.css",
               "src/assets/scss/toastr.css",
-              "node_modules/intl-tel-input/build/css/intlTelInput.css"
+              "node_modules/intl-tel-input/build/css/intlTelInput.css",
+              "./node_modules/ngx-lightbox/lightbox.css"
             ],
             "scripts": [
               "src/app/js/util.js",

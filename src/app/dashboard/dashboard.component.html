@@ -182,7 +182,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns2;" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
@@ -254,7 +254,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns3;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns3;"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #awaitingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
@@ -326,7 +326,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns4;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns4;"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
             <mat-paginator #inprogressPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
