@@ -3,13 +3,14 @@
     (conversationClicked)="onConversationSelected($event)"
   ></app-sidebar>
   <div class="chat">
-    <div class="chatPlaceholder" *ngIf="!conversation">
+    <div class="chatPlaceholder" *ngIf="!latestChat">
       <img width="400" src="assets/icons/message/Group2608897.png" />
       <h2>No messages selected</h2>
-      <p>
-        Please select patient from the list to view the messages.
-      </p>
+      <p>Please select patient from the list to view the messages.</p>
     </div>
-    <app-chat-container [conversation]="conversation" *ngIf="conversation"></app-chat-container>
+    <app-chat-container
+      [latestChat]="latestChat"
+      *ngIf="latestChat"
+    ></app-chat-container>
   </div>
 </div>

@@ -85,7 +85,7 @@ export class ChatComponent implements OnInit {
           visitId: this.visitId,
           patientName: localStorage.patientName,
         })
-        .subscribe({
+        .subscribe({  
           next: (res) => {
             this.updateMessages();
           },

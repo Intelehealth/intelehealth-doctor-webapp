@@ -4,10 +4,18 @@
     <div class="message">(Via Comunity health workers)</div>
   </div>
   <div class="search-box">
+    <form (submit)="search()">
       <div class="search">
         <i class="fa fa-search" aria-hidden="true"></i>
-        <input type="text" [(ngModel)]="searchText" class="txt" placeholder="Search or start the new chat"/>
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          class="txt"
+          [ngModelOptions]="{standalone: true}"
+          placeholder="Search or start the new chat"
+        />
       </div>
+    </form>
   </div>
 
   <div class="sidebar">
@@ -19,14 +27,14 @@
       (click)="conversationClicked.emit(conversation)"
     >
       <div class="picture">
-        <img [src]="conversation.profileLink"/>
+        <img [src]="patientPic" />
       </div>
       <div class="content">
         <div class="conversationHeader">
-          <div class="name">{{ conversation.name }}</div>
+          <div class="name">{{ conversation.patientName }}</div>
         </div>
         <div class="message">
-          {{ conversation.latestMessage }}
+          {{ conversation.message }}
         </div>
       </div>
     </div>
