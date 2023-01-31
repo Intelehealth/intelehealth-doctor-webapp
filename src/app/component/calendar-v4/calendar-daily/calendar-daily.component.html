@@ -9,7 +9,7 @@
   </div>
   <div class="daily-appointments w-100 h-100">
     <div class="appointments w-100" *ngFor="let time of timings">
-      <div *ngFor="let slot of availableSlots" [ngClass]="time === slot.startTime ? 'available-slots' : ''" class=" h-100">
+      <div [class.hours-off]="time === offSlot(time)" *ngFor="let slot of availableSlots" [ngClass]="time === slot.startTime ? 'available-slots' : ''" class=" h-100">
         <div class="row h-100">
           <ng-container *ngIf="time === slot.startTime && slot.type === 'followUp'">
             <div class="col h-100 visit-info mt">
@@ -75,18 +75,17 @@
           </ng-container>
         </div>
       </div>
-      <div
+      <!-- <div
         *ngIf="offSlot(time)"
-        [class.pt]="time === offSlot(time)"
+      
         class="hours-off h-100 w-100"
       >
-      {{ offSlot(time)}}
         <div
           *ngIf="hoursOffSlots?.[0] === offSlot(time)"
           class="hours-off-label m-auto"
         > Hours off
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

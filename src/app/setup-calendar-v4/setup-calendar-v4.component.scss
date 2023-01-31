@@ -7,6 +7,9 @@
 
     ng-select.ng-select {
       margin-top: 7px;
+      .ng-dropdown-panel {
+        width: auto;
+      }
     }
   }
 }

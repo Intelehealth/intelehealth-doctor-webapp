@@ -7,9 +7,11 @@ class Appointment {
   endTime: string
   openMrsId: string
   patientName: string
+  patientPic: string
   gender:string
   age: string
   healthWorker: string
+  hwPic: string
   hwAge: string
   hwGender: string
   type: string
@@ -72,7 +74,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
     });
 
     this.timings.forEach(time => {
-      let availableTime = this.availableSlots.filter(slot => time === slot.startTime ||  time === slot.endTime);
+      let availableTime = this.availableSlots.filter(slot => time === slot.startTime);
       if(availableTime.length === 0) {
         this.hoursOffSlots.push(time);
       }
@@ -92,12 +94,14 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
       appointment.startTime = d1?.slotTime.toLowerCase();
       appointment.endTime = moment(d1?.slotTime,"LT").add(d1.slotDuration,'minutes').format('LT').toLocaleLowerCase();
       appointment.patientName = d1?.patientName;
-      appointment.gender= 'F';
-      appointment.age= '32';
+      appointment.patientPic = d1?.patientPic;
+      appointment.gender= d1?.patientGender;
+      appointment.age= d1?.patientAge;
       appointment.openMrsId = d1?.openMrsId;
-      appointment.healthWorker = d1?.openMrsId;
-      appointment.hwAge ='28';
-      appointment.hwGender = 'M';
+      appointment.healthWorker = d1?.hwName;
+      appointment.hwAge =d1?.hwAge;
+      appointment.hwGender = d1?.hwGender;
+      appointment.hwPic = d1?.hwPic;
       appointment.type = 'appointment';
       appointment.patientId = d1?.patientId;
       appointment.visitId = d1?.visitUuid;

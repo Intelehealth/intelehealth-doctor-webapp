@@ -3,7 +3,6 @@
     <div class="weekdays m-0 row">
       <div
         *ngFor="let day of calendar?.[0].days"
-        [class.off]="day?.isWeekDayOff"
         class="col p-0"
       >
         <div class="d-grid">
@@ -32,8 +31,8 @@
           >
             {{ day.format("D") }}
           </div>
-          <div *ngIf="slot(day)" class="appointment-date h-100 w-100">
-            <div class="d-flex wrapper h-100" (click)="handleClick(slot(day))">
+          <div *ngIf="slot(day)" class="appointment-date h-100 w-100 click">
+            <div class="d-flex wrapper h-100 click" (click)="handleClick(slot(day))">
               <div
                 class="type"
                 [class.active]="slot(day?.date, column)?.isCurrentDay"
