@@ -10,24 +10,37 @@ import * as moment from "moment";
 export class ChatContainerComponent implements OnInit {
   @Input("latestChat") set getChat(latestChat) {
     this.latestChat = latestChat;
-    this.visitId = this.latestChat.visitId;
 
-    this.getMessages();
+    this.visitId = this.latestChat.visitId;
+    this.isNewChat = this.latestChat?.isNewChat;
+    if (!this.isNewChat) {
+      this.getMessages();
+    }
+    if (this.isNewChat) {
+      let visitData = {
+        createdAt: this.latestChat?.createdAt,
+        visitId: this.visitId,
+      };
+      this.visits.push(visitData);
+    }
   }
   latestChat: any;
 
   @Output() onSubmit: EventEmitter<any> = new EventEmitter();
   message = "";
   fromUuid = null;
-  visits: [];
+  visits: any = [];
   visitId: any;
   moment: any = moment;
+  isNewChat: boolean = false;
 
   constructor(private chatSvc: ChatService) {}
 
   ngOnInit(): void {
     this.visitId = this.latestChat?.visitId;
-    this.getPatientsVisits(this.latestChat?.patientId);
+    // if (!this.isNewChat) {
+    //   this.getPatientsVisits(this.latestChat?.patientId);
+    // }
     //  this.getMessages();
   }
 
@@ -47,30 +60,31 @@ export class ChatContainerComponent implements OnInit {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
       next: (res: any) => {
         this.visits = res?.data;
-        console.log("this.visits: ", this.visits);
+        console.log("this.visits1111: ", this.visits);
       },
     });
   }
 
-  onVisitChange() {
+  onVisitChange(visitId) {
+    this.visitId = visitId;
     this.getMessages();
   }
 
   getMessages() {
-    console.log("this.toUserId: ", this.toUserId);
-    console.log("this.latestChat?.patientId: ", this.latestChat?.patientId);
-    this.chatSvc
-      .getPatientMessages(
-        this.toUserId,
-        this.latestChat?.patientId,
-        null,
-        this.visitId
-      )
-      .subscribe({
-        next: (res: any) => {
-          this.visits = res?.data;
-        },
-      });
+    if (!this.isNewChat) {
+      this.chatSvc
+        .getPatientMessages(
+          this.toUserId,
+          this.latestChat?.patientId,
+          null,
+          this.visitId
+        )
+        .subscribe({
+          next: (res: any) => {
+            this.visits = res?.data;
+          },
+        });
+    }
   }
 
   get toUserId() {
@@ -85,15 +99,26 @@ export class ChatContainerComponent implements OnInit {
 
   sendMessage() {
     if (this.message) {
-      console.log("this.latestChat: ", this.latestChat);
       this.latestChat.latestMessage = this.message;
-      this.latestChat.messages.unshift({
-        id: 1,
-        message: this.message,
-        me: true,
-      });
+      if (!this.isNewChat) {
+        this.latestChat.messages.unshift({
+          id: 1,
+          message: this.message,
+          me: true,
+        });
+      }
+      const payload = {
+        visitId: this.latestChat?.visitId,
+        patientName: "",
+        hwName: this.latestChat?.hwName,
+      };
       this.chatSvc
-        .sendMessage(this.latestChat.toUuid, "", this.message)
+        .sendMessage(
+          this.latestChat?.toUser,
+          this.latestChat?.patientId,
+          this.message,
+          payload
+        )
         .subscribe({
           next: (res) => {
             console.log("res: ", res);

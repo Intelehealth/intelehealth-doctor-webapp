@@ -13,20 +13,20 @@ import { FindPatientComponent } from "../../find-patient/find-patient.component"
 })
 export class SidebarComponent implements OnInit {
   @Output() conversationClicked: EventEmitter<any> = new EventEmitter();
-  searchText: string;
   conversations: any;
+  searchValue: string;
   baseURL = environment.baseURL;
-  values: any = [];
+  searchResults: any = [];
 
   get filteredConversations() {
     return this.conversations.filter((conversation) => {
       return (
-        conversation.name
+        conversation?.patientName
           .toLowerCase()
-          .includes(this.searchText.toLowerCase()) ||
-        conversation.latestMessage
+          .includes(this.searchValue.toLowerCase()) ||
+        conversation?.message
           .toLowerCase()
-          .includes(this.searchText.toLowerCase())
+          .includes(this.searchValue.toLowerCase())
       );
     });
   }
@@ -34,7 +34,7 @@ export class SidebarComponent implements OnInit {
     private chatSvc: ChatService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
-    private http: HttpClient,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -51,27 +51,27 @@ export class SidebarComponent implements OnInit {
   }
 
   search() {
-    if (this.searchText === null || this.searchText.length < 3) {
-      this.dialog.open(FindPatientComponent, {
-        width: "50%",
-        data: { value: "Please enter min 3 characters" },
+    if (this.searchValue === null || this.searchValue.length < 3) {
+      this.toast({
+        message: `Please enter min 3 characters.`,
       });
+      return;
     } else {
-      const url = `${this.baseURL}/patient?q=${this.searchText}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
+      const url = `${this.baseURL}/patient?q=${this.searchValue}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe(
         (response) => {
-          this.values = [];
+          this.searchResults = [];
           response["results"].forEach((value) => {
             if (value) {
               if (value.identifiers.length) {
-                this.values.push(value);
+                this.searchResults.push(value);
               }
             }
           });
-          this.dialog.open(FindPatientComponent, {
-            width: "90%",
-            data: { value: this.values },
-          });
+          // this.dialog.open(FindPatientComponent, {
+          //   width: "90%",
+          //   data: { value: this.searchResults },
+          // });
         },
         (err) => {
           if (err.error instanceof Error) {
@@ -82,6 +82,20 @@ export class SidebarComponent implements OnInit {
         }
       );
     }
+  }
+
+  toast({
+    message,
+    duration = 5000,
+    horizontalPosition = "center",
+    verticalPosition = "bottom",
+  }) {
+    const opts: any = {
+      duration,
+      horizontalPosition,
+      verticalPosition,
+    };
+    this.snackbar.open(message, null, opts);
   }
 
   get patientPic() {

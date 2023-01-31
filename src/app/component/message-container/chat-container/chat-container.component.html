@@ -26,7 +26,7 @@
     </div> -->
   </div>
   <div class="body">
-    <div class="message" [ngClass]="{ me: message.me }">
+    <div class="message">
       <div class="messageContent">
       </div>
     </div>
@@ -48,7 +48,7 @@
       />
       <input #inputField hidden type="file" />
     </div>
-    <div class="sent-box" (click)="sendMessage($event)">
+    <div class="sent-box" (click)="sendMessage()">
       <img src="assets/svgs/sent.svg" />
     </div>
   </div>

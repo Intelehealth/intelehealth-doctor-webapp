@@ -9,9 +9,9 @@
         <i class="fa fa-search" aria-hidden="true"></i>
         <input
           type="text"
-          [(ngModel)]="searchText"
+          [(ngModel)]="searchValue"
           class="txt"
-          [ngModelOptions]="{standalone: true}"
+          [ngModelOptions]="{ standalone: true }"
           placeholder="Search or start the new chat"
         />
       </div>
@@ -22,7 +22,7 @@
     <div
       class="conversation"
       *ngFor="
-        let conversation of !searchText ? conversations : filteredConversations
+        let conversation of !searchValue ? conversations : filteredConversations
       "
       (click)="conversationClicked.emit(conversation)"
     >
@@ -35,6 +35,27 @@
         </div>
         <div class="message">
           {{ conversation.message }}
+        </div>
+      </div>
+    </div>
+
+    <!-- for start new chat -->
+    <div
+      class="conversation"
+      *ngFor="
+        let result of searchResults
+      "
+      (click)="conversationClicked.emit(result)"
+    >
+      <div class="picture">
+        <img [src]="patientPic" />
+      </div>
+      <div class="content">
+        <div class="conversationHeader">
+          <div class="name">{{ result?.person?.display }}</div>
+        </div>
+        <div class="message">
+         Click to start new chat
         </div>
       </div>
     </div>

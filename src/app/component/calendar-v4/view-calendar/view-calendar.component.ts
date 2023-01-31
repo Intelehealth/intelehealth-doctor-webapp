@@ -354,6 +354,10 @@ export class ViewCalendarComponent implements OnInit {
     this.timeOff.openTimeOffModal();
   }
 
+  get locale() {
+    return localStorage.getItem("selectedLanguage");
+  }
+
   getVisitStatus(status: string) {
     let statusName: string = 'NA';
     switch (status) {
