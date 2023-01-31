@@ -204,8 +204,8 @@
                   <li>
                     <div class="list-item">
                       <label>Temprature (F)</label>
-                      <div class="list-item-content" [class.text-muted]="!getObsValue('TEMP')">
-                        {{(getObsValue('TEMP'))?getObsValue('TEMP'):'No information'}}
+                      <div class="list-item-content" [class.text-muted]="!getObsValue('TEMPERATURE (C)')">
+                        {{(getObsValue('TEMPERATURE (C)'))?(((getObsValue('TEMPERATURE (C)')* 9/5)+32)|number:'0.2-2'):'No information'}}
                       </div>
                     </div>
                   </li>
@@ -327,6 +327,7 @@
                 </ng-container>
 
               </mat-expansion-panel>
+
               <mat-expansion-panel [expanded]="true">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
@@ -460,7 +461,7 @@
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con">
-            <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel [expanded]="true" #panel1  hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -468,10 +469,59 @@
                     <h6 class="mb-0 ml-2">Patient interaction</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel1.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <form [formGroup]="patientInteractionForm" (ngSubmit)="savePatientInteraction()">
+                <ul class="items-list">
+                  <li>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Connect with patient</label>
+                      <div class="col-sm-9 d-flex align-items-center" *ngIf="getPersonAttributeValue('Telephone Number') != 'NA'; else noContactDetails;">
+                        <div class="d-flex">
+                          <a href="tel:{{getPersonAttributeValue('Telephone Number')}}" target="_blank" class="icon-btn m-0 mr-2">
+                            <img src="assets/svgs/phone-green.svg" alt="">
+                          </a>
+                          <a href="{{getWhatsAppLink()}}" target="_blank" class="icon-btn m-0 mr-2">
+                            <img src="assets/svgs/whatsapp-green.svg" alt="">
+                          </a>
+                        </div>
+                        <span class="text-muted">Click here to connent with the patient</span>
+                      </div>
+                      <ng-template #noContactDetails>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <span class="text-muted">Patient Mobile number is not available</span>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Have you spoken with the patient directly?</label>
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <div class="pretty p-default p-round">
+                          <input type="radio" [value]="'Yes'" formControlName="spoken" />
+                          <div class="state p-success">
+                            <label>Yes</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input type="radio" [value]="'No'" formControlName="spoken" />
+                          <div class="state p-success">
+                            <label>No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !patientInteractionForm.value.present">
+                  <button type="submit" class="gray-btn" [disabled]="patientInteractionForm.invalid">Save</button>
+                </div>
+              </form>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" class="bg-gray">
+            <mat-expansion-panel [expanded]="false" #panel2  hideToggle class="bg-gray">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -479,10 +529,87 @@
                     <h6 class="mb-0 ml-2">Diagnosis</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel2.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
+                <ul class="items-list">
+                  <li>
+                    <div class="row">
+                      <label class="col-sm-3 col-form-label">Do you have enough information for diagnosis?</label>
+                      <div class="col-sm-9 d-flex align-items-center">
+                        <div class="pretty p-default p-round">
+                          <input type="radio" [value]="'Yes'" formControlName="diagnosisIdentified" />
+                          <div class="state p-success">
+                            <label>Yes</label>
+                          </div>
+                        </div>
+                        <div class="pretty p-default p-round">
+                          <input type="radio" [value]="'No'" formControlName="diagnosisIdentified" />
+                          <div class="state p-success">
+                            <label>No</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <ng-container *ngIf="diagnosisForm.value.diagnosisIdentified == 'Yes'">
+                    <li>
+                      <div class="row">
+                        <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
+                        <div class="col-sm-3">
+                          <ng-select class="custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <label class="col-sm-3 col-form-label">Diagnosis type</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Primary'" formControlName="diagnosisType" />
+                            <div class="state p-success">
+                              <label>Primary</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Secondary'" formControlName="diagnosisType" />
+                            <div class="state p-success">
+                              <label>Secondary</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <label class="col-sm-3 col-form-label">Select</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus" />
+                            <div class="state p-success">
+                              <label>Provisional</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus" />
+                            <div class="state p-success">
+                              <label>Confirmed</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ng-container>
+                </ul>
+                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
+                  <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Save</button>
+                </div>
+              </form>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel [expanded]="false" #panel3  hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -490,10 +617,46 @@
                     <h6 class="mb-0 ml-2">Note</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel3.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <ul class="items-list" *ngIf="notes.length; else noNotes;">
+                <li *ngFor="let n of notes; let i=index;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{n.value}}</span>
+                    <button mat-icon-button (click)="deleteNote(i, n.uuid)" *ngIf="isVisitNoteProvider">
+                      <img src="assets/svgs/delete-icon.svg" alt="">
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noNotes>
+                <div class="no-docs">
+                  No notes added!
+                </div>
+              </ng-template>
+              <form [formGroup]="addNoteForm" (ngSubmit)="addNote()" *ngIf="isVisitNoteProvider">
+                <div class="form-group" *ngIf="addMoreNote">
+                  <button type="button" class="add-more-btn" (click)="toggleNote()">
+                    <img src="assets/svgs/plus-circle.svg" alt="">
+                    <span class="ml-2">Add more notes</span>
+                  </button>
+                </div>
+                <ng-container *ngIf="!addMoreNote">
+                  <div class="form-group">
+                    <label for="note"><b>Note&nbsp;</b> <span class="text-muted">(Not shared with patient)</span></label>
+                    <textarea class="form-control" rows="3" placeholder="Type here" formControlName="note"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <button type="button" class="white-btn mr-2" (click)="toggleNote()">Cancel</button>
+                    <button type="submit" class="gray-btn" [disabled]="addNoteForm.invalid">Add note</button>
+                  </div>
+                </ng-container>
+              </form>
+
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" class="bg-gray">
+            <mat-expansion-panel [expanded]="false" #panel4  hideToggle class="bg-gray">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -501,10 +664,120 @@
                     <h6 class="mb-0 ml-2">Medication</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel4.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
 
+              <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Drug name</th>
+                        <th scope="col">Strength</th>
+                        <th scope="col">No. of days</th>
+                        <th scope="col">Timing</th>
+                        <th scope="col">Remarks</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let m of medicines; let i=index;">
+                        <td>{{m.drug}}</td>
+                        <td>{{m.strength}}</td>
+                        <td>{{m.days}}</td>
+                        <td>{{m.timing}}</td>
+                        <td>{{m.remark}}</td>
+                        <td>
+                          <button mat-icon-button *ngIf="isVisitNoteProvider" (click)="deleteMedicine(i, m.uuid)">
+                            <img src="assets/svgs/delete-icon.svg" alt="">
+                          </button>
+                        </td>
+                      </tr>
+                      <ng-container >
+                        <tr *ngIf="addMoreMedicine">
+                          <td colspan="6">
+                            <div class="form-group mb-0">
+                              <button type="button" class="add-more-btn" (click)="toggleMedicine()">
+                                <img src="assets/svgs/plus-circle.svg" alt="">
+                                <span class="ml-2">Add more medicine</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="!addMoreMedicine">
+                          <td>
+                            <ng-select formControlName="drug" class="custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select drug">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select formControlName="strength" class="custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select formControlName="days" class="custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select formControlName="timing" class="custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
+                            </ng-select>
+                          </td>
+                          <td colspan="2">
+                            <div class="form-group mb-0">
+                              <input formControlName="remark" type="text" class="form-control" placeholder="Enter Remark">
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="!addMoreMedicine">
+                          <td colspan="6" class="border-top-0">
+                            <div class="form-group mb-0 float-right">
+                              <button type="button" class="white-btn mr-2" (click)="toggleMedicine()">Cancel</button>
+                              <button type="submit" class="gray-btn" [disabled]="addMedicineForm.invalid">Add</button>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+              </form>
+
+              <h6 class="list-header mt-3">Additional instructions</h6>
+              <ul class="items-list" *ngIf="additionalInstructions.length; else noAdditionalInstructions;">
+                <li *ngFor="let ai of additionalInstructions; let i=index;">
+                  <div class="d-flex justify-content-between">
+                    <span>{{ai.value}}</span>
+                    <button mat-icon-button *ngIf="isVisitNoteProvider" (click)="deleteAdditionalInstruction(i, ai.uuid)">
+                      <img src="assets/svgs/delete-icon.svg" alt="">
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noAdditionalInstructions>
+                <div class="no-docs">
+                  No additional instructions added!
+                </div>
+              </ng-template>
+              <ng-container *ngIf="isVisitNoteProvider">
+                <div class="form-group" *ngIf="addMoreAdditionalInstruction">
+                  <button type="button" class="add-more-btn" (click)="toggleAdditionalInstruction()">
+                    <img src="assets/svgs/plus-circle.svg" alt="">
+                    <span class="ml-2">Add more instructions</span>
+                  </button>
+                </div>
+                <form [formGroup]="addAdditionalInstructionForm" (ngSubmit)="addAdditionalInstruction()"  *ngIf="!addMoreAdditionalInstruction">
+                  <div class="form-group">
+                    <label for="note"><b>Additional instructions</b></label>
+                    <textarea formControlName="note" class="form-control" rows="3" placeholder="Type here"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <button type="button" class="white-btn mr-2" (click)="toggleAdditionalInstruction()">Cancel</button>
+                    <button type="submit" class="gray-btn" [disabled]="addAdditionalInstructionForm.invalid">Save</button>
+                  </div>
+                </form>
+              </ng-container>
             </mat-expansion-panel>
-            <mat-expansion-panel [expanded]="false">
+
+            <mat-expansion-panel [expanded]="false" #panel5  hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -512,11 +785,45 @@
                     <h6 class="mb-0 ml-2">Advice</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel5.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
 
+              <ul class="items-list" *ngIf="advices.length; else noAdvices;">
+                <li *ngFor="let ad of advices; let i=index;">
+                  <div class="d-flex justify-content-between">
+                    <span>{{ad.value}}</span>
+                    <button mat-icon-button (click)="deleteAdvice(i, ad.uuid)" *ngIf="isVisitNoteProvider">
+                      <img src="assets/svgs/delete-icon.svg" alt="">
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noAdvices>
+                <div class="no-docs">
+                  No advices added!
+                </div>
+              </ng-template>
+              <ng-container *ngIf="isVisitNoteProvider">
+                <div class="form-group mt-3" *ngIf="addMoreAdvice">
+                  <button type="button" class="add-more-btn" (click)="toggleAdvice()">
+                    <img src="assets/svgs/plus-circle.svg" alt="">
+                    <span class="ml-2">Add more advice</span>
+                  </button>
+                </div>
+                <form [formGroup]="addAdviceForm" (ngSubmit)="addAdvice()" *ngIf="!addMoreAdvice">
+                  <div class="form-group">
+                    <label for="note"><b>Advice</b></label>
+                    <input type="text" class="form-control" formControlName="advice" placeholder="Type here" [ngbTypeahead]="search">
+                  </div>
+                  <div class="form-group">
+                    <button type="button" class="white-btn mr-2" (click)="toggleAdvice()">Cancel</button>
+                    <button type="submit" class="gray-btn" [disabled]="addAdviceForm.invalid">Add advice</button>
+                  </div>
+                </form>
+              </ng-container>
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" class="bg-gray">
+            <mat-expansion-panel [expanded]="false" #panel6  hideToggle class="bg-gray">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -524,11 +831,47 @@
                     <h6 class="mb-0 ml-2">Test</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel6.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <ul class="items-list" *ngIf="tests.length; else noTests;">
+                <li *ngFor="let t of tests; let i=index;">
+                  <div class="d-flex justify-content-between">
+                    <span>{{t.value}}</span>
+                    <button mat-icon-button (click)="deleteTest(i, t.uuid)" *ngIf="isVisitNoteProvider">
+                      <img src="assets/svgs/delete-icon.svg" alt="">
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <ng-template #noTests>
+                <div class="no-docs">
+                  No tests added!
+                </div>
+              </ng-template>
+              <ng-container *ngIf="isVisitNoteProvider">
+                <div class="form-group mt-3" *ngIf="addMoreTest">
+                  <button type="button" class="add-more-btn" (click)="toggleTest()">
+                    <img src="assets/svgs/plus-circle.svg" alt="">
+                    <span class="ml-2">Add more test</span>
+                  </button>
+                </div>
+                <form [formGroup]="addTestForm" (ngSubmit)="addTest()" *ngIf="!addMoreTest">
+                  <div class="form-group">
+                    <label for="note"><b>Test</b></label>
+                    <input type="text" class="form-control" formControlName="test" placeholder="Type here" [ngbTypeahead]="search2">
+                  </div>
+                  <div class="form-group">
+                    <button type="button" class="white-btn mr-2" (click)="toggleTest()">Cancel</button>
+                    <button type="submit" class="gray-btn" [disabled]="addTestForm.invalid">Add test</button>
+                  </div>
+                </form>
+              </ng-container>
+
 
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel [expanded]="false" #panel7  hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -536,11 +879,64 @@
                     <h6 class="mb-0 ml-2">Referral</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel7.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Referral facility</th>
+                      <th scope="col">Remarks</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Physiotherapist</td>
+                      <td>Please give a visit as soon as possible</td>
+                      <td>
+                        <button mat-icon-button>
+                          <img src="assets/svgs/delete-icon.svg" alt="">
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <div class="form-group mb-0">
+                          <button type="button" class="add-more-btn">
+                            <img src="assets/svgs/plus-circle.svg" alt="">
+                            <span class="ml-2">Add more referral</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <ng-select [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                        </ng-select>
+                      </td>
+                      <td colspan="2">
+                        <div class="form-group mb-0">
+                          <input type="text" class="form-control" placeholder="Type here">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="border-top-0">
+                        <div class="form-group mb-0 float-right">
+                          <button type="button" class="white-btn mr-2">Cancel</button>
+                          <button type="button" class="gray-btn">Add</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" class="bg-gray">
+            <mat-expansion-panel [expanded]="false" #panel8  hideToggle class="bg-gray">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -548,7 +944,47 @@
                     <h6 class="mb-0 ml-2">Follow-up</h6>
                   </div>
                 </mat-panel-title>
+                <mat-icon >{{panel8.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
+
+              <ul class="items-list">
+                <li>
+                  <div class="row">
+                    <label for="follow-up" class="col-sm-3 col-form-label">Do you want to have follow up with the patient?</label>
+                    <div class="col-sm-9 d-flex align-items-center">
+                      <div class="pretty p-default p-round">
+                        <input type="radio" [value]="true" name="follow-up" />
+                        <div class="state p-success">
+                          <label>Yes</label>
+                        </div>
+                      </div>
+                      <div class="pretty p-default p-round">
+                        <input type="radio" [value]="false" name="follow-up" />
+                        <div class="state p-success">
+                          <label>No</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="row">
+                    <label for="follow-date" class="col-sm-3 col-form-label">Select date</label>
+                    <div class="col-sm-3">
+                      <input type="date" class="form-control" placeholder="Enter date">
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="row">
+                    <label for="follow-reason" class="col-sm-3 col-form-label">Reason for follow-up</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Type here">
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
 
             </mat-expansion-panel>
 

@@ -565,6 +565,10 @@ body.font-lato td {
 
     .mat-expansion-panel-header {
       padding: 0px;
+
+      .mat-content {
+        align-items: center;
+      }
     }
 
     .mat-expansion-panel-header.mat-expanded {

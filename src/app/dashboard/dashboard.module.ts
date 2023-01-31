@@ -19,6 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
     FormsModule,
     ReactiveFormsModule,
     Ng2TelInputModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    NgbTypeaheadModule
   ]
 })
 export class DashboardModule { }

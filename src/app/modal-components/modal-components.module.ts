@@ -12,6 +12,9 @@ import { PasswordResetSuccessComponent } from './password-reset-success/password
 import { HelpMenuComponent } from './help-menu/help-menu.component';
 import { SelectLanguageComponent } from './select-language/select-language.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { SharePrescriptionComponent } from './share-prescription/share-prescription.component';
+import { SharePrescriptionSuccessComponent } from './share-prescription-success/share-prescription-success.component';
+import { SharePrescriptionErrorComponent } from './share-prescription-error/share-prescription-error.component';
 
 @NgModule({
     declarations: [
@@ -21,7 +24,10 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
         PasswordResetSuccessComponent,
         HelpMenuComponent,
         SelectLanguageComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        SharePrescriptionComponent,
+        SharePrescriptionSuccessComponent,
+        SharePrescriptionErrorComponent
     ],
     imports: [
         CommonModule,
