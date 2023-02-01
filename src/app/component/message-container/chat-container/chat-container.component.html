@@ -6,7 +6,7 @@
         <!-- <img [src]="pic.profileLink"/> -->
       </div>
       <div class="name">{{ latestChat?.hwName }}</div>
-      <div class="id">ID-1223</div>
+      <!-- <div class="id">ID-1223</div> -->
     </div>
     <div class="visits">
       <select
@@ -17,7 +17,9 @@
         (change)="onVisitChange($event.target.value)"
       >
         <option [value]="visit.visitId" *ngFor="let visit of visits">
-          {{moment(visit?.createdAt).format('DD MMM YYYY')}} ({{ visit.visitId }}) 
+          {{ moment(visit?.createdAt).format("DD MMM YYYY") }} ({{
+            visit.visitId
+          }})
         </option>
       </select>
     </div>
@@ -26,8 +28,17 @@
     </div> -->
   </div>
   <div class="body">
-    <div class="message">
+    <div
+      class="message"
+      [ngClass]="{ me: item?.fromUser === chatSvc?.user?.uuid }"
+      *ngFor="let item of messageList"
+    >
       <div class="messageContent">
+        <span> {{ item.message }}</span>
+      </div>
+      <div class="read-unread-messages mt-2">
+        <div class="read-unread-img"><img height="16px" width="16px" [src]="readSentIcon" /></div>
+        <span class="read-unread-label"> {{ readSentLabel }}</span>
       </div>
     </div>
   </div>

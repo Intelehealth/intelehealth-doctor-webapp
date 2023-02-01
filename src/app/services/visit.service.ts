@@ -17,6 +17,8 @@ export class VisitService {
 
   public isVisitSummaryShow: boolean = false;
 
+  public isHelpButtonShow: boolean = false;
+
   constructor(private http: HttpClient, private helper: HelperService) {}
 
   getVisits(params): Observable<any> {

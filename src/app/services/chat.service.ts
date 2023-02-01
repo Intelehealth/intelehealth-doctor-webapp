@@ -37,12 +37,18 @@ export class ChatService {
     return this.http.get(`${this.baseURL}/messages/${fromUser}/${toUser}`);
   }
 
-  getPatientList() {
-    return this.http.get(`${this.baseURL}/messages/getPatientMessageList`);
+  getPatientList(drUuid) {
+    return this.http.get(
+      `${this.baseURL}/messages/getPatientMessageList?drUuid=${drUuid}`
+    );
   }
 
   getPatientAllVisits(patientId) {
     return this.http.get(`${this.baseURL}/messages/${patientId}`);
+  }
+
+  readMessageById(messageId) {
+    return this.http.put(`${this.baseURL}/messages/read/${messageId}`, "");
   }
 
   public get user() {

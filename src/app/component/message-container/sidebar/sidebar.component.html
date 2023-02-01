@@ -4,7 +4,7 @@
     <div class="message">(Via Comunity health workers)</div>
   </div>
   <div class="search-box">
-    <form (submit)="search()">
+    <!-- <form (submit)="search()"> -->
       <div class="search">
         <i class="fa fa-search" aria-hidden="true"></i>
         <input
@@ -15,7 +15,7 @@
           placeholder="Search or start the new chat"
         />
       </div>
-    </form>
+    <!-- </form> -->
   </div>
 
   <div class="sidebar">
@@ -39,25 +39,5 @@
       </div>
     </div>
 
-    <!-- for start new chat -->
-    <div
-      class="conversation"
-      *ngFor="
-        let result of searchResults
-      "
-      (click)="conversationClicked.emit(result)"
-    >
-      <div class="picture">
-        <img [src]="patientPic" />
-      </div>
-      <div class="content">
-        <div class="conversationHeader">
-          <div class="name">{{ result?.person?.display }}</div>
-        </div>
-        <div class="message">
-         Click to start new chat
-        </div>
-      </div>
-    </div>
   </div>
 </div>

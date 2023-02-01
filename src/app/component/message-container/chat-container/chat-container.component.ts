@@ -10,19 +10,8 @@ import * as moment from "moment";
 export class ChatContainerComponent implements OnInit {
   @Input("latestChat") set getChat(latestChat) {
     this.latestChat = latestChat;
-
     this.visitId = this.latestChat.visitId;
-    this.isNewChat = this.latestChat?.isNewChat;
-    if (!this.isNewChat) {
-      this.getMessages();
-    }
-    if (this.isNewChat) {
-      let visitData = {
-        createdAt: this.latestChat?.createdAt,
-        visitId: this.visitId,
-      };
-      this.visits.push(visitData);
-    }
+    this.getMessages();
   }
   latestChat: any;
 
@@ -30,9 +19,12 @@ export class ChatContainerComponent implements OnInit {
   message = "";
   fromUuid = null;
   visits: any = [];
+  messageList: any;
   visitId: any;
   moment: any = moment;
-  isNewChat: boolean = false;
+  openMenu: boolean = false;
+  isOver = false;
+  readSentImg: any;
 
   constructor(private chatSvc: ChatService) {}
 
@@ -60,7 +52,6 @@ export class ChatContainerComponent implements OnInit {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
       next: (res: any) => {
         this.visits = res?.data;
-        console.log("this.visits1111: ", this.visits);
       },
     });
   }
@@ -71,45 +62,65 @@ export class ChatContainerComponent implements OnInit {
   }
 
   getMessages() {
-    if (!this.isNewChat) {
-      this.chatSvc
-        .getPatientMessages(
-          this.toUserId,
-          this.latestChat?.patientId,
-          null,
-          this.visitId
-        )
-        .subscribe({
-          next: (res: any) => {
-            this.visits = res?.data;
-          },
-        });
-    }
+    this.chatSvc
+      .getPatientMessages(
+        this.toUserId,
+        this.latestChat?.patientId,
+        this.latestChat?.fromUser,
+        this.visitId
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+          this.getPatientsVisits(this.latestChat?.patientId);
+        },
+      });
   }
 
   get toUserId() {
-    if (this.latestChat?.toUser === this.chatSvc?.user?.id) {
+    if (this.latestChat?.toUser === this.chatSvc?.user?.uuid) {
       return this.latestChat.fromUser;
-    } else if (this.latestChat?.fromUser === this.chatSvc?.user?.id) {
+    } else if (this.latestChat?.fromUser === this.chatSvc?.user?.uuid) {
       return this.latestChat?.toUser;
     } else {
       return null;
     }
   }
 
+  get patientName() {
+    return localStorage.patientName || "";
+  }
+
+  get readSentLabel() {
+    if (this.latestChat?.isRead) {
+      return "Read";
+    }
+    return "Sent";
+  }
+
+  get readSentIcon() {
+    if (this.latestChat?.isRead) {
+      return "assets/svgs/read.svg"
+    }
+    return "assets/svgs/sent-msg.svg"
+  }
+
+  clickMenu() {
+    this.openMenu = !this.openMenu;
+  }
+
   sendMessage() {
     if (this.message) {
       this.latestChat.latestMessage = this.message;
-      if (!this.isNewChat) {
-        this.latestChat.messages.unshift({
-          id: 1,
-          message: this.message,
-          me: true,
-        });
-      }
+
+      // this.latestChat.messages.unshift({
+      //   id: 1,
+      //   message: this.message,
+      //   me: true,
+      // });
       const payload = {
         visitId: this.latestChat?.visitId,
-        patientName: "",
+        patientName: this.patientName,
         hwName: this.latestChat?.hwName,
       };
       this.chatSvc
