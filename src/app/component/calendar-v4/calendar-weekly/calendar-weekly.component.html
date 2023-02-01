@@ -26,7 +26,7 @@
     <div class="weekdays first-half-row m-0 row">
       <div *ngFor="let day of weekDay" class="col p-0">
         <div
-          *ngIf="offSlot(day?.appointmenDate)"
+          *ngIf="offSlot(day?.date)"
           class="hours-off h-100 w-100 position-relative"
         ></div>
       </div>
@@ -37,7 +37,7 @@
       <div class="full-rows h-100 m-0 row">
         <div *ngFor="let day of weekDay" class="col p-0">
           <div *ngIf="slot(day?.date, time)" class="appointment-date w-100 click">
-            <div class="d-grid wrapper" (click)="handleClick(slot(day?.date, time))">
+            <div class="d-grid wrapper click" (click)="handleClick(slot(day?.date, time))">
               <div
                 class="type"
                 [class.active]="slot(day?.date, time)?.isCurrentDay"
@@ -62,14 +62,13 @@
                 </ng-container>
               </div>
               <div class="info d-flex">
-                <img src="assets/svgs/user-apnmnt.svg" />
+                <img src="{{ baseUrl + '/personimage/' + slot(day?.date, time)?.patientId}}"  class="profileImg" (error) ="onImgError($event)"  />
                 <div class="name">{{ slot(day?.date, time)?.patientName }}</div>
               </div>
             </div>
           </div>
-
-          <!-- hours off -->
-          <!-- <div
+            
+          <div
             *ngIf="offSlot(day?.date, time)"
             class="hours-off h-100 w-100 position-relative"
           >
@@ -88,7 +87,7 @@
             >
               Hours off
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>

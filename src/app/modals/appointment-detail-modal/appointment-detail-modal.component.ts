@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-appointment-detail-modal",
@@ -15,7 +16,7 @@ import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 export class AppointmentDetailModalComponent implements OnInit {
   @ViewChild("modalContent") modalContent: TemplateRef<any>;
   public modalRef = null;
-
+  baseUrl = environment.baseURL;
   @Input() modal: any;
 
   constructor(public modalSvc: NgbModal) {}
@@ -29,5 +30,9 @@ export class AppointmentDetailModalComponent implements OnInit {
       // centered: true,
     };
     this.modalRef = this.modalSvc.open(this.modalContent, options);
+  }
+  
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user-light-bg.svg';
   }
 }

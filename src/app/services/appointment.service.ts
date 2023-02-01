@@ -53,6 +53,12 @@ export class AppointmentService {
     );
   }
 
+  getFollowUpVisit(providerId) {
+    return this.http.get(
+      `${this.baseURL}/openmrs/getFollowUpVisit/${providerId}`
+    );
+  }
+
   rescheduleAppointment(payload) {
     return this.http.post(
       `${this.baseURL}/appointment/rescheduleAppointment`,

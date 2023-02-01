@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 class Appointment {
   id:number
   startTime: string
   endTime: string
   patientName: string
+  patientPic: string
   gender: string
   age: string
   healthWorker: string
@@ -28,20 +30,21 @@ class Appointment {
   styleUrls: ['./calendar-weekly.component.scss']
 })
 export class CalendarWeeklyComponent implements OnInit {
-  @Input() data: any;
+  @Input() data;
   @Input() selectedDate: any;
+  @Input() daysOff;
   @Output() openModal = new EventEmitter();
   timings: any = [];
   hoursOffSlotsObj = {};
-
+  baseUrl = environment.baseURL;
   weekDay = [
-    { day: 'SUN', date: 10, isCurrentDay: false, isDayOff: false },
-    { day: 'MON', date: 4, isCurrentDay: false, isDayOff: false },
-    { day: 'TUE', date: 5, isCurrentDay: false, isDayOff: false },
-    { day: 'WED', date: 6, isCurrentDay: false, isDayOff: false },
-    { day: 'THU', date: 7, isCurrentDay: false, isDayOff: false },
-    { day: 'FRI', date: 8, isCurrentDay: false, isDayOff: false },
-    { day: 'SAT', date: 9, isCurrentDay: false, isDayOff: false },
+    { day: 'SUN', date: 10, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'MON', date: 4, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'TUE', date: 5, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'WED', date: 6, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'THU', date: 7, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'FRI', date: 8, isCurrentDay: false, isDayOff: false, fullDate: ''},
+    { day: 'SAT', date: 9, isCurrentDay: false, isDayOff: false, fullDate: ''},
   ];
   availableSlots = [];
 
@@ -58,9 +61,10 @@ export class CalendarWeeklyComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes?.selectedDate?.currentValue.startOfMonth)
       this.setCalendar(changes?.selectedDate?.currentValue.startOfMonth, changes?.selectedDate?.currentValue.endOfMonth);
-    if (changes?.data?.currentValue) {
+    if (changes?.data?.currentValue)
       this.setAppointments();
-    }
+    if(changes?.daysOff?.currentValue)
+    this.daysOff = changes?.daysOff.currentValue;
   }
 
   setCalendar(start, end) {
@@ -78,13 +82,17 @@ export class CalendarWeeklyComponent implements OnInit {
       this.weekDay.forEach(day => {
         if (day.day === currentDay.format("ddd").toUpperCase()) {
           day.date = Number(currentDay.format("D"));
+          day.fullDate = currentDay;
           day.isCurrentDay = false;
+          day.isDayOff = false;
         }
       });
     })
     this.weekDay.forEach(day => {
       if (day.date === Number(moment().format("D")))
         day.isCurrentDay = true;
+      let isDayOff = this.daysOff?.find(day1 => day1 === moment(day.fullDate, 'YYYY-MM-DD HH:mm').format("DD/MM/YYYY"));
+      if(isDayOff) day.isDayOff = true;  
     });
   }
   /**
@@ -108,13 +116,14 @@ export class CalendarWeeklyComponent implements OnInit {
       appointment.startTime = d1?.slotTime.toLowerCase();
       appointment.endTime = moment(d1?.slotTime, "LT").add(d1.slotDuration, 'minutes').format('LT').toLocaleLowerCase();
       appointment.patientName = d1?.patientName;
-      appointment.gender = 'F';
-      appointment.age = '32';
+      appointment.patientPic = d1?.patientPic;
+      appointment.gender= d1?.patientGender;
+      appointment.age= d1?.patientAge;
       appointment.openMrsId = d1?.openMrsId;
-      appointment.healthWorker = d1?.hwUUID;
-      appointment.hwAge = '28';
-      appointment.hwGender = 'M';
-      appointment.type = 'appointment';
+      appointment.healthWorker = d1?.hwName;
+      appointment.hwAge =d1?.hwAge;
+      appointment.hwGender = d1?.hwGender;
+      appointment.type = d1?.type ? d1?.type : 'appointment';
       appointment.date = Number(moment(d1?.slotJsDate, 'YYYY-MM-DD HH:mm:ss').format("D"));
       appointment.patientId = d1?.patientId;
       appointment.visitId = d1?.visitUuid;
@@ -152,5 +161,9 @@ export class CalendarWeeklyComponent implements OnInit {
   handleClick(slot) {
     slot["modal"] = "details";
     this.openModal.emit(slot)
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
   }
 }

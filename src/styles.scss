@@ -212,6 +212,17 @@ body.font-lato td {
 .light-green {
   color: #0fd197;
 }
+
+.isDisabled {
+  pointer-events: none;
+  background: lightgray;
+}
+
+.profileImg {
+  width: 40px;
+  height: 41px;
+  border-radius: 50%;
+}
 /* Chatbot css*/
 
 .chatbot-backdrop {

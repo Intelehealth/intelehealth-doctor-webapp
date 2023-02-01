@@ -6,6 +6,7 @@ class Appointment {
   startTime: string
   endTime: string
   patientName: string
+  patientPic: string
   gender: string
   age: string
   healthWorker: string
@@ -14,12 +15,14 @@ class Appointment {
   type: string
   date: number
   month: number
+  monthName: string;
   openMrsId: string
   patientId: string
   visitId:string;
   createdAt: Date
   appointmentDate: Date
   speciality: string
+  year: string
 }
 
 @Component({
@@ -30,6 +33,7 @@ class Appointment {
 export class CalendarMonthlyComponent implements OnInit {
   @Input() data: any;
   @Input() selectedDate: any;
+  @Input() daysOff;
   @Output() openModal = new EventEmitter();
   calendar: any = [];
   hoursOffSlotsObj = {};
@@ -44,48 +48,7 @@ export class CalendarMonthlyComponent implements OnInit {
     { day: 'SAT', date: 9, isCurrentDay: false, isDayOff: false },
   ];
 
-  availableSlots = [
-    {
-      startTime: '9:00 am',
-      endTime: '9:30 am',
-      patientName: 'Muskan Kala',
-      gender: 'F',
-      age: '32',
-      healthWorker: 'Kshitij Kaushik',
-      hwAge: '28',
-      hwGender: 'M',
-      type: 'followUp',
-      isCurrentDay: true,
-      date: 2,
-      month: 11
-    },
-    {
-      startTime: '11:00 am',
-      endTime: '11:30 am',
-      patientName: 'Muskan Kala',
-      gender: 'F',
-      age: '32',
-      healthWorker: 'Kshitij Kaushik',
-      hwAge: '28',
-      hwGender: 'M',
-      date: 3,
-      month: 11,
-      type: 'appointment'
-    },
-    {
-      startTime: '1:00 pm',
-      endTime: '1:30 am',
-      patientName: 'Muskan Kala',
-      gender: 'F',
-      age: '32',
-      healthWorker: 'Kshitij Kaushik',
-      hwAge: '28',
-      hwGender: 'M',
-      date: 3,
-      month: 11,
-      type: 'appointment'
-    }
-  ];
+  availableSlots = [];
 
   hoursOffSlots = [];
 
@@ -97,18 +60,20 @@ export class CalendarMonthlyComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes?.selectedDate?.currentValue.startOfMonth )
+    if(changes?.selectedDate?.currentValue.startOfMonth)
      this.setCalendar(changes?.selectedDate?.currentValue.startOfMonth);
      if (changes?.data?.currentValue) {
       this.setAppointments();
-    }
+    }  
+    if(changes?.daysOff?.currentValue) 
+    this.daysOff = changes?.daysOff?.currentValue;
   }
   
   
   /**
    * generates a calendar dynamically
    */
-  setCalendar(selectedDay?, offWeekDays = []) {
+  setCalendar(selectedDay?, offWeekDays = this.daysOff) {
     const calendar = [];
     const today = moment(selectedDay);
     const startDay = today.clone().startOf('month').startOf('isoWeek');
@@ -119,7 +84,7 @@ export class CalendarMonthlyComponent implements OnInit {
       calendar.push({
         days: Array(7).fill(0).map(() => {
           let newDate: any = date.add(1, 'day').clone();
-          newDate.isWeekDayOff = !!offWeekDays.includes(newDate.format('ddd'));
+          newDate.isWeekDayOff = offWeekDays?.includes(newDate.format("DD/MM/YYYY"));
           newDate.isToday = this.today(newDate);
           return newDate;
         }),
@@ -136,15 +101,18 @@ export class CalendarMonthlyComponent implements OnInit {
      appointment.startTime = d1?.slotTime.toLowerCase();
      appointment.endTime = moment(d1?.slotTime,"LT").add(d1.slotDuration,'minutes').format('LT').toLocaleLowerCase();
      appointment.patientName = d1?.patientName;
-     appointment.gender= 'F';
-     appointment.age= '32';
-     appointment.healthWorker = d1?.hwUUID;
+     appointment.patientPic = d1?.patientPic;
+     appointment.gender= d1?.patientGender;
+     appointment.age= d1?.patientAge;
      appointment.openMrsId = d1?.openMrsId;
-     appointment.hwAge ='28';
-     appointment.hwGender = 'M';
-     appointment.type = 'appointment';
+     appointment.healthWorker = d1?.hwName;
+     appointment.hwAge =d1?.hwAge;
+     appointment.hwGender = d1?.hwGender;
+     appointment.type = d1?.type ? d1?.type :'appointment';
      appointment.date = Number(moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("D"));
      appointment.month = Number(moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("M"));
+     appointment.monthName = moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("MMMM");
+     appointment.year = moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("Y");
      appointment.patientId = d1?.patientId;
      appointment.visitId = d1?.visitUuid;
      appointment.createdAt = d1?.createdAt;

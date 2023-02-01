@@ -79,7 +79,7 @@
         </div>
 
         <div class="d-flex justify-content-center mt-4">
-          <div class="btns right-btn click" [class.isDisabled]="activeSlot === null" (click)="modal.rightBtnOnClick(activeSlot,todaysDate);close()">
+          <div class="btns click" [ngClass]="activeSlot === null ? 'isDisabled' : 'right-btn'" (click)="modal.rightBtnOnClick(activeSlot,todaysDate);close()">
             {{ modal?.rightBtnText }}
           </div>
         </div>
