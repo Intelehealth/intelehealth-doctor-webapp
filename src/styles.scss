@@ -215,6 +215,11 @@ body.font-lato td {
 .light-green {
   color: #0FD197;
 }
+
+.isDisabled {
+  pointer-events: none;
+  background: lightgray;
+}
 /* Chatbot css*/
 
 .chatbot-backdrop {

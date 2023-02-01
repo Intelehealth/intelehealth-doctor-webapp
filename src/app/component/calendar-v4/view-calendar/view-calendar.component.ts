@@ -45,12 +45,12 @@ export class ViewCalendarComponent implements OnInit {
       "Are you sure you want to reschedule muskan kala’s appointment from ",
     leftBtnText: "Go Back",
     leftBtnOnClick: () => {
-       this.openRescheduleTimeSlots();
-     },
+      this.openRescheduleTimeSlots();
+    },
     rightBtnText: "Confirm",
     rightBtnOnClick: () => {
       this.reschdule();
-     },
+    },
     windowClass: "reschdule-appointment-height",
     circleIconPath: "assets/svgs/reschdule-the-appointment.svg",
     timings: {
@@ -66,13 +66,13 @@ export class ViewCalendarComponent implements OnInit {
     subText:
       "Are you sure you want to cancel your appointment on 5 August at 10:00 am",
     leftBtnText: "Go Back",
-    leftBtnOnClick: () => { 
+    leftBtnOnClick: () => {
       this.openModal(this.selectedSlot)
     },
     rightBtnText: "Cancel",
     rightBtnOnClick: () => {
       this.cancel();
-     },
+    },
     windowClass: "shared-successfull",
     circleIconPath: "assets/svgs/cancel-the-appointment.svg",
   };
@@ -80,7 +80,7 @@ export class ViewCalendarComponent implements OnInit {
   appointmentDetailModal: any = {
     AppointmentOn: "Starts in 3 days",
     leftBtnText: "Cancel",
-    leftBtnOnClick: () => { 
+    leftBtnOnClick: () => {
       this.confirmCancelAppointment()
     },
     rightBtnText: "Reschedule",
@@ -112,8 +112,8 @@ export class ViewCalendarComponent implements OnInit {
     afterTitle: "Afternoon",
     eveningTitle: "Evening",
     rightBtnText: "Reschedule",
-    rightBtnOnClick: (activeSlot, date) => { 
-            this.confirmRescheduleTimeSlots(activeSlot, date);
+    rightBtnOnClick: (activeSlot, date) => {
+      this.confirmRescheduleTimeSlots(activeSlot, date);
     },
   };
 
@@ -124,7 +124,9 @@ export class ViewCalendarComponent implements OnInit {
     leftBtnText: "Go Back",
     leftBtnOnClick: () => { },
     rightBtnText: "Confirm",
-    rightBtnOnClick: () => { },
+    rightBtnOnClick: () => {
+      this.saveHoursOff();
+    },
     windowClass: "mark-as-hours-off-height",
     circleIconPath: "assets/svgs/cannot-share-prescription.svg",
   };
@@ -136,20 +138,28 @@ export class ViewCalendarComponent implements OnInit {
     leftBtnText: "Go Back",
     leftBtnOnClick: () => { },
     rightBtnText: "Confirm",
-    rightBtnOnClick: () => { },
+    rightBtnOnClick: () => {
+      this.saveDaysoff();
+    },
     windowClass: "mark-as-days-off-height",
     circleIconPath: "assets/svgs/cannot-share-prescription.svg",
   };
 
   timeOffModal: any = {
     mainText: "5 August, 2022",
-    appointmentTime: "3:00 pm - 3:30 pm 4:00 pm - 4:30 pm",
-    FollowUpTime: "3:00 pm",
+    appointmentTime: [],
+    FollowUpTime: [],
     isShowFromAndToFields: false,
     leftBtnText: "Cancel",
     leftBtnOnClick: () => { },
     rightBtnText: "Continue",
-    rightBtnOnClick: () => { },
+    rightBtnOnClick: (data) => {
+      if (data.selectedValue === "dayOff") {
+        this.confirmMarkAsDaysOff();
+      } else {
+        this.confirmMarkAsHoursOff(data.selectedFrom, data.selectedToTime);
+      }
+    },
   };
 
   timeOffFromAndToModal: any = {
@@ -168,6 +178,8 @@ export class ViewCalendarComponent implements OnInit {
   dates = { startOfMonth: "", endOfMonth: "" }
   appointments = [];
   selectedSlot;
+  daysOff = [];
+  drScheduleForMonth;
   constructor(private appointmentService: AppointmentService,
     private visitService: VisitService,
     private toastr: ToastrService) { }
@@ -194,6 +206,7 @@ export class ViewCalendarComponent implements OnInit {
   getData() {
     this.dates = this.getDates(this.view);
     this.getDrSlots(this.dates.startOfMonth, this.dates.endOfMonth);
+    this.getDrSchedule();
   }
 
   getDates(view) {
@@ -220,22 +233,26 @@ export class ViewCalendarComponent implements OnInit {
       });
   }
 
+  getDrSchedule(
+    year = moment(this.dates.startOfMonth).format("YYYY"),
+    month = moment(this.dates.endOfMonth).format("MMMM")
+  ) {
+    this.appointmentService
+      .getUserAppoitment(this.userId, year, month)
+      .subscribe({
+        next: (res: any) => {
+          if (res && res.data) {
+            this.drScheduleForMonth = res.data;
+            this.daysOff = res.data.daysOff;
+          } else {
+            this.daysOff = [];
+          }
+        }
+      });
+  }
 
   get userId() {
     return JSON.parse(localStorage.user).uuid;
-  }
-  /**
-   * @todo remove this ngAfterviewInit while implementaion, added just to test that modals are working fine
-   */
-  ngAfterViewInit() {
-    // this.appointmentDetail.openAppointmentModal();
-    // this.editEditPrescription.openAppointmentModal();
-    // this.providePrescription.openAppointmentModal();
-    // this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
-    // this.markAsHoursOff.openModal();
-    // this.markAsDaysOff.openModal();
-    // this.timeOff.openTimeOffModal();
-    // this.timeOffFromAndTo.openTimeOffModal();
   }
 
   openModal(slot) {
@@ -281,64 +298,64 @@ export class ViewCalendarComponent implements OnInit {
   }
 
   openRescheduleTimeSlots() {
-    // this.visitService
-    // .fetchVisitDetails(
-    //   this.selectedSlot.visitId,
-    //   "custom:(uuid,encounters:(display,uuid,display))"
-    // )
-    // .subscribe((res) => {
-    //   const len = res.encounters.filter((e) => {
-    //     return (
-    //       e.display.includes("Patient Exit Survey") ||
-    //       e.display.includes("Visit Complete")
-    //     );
-    //   }).length;
-    //   const isCompleted = Boolean(len);
-    //   if (isCompleted) {
-    //     const message = `Visit is already completed, it can't be rescheduled.`;
-    //     this.toastr.error(message);
-    //   } else {
-    //     this.rescheduleTimeSlotsModal["data"] = this.selectedSlot;
-    //     this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
-    //   }
-    // });
-    this.rescheduleTimeSlotsModal["data"] = this.selectedSlot;
-    this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
+    this.visitService
+      .fetchVisitDetails(
+        this.selectedSlot.visitId,
+        "custom:(uuid,encounters:(display,uuid,display))"
+      )
+      .subscribe((res) => {
+        const len = res.encounters.filter((e) => {
+          return (
+            e.display.includes("Patient Exit Survey") ||
+            e.display.includes("Visit Complete")
+          );
+        }).length;
+        const isCompleted = Boolean(len);
+        if (isCompleted) {
+          const message = `Visit is already completed, it can't be rescheduled.`;
+          this.toastr.error(message);
+        } else {
+          this.rescheduleTimeSlotsModal["data"] = this.selectedSlot;
+          this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
+        }
+      });
   }
 
   confirmRescheduleTimeSlots(slotTime, date) {
     this.reschduleTheAppointmentModal.subText = this.reschduleTheAppointmentModal.subText.replace('muskan kala', this.selectedSlot?.patientName);
     this.reschduleTheAppointmentModal.timings = {
-      fromDate: this.selectedSlot.date,
+      fromDate: this.selectedSlot.appointmentDate,
       fromTime: this.selectedSlot.startTime,
       toDate: date,
       toTime: slotTime,
     },
-    this.reschduleAppointment.openModal()
+      this.reschduleAppointment.openModal()
   }
 
   reschdule() {
-    // const payload = {
-    // };
-
-    // this.appointmentService
-    //   .rescheduleAppointment(payload)
-    //   .subscribe((res: any) => {
-    //     const message = res.message || "Appointment rescheduled successfully!";
-    //     this.toastr.success(message);
-    //   });
+    let apt = this.appointments.find(apt => apt.id === this.selectedSlot.id);
+    apt.appointmentId = apt.id;
+    apt.slotDate = moment(this.reschduleTheAppointmentModal.timings.toDate, "YYYY-MM-DD").format('DD/MM/YYYY');
+    apt.slotTime = this.reschduleTheAppointmentModal.timings.toTime;
+    this.appointmentService
+      .rescheduleAppointment(apt)
+      .subscribe((res: any) => {
+        this.getDrSlots(this.dates.startOfMonth, this.dates.endOfMonth);
+        const message = res.message || "Appointment rescheduled successfully!";
+        this.toastr.success(message);
+      });
   }
 
   confirmCancelAppointment() {
-    let date = moment(this.selectedSlot?.appointmentDate,'YYYY-MM-DD HH:mm:ss').format('D MMMM');
-    this.cancelAppointmentModal.subText =  this.cancelAppointmentModal.subText.replace('5 August', date).replace('10:00 am', this.selectedSlot?.startTime);
+    let date = moment(this.selectedSlot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format('D MMMM');
+    this.cancelAppointmentModal.subText = this.cancelAppointmentModal.subText.replace('5 August', date).replace('10:00 am', this.selectedSlot?.startTime);
     this.cancelAppointment.openModal();
   }
 
-  cancel() {
+  cancel(slot?) {
     const payload = {
-      id: this.selectedSlot.id,
-      visitUuid: this.selectedSlot.visitId,
+      id: slot ? slot.id : this.selectedSlot.id,
+      visitUuid: slot ? slot.visitId : this.selectedSlot.visitId,
       hwUUID: this.userId,
     };
     this.appointmentService
@@ -346,12 +363,66 @@ export class ViewCalendarComponent implements OnInit {
       .subscribe((res: any) => {
         const message =
           res.message || "Appointment cancelled successfully!";
-          this.toastr.success(message);
+        this.toastr.success(message);
+        this.getDrSlots(this.dates.startOfMonth, this.dates.endOfMonth);
       });
   }
 
-  openMonthlyModal() {
+  openMonthlyModal(slot) {
+    this.timeOffModal.appointmentTime = [];
+    this.selectedSlot = slot;
+    slot.slots.forEach(slot => {
+      let value = slot.startTime + "-" + slot.endTime
+      this.timeOffModal.appointmentTime.push(value);
+    });
+    this.timeOffModal.mainText = moment(slot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format("DD MMM, YYYY")
     this.timeOff.openTimeOffModal();
+  }
+
+  confirmMarkAsDaysOff() {
+    this.markAsDaysOffModal.subText = this.markAsDaysOffModal.subText.replace('5 August, 2022', moment(this.selectedSlot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format("DD MMM, YYYY"));
+    this.markAsDaysOff.openModal();
+  }
+
+  confirmMarkAsHoursOff(startTime, endTime) {
+    this.markAsHoursOffModal.subText = this.markAsHoursOffModal.subText.replace('5 August, 2022', moment(this.selectedSlot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format("DD MMM, YYYY"))
+      .replace('3:00 pm', startTime).replace('7:00 pm', endTime);
+    this.selectedSlot['startTimeforHoursOff'] = startTime;
+    this.selectedSlot['endTimeforHoursOff'] = endTime;
+    this.markAsHoursOff.openModal();
+  }
+
+  saveDaysoff() {
+    if (this.daysOff?.length > 0 && !this.daysOff?.includes(moment(this.selectedSlot.appointmentDate).format("DD/MM/YYYY"))) {
+      this.daysOff?.push(moment(this.selectedSlot.appointmentDate).format("DD/MM/YYYY"));
+    } else {
+      this.daysOff = [];
+      this.daysOff?.push(moment(this.selectedSlot.appointmentDate).format("DD/MM/YYYY"));
+    }
+    let body = {
+      userUuid: this.userId,
+      daysOff: this.daysOff,
+      month: this.selectedSlot.monthName,
+      year: this.selectedSlot.year
+    };
+    this.appointmentService.updateDaysOff(body).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.selectedSlot.slots.forEach((slot) => {
+            this.cancel(slot);
+          });
+        }
+      },
+    });
+  }
+
+  saveHoursOff() {
+    this.selectedSlot.slots.forEach((slot) => {
+      if (moment(slot.startTime, "LT").isBetween(moment(this.selectedSlot.startTimeforHoursOff, "LT"), moment(this.selectedSlot.endTimeforHoursOff, "LT")) ||
+        moment(slot.endTime, "LT").isBetween(moment(this.selectedSlot.startTimeforHoursOff, "LT"), moment(this.selectedSlot.endTimeforHoursOff, "LT"))) {
+        this.cancel(slot);
+      }
+    });
   }
 
   getVisitStatus(status: string) {

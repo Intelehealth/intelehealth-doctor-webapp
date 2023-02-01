@@ -65,6 +65,7 @@ export class SetupCalendarV4Component implements OnInit {
   public init = new Date();
   public resetModel = new Date(0);
   public model = []; daysOff = [];
+  selectedMonth;
   @ViewChild('picker', { static: true }) _picker: MatDatepicker<Date>;
 
   constructor(private appointmentService: AppointmentService) { }
@@ -87,8 +88,18 @@ export class SetupCalendarV4Component implements OnInit {
 
   onCheckboxChange(e, days) {
     if (!e.target.checked) {
-      let element = this.weekDaysList.find((itm) => itm === days.name);
-      this.weekDaysList.splice(this.weekDaysList.indexOf(element), 1);
+      if (days.name === "Weekdays") {
+        for (let i = 0; i <= 4; i++) {
+          this.weekDaysList.splice(this.weekDaysList.indexOf(this.daysList[i].name), 1);
+        }
+      } else if (days.name === "Weekends") {
+        for (let i = 5; i <= 6; i++) {
+          this.weekDaysList.splice(this.weekDaysList.indexOf(this.daysList[i].name), 1);
+        }
+      } else {
+        let element = this.weekDaysList.find((itm) => itm === days.name);
+        this.weekDaysList.splice(this.weekDaysList.indexOf(element), 1);
+      }
       return;
     }
     if (days.name === "Weekdays") {
@@ -134,7 +145,7 @@ export class SetupCalendarV4Component implements OnInit {
             this.months.push({ name: this.monthNames[(new Date()).getMonth() + this.months.length], year: new Date().getFullYear() });
           }
           this.getSchedule(this.months[0].year, this.months[0].name);
-
+          this.selectedMonth = {name : this.months[0].name, year : this.months[0].year}
         },
       });
   }
@@ -164,7 +175,9 @@ export class SetupCalendarV4Component implements OnInit {
     this.data = [];
     this.startDate = null;
     this.endDate = null;
+    this.daysOff = [];
     this.getSchedule(month.year, month.name);
+    this.selectedMonth = month;
   }
 
   save() {
@@ -203,7 +216,9 @@ export class SetupCalendarV4Component implements OnInit {
 
     let body = {
       userUuid: this.userId,
-      daysOff: array3
+      daysOff: array3,
+      month: this.selectedMonth.name,
+      year: this.selectedMonth.year
     }
     this.appointmentService.updateDaysOff(body).subscribe({
       next: (res: any) => {
@@ -253,7 +268,7 @@ export class SetupCalendarV4Component implements OnInit {
 
   private getDaysOff(daysOff) {
     this.daysOff = [];
-    daysOff.forEach(arr => {
+    daysOff?.forEach(arr => {
       this.daysOff.push(moment(arr, "DD/MM/YYYY").format("YYYY-MM-DD HH:mm:ss"));
     });
   }
@@ -391,10 +406,20 @@ export class SetupCalendarV4Component implements OnInit {
   }
 
   public remove(index: number): void {
-    this.daysOff.splice(index, 1)
+    this.daysOff.splice(index, 1);
+    let daysOff = [];
+    if(this.daysOff[0].includes("-")) {
+      this.daysOff?.forEach(arr => {
+        daysOff.push(moment(arr, ("YYYY-MM-DD HH:mm:ss")).format("DD/MM/YYYY"));
+      });
+    } else {
+      daysOff = this.daysOff;
+    }
     let body = {
       userUuid: this.userId,
-      daysOff: this.daysOff
+      daysOff: daysOff,
+      month: this.selectedMonth.name,
+      year: this.selectedMonth.year
     }
     this.appointmentService.updateDaysOff(body).subscribe({
       next: (res: any) => {
