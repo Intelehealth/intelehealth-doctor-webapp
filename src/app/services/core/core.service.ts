@@ -64,8 +64,8 @@ export class CoreService {
     return dialogRef.afterClosed();
   }
 
-  openSharePrescriptionErrorModal(): Observable<any> {
-    const dialogRef = this.dialog.open(SharePrescriptionErrorComponent, { panelClass: 'modal-md' });
+  openSharePrescriptionErrorModal(data: { msg:string, confirmBtnText: string }): Observable<any> {
+    const dialogRef = this.dialog.open(SharePrescriptionErrorComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
 }

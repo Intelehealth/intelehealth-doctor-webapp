@@ -446,6 +446,10 @@ textarea.form-control {
   color: #FFFFFF;
 }
 
+.blue-btn:disabled {
+  opacity: 0.5;
+}
+
 .table th, .table td {
   vertical-align: middle;
   white-space: nowrap;

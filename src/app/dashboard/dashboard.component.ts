@@ -83,55 +83,47 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.visitService.getVisits({ includeInactive: false }).subscribe(
       (response: any) => {
         let visits = response.results;
+        visits.forEach((visit: any) => {
+          // Check if visit has encounters
+          if (visit.encounters.length > 0) {
+            /*
+              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
+              If no attributes, consider it as General Physician
+            */
+            if (visit.attributes.length) {
+              let flag = 0;
+              visit.attributes.forEach((visitAttr: any) => {
+                if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+                  // If specialization matches process visit
+                  if (visitAttr.value == this.specialization) {
+                    this.processVisit(visit);
+                  }
+                }
+              });
+            } else if(this.specialization == 'General Physician') {
+              this.processVisit(visit);
+            }
+          }
+        });
 
         // Check appointments
         this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
-          visits.forEach((visit: any) => {
-            // Check if visit has encounters
-            if (visit.encounters.length > 0) {
-              /*
-                Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
-                If no attributes, consider it as General Physician
-              */
-              if (visit.attributes.length) {
-                let flag = 0;
-                visit.attributes.forEach((visitAttr: any) => {
-                  if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                    // If specialization matches process visit
-                    if (visitAttr.value == this.specialization) {
-                      this.processVisit(visit);
-                    }
-                  }
-                });
-              } else if(this.specialization == 'General Physician') {
-                this.processVisit(visit);
+          appointmentsdata.forEach(appointment => {
+            if (appointment.status == 'booked') {
+              let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
+              if (matchedVisit) {
+                matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
               }
-
-              appointmentsdata.forEach(appointment => {
-                if (appointment.status == 'booked') {
-                  let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-                  if (matchedVisit) {
-                    matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                  }
-                  appointment.visit_info = matchedVisit;
-                  appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                  this.appointments.push(appointment);
-                }
-              });
-              this.dataSource1 = new MatTableDataSource(this.appointments);
-              this.dataSource1.paginator = this.appointmentPaginator;
+              appointment.visit_info = matchedVisit;
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              this.appointments.push(appointment);
             }
           });
+          this.dataSource1 = new MatTableDataSource(this.appointments);
+          this.dataSource1.paginator = this.appointmentPaginator;
         });
-
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
-        this.dataSource2.paginator = this.priorityPaginator;
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
-        this.dataSource3.paginator = this.awaitingPaginator;
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
-        this.dataSource4.paginator = this.inprogressPaginator;
       }
     );
   }
@@ -154,6 +146,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
       this.awaitingVisits.push(visit);
     }
+
+    this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+    this.dataSource2.paginator = this.priorityPaginator;
+    this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+    this.dataSource3.paginator = this.awaitingPaginator;
+    this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+    this.dataSource4.paginator = this.inprogressPaginator;
   }
 
   // getVisitCounts(specialization: string) {

@@ -202,7 +202,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsPosition: POSITION.bottomCenter,
   bgsSize: 40,
   bgsType: SPINNER.fadingCircle, // background spinner type
-  fgsColor: "#FFFFFF",
+  fgsColor: "#FFFFFF", //#2E1E91
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness

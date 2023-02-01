@@ -42,6 +42,8 @@ export class VisitSummaryComponent implements OnInit {
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
+  conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
+  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 
   baseURL = environment.baseURL;
   additionalDocs: any = [];
@@ -51,6 +53,7 @@ export class VisitSummaryComponent implements OnInit {
   advices: any = [];
   additionalInstructions: any = [];
   tests: any = [];
+  referrals: any = [];
 
   specializations: any[] = [
     {
@@ -162,6 +165,7 @@ export class VisitSummaryComponent implements OnInit {
   advicesList: any = [];
   testsList: any = [];
 
+  visitCompleted: any = false;
   visitNotePresent: any = false;
   isVisitNoteProvider: boolean = false;
   referSpecialityForm: FormGroup;
@@ -174,6 +178,7 @@ export class VisitSummaryComponent implements OnInit {
   addMoreAdditionalInstruction: boolean = true;
   addMoreAdvice: boolean = true;
   addMoreTest: boolean = true;
+  addMoreReferral: boolean = true;
 
   patientInteractionForm: FormGroup;
   diagnosisForm: FormGroup;
@@ -182,6 +187,8 @@ export class VisitSummaryComponent implements OnInit {
   addAdditionalInstructionForm: FormGroup;
   addAdviceForm: FormGroup;
   addTestForm: FormGroup;
+  addReferralForm: FormGroup;
+  followUpForm: FormGroup;
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -248,6 +255,18 @@ export class VisitSummaryComponent implements OnInit {
       this.addTestForm = new FormGroup({
         test: new FormControl(null, [Validators.required])
       });
+
+      this.addReferralForm = new FormGroup({
+        speciality: new FormControl(null, [Validators.required]),
+        remark: new FormControl(null, [Validators.required]),
+      });
+
+      this.followUpForm = new FormGroup({
+        present: new FormControl(false, [Validators.required]),
+        wantFollowUp: new FormControl('No', [Validators.required]),
+        followUpDate: new FormControl(null),
+        followUpReason: new FormControl(null)
+      });
   }
 
   ngOnInit(): void {
@@ -283,6 +302,16 @@ export class VisitSummaryComponent implements OnInit {
         this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
       }
     });
+
+    this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
+      if (val == 'Yes') {
+        this.followUpForm.get('followUpDate').setValidators(Validators.required);
+        this.followUpForm.get('followUpDate').updateValueAndValidity();
+      } else {
+        this.diagnosisForm.get('followUpDate').clearValidators();
+        this.diagnosisForm.get('followUpDate').updateValueAndValidity();
+      }
+    });
   }
 
   getVisit(uuid: string) {
@@ -296,6 +325,8 @@ export class VisitSummaryComponent implements OnInit {
             this.clinicName = visit.location.display;
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, 'Visit Note');
+            // check if visit complete exists for this visit
+            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
             // check if visit note provider and logged in provider are same
             if (this.visitNotePresent) {
               this.visitNotePresent.encounterProviders.forEach((p: any) => {
@@ -312,6 +343,8 @@ export class VisitSummaryComponent implements OnInit {
               this.checkIfAdvicePresent();
               this.getTestsList();
               this.checkIfTestPresent();
+              this.checkIfReferralPresent();
+              this.checkIfFollowUpPresent();
             }
             this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
@@ -387,9 +420,9 @@ export class VisitSummaryComponent implements OnInit {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint = obs.value.split('►<b>');
+            const currentComplaint = obs.value.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
-              if (currentComplaint[i]) {
+              if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
                 if (!obs1[0].match('Associated symptoms')) {
                   this.cheifComplaints.push(obs1[0]);
@@ -401,7 +434,7 @@ export class VisitSummaryComponent implements OnInit {
                   obj1.title = 'Associated symptoms';
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
-                    if (splitByBr[j].trim()) {
+                    if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
                       obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1] });
                     }
                   }
@@ -411,7 +444,7 @@ export class VisitSummaryComponent implements OnInit {
                   obj1.title = splitByBr[0].replace('</b>:', '');
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
-                    if (splitByBr[k].trim()) {
+                    if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
                       const splitByDash = splitByBr[k].split('-');
                       obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
                     }
@@ -495,7 +528,7 @@ export class VisitSummaryComponent implements OnInit {
               if (familyHistory[i]) {
                 const splitByColon = familyHistory[i].split(':');
                 const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1].replace('.','').trim() });
+                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
               }
             }
             this.patientHistoryData.push(obj1);
@@ -678,7 +711,7 @@ export class VisitSummaryComponent implements OnInit {
 
   startVisitNote() {
     const json = {
-      patient: this.patient.uuid,
+      patient: this.visit.patient.uuid,
       encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79", // Visit Note encounter
       encounterProviders: [
         {
@@ -949,17 +982,17 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   addTest() {
-    if (this.addAdviceForm.invalid) {
+    if (this.addTestForm.invalid) {
       return;
     }
     this.encounterService.postObs({
       concept: this.conceptTest,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: this.addAdviceForm.value.test,
+      value: this.addTestForm.value.test,
       encounter: this.visitNotePresent.uuid,
     }).subscribe(response => {
-      this.tests.push({ uuid: response.uuid, value: this.addAdviceForm.value.test });
+      this.tests.push({ uuid: response.uuid, value: this.addTestForm.value.test });
       this.addTestForm.reset();
     });
   }
@@ -970,6 +1003,170 @@ export class VisitSummaryComponent implements OnInit {
     });
   }
 
+  toggleReferral() {
+    this.addMoreReferral = !this.addMoreReferral;
+    this.addReferralForm.reset();
+  }
 
+  checkIfReferralPresent() {
+    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
+    .subscribe((response: any) => {
+      response.results.forEach((obs: any) => {
+        if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+          this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark:  obs.value.split(':')[1].trim() });
+        }
+      });
+    });
+  }
+
+  addReferral() {
+    if (this.addReferralForm.invalid) {
+      return;
+    }
+    this.encounterService.postObs({
+      concept: this.conceptReferral,
+      person: this.visit.patient.uuid,
+      obsDatetime: new Date(),
+      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.remark}`,
+      encounter: this.visitNotePresent.uuid,
+    }).subscribe(response => {
+      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, remark: this.addReferralForm.value.remark });
+      this.addReferralForm.reset();
+    });
+  }
+
+  deleteReferral(index: number, uuid: string) {
+    this.diagnosisService.deleteObs(uuid).subscribe(() => {
+      this.referrals.splice(index, 1);
+    });
+  }
+
+  checkIfFollowUpPresent() {
+    this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
+      response.results.forEach((obs: any) => {
+        if (obs.encounter.visit.uuid === this.visit.uuid) {
+          let followUpDate = moment(obs.value.split(', Remark: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD');
+          let followUpReason = (obs.value.split(', Remark: ')[1])? obs.value.split(', Remark: ')[1] : null ;
+          this.followUpForm.patchValue({
+            present: true,
+            wantFollowUp: 'Yes',
+            followUpDate,
+            followUpReason
+          });
+        }
+      });
+    });
+  }
+
+  saveFollowUp() {
+    if (this.followUpForm.invalid || !this.isVisitNoteProvider) {
+      return;
+    }
+    this.encounterService.postObs({
+      concept: this.conceptFollow,
+      person: this.visit.patient.uuid,
+      obsDatetime: new Date(),
+      value: (this.followUpForm.value.followUpReason) ? `${this.followUpForm.value.followUpDate}, Remark: ${this.followUpForm.value.followUpReason}`: this.followUpForm.value.followUpDate,
+      encounter: this.visitNotePresent.uuid
+    }).subscribe((res: any) => {
+      if (res) {
+        this.followUpForm.patchValue({ present: true });
+      }
+    });
+  }
+
+  sharePrescription() {
+    this.coreService.openSharePrescriptionConfirmModal().subscribe((res: any) =>{
+      if (res) {
+        if (this.isVisitNoteProvider) {
+          if (this.provider.attributes.length) {
+            if (navigator.onLine) {
+              this.encounterService.postEncounter({
+                patient: this.visit.patient.uuid,
+                encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e", //visit complete encounter type uuid
+                encounterProviders: [
+                  {
+                    provider: this.provider.uuid,
+                    encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+                  },
+                ],
+                visit: this.visit.uuid,
+                encounterDatetime: new Date(Date.now() - 30000),
+                obs: [
+                  {
+                    concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e", // Doctor details concept uuid
+                    value: JSON.stringify(this.getDoctorDetails()),
+                  },
+                ]
+              }).subscribe((post) => {
+                this.visitCompleted = true;
+                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                  if (result == 'view') {
+                    // Open visit summary modal here....
+
+                  } else if(result == 'dashboard') {
+                    this.router.navigate(['/dashboard']);
+                  }
+                });
+              });
+            } else {
+              this.coreService.openSharePrescriptionErrorModal({ msg:'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again'}).subscribe((c: any) =>{
+                if (c) {
+
+                }
+              });
+            }
+
+          } else {
+            this.coreService.openSharePrescriptionErrorModal({ msg:'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile'}).subscribe((c: any) =>{
+              if (c) {
+                this.router.navigate(['/dashboard/profile']);
+              }
+            });
+          }
+        } else {
+          this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard'}).subscribe((c: any) =>{
+            if (c) {
+              this.router.navigate(['/dashboard']);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  getDoctorDetails() {
+    let d: any = {};
+    let attrs: string[] = [
+      'qualification',
+      'fontOfSign',
+      'whatsapp',
+      'registrationNumber',
+      'consultationLanguage',
+      'typeOfProfession',
+      'address',
+      'workExperience',
+      'researchExperience',
+      'textOfSign',
+      'specialization',
+      'phoneNumber',
+      'countryCode',
+      'emailId',
+      'workExperienceDetails',
+      'signatureType',
+      'signature'
+    ];
+    d.name = this.provider.person.display;
+    d.uuid = this.provider.uuid;
+    attrs.forEach((attr: any) => {
+      this.provider.attributes.forEach((pattr: any) => {
+        if (pattr.attributeType.display == attr && !pattr.voided) {
+          d[attr] = pattr.value;
+          return;
+        }
+      });
+    });
+    return d;
+  }
 
 }
