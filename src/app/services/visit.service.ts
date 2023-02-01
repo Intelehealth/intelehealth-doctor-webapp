@@ -59,6 +59,15 @@ export class VisitService {
     return this.http.get(url);
   }
 
+  getVisitDetails(
+    uuid,
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,person:(display,gender,age),attributes))),patient:(uuid,identifiers:(identifier),person:(display,gender,age)))"
+  ): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url);
+  }
+
   getAttribute(visitId): Observable<any> {
     const url = `${this.baseURL}/visit/${visitId}/attribute`;
     return this.http.get(url);

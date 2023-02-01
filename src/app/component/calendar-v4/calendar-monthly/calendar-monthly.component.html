@@ -45,7 +45,12 @@
               </div>
               <div class="slot-column d-grid">
                 <div *ngFor="let slot of slot(day)?.slots" class="timings">
-                  {{ slot.startTime }} - {{ slot.endTime }}
+                  <div *ngIf="slot.type === 'appointment'">
+                    {{ slot.startTime }} - {{ slot.endTime }}
+                  </div>
+                  <div *ngIf="slot.type === 'followUp'">
+                    {{ slot.startTime }}
+                  </div>
                 </div>
               </div>
             </div>

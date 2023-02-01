@@ -12,7 +12,7 @@
       <div [class.hours-off]="time === offSlot(time)" *ngFor="let slot of availableSlots" [ngClass]="time === slot.startTime ? 'available-slots' : ''" class=" h-100">
         <div class="row h-100">
           <ng-container *ngIf="time === slot.startTime && slot.type === 'followUp'">
-            <div class="col h-100 visit-info mt">
+            <div class="col h-100 visit-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
                 <img src="assets/svgs/consultaion-light-bg.svg" />
                 <div class="d-grid">
@@ -24,7 +24,7 @@
 
             <div class="col h-100 patient-info mt">
               <div class="d-flex">
-                <img src="assets/svgs/user-light-bg.svg" />
+                <img src="{{ baseUrl + '/personimage/' + slot.patientId}}" class="profileImg" (error) ="onImgError($event)" />
                 <div class="d-grid">
                   <div class="label">{{slot.patientName}}..({{slot.gender}},{{slot.age}})</div>
                   <div class="sub-text">Patient</div>
@@ -55,7 +55,7 @@
 
             <div class="col h-100 patient-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
-                <img src="assets/svgs/user-light-bg.svg" />
+                <img src="{{ baseUrl + '/personimage/' + slot.patientId}}"  class="profileImg" (error) ="onImgError($event)" />
                 <div class="d-grid">
                   <div class="label">{{slot.patientName}}..({{slot.gender}},{{slot.age}})</div>
                   <div class="sub-text">Patient</div>

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 class Appointment {
   id: number
@@ -36,7 +37,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
   hoursOffSlotsObj = {};
   availableSlots = [];
   hoursOffSlots = []
-
+  baseUrl = environment.baseURL;
   constructor() { }
 
   ngOnInit(): void {
@@ -83,6 +84,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
     this.hoursOffSlots.forEach(slot => {
       this.hoursOffSlotsObj[slot] = slot;
     });
+    console.log("availableSlots", this.availableSlots)
   }
 
   setAppointments() {
@@ -102,7 +104,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
       appointment.hwAge =d1?.hwAge;
       appointment.hwGender = d1?.hwGender;
       appointment.hwPic = d1?.hwPic;
-      appointment.type = 'appointment';
+      appointment.type = d1?.type ? d1?.type : 'appointment';
       appointment.patientId = d1?.patientId;
       appointment.visitId = d1?.visitUuid;
       appointment.createdAt = d1?.createdAt;
@@ -124,5 +126,9 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
   handleClick(slot) {
     slot["modal"] = "details";
     this.openModal.emit(slot)
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user-light-bg.svg';
   }
 }

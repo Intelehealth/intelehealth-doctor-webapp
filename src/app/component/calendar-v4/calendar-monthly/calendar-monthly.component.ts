@@ -108,7 +108,7 @@ export class CalendarMonthlyComponent implements OnInit {
      appointment.healthWorker = d1?.hwName;
      appointment.hwAge =d1?.hwAge;
      appointment.hwGender = d1?.hwGender;
-     appointment.type = 'appointment';
+     appointment.type = d1?.type ? d1?.type :'appointment';
      appointment.date = Number(moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("D"));
      appointment.month = Number(moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("M"));
      appointment.monthName = moment(d1?.slotJsDate,'YYYY-MM-DD HH:mm:ss').format("MMMM");

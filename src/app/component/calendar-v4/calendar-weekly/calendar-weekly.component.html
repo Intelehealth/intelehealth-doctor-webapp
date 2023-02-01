@@ -62,7 +62,7 @@
                 </ng-container>
               </div>
               <div class="info d-flex">
-                <img src="assets/svgs/user-apnmnt.svg" />
+                <img src="{{ baseUrl + '/personimage/' + slot(day?.date, time)?.patientId}}"  class="profileImg" (error) ="onImgError($event)"  />
                 <div class="name">{{ slot(day?.date, time)?.patientName }}</div>
               </div>
             </div>
