@@ -14,6 +14,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-visit-summary',
@@ -54,6 +55,7 @@ export class VisitSummaryComponent implements OnInit {
   additionalInstructions: any = [];
   tests: any = [];
   referrals: any = [];
+  pastVisits: any = [];
 
   specializations: any[] = [
     {
@@ -173,12 +175,12 @@ export class VisitSummaryComponent implements OnInit {
   showAll: boolean = true;
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
-  addMoreNote: boolean = true;
-  addMoreMedicine: boolean = true;
-  addMoreAdditionalInstruction: boolean = true;
-  addMoreAdvice: boolean = true;
-  addMoreTest: boolean = true;
-  addMoreReferral: boolean = true;
+  addMoreNote: boolean = false;
+  addMoreMedicine: boolean = false;
+  addMoreAdditionalInstruction: boolean = false;
+  addMoreAdvice: boolean = false;
+  addMoreTest: boolean = false;
+  addMoreReferral: boolean = false;
 
   patientInteractionForm: FormGroup;
   diagnosisForm: FormGroup;
@@ -189,6 +191,9 @@ export class VisitSummaryComponent implements OnInit {
   addTestForm: FormGroup;
   addReferralForm: FormGroup;
   followUpForm: FormGroup;
+
+  displayedColumns: string[] = ['action', 'created_on', 'consulted_by', 'cheif_complaint', 'summary', 'prescription', 'prescription_sent'];
+  dataSource = new MatTableDataSource<any>();
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -334,7 +339,7 @@ export class VisitSummaryComponent implements OnInit {
                   this.isVisitNoteProvider = true;
                 }
               });
-
+              this.getPastVisitHistory();
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfNotePresent();
@@ -921,6 +926,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   checkIfAdvicePresent() {
+    this.advices = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAdvice)
     .subscribe((response: any) => {
       response.results.forEach((obs: any) => {
@@ -971,6 +977,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   checkIfTestPresent() {
+    this.tests = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptTest)
     .subscribe((response: any) => {
       response.results.forEach((obs: any) => {
@@ -1009,6 +1016,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   checkIfReferralPresent() {
+    this.referrals = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
     .subscribe((response: any) => {
       response.results.forEach((obs: any) => {
@@ -1167,6 +1175,61 @@ export class VisitSummaryComponent implements OnInit {
       });
     });
     return d;
+  }
+
+  getPastVisitHistory() {
+    this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: any) => {
+      let visits = res.results;
+      if (visits.length > 1) {
+        visits.forEach((visit: any) => {
+          if (visit.uuid !== this.visit.uuid) {
+            this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: any) =>{
+              visitdetail.created_on = visitdetail.startDatetime;
+              visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
+              visitdetail.encounters.forEach((encounter: any) => {
+                if (encounter.encounterType.display == 'Visit Complete') {
+                  visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+                  encounter.obs.forEach((o: any) => {
+                    if (o.concept.display == 'Doctor details') {
+                      visitdetail.doctor = JSON.parse(o.value);
+                    }
+                  });
+                  encounter.encounterProviders.forEach((p: any) => {
+                    visitdetail.doctor.gender = p.provider.person.gender;
+                    visitdetail.doctor.person_uuid = p.provider.person.uuid;
+                  });
+                }
+              });
+              this.pastVisits.push(visitdetail);
+            });
+          }
+        });
+        this.dataSource = new MatTableDataSource(this.pastVisits);
+      }
+    });
+  }
+
+  getCheifComplaint(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.display;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+            const currentComplaint = currentObs.display.split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
   }
 
 }

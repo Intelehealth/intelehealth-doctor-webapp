@@ -436,7 +436,93 @@
           </mat-tab>
 
           <mat-tab label="Past visit history">
+            <div class="mat-elevation-z8">
+              <table mat-table [dataSource]="dataSource">
 
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let element; let first=first;">
+                    <div class="timeline-icon">
+                      <div class="t-line" *ngIf="!first"></div>
+                      <div class="dot"></div>
+                      <div class="b-line"></div>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Created on Column -->
+                <ng-container matColumnDef="created_on">
+                  <th mat-header-cell *matHeaderCellDef> Created on </th>
+                  <td mat-cell *matCellDef="let element">
+                    {{element.created_on|date:'dd MM, yyyy'}}
+                  </td>
+                </ng-container>
+
+                <!-- Consulted by Column -->
+                <ng-container matColumnDef="consulted_by">
+                  <th mat-header-cell *matHeaderCellDef> Consulted by </th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="d-flex align-items-center">
+                      <img src="{{ baseUrl + '/personimage/' + element.doctor.person_uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                      <span class="font-bold ml-2">{{element.doctor.name}} ({{element.doctor.gender}})</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Cheif Complaint Column -->
+                <ng-container matColumnDef="cheif_complaint">
+                  <th mat-header-cell *matHeaderCellDef> Cheif Complaint </th>
+                  <td mat-cell *matCellDef="let element"> {{element.cheif_complaint}} </td>
+                </ng-container>
+
+                <!-- Summary Column -->
+                <ng-container matColumnDef="summary">
+                  <th mat-header-cell *matHeaderCellDef> Summary </th>
+                  <td mat-cell *matCellDef="let element">
+                    <a href="javascript:void(0)" (click)="openVisitSummaryModal(element.uuid)">
+                      <div class="blue-pill">
+                        <img src="assets/svgs/summary-list-blue-icon.svg" alt="">
+                        <span class="ml-1">View</span>
+                      </div>
+                    </a>
+                  </td>
+                </ng-container>
+
+                <!-- Prescription Column -->
+                <ng-container matColumnDef="prescription">
+                  <th mat-header-cell *matHeaderCellDef> Prescription </th>
+                  <td mat-cell *matCellDef="let element">
+                    <a href="javascript:void(0)" (click)="openVisitPrescriptionModal(element.uuid)">
+                      <div class="green-pill">
+                        <img src="assets/svgs/green-pad.svg" alt="">
+                        <span class="ml-1">View</span>
+                      </div>
+                    </a>
+                  </td>
+                </ng-container>
+
+                <!-- Prescription sent Column -->
+                <ng-container matColumnDef="prescription_sent">
+                  <th mat-header-cell *matHeaderCellDef> Prescription sent </th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="blue-pill">
+                      <img src="assets/svgs/pad-4.svg" alt="">
+                      <span class="ml-1">{{element.prescription_sent}}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                    No past visit history
+                  </td>
+                </tr>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
           </mat-tab>
 
         </mat-tab-group>
@@ -688,8 +774,8 @@
                           <td>{{m.days}}</td>
                           <td>{{m.timing}}</td>
                           <td>{{m.remark}}</td>
-                          <td>
-                            <button mat-icon-button *ngIf="isVisitNoteProvider" (click)="deleteMedicine(i, m.uuid)">
+                          <td class="pr-0">
+                            <button mat-icon-button class="float-right" *ngIf="isVisitNoteProvider" (click)="deleteMedicine(i, m.uuid)">
                               <img src="assets/svgs/delete-icon.svg" alt="">
                             </button>
                           </td>
@@ -904,8 +990,8 @@
                         <tr *ngFor="let r of referrals; let i=index;">
                           <td>{{r.speciality}}</td>
                           <td>{{r.remark}}</td>
-                          <td>
-                            <button mat-icon-button (click)="deleteReferral(i, r.uuid)" *ngIf="isVisitNoteProvider">
+                          <td class="pr-0">
+                            <button class="float-right" mat-icon-button (click)="deleteReferral(i, r.uuid)" *ngIf="isVisitNoteProvider">
                               <img src="assets/svgs/delete-icon.svg" alt="">
                             </button>
                           </td>
