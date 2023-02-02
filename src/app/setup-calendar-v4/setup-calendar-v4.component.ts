@@ -133,7 +133,7 @@ export class SetupCalendarV4Component implements OnInit {
 
   addMonth() {
     if (this.months.length !== this.monthNames.length)
-      this.months.push({ name: this.monthNames[(new Date()).getMonth() + this.months.length], year: new Date().getFullYear() });
+      this.months.push({ name: this.monthNames[this.months.length], year: new Date().getFullYear() });
   }
 
   getScheduledMonths() {
@@ -142,7 +142,7 @@ export class SetupCalendarV4Component implements OnInit {
         next: (res: any) => {
           this.months = res.data;
           if (this.months.length === 0) {
-            this.months.push({ name: this.monthNames[(new Date()).getMonth() + this.months.length], year: new Date().getFullYear() });
+            this.months.push({ name: this.monthNames[this.months.length], year: new Date().getFullYear() });
           }
           this.getSchedule(this.months[0].year, this.months[0].name);
           this.selectedMonth = {name : this.months[0].name, year : this.months[0].year}

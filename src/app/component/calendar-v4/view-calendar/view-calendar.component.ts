@@ -414,7 +414,7 @@ export class ViewCalendarComponent implements OnInit {
         const isCompleted = Boolean(len);
         if (isCompleted) {
           const message = `Visit is already completed, it can't be rescheduled.`;
-          this.toastr.error(message);
+          this.toastr.error(message, 'Rescheduling failed');
         } else {
           this.rescheduleTimeSlotsModal["data"] = this.selectedSlot;
           this.rescheduleTimeSlots.openRescheduleTimeSlotsModal();
@@ -443,7 +443,7 @@ export class ViewCalendarComponent implements OnInit {
       .subscribe((res: any) => {
         this.getDrSlots(this.dates.startOfMonth, this.dates.endOfMonth);
         const message = res.message || "Appointment rescheduled successfully!";
-        this.toastr.success(message);
+        this.toastr.success(message, 'Rescheduling successful');
       });
   }
 
@@ -464,7 +464,7 @@ export class ViewCalendarComponent implements OnInit {
       .subscribe((res: any) => {
         const message =
           res.message || "Appointment cancelled successfully!";
-        this.toastr.success(message);
+        this.toastr.success(message, 'Canceling successful');
         this.getDrSlots(this.dates.startOfMonth, this.dates.endOfMonth);
       });
   }

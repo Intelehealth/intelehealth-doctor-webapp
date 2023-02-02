@@ -125,12 +125,15 @@
       width: 22px;
       height: 0px;
 
-      border: 2px solid #ea315b;
+      border: 2px solid white;
       transform: rotate(90deg);
 
       flex: none;
       order: 0;
       flex-grow: 0;
+    }
+    .red-line {
+      border: 2px solid #ea315b;
     }
   }
 
@@ -985,6 +988,9 @@ color: #2E1E91;
   font-size: 14px;
 }
 
+.unclick {
+  pointer-events: none;
+}
 
 .daysoff-btn {
   width: 100px;

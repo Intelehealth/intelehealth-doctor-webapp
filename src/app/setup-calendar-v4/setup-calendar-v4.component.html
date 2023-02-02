@@ -18,13 +18,13 @@
     </div>
     <!-- Month wise -->
     <div>
-      <div *ngFor="let month of months" class="month-wise">
+      <div *ngFor="let month of months, index as i" class="month-wise">
         <!-- Month -->
         <div class="month">
           <!-- Details -->
-          <div class="details click" (click)="getMonthDetails(month)">
-            <div class="left-line"></div>
-            <span class="name">{{month.name}}</span>
+          <div class="details click" (click)="getMonthDetails(month)"> 
+            <div  class="left-line" [ngClass]="{'red-line': selectedMonth?.name === month?.name}"></div>
+            <span class="name">{{month.name}} </span>
           </div>
           <!-- Chevron -->
           <div>
@@ -36,7 +36,7 @@
 
     </div>
     <!-- For Add More -->
-    <div class="add-more-container click" (click)="addMonth()">
+    <div  [ngClass]="this.months.length === 12 ? 'unclick' : 'click'" class="add-more-container" (click)="addMonth()">
       <!-- Plus Icon -->
       <div class="plus-icon">
         <img src="assets/svgs/plus.svg" />

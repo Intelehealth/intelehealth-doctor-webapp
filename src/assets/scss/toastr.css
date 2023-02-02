@@ -46,10 +46,12 @@
 /* toast styles */
 .toast-title {
   font-weight: bold;
+  width: 250px;
 }
 .toast-message {
   word-wrap: break-word;
   color: #7F7B92;
+  width: 220px;
 }
 .toast-message a,
 .toast-message label {
@@ -78,6 +80,7 @@ button.toast-close-button {
   cursor: pointer;
   background: transparent;
   border: 0;
+  margin-top: -6px;
 }
 .toast-container {
   pointer-events: none;
