@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
+import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 @Injectable({
@@ -9,7 +10,7 @@ import { environment } from "src/environments/environment";
 export class ChatService {
   private baseURL = environment.mindmapURL;
   popUpCloseEmitter = new Subject();
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   sendMessage(toUser, patientId, message, additionalPayload = {}) {
     const payload = {
@@ -30,19 +31,30 @@ export class ChatService {
   ) {
     return this.http.get(
       `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?visitId=${visitId}`
-    );
+    ).pipe(map(
+      (res: any) => {
+        res.data = res.data.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        return res;
+      }
+    ))
   }
 
   getAllMessages(toUser, fromUser = this.user.uuid) {
     return this.http.get(`${this.baseURL}/messages/${fromUser}/${toUser}`);
   }
 
-  getPatientList() {
-    return this.http.get(`${this.baseURL}/messages/getPatientMessageList`);
+  getPatientList(drUuid) {
+    return this.http.get(
+      `${this.baseURL}/messages/getPatientMessageList?drUuid=${drUuid}`
+    );
   }
 
   getPatientAllVisits(patientId) {
     return this.http.get(`${this.baseURL}/messages/${patientId}`);
+  }
+
+  readMessageById(messageId) {
+    return this.http.put(`${this.baseURL}/messages/read/${messageId}`, "");
   }
 
   public get user() {

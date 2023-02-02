@@ -11,7 +11,7 @@
 
     <div class="d-flex personal-person-detail-modal">
       <div class="personal-person-img">
-        <img src="assets/svgs/personal-person.svg" />
+        <img src="{{ baseUrl + '/personimage/' + modal?.data?.patientId}}"  class="profileImg" (error) ="onImgError($event)"/>
       </div>
 
       <div class="d-grid">

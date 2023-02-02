@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 class Appointment {
   id:number
@@ -35,7 +36,7 @@ export class CalendarWeeklyComponent implements OnInit {
   @Output() openModal = new EventEmitter();
   timings: any = [];
   hoursOffSlotsObj = {};
-
+  baseUrl = environment.baseURL;
   weekDay = [
     { day: 'SUN', date: 10, isCurrentDay: false, isDayOff: false, fullDate: ''},
     { day: 'MON', date: 4, isCurrentDay: false, isDayOff: false, fullDate: ''},
@@ -122,7 +123,7 @@ export class CalendarWeeklyComponent implements OnInit {
       appointment.healthWorker = d1?.hwName;
       appointment.hwAge =d1?.hwAge;
       appointment.hwGender = d1?.hwGender;
-      appointment.type = 'appointment';
+      appointment.type = d1?.type ? d1?.type : 'appointment';
       appointment.date = Number(moment(d1?.slotJsDate, 'YYYY-MM-DD HH:mm:ss').format("D"));
       appointment.patientId = d1?.patientId;
       appointment.visitId = d1?.visitUuid;
@@ -160,5 +161,9 @@ export class CalendarWeeklyComponent implements OnInit {
   handleClick(slot) {
     slot["modal"] = "details";
     this.openModal.emit(slot)
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
   }
 }

@@ -10,18 +10,11 @@ import * as moment from "moment";
 export class ChatContainerComponent implements OnInit {
   @Input("latestChat") set getChat(latestChat) {
     this.latestChat = latestChat;
-
     this.visitId = this.latestChat.visitId;
-    this.isNewChat = this.latestChat?.isNewChat;
-    if (!this.isNewChat) {
-      this.getMessages();
-    }
-    if (this.isNewChat) {
-      let visitData = {
-        createdAt: this.latestChat?.createdAt,
-        visitId: this.visitId,
-      };
-      this.visits.push(visitData);
+    this.getMessages();
+
+    if (this.latestChat?.fromUser !== this.fromUser) {
+      this.readMessages(this.latestChat?.id);
     }
   }
   latestChat: any;
@@ -30,11 +23,14 @@ export class ChatContainerComponent implements OnInit {
   message = "";
   fromUuid = null;
   visits: any = [];
+  messageList: any;
   visitId: any;
   moment: any = moment;
-  isNewChat: boolean = false;
+  openMenu: boolean = false;
+  isOver = false;
+  readSentImg: any;
 
-  constructor(private chatSvc: ChatService) {}
+  constructor(private chatSvc: ChatService) { }
 
   ngOnInit(): void {
     this.visitId = this.latestChat?.visitId;
@@ -60,7 +56,6 @@ export class ChatContainerComponent implements OnInit {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
       next: (res: any) => {
         this.visits = res?.data;
-        console.log("this.visits1111: ", this.visits);
       },
     });
   }
@@ -71,47 +66,57 @@ export class ChatContainerComponent implements OnInit {
   }
 
   getMessages() {
-    if (!this.isNewChat) {
-      this.chatSvc
-        .getPatientMessages(
-          this.toUserId,
-          this.latestChat?.patientId,
-          null,
-          this.visitId
-        )
-        .subscribe({
-          next: (res: any) => {
-            this.visits = res?.data;
-          },
-        });
-    }
+    this.chatSvc
+      .getPatientMessages(
+        this.toUserId,
+        this.latestChat?.patientId,
+        this.latestChat?.fromUser,
+        this.visitId
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+          this.getPatientsVisits(this.latestChat?.patientId);
+        },
+      });
   }
 
   get toUserId() {
-    if (this.latestChat?.toUser === this.chatSvc?.user?.id) {
+    if (this.latestChat?.toUser === this.chatSvc?.user?.uuid) {
       return this.latestChat.fromUser;
-    } else if (this.latestChat?.fromUser === this.chatSvc?.user?.id) {
+    } else if (this.latestChat?.fromUser === this.chatSvc?.user?.uuid) {
       return this.latestChat?.toUser;
     } else {
       return null;
     }
   }
 
+  readMessages(messageId) {
+    this.chatSvc.readMessageById(messageId).subscribe({
+      next: (res) => {
+        this.getMessages();
+      },
+    });
+  }
+
+  get patientName() {
+    return localStorage.patientName || "";
+  }
+
+  clickMenu() {
+    this.openMenu = !this.openMenu;
+  }
+
   sendMessage() {
     if (this.message) {
       this.latestChat.latestMessage = this.message;
-      if (!this.isNewChat) {
-        this.latestChat.messages.unshift({
-          id: 1,
-          message: this.message,
-          me: true,
-        });
-      }
+
       const payload = {
         visitId: this.latestChat?.visitId,
-        patientName: "",
+        patientName: this.patientName,
         hwName: this.latestChat?.hwName,
       };
+
       this.chatSvc
         .sendMessage(
           this.latestChat?.toUser,
@@ -121,34 +126,14 @@ export class ChatContainerComponent implements OnInit {
         )
         .subscribe({
           next: (res) => {
-            console.log("res: ", res);
-            this.updateMessages(this.latestChat.toUuid);
-          },
-          error: () => {
-            // this.loading = false;
-          },
-          complete: () => {
-            //  this.loading = false;
+            this.getMessages();
           },
         });
       this.message = "";
     }
   }
 
-  updateMessages(toUuid) {
-    this.chatSvc.getAllMessages(toUuid).subscribe({
-      next: (res: { data }) => {
-        //this.latestChat = res.data;
-        // var newArray = this.latestChat.messages.map((obj)=> {
-        //   return { message: res.data.message };
-        // });
-        // console.log('newArray: ', newArray);
-        console.log("res.data: ", res.data);
-      },
-      error: (err) => {
-        console.log("err:>>>> ", err);
-      },
-      complete: () => {},
-    });
+  get fromUser() {
+    return JSON.parse(localStorage.user).uuid;
   }
 }

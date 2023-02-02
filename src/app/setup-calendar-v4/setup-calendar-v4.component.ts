@@ -160,6 +160,9 @@ export class SetupCalendarV4Component implements OnInit {
         next: (res: any) => {
           if (res && res.data) {
             this.userSchedule = res.data;
+            if ( res.data.slotSchedule == undefined || res.data.slotSchedule.length == 0) {
+              this.addTiming();
+            }
             this.setData(res.data);
           } else {
             this.addTiming();
@@ -178,6 +181,7 @@ export class SetupCalendarV4Component implements OnInit {
     this.daysOff = [];
     this.getSchedule(month.year, month.name);
     this.selectedMonth = month;
+    this.showAddMore = false;
   }
 
   save() {

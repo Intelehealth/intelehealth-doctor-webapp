@@ -38,64 +38,15 @@ export class SidebarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getPatientsList();
+    this.getPatientsList(this.chatSvc?.user?.uuid);
   }
 
-  getPatientsList() {
-    this.chatSvc.getPatientList().subscribe({
+  getPatientsList(drUuid) {
+    this.chatSvc.getPatientList(drUuid).subscribe({
       next: (res: any) => {
-        console.log("res.data: ", res);
         this.conversations = res.data;
       },
     });
-  }
-
-  search() {
-    if (this.searchValue === null || this.searchValue.length < 3) {
-      this.toast({
-        message: `Please enter min 3 characters.`,
-      });
-      return;
-    } else {
-      const url = `${this.baseURL}/patient?q=${this.searchValue}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
-      this.http.get(url).subscribe(
-        (response) => {
-          this.searchResults = [];
-          response["results"].forEach((value) => {
-            if (value) {
-              if (value.identifiers.length) {
-                this.searchResults.push(value);
-              }
-            }
-          });
-          // this.dialog.open(FindPatientComponent, {
-          //   width: "90%",
-          //   data: { value: this.searchResults },
-          // });
-        },
-        (err) => {
-          if (err.error instanceof Error) {
-            this.snackbar.open("Client-side error", null, { duration: 2000 });
-          } else {
-            this.snackbar.open("Server-side error", null, { duration: 2000 });
-          }
-        }
-      );
-    }
-  }
-
-  toast({
-    message,
-    duration = 5000,
-    horizontalPosition = "center",
-    verticalPosition = "bottom",
-  }) {
-    const opts: any = {
-      duration,
-      horizontalPosition,
-      verticalPosition,
-    };
-    this.snackbar.open(message, null, opts);
   }
 
   get patientPic() {

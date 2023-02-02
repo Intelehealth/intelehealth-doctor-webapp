@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatTabChangeEvent } from "@angular/material/tabs";
+import { Router } from "@angular/router";
 import { CalendarView } from "angular-calendar";
 import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
@@ -9,6 +10,28 @@ import { RescheduleAppointmentModalComponent } from "src/app/modals/reschedule-a
 import { TimeOffModalComponent } from "src/app/modals/time-off-modal/time-off-modal.component";
 import { AppointmentService } from "src/app/services/appointment.service";
 import { VisitService } from "src/app/services/visit.service";
+
+class FollowUp {
+  id: number
+  slotTime: string
+  openMrsId: string
+  patientName: string
+  patientPic: string
+  patientGender:string
+  patientAge: string
+  healthWorker: string
+  hwName: string
+  hwPic: string
+  hwAge: string
+  hwGender: string
+  type: string
+  patientId: string
+  visitUuid:string;
+  createdAt: string
+  slotJsDate: string
+  appointmentDate: string
+  speciality: string
+}
 
 @Component({
   selector: "app-view-calendar",
@@ -94,7 +117,9 @@ export class ViewCalendarComponent implements OnInit {
   editEditPrescriptionModal: any = {
     AppointmentOn: "Prescription created 1 day ago",
     rightBtnText: "Edit Prescription",
-    rightBtnOnClick: () => { },
+    rightBtnOnClick: () => {
+        this.navigateToSummaray();
+     },
   };
 
   providePrescriptionModal: any = {
@@ -177,15 +202,18 @@ export class ViewCalendarComponent implements OnInit {
   view: CalendarView = CalendarView.Day;
   dates = { startOfMonth: "", endOfMonth: "" }
   appointments = [];
+  followUpVisits = [];
   selectedSlot;
   daysOff = [];
   drScheduleForMonth;
   constructor(private appointmentService: AppointmentService,
     private visitService: VisitService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.setView('day');
+    this.getFollowUpVisit();
   }
 
   onTabChange(event: MatTabChangeEvent) {
@@ -229,6 +257,7 @@ export class ViewCalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.appointments = res.data;
+          this.getFollowUpVisitByDates(this.dates.startOfMonth, this.dates.endOfMonth);
         },
       });
   }
@@ -251,8 +280,69 @@ export class ViewCalendarComponent implements OnInit {
       });
   }
 
+  getFollowUpVisit() {
+    this.followUpVisits = [];
+    this.appointmentService
+    .getFollowUpVisit(this.providerId)
+    .subscribe({
+      next: (res: any) => {
+        if(res) {
+          let followUpVisits = res;
+            followUpVisits.forEach(visit => {
+            this.visitService.getVisitDetails(visit.visit_id)
+            .subscribe((result)=> {
+              this.setFollowUpVisit(visit, result);
+            })
+          });
+        }
+      },
+    });
+  }
+
+  setFollowUpVisit(followUpVisit, visit) {
+    let obj = new FollowUp;
+    obj.slotTime = (followUpVisit.followup_text.includes("Time")) ? followUpVisit.followup_text.split(", Time: ")[1]?.split(", Remark: ")[0]: "10:00 AM";
+    obj.patientName = visit.patient.person.display;
+    obj.patientAge = visit.patient.person.age;
+    obj.patientGender = visit.patient.person.gender;
+    obj.patientPic = "";
+    obj.openMrsId = visit.patient.identifiers[0].identifier;
+    obj.patientId = visit.patient.uuid;
+    obj.visitUuid = visit.uuid;
+    obj.appointmentDate = (followUpVisit.followup_text.includes(",")) ? followUpVisit.followup_text.split(", Time: ")[0] : followUpVisit.followup_text;
+    obj.type = 'followUp';
+    obj.createdAt = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss");
+    obj.slotJsDate = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss")
+    const encounters = visit.encounters;
+        encounters.forEach(encounter => {
+          const display = encounter.display;
+          if (display.match('ADULTINITIAL') !== null) {
+            obj.hwName = encounter.encounterProviders[0].provider.person.display;
+            obj.hwAge = encounter.encounterProviders[0].provider.person.age;
+            obj.hwGender = encounter.encounterProviders[0].provider.person.gender;
+            obj.hwPic = "";
+          }
+        });
+       this.followUpVisits.push(obj);
+  }
+
+  getFollowUpVisitByDates(start, end) {
+    let array = [];
+    this.followUpVisits.forEach(visit => {
+      if(moment(start,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) || moment(end,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) || 
+      moment(visit.createdAt,"YYYY-MM-DD").isBetween(moment(start,"YYYY-MM-DD"),(moment(end,"YYYY-MM-DD")))) {
+        array.push(visit);
+      }
+    });
+    this.appointments = this.appointments.concat(array);
+  }
+
   get userId() {
     return JSON.parse(localStorage.user).uuid;
+  }
+
+  get providerId() {
+    return JSON.parse(localStorage.provider).uuid;
   }
 
   openModal(slot) {
@@ -289,10 +379,21 @@ export class ViewCalendarComponent implements OnInit {
         });
         slot["complaints"] = recentComplaints;
         slot["visitStatus"] = this.getVisitStatus(encounters[0]?.encounterType.display);
-        if (slot.modal === "details") {
+        this.selectedSlot = slot;
+        let days = moment(encounters[0]?.encounterDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment(), 'days');
+        if (slot.modal === "details" && slot.type === 'appointment') {
           this.appointmentDetailModal["data"] = slot;
-          this.selectedSlot = slot;
+          let day = moment(slot.appointmentDate, "YYYY-MM-DD HH:mm:ss").diff(moment(), 'days')
+          this.appointmentDetailModal.AppointmentOn = day > 0 ?  `Starts in ${Math.abs(day)} days` : `Awaiting since ${Math.abs(day)} day`;
           this.appointmentDetail.openAppointmentModal();
+        } else if( slot["visitStatus"] === 'Completed' ||  slot["visitStatus"] === 'Ended') {
+          this.editEditPrescriptionModal.AppointmentOn = days < 1 ? `Prescription created ${Math.abs(days)} days ago`: `Prescription created ${Math.abs(days)} day ago`;
+          this.editEditPrescriptionModal["data"] = slot;
+          this.editEditPrescription.openAppointmentModal();
+        } else {
+          this.providePrescriptionModal.AppointmentOn = `Awaiting since ${Math.abs(days)} day`;
+          this.providePrescriptionModal["data"] = slot;
+          this.providePrescription.openAppointmentModal();
         }
       });
   }
@@ -370,10 +471,16 @@ export class ViewCalendarComponent implements OnInit {
 
   openMonthlyModal(slot) {
     this.timeOffModal.appointmentTime = [];
+    this.timeOffModal.FollowUpTime = [];
     this.selectedSlot = slot;
     slot.slots.forEach(slot => {
-      let value = slot.startTime + "-" + slot.endTime
-      this.timeOffModal.appointmentTime.push(value);
+      if(slot.type === 'appointment') {
+        let value = slot.startTime + "-" + slot.endTime
+        this.timeOffModal.appointmentTime.push(value);
+      } else {
+        this.timeOffModal.FollowUpTime.push(slot.startTime);
+      }
+     
     });
     this.timeOffModal.mainText = moment(slot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format("DD MMM, YYYY")
     this.timeOff.openTimeOffModal();
@@ -423,6 +530,10 @@ export class ViewCalendarComponent implements OnInit {
         this.cancel(slot);
       }
     });
+  }
+
+  navigateToSummaray() {
+    this.router.navigate(['/dashboard/visit-summary', this.selectedSlot.patientId, this.selectedSlot.visitId]);
   }
 
   getVisitStatus(status: string) {

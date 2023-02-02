@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
@@ -17,7 +17,11 @@ export class VisitService {
 
   public isVisitSummaryShow: boolean = false;
 
-  constructor(private http: HttpClient, private helper: HelperService) {}
+  public isHelpButtonShow: boolean = false;
+
+  public triggerAction: any = new Subject();
+
+  constructor(private http: HttpClient, private helper: HelperService) { }
 
   getVisits(params): Observable<any> {
     const query = {
@@ -53,6 +57,15 @@ export class VisitService {
   fetchVisitDetails(
     uuid,
     v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,gender)))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+  ): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url);
+  }
+
+  getVisitDetails(
+    uuid,
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value),encounterProviders:(display,provider:(uuid,person:(display,gender,age),attributes))),patient:(uuid,identifiers:(identifier),person:(display,gender,age)))"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;

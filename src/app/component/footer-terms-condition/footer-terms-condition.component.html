@@ -11,7 +11,7 @@
       >
     </p>
   </div>
-  <div class="help">
+  <div class="help" *ngIf="!isHelpButtonShow">
     <button type="button" class="btn btn-help font-weight-bold position" (click)="openDialog()">
       Help
     </button>

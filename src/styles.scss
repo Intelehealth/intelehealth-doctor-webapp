@@ -213,12 +213,18 @@ body.font-lato td {
 }
 
 .light-green {
-  color: #0FD197;
+  color: #0fd197;
 }
 
 .isDisabled {
   pointer-events: none;
   background: lightgray;
+}
+
+.profileImg {
+  width: 40px;
+  height: 41px;
+  border-radius: 50%;
 }
 /* Chatbot css*/
 
@@ -418,7 +424,8 @@ body.font-lato td {
 .modal-dialog .modal-content {
   border-radius: 12px;
   border: none;
-  box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
+  box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%),
+    0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
 }
 
 .modal-lg {
@@ -790,7 +797,7 @@ body.font-lato td {
     height: 202px !important;
   }
 
-  .zomm{
+  .zomm {
     position: absolute;
     bottom: 42% !important;
     right: 44% !important;
@@ -814,14 +821,23 @@ body.font-lato td {
     display: none !important;
   }
 
-  .call-voice{
+  .call-voice {
     top: 5px !important;
     right: 5px !important;
-    left:unset !important;
+    left: unset !important;
   }
 
-  .voice-call-icons{
+  .voice-call-icons {
     width: 16px;
     height: 16px;
   }
+}
+
+/*for set plus icon in visit summary */
+.mat-mini-fab .mat-button-wrapper {
+  padding: 4px 0 !important;
+}
+
+.mat-fab.mat-accent {
+  background-color: #2e1e91;
 }
