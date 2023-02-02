@@ -84,7 +84,6 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
     this.hoursOffSlots.forEach(slot => {
       this.hoursOffSlotsObj[slot] = slot;
     });
-    console.log("availableSlots", this.availableSlots)
   }
 
   setAppointments() {

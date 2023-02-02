@@ -22,12 +22,14 @@ export class FollowUpV4Component implements OnInit {
   patientId: string;
   visitUuid: string;
   followUp = [];
-  selecteDate;
+  selecteDate;selectedTime;
   selecteAdvice:string;
   isDataPresent:boolean=false;
+  timeList = [];
   followUpData = [
     "Do you want to have follow up with the patient",
     "Select date",
+    "Select time",
     "Reason for follow-up",
   ];
 
@@ -39,19 +41,50 @@ export class FollowUpV4Component implements OnInit {
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
+    this.timeList= this.getHours();
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid || this.readOnly === true) {
-          let date1 = obs.value.split(", Remark: ")[0].replaceAll('-','/');
+          let date1 = obs.value.split(", Time: ")[0].replaceAll('-','/');
            let selecteDate = moment(date1,'DD/MM/YYYY').toISOString();
           this.selecteDate = this.datepipe.transform(selecteDate, 'yyyy-MM-dd');
-          this.selecteAdvice = obs.value.split(", Remark: ")[1];
+          this.selectedTime = obs.value.split(", Time: ")[1].split(", Remark: ")[0];
+          this.selecteAdvice = obs.value.split(", Time: ")[1].split(", Remark: ")[1];
           this.isDataPresent = true;
           this.type = "Y";
         }
       });
     });
+  }
+
+  getHours(returnAll = true, date?) {
+    const hours = Array.from(
+      {
+        length:21,
+      },
+      (_, hour) =>
+        moment({
+          hour,
+          minutes: 0,
+        }).format("LT")
+    );
+   hours.splice(0, 9);
+    if (this.isToday(date) && !returnAll) {
+      const hrs = hours.filter((h) => moment(h, "LT").isAfter(moment()));
+      return hrs;
+    } else {
+      return hours;
+    }
+  }
+
+  isToday(date) {
+    const start = moment().startOf("day");
+    const end = moment().endOf("day");
+    return (
+      moment().startOf("day").isSame(moment(date)) ||
+      moment(date).isBetween(start, end)
+    );
   }
 
   submit() {
@@ -63,7 +96,7 @@ export class FollowUpV4Component implements OnInit {
         concept: this.conceptFollow,
         person: this.patientId,
         obsDatetime: date,
-        value: this.selecteAdvice ? `${obsdate}, Remark: ${this.selecteAdvice}` : obsdate,
+        value: this.selecteAdvice ? `${obsdate}, Time: ${this.selectedTime}, Remark: ${this.selecteAdvice}` : obsdate,
         encounter: encounterUuid
       };
       this.encounterService.postObs(json)
