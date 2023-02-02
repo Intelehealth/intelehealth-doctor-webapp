@@ -167,6 +167,7 @@ export class VisitSummaryComponent implements OnInit {
   advicesList: any = [];
   testsList: any = [];
 
+  visitEnded: any = false;
   visitCompleted: any = false;
   visitNotePresent: any = false;
   isVisitNoteProvider: boolean = false;
@@ -332,6 +333,8 @@ export class VisitSummaryComponent implements OnInit {
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, 'Visit Note');
             // check if visit complete exists for this visit
             this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
+            // check if visit note provider and logged in provider are same
+            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
             // check if visit note provider and logged in provider are same
             if (this.visitNotePresent) {
               this.visitNotePresent.encounterProviders.forEach((p: any) => {
@@ -1230,6 +1233,14 @@ export class VisitSummaryComponent implements OnInit {
       }
     });
     return recent;
+  }
+
+  openVisitSummaryModal(uuid: string) {
+    this.coreService.openVisitSummaryModal({uuid});
+  }
+
+  openVisitPrescriptionModal(uuid: string) {
+    this.coreService.openVisitPrescriptionModal({uuid});
   }
 
 }

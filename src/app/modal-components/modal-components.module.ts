@@ -15,6 +15,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { SharePrescriptionComponent } from './share-prescription/share-prescription.component';
 import { SharePrescriptionSuccessComponent } from './share-prescription-success/share-prescription-success.component';
 import { SharePrescriptionErrorComponent } from './share-prescription-error/share-prescription-error.component';
+import { ViewVisitSummaryComponent } from './view-visit-summary/view-visit-summary.component';
+import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-visit-prescription.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +29,9 @@ import { SharePrescriptionErrorComponent } from './share-prescription-error/shar
         ConfirmDialogComponent,
         SharePrescriptionComponent,
         SharePrescriptionSuccessComponent,
-        SharePrescriptionErrorComponent
+        SharePrescriptionErrorComponent,
+        ViewVisitSummaryComponent,
+        ViewVisitPrescriptionComponent
     ],
     imports: [
         CommonModule,

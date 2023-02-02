@@ -132,7 +132,7 @@
                       <div class="list-item-content">
                         <div class="visit-provider-con">
                           <span>{{providerName}}</span>
-                          <div>
+                          <div class="d-flex">
                             <img class="mx-3" src="assets/svgs/dot.svg" />
                             <a href="javascript:void(0)" class="icon-btn" (click)="startChat()">
                               <img src="assets/svgs/whatsapp-icon.svg" alt="">
@@ -601,7 +601,7 @@
                     </div>
                   </li>
                 </ul>
-                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !patientInteractionForm.value.present">
+                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !visitEnded && !patientInteractionForm.value.present">
                   <button type="submit" class="gray-btn" [disabled]="patientInteractionForm.invalid">Save</button>
                 </div>
               </form>
@@ -689,7 +689,7 @@
                     </li>
                   </ng-container>
                 </ul>
-                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
+                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !visitEnded && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
                   <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Save</button>
                 </div>
               </form>
@@ -710,7 +710,7 @@
                 <li *ngFor="let n of notes; let i=index;">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>{{n.value}}</span>
-                    <button mat-icon-button (click)="deleteNote(i, n.uuid)" *ngIf="isVisitNoteProvider">
+                    <button mat-icon-button (click)="deleteNote(i, n.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
                       <img src="assets/svgs/delete-icon.svg" alt="">
                     </button>
                   </div>
@@ -721,7 +721,7 @@
                   No notes added!
                 </div>
               </ng-template>
-              <form [formGroup]="addNoteForm" (ngSubmit)="addNote()" *ngIf="isVisitNoteProvider">
+              <form [formGroup]="addNoteForm" (ngSubmit)="addNote()" *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group" *ngIf="addMoreNote">
                   <button type="button" class="add-more-btn" (click)="toggleNote()">
                     <img src="assets/svgs/plus-circle.svg" alt="">
@@ -775,7 +775,7 @@
                           <td>{{m.timing}}</td>
                           <td>{{m.remark}}</td>
                           <td class="pr-0">
-                            <button mat-icon-button class="float-right" *ngIf="isVisitNoteProvider" (click)="deleteMedicine(i, m.uuid)">
+                            <button mat-icon-button class="float-right" *ngIf="isVisitNoteProvider && !visitEnded" (click)="deleteMedicine(i, m.uuid)">
                               <img src="assets/svgs/delete-icon.svg" alt="">
                             </button>
                           </td>
@@ -786,7 +786,7 @@
                           <td colspan="6" class="text-center font-weight-bold">No medicines added!</td>
                         </tr>
                       </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider">
+                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreMedicine">
                           <td colspan="6">
                             <div class="form-group mb-0">
@@ -839,7 +839,7 @@
                 <li *ngFor="let ai of additionalInstructions; let i=index;">
                   <div class="d-flex justify-content-between">
                     <span>{{ai.value}}</span>
-                    <button mat-icon-button *ngIf="isVisitNoteProvider" (click)="deleteAdditionalInstruction(i, ai.uuid)">
+                    <button mat-icon-button *ngIf="isVisitNoteProvider && !visitEnded" (click)="deleteAdditionalInstruction(i, ai.uuid)">
                       <img src="assets/svgs/delete-icon.svg" alt="">
                     </button>
                   </div>
@@ -850,7 +850,7 @@
                   No additional instructions added!
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group" *ngIf="addMoreAdditionalInstruction">
                   <button type="button" class="add-more-btn" (click)="toggleAdditionalInstruction()">
                     <img src="assets/svgs/plus-circle.svg" alt="">
@@ -885,7 +885,7 @@
                 <li *ngFor="let ad of advices; let i=index;">
                   <div class="d-flex justify-content-between">
                     <span>{{ad.value}}</span>
-                    <button mat-icon-button (click)="deleteAdvice(i, ad.uuid)" *ngIf="isVisitNoteProvider">
+                    <button mat-icon-button (click)="deleteAdvice(i, ad.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
                       <img src="assets/svgs/delete-icon.svg" alt="">
                     </button>
                   </div>
@@ -896,7 +896,7 @@
                   No advices added!
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group mt-3" *ngIf="addMoreAdvice">
                   <button type="button" class="add-more-btn" (click)="toggleAdvice()">
                     <img src="assets/svgs/plus-circle.svg" alt="">
@@ -931,7 +931,7 @@
                 <li *ngFor="let t of tests; let i=index;">
                   <div class="d-flex justify-content-between">
                     <span>{{t.value}}</span>
-                    <button mat-icon-button (click)="deleteTest(i, t.uuid)" *ngIf="isVisitNoteProvider">
+                    <button mat-icon-button (click)="deleteTest(i, t.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
                       <img src="assets/svgs/delete-icon.svg" alt="">
                     </button>
                   </div>
@@ -942,7 +942,7 @@
                   No tests added!
                 </div>
               </ng-template>
-              <ng-container *ngIf="isVisitNoteProvider">
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                 <div class="form-group mt-3" *ngIf="addMoreTest">
                   <button type="button" class="add-more-btn" (click)="toggleTest()">
                     <img src="assets/svgs/plus-circle.svg" alt="">
@@ -991,7 +991,7 @@
                           <td>{{r.speciality}}</td>
                           <td>{{r.remark}}</td>
                           <td class="pr-0">
-                            <button class="float-right" mat-icon-button (click)="deleteReferral(i, r.uuid)" *ngIf="isVisitNoteProvider">
+                            <button class="float-right" mat-icon-button (click)="deleteReferral(i, r.uuid)" *ngIf="isVisitNoteProvider && !visitEnded">
                               <img src="assets/svgs/delete-icon.svg" alt="">
                             </button>
                           </td>
@@ -1004,7 +1004,7 @@
                           </td>
                         </tr>
                       </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider">
+                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreReferral">
                           <td colspan="3">
                             <div class="form-group mb-0">
@@ -1092,7 +1092,7 @@
                     </li>
                   </ng-container>
                 </ul>
-                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !followUpForm.value.present && followUpForm.value.wantFollowUp == 'Yes'">
+                <div class="form-group mb-0 float-right" *ngIf="isVisitNoteProvider && !visitEnded && !followUpForm.value.present && followUpForm.value.wantFollowUp == 'Yes'">
                   <button type="submit" class="gray-btn" [disabled]="followUpForm.invalid">Save</button>
                 </div>
               </form>
@@ -1103,7 +1103,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="visitNotePresent && isVisitNoteProvider">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider">
       <button type="button" class="blue-btn" [disabled]="visitCompleted" (click)="sharePrescription()">Share prescription</button>
     </div>
   </div>

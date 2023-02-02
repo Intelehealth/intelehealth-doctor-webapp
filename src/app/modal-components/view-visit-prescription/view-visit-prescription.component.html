@@ -1,0 +1,384 @@
+<div class="modal-nav">
+  <button mat-icon-button (click)="close(false)">
+    <img src="assets/svgs/arrow-right-white.svg" alt="">
+  </button>
+  <button mat-icon-button>
+    <img src="assets/svgs/download-white.svg" alt="">
+  </button>
+</div>
+
+<div class="title-con" mat-dialog-title>
+  <h6>Prescription</h6>
+</div>
+<mat-dialog-content>
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="row patient-info-wrapper">
+        <div class="col-md-4 patient-info-section p-3" *ngIf="patient">
+          <div class="patient-img-item mb-2">
+            <div class="patient-img">
+              <img src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}" (error) ="onImgError($event)" alt="" width="100%" height="100%">
+            </div>
+            <div class="ml-3">
+              <h6>{{patient?.person.display}} ({{patient?.person.gender}})</h6>
+              <p>{{getPatientIdentifier('OpenMRS ID')}}</p>
+            </div>
+          </div>
+          <div class="patient-info-item">
+            <h6>Age</h6>
+            <p>{{ (patient?.person.birthdate) ? getAge(patient?.person.birthdate) : patient?.person.age }}</p>
+          </div>
+        </div>
+        <div class="col-md-4 patient-info-section p-3">
+          <div class="patient-info-item mb-3">
+            <h6>Occupation</h6>
+            <p>{{getPersonAttributeValue('occupation')}}</p>
+          </div>
+          <div class="patient-info-item">
+            <h6>Address</h6>
+            <p>{{patient?.person.preferredAddress.cityVillage}}</p>
+          </div>
+        </div>
+        <div class="col-md-4 patient-info-section p-3">
+          <div class="patient-info-item">
+            <h6>Contact no.</h6>
+            <p>
+              <img src="assets/svgs/phone-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+            </p>
+            <p>
+              <img src="assets/svgs/whatsapp-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/consultation-details-blue.svg" alt="">
+              <h6>Consultation details</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li>
+                  <div class="list-item">
+                    <label>Visit ID</label>
+                    <div class="list-item-content">
+                      {{(visit?.uuid)?(replaceWithStar(visit?.uuid)|uppercase):''}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Visit created</label>
+                    <div class="list-item-content">
+                      {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Appointment on</label>
+                    <div class="list-item-content">
+                      <span class="text-muted">No appointment</span>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Status</label>
+                    <div class="list-item-content">
+                      <span [ngClass]="{ 'text-important-red': visitStatus == 'Priority Visit', 'text-important-green': ['Awaiting Visit', 'In-progress Visit', 'Completed Visit', 'Ended Visit'].indexOf(visitStatus) != -1 }">{{visitStatus}}</span>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Location</label>
+                    <div class="list-item-content">
+                      {{clinicName|titlecase}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Provided by</label>
+                    <div class="list-item-content">
+                      <div class="visit-provider-con">
+                        <span>{{providerName}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/patient-interaction.svg" alt="">
+              <h6>Consulted doctor details</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li>
+                  <div class="list-item">
+                    <label>Name</label>
+                    <div class="list-item-content">
+                      {{(consultedDoctor)? consultedDoctor.name : 'NA'}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Qualification</label>
+                    <div class="list-item-content">
+                      {{(consultedDoctor)? consultedDoctor.qualification : 'NA'}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Speciality</label>
+                    <div class="list-item-content">
+                      {{(consultedDoctor)? consultedDoctor.specialization : 'NA'}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Spoken with patient</label>
+                    <div class="list-item-content">
+                      {{spokenWithPatient}}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/diagnosis.svg" alt="">
+              <h6>Diagnosis</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li>
+                  <div class="list-item">
+                    <label>Has enough information for diagnosis?</label>
+                    <div class="list-item-content">
+                      {{(diagnosis)? diagnosis.diagnosisIdentified:'No'}}
+                    </div>
+                  </div>
+                </li>
+                <ng-container *ngIf="diagnosis">
+                  <li>
+                    <div class="list-item">
+                      <label>Diagnosed for</label>
+                      <div class="list-item-content">
+                        {{diagnosis.diagnosisName}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Diagnosis type</label>
+                      <div class="list-item-content">
+                        {{diagnosis.diagnosisType}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Diagnosis status</label>
+                      <div class="list-item-content">
+                        {{diagnosis.diagnosisStatus}}
+                      </div>
+                    </div>
+                  </li>
+                </ng-container>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/note.svg" alt="">
+              <h6>Note</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li *ngFor="let n of notes;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{n.value}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/medication.svg" alt="">
+              <h6>Medication</h6>
+            </div>
+            <div class="data-section-content">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Drug name</th>
+                      <th scope="col">Strength</th>
+                      <th scope="col">No. of days</th>
+                      <th scope="col">Timing</th>
+                      <th scope="col">Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="medicines.length; else noMedicines;">
+                      <tr *ngFor="let m of medicines; let i=index;">
+                        <td>{{m.drug}}</td>
+                        <td>{{m.strength}}</td>
+                        <td>{{m.days}}</td>
+                        <td>{{m.timing}}</td>
+                        <td>{{m.remark}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noMedicines>
+                      <tr>
+                        <td colspan="5" class="text-center">No medicines added</td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/advice.svg" alt="">
+              <h6>Advice</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li *ngFor="let a of advices;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{a.value}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/test.svg" alt="">
+              <h6>Test</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li *ngFor="let t of tests;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{t.value}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/referral.svg" alt="">
+              <h6>Referral</h6>
+            </div>
+            <div class="data-section-content">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Referral facility</th>
+                      <th scope="col">Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="referrals.length; else noReferrals;">
+                      <tr *ngFor="let r of referrals; let i=index;">
+                        <td>{{r.speciality}}</td>
+                        <td>{{r.remark}}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noReferrals>
+                      <tr>
+                        <td colspan="3" class="text-center">
+                          No referrals added
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/follow-up.svg" alt="">
+              <h6>Follow-up</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li>
+                  <div class="list-item">
+                    <label>Follow-up suggested</label>
+                    <div class="list-item-content">
+                      {{(followUp)? followUp.wantFollowUp:'No'}}
+                    </div>
+                  </div>
+                </li>
+                <ng-container *ngIf="followUp">
+                  <li>
+                    <div class="list-item">
+                      <label>Follow-up Date</label>
+                      <div class="list-item-content">
+                        {{followUp.followUpDate}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Reason for follow-up</label>
+                      <div class="list-item-content">
+                        {{followUp.followUpReason}}
+                      </div>
+                    </div>
+                  </li>
+                </ng-container>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<!-- <mat-dialog-actions align="center">
+  <button type="button" class="intel-blue-btn" (click)="close(true)">Close</button>
+</mat-dialog-actions> -->

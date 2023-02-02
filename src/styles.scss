@@ -421,6 +421,32 @@ body.font-lato td {
   box-shadow: 0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
 }
 
+.modal-lg {
+  width: 1086px;
+  max-width: 90% !important;
+
+  .mat-dialog-container {
+    padding: 0px;
+    background: #ffffff;
+    border-radius: 12px;
+    position: relative;
+  }
+
+  .mat-dialog-title {
+    margin: 0px;
+  }
+
+  .mat-dialog-content {
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .mat-dialog-actions {
+    margin: 0px;
+    border-top: 2px solid rgba(178, 175, 190, 0.2);
+  }
+}
+
 .modal-md {
   width: 490px;
   max-width: 90% !important;

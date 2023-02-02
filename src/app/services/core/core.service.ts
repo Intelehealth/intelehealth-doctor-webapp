@@ -11,6 +11,8 @@ import { SharePrescriptionErrorComponent } from 'src/app/modal-components/share-
 import { SharePrescriptionSuccessComponent } from 'src/app/modal-components/share-prescription-success/share-prescription-success.component';
 import { SharePrescriptionComponent } from 'src/app/modal-components/share-prescription/share-prescription.component';
 import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mindmap-json/upload-mindmap-json.component';
+import { ViewVisitPrescriptionComponent } from 'src/app/modal-components/view-visit-prescription/view-visit-prescription.component';
+import { ViewVisitSummaryComponent } from 'src/app/modal-components/view-visit-summary/view-visit-summary.component';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,16 @@ export class CoreService {
 
   openSharePrescriptionErrorModal(data: { msg:string, confirmBtnText: string }): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionErrorComponent, { panelClass: 'modal-md', data });
+    return dialogRef.afterClosed();
+  }
+
+  openVisitSummaryModal(data: { uuid:string }): Observable<any> {
+    const dialogRef = this.dialog.open(ViewVisitSummaryComponent, { panelClass: 'modal-lg', data,  });
+    return dialogRef.afterClosed();
+  }
+
+  openVisitPrescriptionModal(data: { uuid:string }): Observable<any> {
+    const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data });
     return dialogRef.afterClosed();
   }
 }
