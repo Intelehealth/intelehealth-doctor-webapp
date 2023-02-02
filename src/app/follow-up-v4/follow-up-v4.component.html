@@ -42,6 +42,9 @@
           <li class="margin" *ngIf="type == 'Y'">
             {{ followUpData[2] }}
           </li>
+          <li  class="margin" *ngIf="type == 'Y'">
+            {{ followUpData[3] }}
+          </li>
         </ul>
       </div>
 
@@ -54,6 +57,16 @@
 
         <div *ngIf="type == 'Y'" class="date">
           <input type="date"   [min]="minDate"  [(ngModel)]="selecteDate"  class="form-control" />
+        </div>
+
+        <div *ngIf="type == 'Y'" class="select-form">
+          <ng-select
+            [items]="timeList"
+            bindLabel="name"
+            [clearable]="false"
+            [(ngModel)]="selectedTime"
+          >
+          </ng-select>
         </div>
 
         <div *ngIf="type == 'Y'">

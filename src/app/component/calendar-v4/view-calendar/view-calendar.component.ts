@@ -301,7 +301,7 @@ export class ViewCalendarComponent implements OnInit {
 
   setFollowUpVisit(followUpVisit, visit) {
     let obj = new FollowUp;
-    obj.slotTime = "11:30 AM";
+    obj.slotTime = (followUpVisit.followup_text.includes("Time")) ? followUpVisit.followup_text.split(", Time: ")[1]?.split(", Remark: ")[0]: "10:00 AM";
     obj.patientName = visit.patient.person.display;
     obj.patientAge = visit.patient.person.age;
     obj.patientGender = visit.patient.person.gender;
@@ -309,7 +309,7 @@ export class ViewCalendarComponent implements OnInit {
     obj.openMrsId = visit.patient.identifiers[0].identifier;
     obj.patientId = visit.patient.uuid;
     obj.visitUuid = visit.uuid;
-    obj.appointmentDate = (followUpVisit.followup_text.includes(",")) ? followUpVisit.followup_text.split(",")[0] : followUpVisit.followup_text;
+    obj.appointmentDate = (followUpVisit.followup_text.includes(",")) ? followUpVisit.followup_text.split(", Time: ")[0] : followUpVisit.followup_text;
     obj.type = 'followUp';
     obj.createdAt = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss");
     obj.slotJsDate = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss")
@@ -386,12 +386,12 @@ export class ViewCalendarComponent implements OnInit {
           let day = moment(slot.appointmentDate, "YYYY-MM-DD HH:mm:ss").diff(moment(), 'days')
           this.appointmentDetailModal.AppointmentOn = day > 0 ?  `Starts in ${Math.abs(day)} days` : `Awaiting since ${Math.abs(day)} day`;
           this.appointmentDetail.openAppointmentModal();
-        } else if( slot["visitStatus"] === 'Completed') {
-          this.editEditPrescriptionModal.AppointmentOn = days < 0 ?  `Prescription created ${Math.abs(days)} day ago`: 
+        } else if( slot["visitStatus"] === 'Completed' ||  slot["visitStatus"] === 'Ended') {
+          this.editEditPrescriptionModal.AppointmentOn = days < 1 ? `Prescription created ${Math.abs(days)} days ago`: `Prescription created ${Math.abs(days)} day ago`;
           this.editEditPrescriptionModal["data"] = slot;
           this.editEditPrescription.openAppointmentModal();
         } else {
-          this.providePrescriptionModal.AppointmentOn = days < 0 ?  `Awaiting since ${Math.abs(days)} day`: 
+          this.providePrescriptionModal.AppointmentOn = `Awaiting since ${Math.abs(days)} day`;
           this.providePrescriptionModal["data"] = slot;
           this.providePrescription.openAppointmentModal();
         }
