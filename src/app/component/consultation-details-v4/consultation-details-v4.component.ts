@@ -6,7 +6,6 @@ import { SessionService } from "./../../services/session.service";
 import { SocketService } from "src/app/services/socket.service";
 import { ChatComponent } from "../chat/chat.component";
 import { AppointmentService } from "src/app/services/appointment.service";
-import { MatDialog } from "@angular/material/dialog";
 
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
@@ -34,7 +33,7 @@ export class ConsultationDetailsV4Component implements OnInit {
   patientUuid: any;
   provider: any;
   currentTheme: "overflow-y";
-  changeSide:boolean = false;
+  changeSide: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,8 +42,7 @@ export class ConsultationDetailsV4Component implements OnInit {
     private authService: AuthService,
     private socket: SocketService,
     private appointmentService: AppointmentService,
-    private matDialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit() {
     const visitId = this.route.snapshot.params["visit_id"];
@@ -88,7 +86,7 @@ export class ConsultationDetailsV4Component implements OnInit {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -132,7 +130,9 @@ export class ConsultationDetailsV4Component implements OnInit {
   }
 
   getChat() {
-    this.chatComponent.chatLaunch();
+    this.visitService.triggerAction.next({
+      action: 'toggleChatBox'
+    });
   }
 
   getAppointmentDetails(visitId) {
@@ -150,12 +150,11 @@ export class ConsultationDetailsV4Component implements OnInit {
     this.socket.openNewVCModal();
   }
 
-  toggleCollapse(){
+  toggleCollapse() {
     this.changeSide = !this.changeSide;
   }
   get toggleImage() {
-    return `assets/svgs/${
-      this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
-    }`;
+    return `assets/svgs/${this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
+      }`;
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
@@ -19,7 +19,9 @@ export class VisitService {
 
   public isHelpButtonShow: boolean = false;
 
-  constructor(private http: HttpClient, private helper: HelperService) {}
+  public triggerAction: any = new Subject();
+
+  constructor(private http: HttpClient, private helper: HelperService) { }
 
   getVisits(params): Observable<any> {
     const query = {

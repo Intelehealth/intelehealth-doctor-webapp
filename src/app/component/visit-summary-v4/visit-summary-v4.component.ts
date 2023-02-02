@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { HeaderService } from "src/app/services/header.service";
@@ -13,6 +13,7 @@ declare const getFromStorage: Function;
   animations: plusIconAnimations,
 })
 export class VisitSummaryV4Component implements OnInit {
+  @ViewChild('chatBody') chatBody: ElementRef;
   buttons = [];
   fabTogglerState = "inactive";
   maxButtons = 6;
@@ -65,21 +66,27 @@ export class VisitSummaryV4Component implements OnInit {
     }
 
     if (this.patientId && this.visitId) {
-      this.getMessages(
-        this.toUser,
-        this.patientId,
-        this.fromUser,
-        this.visitId
-      );
+      this.getMessages();
     }
+
+    this.visitSvc.triggerAction.subscribe({
+      next: ((res: any) => {
+        switch (res.action) {
+          case 'toggleChatBox':
+            this.toggleChat();
+            break;
+        }
+      })
+    })
   }
 
-  getMessages(toUser, patientId, fromUser, visitId) {
+  getMessages(toUser = this.toUser, patientId = this.patientId, fromUser = this.fromUser, visitId = this.visitId) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
         next: (res: any) => {
           this.messages = res?.data;
+          this.scroll();
         },
       });
   }
@@ -95,18 +102,7 @@ export class VisitSummaryV4Component implements OnInit {
         .sendMessage(this.toUser, this.patientId, this.message, payload)
         .subscribe({
           next: (res) => {
-            this.getMessages(
-              this.toUser,
-              this.patientId,
-              this.fromUser,
-              this.visitId
-            );
-          },
-          error: () => {
-            // this.loading = false;
-          },
-          complete: () => {
-            //  this.loading = false;
+            this.getMessages();
           },
         });
       this.message = "";
@@ -115,7 +111,9 @@ export class VisitSummaryV4Component implements OnInit {
 
   readMessages(messageId) {
     this.chatSvc.readMessageById(messageId).subscribe({
-      next: (res) => {},
+      next: (res) => {
+        this.getMessages();
+      },
     });
   }
 
@@ -137,11 +135,19 @@ export class VisitSummaryV4Component implements OnInit {
   selectedButton(btn) {
     if (btn.isChat) {
       this.isShowChat = !this.isShowChat;
+      if (this.isShowChat) {
+        this.showItems();
+      } else {
+        this.hideItems();
+      }
     }
     if (this.isShowChat) {
-      const messages = this.messages.at(-1);
-      this.readMessages(messages?.id);
+      const messages = this.messages.at();
+      if (messages.fromUser !== this.fromUser) {
+        this.readMessages(messages?.id);
+      }
     }
+    this.scroll();
   }
 
   get isVisitSummaryShow() {
@@ -156,18 +162,14 @@ export class VisitSummaryV4Component implements OnInit {
     return localStorage.patientName || "";
   }
 
-  get readSentLabel() {
-    if (this.messages?.isRead) {
-      return "Read";
-    }
-    return "Sent";
+  scroll() {
+    setTimeout(() => {
+      this.chatBody.nativeElement.scroll(0, 99999999);
+    }, 500);
   }
 
-  get readSentIcon() {
-    if (this.messages?.isRead) {
-      return "assets/svgs/read.svg";
-    }
-    return "assets/svgs/sent-msg.svg";
+  toggleChat() {
+    this.selectedButton(this.options.buttons[1])
   }
 
   ngOnDestroy() {

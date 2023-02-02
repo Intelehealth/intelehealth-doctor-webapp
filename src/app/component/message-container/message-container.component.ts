@@ -12,18 +12,11 @@ export class MessageContainerComponent implements OnInit {
   latestChat: any;
   patientInfo = [];
   info = {};
-  constructor(private chatSvc: ChatService) {}
+  constructor(private chatSvc: ChatService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onConversationSelected(latestChat) {
     this.latestChat = latestChat;
-    this.readMessages(this.latestChat?.id);
-  }
-
-  readMessages(messageId) {
-    this.chatSvc.readMessageById(messageId).subscribe({
-      next: (res) => {},
-    });
   }
 }

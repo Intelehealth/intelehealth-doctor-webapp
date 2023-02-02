@@ -12,6 +12,10 @@ export class ChatContainerComponent implements OnInit {
     this.latestChat = latestChat;
     this.visitId = this.latestChat.visitId;
     this.getMessages();
+
+    if (this.latestChat?.fromUser !== this.fromUser) {
+      this.readMessages(this.latestChat?.id);
+    }
   }
   latestChat: any;
 
@@ -26,7 +30,7 @@ export class ChatContainerComponent implements OnInit {
   isOver = false;
   readSentImg: any;
 
-  constructor(private chatSvc: ChatService) {}
+  constructor(private chatSvc: ChatService) { }
 
   ngOnInit(): void {
     this.visitId = this.latestChat?.visitId;
@@ -87,22 +91,16 @@ export class ChatContainerComponent implements OnInit {
     }
   }
 
+  readMessages(messageId) {
+    this.chatSvc.readMessageById(messageId).subscribe({
+      next: (res) => {
+        this.getMessages();
+      },
+    });
+  }
+
   get patientName() {
     return localStorage.patientName || "";
-  }
-
-  get readSentLabel() {
-    if (this.latestChat?.isRead) {
-      return "Read";
-    }
-    return "Sent";
-  }
-
-  get readSentIcon() {
-    if (this.latestChat?.isRead) {
-      return "assets/svgs/read.svg"
-    }
-    return "assets/svgs/sent-msg.svg"
   }
 
   clickMenu() {
@@ -113,16 +111,12 @@ export class ChatContainerComponent implements OnInit {
     if (this.message) {
       this.latestChat.latestMessage = this.message;
 
-      // this.latestChat.messages.unshift({
-      //   id: 1,
-      //   message: this.message,
-      //   me: true,
-      // });
       const payload = {
         visitId: this.latestChat?.visitId,
         patientName: this.patientName,
         hwName: this.latestChat?.hwName,
       };
+
       this.chatSvc
         .sendMessage(
           this.latestChat?.toUser,
@@ -132,34 +126,14 @@ export class ChatContainerComponent implements OnInit {
         )
         .subscribe({
           next: (res) => {
-            console.log("res: ", res);
-            this.updateMessages(this.latestChat.toUuid);
-          },
-          error: () => {
-            // this.loading = false;
-          },
-          complete: () => {
-            //  this.loading = false;
+            this.getMessages();
           },
         });
       this.message = "";
     }
   }
 
-  updateMessages(toUuid) {
-    this.chatSvc.getAllMessages(toUuid).subscribe({
-      next: (res: { data }) => {
-        //this.latestChat = res.data;
-        // var newArray = this.latestChat.messages.map((obj)=> {
-        //   return { message: res.data.message };
-        // });
-        // console.log('newArray: ', newArray);
-        console.log("res.data: ", res.data);
-      },
-      error: (err) => {
-        console.log("err:>>>> ", err);
-      },
-      complete: () => {},
-    });
+  get fromUser() {
+    return JSON.parse(localStorage.user).uuid;
   }
 }

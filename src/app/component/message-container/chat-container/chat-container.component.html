@@ -37,8 +37,18 @@
         <span> {{ item.message }}</span>
       </div>
       <div class="read-unread-messages mt-2">
-        <div class="read-unread-img"><img height="16px" width="16px" [src]="readSentIcon" /></div>
-        <span class="read-unread-label"> {{ readSentLabel }}</span>
+        <div class="read-unread-img">
+          <img
+            height="16px"
+            width="16px"
+            [src]="
+              item.isRead ? 'assets/svgs/read.svg' : 'assets/svgs/sent-msg.svg'
+            "
+          />
+        </div>
+        <span class="read-unread-label">
+          {{ item.isRead ? "Read" : "Sent" }}
+        </span>
       </div>
     </div>
   </div>
@@ -47,7 +57,7 @@
       <input
         type="text"
         [(ngModel)]="message"
-        (keyup.enter)="submitMessage($event)"
+        (keyup.enter)="sendMessage($event)"
         placeholder="Enter your message"
       />
       <img
