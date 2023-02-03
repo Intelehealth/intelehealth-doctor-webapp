@@ -22,7 +22,7 @@
               </div>
             </div>
 
-            <div class="col h-100 patient-info mt">
+            <div class="col h-100 patient-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
                 <img src="{{ baseUrl + '/personimage/' + slot.patientId}}" class="profileImg" (error) ="onImgError($event)" />
                 <div class="d-grid">
@@ -32,7 +32,7 @@
               </div>
             </div>
 
-            <div class="col h-100 hw-info mt">
+            <div class="col h-100 hw-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
                 <img src="assets/svgs/hw.svg" />
                 <div class="d-grid">

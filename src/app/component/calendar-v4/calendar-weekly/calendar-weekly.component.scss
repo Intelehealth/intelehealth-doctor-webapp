@@ -170,7 +170,7 @@
             border-radius: 8px;
 
             .wrapper {
-                padding: 8px;
+                padding: 0px 8px;
             }
 
             .type {
@@ -198,7 +198,7 @@
 
                 .name {
                     margin-left: 8px;
-                    margin-top: 6px;
+                    margin-top: 10px;
                     width: 76px;
 
                     font-family: 'DM Sans';
@@ -216,4 +216,9 @@
             }
         }
     }
+    .profileImg {
+        width: 24px;
+        height: 41px;
+        border-radius: 50%;
+      }
 }
