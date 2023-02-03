@@ -208,6 +208,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   pbThickness: 3, // progress bar thickness
   text: "Please Wait..."
 };
+import { BreadcrumbService } from "./services/breadcrumb.service";
 
 @NgModule({
   declarations: [
@@ -405,6 +406,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     SocketService,
     CountryData,
     NgbActiveModal,
+    BreadcrumbService,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

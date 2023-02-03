@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HeaderService } from 'src/app/services/header.service';
 import { ProfileService } from 'src/app/services/profile.service';
 declare var getFromStorage: any;
 @Component({
@@ -11,7 +12,10 @@ export class ProfileContainerComponent implements OnInit {
   drName:string;
   providerInfo;
   personImageURL = "assets/images/profile/Frame 2609036.png";
-  constructor(private profileService: ProfileService) { }
+  constructor(private profileService: ProfileService,
+    private headerSvc: HeaderService) { 
+      this.headerSvc.showSearchBar = false;
+    }
 
   ngOnInit(): void {
     this.drName = getFromStorage("doctorName");
