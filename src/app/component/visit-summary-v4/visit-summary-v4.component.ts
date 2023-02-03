@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/co
 import { ActivatedRoute } from "@angular/router";
 import { ChatService } from "src/app/services/chat.service";
 import { HeaderService } from "src/app/services/header.service";
+import { SocketService } from "src/app/services/socket.service";
 import { VisitService } from "src/app/services/visit.service";
 import { plusIconAnimations } from "./visit-summary-v4.animation";
 declare const getFromStorage: Function;
@@ -41,7 +42,8 @@ export class VisitSummaryV4Component implements OnInit {
     private headerSvc: HeaderService,
     public visitSvc: VisitService,
     private chatSvc: ChatService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private socketSvc: SocketService
   ) {
     this.headerSvc.showSearchBar = false;
   }
@@ -53,8 +55,7 @@ export class VisitSummaryV4Component implements OnInit {
     const patientVisitProvider = getFromStorage("patientVisitProvider");
     this.toUser = patientVisitProvider?.provider?.uuid;
 
-    const hw = patientVisitProvider?.display?.split(":");
-    this.hwName = hw[0];
+    this.hwName = patientVisitProvider?.display?.split(":")?.[0];
 
     this.visitSvc.isHelpButtonShow = true;
 
@@ -77,7 +78,22 @@ export class VisitSummaryV4Component implements OnInit {
             break;
         }
       })
-    })
+    });
+
+    this.socketSvc.initSocket(true);
+    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+      this.socketSvc.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+
+      this.readMessages(data.id);
+    });
+
+    this.socketSvc.onEvent("isread").subscribe((data) => {
+      this.getMessages();
+    });
   }
 
   getMessages(toUser = this.toUser, patientId = this.patientId, fromUser = this.fromUser, visitId = this.visitId) {
@@ -143,7 +159,7 @@ export class VisitSummaryV4Component implements OnInit {
     }
     if (this.isShowChat) {
       const messages = this.messages.at();
-      if (messages.fromUser !== this.fromUser) {
+      if (messages?.fromUser !== this.fromUser) {
         this.readMessages(messages?.id);
       }
     }
@@ -163,9 +179,11 @@ export class VisitSummaryV4Component implements OnInit {
   }
 
   scroll() {
-    setTimeout(() => {
-      this.chatBody.nativeElement.scroll(0, 99999999);
-    }, 500);
+    try {
+      setTimeout(() => {
+        this.chatBody?.nativeElement?.scroll(0, 99999999);
+      }, 500);
+    } catch (error) { }
   }
 
   toggleChat() {

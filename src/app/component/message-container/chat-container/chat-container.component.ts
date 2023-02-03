@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Input, Output } from "@angular/core";
 import { ChatService } from "src/app/services/chat.service";
 import * as moment from "moment";
+import { SocketService } from "src/app/services/socket.service";
 
 @Component({
   selector: "app-chat-container",
@@ -30,7 +31,7 @@ export class ChatContainerComponent implements OnInit {
   isOver = false;
   readSentImg: any;
 
-  constructor(private chatSvc: ChatService) { }
+  constructor(private chatSvc: ChatService, private socketSvc: SocketService) { }
 
   ngOnInit(): void {
     this.visitId = this.latestChat?.visitId;
@@ -38,6 +39,20 @@ export class ChatContainerComponent implements OnInit {
     //   this.getPatientsVisits(this.latestChat?.patientId);
     // }
     //  this.getMessages();
+    this.socketSvc.initSocket(true);
+    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+      this.socketSvc.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+
+      this.readMessages(data.id);
+    });
+
+    this.socketSvc.onEvent("isread").subscribe((data) => {
+      this.getMessages();
+    });
   }
 
   submitMessage(event) {
