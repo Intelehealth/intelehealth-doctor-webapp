@@ -181,6 +181,7 @@ import { HelpmenuComponent } from "./component/helpmenu/helpmenu.component";
 import { AppointmentContainerComponent } from "./component/appointment-container/appointment-container.component";
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { ToastrModule } from "ngx-toastr";
+import { BreadcrumbService } from "./services/breadcrumb.service";
 
 @NgModule({
   declarations: [
@@ -368,6 +369,9 @@ import { ToastrModule } from "ngx-toastr";
         {
           path: "dashboard",
           component: DashboardComponent,
+          data: {
+            breadcrumb: 'Dashboard',
+        },
           children: [
             {
               path: "",
@@ -382,16 +386,25 @@ import { ToastrModule } from "ngx-toastr";
             {
               path: "calendar",
               component: CalendarContainerComponent,
+              data: {
+                breadcrumb: 'Calendar',
+            },
               canActivate: [AuthGuard],
             },
             {
               path: "view-calendar",
               component: ViewCalendarComponent,
+              data: {
+                breadcrumb: 'Daily',
+            },
               canActivate: [AuthGuard],
             },
             {
               path: "setup-calendar",
               component: SetupCalendarV4Component,
+              data: {
+                breadcrumb: 'Calendar',
+            },
               canActivate: [AuthGuard],
             },
             {
@@ -408,6 +421,9 @@ import { ToastrModule } from "ngx-toastr";
             {
               path: "visit-summary/:patient_id/:visit_id",
               component: VisitSummaryV4Component,
+              data: {
+                breadcrumb: 'Visit Summary',
+            },
               canActivate: [AuthGuard],
             },
             {
@@ -423,6 +439,9 @@ import { ToastrModule } from "ngx-toastr";
             {
               path: "profile",
               component: ProfileContainerComponent,
+              data: {
+                breadcrumb: 'Profile',
+            },
               canActivate: [AuthGuard],
             },
             {
@@ -528,6 +547,7 @@ import { ToastrModule } from "ngx-toastr";
     SocketService,
     CountryData,
     NgbActiveModal,
+    BreadcrumbService,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

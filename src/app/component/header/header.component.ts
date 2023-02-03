@@ -9,6 +9,9 @@ import { FindPatientComponent } from "../find-patient/find-patient.component";
 import { SelectLanguageComponent } from "../set-up-profile/select-language/select-language.component";
 import { SetNewPasswordComponent } from "../set-new-password/set-new-password.component";
 import { Router } from "@angular/router";
+import { Observable } from "rxjs";
+import { Breadcrumb } from "src/app/services/breadcrumb.model";
+import { BreadcrumbService } from "src/app/services/breadcrumb.service";
 declare var getFromStorage: any;
 
 @Component({
@@ -45,24 +48,19 @@ export class HeaderComponent implements OnInit {
       isActive: false,
     },
   ];
-
-  breadCrumb = [
-    {
-      text: "Dashboard",
-      route: "/dashboard",
-    }
-  ];
-
   userName: string;
   values: any = [];
   searchValue: string;
   personImgURL = "assets/images/profile/Frame 2609036.png";
+  breadcrumbs$: Observable<Breadcrumb[]>;
   constructor(public headerService: HeaderService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
     private http: HttpClient,
     private profileService: ProfileService,
-    private router: Router) {
+    private router: Router,
+    private readonly breadcrumbService: BreadcrumbService) {
+      this.breadcrumbs$ = breadcrumbService.breadcrumbs$;
   }
 
   ngOnInit(): void {
@@ -72,22 +70,6 @@ export class HeaderComponent implements OnInit {
       this.personImgURL = `${this.profileService.baseURL}/personimage/${provider.person.uuid}`;
     }, (err) => {
       this.personImgURL = this.personImgURL;
-    });
-    this.router.events.subscribe(() => {
-      if (this.breadCrumb.length == 2) {
-        this.breadCrumb.pop();
-      }
-      if (this.router.url.includes("visit-summary")) {
-        this.breadCrumb.push({
-          text: "Visit summary",
-          route: "/dashboard/visit-summary",
-        });
-      } else if (this.router.url.includes("calendar")) {
-        this.breadCrumb.push({
-          text: "Calendar",
-          route: "/dashboard/calendar",
-        });
-      }
     });
   }
 
