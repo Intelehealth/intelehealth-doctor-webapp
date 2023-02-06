@@ -89,6 +89,7 @@ export class SetupCalendarV4Component implements OnInit {
   }
 
   onCheckboxChange(e, days) {
+    this.showDays = false;
     if (!e.target.checked) {
       if (days.name === "Weekdays") {
         for (let i = 0; i <= 4; i++) {
@@ -130,7 +131,6 @@ export class SetupCalendarV4Component implements OnInit {
         this.weekDaysList.push(days.name);
       }
     }
-    this.showDays = false;
   }
 
   clearSelection() {
