@@ -182,6 +182,7 @@ import { AppointmentContainerComponent } from "./component/appointment-container
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { ToastrModule } from "ngx-toastr";
 import { BreadcrumbService } from "./services/breadcrumb.service";
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
   declarations: [
@@ -346,6 +347,7 @@ import { BreadcrumbService } from "./services/breadcrumb.service";
     NgOtpInputModule,
     MatMenuModule,
     NgSelectModule,
+    MomentModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot(
       [

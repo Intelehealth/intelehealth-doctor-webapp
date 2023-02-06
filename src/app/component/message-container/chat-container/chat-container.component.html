@@ -17,9 +17,7 @@
         (change)="onVisitChange($event.target.value)"
       >
         <option [value]="visit.visitId" *ngFor="let visit of visits">
-          {{ moment(visit?.createdAt).format("DD MMM YYYY") }} ({{
-            visit.visitId
-          }})
+          {{ visit?.createdAt | amDateFormat : "DD MMM YYYY" }}
         </option>
       </select>
     </div>
@@ -37,18 +35,25 @@
         <span> {{ item.message }}</span>
       </div>
       <div class="read-unread-messages mt-2">
-        <div class="read-unread-img">
-          <img
-            height="16px"
-            width="16px"
-            [src]="
-              item.isRead ? 'assets/svgs/read.svg' : 'assets/svgs/sent-msg.svg'
-            "
-          />
+        <div class="msg-time">
+          {{ item.createdAt | amDateFormat : "LT" }}
         </div>
-        <span class="read-unread-label">
-          {{ item.isRead ? "Read" : "Sent" }}
-        </span>
+        <ng-container *ngIf="item?.fromUser === chatSvc?.user?.uuid">
+          <div class="read-unread-img">
+            <img
+              height="16px"
+              width="16px"
+              [src]="
+                item.isRead
+                  ? 'assets/svgs/read.svg'
+                  : 'assets/svgs/sent-msg.svg'
+              "
+            />
+          </div>
+          <span class="read-unread-label">
+            {{ item.isRead ? "Read" : "Sent" }}
+          </span>
+        </ng-container>
       </div>
     </div>
   </div>
