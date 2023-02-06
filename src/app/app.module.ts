@@ -209,6 +209,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   text: "Please Wait..."
 };
 import { BreadcrumbService } from "./services/breadcrumb.service";
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
   declarations: [
@@ -375,6 +376,7 @@ import { BreadcrumbService } from "./services/breadcrumb.service";
     NgOtpInputModule,
     MatMenuModule,
     NgSelectModule,
+    MomentModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,

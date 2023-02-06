@@ -168,7 +168,7 @@
                     <ng-container *ngIf="showDays">
                       <div class="days-container position-absolute">
                         <div class="days-content" *ngFor="let days of daysList">
-                          <input type="checkbox" [checked]="days.checked" class="checkbox"
+                          <input type="checkbox" [checked]="days.checked" class="checkbox click"
                             (change)="onCheckboxChange($event, days)" id="weekdays" name="weekdays" />
                           <span class="day-name">{{ days.name }}</span>
                         </div>
@@ -177,7 +177,7 @@
                   </div>
                 </td>
                 <td class="pr-0 d-flex save-cancel-td">
-                  <div class="save-btn position-relative click" (click)="save()">
+                  <div class="save-btn position-relative " [ngClass]="startDate && endDate &&  weekDaysList.length > 0 ? 'save-btn-bg click' : 'isDisabled'"  (click)="save()">
                     <span class="save-btn-label position-absolute">Save</span>
                   </div>
 

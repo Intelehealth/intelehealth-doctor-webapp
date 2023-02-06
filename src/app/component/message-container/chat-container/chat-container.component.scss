@@ -37,6 +37,7 @@
     flex-grow: 1;
     display: flex;
   }
+
   .id {
     position: absolute;
     bottom: 2%;
@@ -93,6 +94,7 @@
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+
   .messageContent {
     background: #ffffff;
     border: 1px solid rgba(178, 175, 190, 0.2);
@@ -106,6 +108,7 @@
 
   &.me {
     align-items: flex-end;
+
     .messageContent {
       background: #efe8ff;
       border-radius: 8px 8px 0px 8px;
@@ -121,6 +124,7 @@
 .footer {
   display: flex;
   margin-bottom: 10px;
+
   .attach-img {
     position: absolute;
     right: 8%;
@@ -165,7 +169,7 @@
   padding: 0px;
   gap: 4px;
 
-  width: 56px;
+  width: auto;
   height: 20px;
 
   /* Inside auto layout */
@@ -202,7 +206,7 @@
 
   width: 32px;
   height: 18px;
-  
+
   color: #7f7b92;
 
   font-family: "DM Sans";
@@ -210,7 +214,7 @@
   font-weight: 400;
   font-size: 12px;
   line-height: 18px;
-  
+
   text-align: center;
   letter-spacing: -0.139286px;
 
