@@ -41,11 +41,12 @@ export class ConsultationDetailsV4Component implements OnInit {
     private sessionService: SessionService,
     private authService: AuthService,
     private socket: SocketService,
-    private appointmentService: AppointmentService,
-  ) { }
+    private appointmentService: AppointmentService
+  ) {}
 
   ngOnInit() {
     const visitId = this.route.snapshot.params["visit_id"];
+    this.visitService.chatVisitId = visitId;
     this.patientUuid = this.route.snapshot.params["patient_id"];
     this.provider = getFromStorage("provider");
     this.visitService
@@ -86,7 +87,7 @@ export class ConsultationDetailsV4Component implements OnInit {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -131,7 +132,7 @@ export class ConsultationDetailsV4Component implements OnInit {
 
   getChat() {
     this.visitService.triggerAction.next({
-      action: 'toggleChatBox'
+      action: "toggleChatBox",
     });
   }
 
@@ -154,7 +155,10 @@ export class ConsultationDetailsV4Component implements OnInit {
     this.changeSide = !this.changeSide;
   }
   get toggleImage() {
-    return `assets/svgs/${this.changeSide ? "filter-table-up-arrow.svg" : "filter-table-down-arrow.svg"
-      }`;
+    return `assets/svgs/${
+      this.changeSide
+        ? "filter-table-up-arrow.svg"
+        : "filter-table-down-arrow.svg"
+    }`;
   }
 }

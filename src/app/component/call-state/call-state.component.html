@@ -5,17 +5,22 @@
     [ngClass]="collapsed_message ? 'call-state-collapsed' : ''"
   >
     <div class="d-flex">
-      <video #remoteVideo class="remoteVideo  mx-auto" autoplay></video>
+      <video #remoteVideo class="remoteVideo mx-auto" autoplay></video>
     </div>
     <div
       #localContainer
       class="call-person"
       [ngClass]="{ 'd-none': isVideoOff }"
     >
-      <video #localVideo autoplay class="localVideo" [ngClass]="{'collapse-localVideo': collapsed_message}"></video>
+      <video
+        #localVideo
+        autoplay
+        class="localVideo"
+        [ngClass]="{ 'collapse-localVideo': collapsed_message }"
+      ></video>
     </div>
     <div class="call-person" [ngClass]="{ 'd-none': !isVideoOff }">
-      <img class="voice" [src]="voiceCallIcons | async"  *ngIf="!isMute" />
+      <img class="voice" [src]="voiceCallIcons | async" *ngIf="!isMute" />
       <img
         class="voice mute-mic"
         src="assets/svgs/mute-mic.svg"
@@ -63,33 +68,59 @@
       </button>
     </div>
     <div class="zomm">
-      <button class="logo zoom-icon" (click)="toggleZoomIn()" *ngIf="!isFullscreen">
+      <button
+        class="logo zoom-icon"
+        (click)="toggleZoomIn()"
+        *ngIf="!isFullscreen"
+      >
         <img src="assets/svgs/minimize.svg" />
       </button>
 
-      <button class="logo" (click)="toggleZoomOut()" *ngIf="isFullscreen" >
+      <button class="logo" (click)="toggleZoomOut()" *ngIf="isFullscreen">
         <img width="30px" height="30px" src="assets/svgs/maximize.svg" />
       </button>
     </div>
-  </div> 
+  </div>
 
   <div class="message-container" *ngIf="collapsed_message">
     <div class="profile-section">
       <div class="picture">
         <img src="assets/icons/message/Frame2608562.png" />
       </div>
-      <div class="name">Muskan Kala</div>
+      <div class="name">{{ patientName }}</div>
     </div>
-    <div class="body">
-      <div class="chat-time">Mon at 5:41 PM</div>
+    <div #chatBody class="body">
+      <div class="chat-time"></div>
       <div class="message">
         <div
           class="conversation"
-          [ngClass]="{ me: message.me }"
-          *ngFor="let message of conversations"
+          [ngClass]="{ me: msg?.fromUser === chatSvc?.user?.uuid }"
+          *ngFor="let msg of messages"
         >
           <div class="messageContent">
-            {{ message.body }}
+            {{ msg.message }}
+          </div>
+
+          <div class="read-unread-messages mt-2">
+            <div class="msg-time">
+              {{ msg.createdAt | amDateFormat : "LT" }}
+            </div>
+            <ng-container *ngIf="msg?.fromUser === chatSvc?.user?.uuid">
+              <div class="read-unread-img">
+                <img
+                  height="16px"
+                  width="16px"
+                  [src]="
+                    msg.isRead
+                      ? 'assets/svgs/read.svg'
+                      : 'assets/svgs/sent-msg.svg'
+                  "
+                />
+              </div>
+              <span class="read-unread-label">
+                {{ msg.isRead ? "Read" : "Sent" }}
+              </span>
+            </ng-container>
           </div>
         </div>
       </div>
@@ -99,7 +130,7 @@
         <input
           type="text"
           [(ngModel)]="message"
-          (keyup.enter)="submitMessage($event)"
+          (keyup.enter)="sendMessage($event)"
           placeholder="Enter your message"
         />
         <img
@@ -111,7 +142,7 @@
         />
         <input #inputField hidden type="file" />
       </div>
-      <div class="sent-box" (click)="submitMessage($event)">
+      <div class="sent-box" (click)="sendMessages()">
         <img src="assets/svgs/sent.svg" />
       </div>
     </div>

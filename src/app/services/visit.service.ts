@@ -21,7 +21,9 @@ export class VisitService {
 
   public triggerAction: any = new Subject();
 
-  constructor(private http: HttpClient, private helper: HelperService) { }
+  public chatVisitId: any;
+
+  constructor(private http: HttpClient, private helper: HelperService) {}
 
   getVisits(params): Observable<any> {
     const query = {

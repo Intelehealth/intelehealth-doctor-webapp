@@ -120,7 +120,10 @@ export class SocketService {
     });
   }
 
-  public openNewVCModal(initiator = "dr") {
+  public openNewVCModal(
+    initiator = "dr",
+    visitId = this.visitSvc.chatVisitId || ""
+  ) {
     this.visitSvc.isVisitSummaryShow = true;
     const bodyElement = document.body;
     bodyElement.classList.add("body-hide-overflow");
@@ -131,7 +134,7 @@ export class SocketService {
     };
     const config: MatDialogConfig = {
       width: "calc(100% - 300px)",
-      height:"82vh",
+      height: "82vh",
       maxHeight: "90vh",
       autoFocus: false,
       hasBackdrop: false,
@@ -139,6 +142,7 @@ export class SocketService {
       data: {
         patientUuid: localStorage.patientUuid,
         connectToDrId: localStorage.connectToDrId,
+        visitId,
         initiator,
       },
     };

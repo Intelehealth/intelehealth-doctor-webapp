@@ -6,11 +6,14 @@ import {
   Input,
   Inject,
   ViewChild,
+  ElementRef,
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { concatMap, delay, repeat } from "rxjs/operators";
+import { ChatService } from "src/app/services/chat.service";
 import { SocketService } from "src/app/services/socket.service";
 import { VisitService } from "src/app/services/visit.service";
 declare const getFromStorage: Function;
@@ -46,30 +49,26 @@ export class CallStateComponent implements OnInit {
   initiator = "dr";
   isRemote = false;
   voiceCallIcons: any;
+  hwName: any;
+  toUser: string;
+  messages: any = [];
+  patientId: string;
+  visitId: string;
 
   @ViewChild("mainContainer") mainContainer: any;
   @ViewChild("localVideo") localVideoRef: any;
   @ViewChild("remoteVideo") remoteVideoRef: any;
   @ViewChild("localContainer") localContainer: any;
-
-  conversations = [
-    { id: 1, body: "Hi! How is patient feeling now?", me: true },
-    {
-      id: 2,
-      body: "The patient was not feeling good for 2-3 days but lately the patient is doing well. ",
-      me: false,
-    },
-    { id: 3, body: "Great to hear. Keep me posted on the patient.", me: false },
-    { id: 4, body: "Hi! How is patient feeling now?", me: true },
-  ];
+  @ViewChild("chatBody") chatBody: ElementRef;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public socketService: SocketService,
     public dialogRef: MatDialogRef<CallStateComponent>,
     private snackbar: MatSnackBar,
-    private visitSvc: VisitService
-  ) { }
+    private visitSvc: VisitService,
+    private chatSvc: ChatService
+  ) {}
 
   toast({
     message,
@@ -97,6 +96,7 @@ export class CallStateComponent implements OnInit {
       this.initiator = this.data.initiator;
     }
     const patientVisitProvider = getFromStorage("patientVisitProvider");
+    this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
 
@@ -107,13 +107,89 @@ export class CallStateComponent implements OnInit {
 
     this.connectToDrId = this.data.connectToDrId;
     await this.startUserMedia();
+    this.toUser = patientVisitProvider?.provider?.uuid;
+    if (this.data) {
+      this.visitId = this.data?.visitId;
+      this.patientId = this.data?.patientUuid;
+      this.getMessages();
+    }
 
     this.socketService.initSocket();
     const res = this.initSocketEvents();
     console.log("res: ", res);
+    this.socketService.onEvent("updateMessage").subscribe((data) => {
+      this.socketService.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+
+      this.readMessages(data.id);
+    });
+    this.socketService.onEvent("isread").subscribe((data) => {
+      this.getMessages();
+    });
     console.log("this.socketService.incoming: ", this.socketService.incoming);
-    await this.connect();
+     await this.connect();
     await this.changeVoiceCallIcons();
+  }
+
+  getMessages(
+    toUser = this.toUser,
+    patientId = this.patientId,
+    fromUser = this.fromUser,
+    visitId = this.visitId
+  ) {
+    this.chatSvc
+      .getPatientMessages(toUser, patientId, fromUser, visitId)
+      .subscribe({
+        next: (res: any) => {
+          this.messages = res?.data;
+          this.scroll();
+        },
+      });
+  }
+
+  sendMessages() {
+    if (this.message) {
+      const payload = {
+        visitId: this.visitId,
+        patientName: this.patientName,
+        hwName: this.hwName,
+      };
+      this.chatSvc
+        .sendMessage(this.toUser, this.patientId, this.message, payload)
+        .subscribe({
+          next: (res) => {
+            this.getMessages();
+          },
+        });
+      this.message = "";
+    }
+  }
+
+  readMessages(messageId) {
+    this.chatSvc.readMessageById(messageId).subscribe({
+      next: (res) => {
+        this.getMessages();
+      },
+    });
+  }
+
+  scroll() {
+    try {
+      setTimeout(() => {
+        this.chatBody?.nativeElement?.scroll(0, 99999999);
+      }, 500);
+    } catch (error) {}
+  }
+
+  get fromUser() {
+    return JSON.parse(localStorage.user).uuid;
+  }
+
+  get patientName() {
+    return localStorage.patientName || "";
   }
 
   async connect() {
@@ -360,11 +436,6 @@ export class CallStateComponent implements OnInit {
     let value = event.target.value.trim();
     this.message = "";
     if (value.length < 1) return false;
-    this.conversations.unshift({
-      id: 1,
-      body: value,
-      me: true,
-    });
   }
 
   stop() {
