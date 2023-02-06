@@ -389,7 +389,10 @@ import { MomentModule } from 'ngx-moment';
     AppRoutingModule,
     NgxUiLoaderModule.forRoot(ngxUiLoaderConfig),
     NgxUiLoaderHttpModule.forRoot({
-      showForeground: true
+      showForeground: true,
+      exclude: [
+        'https://uiux.intelehealth.org:3004/api/messages/'
+      ]
     }),
     NgxPermissionsModule.forRoot({
       permissionsIsolate: false,

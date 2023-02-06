@@ -5,15 +5,15 @@ import { MessageContainerComponent } from '../component/message-container/messag
 import { MessagesComponent } from './messages.component';
 
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   component: MessagesComponent
-  // }
   {
-    path: "",
-    component: MessageContainerComponent,
-    canActivate: [AuthGuard],
+    path: '',
+    component: MessagesComponent
   }
+  // {
+  //   path: "",
+  //   component: MessageContainerComponent,
+  //   canActivate: [AuthGuard],
+  // }
 ];
 
 @NgModule({
