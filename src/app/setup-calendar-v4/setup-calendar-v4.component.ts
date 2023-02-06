@@ -90,50 +90,75 @@ export class SetupCalendarV4Component implements OnInit {
     if (!e.target.checked) {
       if (days.name === "Weekdays") {
         for (let i = 0; i <= 4; i++) {
+          this.daysList[i].checked = false;
+          this.daysList[7].checked = false
           this.weekDaysList.splice(this.weekDaysList.indexOf(this.daysList[i].name), 1);
         }
       } else if (days.name === "Weekends") {
         for (let i = 5; i <= 6; i++) {
+          this.daysList[i].checked = false;
+          this.daysList[8].checked = false
           this.weekDaysList.splice(this.weekDaysList.indexOf(this.daysList[i].name), 1);
         }
       } else {
         let element = this.weekDaysList.find((itm) => itm === days.name);
         this.weekDaysList.splice(this.weekDaysList.indexOf(element), 1);
+        let element1 = this.daysList.find((itm) => itm.name === days.name);
+        if (element1) element1.checked = false;
       }
       return;
-    }
-    if (days.name === "Weekdays") {
-      for (let i = 0; i <= 4; i++) {
-        this.weekDaysList.push(this.daysList[i].name);
-      }
-    } else if (days.name === "Weekends") {
-      for (let i = 5; i <= 6; i++) {
-        this.weekDaysList.push(this.daysList[i].name);
-      }
     } else {
-      this.weekDaysList.push(days.name);
+      if (days.name === "Weekdays") {
+        this.clearSelection();
+        for (let i = 0; i <= 4; i++) {
+          this.daysList[i].checked = true;
+          this.daysList[7].checked = true;
+          this.weekDaysList.push(this.daysList[i].name);
+        }
+      } else if (days.name === "Weekends") {
+        this.clearSelection();
+        for (let i = 5; i <= 6; i++) {
+          this.daysList[i].checked = true;
+          this.daysList[8].checked = true;
+          this.weekDaysList.push(this.daysList[i].name);
+        }
+      } else {
+        let element1 = this.daysList.find((itm) => itm.name === days.name);
+        if (element1) element1.checked = true;
+        this.weekDaysList.push(days.name);
+      }
     }
+    this.showDays = false;
+  }
+
+  clearSelection() {
+    this.weekDaysList = [];
+    this.daysList.forEach(day =>day.checked = false);
   }
 
   addTiming() {
     this.showAddMore = true;
+    this.showDays = false;
     this.selectedStartTime = this.timeList[0];
     this.selectedEndTime = this.timeList[0];
     this.selectedStartAmPm = this.clockTimeAmPM[0];
     this.selectedEndAmPm = this.clockTimeAmPM[1];
-    this.weekDaysList = [];
+    this.clearSelection();
     this.errorMsg = null;
   }
 
   removeTiming() {
-    if (this.data.length > 0)
+    if (this.data.length > 0) {
       this.showAddMore = false;
-    this.errorMsg = null;
+      this.errorMsg = null;
+    }
+    this.showDays = false;
+    this.clearSelection();
   }
 
   addMonth() {
     if (this.months.length !== this.monthNames.length)
-      this.months.push({ name: this.monthNames[this.months.length+1], year: new Date().getFullYear() });
+      this.months.push({ name: this.monthNames[this.months.length + 1], year: new Date().getFullYear() });
   }
 
   getScheduledMonths() {
@@ -145,7 +170,7 @@ export class SetupCalendarV4Component implements OnInit {
             this.months.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear() });
           }
           this.getSchedule(this.months[0].year, this.months[0].name);
-          this.selectedMonth = {name : this.months[0].name, year : this.months[0].year}
+          this.selectedMonth = { name: this.months[0].name, year: this.months[0].year }
         },
       });
   }
@@ -160,7 +185,7 @@ export class SetupCalendarV4Component implements OnInit {
         next: (res: any) => {
           if (res && res.data) {
             this.userSchedule = res.data;
-            if ( res.data.slotSchedule == undefined || res.data.slotSchedule.length == 0) {
+            if (res.data.slotSchedule == undefined || res.data.slotSchedule.length == 0) {
               this.addTiming();
             }
             this.setData(res.data);
@@ -412,7 +437,7 @@ export class SetupCalendarV4Component implements OnInit {
   public remove(index: number): void {
     this.daysOff.splice(index, 1);
     let daysOff = [];
-    if(this.daysOff[0].includes("-")) {
+    if (this.daysOff[0].includes("-")) {
       this.daysOff?.forEach(arr => {
         daysOff.push(moment(arr, ("YYYY-MM-DD HH:mm:ss")).format("DD/MM/YYYY"));
       });
