@@ -5,7 +5,7 @@
   <div class="label1">Setup your calendar<br>
     <span class="text">Please set up your scedule for the month according to your availability</span>
   </div>
-  <button type="button" class="btn manage-calendar-btn ml-auto" routerLink="/dashboard/view-calendar">
+  <button type="button" class="btn manage-calendar-btn ml-auto" routerLink="/calendar/view-calendar">
     View calendar
   </button>
 </div>
@@ -22,7 +22,7 @@
         <!-- Month -->
         <div class="month">
           <!-- Details -->
-          <div class="details click" (click)="getMonthDetails(month)"> 
+          <div class="details click" (click)="getMonthDetails(month)">
             <div  class="left-line" [ngClass]="{'red-line': selectedMonth?.name === month?.name}"></div>
             <span class="name">{{month.name}} </span>
           </div>

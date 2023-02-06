@@ -97,7 +97,7 @@ export class CallStateComponent implements OnInit {
       this.initiator = this.data.initiator;
     }
     const patientVisitProvider = getFromStorage("patientVisitProvider");
-    const doctorName = getFromStorage("doctorName");
+    const doctorName = localStorage.getItem("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
 
     this.nurseId =

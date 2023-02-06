@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -15,13 +15,14 @@ import medicines from '../../core/data/medicines';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-visit-summary',
   templateUrl: './visit-summary.component.html',
   styleUrls: ['./visit-summary.component.scss']
 })
-export class VisitSummaryComponent implements OnInit {
+export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   visit: any;
   patient: any;
@@ -219,7 +220,8 @@ export class VisitSummaryComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private toastr: ToastrService,
     private coreService: CoreService,
-    private encounterService: EncounterService) {
+    private encounterService: EncounterService,
+    private socket: SocketService) {
       this.referSpecialityForm = new FormGroup({
         refer: new FormControl(false, [Validators.required]),
         specialization: new FormControl(null, [Validators.required])
@@ -374,6 +376,8 @@ export class VisitSummaryComponent implements OnInit {
     encounters.forEach((encounter: any) => {
       if (encounter.display.match("ADULTINITIAL") !== null) {
         this.providerName = encounter.encounterProviders[0].display;
+        // store visit provider in localStorage
+        localStorage.setItem('patientVisitProvider', JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
             if (attribute.display.match("phoneNumber") != null) {
@@ -697,11 +701,15 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   startChat() {
-
+    this.visitService.triggerAction.next({
+      action: 'toggleChatBox'
+    });
   }
 
   startCall() {
-
+    localStorage.patientUuid = this.visit.patient.uuid;
+    localStorage.connectToDrId = this.provider?.person?.uuid;
+    this.socket.openNewVCModal();
   }
 
   checkIfDateOldThanOneDay(data: any) {
@@ -1241,6 +1249,10 @@ export class VisitSummaryComponent implements OnInit {
 
   openVisitPrescriptionModal(uuid: string) {
     this.coreService.openVisitPrescriptionModal({uuid});
+  }
+
+  ngOnDestroy(): void {
+    localStorage.removeItem('patientVisitProvider');
   }
 
 }

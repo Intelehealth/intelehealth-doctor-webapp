@@ -16,7 +16,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
-import { ProfileContainerComponent } from '../component/profile-container/profile-container.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
 
@@ -28,10 +27,6 @@ const routes: Routes = [
       {
         path: '',
         component: AyuComponent
-      },
-      {
-        path: 'profile',
-        component: ProfileContainerComponent
       }
     ]
   }

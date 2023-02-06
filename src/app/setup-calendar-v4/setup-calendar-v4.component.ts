@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDatepicker, MatDatepickerInputEvent } from "@angular/material/datepicker";
 import * as moment from "moment";
+import { PageTitleService } from "../core/page-title/page-title.service";
 import { AppointmentService } from "../services/appointment.service";
 
 @Component({
@@ -68,9 +69,10 @@ export class SetupCalendarV4Component implements OnInit {
   selectedMonth;
   @ViewChild('picker', { static: true }) _picker: MatDatepicker<Date>;
 
-  constructor(private appointmentService: AppointmentService) { }
+  constructor(private appointmentService: AppointmentService, private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {
+    this.pageTitleService.setTitle({title: 'Calendar', imgUrl: 'assets/svgs/calender-dilog.svg' });
     this.getScheduledMonths();
   }
 

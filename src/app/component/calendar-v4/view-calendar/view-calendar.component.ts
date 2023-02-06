@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { CalendarView } from "angular-calendar";
 import * as moment from "moment";
 import { ToastrService } from "ngx-toastr";
+import { PageTitleService } from "src/app/core/page-title/page-title.service";
 import { AppointmentDetailModalComponent } from "src/app/modals/appointment-detail-modal/appointment-detail-modal.component";
 import { CommonModalComponent } from "src/app/modals/common-modal/common-modal.component";
 import { RescheduleAppointmentModalComponent } from "src/app/modals/reschedule-appointment-modal/reschedule-appointment-modal.component";
@@ -209,9 +210,11 @@ export class ViewCalendarComponent implements OnInit {
   constructor(private appointmentService: AppointmentService,
     private visitService: VisitService,
     private toastr: ToastrService,
-    private router: Router) { }
+    private router: Router,
+    private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {
+    this.pageTitleService.setTitle({title: 'Calendar', imgUrl: 'assets/svgs/calender-dilog.svg' });
     this.setView('day');
     this.getFollowUpVisit();
   }
@@ -329,7 +332,7 @@ export class ViewCalendarComponent implements OnInit {
   getFollowUpVisitByDates(start, end) {
     let array = [];
     this.followUpVisits.forEach(visit => {
-      if(moment(start,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) || moment(end,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) || 
+      if(moment(start,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) || moment(end,"YYYY-MM-DD").isSame(moment(visit.createdAt,"YYYY-MM-DD")) ||
       moment(visit.createdAt,"YYYY-MM-DD").isBetween(moment(start,"YYYY-MM-DD"),(moment(end,"YYYY-MM-DD")))) {
         array.push(visit);
       }
@@ -480,7 +483,7 @@ export class ViewCalendarComponent implements OnInit {
       } else {
         this.timeOffModal.FollowUpTime.push(slot.startTime);
       }
-     
+
     });
     this.timeOffModal.mainText = moment(slot?.appointmentDate, 'YYYY-MM-DD HH:mm:ss').format("DD MMM, YYYY")
     this.timeOff.openTimeOffModal();
