@@ -255,6 +255,7 @@ export class SetupCalendarV4Component implements OnInit {
       next: (res: any) => {
         if (res.status) {
           this.getDaysOff(array3);
+          this.showSaveButton=false;
           this.model = [];
         }
       },
