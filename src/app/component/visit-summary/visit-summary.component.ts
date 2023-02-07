@@ -78,6 +78,8 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
     } 
+    this.patientId = this.route.snapshot.paramMap.get("patient_id");
+
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
       if (Array.isArray(visitDetails.attributes)) {
