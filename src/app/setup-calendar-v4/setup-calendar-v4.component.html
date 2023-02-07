@@ -207,14 +207,17 @@
         <table class="table w-100">
           <tr class="schedule">
             <td class="pl-0 mt-4">
-                    <mat-form-field class="example-full-width" appearance="fill">
-                      <mat-label>Select dates</mat-label>
-                        <input [value]="resetModel" matInput [matDatepicker]="picker" [min]="minDate"
+              <div> Dates <br>
+                    <div class="daysOff-cal" >
+                      <mat-form-field class="matwidth" appearance="none">
+                        <input matInput [value]="resetModel"  [matDatepicker]="picker" [min]="minDate"
                           (dateChange)="dateChanged($event)" hidden />
-                        <mat-chip *ngFor="let value of model" [selectable]="false" [removable]="true" (removed)="remove(value)">
-                          {{ value |   date: 'dd MMM,' }}
+                          <div class="ellipsis">
+                            <mat-chip *ngFor="let value of model" [selectable]="false" [removable]="true" (removed)="remove(value)">
+                            {{ value |   date: 'dd MMM,' }}
                         </mat-chip>
-                      <mat-datepicker-toggle matSuffix [for]="picker">
+                        </div>                          
+                        <mat-datepicker-toggle matSuffix [for]="picker">
                         <mat-icon matDatepickerToggleIcon><img src="assets/svgs/calendar-date.svg" /></mat-icon>
                       </mat-datepicker-toggle>
                       <mat-datepicker #picker [startAt]="init" [dateClass]="dateClass">
@@ -224,13 +227,15 @@
                         </mat-datepicker-actions>
                       </mat-datepicker>
                     </mat-form-field>
+                    </div>
+                    </div>
                  </td>
                  <td *ngIf="showSaveButton" class="d-flex save-cancel-td">
-                  <div class="save-btn position-relative click" (click)="saveDaysOff()">
+                  <div class="mt-4 save-btn save-btn-bg position-relative click" (click)="saveDaysOff()">
                     <span class="save-btn-label position-absolute">Save</span>
                   </div>
 
-                  <div class="cancel-btn position-relative click" (click)="model = [];showSaveButton=false">
+                  <div class="mt-4 cancel-btn position-relative click" (click)="model = [];showSaveButton=false">
                     <span class="cancel-btn-label position-absolute">Cancel</span>
                   </div>
                 </td>

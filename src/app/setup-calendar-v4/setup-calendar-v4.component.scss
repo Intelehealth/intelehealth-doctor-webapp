@@ -32,7 +32,7 @@
 
 .right-side-container {
   width: 1115px;
-  height: 740px;
+//  height: 740px;
 
   background: #ffffff;
   border-radius: 20px;
@@ -334,6 +334,34 @@
   border-radius: 8px;
 }
 
+.daysOff-cal{
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  //padding: 14px 16px;
+  gap: 4px;
+
+  width: 249px;
+  height: 48px;
+
+  background: #faf9ff;
+
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+}
+.ellipsis {
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 210px; 
+}
+.matwidth {
+  width: 245px;
+  margin-top: 26px;
+}
 .date-value {
   width: 83px;
   height: 24px;
@@ -1023,4 +1051,5 @@ color: #2E1E91;
 ::ng-deep .mat-calendar-body-cell.selected > .mat-calendar-body-cell-content:hover {
   background-color: #0FD197 !important;
   color: #19181A !important;
+    height: 48px;
 }
