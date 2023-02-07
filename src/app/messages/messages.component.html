@@ -64,7 +64,7 @@
                     <ng-container *ngFor="let item of messageList;let first=first;">
                       <li class="chat-status" [class.right]="item?.fromUser === chatSvc?.user?.uuid">
                         <span class="mr-1">{{item.createdAt|amDateFormat:'LT'}}</span>
-                        <ng-container *ngIf="first">
+                        <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
                           <ng-container *ngIf="item.isRead">
                             <img src="assets/svgs/read-status.svg" alt="" >
                             <span class="ml-1">Read</span>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
@@ -78,6 +79,11 @@ export class CoreService {
 
   openVisitPrescriptionModal(data: { uuid:string }): Observable<any> {
     const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data });
+    return dialogRef.afterClosed();
+  }
+
+  openChatBoxModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false } );
     return dialogRef.afterClosed();
   }
 }

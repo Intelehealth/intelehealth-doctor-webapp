@@ -701,8 +701,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   startChat() {
-    this.visitService.triggerAction.next({
-      action: 'toggleChatBox'
+    this.coreService.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.patient.person.display,
+      patientPersonUuid: this.patient.person.uuid,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
+    }).subscribe((res: any) =>{
+
     });
   }
 

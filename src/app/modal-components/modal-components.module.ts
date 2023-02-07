@@ -17,6 +17,8 @@ import { SharePrescriptionSuccessComponent } from './share-prescription-success/
 import { SharePrescriptionErrorComponent } from './share-prescription-error/share-prescription-error.component';
 import { ViewVisitSummaryComponent } from './view-visit-summary/view-visit-summary.component';
 import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-visit-prescription.component';
+import { ChatBoxComponent } from './chat-box/chat-box.component';
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
     declarations: [
@@ -31,7 +33,8 @@ import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-v
         SharePrescriptionSuccessComponent,
         SharePrescriptionErrorComponent,
         ViewVisitSummaryComponent,
-        ViewVisitPrescriptionComponent
+        ViewVisitPrescriptionComponent,
+        ChatBoxComponent
     ],
     imports: [
         CommonModule,
@@ -40,7 +43,8 @@ import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-v
         ReactiveFormsModule,
         MatIconModule,
         MatButtonModule,
-        NgxDropzoneModule
+        NgxDropzoneModule,
+        MomentModule
     ]
 })
 export class ModalComponentsModule { }
