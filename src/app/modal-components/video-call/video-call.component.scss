@@ -1,0 +1,159 @@
+.call-detail {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .chw-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    img {
+      width: 48px;
+      height: 48px;
+      margin-right: 10px;
+    }
+
+    h6 {
+      font-size: 16px;
+      line-height: 150%;
+      font-weight: bold;
+      color: #1B163A;
+    }
+
+    span {
+      font-size: 14px;
+      line-height: 150%;
+      color: #1B163A;
+    }
+  }
+}
+
+.main-container {
+  position: relative;
+  padding: 5px;
+
+  .remote-con {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    background: #EFE8FF;
+    border-radius: 4px 4px 12px 12px;
+    overflow: hidden;
+
+    video {
+      height: 100%;
+      width: 100%;
+      background: url('../../../assets/svgs/dots-bg.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 200px 200px;
+    }
+
+    .audio-status {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      display: flex;
+
+      .audio-img {
+        width: 16px;
+      }
+    }
+
+    .call-duration {
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      color: #1B163A;
+
+      .pill {
+        padding: 4px 12px;
+        color: #2E1E91;
+        background: #FFFFFF;
+        box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
+        border-radius: 20px;
+        font-weight: bold;
+      }
+    }
+
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0px;
+    }
+
+    .window-controls {
+      position: absolute;
+      bottom: 0;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0px;
+    }
+  }
+
+  .local-con {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30vmin;
+    height: 20vmin;
+    border: 5px solid #FFFFFF;
+    box-shadow: 0px 4px 20px rgba(31, 28, 58, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+
+    video {
+      height: 100%;
+      width: 100%;
+      background: url('../../../assets/svgs/dots-bg.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .audio-status {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+
+      .audio-img {
+        width: 16px;
+      }
+    }
+  }
+}
+
+.video-ctrl-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  outline: none;
+  background: #FFFFFF;
+  border-radius: 50%;
+  margin: 0px 5px;
+}
+
+.video-ctrl-btn.red {
+  background: #FF475D;
+}
+
+.video-ctrl-btn.gray {
+  background: #B0ADBE;
+}
+
+.video-ctrl-btn.blue {
+  background: #2E1E91;
+}

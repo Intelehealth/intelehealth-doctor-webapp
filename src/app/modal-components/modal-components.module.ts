@@ -19,6 +19,7 @@ import { ViewVisitSummaryComponent } from './view-visit-summary/view-visit-summa
 import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-visit-prescription.component';
 import { ChatBoxComponent } from './chat-box/chat-box.component';
 import { MomentModule } from 'ngx-moment';
+import { VideoCallComponent } from './video-call/video-call.component';
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import { MomentModule } from 'ngx-moment';
         SharePrescriptionErrorComponent,
         ViewVisitSummaryComponent,
         ViewVisitPrescriptionComponent,
-        ChatBoxComponent
+        ChatBoxComponent,
+        VideoCallComponent
     ],
     imports: [
         CommonModule,

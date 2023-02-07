@@ -41,6 +41,32 @@
         font-size: 24px;
         font-weight: bold;
       }
+
+      .input-group {
+        background: #FAF9FF;
+        border: 2px solid rgba(178, 175, 190, 0.2);
+        border-radius: 8px;
+        height: 52px;
+        align-items: center;
+
+        .input-group-text {
+          background: none;
+          border: none;
+        }
+
+        .form-control {
+          border: none;
+          outline: none;
+          background: transparent;
+          font-size: 16px;
+          line-height: 150%;
+          padding-left: 0px;
+        }
+
+        .form-control:focus {
+          box-shadow: none;
+        }
+      }
     }
 
     .notification-button {
