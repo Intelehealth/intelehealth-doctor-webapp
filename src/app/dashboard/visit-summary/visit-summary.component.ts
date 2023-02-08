@@ -713,6 +713,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   startCall() {
+    this.coreService.openVideoCallModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      connectToDrId: this.provider?.person?.uuid,
+      patientName: this.patient.person.display,
+      patientPersonUuid: this.patient.person.uuid,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+      initiator: 'dr'
+    });
+    return;
     localStorage.patientUuid = this.visit.patient.uuid;
     localStorage.connectToDrId = this.provider?.person?.uuid;
     this.socket.openNewVCModal();

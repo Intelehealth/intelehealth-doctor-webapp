@@ -105,7 +105,7 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
-    headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
+    // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');

@@ -89,7 +89,7 @@ export class CoreService {
   }
 
   openVideoCallModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "modal-lg", data } );
+    const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false } );
     return dialogRef.afterClosed();
   }
 }
