@@ -286,7 +286,7 @@ export class VisitSummaryComponent implements OnInit {
 
   Submit() {
     let data = JSON.parse(localStorage.getItem('followUpVisitMandatory'));
-    if(data === true) {
+    if(data !== true) {
       const date = new Date()
       const time = new Date(Number(date) + 482000000)
       const obsdate = this.datepipe.transform(time, 'dd-MM-yyyy');
