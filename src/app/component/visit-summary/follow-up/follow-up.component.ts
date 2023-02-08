@@ -60,6 +60,7 @@ followForm = new FormGroup({
   }
 
   Submit() {
+    localStorage.setItem('followUpVisitMandatory ', JSON.stringify(true));
     const date = new Date();
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');

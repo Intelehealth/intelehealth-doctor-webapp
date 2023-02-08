@@ -9,6 +9,9 @@ import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
+import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { DatePipe } from '@angular/common';
+declare var getEncounterUUID: any;
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -19,6 +22,10 @@ declare var getFromStorage: any,
   styleUrls: ["./visit-summary.component.css"],
 })
 export class VisitSummaryComponent implements OnInit {
+  followUp: any = [];
+  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
+  encounterUuid: string;
+  patientId: string;
   show = false;
   text: string;
   font: string;
@@ -43,7 +50,9 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
-    private dialogService: ConfirmDialogService
+    private dialogService: ConfirmDialogService,
+    private diagnosisService: DiagnosisService,
+    private datepipe: DatePipe
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -272,6 +281,31 @@ export class VisitSummaryComponent implements OnInit {
           this.isManagerRole = true;
         }
       });
+    }
+  }
+
+  Submit() {
+    let data = JSON.parse(localStorage.getItem('followUpVisitMandatory'));
+    if(data === true) {
+      const date = new Date()
+      const time = new Date(Number(date) + 482000000)
+      const obsdate = this.datepipe.transform(time, 'dd-MM-yyyy');
+      const advice = "Follow up visit mandatory"
+      if (this.diagnosisService.isSameDoctor()) {
+        this.encounterUuid = getEncounterUUID();
+        const json = {
+          concept: this.conceptFollow,
+          person: this.patientId,
+          obsDatetime: date,
+          value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
+          encounter: this.encounterUuid
+        };
+        this.service.postObs(json)
+        .subscribe(resp => {
+          this.followUp.push({uuid: resp.uuid, value: json.value});
+        });
+      }
+      this.sign()
     }
   }
 }
