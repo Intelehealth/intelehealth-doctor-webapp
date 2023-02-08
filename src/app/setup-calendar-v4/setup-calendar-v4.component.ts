@@ -438,7 +438,7 @@ export class SetupCalendarV4Component implements OnInit {
   public remove(index: number): void {
     this.daysOff.splice(index, 1);
     let daysOff = [];
-    if (this.daysOff[0].includes("-")) {
+    if (this.daysOff.length > 0 && this.daysOff[0].includes("-")) {
       this.daysOff?.forEach(arr => {
         daysOff.push(moment(arr, ("YYYY-MM-DD HH:mm:ss")).format("DD/MM/YYYY"));
       });

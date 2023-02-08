@@ -412,6 +412,9 @@ import { MomentModule } from 'ngx-moment';
             {
               path: "help",
               component: HelpContainerComponent,
+              data: {
+                breadcrumb: 'Help & Support',
+            },
               canActivate: [AuthGuard],
             },
             {
@@ -454,11 +457,17 @@ import { MomentModule } from 'ngx-moment';
             {
               path: "prescription",
               component: PrescriptionContainerComponent,
+              data: {
+                breadcrumb: 'Prescription',
+            },
               canActivate: [AuthGuard],
             },
             {
               path: "appointments",
               component: AppointmentContainerComponent,
+              data: {
+                breadcrumb: 'Appointments',
+            },
               canActivate: [AuthGuard],
             },
           ],

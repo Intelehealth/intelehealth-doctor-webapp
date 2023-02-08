@@ -8,7 +8,11 @@
     </div>
   </div>
   <div class="daily-appointments w-100 h-100">
-    <div class="appointments w-100" *ngFor="let time of timings">
+    <div class="appointments w-100" *ngFor="let time of timings, index as i">
+      <div *ngIf="showTimer !== getTime(timings[i],timings[i+1])">
+        <span class="time-circle"></span>
+        <span class="conditional"></span>
+      </div> 
       <div [class.hours-off]="time === offSlot(time)" *ngFor="let slot of availableSlots" [ngClass]="time === slot.startTime ? 'available-slots' : ''" class=" h-100">
         <div class="row h-100">
           <ng-container *ngIf="time === slot.startTime && slot.type === 'followUp'">

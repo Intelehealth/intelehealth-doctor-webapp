@@ -125,4 +125,29 @@
         height: 41px;
         border-radius: 50%;
       }
+
+    .time-circle {
+     position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 100px;
+    //top: 235px;
+
+    /* Primary/Green */
+
+    background: #0FD197;
+    border-radius: 35.5px;
+    transform: matrix(-1, 0, 0, 1, 0, 0);
+    } 
+    .conditional {
+        position: absolute;
+        width: 1064px;
+        height: 3px;
+        left: 100px;
+        margin-top: 5px;
+        
+        /* Primary/Green */
+        
+        background: #0FD197;
+    }  
 }
