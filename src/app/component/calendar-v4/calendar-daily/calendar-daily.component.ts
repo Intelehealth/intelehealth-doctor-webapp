@@ -38,6 +38,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
   availableSlots = [];
   hoursOffSlots = []
   baseUrl = environment.baseURL;
+  showTimer = false;
   constructor() { }
 
   ngOnInit(): void {
@@ -129,5 +130,15 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user-light-bg.svg';
+  }
+
+  getTime(time1, time2) {
+    let currentTime = moment().format("hh:mm a");
+    if(moment(currentTime, "LT").isBetween(moment(time1, "LT"), moment(time2, "LT")) || 
+    moment(currentTime, "LT").isSame(moment(time1, "LT")) || moment(currentTime, "LT").isSame(moment(time2, "LT"))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
