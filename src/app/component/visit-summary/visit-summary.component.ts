@@ -306,6 +306,8 @@ export class VisitSummaryComponent implements OnInit {
         });
       }
       this.sign()
+    }else{
+      this.sign()
     }
   }
 }
