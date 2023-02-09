@@ -15,16 +15,43 @@
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">
-                          <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                          <img
+                            src="assets/svgs/search-icon.svg"
+                            alt=""
+                            width="20px"
+                            height="20px"
+                          />
                         </span>
                       </div>
-                      <input type="text" [(ngModel)]="searchValue" (ngModelChange)="search()" class="form-control" placeholder="Search by patient name or ID" aria-label="Username" aria-describedby="basic-addon1">
+                      <input
+                        type="text"
+                        [(ngModel)]="searchValue"
+                        (ngModelChange)="search()"
+                        class="form-control"
+                        placeholder="Search by patient name or ID"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                      />
                     </div>
                   </div>
                   <ul class="chat-items-list">
-                    <li [class.selected]="conversation.id == selectedConversation?.id" *ngFor="let conversation of !searchValue ? conversations : filteredConversations;" (click)="conversationSelected(conversation)">
+                    <li
+                      [class.selected]="
+                        conversation.id == selectedConversation?.id
+                      "
+                      *ngFor="
+                        let conversation of !searchValue
+                          ? conversations
+                          : filteredConversations
+                      "
+                      (click)="conversationSelected(conversation)"
+                    >
                       <div class="chat-item-con">
-                        <img [src]="patientPic" alt="" (error)="onImgError($event)">
+                        <img
+                          [src]="patientPic"
+                          alt=""
+                          (error)="onImgError($event)"
+                        />
                         <div>
                           <h6>{{ (conversation.patientName)? (conversation.patientName|titlecase): 'Unknown' }}</h6>
                           <p>{{ conversation.message }}</p>
@@ -36,50 +63,83 @@
               </div>
             </div>
             <div class="col-md-8 p-0">
-              <div class="chat-main-con" *ngIf="selectedConversation; else noConversationSelected;">
+              <div
+                class="chat-main-con"
+                *ngIf="selectedConversation; else noConversationSelected"
+              >
                 <div class="chat-con-title">
                   <div class="chat-item-info">
-                    <img src="assets/svgs/user.svg" alt="">
+                    <img src="assets/svgs/user.svg" alt="" />
                     <div class="title">
-                      <h6 class="mb-0">{{ selectedConversation?.hwName|titlecase }}</h6>
-                      <span>ID-1234</span>
+                      <h6 class="mb-0">
+                        {{ (selectedConversation.patientName)? (selectedConversation.patientName|titlecase): 'Unknown' }}
+                      </h6>
+                      <span>
+                        CHW: {{ selectedConversation?.hwName | titlecase }}
+                      </span>
                     </div>
                   </div>
                   <div class="d-flex align-items-center">
-                    <ng-select class="custom mr-2" [items]="visits" bindLabel="createdAt" bindValue="visitId" [(ngModel)]="visitId" [clearable]="false" [searchable]="false" placeholder="Select visit">
+                    <ng-select
+                      class="custom mr-2"
+                      [items]="visits"
+                      bindLabel="createdAt"
+                      bindValue="visitId"
+                      [(ngModel)]="visitId"
+                      [clearable]="false"
+                      [searchable]="false"
+                      placeholder="Select visit"
+                    >
                       <ng-template ng-label-tmp let-item="item">
-                        {{item.createdAt|amDateFormat : "DD MMM YYYY"}}
+                        {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
-                      <ng-template ng-option-tmp let-item="item" let-index="index">
-                        {{item.createdAt|amDateFormat : "DD MMM YYYY"}}
+                      <ng-template
+                        ng-option-tmp
+                        let-item="item"
+                        let-index="index"
+                      >
+                        {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
                     </ng-select>
                     <button mat-icon-button>
-                      <img src="assets/svgs/phone.svg" alt="">
+                      <img src="assets/svgs/phone.svg" alt="" />
                     </button>
                   </div>
                 </div>
                 <div class="chat-con-body">
                   <ul class="chat-messages-list">
-                    <ng-container *ngFor="let item of messageList;let first=first;">
-                      <li class="chat-status" [class.right]="item?.fromUser === chatSvc?.user?.uuid">
-                        <span class="mr-1">{{item.createdAt|amDateFormat:'LT'}}</span>
-                        <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
+                    <ng-container
+                      *ngFor="let item of messageList; let first = first"
+                    >
+                      <li
+                        class="chat-status"
+                        [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                      >
+                        <span class="mr-1">{{
+                          item.createdAt | amDateFormat : "LT"
+                        }}</span>
+                        <ng-container
+                          *ngIf="
+                            first && item?.fromUser === chatSvc?.user?.uuid
+                          "
+                        >
                           <ng-container *ngIf="item.isRead">
-                            <img src="assets/svgs/read-status.svg" alt="" >
+                            <img src="assets/svgs/read-status.svg" alt="" />
                             <span class="ml-1">Read</span>
                           </ng-container>
                           <ng-container *ngIf="!item.isRead">
-                            <img src="assets/svgs/sent-status.svg" alt="" >
+                            <img src="assets/svgs/sent-status.svg" alt="" />
                             <span class="ml-1">Sent</span>
                           </ng-container>
                         </ng-container>
                       </li>
-                      <li class="chat-message" [class.right]="item?.fromUser === chatSvc?.user?.uuid">
+                      <li
+                        class="chat-message"
+                        [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                      >
                         {{ item.message }}
                       </li>
                     </ng-container>
-
                   </ul>
                   <!-- <ul class="chat-messages-list">
                     <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
@@ -92,30 +152,42 @@
                   </ul> -->
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
-                      <input type="text" class="form-control" placeholder="Type here" [(ngModel)]="message" (keyup.enter)="sendMessage()">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Type here"
+                        [(ngModel)]="message"
+                        (keyup.enter)="sendMessage()"
+                      />
                       <div class="input-group-append">
                         <button type="button">
-                          <img src="assets/svgs/attachment-icon.svg" alt="">
+                          <img src="assets/svgs/attachment-icon.svg" alt="" />
                         </button>
                       </div>
                     </div>
-                    <button type="button" class="send-btn" (click)="sendMessage()">
-                      <img src="assets/svgs/send-icon-white.svg" alt="">
+                    <button
+                      type="button"
+                      class="send-btn"
+                      (click)="sendMessage()"
+                    >
+                      <img src="assets/svgs/send-icon-white.svg" alt="" />
                     </button>
                   </div>
                 </div>
               </div>
               <ng-template #noConversationSelected>
                 <div class="no-conversation-selected">
-                  <img src="assets/svgs/chat-messages.png" alt="">
+                  <img src="assets/svgs/chat-messages.png" alt="" />
                   <h6>No messages selected</h6>
-                  <p>Please select patient from the list <br> to view the messages</p>
+                  <p>
+                    Please select patient from the list <br />
+                    to view the messages
+                  </p>
                 </div>
               </ng-template>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
