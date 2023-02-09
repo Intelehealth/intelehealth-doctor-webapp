@@ -96,14 +96,16 @@
               <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
             </ng-container>
             <ng-container *ngIf="header.title == 'Dashboard'">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">
-                    <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
-                  </span>
+              <form [formGroup]="searchForm">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                    <input type="text" class="form-control" formControlName="keyword" placeholder="Search patient" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
-                <input type="text" class="form-control" placeholder="Search patient" aria-label="Username" aria-describedby="basic-addon1">
-              </div>
+              </form>
             </ng-container>
           </div>
         </a>

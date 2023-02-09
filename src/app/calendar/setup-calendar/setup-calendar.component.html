@@ -1,0 +1,192 @@
+<div class="container-fluid">
+  <div class="row setup-title-con">
+    <div class="col-md-8 p-0 pb-2">
+      <div class="title-con d-flex align-items-center">
+        <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
+        <div class="d-flex flex-column">
+          <h6 class="mb-0">Setup your calendar</h6>
+          <p class="mb-0">Please set up your scedule for the month according to your availability</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 p-0 pb-2">
+      <button mat-button class="view-btn">View calendar</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 p-1">
+      <div class="month-con">
+        <div class="month-title">
+          <h6 class="mb-0">Month</h6>
+        </div>
+        <ul class="month-list">
+          <li class="list-item selected">
+            <span>January</span>
+            <mat-icon>keyboard_arrow_right</mat-icon>
+          </li>
+          <li class="list-item">
+            <span>February</span>
+            <mat-icon>keyboard_arrow_right</mat-icon>
+          </li>
+          <li class="list-item">
+            <span>March</span>
+            <mat-icon>keyboard_arrow_right</mat-icon>
+          </li>
+          <li class="add-more-list-item">
+            <a href="javascript:void(0)">
+              <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
+              Add more months
+            </a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9 p-1">
+      <div class="card intel-card">
+        <div class="card-header">
+          <h6 class="mb-0 color-blue">Working days</h6>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Start date</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Select date" aria-label="Start date" aria-describedby="basic-addon1" readonly>
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon1">
+                    <button type="button">
+                      <img src="assets/svgs/calendar-date.svg" alt="">
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label>End date</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Select date" aria-label="End date" aria-describedby="basic-addon2" readonly>
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon2">
+                    <button type="button">
+                      <img src="assets/svgs/calendar-date.svg" alt="">
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Start time</th>
+                    <th scope="col">End time</th>
+                    <th scope="col">Days</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>10:00 AM</td>
+                    <td>05:00 PM</td>
+                    <td>Mon,Tue,Wed</td>
+                    <td>
+                      <button mat-button type="button" class="delete-btn">
+                        <img src="assets/svgs/delete-icon.svg" alt="">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>10:00 AM</td>
+                    <td>05:00 PM</td>
+                    <td>Mon,Tue,Wed</td>
+                    <td>
+                      <button mat-button type="button" class="delete-btn">
+                        <img src="assets/svgs/delete-icon.svg" alt="">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="4">
+                      <a href="javascript:void(0)" class="add-more-btn">
+                        <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
+                        Add more months
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                      <ng-select [items]="days" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" placeholder="Select days">
+                        <ng-template ng-label-tmp let-item="item">
+                          {{item.shortName}},
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                          <div class="pretty p-image p-plain">
+                            <input type="checkbox" [checked]="item$.selected"/>
+                            <div class="state">
+                                <img class="image" src="assets/svgs/checkbox-tick.png">
+                                <label>{{item.name}}</label>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+                    </td>
+                    <td>
+                      <button mat-button type="button" class="save-btn mr-2">
+                        Save
+                      </button>
+                      <button mat-button type="button" class="cancel-btn">
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+        <div class="card-header">
+          <h6 class="mb-0 color-blue">Days off</h6>
+        </div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Dates</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Select dates" aria-label="Start date" aria-describedby="basic-addon3" readonly>
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon3">
+                    <button type="button">
+                      <img src="assets/svgs/calendar-date.svg" alt="">
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 pb-3">
+              <div class="h-100 d-flex align-items-end">
+                <button mat-button type="button" class="save-btn mr-2">
+                  Save
+                </button>
+                <button mat-button type="button" class="cancel-btn">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

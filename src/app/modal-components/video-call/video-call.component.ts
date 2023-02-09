@@ -5,7 +5,6 @@ import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-video-call',
@@ -397,11 +396,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get callDuration() {
-    let duration;
+    let duration: any;
     if (this.callStartedAt) {
       duration = moment.duration(moment().diff(this.callStartedAt))
     }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : ''
+    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
   }
 
 }

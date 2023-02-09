@@ -722,10 +722,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr'
     });
-    return;
-    localStorage.patientUuid = this.visit.patient.uuid;
-    localStorage.connectToDrId = this.provider?.person?.uuid;
-    this.socket.openNewVCModal();
   }
 
   checkIfDateOldThanOneDay(data: any) {

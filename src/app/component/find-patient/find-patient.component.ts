@@ -28,10 +28,10 @@ export class FindPatientComponent implements OnInit {
     }
   }
 
-  find(uuid) {
+  find(uuid: string) {
     this.service.recentVisits(uuid)
       .subscribe(response => {
-        this.router.navigate(['/dashboard/visit-summary', response.results[0].patient.uuid, response.results[0].uuid]);
+        this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
         this.dialog.close();
       });
   }

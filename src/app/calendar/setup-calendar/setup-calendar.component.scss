@@ -1,0 +1,191 @@
+.setup-title-con {
+  .title-con {
+    img {
+      width: 44px;
+    }
+
+    h6 {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1B163A;
+    }
+
+    p {
+      font-size: 14px;
+      color: #7F7B92;
+    }
+  }
+
+  .view-btn {
+    text-decoration: none;
+    background: #EFE8FF;
+    border-radius: 8px;
+    height: 44px;
+    color: #2E1E91;
+    font-weight: bold;
+    font-size: 18px;
+    float: right;
+  }
+}
+
+.month-con {
+  background: #FFFFFF;
+  box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
+  border-radius: 12px;
+  padding: 0px 0px 24px;
+  overflow: hidden;
+
+  .month-title {
+    height: 63px;
+    background: #EFE8FF;
+    padding: 20px 24px 16px;
+
+    h6 {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1B163A;
+    }
+  }
+
+  ul.month-list {
+    list-style-type: none;
+    padding: 0px 24px;
+    margin-bottom: 0px;
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+      font-size: 16px;
+      color: #1B163A;
+      padding: 15px 0px;
+      cursor: pointer;
+
+      span {
+        padding: 0px 15px;
+      }
+
+      .mat-icon {
+        color: #7F7B92;
+      }
+    }
+
+    .list-item.selected {
+      span {
+        border-left: 3px solid #EA315B;
+      }
+    }
+
+    li.add-more-list-item {
+      padding: 15px 0px 0px;
+      a {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #1B163A;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.color-blue {
+  color: #2E1E91;
+}
+
+.form-group {
+  label {
+    font-size: 14px;
+    color: #1B163A;
+    font-weight: bold;
+  }
+
+  .input-group {
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    background: #FAF9FF;
+    border-radius: 8px;
+
+    .form-control {
+      padding: 14px 16px;
+      height: 48px;
+      font-size: 16px;
+      color: #1B163A;
+      border: none;
+      background: transparent;
+    }
+
+    .form-control:focus {
+      box-shadow: none;
+    }
+
+    .input-group-append {
+      .input-group-text {
+        background: transparent;
+        border: none;
+
+        button {
+          border: none;
+          background: none;
+          outline: none;
+        }
+      }
+    }
+  }
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table thead th {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 150%;
+  color: #7F7B92;
+  border: none;
+}
+
+.add-more-btn {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #1B163A;
+  text-decoration: none;
+}
+
+.delete-btn {
+  background: #FFFFFF;
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FF475D;
+  height: 48px;
+}
+
+.save-btn {
+  background: #2E1E91;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: #FFFFFF;
+  height: 48px;
+  min-width: 100px;
+}
+
+.cancel-btn {
+  background: #FFFFFF;
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 150%;
+  color: #2E1E91;
+  height: 48px;
+  min-width: 100px;
+}
