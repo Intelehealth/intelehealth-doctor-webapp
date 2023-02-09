@@ -1,18 +1,18 @@
 <div class="call-detail" mat-dialog-title [class.d-none]="_minimized">
-    <div class="chw-item">
-      <img src="assets/svgs/chw.svg" alt="">
-      <div class="d-flex flex-column justify-content-center">
-        <h6 class="mb-0">{{this.hwName|titlecase}}</h6>
-        <span>CHW</span>
-      </div>
+  <div class="chw-item">
+    <img src="assets/svgs/chw.svg" alt="" />
+    <div class="d-flex flex-column justify-content-center">
+      <h6 class="mb-0">{{ this.hwName | titlecase }}</h6>
+      <span>CHW</span>
     </div>
-    <div class="chw-item">
-      <img src="assets/svgs/patient.svg" alt="">
-      <div class="d-flex flex-column justify-content-center">
-        <h6 class="mb-0">{{this.data.patientName|titlecase}}</h6>
-        <span>Patient</span>
-      </div>
+  </div>
+  <div class="chw-item">
+    <img src="assets/svgs/patient.svg" alt="" />
+    <div class="d-flex flex-column justify-content-center">
+      <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
+      <span>Patient</span>
     </div>
+  </div>
 </div>
 <mat-dialog-content>
   <div class="container-fluid">
@@ -21,46 +21,124 @@
         <div class="main-container">
           <div class="remote-con" [class.minimized]="_minimized">
             <video #remoteVideo autoplay></video>
-            <div class="video-off-container" *ngIf="!isRemote || (isRemote && _remoteVideoOff)">
-              <img src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}" (error) ="onImgError($event)" alt="">
+            <div
+              class="video-off-container"
+              *ngIf="!isRemote || (isRemote && _remoteVideoOff)"
+            >
+              <img
+                src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
+                (error)="onImgError($event)"
+                alt=""
+              />
             </div>
             <div class="audio-status">
-              <img class="audio-img" src="{{(_remoteAudioMute)? 'assets/svgs/audio-wave-mute.svg' : 'assets/svgs/audio-wave.svg'}}" alt="">
+              <img
+                class="audio-img"
+                src="{{
+                  _remoteAudioMute
+                    ? 'assets/svgs/audio-wave-mute.svg'
+                    : 'assets/svgs/audio-wave.svg'
+                }}"
+                alt=""
+              />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
             </div>
             <div class="call-duration" [class.d-none]="_minimized">
-              <span>Call ends in</span>
-              <span class="pill">12:32</span>
+              <!-- <span>Call ends in</span> -->
+              <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
             </div>
             <div class="video-controls" [class.d-none]="_minimized">
-              <button type="button" class="video-ctrl-btn red" (click)="endCallInRoom()">
-                <img src="assets/svgs/call-end.svg" alt="">
+              <button
+                type="button"
+                class="video-ctrl-btn red"
+                (click)="endCallInRoom()"
+              >
+                <img src="assets/svgs/call-end.svg" alt="" />
               </button>
-              <button type="button" class="video-ctrl-btn" (click)="toggleAudio()" [class.gray]="_localAudioMute">
-                <img src="{{(_localAudioMute)? 'assets/svgs/microphone-mute.svg' : 'assets/svgs/microphone-blue.svg'}}" alt="">
+              <button
+                type="button"
+                class="video-ctrl-btn"
+                (click)="toggleAudio()"
+                [class.gray]="_localAudioMute"
+              >
+                <img
+                  src="{{
+                    _localAudioMute
+                      ? 'assets/svgs/microphone-mute.svg'
+                      : 'assets/svgs/microphone-blue.svg'
+                  }}"
+                  alt=""
+                />
               </button>
-              <button type="button" class="video-ctrl-btn" (click)="toggleVideo()" [class.gray]="_localVideoOff">
-                <img src="{{(_localVideoOff)? 'assets/svgs/video-mute.svg' : 'assets/svgs/video-blue.svg'}}" alt="">
+              <button
+                type="button"
+                class="video-ctrl-btn"
+                (click)="toggleVideo()"
+                [class.gray]="_localVideoOff"
+              >
+                <img
+                  src="{{
+                    _localVideoOff
+                      ? 'assets/svgs/video-mute.svg'
+                      : 'assets/svgs/video-blue.svg'
+                  }}"
+                  alt=""
+                />
               </button>
-              <button type="button" class="video-ctrl-btn" [class.blue]="_chatOpened" (click)="_chatOpened = !_chatOpened">
-                <img src="{{(_chatOpened)? 'assets/svgs/message-white.svg' : 'assets/svgs/message-blue.svg'}}" alt="">
+              <button
+                type="button"
+                class="video-ctrl-btn"
+                [class.blue]="_chatOpened"
+                (click)="_chatOpened = !_chatOpened"
+              >
+                <img
+                  src="{{
+                    _chatOpened
+                      ? 'assets/svgs/message-white.svg'
+                      : 'assets/svgs/message-blue.svg'
+                  }}"
+                  alt=""
+                />
               </button>
             </div>
             <div class="window-controls" [class.minimized]="_minimized">
-              <button type="button" class="video-ctrl-btn" (click)="toggleWindow()">
-                <img src="{{(_minimized)?'assets/svgs/maximize-blue.svg':'assets/svgs/minimize-blue.svg'}}" alt="">
+              <button
+                type="button"
+                class="video-ctrl-btn"
+                (click)="toggleWindow()"
+              >
+                <img
+                  src="{{
+                    _minimized
+                      ? 'assets/svgs/maximize-blue.svg'
+                      : 'assets/svgs/minimize-blue.svg'
+                  }}"
+                  alt=""
+                />
               </button>
             </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
             <video #localVideo autoplay></video>
             <div class="video-off-container" *ngIf="_localVideoOff">
-              <img src="{{ baseUrl + '/personimage/' + data.connectToDrId }}" (error)="$event.target.src = 'assets/svgs/dr-user.svg'" alt="">
+              <img
+                src="{{ baseUrl + '/personimage/' + data.connectToDrId }}"
+                (error)="$event.target.src = 'assets/svgs/dr-user.svg'"
+                alt=""
+              />
             </div>
             <div class="audio-status">
-              <img class="audio-img" src="{{(_localAudioMute)? 'assets/svgs/audio-wave-mute.svg' : 'assets/svgs/audio-wave.svg'}}" alt="">
+              <img
+                class="audio-img"
+                src="{{
+                  _localAudioMute
+                    ? 'assets/svgs/audio-wave-mute.svg'
+                    : 'assets/svgs/audio-wave.svg'
+                }}"
+                alt=""
+              />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
@@ -72,51 +150,70 @@
         <div class="chat-main-con">
           <div class="chat-con-title">
             <div class="chat-item-info">
-              <img src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}" (error) ="onImgError($event)"  alt="">
+              <img
+                src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
+                (error)="onImgError($event)"
+                alt=""
+              />
               <div class="title">
-                <h6 class="mb-0">{{this.data.patientName}}</h6>
-                <span>{{data.patientOpenMrsId}}</span>
+                <h6 class="mb-0">{{ this.data.patientName }}</h6>
+                <span>{{ data.patientOpenMrsId }}</span>
               </div>
             </div>
           </div>
           <div class="chat-con-body">
             <ul class="chat-messages-list">
-              <ng-container *ngFor="let item of messageList;let first=first;">
-                <li class="chat-status" [class.right]="item?.fromUser === chatSvc?.user?.uuid">
-                  <span class="mr-1">{{item.createdAt|amDateFormat:'LT'}}</span>
-                  <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
+              <ng-container *ngFor="let item of messageList; let first = first">
+                <li
+                  class="chat-status"
+                  [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                >
+                  <span class="mr-1">{{
+                    item.createdAt | amDateFormat : "LT"
+                  }}</span>
+                  <ng-container
+                    *ngIf="first && item?.fromUser === chatSvc?.user?.uuid"
+                  >
                     <ng-container *ngIf="item.isRead">
-                      <img src="assets/svgs/read-status.svg" alt="" >
+                      <img src="assets/svgs/read-status.svg" alt="" />
                       <span class="ml-1">Read</span>
                     </ng-container>
                     <ng-container *ngIf="!item.isRead">
-                      <img src="assets/svgs/sent-status.svg" alt="" >
+                      <img src="assets/svgs/sent-status.svg" alt="" />
                       <span class="ml-1">Sent</span>
                     </ng-container>
                   </ng-container>
                 </li>
-                <li class="chat-message" [class.right]="item?.fromUser === chatSvc?.user?.uuid">
+                <li
+                  class="chat-message"
+                  [class.right]="item?.fromUser === chatSvc?.user?.uuid"
+                >
                   {{ item.message }}
                 </li>
               </ng-container>
             </ul>
             <div class="chat-input-con">
               <div class="input-group mr-2">
-                <input type="text" class="form-control" placeholder="Type here" [(ngModel)]="message" (keyup.enter)="sendMessage()">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Type here"
+                  [(ngModel)]="message"
+                  (keyup.enter)="sendMessage()"
+                />
                 <div class="input-group-append">
                   <button type="button">
-                    <img src="assets/svgs/attachment-icon.svg" alt="">
+                    <img src="assets/svgs/attachment-icon.svg" alt="" />
                   </button>
                 </div>
               </div>
               <button type="button" class="send-btn" (click)="sendMessage()">
-                <img src="assets/svgs/send-icon-white.svg" alt="">
+                <img src="assets/svgs/send-icon-white.svg" alt="" />
               </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </mat-dialog-content>

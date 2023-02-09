@@ -1,19 +1,20 @@
 import { Component, Inject, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { of } from 'rxjs';
-import { concatMap, delay, repeat } from 'rxjs/operators';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
-import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
+import * as moment from 'moment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-video-call',
   templateUrl: './video-call.component.html',
-  styleUrls: ['./video-call.component.scss']
+  styleUrls: ['./video-call.component.scss'],
 })
 export class VideoCallComponent implements OnInit, OnDestroy {
+  @ViewChild("localVideo") localVideoRef: any;
+  @ViewChild("remoteVideo") remoteVideoRef: any;
 
   message: string;
   messageList: any = [];
@@ -34,22 +35,22 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   connectToDrId = "";
   isStreamAvailable: any;
   localStream: MediaStream;
-  @ViewChild("localVideo") localVideoRef: any;
-  @ViewChild("remoteVideo") remoteVideoRef: any;
   pc: any;
   isRemote: boolean = false;
   isStarted: boolean = false;
+  callStartedAt = null;
+  changeDetForDuration: any = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
-    private visitSvc: VisitService,
     private toastr: ToastrService) { }
 
   async ngOnInit() {
-    this.room = this.data.patientUuid;
+    this.room = this.data.patientId;
+
     if (this.data.initiator) {
       this.initiator = this.data.initiator;
     }
@@ -66,8 +67,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.getMessages();
     }
     this.socketSvc.initSocket(true);
-    const res = this.initSocketEvents();
-    console.log("res: ", res);
+    this.initSocketEvents();
 
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       this.socketSvc.showNotification({
@@ -83,9 +83,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.getMessages();
     });
 
-    console.log("this.socketService.incoming: ", this.socketSvc.incoming);
+
     await this.connect();
     // await this.changeVoiceCallIcons();
+    /**
+     * Don't remove this, required change detection for duration
+     */
+    this.changeDetForDuration = setInterval(() => { }, 1000);
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -176,17 +180,17 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         (err: any) => {
           rej(err);
           this.isStreamAvailable = false;
-          console.error(err);
+
         }
       );
     });
   }
 
   async connect() {
-    console.log("this.initiator: ", this.initiator);
-    console.log("Attempted to create or  join room", this.room);
+
+
     if (this.initiator === "dr") {
-      this.toastr.info("Calling....");
+      this.toastr.info("Calling....", null, { timeOut: 2000 });
       this.call();
     } else {
       this.socketSvc.emitEvent("create_or_join_hw", {
@@ -201,7 +205,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       nurseId: this.nurseId.uuid,
       doctorName: this.doctorName,
       roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId
     });
+
     setTimeout(() => {
       this.socketSvc.emitEvent("create or join", this.room);
     }, 500);
@@ -219,17 +226,21 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   initSocketEvents() {
     this.socketSvc.onEvent("message").subscribe((data) => {
-      console.log("Data received: ", data);
+
       this.handleSignalingData(data);
     });
 
     this.socketSvc.onEvent("ready").subscribe(() => {
-      console.log("ready: ");
+
       this.createPeerConnection();
       this.sendOffer();
     });
 
-    this.socketSvc.onEvent("bye").subscribe(() => {
+    this.socketSvc.onEvent("bye").subscribe((data: any) => {
+      console.log('data:>>> ', data);
+      if (!data?.webapp) {
+        this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
+      }
       this.stop();
     });
   }
@@ -242,9 +253,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         this.sendAnswer();
         break;
       case "answer":
+        this.callStartedAt = moment();
         this.pc.setRemoteDescription(new RTCSessionDescription(data));
         break;
       case "candidate":
+        this.callStartedAt = moment();
         this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
         break;
     }
@@ -271,9 +284,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.pc.onicecandidate = this.onIceCandidate.bind(this);
       this.pc.onaddstream = this.onAddStream.bind(this);
       this.pc.addStream(this.localStream);
-      console.log("Created RTCPeerConnnection");
+
     } catch (e) {
-      console.log("Failed to create PeerConnection, exception: " + e.message);
+
       alert("Cannot create RTCPeerConnection object.");
       return;
     }
@@ -281,7 +294,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   onIceCandidate(event: any) {
     if (event.candidate) {
-      console.log("ICE candidate");
+
       this.sendMessage2({
         type: "candidate",
         candidate: event.candidate,
@@ -290,7 +303,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   onAddStream(event: any) {
-    console.log("Add stream");
+
     if (!event.stream.getVideoTracks()[0].enabled) {
       this._remoteVideoOff = false;
     } else {
@@ -306,9 +319,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   sendOffer() {
-    console.log("Send offer");
+
     this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.error("Send offer failed: ", error);
+
     });
   }
 
@@ -325,21 +338,24 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   sendAnswer() {
-    console.log("Send answer");
+
     this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.error("Send answer failed: ", error);
+
     });
   }
 
   setAndSendLocalDescription(sessionDescription) {
     this.pc.setLocalDescription(sessionDescription);
-    console.log("Local description set");
+
     this.sendMessage2(sessionDescription);
   }
 
   endCallInRoom() {
-    this.socketSvc.emitEvent("bye", this.room);
-    // this.modalOpenClose();
+    this.socketSvc.emitEvent("bye", {
+      nurseId: this.nurseId.uuid,
+      webapp: true
+    });
+
     this.stop();
   }
 
@@ -348,7 +364,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.socketSvc.initSocket(true);
     this.dialogRef.close(true);
   }
 
@@ -378,6 +393,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.socketSvc.incoming = false;
+    clearInterval(this.changeDetForDuration);
+  }
+
+  get callDuration() {
+    let duration;
+    if (this.callStartedAt) {
+      duration = moment.duration(moment().diff(this.callStartedAt))
+    }
+    return duration ? `${duration.minutes()}:${duration.seconds()}` : ''
   }
 
 }
