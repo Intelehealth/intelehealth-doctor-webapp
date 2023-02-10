@@ -20,6 +20,8 @@ import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-v
 import { ChatBoxComponent } from './chat-box/chat-box.component';
 import { MomentModule } from 'ngx-moment';
 import { VideoCallComponent } from './video-call/video-call.component';
+import { SearchedPatientsComponent } from './searched-patients/searched-patients.component';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
     declarations: [
@@ -36,7 +38,8 @@ import { VideoCallComponent } from './video-call/video-call.component';
         ViewVisitSummaryComponent,
         ViewVisitPrescriptionComponent,
         ChatBoxComponent,
-        VideoCallComponent
+        VideoCallComponent,
+        SearchedPatientsComponent
     ],
     imports: [
         CommonModule,
@@ -46,7 +49,8 @@ import { VideoCallComponent } from './video-call/video-call.component';
         MatIconModule,
         MatButtonModule,
         NgxDropzoneModule,
-        MomentModule
+        MomentModule,
+        MatListModule
     ]
 })
 export class ModalComponentsModule { }

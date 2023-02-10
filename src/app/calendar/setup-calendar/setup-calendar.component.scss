@@ -189,3 +189,126 @@
   height: 48px;
   min-width: 100px;
 }
+
+.days-off-chips-con {
+  h6 {
+    font-weight: bold;
+    font-size: 14px;
+    color: #7F7B92;
+  }
+
+  .days-off-chips {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 0px;
+
+    .chip-item {
+      background: #EFE8FF;
+      border: 1px solid rgba(178, 175, 190, 0.2);
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #2E1E91;
+      padding: 5px 5px 5px 10px;
+      margin: 0px 5px 5px 0px;
+    }
+  }
+}
+
+::ng-deep .ng-select.customSelect1 {
+  min-height: 48px;
+  background: #FAF9FF;
+  border: 0.770833px solid rgba(178, 175, 190, 0.2);
+  border-radius: 8px;
+
+  .ng-select-container  {
+    background: none !important;
+    min-height: 48px;
+    height: 100%;
+    border: none;
+
+    .ng-value-container {
+      position: relative;
+      padding-top: 0px;
+      overflow: hidden;
+      flex-wrap: nowrap !important;
+      width: 150px;
+
+      .ng-placeholder {
+        top: 0px;
+        padding-bottom: 0px;
+      }
+
+      .ng-input {
+        padding: 0px;
+        padding-left: 3px;
+        font-size: 16px;
+        color: #1B163A;
+      }
+
+      .ng-value {
+        background: none;
+        color: #1B163A;
+        margin: 0;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.pretty.p-image .state img {
+  transform: none;
+}
+
+::ng-deep .ng-select.customSelect2 {
+  min-height: 48px;
+
+  .ng-select-container  {
+    min-height: 48px;
+    height: 100%;
+    border: none;
+
+    .ng-value-container {
+      position: relative;
+      padding-top: 0px;
+      overflow: hidden;
+      flex-wrap: nowrap !important;
+      width: fit-content;
+
+      .ng-input {
+        top: 0px;
+        padding-right: 10px;
+        font-size: 16px;
+        color: #1B163A;
+      }
+    }
+  }
+
+  .ng-select-container:hover {
+    box-shadow: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

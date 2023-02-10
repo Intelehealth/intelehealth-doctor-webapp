@@ -52,7 +52,8 @@
             <div class="form-group col-md-6">
               <label>Start date</label>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Select date" aria-label="Start date" aria-describedby="basic-addon1" readonly>
+                <input type="text" class="form-control" placeholder="Select date" aria-label="Start date"
+                  aria-describedby="basic-addon1" readonly>
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon1">
                     <button type="button">
@@ -65,7 +66,8 @@
             <div class="form-group col-md-6">
               <label>End date</label>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Select date" aria-label="End date" aria-describedby="basic-addon2" readonly>
+                <input type="text" class="form-control" placeholder="Select date" aria-label="End date"
+                  aria-describedby="basic-addon2" readonly>
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon2">
                     <button type="button">
@@ -115,19 +117,61 @@
                     <td colspan="4">
                       <a href="javascript:void(0)" class="add-more-btn">
                         <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
-                        Add more months
+                        Add more timings
                       </a>
                     </td>
                   </tr>
                   <tr>
                     <td>
-
+                      <div class="d-flex">
+                        <ng-select class="customSelect2 mr-2" [items]="timeList"
+                          appendTo=".intel-card"
+                          bindLabel="name"
+                          bindValue="name"
+                          placeholder="Select"
+                          [clearable]="false"
+                          [searchable]="false">
+                        </ng-select>
+                        <ng-select class="customSelect2" [items]="clockTimeAmPM"
+                          appendTo=".intel-card"
+                          bindLabel="name"
+                          bindValue="name"
+                          placeholder="Select"
+                          [clearable]="false"
+                          [searchable]="false">
+                        </ng-select>
+                      </div>
                     </td>
                     <td>
-
+                      <div class="d-flex">
+                        <ng-select class="customSelect2 mr-2" [items]="timeList"
+                          appendTo=".intel-card"
+                          bindLabel="name"
+                          bindValue="name"
+                          placeholder="Select"
+                          [clearable]="false"
+                          [searchable]="false">
+                        </ng-select>
+                        <ng-select class="customSelect2" [items]="clockTimeAmPM"
+                          appendTo=".intel-card"
+                          bindLabel="name"
+                          bindValue="name"
+                          placeholder="Select"
+                          [clearable]="false"
+                          [searchable]="false">
+                        </ng-select>
+                      </div>
                     </td>
                     <td>
-                      <ng-select [items]="days" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" placeholder="Select days">
+                      <ng-select class="customSelect1" [items]="days"
+                        appendTo=".intel-card"
+                        bindLabel="shortName"
+                        bindValue="name"
+                        placeholder="Select days"
+                        multiple="true"
+                        [closeOnSelect]="false"
+                        [clearable]="false"
+                        [searchable]="false">
                         <ng-template ng-label-tmp let-item="item">
                           {{item.shortName}},
                         </ng-template>
@@ -164,7 +208,8 @@
             <div class="form-group col-md-6">
               <label>Dates</label>
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Select dates" aria-label="Start date" aria-describedby="basic-addon3" readonly>
+                <input type="text" class="form-control" placeholder="Select dates" aria-label="Start date"
+                  aria-describedby="basic-addon3" readonly>
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon3">
                     <button type="button">
@@ -181,6 +226,53 @@
                 </button>
                 <button mat-button type="button" class="cancel-btn">
                   Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="days-off-chips-con">
+            <h6 class="mb-0">Your days off</h6>
+            <div class="days-off-chips">
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="chip-item">
+                <span>10 July, 2023</span>
+                <button mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
                 </button>
               </div>
             </div>

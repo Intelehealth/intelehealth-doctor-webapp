@@ -1,0 +1,43 @@
+.modal-title {
+  padding: 24px;
+  background: #EFE8FF;
+
+  h6 {
+    font-family: 'DM Sans';
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 150%;
+    color: #1B163A;
+  }
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 16px;
+  color: #1B163A;
+}
+
+.identifier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+
+  span {
+    font-size: 12px;
+    font-style: normal;
+  }
+}
+
+.blue-btn {
+  height: 48px;
+  background: #2E1E91;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 150%;
+  color: #FFFFFF;
+  margin-left: auto;
+}

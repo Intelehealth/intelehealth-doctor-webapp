@@ -799,19 +799,19 @@
                         </tr>
                         <tr *ngIf="!addMoreMedicine">
                           <td>
-                            <ng-select formControlName="drug" class="custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select drug">
+                            <ng-select appendTo=".table-responsive" formControlName="drug" class="custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select drug">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select formControlName="strength" class="custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
+                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select formControlName="days" class="custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
+                            <ng-select appendTo=".table-responsive"  formControlName="days" class="custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select formControlName="timing" class="custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
+                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
                             </ng-select>
                           </td>
                           <td colspan="2">
@@ -976,7 +976,7 @@
               </mat-expansion-panel-header>
 
               <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
-                <div class="table-responsive">
+                <div class="table-responsive scrollable-box">
                   <table class="table">
                     <thead>
                       <tr>
@@ -1017,7 +1017,7 @@
                         </tr>
                         <tr *ngIf="!addMoreReferral">
                           <td>
-                            <ng-select formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                            <ng-select appendTo=".scrollable-box" formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
                             </ng-select>
                           </td>
                           <td colspan="2">
