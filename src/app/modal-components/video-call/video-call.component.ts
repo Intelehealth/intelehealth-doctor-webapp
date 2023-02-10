@@ -232,7 +232,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
-      if (!data?.webapp) {
+      if (data === 'app') {
         this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
       }
       this.stop();
@@ -259,7 +259,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.onEvent("audioOff").subscribe((data: any) => {
       if (!data?.fromWebapp)
-        this._remoteAudioMute = false;
+        this._remoteAudioMute = true;
     });
   }
 
@@ -321,11 +321,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   onAddStream(event: any) {
-    if (!event.stream.getAudioTracks()[0].enabled) {
-      this._remoteAudioMute = false;
-    } else {
-      this._remoteAudioMute = true;
-    }
     this.remoteVideoRef.nativeElement.srcObject = event.stream;
     this.isRemote = true;
   }
@@ -391,7 +386,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.localStream.getVideoTracks()[0].enabled = this._localVideoOff;
     this._localVideoOff = !this._localVideoOff;
 
-    const event = this._localAudioMute ? 'videoOff' : 'videoOn';
+    const event = this._localVideoOff ? 'videoOff' : 'videoOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
