@@ -20,25 +20,18 @@
           <h6 class="mb-0">Month</h6>
         </div>
         <ul class="month-list">
-          <li class="list-item selected">
-            <span>January</span>
-            <mat-icon>keyboard_arrow_right</mat-icon>
-          </li>
-          <li class="list-item">
-            <span>February</span>
-            <mat-icon>keyboard_arrow_right</mat-icon>
-          </li>
-          <li class="list-item">
-            <span>March</span>
-            <mat-icon>keyboard_arrow_right</mat-icon>
-          </li>
+          <ng-container *ngFor="let m of scheduledMonths; let i=index;">
+            <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name">
+              <span>{{m.name|titlecase}}</span>
+              <mat-icon>keyboard_arrow_right</mat-icon>
+            </li>
+          </ng-container>
           <li class="add-more-list-item">
             <a href="javascript:void(0)">
               <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
               Add more months
             </a>
           </li>
-
         </ul>
       </div>
     </div>
@@ -115,15 +108,15 @@
                       </button>
                     </td>
                   </tr>
-                  <tr>
+                  <tr *ngIf="!_addMoreTiming">
                     <td colspan="4">
-                      <a href="javascript:void(0)" class="add-more-btn">
+                      <a href="javascript:void(0)" class="add-more-btn" (click)="toggleAddMoreTiming()">
                         <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
                         Add more timings
                       </a>
                     </td>
                   </tr>
-                  <tr>
+                  <tr *ngIf="_addMoreTiming">
                     <td>
                       <div class="d-flex">
                         <ng-select class="customSelect2 mr-2" [items]="timeList"
@@ -192,7 +185,7 @@
                       <button mat-button type="button" class="save-btn mr-2">
                         Save
                       </button>
-                      <button mat-button type="button" class="cancel-btn">
+                      <button mat-button type="button" class="cancel-btn" (click)="toggleAddMoreTiming()">
                         Cancel
                       </button>
                     </td>

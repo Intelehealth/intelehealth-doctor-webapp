@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,7 +22,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatIconModule,
     MatButtonModule,
     NgSelectModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class CalendarModule { }
