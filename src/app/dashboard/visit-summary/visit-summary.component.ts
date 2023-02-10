@@ -164,6 +164,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       name: '1 - 1 - 1'
     }
   ];
+  timeList: any = [];
   drugNameList: any = [];
   advicesList: any = [];
   testsList: any = [];
@@ -273,6 +274,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         present: new FormControl(false, [Validators.required]),
         wantFollowUp: new FormControl('No', [Validators.required]),
         followUpDate: new FormControl(null),
+        followUpTime: new FormControl(null),
         followUpReason: new FormControl(null)
       });
   }
@@ -282,6 +284,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
     this.drugNameList = this.drugNameList.concat(medicines);
+    this.timeList= this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
   }
@@ -315,9 +318,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (val == 'Yes') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
+        this.followUpForm.get('followUpTime').setValidators(Validators.required);
+        this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
         this.diagnosisForm.get('followUpDate').clearValidators();
         this.diagnosisForm.get('followUpDate').updateValueAndValidity();
+        this.followUpForm.get('followUpTime').clearValidators();
+        this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
   }
@@ -398,13 +405,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   getPatientIdentifier(identifierType: string) {
+    let identifier = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: any) => {
-        if (idf.identifierType == 'OpenMRS ID') {
-          return idf.identifier;
+        if (idf.identifierType.display == identifierType) {
+          identifier = idf.identifier;
         }
       });
     }
+    return identifier;
   }
 
   getVitalObs(encounters: any) {
@@ -1072,16 +1081,47 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  getHours(returnAll = true, date?: any) {
+    const hours = Array.from(
+      {
+        length: 21,
+      },
+      (_, hour) =>
+        moment({
+          hour,
+          minutes: 0,
+        }).format("LT")
+    );
+    hours.splice(0, 9);
+    if (this.isToday(date) && !returnAll) {
+      const hrs = hours.filter((h) => moment(h, "LT").isAfter(moment()));
+      return hrs;
+    } else {
+      return hours;
+    }
+  }
+
+  isToday(date: any) {
+    const start = moment().startOf("day");
+    const end = moment().endOf("day");
+    return (
+      moment().startOf("day").isSame(moment(date)) ||
+      moment(date).isBetween(start, end)
+    );
+  }
+
   checkIfFollowUpPresent() {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           let followUpDate = moment(obs.value.split(', Remark: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD');
-          let followUpReason = (obs.value.split(', Remark: ')[1])? obs.value.split(', Remark: ')[1] : null ;
+          let followUpTime = (obs.value.split(', Time: ')[1].split(', Remark: ')[0])? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null ;
+          let followUpReason = (obs.value.split(', Time: ')[1].split(', Remark: ')[1])? obs.value.split(', Time: ')[1].split(', Remark: ')[1] : null ;
           this.followUpForm.patchValue({
             present: true,
             wantFollowUp: 'Yes',
             followUpDate,
+            followUpTime,
             followUpReason
           });
         }
@@ -1097,7 +1137,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: this.conceptFollow,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: (this.followUpForm.value.followUpReason) ? `${this.followUpForm.value.followUpDate}, Remark: ${this.followUpForm.value.followUpReason}`: this.followUpForm.value.followUpDate,
+      value: (this.followUpForm.value.followUpReason) ? `${this.followUpForm.value.followUpDate}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}`: `${this.followUpForm.value.followUpDate}, Time: ${this.followUpForm.value.followUpTime}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {

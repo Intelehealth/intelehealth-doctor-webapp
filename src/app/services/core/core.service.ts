@@ -7,6 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
 import { SelectLanguageComponent } from 'src/app/modal-components/select-language/select-language.component';
 import { SharePrescriptionErrorComponent } from 'src/app/modal-components/share-prescription-error/share-prescription-error.component';
 import { SharePrescriptionSuccessComponent } from 'src/app/modal-components/share-prescription-success/share-prescription-success.component';
@@ -90,6 +91,11 @@ export class CoreService {
 
   openVideoCallModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false } );
+    return dialogRef.afterClosed();
+  }
+
+  openSearchedPatientModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(SearchedPatientsComponent, { panelClass: "modal-lg", data } );
     return dialogRef.afterClosed();
   }
 }

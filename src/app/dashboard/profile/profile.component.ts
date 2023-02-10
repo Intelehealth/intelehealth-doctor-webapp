@@ -283,6 +283,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             break;
           case 'phoneNumber':
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
+            (personalFormValues.phoneNumber)? this.phoneNumberValid = true : this.phoneNumberValid = false;
             break;
           case 'qualification':
 
@@ -311,6 +312,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             break;
           case 'whatsapp':
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
+            (personalFormValues.whatsapp)? this.whatsAppNumberValid = true : this.whatsAppNumberValid = false;
             break;
           case 'workExperience':
             professionalFormValues.workExperience = this.getAttributeValue(attrType.uuid, attrType.display);

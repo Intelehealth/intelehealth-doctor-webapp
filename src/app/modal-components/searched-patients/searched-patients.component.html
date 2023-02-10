@@ -1,0 +1,41 @@
+<div mat-dialog-title class="modal-title">
+  <h6 class="mb-0">Patients</h6>
+</div>
+<mat-dialog-content>
+  <div class="table-responsive">
+    <table class="table">
+      <tbody>
+        <ng-container *ngIf="data && data?.length; else noPatientsFound;">
+          <tr *ngFor="let value of data;">
+            <th scope="row">
+              <div class="identifier">
+                <span>
+                  {{value.identifiers[0].identifierType.name}}
+                </span>
+                {{value.identifiers[0].identifier}}
+              </div>
+            </th>
+            <td>{{ value.person.display}} ({{ value.person.gender}}, {{ value.person.age}})</td>
+            <td>
+              <button mat-button type="button" class="blue-btn" (click)="view(value.uuid)">
+                View
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noPatientsFound>
+          <tr>
+            <td colspan="3" class="text-center">
+              No patients found!
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close="false" class="blue-btn mr-2">
+    Close
+  </button>
+</mat-dialog-actions>
