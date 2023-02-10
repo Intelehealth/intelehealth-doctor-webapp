@@ -1114,9 +1114,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate = moment(obs.value.split(', Remark: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD');
-          let followUpTime = (obs.value.split(', Time: ')[1].split(', Remark: ')[0])? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null ;
-          let followUpReason = (obs.value.split(', Time: ')[1].split(', Remark: ')[1])? obs.value.split(', Time: ')[1].split(', Remark: ')[1] : null ;
+          let followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD');
+          let followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
+          let followUpReason = (obs.value.split(', Remark: ')[1])? obs.value.split(', Remark: ')[1] : null;
           this.followUpForm.patchValue({
             present: true,
             wantFollowUp: 'Yes',

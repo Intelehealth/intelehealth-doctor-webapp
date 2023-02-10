@@ -96,14 +96,6 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>OpenMRS ID</label>
-                      <div class="list-item-content">
-                        {{getPatientIdentifier('OpenMRS ID')|uppercase}}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
                       <label>Visit created</label>
                       <div class="list-item-content">
                         {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
@@ -429,7 +421,7 @@
                     <div class="form-group row">
                       <label for="refer" class="col-sm-3 col-form-label">Specialization</label>
                       <div class="col-sm-3">
-                        <ng-select formControlName="specialization" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                        <ng-select class="visit-select" formControlName="specialization" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
                         </ng-select>
                       </div>
                     </div>
@@ -652,7 +644,7 @@
                       <div class="row">
                         <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
                         <div class="col-sm-3">
-                          <ng-select class="custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis">
                           </ng-select>
                         </div>
                       </div>
@@ -807,19 +799,19 @@
                         </tr>
                         <tr *ngIf="!addMoreMedicine">
                           <td>
-                            <ng-select appendTo=".table-responsive" formControlName="drug" class="custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select drug">
+                            <ng-select appendTo=".table-responsive" formControlName="drug" class="visit-select custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select drug">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
+                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="days" class="custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
+                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
+                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
                             </ng-select>
                           </td>
                           <td colspan="2">
@@ -1028,7 +1020,7 @@
                         </tr>
                         <tr *ngIf="!addMoreReferral">
                           <td>
-                            <ng-select appendTo=".scrollable-box" formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                            <ng-select class="visit-select" appendTo=".scrollable-box" formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
                             </ng-select>
                           </td>
                           <td colspan="2">
@@ -1097,7 +1089,7 @@
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label">Select time</label>
                         <div class="col-sm-3">
-                          <ng-select class="custom" appendTo="body" formControlName="followUpTime" [items]="timeList" bindLabel="name" [clearable]="false" [searchable]="true" placeholder="Select time">
+                          <ng-select class="visit-select custom" appendTo="body" formControlName="followUpTime" [items]="timeList" bindLabel="name" [clearable]="false" [searchable]="true" placeholder="Select time">
                           </ng-select>
                         </div>
                       </div>

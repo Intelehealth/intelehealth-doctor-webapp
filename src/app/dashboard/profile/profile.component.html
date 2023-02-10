@@ -236,7 +236,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="typeOfProfession">Type of profession *</label>
-                  <ng-select [items]="professions" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="Select type of profession">
+                  <ng-select class="profile-select" [items]="professions" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="Select type of profession">
                   </ng-select>
                   <div *ngIf="submitted && f2.typeOfProfession.errors">
                     <small class="error-msg" *ngIf="f2.typeOfProfession.errors.required">Select type of profession</small>
@@ -253,7 +253,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="specialization">Specialization *</label>
-                  <ng-select [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="Select specialization">
+                  <ng-select class="profile-select" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="Select specialization">
                   </ng-select>
                   <div *ngIf="submitted && f2.specialization.errors">
                     <small class="error-msg" *ngIf="f2.specialization.errors.required">Select specialization</small>
@@ -261,7 +261,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="consultationLanguage">Consultation Language *</label>
-                  <ng-select [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="consultationLanguage" placeholder="Select consultation language">
+                  <ng-select class="profile-select" [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="consultationLanguage" placeholder="Select consultation language">
                     <ng-template ng-label-tmp let-item="item">
                       {{item.name}},
                     </ng-template>
@@ -283,7 +283,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="workExperience">Work Experience*</label>
-                  <ng-select [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="Eg. General Physician">
+                  <ng-select class="profile-select" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="Eg. General Physician">
                   </ng-select>
                   <div *ngIf="submitted && f2.workExperience.errors">
                     <small class="error-msg" *ngIf="f2.workExperience.errors.required">Select work experience as</small>
@@ -291,7 +291,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="researchExperience">Research Experience *</label>
-                  <ng-select [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="researchExperience" placeholder="Select research experience">
+                  <ng-select class="profile-select" [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="researchExperience" placeholder="Select research experience">
                     <ng-template ng-label-tmp let-item="item">
                       {{item.name}},
                     </ng-template>
