@@ -7,6 +7,7 @@ import { SetupCalendarComponent } from './setup-calendar/setup-calendar.componen
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     CalendarRoutingModule,
     MatIconModule,
     MatButtonModule,
-    NgSelectModule
+    NgSelectModule,
+    MatDatepickerModule
   ]
 })
 export class CalendarModule { }

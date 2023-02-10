@@ -413,11 +413,11 @@ textarea.form-control {
   box-shadow: none;
 }
 
-::ng-deep .custom.ng-select.ng-select-single .ng-select-container, .ng-select.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container, .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
   background: #FFFFFF;
 }
 
-::ng-deep .ng-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
   height: 48px;
   width: 100%;
   background: #FAF9FF;

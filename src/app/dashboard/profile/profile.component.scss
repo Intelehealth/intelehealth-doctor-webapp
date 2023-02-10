@@ -320,7 +320,7 @@ textarea.form-control {
   border-radius: 8px;
 }
 
-::ng-deep .ng-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.profile-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.profile-select.ng-select-multiple .ng-select-container {
   height: 48px;
   width: 100%;
   background: #FAF9FF;
@@ -338,7 +338,7 @@ textarea.form-control {
   }
 }
 
-::ng-deep .ng-select.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.profile-select.ng-select-multiple .ng-select-container {
   .ng-value-container {
     .ng-value {
       background: none;
@@ -347,7 +347,7 @@ textarea.form-control {
   }
 }
 
-::ng-deep .ng-select.ng-select-single.ng-select-container:hover, ::ng-deep .ng-select.ng-select-single.ng-select-container:focus {
+::ng-deep .ng-select.profile-select.ng-select-single.ng-select-container:hover, ::ng-deep .ng-select.profile-select.ng-select-single.ng-select-container:focus {
   box-shadow: none;
   outline: none;
 }
