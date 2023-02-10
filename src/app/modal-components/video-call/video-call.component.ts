@@ -78,11 +78,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.readMessages(data.id);
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data) => {
-      this.getMessages();
-    });
-
-
     await this.connect();
     // await this.changeVoiceCallIcons();
     /**
@@ -225,8 +220,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   initSocketEvents() {
     this.socketSvc.onEvent("message").subscribe((data) => {
-
-      this.handleSignalingData(data);
+      if (!['video', 'audio'].includes(data?.id)) {
+        this.handleSignalingData(data);
+      }
     });
 
     this.socketSvc.onEvent("ready").subscribe(() => {
@@ -236,11 +232,34 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
-      console.log('data:>>> ', data);
       if (!data?.webapp) {
         this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
       }
       this.stop();
+    });
+
+    this.socketSvc.onEvent("isread").subscribe((data: any) => {
+      this.getMessages();
+    });
+
+    this.socketSvc.onEvent("videoOn").subscribe((data: any) => {
+      if (!data?.fromWebapp)
+        this._remoteVideoOff = false;
+    });
+
+    this.socketSvc.onEvent("videoOff").subscribe((data: any) => {
+      if (!data?.fromWebapp)
+        this._remoteVideoOff = true;
+    });
+
+    this.socketSvc.onEvent("audioOn").subscribe((data: any) => {
+      if (!data?.fromWebapp)
+        this._remoteAudioMute = false;
+    });
+
+    this.socketSvc.onEvent("audioOff").subscribe((data: any) => {
+      if (!data?.fromWebapp)
+        this._remoteAudioMute = false;
     });
   }
 
@@ -302,12 +321,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   onAddStream(event: any) {
-
-    if (!event.stream.getVideoTracks()[0].enabled) {
-      this._remoteVideoOff = false;
-    } else {
-      this._remoteVideoOff = true;
-    }
     if (!event.stream.getAudioTracks()[0].enabled) {
       this._remoteAudioMute = false;
     } else {
@@ -369,11 +382,17 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   toggleAudio() {
     this.localStream.getAudioTracks()[0].enabled = this._localAudioMute;
     this._localAudioMute = !this._localAudioMute;
+
+    const event = this._localAudioMute ? 'audioOff' : 'audioOn';
+    this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
   toggleVideo() {
     this.localStream.getVideoTracks()[0].enabled = this._localVideoOff;
     this._localVideoOff = !this._localVideoOff;
+
+    const event = this._localAudioMute ? 'videoOff' : 'videoOn';
+    this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
   toggleWindow() {

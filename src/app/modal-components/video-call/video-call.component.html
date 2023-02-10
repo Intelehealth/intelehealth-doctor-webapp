@@ -20,10 +20,12 @@
       <div class="col p-0">
         <div class="main-container">
           <div class="remote-con" [class.minimized]="_minimized">
-            <video #remoteVideo autoplay></video>
-            <div class="video-off-container" *ngIf="!isRemote || (isRemote && _remoteVideoOff)">
-              <img src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}" (error)="onImgError($event)" alt="" />
-            </div>
+            <video #remoteVideo autoplay  *ngIf="!_remoteVideoOff;else remoteVideoOff"></video>            
+            <ng-template #remoteVideoOff>
+              <div class="video-off-container">
+                <img src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}" (error)="onImgError($event)" alt="" />
+              </div>
+            </ng-template>
             <div class="audio-status">
               <img class="audio-img" src="{{
                   _remoteAudioMute
