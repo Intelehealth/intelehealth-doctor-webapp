@@ -22,6 +22,11 @@ import { MomentModule } from 'ngx-moment';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { SearchedPatientsComponent } from './searched-patients/searched-patients.component';
 import { MatListModule } from '@angular/material/list';
+import { AppointmentDetailComponent } from './appointment-detail/appointment-detail.component';
+import { RescheduleAppointmentComponent } from './reschedule-appointment/reschedule-appointment.component';
+import { RescheduleAppointmentConfirmComponent } from './reschedule-appointment-confirm/reschedule-appointment-confirm.component';
+import { CancelAppointmentConfirmComponent } from './cancel-appointment-confirm/cancel-appointment-confirm.component';
+import { AppointmentDetailMonthComponent } from './appointment-detail-month/appointment-detail-month.component';
 
 @NgModule({
     declarations: [
@@ -39,7 +44,12 @@ import { MatListModule } from '@angular/material/list';
         ViewVisitPrescriptionComponent,
         ChatBoxComponent,
         VideoCallComponent,
-        SearchedPatientsComponent
+        SearchedPatientsComponent,
+        AppointmentDetailComponent,
+        RescheduleAppointmentComponent,
+        RescheduleAppointmentConfirmComponent,
+        CancelAppointmentConfirmComponent,
+        AppointmentDetailMonthComponent
     ],
     imports: [
         CommonModule,

@@ -16,6 +16,7 @@ declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 export class AuthService {
 
   private baseUrl = environment.baseURL;
+  private base = environment.base;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
   private base64Cred: string;
@@ -80,6 +81,18 @@ export class AuthService {
 
   login(credBase64: string) {
     this.base64Cred = credBase64;
+    console.log(this.cookieService.getAll());
+    this.cookieService.delete('JSESSIONID');
+    this.cookieService.delete('JSESSIONID', '/');
+    this.cookieService.delete('JSESSIONID', '/openmrs');
+    this.cookieService.delete('JSESSIONID', '/', this.base);
+    this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
+    this.cookieService.deleteAll();
+    this.cookieService.deleteAll('/');
+    this.cookieService.deleteAll('/openmrs');
+    this.cookieService.deleteAll('/', this.base);
+    this.cookieService.deleteAll('/openmrs', this.base);
+
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
     return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
@@ -91,7 +104,10 @@ export class AuthService {
           this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
           this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
           this.currentUserSubject.next(user);
-          this.cookieService.set('JSESSIONID', user.sessionId);
+          console.log(user.sessionId);
+          if (user.sessionId) {
+            this.cookieService.set('JSESSIONID', user.sessionId, 1, '/openmrs', this.base);
+          }
         }
         return user;
       }));
@@ -111,7 +127,18 @@ export class AuthService {
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
       localStorage.removeItem('doctorName');
+      console.log(this.cookieService.getAll());
       this.cookieService.delete('JSESSIONID');
+      this.cookieService.delete('JSESSIONID', '/');
+      this.cookieService.delete('JSESSIONID', '/openmrs');
+      this.cookieService.delete('JSESSIONID', '/', this.base);
+      this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
+      this.cookieService.deleteAll();
+      this.cookieService.deleteAll('/');
+      this.cookieService.deleteAll('/openmrs');
+      this.cookieService.deleteAll('/', this.base);
+      this.cookieService.deleteAll('/openmrs', this.base);
+
       this.currentUserSubject.next(null);
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();

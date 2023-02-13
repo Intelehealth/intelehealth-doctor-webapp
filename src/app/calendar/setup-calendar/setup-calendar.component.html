@@ -87,7 +87,7 @@
                 <tbody>
                   <ng-container *ngFor="let t of ft.controls; let i=index; let last=last;">
                     <ng-container [formGroupName]="i">
-                      <tr *ngIf="!last">
+                      <!-- <tr *ngIf="!last">
                         <td>
                           {{t.value.startTime}} {{t.value.startMeridiem}}
                         </td>
@@ -98,30 +98,30 @@
                           {{t.value.days}}
                         </td>
                         <td>
-                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)">
+                          <button mat-button type="button" class="delete-btn float-right" (click)="deleteSlot(i)">
                             <img src="assets/svgs/delete-icon.svg" alt="">
                             Delete
                           </button>
                         </td>
-                      </tr>
-                      <!-- <tr *ngIf="!last">
+                      </tr> -->
+                      <tr *ngIf="!last">
                         <td>
                           <div class="d-flex">
                             <ng-select formControlName="startTime" class="customSelect2 mr-2" [items]="timeList"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="timeList[0].name"
                               [clearable]="false"
-                              [searchable]="false" [attr.disabled]="true">
+                              [searchable]="false">
                             </ng-select>
                             <ng-select formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="clockTimeAmPM[0].name"
                               [clearable]="false"
-                              [searchable]="false" [attr.disabled]="true">
+                              [searchable]="false">
                             </ng-select>
                           </div>
                         </td>
@@ -131,17 +131,17 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="timeList[0].name"
                               [clearable]="false"
-                              [searchable]="false" [attr.disabled]="true">
+                              [searchable]="false">
                             </ng-select>
                             <ng-select formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="clockTimeAmPM[0].name"
                               [clearable]="false"
-                              [searchable]="false" [attr.disabled]="true">
+                              [searchable]="false">
                             </ng-select>
                           </div>
                         </td>
@@ -151,11 +151,11 @@
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            placeholder="Select days"
+                            [placeholder]="days[0].shortName"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
-                            [searchable]="false" [attr.disabled]="true">
+                            [searchable]="false">
                             <ng-template ng-label-tmp let-item="item">
                               {{item.shortName}},
                             </ng-template>
@@ -176,7 +176,7 @@
                             Delete
                           </button>
                         </td>
-                      </tr> -->
+                      </tr>
 
                       <tr *ngIf="!_addMoreTiming && last">
                         <td colspan="4">
@@ -193,7 +193,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="timeList[0].name"
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
@@ -201,7 +201,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="clockTimeAmPM[0].name"
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
@@ -213,7 +213,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="timeList[0].name"
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
@@ -221,7 +221,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="Select"
+                              [placeholder]="clockTimeAmPM[0].name"
                               [clearable]="false"
                               [searchable]="false">
                             </ng-select>
@@ -233,7 +233,7 @@
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            placeholder="Select days"
+                            [placeholder]="days[0].shortName"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"

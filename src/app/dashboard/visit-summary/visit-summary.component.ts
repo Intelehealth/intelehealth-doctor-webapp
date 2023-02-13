@@ -680,7 +680,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.coreService.openConfirmationDialog({confirmationMsg: 'Are you sure to re-assign this visit to another doctor?' })
+    this.coreService.openConfirmationDialog({confirmationMsg: 'Are you sure to re-assign this visit to another doctor?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' })
     .afterClosed().subscribe((res: any) => {
       if (res) {
         let attr = this.checkIfAttributeExists(this.visit.attributes);

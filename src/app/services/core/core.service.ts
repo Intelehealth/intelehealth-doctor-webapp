@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { AppointmentDetailMonthComponent } from 'src/app/modal-components/appointment-detail-month/appointment-detail-month.component';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
@@ -24,7 +25,7 @@ export class CoreService {
 
   constructor(private dialog: MatDialog) { }
 
-  openConfirmationDialog(data: { confirmationMsg: string }): MatDialogRef<ConfirmDialogComponent> {
+  openConfirmationDialog(data: { confirmationMsg: string, cancelBtnText: string, confirmBtnText: string }): MatDialogRef<ConfirmDialogComponent> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, { panelClass: 'modal-md', data } );
     return dialogRef;
   }
@@ -96,6 +97,11 @@ export class CoreService {
 
   openSearchedPatientModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(SearchedPatientsComponent, { panelClass: "modal-lg", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openAppointmentDetailMonthViewModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: "medium-modal", data } );
     return dialogRef.afterClosed();
   }
 }

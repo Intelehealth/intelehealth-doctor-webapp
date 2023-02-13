@@ -238,11 +238,11 @@ export class SetupCalendarComponent implements OnInit {
     uniqTiming.forEach((ut: any) => {
       let utslots = _.filter(schedule.slotSchedule, { startTime: ut.startTime, endTime: ut.endTime });
       let timingFormGroup = new FormGroup({
-        startTime: new FormControl(ut.startTime.split(" ")[0], Validators.required),
-        startMeridiem: new FormControl(ut.startTime.split(" ")[1], Validators.required),
-        endTime: new FormControl(ut.endTime.split(" ")[0], Validators.required),
-        endMeridiem: new FormControl(ut.endTime.split(" ")[1], Validators.required),
-        days: new FormControl(_.map(_.uniq(_.map(utslots,'day')), (val) => val.slice(0,3)), Validators.required),
+        startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
+        startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
+        endTime: new FormControl({ value: ut.endTime.split(" ")[0], disabled: true }, Validators.required),
+        endMeridiem: new FormControl({ value: ut.endTime.split(" ")[1], disabled: true }, Validators.required),
+        days: new FormControl({ value: _.map(_.uniq(_.map(utslots,'day')), (val) => val.slice(0,3)), disabled: true }, Validators.required),
         slots: this.getSlotsArray(utslots)
       });
       this.ft.push(timingFormGroup);
@@ -314,7 +314,7 @@ export class SetupCalendarComponent implements OnInit {
       return;
     }
     let flag = 0;
-    let ts = [...this.ft.value];
+    let ts = [...this.ft.getRawValue()];
     for (let i = 0; i < ts.length; i++) {
       if (this.validateTimeSlot({ startTime: `${ts[i].startTime} ${ts[i].startMeridiem}`, endTime: `${ts[i].endTime} ${ts[i].endMeridiem}` })) {
         let newSlots = this.createSlots(ts[i].days, `${ts[i].startTime} ${ts[i].startMeridiem}`, `${ts[i].endTime} ${ts[i].endMeridiem}`);
@@ -379,7 +379,7 @@ export class SetupCalendarComponent implements OnInit {
     if (flag == 1) {
       return;
     }
-    // console.log(this.addSlotsForm.value);
+    console.log(this.addSlotsForm.getRawValue());
     let body = { ...this.addSlotsForm.value };
     delete body['timings'];
     delete body['daysOff'];
@@ -394,7 +394,7 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   deleteSlot(index: number) {
-    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to delete this timing slot?'}).afterClosed().subscribe(res => {
+    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to delete this timing slot?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
         this.fs.clear();
         if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
@@ -402,7 +402,7 @@ export class SetupCalendarComponent implements OnInit {
           return;
         }
         let flag = 0;
-        let ts = [...this.ft.value];
+        let ts = [...this.ft.getRawValue()];
         for (let i = 0; i < ts.length - 1; i++) {
           if (i != index) {
             if (this.validateTimeSlot({ startTime: `${ts[i].startTime} ${ts[i].startMeridiem}`, endTime: `${ts[i].endTime} ${ts[i].endMeridiem}` })) {
@@ -467,7 +467,7 @@ export class SetupCalendarComponent implements OnInit {
         if (flag == 1) {
           return;
         }
-        // console.log(this.addSlotsForm.value);
+        console.log(this.addSlotsForm.getRawValue());
         let body = { ...this.addSlotsForm.value };
         delete body['timings'];
         delete body['daysOff'];
@@ -545,7 +545,7 @@ export class SetupCalendarComponent implements OnInit {
       return;
     }
 
-    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?' }).afterClosed().subscribe(res => {
+    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
         let finalDaysOff = _.map(_.uniq([...this.fd.value].concat(this.daysOffSelected)), (val: any)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
@@ -571,7 +571,7 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   removeDaysOff(index: number) {
-    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to remove this day off ?' }).afterClosed().subscribe(res => {
+    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to remove this day off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
         let finalDaysOff = [...this.fd.value];
         finalDaysOff.splice(index, 1);
