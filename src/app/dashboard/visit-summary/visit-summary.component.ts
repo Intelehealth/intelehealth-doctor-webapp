@@ -1200,7 +1200,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
                   if (result == 'view') {
                     // Open visit summary modal here....
-
+                    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
                   } else if(result == 'dashboard') {
                     this.router.navigate(['/dashboard']);
                   }

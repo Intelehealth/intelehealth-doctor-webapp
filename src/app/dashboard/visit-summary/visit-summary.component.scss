@@ -141,6 +141,11 @@
 }
 
 .intel-accordion-con {
+
+  .mat-expansion-panel.overflow-show {
+    overflow: visible;
+  }
+
   .mat-expansion-panel {
     background: #FFFFFF;
     box-shadow: none !important;
@@ -457,9 +462,9 @@ textarea.form-control {
   border-radius: 8px;
   box-shadow: none;
 
-  .ng-value-container {
-    position: relative;
-  }
+  // .ng-value-container {
+  //   position: relative;
+  // }
 
   .ng-value-container .ng-input {
     top: 50%;

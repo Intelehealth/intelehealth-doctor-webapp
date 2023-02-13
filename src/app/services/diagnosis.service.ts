@@ -34,7 +34,7 @@ export class DiagnosisService {
     return this.http.get(url);
   }
 
-  getDiagnosisList(term) {
+  getDiagnosisList(term: any) {
     const url = `${environment.baseURLCoreApp}/search.action?&term=${term}`;
     return this.http.get(url)
     .pipe(
@@ -59,12 +59,12 @@ export class DiagnosisService {
   isSameDoctor() {
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
-    if (providerDetails && providerUuid === getEncounterProviderUUID()) { 
+    if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;
     } else {
       this.snackbar.open("Another doctor is viewing this case", null, {
         duration: 4000,
       });
     }
-  } 
+  }
 }
