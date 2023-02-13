@@ -425,7 +425,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getAppointment(visitId: string) {
     this.appointmentService.getAppointment(visitId).subscribe((res: any) => {
       if (res) {
-        this.visitAppointment = res?.data?.slotDate;
+        this.visitAppointment = res?.data?.slotJsDate;
       }
     });
   }

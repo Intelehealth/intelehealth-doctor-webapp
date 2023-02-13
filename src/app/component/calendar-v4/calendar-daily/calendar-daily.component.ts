@@ -12,7 +12,7 @@ class Appointment {
   gender:string
   age: string
   healthWorker: string
-  hwPic: string
+  hwUUID: string
   hwAge: string
   hwGender: string
   type: string
@@ -38,6 +38,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
   availableSlots = [];
   hoursOffSlots = []
   baseUrl = environment.baseURL;
+  base = environment.base;
   showTimer = false;
   constructor() { }
 
@@ -103,7 +104,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
       appointment.healthWorker = d1?.hwName;
       appointment.hwAge =d1?.hwAge;
       appointment.hwGender = d1?.hwGender;
-      appointment.hwPic = d1?.hwPic;
+      appointment.hwUUID = d1?.hwUUID;
       appointment.type = d1?.type ? d1?.type : 'appointment';
       appointment.patientId = d1?.patientId;
       appointment.visitId = d1?.visitUuid;
@@ -112,6 +113,7 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
       appointment.speciality = d1?.speciality;
       this.availableSlots.push(appointment);
     });
+    this.availableSlots.sort((a, b) => (moment(a.startTime, "LT") < moment(b.startTime, "LT")) ? -1 : (moment(a.startTime, "LT") > moment(b.startTime, "LT")) ? 1 : 0);
     this.setAvailableTimeSlotObject();
   }
 
@@ -134,11 +136,9 @@ export class CalendarDailyComponent implements OnInit,OnChanges {
 
   getTime(time1, time2) {
     let currentTime = moment().format("hh:mm a");
-    if(moment(currentTime, "LT").isBetween(moment(time1, "LT"), moment(time2, "LT")) || 
-    moment(currentTime, "LT").isSame(moment(time1, "LT")) || moment(currentTime, "LT").isSame(moment(time2, "LT"))) {
+    if(moment(currentTime, "LT").isBetween(moment(time1, "LT"), moment(time2, "LT"))) {
       return true;
-    } else {
-      return false;
-    }
+    } else
+        return false; 
   }
 }

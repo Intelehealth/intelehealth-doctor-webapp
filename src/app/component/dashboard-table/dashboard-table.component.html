@@ -33,7 +33,7 @@
         *ngFor="let data of pagedItems"
         [ngClass]="{ actives: data?.isActive }"
         class="table-height"
-        [routerLink]="['/dashboard/visit-summary', data?.patientId, data?.visitId]"
+        [routerLink]="['/dashboard/visit-summary', data?.visitId]"
       >
         <td
           *ngFor="let header of table?.headers"

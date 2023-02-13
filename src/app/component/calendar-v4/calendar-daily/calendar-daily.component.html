@@ -38,7 +38,7 @@
 
             <div class="col h-100 hw-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
-                <img src="assets/svgs/hw.svg" />
+                <img src="{{ base + '/di/' + slot.hwUUID +'_image.png'}}" class="profileImg" (error) ="onImgError($event)" />
                 <div class="d-grid">
                   <div class="label">{{slot.healthWorker}}..({{slot.hwGender}},{{slot.hwAge}})</div>
                   <div class="sub-text">Health Worker</div>
@@ -69,7 +69,7 @@
 
             <div class="col h-100 hw-info mt click" (click)="handleClick(slot)">
               <div class="d-flex">
-                <img src="assets/svgs/hw.svg" />
+                <img src="{{ base + '/di/' + slot.hwUUID +'_image.png'}}" class="profileImg" (error) ="onImgError($event)" />
                 <div class="d-grid">
                   <div class="label">{{slot.healthWorker}}..({{slot.hwGender}},{{slot.hwAge}})</div>
                   <div class="sub-text">Health Worker</div>

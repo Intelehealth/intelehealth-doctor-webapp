@@ -386,7 +386,8 @@ export class ViewCalendarComponent implements OnInit {
         let days = moment(encounters[0]?.encounterDatetime, "YYYY-MM-DD HH:mm:ss").diff(moment(), 'days');
         if (slot.modal === "details" && slot.type === 'appointment') {
           this.appointmentDetailModal["data"] = slot;
-          let day = moment(slot.appointmentDate, "YYYY-MM-DD HH:mm:ss").diff(moment(), 'days')
+          let todays = moment(new Date()).format("DD/MM/YYYY");
+          let day = moment(slot.appointmentDate, "YYYY-MM-DD HH:mm:ss").diff( moment(todays, "DD/MM/YYYY"), 'days')
           this.appointmentDetailModal.AppointmentOn = day > 0 ?  `Starts in ${Math.abs(day)} days` : `Awaiting since ${Math.abs(day)} day`;
           this.appointmentDetail.openAppointmentModal();
         } else if( slot["visitStatus"] === 'Completed' ||  slot["visitStatus"] === 'Ended') {
@@ -536,7 +537,7 @@ export class ViewCalendarComponent implements OnInit {
   }
 
   navigateToSummaray() {
-    this.router.navigate(['/dashboard/visit-summary', this.selectedSlot.patientId, this.selectedSlot.visitId]);
+    this.router.navigate(['/dashboard/visit-summary', this.selectedSlot.visitId]);
   }
 
   getVisitStatus(status: string) {

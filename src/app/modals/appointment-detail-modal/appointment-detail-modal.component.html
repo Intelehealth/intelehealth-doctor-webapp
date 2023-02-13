@@ -16,9 +16,9 @@
 
       <div class="d-grid">
         <div class="font-bold">{{modal?.data?.patientName}} ({{modal?.data?.gender}}, {{modal?.data?.age}})</div>
-        <div class="view-detail-font grey-color">PID: {{modal?.data?.openMrsId}}</div>
+        <div class="grey-color">PID: {{modal?.data?.openMrsId}}</div>
         <div class="view-detail-font blue-color click" 
-        [routerLink]="['/dashboard/visit-summary', modal?.data?.patientId, modal?.data?.visitId]">
+        [routerLink]="['/dashboard/visit-summary', modal?.data?.visitId]">
           <span> View details </span>
           <img src="assets/svgs/right-arrow-blue.svg" />
         </div>
