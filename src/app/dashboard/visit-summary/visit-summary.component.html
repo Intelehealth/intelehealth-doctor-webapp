@@ -1081,7 +1081,19 @@
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label">Select date</label>
                         <div class="col-sm-3">
-                          <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate">
+                          <!-- <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate"> -->
+                          <div class="input-group">
+                            <input type="text" class="form-control" formControlName="followUpDate" [matDatepicker]="fdp" placeholder="Enter date" aria-label="Birthdate"
+                              aria-describedby="basic-addon1" readonly>
+                            <mat-datepicker #fdp></mat-datepicker>
+                            <div class="input-group-append">
+                              <span class="input-group-text" id="basic-addon1">
+                                <mat-datepicker-toggle matSuffix [for]="fdp">
+                                  <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+                                </mat-datepicker-toggle>
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </li>

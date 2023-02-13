@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     Ng2TelInputModule,
     NgxDropzoneModule,
-    NgbTypeaheadModule
+    NgbTypeaheadModule,
+    MatDatepickerModule
   ]
 })
 export class DashboardModule { }

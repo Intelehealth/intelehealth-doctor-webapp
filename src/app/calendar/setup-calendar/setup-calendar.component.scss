@@ -102,6 +102,7 @@
   }
 
   .input-group {
+    position: relative;
     border: 1px solid rgba(178, 175, 190, 0.2);
     background: #FAF9FF;
     border-radius: 8px;
@@ -113,10 +114,18 @@
       color: #1B163A;
       border: none;
       background: transparent;
+      text-overflow: ellipsis;
     }
 
     .form-control:focus {
       box-shadow: none;
+    }
+
+    .form-control.hidden-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
 
     .input-group-append {
@@ -153,6 +162,7 @@
   font-size: 16px;
   color: #1B163A;
   text-decoration: none;
+  width: fit-content;
 }
 
 .delete-btn {
@@ -165,6 +175,10 @@
   color: #FF475D;
   height: 48px;
 }
+
+// .save-btn:disabled, .cancel-btn:disabled {
+//   opacity: 0.9;
+// }
 
 .save-btn {
   background: #2E1E91;
@@ -268,12 +282,19 @@
   }
 }
 
+::ng-deep .ng-select.customSelect1.ng-select-multiple.ng-select-disabled>.ng-select-container .ng-value-container .ng-value {
+  background-color: transparent;
+  border: none;
+}
+
 .pretty.p-image .state img {
   transform: none;
 }
 
 ::ng-deep .ng-select.customSelect2 {
   min-height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
 
   .ng-select-container  {
     min-height: 48px;
@@ -311,4 +332,29 @@
     top: 50%;
     transform: translate(-50%, -50%);
   }
+}
+
+::ng-deep .ng-select.customSelect2.ng-select-disabled>.ng-select-container {
+  background-color: transparent;
+}
+
+::ng-deep .daysOffCalendar {
+  .mat-calendar-body-cell-content.mat-calendar-body-selected {
+    background: transparent;
+    color: #1B163A;
+  }
+}
+
+::ng-deep .mat-calendar-body-cell.dayOffDate
+{
+  background: #0FD197 !important;
+  border-radius: 50%;
+  .mat-calendar-body-cell-content.mat-calendar-body-selected {
+    background: transparent;
+    color: #1B163A;
+  }
+}
+
+.invalid-input {
+  border: 1px solid red !important;
 }

@@ -150,6 +150,10 @@
   .mat-expansion-panel.bg-gray {
     background: #FAF9FF;
 
+    .input-group {
+      background: #FFFFFF;
+    }
+
     .form-control {
       background: #FFFFFF;
     }
@@ -411,6 +415,34 @@ textarea.form-control {
 
 .form-control:focus {
   box-shadow: none;
+}
+
+.input-group {
+  border: 1px solid rgba(178, 175, 190, 0.2);
+  background: #FAF9FF;
+  border-radius: 8px;
+  height: 48px;
+
+  .form-control {
+    padding: 14px 16px;
+    height: 46px;
+    font-size: 16px;
+    color: #1B163A;
+    border: none;
+    background: transparent;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+  }
+
+  .input-group-append {
+    .input-group-text {
+      background: transparent;
+      border: none;
+      padding: 0px;
+    }
+  }
 }
 
 ::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container, .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {

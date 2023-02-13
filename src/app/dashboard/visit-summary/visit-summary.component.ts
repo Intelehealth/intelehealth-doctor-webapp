@@ -16,11 +16,37 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { SocketService } from 'src/app/services/socket.service';
+import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
+import { formatDate } from '@angular/common';
+
+export const PICK_FORMATS = {
+  parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
+  display: {
+      dateInput: 'input',
+      monthYearLabel: {year: 'numeric', month: 'short'},
+      dateA11yLabel: {year: 'numeric', month: 'long', day: 'numeric'},
+      monthYearA11yLabel: {year: 'numeric', month: 'long'}
+  }
+};
+
+class PickDateAdapter extends NativeDateAdapter {
+  format(date: Date, displayFormat: Object): string {
+      if (displayFormat === 'input') {
+          return formatDate(date,'dd MMMM yyyy',this.locale);
+      } else {
+          return date.toDateString();
+      }
+  }
+}
 
 @Component({
   selector: 'app-visit-summary',
   templateUrl: './visit-summary.component.html',
-  styleUrls: ['./visit-summary.component.scss']
+  styleUrls: ['./visit-summary.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: PickDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
+  ]
 })
 export class VisitSummaryComponent implements OnInit, OnDestroy {
 
@@ -1114,7 +1140,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0].replaceAll('-','/'),'DD/MM/YYYY').format('YYYY-MM-DD');
+          let followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
           let followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
           let followUpReason = (obs.value.split(', Remark: ')[1])? obs.value.split(', Remark: ')[1] : null;
           this.followUpForm.patchValue({
@@ -1137,7 +1163,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: this.conceptFollow,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: (this.followUpForm.value.followUpReason) ? `${this.followUpForm.value.followUpDate}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}`: `${this.followUpForm.value.followUpDate}, Time: ${this.followUpForm.value.followUpTime}`,
+      value: (this.followUpForm.value.followUpReason) ? `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}`: `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {

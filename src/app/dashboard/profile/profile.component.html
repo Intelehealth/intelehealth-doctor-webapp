@@ -82,7 +82,18 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="birthdate">Date of birth *</label>
-                  <input type="date" class="form-control" formControlName="birthdate" placeholder="Enter DOB">
+                  <div class="input-group">
+                    <input type="text" class="form-control" formControlName="birthdate" [matDatepicker]="dobdp" placeholder="Enter DOB" aria-label="Birthdate"
+                      aria-describedby="basic-addon1" readonly>
+                    <mat-datepicker #dobdp></mat-datepicker>
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon1">
+                        <mat-datepicker-toggle matSuffix [for]="dobdp">
+                          <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+                        </mat-datepicker-toggle>
+                      </span>
+                    </div>
+                  </div>
                   <div *ngIf="submitted && f1.birthdate.errors">
                     <small class="error-msg" *ngIf="f1.birthdate.errors.required">Enter DOB</small>
                   </div>
@@ -175,7 +186,7 @@
                           </div>
                           <div class="form-group col-md-6">
                             <label for="fontOfSign">Select Signature *</label>
-                            <ng-select [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
+                            <ng-select class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
                               <ng-template ng-label-tmp let-item="item">
                                 <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 50px;">{{item.text}}</p>
                               </ng-template>
