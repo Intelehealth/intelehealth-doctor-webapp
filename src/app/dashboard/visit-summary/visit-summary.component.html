@@ -373,12 +373,12 @@
                     <div class="doc-item" *ngFor="let d of additionalDocs;">
                       <img [src]="d.src" alt="">
                     </div>
-                    <div class="doc-item">
+                    <!-- <div class="doc-item">
                       <div class="other-doc">
                         <img src="assets/svgs/pdf-doc.svg" alt="">
                         <span>Blood test report.pdf</span>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </ng-container>
 
@@ -390,7 +390,7 @@
 
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="!visitNotePresent" [disabled]="visitNotePresent">
+              <mat-expansion-panel [expanded]="!visitNotePresent" *ngIf="!visitNotePresent">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     <div class="intel-accordion-title">
