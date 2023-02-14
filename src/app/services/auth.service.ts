@@ -37,6 +37,7 @@ export class AuthService {
       this.permissionsService.loadPermissions(this.extractPermissions(localStorageUser.user.privileges));
       this.rolesService.addRoles(this.extractRolesAndPermissions(localStorageUser.user.privileges, localStorageUser.user.roles));
     }
+    this.base64Cred = localStorage.getItem('xsddsdass');
   }
   public fingerPrint;
 
@@ -81,6 +82,7 @@ export class AuthService {
 
   login(credBase64: string) {
     this.base64Cred = credBase64;
+    localStorage.setItem('xsddsdass', credBase64);
     console.log(this.cookieService.getAll());
     this.cookieService.delete('JSESSIONID');
     this.cookieService.delete('JSESSIONID', '/');
@@ -92,6 +94,8 @@ export class AuthService {
     this.cookieService.deleteAll('/openmrs');
     this.cookieService.deleteAll('/', this.base);
     this.cookieService.deleteAll('/openmrs', this.base);
+    document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
@@ -121,12 +125,13 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
-    // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
+    headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
       localStorage.removeItem('doctorName');
+      localStorage.removeItem('xsddsdass');
       console.log(this.cookieService.getAll());
       this.cookieService.delete('JSESSIONID');
       this.cookieService.delete('JSESSIONID', '/');
@@ -138,6 +143,8 @@ export class AuthService {
       this.cookieService.deleteAll('/openmrs');
       this.cookieService.deleteAll('/', this.base);
       this.cookieService.deleteAll('/openmrs', this.base);
+      document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
       this.currentUserSubject.next(null);
       this.permissionsService.flushPermissions();

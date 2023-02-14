@@ -610,6 +610,12 @@ th.mat-header-cell:last-child {
   width: fit-content;
 }
 
+.pill-anchor, .pill-anchor:hover {
+  display: inline-block;
+  width: fit-content;
+  text-decoration: none !important;
+}
+
 .timeline-icon {
   position: relative;
   width: 20px;

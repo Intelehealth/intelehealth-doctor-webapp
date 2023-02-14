@@ -331,10 +331,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
         this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
       } else {
+        this.diagnosisForm.get('diagnosisName').setValue(null);
         this.diagnosisForm.get('diagnosisName').clearValidators();
         this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisType').setValue(null);
         this.diagnosisForm.get('diagnosisType').clearValidators();
         this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
+        this.diagnosisForm.get('diagnosisStatus').setValue(null);
         this.diagnosisForm.get('diagnosisStatus').clearValidators();
         this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
       }
@@ -833,8 +836,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   searchDiagnosis(event: any) {
     if (event.target.value) {
       if (event.target.value.length > 3) {
+        this.diagnosis = [];
         this.diagnosisService.getDiagnosisList(event.target.value).subscribe(response => {
-          this.diagnosis = response;
+          if (response && response.length) {
+            this.diagnosis = response.map((val) => val?.conceptName?.name);
+          } else {
+            this.diagnosis = [{
+              id: 1,
+              name: 'Viral Flu'
+            }];
+          }
       });
       }
     }
