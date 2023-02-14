@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getVisits() {
-    this.visitService.getVisits({ includeInactive: false }).subscribe(
+    this.visitService.getVisits({ includeInactive: true }).subscribe(
       (response: any) => {
         let visits = response.results;
         visits.forEach((visit: any) => {
@@ -107,7 +107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
 
         // Check appointments
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
+        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
           appointmentsdata.forEach(appointment => {
