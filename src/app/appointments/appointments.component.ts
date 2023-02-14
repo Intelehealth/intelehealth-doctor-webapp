@@ -52,7 +52,7 @@ export class AppointmentsComponent implements OnInit {
     this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
       if (res) {
         let visits = res.results;
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
+        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
           appointmentsdata.forEach(appointment => {
@@ -60,10 +60,10 @@ export class AppointmentsComponent implements OnInit {
               let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
               if (matchedVisit) {
                 matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
+                appointment.visit_info = matchedVisit;
+                appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+                this.appointments.push(appointment);
               }
-              appointment.visit_info = matchedVisit;
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-              this.appointments.push(appointment);
             }
           });
           this.dataSource = new MatTableDataSource(this.appointments);

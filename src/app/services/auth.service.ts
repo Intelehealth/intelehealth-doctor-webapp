@@ -83,19 +83,19 @@ export class AuthService {
   login(credBase64: string) {
     this.base64Cred = credBase64;
     localStorage.setItem('xsddsdass', credBase64);
-    console.log(this.cookieService.getAll());
-    this.cookieService.delete('JSESSIONID');
-    this.cookieService.delete('JSESSIONID', '/');
-    this.cookieService.delete('JSESSIONID', '/openmrs');
-    this.cookieService.delete('JSESSIONID', '/', this.base);
-    this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
+    // console.log(this.cookieService.getAll());
+    // this.cookieService.delete('JSESSIONID');
+    // this.cookieService.delete('JSESSIONID', '/');
+    // this.cookieService.delete('JSESSIONID', '/openmrs');
+    // this.cookieService.delete('JSESSIONID', '/', this.base);
+    // this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
     this.cookieService.deleteAll();
-    this.cookieService.deleteAll('/');
-    this.cookieService.deleteAll('/openmrs');
-    this.cookieService.deleteAll('/', this.base);
-    this.cookieService.deleteAll('/openmrs', this.base);
-    document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    // this.cookieService.deleteAll('/');
+    // this.cookieService.deleteAll('/openmrs');
+    // this.cookieService.deleteAll('/', this.base);
+    // this.cookieService.deleteAll('/openmrs', this.base);
+    // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
@@ -110,7 +110,8 @@ export class AuthService {
           this.currentUserSubject.next(user);
           console.log(user.sessionId);
           if (user.sessionId) {
-            this.cookieService.set('JSESSIONID', user.sessionId, 1, '/openmrs', this.base);
+            this.cookieService.set('JSESSIONID', user.sessionId);
+            this.cookieService.set('JSESSIONID', user.sessionId, null, '/openmrs', this.base);
           }
         }
         return user;
@@ -122,35 +123,50 @@ export class AuthService {
   }
 
   logOut() {
-    // remove user from local storage to log user out
-    let headers: HttpHeaders = new HttpHeaders();
-    // headers = headers.set('cookie', `JSESSIONID=${id}`);
-    headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('user');
-      localStorage.removeItem('provider');
-      localStorage.removeItem('doctorName');
-      localStorage.removeItem('xsddsdass');
-      console.log(this.cookieService.getAll());
-      this.cookieService.delete('JSESSIONID');
-      this.cookieService.delete('JSESSIONID', '/');
-      this.cookieService.delete('JSESSIONID', '/openmrs');
-      this.cookieService.delete('JSESSIONID', '/', this.base);
-      this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
-      this.cookieService.deleteAll();
-      this.cookieService.deleteAll('/');
-      this.cookieService.deleteAll('/openmrs');
-      this.cookieService.deleteAll('/', this.base);
-      this.cookieService.deleteAll('/openmrs', this.base);
-      document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-
-      this.currentUserSubject.next(null);
-      this.permissionsService.flushPermissions();
-      this.rolesService.flushRoles();
-      this.router.navigate(['/session/login']);
+    this.sessionService.session().subscribe((res) => {
+      this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('user');
+        localStorage.removeItem('provider');
+        localStorage.removeItem('doctorName');
+        localStorage.removeItem('xsddsdass');
+        this.cookieService.deleteAll();
+        this.currentUserSubject.next(null);
+        this.permissionsService.flushPermissions();
+        this.rolesService.flushRoles();
+        this.router.navigate(['/session/login']);
+      });
     });
+
+    // // remove user from local storage to log user out
+    // let headers: HttpHeaders = new HttpHeaders();
+    // // headers = headers.set('cookie', `JSESSIONID=${id}`);
+    // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
+    // this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
+    //   localStorage.removeItem('currentUser');
+    //   localStorage.removeItem('user');
+    //   localStorage.removeItem('provider');
+    //   localStorage.removeItem('doctorName');
+    //   localStorage.removeItem('xsddsdass');
+    //   console.log(this.cookieService.getAll());
+    //   this.cookieService.delete('JSESSIONID');
+    //   this.cookieService.delete('JSESSIONID', '/');
+    //   this.cookieService.delete('JSESSIONID', '/openmrs');
+    //   this.cookieService.delete('JSESSIONID', '/', this.base);
+    //   this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
+    //   this.cookieService.deleteAll();
+    //   this.cookieService.deleteAll('/');
+    //   this.cookieService.deleteAll('/openmrs');
+    //   this.cookieService.deleteAll('/', this.base);
+    //   this.cookieService.deleteAll('/openmrs', this.base);
+    //   document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    //   document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+    //   this.currentUserSubject.next(null);
+    //   this.permissionsService.flushPermissions();
+    //   this.rolesService.flushRoles();
+    //   this.router.navigate(['/session/login']);
+    // });
   }
 
   extractPermissions(perm: any[]) {

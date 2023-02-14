@@ -839,7 +839,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.diagnosis = [];
         this.diagnosisService.getDiagnosisList(event.target.value).subscribe(response => {
           if (response && response.length) {
-            this.diagnosis = response.map((val) => val?.conceptName?.name);
+            this.diagnosis = response;
           } else {
             this.diagnosis = [{
               id: 1,
