@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getVisits() {
-    this.visitService.getVisits({ includeInactive: false }).subscribe(
+    this.visitService.getVisits({ includeInactive: true }).subscribe(
       (response: any) => {
         let visits = response.results;
         visits.forEach((visit: any) => {
