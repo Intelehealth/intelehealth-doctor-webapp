@@ -12,7 +12,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { SocketService } from 'src/app/services/socket.service';
@@ -103,10 +103,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
   ];
   diagnosis: any[] = [
-    {
-      id: 1,
-      name: 'Viral Flu'
-    }
+    // {
+    //   id: 1,
+    //   name: 'Viral Flu'
+    // }
   ];
   strengthList: any[] = [
     {
@@ -224,6 +224,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['action', 'created_on', 'consulted_by', 'cheif_complaint', 'summary', 'prescription', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
 
+  diagnosisSubject: BehaviorSubject<any>;
+  diagnosis$: Observable<any>;
+  private dSearchSubject: Subject<string> = new Subject();
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -236,6 +240,41 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+  )
+
+  search3 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  )
+
+  search4 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.strengthList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  )
+
+  search5 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.daysList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  )
+
+  search6 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.timingList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  )
+
+  search7 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.diagnosis.filter(v => v.conceptName.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.conceptName.name))
   )
 
   constructor(
@@ -303,6 +342,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         followUpTime: new FormControl(null),
         followUpReason: new FormControl(null)
       });
+
+      this.diagnosisSubject = new BehaviorSubject<any[]>([]);
+      this.diagnosis$ = this.diagnosisSubject.asObservable();
   }
 
   ngOnInit(): void {
@@ -313,6 +355,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.timeList= this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
+    this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
+      this.searchDiagnosis(searchTextValue);
+    });
   }
 
   formControlValueChanges() {
@@ -833,20 +878,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  searchDiagnosis(event: any) {
-    if (event.target.value) {
-      if (event.target.value.length > 3) {
-        this.diagnosis = [];
-        this.diagnosisService.getDiagnosisList(event.target.value).subscribe(response => {
+  onKeyUp(event: any) {
+    this.dSearchSubject.next(event.target.value);
+  }
+
+  searchDiagnosis(val: any) {
+    if (val) {
+      if (val.length > 3) {
+        this.diagnosisService.getDiagnosisList(val).subscribe(response => {
           if (response && response.length) {
-            this.diagnosis = response;
+            this.diagnosisSubject.next(response.map((d: any) => { return { name: d.conceptName.name } }));
           } else {
-            this.diagnosis = [{
-              id: 1,
-              name: 'Viral Flu'
-            }];
+            this.diagnosisSubject.next([]);
           }
-      });
+        }, (error) =>{
+          this.diagnosisSubject.next([]);
+        });
       }
     }
   }

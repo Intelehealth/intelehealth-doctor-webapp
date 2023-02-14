@@ -19,7 +19,7 @@
               <!-- Name Column -->
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> Patient </th>
-                <td mat-cell *matCellDef="let element">
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]">
 
                   <div class="d-flex align-items-center">
                     <img src="{{ baseUrl + '/personimage/' + element.visit_info.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
@@ -31,25 +31,25 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.patient.person.age}}y </td>
               </ng-container>
 
               <!-- Starts In Column -->
               <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> Starts in </th>
-                <td mat-cell *matCellDef="let element"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
               </ng-container>
 
               <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> Location </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.location.display}} </td>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.location.display}} </td>
               </ng-container>
 
               <!-- Cheif Complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> Cheif Complaint </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_info.cheif_complaint}} </td>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.cheif_complaint}} </td>
               </ng-container>
 
               <!-- Prescription Sent Column -->

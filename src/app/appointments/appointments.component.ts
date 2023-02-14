@@ -49,7 +49,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   getVisits() {
-    this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
+    this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         let visits = res.results;
         this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))

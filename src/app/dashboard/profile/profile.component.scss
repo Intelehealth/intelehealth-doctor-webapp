@@ -336,6 +336,18 @@ textarea.form-control {
     top: 50%;
     transform: translateY(-50%);
   }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 ::ng-deep .ng-select.profile-select.ng-select-multiple .ng-select-container {

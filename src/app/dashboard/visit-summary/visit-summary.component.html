@@ -645,7 +645,7 @@
                       <div class="row">
                         <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
                         <div class="col-sm-3">
-                          <ng-select class="visit-select custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis" [addTag]="true" [addTagText]="''">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName" (keydown)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
                           </ng-select>
                         </div>
                       </div>
@@ -743,7 +743,7 @@
 
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" #panel4  hideToggle class="bg-gray">
+            <mat-expansion-panel [expanded]="false" #panel4  hideToggle class="bg-gray overflow-show">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -798,22 +798,49 @@
                             </div>
                           </td>
                         </tr>
+                        <!-- <tr *ngIf="!addMoreMedicine">
+                          <td>
+                            <ng-select appendTo=".table-responsive" formControlName="drug" class="visit-select custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select drug">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select strength">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select days">
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select timing">
+                            </ng-select>
+                          </td>
+                          <td colspan="2">
+                            <div class="form-group mb-0">
+                              <input formControlName="remark" type="text" class="form-control" placeholder="Enter Remark">
+                            </div>
+                          </td>
+                        </tr> -->
                         <tr *ngIf="!addMoreMedicine">
                           <td>
-                            <ng-select appendTo=".table-responsive" formControlName="drug" class="visit-select custom" [items]="drugNameList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" [addTagText]="''" placeholder="Select drug">
-                            </ng-select>
+                            <div class="form-group mb-0">
+                              <input formControlName="drug" type="text" class="form-control" placeholder="Enter drug" [ngbTypeahead]="search3">
+                            </div>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" [addTagText]="''" placeholder="Select strength">
-                            </ng-select>
+                            <div class="form-group mb-0">
+                              <input formControlName="strength" type="text" class="form-control" placeholder="Enter strength" [ngbTypeahead]="search4">
+                            </div>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" [addTagText]="''" placeholder="Select days">
-                            </ng-select>
+                            <div class="form-group mb-0">
+                              <input formControlName="days" type="text" class="form-control" placeholder="Enter days" [ngbTypeahead]="search5">
+                            </div>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" [addTagText]="''" placeholder="Select timing">
-                            </ng-select>
+                            <div class="form-group mb-0">
+                              <input formControlName="timing" type="text" class="form-control" placeholder="Enter timing" [ngbTypeahead]="search6">
+                            </div>
                           </td>
                           <td colspan="2">
                             <div class="form-group mb-0">
