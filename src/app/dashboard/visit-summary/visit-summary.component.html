@@ -645,7 +645,7 @@
                       <div class="row">
                         <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
                         <div class="col-sm-3">
-                          <ng-select class="visit-select custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName" [items]="diagnosis" (keydown)="searchDiagnosis($event)" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
                           </ng-select>
                         </div>
                       </div>
@@ -804,15 +804,15 @@
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select strength">
+                            <ng-select appendTo=".table-responsive"  formControlName="strength" class="visit-select custom" [items]="strengthList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select strength">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select days">
+                            <ng-select appendTo=".table-responsive"  formControlName="days" class="visit-select custom" [items]="daysList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select days">
                             </ng-select>
                           </td>
                           <td>
-                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select timing">
+                            <ng-select appendTo=".table-responsive"  formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select timing">
                             </ng-select>
                           </td>
                           <td colspan="2">
@@ -1021,7 +1021,7 @@
                         </tr>
                         <tr *ngIf="!addMoreReferral">
                           <td>
-                            <ng-select class="visit-select" appendTo=".scrollable-box" formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select specialization">
+                            <ng-select class="visit-select" appendTo=".scrollable-box" formControlName="speciality" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select specialization">
                             </ng-select>
                           </td>
                           <td colspan="2">

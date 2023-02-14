@@ -371,13 +371,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             // check if visit note provider and logged in provider are same
             this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
             // check if visit note provider and logged in provider are same
+            this.getPastVisitHistory();
             if (this.visitNotePresent) {
               this.visitNotePresent.encounterProviders.forEach((p: any) => {
                 if(p.provider.uuid == this.provider.uuid) {
                   this.isVisitNoteProvider = true;
                 }
               });
-              this.getPastVisitHistory();
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
               this.checkIfNotePresent();
@@ -685,13 +685,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (res) {
         let attr = this.checkIfAttributeExists(this.visit.attributes);
         if (attr) {
-          this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.speciality }).subscribe((result: any) =>{
+          this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: any) =>{
             if (result) {
               this.updateEncounterForRefer();
             }
           });
         } else {
-          this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.speciality }).subscribe((result: any) =>{
+          this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: any) =>{
             if (result) {
               this.updateEncounterForRefer();
             }
@@ -727,7 +727,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   checkIfAttributeExists(attrs: any) {
     let currentAttr;
-    attrs.array.forEach((attr: any) => {
+    attrs.forEach((attr: any) => {
       if (attr.attributeType.display == 'Visit Speciality') {
         currentAttr = attr;
       }
@@ -760,16 +760,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkIfDateOldThanOneDay(data: any) {
-    let hours = moment(data).diff(moment(), 'hours');
-    let minutes = moment(data).diff(moment(), 'minutes');
+    let hours = moment().diff(moment(data), 'hours');
+    let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm A');
+      return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
       if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+      return `${minutes} minutes ago`;
     }
-    return `${hours} hrs`;
+    return `${hours} hrs ago`;
   }
 
   startVisitNote() {
@@ -831,9 +831,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   searchDiagnosis(event: any) {
-    this.diagnosisService.getDiagnosisList(event.target.value).subscribe(response => {
-        this.diagnosis = response;
-    });
+    if (event.target.value) {
+      if (event.target.value.length > 3) {
+        this.diagnosisService.getDiagnosisList(event.target.value).subscribe(response => {
+          this.diagnosis = response;
+      });
+      }
+    }
   }
 
   saveDiagnosis() {
@@ -1267,6 +1271,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   getPastVisitHistory() {
+    this.pastVisits = [];
     this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: any) => {
       let visits = res.results;
       if (visits.length > 1) {
@@ -1290,10 +1295,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 }
               });
               this.pastVisits.push(visitdetail);
+              this.dataSource = new MatTableDataSource(this.pastVisits);
             });
           }
         });
-        this.dataSource = new MatTableDataSource(this.pastVisits);
       }
     });
   }
