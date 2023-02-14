@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
-import { CoreService } from 'src/app/services/core/core.service';
+// import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-get-started',
@@ -12,14 +12,16 @@ export class GetStartedComponent implements OnInit {
 
   doctorName : string = '';
   greetingMsg: string = 'Hi';
-
+  pc: boolean = true;
+  sc: boolean = true;
   constructor(
     private pageTitleService: PageTitleService,
     private router: Router,
-    private coreService: CoreService) { }
+    // private coreService: CoreService
+    ) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: '', imgUrl: '' });
+    this.pageTitleService.setTitle({ title: 'Home', imgUrl: 'assets/svgs/menu-info-circle.svg' });
     this.doctorName = localStorage.getItem('doctorName');
     let now = new Date();
     let hrs = now.getHours();
@@ -29,9 +31,9 @@ export class GetStartedComponent implements OnInit {
       this.greetingMsg = 'Good Afternoon';
     else if (hrs >= 17 && hrs <= 24)
       this.greetingMsg = 'Good Evening';
-    this.coreService.openSelectLanguageModal().subscribe((res: any) =>{
-      console.log(res);
-    });
+    // this.coreService.openSelectLanguageModal().subscribe((res: any) =>{
+    //   console.log(res);
+    // });
   }
 
   setupProfile() {
@@ -39,7 +41,7 @@ export class GetStartedComponent implements OnInit {
   }
 
   setupCalendar() {
-    this.router.navigate(['/calendar']);
+    this.router.navigate(['/calendar/setup-calendar']);
   }
 
 }

@@ -51,7 +51,7 @@
 .toast-message {
   word-wrap: break-word;
   color: #7F7B92;
-  width: 220px;
+  /* width: 220px; */
 }
 .toast-message a,
 .toast-message label {
@@ -64,7 +64,7 @@
 .toast-close-button {
   position: relative;
   right: 0em;
-  top: -0.3em;
+  /* top: -0.3em; */
   float: right;
   font-size: 30px;
   color: #7F7B92;

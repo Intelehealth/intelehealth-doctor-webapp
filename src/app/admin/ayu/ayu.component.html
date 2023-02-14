@@ -4,7 +4,7 @@
       <div class="form-group row">
         <label for="selectLicenseKey" class="col-sm-3 col-form-label">Select License Key</label>
         <div class="col-sm-9">
-          <ng-select [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
+          <ng-select class="ayu-select" [(ngModel)]="selectedLicense" (change)="licenceKeySelecter()" [clearable]="false">
             <ng-option *ngFor="let mindmap of mindmaps" [value]="mindmap.keyName">
               {{ mindmap.keyName }}
             </ng-option>

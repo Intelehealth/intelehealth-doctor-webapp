@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="col-md-8 p-0">
-      <div class="card intel-horz-card disabled my-3">
+      <div class="card intel-horz-card my-3" [class.disabled]="!pc">
         <div class="d-flex flex-row">
           <div class="pr-3">
             <img src="assets/svgs/user-pink-circle.svg" alt="..." width="44px">
@@ -17,7 +17,7 @@
             <div class="card-body p-0">
               <h6 class="card-title">Set up your profile</h6>
               <p class="card-text">You need to set-up your profile by adding few details of yours & start receiving the patient prescription requests.</p>
-              <button type="button" class="intel-blue-btn" (click)="setupProfile()">
+              <button type="button" class="intel-blue-btn" (click)="setupProfile()" [disabled]="!pc">
                 Setup profile
               </button>
             </div>
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="col-md-8 p-0">
-      <div class="card intel-horz-card my-3">
+      <div class="card intel-horz-card my-3" [class.disabled]="!sc">
         <div class="d-flex flex-row">
           <div class="pr-3">
             <img src="assets/svgs/calendar-pink-circle.svg" alt="..." width="44px">
@@ -35,7 +35,7 @@
             <div class="card-body p-0">
               <h6 class="card-title">Set up your calendar</h6>
               <p class="card-text">You need to set-up your calendar so you can start taking appointments of the patients.</p>
-              <button type="button" class="intel-blue-btn" (click)="setupCalendar()">
+              <button type="button" class="intel-blue-btn" (click)="setupCalendar()" [disabled]="!pc">
                 Setup calendar
               </button>
             </div>

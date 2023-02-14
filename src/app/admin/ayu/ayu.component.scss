@@ -28,7 +28,11 @@
   // }
 }
 
-::ng-deep .ng-select.ng-select-single .ng-select-container {
+::ng-deep .ng-select.ayu-select {
+  width: fit-content;
+}
+
+::ng-deep .ng-select.ayu-select.ng-select-single .ng-select-container {
   height: 48px;
   width: 236px;
   background: #FAF9FF;
@@ -42,7 +46,7 @@
   }
 }
 
-::ng-deep .ng-select.ng-select-single.ng-select-container:hover {
+::ng-deep .ng-select.ayu-select.ng-select-single.ng-select-container:hover {
   box-shadow: none;
   outline: none;
 }
