@@ -99,7 +99,7 @@
   margin: 5px;
 }
 
-::ng-deep .mat-tab-group {
+::ng-deep .visit-summary-tab-group.mat-tab-group {
   font-family: DM Sans;
 
   .mat-tab-header {
@@ -481,6 +481,10 @@ textarea.form-control {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  .ng-clear-wrapper {
+    display: none;
   }
 }
 

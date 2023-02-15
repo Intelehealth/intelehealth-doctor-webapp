@@ -9,6 +9,8 @@ import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
+import { CoreService } from '../services/core/core.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -51,7 +53,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private appointmentService: AppointmentService,
     private visitService: VisitService,
     private socket: SocketService,
-    private router: Router) { }
+    private router: Router,
+    private coreService: CoreService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -80,6 +84,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getVisits() {
+    this.appointments = [];
+    this.awaitingVisits = [];
+    this.inProgressVisits = [];
+    this.priorityVisits = [];
     this.visitService.getVisits({ includeInactive: true }).subscribe(
       (response: any) => {
         let visits = response.results;
@@ -268,8 +276,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log("Clicked: Reschedule");
   }
 
-  cancel() {
-    console.log("Clicked: Cancel");
+  cancel(appointment: any) {
+    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
+      if (res) {
+        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        this.getVisits();
+      }
+    });
   }
 
   onImgError(event: any) {

@@ -69,7 +69,7 @@
 
     <div class="col-md-12 p-0 mb-5">
       <div class="intel-card">
-        <mat-tab-group mat-align-tabs="start" [disableRipple]="true" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab-group class="visit-summary-tab-group" mat-align-tabs="start" [disableRipple]="true" (selectedIndexChange)="onTabChange($event)">
           <mat-tab label="Current visit summary">
             <div class="text-right">
               <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll"><span class="text-muted">Show all</span> <mat-icon>expand_more</mat-icon> </button>
@@ -645,7 +645,7 @@
                       <div class="row">
                         <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
                         <div class="col-sm-3">
-                          <ng-select class="visit-select custom" formControlName="diagnosisName" (keydown)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName" (search)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
                           </ng-select>
                         </div>
                       </div>

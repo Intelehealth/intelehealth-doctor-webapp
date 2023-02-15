@@ -18,6 +18,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SocketService } from 'src/app/services/socket.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
+import * as _ from 'lodash';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -348,7 +349,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.timeList= this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
-    this.dSearchSubject.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(searchTextValue => {
+    this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
   }
@@ -872,22 +873,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   onKeyUp(event: any) {
-    this.dSearchSubject.next(event.target.value);
+    this.dSearchSubject.next(event.term);
+    // this.dSearchSubject.next(event.target.value);
   }
 
   searchDiagnosis(val: any) {
     if (val) {
-      if (val.length > 3) {
+      if (val.length >= 3) {
         this.diagnosisService.getDiagnosisList(val).subscribe(response => {
           if (response && response.length) {
-            console.log('search-data =>', response);
             let data = [];
             response.forEach(element => {
               if (element) {
                 data.push({ name: element });
               }
             });
-            console.log('diagnosis-data =>', data);
             this.diagnosisSubject.next(data);
           } else {
             this.diagnosisSubject.next([]);
@@ -935,6 +935,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   addNote() {
     if (this.addNoteForm.invalid) {
       this.toastr.warning("Please enter note text to add", "Invalid note");
+      return;
+    }
+    if (_.find(this.notes, { value: this.addNoteForm.value.note })) {
+      this.toastr.warning("Note already added, please add another note.", "Already Added");
       return;
     }
     this.encounterService.postObs({
@@ -991,6 +995,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addMedicineForm.invalid) {
       return;
     }
+    if (_.find(this.medicines, { drug: this.addMedicineForm.value.drug })) {
+      this.toastr.warning("Drug already added, please add another drug.", "Already Added");
+      return;
+    }
     this.encounterService.postObs({
       concept: this.conceptMed,
       person: this.visit.patient.uuid,
@@ -1005,6 +1013,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   addAdditionalInstruction() {
     if (this.addAdditionalInstructionForm.invalid) {
+      return;
+    }
+    if (_.find(this.additionalInstructions, { value: this.addAdditionalInstructionForm.value.note })) {
+      this.toastr.warning("Additional instruction already added, please add another instruction.", "Already Added");
       return;
     }
     this.encounterService.postObs({
@@ -1064,6 +1076,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addAdviceForm.invalid) {
       return;
     }
+    if (_.find(this.advices, { value: this.addAdviceForm.value.advice })) {
+      this.toastr.warning("Advice already added, please add another advice.", "Already Added");
+      return;
+    }
     this.encounterService.postObs({
       concept: this.conceptAdvice,
       person: this.visit.patient.uuid,
@@ -1113,6 +1129,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addTestForm.invalid) {
       return;
     }
+    if (_.find(this.tests, { value: this.addTestForm.value.test })) {
+      this.toastr.warning("Test already added, please add another test.", "Already Added");
+      return;
+    }
     this.encounterService.postObs({
       concept: this.conceptTest,
       person: this.visit.patient.uuid,
@@ -1150,6 +1170,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   addReferral() {
     if (this.addReferralForm.invalid) {
+      return;
+    }
+    if (_.find(this.referrals, { speciality: this.addReferralForm.value.speciality })) {
+      this.toastr.warning("Referral already added, please add another referral.", "Already Added");
       return;
     }
     this.encounterService.postObs({
