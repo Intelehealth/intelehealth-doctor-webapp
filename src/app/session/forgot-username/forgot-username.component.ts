@@ -19,7 +19,7 @@ export class ForgotUsernameComponent implements OnInit {
   constructor(private toastr: ToastrService, private router: Router) {
     this.forgotUsernameForm = new FormGroup({
       phone: new FormControl('', Validators.required),
-      email: new FormControl(''),
+      email: new FormControl('',Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
       countryCode: new FormControl('91', Validators.required)
     });
   }
@@ -37,7 +37,7 @@ export class ForgotUsernameComponent implements OnInit {
       this.forgotUsernameForm.get('email').updateValueAndValidity();
 
     } else {
-      this.forgotUsernameForm.get('email').setValidators([Validators.required, Validators.email]);
+      this.forgotUsernameForm.get('email').setValidators([Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]);
       this.forgotUsernameForm.get('email').updateValueAndValidity();
       this.forgotUsernameForm.get('phone').clearValidators();
       this.forgotUsernameForm.get('phone').updateValueAndValidity();
@@ -53,7 +53,7 @@ export class ForgotUsernameComponent implements OnInit {
 
   forgotUsername() {
     this.submitted = true;
-    if (this.forgotUsernameForm.invalid || !this.phoneIsValid) {
+    if (this.forgotUsernameForm.invalid) {
       return;
     }
     this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");

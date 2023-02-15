@@ -64,7 +64,7 @@
                 </div>
                 <div *ngIf="submitted && f.email.errors">
                   <small *ngIf="f.email.errors.required" class="error-msg">Please enter email</small>
-                  <small *ngIf="f.email.errors.email" class="error-msg">Please enter valid email</small>
+                  <small *ngIf="f.email.errors.pattern" class="error-msg">Please enter valid email</small>
                 </div>
               </div>
               <div class="form-group mt-5">
