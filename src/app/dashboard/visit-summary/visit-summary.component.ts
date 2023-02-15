@@ -270,13 +270,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       map(term => term.length < 1 ? [] : this.timingList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
   )
 
-  search7 = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(1000),
-      distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.diagnosis.filter(v => v.conceptName.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.conceptName.name))
-  )
-
   constructor(
     private pageTitleService: PageTitleService,
     private route: ActivatedRoute,
@@ -355,7 +348,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.timeList= this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
-    this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
+    this.dSearchSubject.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
   }
@@ -887,7 +880,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (val.length > 3) {
         this.diagnosisService.getDiagnosisList(val).subscribe(response => {
           if (response && response.length) {
-            this.diagnosisSubject.next(response.map((d: any) => { return { name: d.conceptName.name } }));
+            console.log('search-data =>', response);
+            let data = [];
+            response.forEach(element => {
+              if (element) {
+                data.push({ name: element });
+              }
+            });
+            console.log('diagnosis-data =>', data);
+            this.diagnosisSubject.next(data);
           } else {
             this.diagnosisSubject.next([]);
           }

@@ -12,7 +12,7 @@
           <label for="email">
             Enter OTP
           </label>
-          <ng-otp-input [formCtrl]="fCtrl"  [config]="{ length: 6, placeholder: '_', inputClass: 'otp-input-box' }"></ng-otp-input>
+          <ng-otp-input [formCtrl]="fCtrl"  [config]="{ length: 6, placeholder: '_', inputClass: 'otp-input-box', allowNumbersOnly: true }"></ng-otp-input>
           <div *ngIf="submitted && fCtrl.errors">
             <small *ngIf="fCtrl.errors.required" class="error-msg">Please enter otp</small>
             <small *ngIf="fCtrl.errors.minlength || fCtrl.errors.maxlength" class="error-msg">Please enter valid otp</small>
