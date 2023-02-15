@@ -62,6 +62,7 @@ export class ChatComponent implements OnInit {
     this.socket.onEvent("updateMessage").subscribe((data) => {
       this.updateMessages();
       this.playNotify();
+      this.chats = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
   }
 

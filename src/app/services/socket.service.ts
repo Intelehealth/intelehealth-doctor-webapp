@@ -29,7 +29,7 @@ export class SocketService {
     private http: HttpClient,
     private dialog: MatDialog,
     private visitSvc: VisitService
-  ) {}
+  ) { }
 
   message(roomId, clientId, message): Observable<any> {
     const url = `${this.baseURL}/message/${roomId}/${clientId}`;
@@ -42,7 +42,9 @@ export class SocketService {
       this.socket.disconnect();
     }
     if (!this.socket || forceInit) {
-      localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+      if (!sessionStorage.webrtcDebug) {
+        localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+      }
       this.socket = io(environment.socketURL, {
         query: localStorage.socketQuery,
       });

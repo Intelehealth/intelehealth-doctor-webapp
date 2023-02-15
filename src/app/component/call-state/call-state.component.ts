@@ -125,6 +125,7 @@ export class CallStateComponent implements OnInit {
       });
 
       this.readMessages(data.id);
+      this.messages = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
     this.socketService.onEvent("isread").subscribe((data) => {
       this.getMessages();

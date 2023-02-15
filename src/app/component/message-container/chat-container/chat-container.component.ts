@@ -48,6 +48,7 @@ export class ChatContainerComponent implements OnInit {
       });
 
       this.readMessages(data.id);
+      this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.socketSvc.onEvent("isread").subscribe((data) => {

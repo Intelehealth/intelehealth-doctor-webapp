@@ -76,6 +76,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
 
       this.readMessages(data.id);
+      this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     await this.connect();

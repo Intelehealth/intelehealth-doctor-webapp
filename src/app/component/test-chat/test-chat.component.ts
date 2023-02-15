@@ -13,10 +13,11 @@ export class TestChatComponent implements OnInit {
   @ViewChild("chatInput") chatInput: ElementRef;
   @ViewChild("chatBox") chatBox: ElementRef;
   data = {
-    to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
-    from: "5a700f00-eca8-4fe2-bbbd-a2d4e5c3622a",
-    patientId: "e5ec6a24-c350-4f66-a991-f0610962996b",
-    connectToDrId: '67bfd7f0-0508-11e3-8ffd-0800200c9a66'//dr 1 id by default to test
+    to: "88a18f3e-0a1d-4af6-b1b4-38b1ee7c5c2f",
+    from: "30240f0b-7ea8-4e5e-87f8-eb29cd702f99",
+    patientId: "757a9fa4-e86d-47e9-8a0a-d52decdab703",
+    connectToDrId: '67bfd7f0-0508-11e3-8ffd-0800200c9a66',//dr 1 id by default to test,
+    visitId: 'e215f705-9c11-4c3a-bca9-6bb1fcaff61c'
   };
   classFlag = false;
   chats = [];
@@ -42,7 +43,17 @@ export class TestChatComponent implements OnInit {
 
   reInitSocket() {
     localStorage.socketQuery = `userId=${this.data.from}&name=mobile`;
-    this.socket.initSocket(true);
+    sessionStorage.webrtcDebug = 1;
+    this.socket.initSocket();
+
+    this.socket.onEvent("updateMessage").subscribe((data) => {
+      this.updateMessages();
+      this.chats = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+    });
+
+    this.socket.onEvent("isread").subscribe((data) => {
+      this.updateMessages();
+    });
   }
 
   get chatElem() {
@@ -81,7 +92,8 @@ export class TestChatComponent implements OnInit {
           this.data.to,
           this.data.patientId,
           this.chatElem.value,
-          this.data.from
+          { visitId: this.data.visitId },
+          this.data.from,
         )
         .subscribe((res) => {
           this.updateMessages();
@@ -109,7 +121,7 @@ export class TestChatComponent implements OnInit {
     this.classFlag = true;
     this.scroll();
   }
-  
+
   chatClose() {
     this.classFlag = false;
   }
