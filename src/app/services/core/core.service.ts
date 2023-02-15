@@ -9,6 +9,8 @@ import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { RescheduleAppointmentConfirmComponent } from 'src/app/modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
+import { RescheduleAppointmentComponent } from 'src/app/modal-components/reschedule-appointment/reschedule-appointment.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
 import { SelectLanguageComponent } from 'src/app/modal-components/select-language/select-language.component';
 import { SharePrescriptionErrorComponent } from 'src/app/modal-components/share-prescription-error/share-prescription-error.component';
@@ -108,6 +110,16 @@ export class CoreService {
 
   openConfirmCancelAppointmentModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(CancelAppointmentConfirmComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openRescheduleAppointmentModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(RescheduleAppointmentComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openRescheduleAppointmentConfirmModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(RescheduleAppointmentConfirmComponent, { panelClass: "modal-md", data } );
     return dialogRef.afterClosed();
   }
 }

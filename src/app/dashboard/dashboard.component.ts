@@ -272,8 +272,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return specialization;
   }
 
-  reschedule() {
-    console.log("Clicked: Reschedule");
+  reschedule(appointment: any) {
+    const len = appointment.visit_info.encounters.filter((e: any) => {
+      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    }).length;
+    const isCompleted = Boolean(len);
+    if (isCompleted) {
+      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+    } else {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
+        if (res) {
+          let newSlot = res;
+          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: any) => {
+            if (result) {
+              appointment.appointmentId = appointment.id;
+              appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
+              appointment.slotTime = newSlot.slot;
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
+                const message = res.message;
+                if (res.status) {
+                  this.getVisits();
+                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
+                } else {
+                  this.toastr.success(message, 'Rescheduling failed!');
+                }
+              });
+            }
+          })
+        }
+      });
+    }
   }
 
   cancel(appointment: any) {

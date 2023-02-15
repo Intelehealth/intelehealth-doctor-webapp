@@ -27,6 +27,7 @@ import { RescheduleAppointmentComponent } from './reschedule-appointment/resched
 import { RescheduleAppointmentConfirmComponent } from './reschedule-appointment-confirm/reschedule-appointment-confirm.component';
 import { CancelAppointmentConfirmComponent } from './cancel-appointment-confirm/cancel-appointment-confirm.component';
 import { AppointmentDetailMonthComponent } from './appointment-detail-month/appointment-detail-month.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
     declarations: [
@@ -60,7 +61,8 @@ import { AppointmentDetailMonthComponent } from './appointment-detail-month/appo
         MatButtonModule,
         NgxDropzoneModule,
         MomentModule,
-        MatListModule
+        MatListModule,
+        MatDatepickerModule
     ]
 })
 export class ModalComponentsModule { }
