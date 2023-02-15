@@ -186,7 +186,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
-      emailId: new FormControl('', [Validators.required, Validators.email]),
+      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
       fontOfSign: new FormControl(null),
