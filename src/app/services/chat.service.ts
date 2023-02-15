@@ -12,10 +12,10 @@ export class ChatService {
   popUpCloseEmitter = new Subject();
   constructor(private http: HttpClient) { }
 
-  sendMessage(toUser, patientId, message, additionalPayload = {}) {
+  sendMessage(toUser, patientId, message, additionalPayload = {}, fromUser = this.user.uuid) {
     const payload = {
       ...additionalPayload,
-      fromUser: this.user.uuid,
+      fromUser,
       toUser,
       patientId,
       message,

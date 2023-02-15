@@ -18,8 +18,8 @@ export class ForgotUsernameComponent implements OnInit {
 
   constructor(private toastr: ToastrService, private router: Router) {
     this.forgotUsernameForm = new FormGroup({
-      phone: new FormControl('', Validators.required),
-      email: new FormControl(''),
+      phone: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
+      email: new FormControl('',Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
       countryCode: new FormControl('91', Validators.required)
     });
   }
@@ -31,13 +31,13 @@ export class ForgotUsernameComponent implements OnInit {
 
   reset() {
     if (this.active == 'phone' ) {
-      this.forgotUsernameForm.get('phone').setValidators([Validators.required]);
+      this.forgotUsernameForm.get('phone').setValidators([Validators.required, Validators.pattern("^[0-9]{10}$")]);
       this.forgotUsernameForm.get('phone').updateValueAndValidity();
       this.forgotUsernameForm.get('email').clearValidators();
       this.forgotUsernameForm.get('email').updateValueAndValidity();
 
     } else {
-      this.forgotUsernameForm.get('email').setValidators([Validators.required, Validators.email]);
+      this.forgotUsernameForm.get('email').setValidators([Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]);
       this.forgotUsernameForm.get('email').updateValueAndValidity();
       this.forgotUsernameForm.get('phone').clearValidators();
       this.forgotUsernameForm.get('phone').updateValueAndValidity();

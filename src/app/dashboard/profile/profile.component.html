@@ -123,7 +123,7 @@
                   <div *ngIf="submitted && f1.phoneNumber.errors">
                     <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">Enter phone number</small>
                   </div>
-                  <div *ngIf="submitted && !f1.phoneNumber.errors && !phoneNumberValid">
+                  <div *ngIf="submitted && f1?.phoneNumber?.errors?.pattern && !phoneNumberValid">
                     <small class="error-msg">Enter valid phone number</small>
                   </div>
                 </div>
@@ -142,7 +142,7 @@
                   <div *ngIf="submitted && f1.whatsapp.errors">
                     <small class="error-msg" *ngIf="f1.whatsapp.errors.required">Enter whatsApp number</small>
                   </div>
-                  <div *ngIf="submitted && !f1.whatsapp.errors && !whatsAppNumberValid">
+                  <div *ngIf="submitted && f1.whatsapp?.errors?.pattern && !whatsAppNumberValid">
                     <small class="error-msg">Enter valid whatsApp number</small>
                   </div>
                 </div>

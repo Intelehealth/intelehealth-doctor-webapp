@@ -19,8 +19,8 @@ export class VerificationMethodComponent implements OnInit {
 
   constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) {
     this.verificationForm = new FormGroup({
-      phone: new FormControl('', Validators.required),
-      email: new FormControl(''),
+      phone: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
+      email: new FormControl('', Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
       countryCode: new FormControl('91', Validators.required)
     });
   }
@@ -32,13 +32,13 @@ export class VerificationMethodComponent implements OnInit {
 
   reset() {
     if (this.active == 'phone' ) {
-      this.verificationForm.get('phone').setValidators([Validators.required]);
+      this.verificationForm.get('phone').setValidators([Validators.required, Validators.pattern("^[0-9]{10}$")]);
       this.verificationForm.get('phone').updateValueAndValidity();
       this.verificationForm.get('email').clearValidators();
       this.verificationForm.get('email').updateValueAndValidity();
 
     } else {
-      this.verificationForm.get('email').setValidators([Validators.required, Validators.email]);
+      this.verificationForm.get('email').setValidators([Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]);
       this.verificationForm.get('email').updateValueAndValidity();
       this.verificationForm.get('phone').clearValidators();
       this.verificationForm.get('phone').updateValueAndValidity();
@@ -54,7 +54,7 @@ export class VerificationMethodComponent implements OnInit {
 
   verify() {
     this.submitted = true;
-    if (this.verificationForm.invalid || !this.phoneIsValid) {
+    if (this.verificationForm.invalid) {
       return;
     }
     this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
@@ -62,7 +62,7 @@ export class VerificationMethodComponent implements OnInit {
   }
 
   replaceWithStar(str: string) {
-    let n = str.length;
+    let n = str?.length;
     return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
