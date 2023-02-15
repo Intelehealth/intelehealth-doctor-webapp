@@ -6,6 +6,8 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 import { AppointmentService } from '../services/appointment.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
+import { CoreService } from '../services/core/core.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-appointments',
@@ -31,24 +33,27 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private visitService: VisitService,
-    private pageTitleService: PageTitleService) { }
+    private pageTitleService: PageTitleService,
+    private coreService: CoreService,
+    private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
     this.getVisits();
   }
 
-  getAppointements() {
-    this.appointmentService
-      .getUserSlots(JSON.parse(localStorage.user).uuid,'01/01/2022','31/12/2022')
-      .subscribe({
-        next: (res: any) => {
-          console.log(res);
-        },
-      });
-  }
+  // getAppointements() {
+  //   this.appointmentService
+  //     .getUserSlots(JSON.parse(localStorage.user).uuid,'01/01/2022','31/12/2022')
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         console.log(res);
+  //       },
+  //     });
+  // }
 
   getVisits() {
+    this.appointments = [];
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         let visits = res.results;
@@ -115,12 +120,21 @@ export class AppointmentsComponent implements OnInit {
     console.log("Clicked: Reschedule");
   }
 
-  cancel() {
-    console.log("Clicked: Cancel");
+  cancel(appointment: any) {
+    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
+      if (res) {
+        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        this.getVisits();
+      }
+    });
   }
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
+  }
+
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
   }
 
 }
