@@ -423,6 +423,13 @@ body.font-lato td {
     0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%);
 }
 
+.modal-lg.transparent {
+  .mat-dialog-container {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
 .modal-lg {
   width: 1086px;
   max-width: 90% !important;

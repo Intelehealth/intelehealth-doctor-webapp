@@ -4,6 +4,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -34,7 +35,8 @@ export class ViewVisitSummaryComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ViewVisitSummaryComponent>,
     private visitService: VisitService,
-    private diagnosisService: DiagnosisService
+    private diagnosisService: DiagnosisService,
+    private coreService: CoreService
   ) { }
 
   ngOnInit(): void {
@@ -298,6 +300,10 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  previewEyeImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => {});
+  }
+
   getVisitAdditionalDocs(visit: any) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
@@ -308,6 +314,10 @@ export class ViewVisitSummaryComponent implements OnInit {
         }
       });
     });
+  }
+
+  previewDocImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res: any) => {});
   }
 
   close(val: any) {

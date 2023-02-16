@@ -28,6 +28,7 @@ import { RescheduleAppointmentConfirmComponent } from './reschedule-appointment-
 import { CancelAppointmentConfirmComponent } from './cancel-appointment-confirm/cancel-appointment-confirm.component';
 import { AppointmentDetailMonthComponent } from './appointment-detail-month/appointment-detail-month.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ImagesPreviewComponent } from './images-preview/images-preview.component';
 
 @NgModule({
     declarations: [
@@ -50,7 +51,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
         RescheduleAppointmentComponent,
         RescheduleAppointmentConfirmComponent,
         CancelAppointmentConfirmComponent,
-        AppointmentDetailMonthComponent
+        AppointmentDetailMonthComponent,
+        ImagesPreviewComponent
     ],
     imports: [
         CommonModule,

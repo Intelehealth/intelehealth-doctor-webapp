@@ -307,8 +307,11 @@
                             <label>Eye images</label>
                             <div class="list-item-content">
                               <div class="eye-images-con">
-                                <div class="eye-item" *ngFor="let e of eyeImages;">
+                                <div class="eye-item" *ngFor="let e of eyeImages;let x=index;">
                                   <img [src]="e.src" alt="">
+                                  <div class="cover" (click)="previewEyeImages(x)">
+                                    <img src="assets/svgs/maximize.svg" alt="">
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -366,12 +369,15 @@
                       <h6 class="mb-0 ml-2">Additional documents</h6>
                     </div>
                   </mat-panel-title>
-                </mat-expansion-panel-header>
+                </mat-expansion-panel-header>previewDocImages
 
                 <ng-container *ngIf="additionalDocs.length; else noAdditionaDocs;">
                   <div class="additional-doc-container">
-                    <div class="doc-item" *ngFor="let d of additionalDocs;">
+                    <div class="doc-item" *ngFor="let d of additionalDocs;let x=index;">
                       <img [src]="d.src" alt="">
+                      <div class="cover" (click)="previewDocImages(x)">
+                        <img src="assets/svgs/maximize.svg" alt="">
+                      </div>
                     </div>
                     <!-- <div class="doc-item">
                       <div class="other-doc">

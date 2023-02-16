@@ -7,6 +7,7 @@ import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/canc
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
+import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
 import { RescheduleAppointmentConfirmComponent } from 'src/app/modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
@@ -120,6 +121,11 @@ export class CoreService {
 
   openRescheduleAppointmentConfirmModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(RescheduleAppointmentConfirmComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openImagesPreviewModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ImagesPreviewComponent, { panelClass: ["modal-lg", "transparent"], data } );
     return dialogRef.afterClosed();
   }
 }

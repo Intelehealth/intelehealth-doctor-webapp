@@ -186,7 +186,7 @@
                           </div>
                           <div class="form-group col-md-6">
                             <label for="fontOfSign">Select Signature *</label>
-                            <ng-select class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
+                            <ng-select appendTo="body" class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
                               <ng-template ng-label-tmp let-item="item">
                                 <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 50px;">{{item.text}}</p>
                               </ng-template>

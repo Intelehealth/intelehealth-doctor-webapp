@@ -639,6 +639,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  previewEyeImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => {});
+  }
+
   getVisitAdditionalDocs(visit: any) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
@@ -649,6 +653,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  previewDocImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res: any) => {});
   }
 
   onTabChange(event: number) {

@@ -1,0 +1,25 @@
+<div class="modal-nav">
+  <button mat-icon-button (click)="close(false)">
+    <img src="assets/svgs/arrow-right-white.svg" alt="">
+  </button>
+  <button mat-icon-button>
+    <img src="assets/svgs/download-white.svg" alt="">
+  </button>
+</div>
+<mat-dialog-content>
+  <div class="preview-con d-flex align-items-center justify-content-center">
+    <div class="nav-icon" *ngIf="startIndex > min">
+      <a href="javascript:void(0)" (click)="previous()">
+        <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%">
+      </a>
+    </div>
+    <div class="img-con">
+      <img [src]="imgUrl" alt="" height="100%" (error)="onImageError($event)">
+    </div>
+    <div class="nav-icon" *ngIf="startIndex < max">
+      <a href="javascript:void(0)" (click)="next()">
+        <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%">
+      </a>
+    </div>
+  </div>
+</mat-dialog-content>
