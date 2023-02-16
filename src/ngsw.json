@@ -80,6 +80,15 @@
         "ignoreVary": true
       },
       "version": 1
+    },
+    {
+      "name": "api",
+      "urls": ["/api/messages/**"],
+      "cacheConfig": {
+        "maxSize": 0,
+        "maxAge": "0u",
+        "strategy": "freshness"
+      }
     }
   ],
   "hashTable": {

@@ -20,7 +20,7 @@ export class ChatService {
       patientId,
       message,
     };
-    return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
+    return this.http.post(`${this.baseURL}/messages/sendMessage?ngsw-bypass=true`, payload);
   }
 
   getPatientMessages(
@@ -30,7 +30,7 @@ export class ChatService {
     visitId: string = ""
   ) {
     return this.http.get(
-      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?visitId=${visitId}`
+      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?visitId=${visitId}&ngsw-bypass=true`
     ).pipe(map(
       (res: any) => {
         res.data = res.data.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
@@ -40,21 +40,21 @@ export class ChatService {
   }
 
   getAllMessages(toUser, fromUser = this.user.uuid) {
-    return this.http.get(`${this.baseURL}/messages/${fromUser}/${toUser}`);
+    return this.http.get(`${this.baseURL}/messages/${fromUser}/${toUser}?ngsw-bypass=true`);
   }
 
   getPatientList(drUuid) {
     return this.http.get(
-      `${this.baseURL}/messages/getPatientMessageList?drUuid=${drUuid}`
+      `${this.baseURL}/messages/getPatientMessageList?drUuid=${drUuid}&ngsw-bypass=true`
     );
   }
 
   getPatientAllVisits(patientId) {
-    return this.http.get(`${this.baseURL}/messages/${patientId}`);
+    return this.http.get(`${this.baseURL}/messages/${patientId}?ngsw-bypass=true`);
   }
 
   readMessageById(messageId) {
-    return this.http.put(`${this.baseURL}/messages/read/${messageId}`, "");
+    return this.http.put(`${this.baseURL}/messages/read/${messageId}?ngsw-bypass=true`, "");
   }
 
   public get user() {
