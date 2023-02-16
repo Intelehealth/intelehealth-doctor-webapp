@@ -74,10 +74,6 @@
   }
 }
 
-.intel-card {
-  overflow: hidden;
-}
-
 ::ng-deep .mat-horizontal-stepper-header{
   pointer-events: none !important;
 }
@@ -85,9 +81,11 @@
 ::ng-deep .mat-stepper-horizontal {
 
   font-family: DM Sans;
+  border-radius: 12px;
 
   .mat-horizontal-content-container {
     padding: 24px;
+    overflow: visible;
   }
 
   .mat-horizontal-stepper-header-container {

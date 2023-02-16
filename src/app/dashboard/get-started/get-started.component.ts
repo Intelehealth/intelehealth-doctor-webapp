@@ -16,12 +16,11 @@ export class GetStartedComponent implements OnInit {
   sc: boolean = true;
   constructor(
     private pageTitleService: PageTitleService,
-    private router: Router,
-    // private coreService: CoreService
+    private router: Router
     ) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: 'Home', imgUrl: 'assets/svgs/menu-info-circle.svg' });
+    this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.doctorName = localStorage.getItem('doctorName');
     let now = new Date();
     let hrs = now.getHours();
@@ -31,9 +30,6 @@ export class GetStartedComponent implements OnInit {
       this.greetingMsg = 'Good Afternoon';
     else if (hrs >= 17 && hrs <= 24)
       this.greetingMsg = 'Good Evening';
-    // this.coreService.openSelectLanguageModal().subscribe((res: any) =>{
-    //   console.log(res);
-    // });
   }
 
   setupProfile() {

@@ -14,14 +14,23 @@ const routes: Routes = [
   },
   {
     path: 'profile',
+    data: {
+      breadcrumb: 'Profile'
+    },
     component: ProfileComponent
   },
   {
     path: 'get-started',
+    data: {
+      breadcrumb: 'Get-Started'
+    },
     component: GetStartedComponent
   },
   {
     path: 'visit-summary/:id',
+    data: {
+      breadcrumb: 'Visit Summary'
+    },
     component: VisitSummaryComponent
   }
 ];

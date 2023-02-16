@@ -110,7 +110,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="phoneNumber">Phone Number *</label>
-                  <input type="number"
+                  <input type="text"
                     ng2TelInput
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'phoneNumber')"
@@ -119,7 +119,8 @@
                     (countryChange)="onCountryChange($event, 'phoneNumber')"
                     placeholder="Enter Mobile Number"
                     class="form-control"
-                    formControlName="phoneNumber"/>
+                    formControlName="phoneNumber"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
                   <div *ngIf="submitted && f1.phoneNumber.errors">
                     <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">Enter phone number</small>
                   </div>
@@ -129,7 +130,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="whatsapp">WhatsApp Number *</label>
-                  <input type="number"
+                  <input type="text"
                     ng2TelInput
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'whatsAppNumber')"
@@ -138,7 +139,8 @@
                     (countryChange)="onCountryChange($event, 'whatsAppNumber')"
                     placeholder="Enter Mobile Number"
                     class="form-control"
-                    formControlName="whatsapp"/>
+                    formControlName="whatsapp"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
                   <div *ngIf="submitted && f1.whatsapp.errors">
                     <small class="error-msg" *ngIf="f1.whatsapp.errors.required">Enter whatsApp number</small>
                   </div>
@@ -186,9 +188,9 @@
                           </div>
                           <div class="form-group col-md-6">
                             <label for="fontOfSign">Select Signature *</label>
-                            <ng-select appendTo="body" class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
+                            <ng-select appendTo=".form-group" class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="Select Signature" formControlName="fontOfSign">
                               <ng-template ng-label-tmp let-item="item">
-                                <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 50px;">{{item.text}}</p>
+                                <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 30px;">{{item.text}}</p>
                               </ng-template>
                               <ng-template ng-option-tmp let-item="item" let-index="index">
                                 <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 50px;">{{item.text}}</p>

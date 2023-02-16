@@ -108,6 +108,18 @@
               </form>
             </ng-container>
           </div>
+          <nav aria-label="breadcrumb" *ngIf="!header?.title">
+            <ol class="breadcrumb">
+              <ng-container *ngFor="let breadcrumb of breadcrumbs; let last=last;">
+                <li class="breadcrumb-item" *ngIf="!last">
+                  <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page" *ngIf="last">
+                  {{ breadcrumb.label }}
+                </li>
+              </ng-container>
+            </ol>
+          </nav>
         </a>
         <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <mat-icon>keyboard_arrow_down</mat-icon>

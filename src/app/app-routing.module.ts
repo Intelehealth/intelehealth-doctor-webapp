@@ -28,6 +28,9 @@ const routes: Routes = [
       {
         path: 'dashboard',
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+        data: {
+          breadcrumb: 'Dashboard'
+        },
         // canActivate: [NgxPermissionsGuard],
         // data: {
         //   permissions: {
@@ -38,22 +41,37 @@ const routes: Routes = [
       },
       {
         path: 'messages',
+        data: {
+          breadcrumb: 'Messages'
+        },
         loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
       },
       {
         path: 'calendar',
+        data: {
+          breadcrumb: 'Calendar'
+        },
         loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
       },
       {
         path: 'appointments',
+        data: {
+          breadcrumb: 'Appointments'
+        },
         loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
       },
       {
         path: 'prescription',
+        data: {
+          breadcrumb: 'Prescription'
+        },
         loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
       },
       {
         path: 'help',
+        data: {
+          breadcrumb: 'Help & Support'
+        },
         loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
       },
       {
@@ -61,6 +79,7 @@ const routes: Routes = [
         loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
         canActivate: [NgxPermissionsGuard],
         data: {
+          breadcrumb: 'Admin',
           permissions: {
             only: ['ORGANIZATIONAL: SYSTEM ADMINISTRATOR'],
             redirectTo: '/dashboard'
