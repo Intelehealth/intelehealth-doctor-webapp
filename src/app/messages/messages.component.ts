@@ -226,7 +226,6 @@ export class MessagesComponent implements OnInit {
       formData.append(type, file);
       this.chatSvc.uploadAttachment(formData).subscribe({
         next: (res: any) => {
-          console.log('res: ', res);
           this.isAttachment = true;
 
           this.message = res.data;
