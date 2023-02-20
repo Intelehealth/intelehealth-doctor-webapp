@@ -3,7 +3,6 @@ import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { ChatService } from '../services/chat.service';
 import { SocketService } from '../services/socket.service';
-import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -210,7 +209,6 @@ export class MessagesComponent implements OnInit {
   uploadFile(files) {
     if (files.length) {
       const file = files[0];
-      console.log('file: ', file);
       if ((file.size / 1000) > 2000) {
         this.toastr.warning('File should be less than 2MB.');
         return;
