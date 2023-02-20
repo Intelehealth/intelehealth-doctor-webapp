@@ -8,9 +8,9 @@ export const environment = {
   baseURL: "https://uiux.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://uiux.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://uiux.intelehealth.org/openmrs",
-  mindmapURL: "https://uiux.intelehealth.org:3004/api",
-  notificationURL: "https://uiux.intelehealth.org:3004/notification",
-  socketURL: "https://uiux.intelehealth.org:3004",
+  mindmapURL: "http://localhost:3004/api",
+  notificationURL: "http://localhost:3004/notification",
+  socketURL: "http://localhost:3004",
   captchaSiteKey: "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",

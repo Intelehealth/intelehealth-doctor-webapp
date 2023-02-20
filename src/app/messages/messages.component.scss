@@ -19,6 +19,7 @@
       color: #1B163A;
       font-weight: bold;
     }
+
     span {
       font-size: 14px;
       line-height: 163%;
@@ -113,6 +114,7 @@
     li.selected {
       background: #FAF9FF;
       border: 1px solid rgba(178, 175, 190, 0.2);
+
       .chat-item-con {
         border-bottom: none;
       }
@@ -181,6 +183,7 @@
         color: #1B163A;
         font-weight: bold;
       }
+
       span {
         font-size: 14px;
         line-height: 163%;
@@ -188,7 +191,7 @@
       }
     }
 
-    .ng-select.custom  {
+    .ng-select.custom {
       width: fit-content;
       height: 48px;
       background: #FAF9FF;
@@ -200,7 +203,7 @@
       font-family: DM Sans;
     }
 
-    .ng-select.custom:focus  {
+    .ng-select.custom:focus {
       box-shadow: none;
     }
 
@@ -291,7 +294,8 @@
       padding: 10px 0px;
 
       .input-group {
-        background: #EFE8FF;;
+        background: #EFE8FF;
+        ;
         border: 1px solid rgba(178, 175, 190, 0.2);
         border-radius: 8px;
         height: 44px;
@@ -338,6 +342,7 @@
   .chat-main-con {
     .chat-con-title {
       border-top: 1px solid #7F7B92;
+
       .chat-item-info {
         .title {
           flex-shrink: 0;
@@ -349,4 +354,13 @@
       border-radius: 0px 0px 10px 10px;
     }
   }
+}
+
+.attachment {
+  height: 60px;
+  width: 60px;
+
+  object-fit: contain;
+  background-color: white;
+  cursor: pointer;
 }

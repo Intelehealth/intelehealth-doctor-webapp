@@ -4,6 +4,8 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 import { ChatService } from '../services/chat.service';
 import { SocketService } from '../services/socket.service';
 import * as moment from 'moment';
+import { CoreService } from '../services/core/core.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-messages',
@@ -25,12 +27,19 @@ export class MessagesComponent implements OnInit {
   visitId: any;
   openMenu: boolean = false;
   isOver = false;
+  isAttachment = false;
   readSentImg: any;
+  images: any = {};
+  defaultImage = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage = 'assets/images/pdf-icon.png';
 
   constructor(
     private pageTitleService: PageTitleService,
     private chatSvc: ChatService,
-    private socketSvc: SocketService) { }
+    private socketSvc: SocketService,
+    private coreService: CoreService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
@@ -166,6 +175,7 @@ export class MessagesComponent implements OnInit {
         visitId: this.selectedConversation?.visitId,
         patientName: this.patientName,
         hwName: this.selectedConversation?.hwName,
+        type: this.isAttachment ? 'attachment' : 'text'
       };
 
       this.chatSvc
@@ -178,6 +188,7 @@ export class MessagesComponent implements OnInit {
         .subscribe({
           next: (res) => {
             this.getMessages();
+            this.isAttachment = false;
           },
         });
       this.message = "";
@@ -186,6 +197,45 @@ export class MessagesComponent implements OnInit {
 
   get fromUser() {
     return JSON.parse(localStorage.user).uuid;
+  }
+
+  setImage(src) {
+    this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+  isPdf(url) {
+    return url.includes('.pdf');
+  }
+
+  uploadFile(files) {
+    if (files.length) {
+      const file = files[0];
+      console.log('file: ', file);
+      if ((file.size / 1000) > 2000) {
+        this.toastr.warning('File should be less than 2MB.');
+        return;
+      }
+
+      if (!['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'].includes(file.type)) {
+        this.toastr.warning(`${file.type} is not allowed to upload.`);
+        return;
+      }
+
+      const formData = new FormData();
+
+      const type = file.type.split('/')?.[1] || 'file';
+
+      formData.append(type, file);
+      this.chatSvc.uploadAttachment(formData).subscribe({
+        next: (res: any) => {
+          console.log('res: ', res);
+          this.isAttachment = true;
+
+          this.message = res.data;
+          this.sendMessage()
+        }
+      })
+    }
   }
 
 }

@@ -29,6 +29,7 @@ import { CancelAppointmentConfirmComponent } from './cancel-appointment-confirm/
 import { AppointmentDetailMonthComponent } from './appointment-detail-month/appointment-detail-month.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ImagesPreviewComponent } from './images-preview/images-preview.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @NgModule({
     declarations: [
@@ -64,7 +65,8 @@ import { ImagesPreviewComponent } from './images-preview/images-preview.componen
         NgxDropzoneModule,
         MomentModule,
         MatListModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        PdfViewerModule
     ]
 })
 export class ModalComponentsModule { }
