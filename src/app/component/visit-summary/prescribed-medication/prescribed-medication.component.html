@@ -14,7 +14,7 @@
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: mg)" formControlName="unit">
       </div>
       <div class="col">
-        <input type="number" min="1" class="form-control" placeholder="Amount" formControlName="amount">
+        <input type="number" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" class="form-control" placeholder="Amount" formControlName="amount">
       </div>
       <div class="col">
         <input type="text" class="form-control" [ngbTypeahead]="searchDose" placeholder="Units (eg: Tab/Syrup/etc.)" formControlName="unitType">

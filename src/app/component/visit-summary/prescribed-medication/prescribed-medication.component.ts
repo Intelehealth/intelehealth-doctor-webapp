@@ -47,7 +47,7 @@ export class PrescribedMedicationComponent implements OnInit {
     med: new FormControl('', [Validators.required]),
     dose: new FormControl('', Validators.min(0)),
     unit: new FormControl('', [Validators.required]),
-    amount: new FormControl('', Validators.min(1)),
+    amount: new FormControl('', Validators.min(0)),
     unitType: new FormControl('', [Validators.required]),
     frequency: new FormControl('', [Validators.required]),
     route: new FormControl(''),
