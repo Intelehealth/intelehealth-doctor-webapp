@@ -9,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CalendarModule as MwlCalenderModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 
 @NgModule({
@@ -24,7 +26,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NgSelectModule,
     MatDatepickerModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MwlCalenderModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    })
   ]
 })
 export class CalendarModule { }

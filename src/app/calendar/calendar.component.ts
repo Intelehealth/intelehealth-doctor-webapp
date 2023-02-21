@@ -8,6 +8,8 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 })
 export class CalendarComponent implements OnInit {
 
+  viewDate = new Date();
+
   constructor(private pageTitleService: PageTitleService) { }
 
   ngOnInit(): void {

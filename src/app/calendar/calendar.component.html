@@ -12,4 +12,33 @@
       <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">Manage calendar</button>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12 p-0">
+      <mwl-calendar-day-view
+        [viewDate]="viewDate"
+        [hourDuration]="30"
+        [dayStartHour]="9"
+        [dayEndHour]="19"
+        [hourSegmentHeight]="80"
+        [hourSegments]="1">
+      </mwl-calendar-day-view>
+      <ng-template #hourSegmentTemplate>
+        <div>
+
+        </div>
+      </ng-template>
+      <ng-template #currentTimeMarkerTemplate
+        let-columnDate="columnDate"
+        let-dayStartHour="dayStartHour"
+        let-dayStartMinute="dayStartMinute"
+        let-dayEndHour="dayEndHour"
+        let-dayEndMinute="dayEndMinute"
+        let-isVisible="isVisible"
+        let-topPx="topPx">
+        <div class="cal-current-time-marker" *ngIf="isVisible" [style.top.px]="topPx">
+          <div class="round"></div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>

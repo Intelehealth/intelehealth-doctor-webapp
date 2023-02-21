@@ -27,3 +27,20 @@
     float: right;
   }
 }
+
+.cal-current-time-marker {
+  height: 3px;
+  background: #0FD197;
+  position: relative;
+
+  .round {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #0FD197;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    border-radius: 50%;
+  }
+}

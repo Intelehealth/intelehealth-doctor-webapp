@@ -6,6 +6,7 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
 @import "~pretty-checkbox/src/pretty-checkbox.scss";
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap.scss';
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 @font-face {
   font-family: arty;
