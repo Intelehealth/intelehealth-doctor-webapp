@@ -19,9 +19,9 @@ export class ImagesPreviewComponent implements OnInit {
   ngOnInit(): void {
     this.source = this.data.source;
     this.startIndex = this.data.startIndex;
-    if(this.source.length) this.min = 0;
-    if(this.source.length) this.max = this.source.length - 1;
-    if(this.source.length) this.imgUrl = this.data.source[this.data.startIndex].src;
+    if (this.source.length) this.min = 0;
+    if (this.source.length) this.max = this.source.length - 1;
+    if (this.source.length) this.imgUrl = this.data.source[this.data.startIndex].src;
   }
 
   close(val: any) {
@@ -40,6 +40,10 @@ export class ImagesPreviewComponent implements OnInit {
 
   onImageError(event: any) {
     event.target.src = 'assets/svgs/image-placeholder.jpg';
+  }
+
+  isPDF(url) {
+    return url.includes('.pdf');
   }
 
 }

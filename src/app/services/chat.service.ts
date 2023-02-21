@@ -64,4 +64,8 @@ export class ChatService {
       return {};
     }
   }
+
+  uploadAttachment(payload) {
+    return this.http.post(`${this.baseURL}/messages/upload?ngsw-bypass=true`, payload);
+  }
 }

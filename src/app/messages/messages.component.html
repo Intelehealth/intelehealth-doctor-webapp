@@ -53,7 +53,13 @@
                           (error)="onImgError($event)"
                         />
                         <div>
-                          <h6>{{ (conversation.patientName)? (conversation.patientName|titlecase): 'Unknown' }}</h6>
+                          <h6>
+                            {{
+                              conversation.patientName
+                                ? (conversation.patientName | titlecase)
+                                : "Unknown"
+                            }}
+                          </h6>
                           <p>{{ conversation.message }}</p>
                         </div>
                       </div>
@@ -72,7 +78,11 @@
                     <img src="assets/svgs/user.svg" alt="" />
                     <div class="title">
                       <h6 class="mb-0">
-                        {{ (selectedConversation.patientName)? (selectedConversation.patientName|titlecase): 'Unknown' }}
+                        {{
+                          selectedConversation.patientName
+                            ? (selectedConversation.patientName | titlecase)
+                            : "Unknown"
+                        }}
                       </h6>
                       <span>
                         CHW: {{ selectedConversation?.hwName | titlecase }}
@@ -109,7 +119,11 @@
                 <div class="chat-con-body">
                   <ul class="chat-messages-list">
                     <ng-container
-                      *ngFor="let item of messageList; let first = first"
+                      *ngFor="
+                        let item of messageList;
+                        index as i;
+                        let first = first
+                      "
                     >
                       <li
                         class="chat-status"
@@ -137,7 +151,22 @@
                         class="chat-message"
                         [class.right]="item?.fromUser === chatSvc?.user?.uuid"
                       >
-                        {{ item.message }}
+                        <ng-container
+                          *ngIf="item.type === 'attachment'; else message"
+                        >
+                          <img
+                            class="attachment"
+                            [src]="
+                              isPdf(item.message)
+                                ? pdfDefaultImage
+                                : defaultImage
+                            "
+                            (click)="setImage(item.message)"
+                          />
+                        </ng-container>
+                        <ng-template #message>
+                          {{ item.message }}
+                        </ng-template>
                       </li>
                     </ng-container>
                   </ul>
@@ -160,8 +189,14 @@
                         (keyup.enter)="sendMessage()"
                       />
                       <div class="input-group-append">
-                        <button type="button">
+                        <button type="button" (click)="fileInput.click()">
                           <img src="assets/svgs/attachment-icon.svg" alt="" />
+                          <input
+                            #fileInput
+                            type="file"
+                            (change)="uploadFile($event.target.files)"
+                            style="display: none"
+                          />
                         </button>
                       </div>
                     </div>
