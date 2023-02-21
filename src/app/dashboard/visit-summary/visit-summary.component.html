@@ -625,7 +625,104 @@
                 <mat-icon >{{panel2.expanded? 'remove' : 'add'}}</mat-icon>
               </mat-expansion-panel-header>
 
-              <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Diagnosis</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Status</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="existingDiagnosis.length;">
+                      <tr *ngFor="let d of existingDiagnosis; let i=index;">
+                        <td>{{d.diagnosisName}}</td>
+                        <td>{{d.diagnosisType}}</td>
+                        <td>{{d.diagnosisStatus}}</td>
+                        <td class="pr-0">
+                          <button mat-icon-button class="float-right" *ngIf="isVisitNoteProvider && !visitEnded" (click)="deleteDiagnosis(i, d.uuid)">
+                            <img src="assets/svgs/delete-icon.svg" alt="">
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+                      <tr *ngIf="addMoreDiagnosis">
+                        <td colspan="4">
+                          <div class="form-group mb-0">
+                            <button type="button" class="add-more-btn" (click)="toggleDiagnosis()">
+                              <img src="assets/svgs/plus-circle.svg" alt="">
+                              <span class="ml-2">Add more diagnosis</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+
+              <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
+                <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()" *ngIf="!addMoreDiagnosis">
+                  <ul class="items-list">
+                    <li>
+                      <div class="row">
+                        <label for="select-diagnosis" class="col-sm-3 col-form-label">Select diagnosis</label>
+                        <div class="col-sm-3">
+                          <ng-select class="visit-select custom" formControlName="diagnosisName" (search)="onKeyUp($event)" [items]="diagnosis$ | async" bindLabel="name" bindValue="name" [clearable]="true" [searchable]="true" placeholder="Select diagnosis" [addTag]="true">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <label class="col-sm-3 col-form-label">Diagnosis type</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Primary'" formControlName="diagnosisType" />
+                            <div class="state p-success">
+                              <label>Primary</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Secondary'" formControlName="diagnosisType" />
+                            <div class="state p-success">
+                              <label>Secondary</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="row">
+                        <label class="col-sm-3 col-form-label">Select</label>
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Provisional'" formControlName="diagnosisStatus" />
+                            <div class="state p-success">
+                              <label>Provisional</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input type="radio" [value]="'Confirmed'" formControlName="diagnosisStatus" />
+                            <div class="state p-success">
+                              <label>Confirmed</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="form-group mb-0">
+                    <button type="button" class="white-btn mr-2" (click)="toggleDiagnosis()">Cancel</button>
+                    <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Add</button>
+                  </div>
+                </form>
+              </ng-container>
+
+              <!-- <form [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
                 <ul class="items-list">
                   <li>
                     <div class="row">
@@ -699,7 +796,7 @@
                 <div class="form-group mb-0" *ngIf="isVisitNoteProvider && !visitEnded && !diagnosisForm.value.present && diagnosisForm.value.diagnosisIdentified == 'Yes'">
                   <button type="submit" class="gray-btn" [disabled]="diagnosisForm.invalid">Save</button>
                 </div>
-              </form>
+              </form> -->
             </mat-expansion-panel>
 
             <mat-expansion-panel [expanded]="false" #panel3  hideToggle>

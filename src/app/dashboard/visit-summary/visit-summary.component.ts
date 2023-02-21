@@ -79,6 +79,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   eyeImages: any = [];
   notes: any = [];
   medicines: any = [];
+  existingDiagnosis: any = [];
   advices: any = [];
   additionalInstructions: any = [];
   tests: any = [];
@@ -211,6 +212,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   addMoreAdvice: boolean = false;
   addMoreTest: boolean = false;
   addMoreReferral: boolean = false;
+  addMoreDiagnosis: boolean = false;
 
   patientInteractionForm: FormGroup;
   diagnosisForm: FormGroup;
@@ -293,11 +295,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       });
 
       this.diagnosisForm = new FormGroup({
-        present: new FormControl(false, [Validators.required]),
-        diagnosisIdentified: new FormControl('No', [Validators.required]),
-        diagnosisName: new FormControl(null),
-        diagnosisType: new FormControl(null),
-        diagnosisStatus: new FormControl(null)
+        // present: new FormControl(false, [Validators.required]),
+        // diagnosisIdentified: new FormControl('No', [Validators.required]),
+        diagnosisName: new FormControl(null, Validators.required),
+        diagnosisType: new FormControl(null, Validators.required),
+        diagnosisStatus: new FormControl(null, Validators.required)
       });
 
       this.addNoteForm = new FormGroup({
@@ -361,26 +363,26 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.diagnosisForm.get('diagnosisIdentified').valueChanges.subscribe((val: any) => {
-      if (val == 'Yes') {
-        this.diagnosisForm.get('diagnosisName').setValidators(Validators.required);
-        this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-        this.diagnosisForm.get('diagnosisType').setValidators(Validators.required);
-        this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-        this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
-        this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-      } else {
-        this.diagnosisForm.get('diagnosisName').setValue(null);
-        this.diagnosisForm.get('diagnosisName').clearValidators();
-        this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-        this.diagnosisForm.get('diagnosisType').setValue(null);
-        this.diagnosisForm.get('diagnosisType').clearValidators();
-        this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-        this.diagnosisForm.get('diagnosisStatus').setValue(null);
-        this.diagnosisForm.get('diagnosisStatus').clearValidators();
-        this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-      }
-    });
+    // this.diagnosisForm.get('diagnosisIdentified').valueChanges.subscribe((val: any) => {
+    //   if (val == 'Yes') {
+    //     this.diagnosisForm.get('diagnosisName').setValidators(Validators.required);
+    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
+    //     this.diagnosisForm.get('diagnosisType').setValidators(Validators.required);
+    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
+    //     this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
+    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
+    //   } else {
+    //     this.diagnosisForm.get('diagnosisName').setValue(null);
+    //     this.diagnosisForm.get('diagnosisName').clearValidators();
+    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
+    //     this.diagnosisForm.get('diagnosisType').setValue(null);
+    //     this.diagnosisForm.get('diagnosisType').clearValidators();
+    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
+    //     this.diagnosisForm.get('diagnosisStatus').setValue(null);
+    //     this.diagnosisForm.get('diagnosisStatus').clearValidators();
+    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
+    //   }
+    // });
 
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
       if (val == 'Yes') {
@@ -864,17 +866,29 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     })
   }
 
+  toggleDiagnosis() {
+    this.addMoreDiagnosis = !this.addMoreDiagnosis;
+    this.diagnosisForm.reset();
+  }
+
   checkIfDiagnosisPresent() {
+    this.existingDiagnosis = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          this.diagnosisForm.patchValue({
-            present: true,
-            diagnosisIdentified: 'Yes',
+          this.existingDiagnosis.push({
             diagnosisName: obs.value.split(':')[0].trim(),
             diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
+            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
+            uuid: obs.uuid
           });
+          // this.diagnosisForm.patchValue({
+          //   present: true,
+          //   diagnosisIdentified: 'Yes',
+          //   diagnosisName: obs.value.split(':')[0].trim(),
+          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
+          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
+          // });
         }
       });
     });
@@ -919,9 +933,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         encounter: this.visitNotePresent.uuid
       }).subscribe((res: any) => {
         if (res) {
-          this.diagnosisForm.patchValue({ present: true });
+          // this.diagnosisForm.patchValue({ present: true });
+          this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
+          this.diagnosisForm.reset();
         }
       });
+  }
+
+  deleteDiagnosis(index: number, uuid: string) {
+    this.diagnosisService.deleteObs(uuid).subscribe((res: any) => {
+      this.existingDiagnosis.splice(index, 1);
+    });
   }
 
   toggleNote() {

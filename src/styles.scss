@@ -430,6 +430,10 @@ body.font-lato td {
     background: transparent;
     box-shadow: none;
   }
+
+  .mat-dialog-content {
+    max-height: 75vh;
+  }
 }
 
 .modal-lg {
