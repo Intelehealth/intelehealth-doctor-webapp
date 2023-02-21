@@ -22,6 +22,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   verificationFor: string;
   via: string;
   cred: string;
+  userUuid: string;
 
   constructor(
     private toastr: ToastrService,
@@ -41,11 +42,14 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         if(this.counter > 0) --this.counter;
       });
 
-    const { verificationFor, via, val } = window.history.state;
+    const { verificationFor, via, val, id } = window.history.state;
     this.verificationFor = verificationFor;
     this.via = via;
     this.cred = val;
-
+    this.userUuid = id;
+    if (!verificationFor && !via && !val) {
+      this.router.navigate(['/session/login']);
+    }
   }
 
   get fCtrl() { return this.otpVerificationForm.get('otp') }
@@ -77,7 +81,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         break;
 
       case 'forgot-password':
-        this.router.navigate(['/session/setup-password']);
+        this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
         break;
 
       default:
