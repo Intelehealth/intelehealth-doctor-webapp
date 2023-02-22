@@ -21,13 +21,15 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
     ProfileComponent,
     GetStartedComponent,
-    VisitSummaryComponent
+    VisitSummaryComponent,
+    ChangePasswordComponent
   ],
   imports: [
     CommonModule,

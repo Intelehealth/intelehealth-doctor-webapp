@@ -181,4 +181,8 @@ export class AuthService {
   checkIfUsernameExists(username: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/user?q=${username}&v=custom:(uuid,display,username,person:(uuid,display))`);
   }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/password`, { oldPassword, newPassword });
+  }
 }

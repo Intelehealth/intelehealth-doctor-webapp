@@ -111,9 +111,7 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
   }
 
   changePassword() {
-    this.dialog.open(SetNewPasswordComponent, {
-      width: "40%"
-    });
+    this.router.navigate(['/dashboard/change-password']);
   }
 
   getUrl() {

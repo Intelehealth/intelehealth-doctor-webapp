@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardGuard } from '../core/guards/dashboard.guard';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -32,6 +33,13 @@ const routes: Routes = [
       breadcrumb: 'Visit Summary'
     },
     component: VisitSummaryComponent
+  },
+  {
+    path: 'change-password',
+    data: {
+      breadcrumb: 'Change Password'
+    },
+    component: ChangePasswordComponent
   }
 ];
 
