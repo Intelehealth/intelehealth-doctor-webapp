@@ -358,3 +358,8 @@
 .invalid-input {
   border: 1px solid red !important;
 }
+
+.disbled {
+  pointer-events: none;
+  color: gray;
+}

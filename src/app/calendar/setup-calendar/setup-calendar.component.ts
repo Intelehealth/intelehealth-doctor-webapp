@@ -117,6 +117,7 @@ export class SetupCalendarComponent implements OnInit {
   addSlotsForm: FormGroup;
   _addMoreTiming: boolean = false;
   daysOffSelected: any[] = [];
+  filteredDays=[];
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
   submitted: boolean = false;
 
@@ -275,7 +276,13 @@ export class SetupCalendarComponent implements OnInit {
     });
 
     this.daysOffSelected = [];
-
+    this.filteredDays = [];
+    this.days.forEach((element, i) => {
+      let index = schedule.slotSchedule.filter((slot) => element.name == slot.day);
+      if (index.length === 0) {
+      this.filteredDays.push(element);
+     }
+    });
     // console.log(this.addSlotsForm.value);
   }
 

@@ -146,12 +146,12 @@
                           </div>
                         </td>
                         <td>
-                          <ng-select class="customSelect1" [items]="days"
+                          <ng-select class="customSelect1" [items]="filteredDays"
                             formControlName="days"
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            [placeholder]="days[0].shortName"
+                            [placeholder]="filteredDays[0]?.shortName"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
@@ -180,7 +180,7 @@
 
                       <tr *ngIf="!_addMoreTiming && last">
                         <td colspan="4">
-                          <a href="javascript:void(0)" class="add-more-btn" (click)="toggleAddMoreTiming()">
+                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()">
                             <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
                             Add more timings
                           </a>
@@ -228,12 +228,12 @@
                           </div>
                         </td>
                         <td>
-                          <ng-select [class.invalid-input]="submitted && t.controls.days.errors" class="customSelect1" [items]="days"
+                          <ng-select [class.invalid-input]="submitted && t.controls.days.errors" class="customSelect1" [items]="filteredDays"
                             formControlName="days"
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            [placeholder]="days[0].shortName"
+                            [placeholder]="filteredDays[0]?.shortName"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
