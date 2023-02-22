@@ -419,3 +419,22 @@ textarea.form-control {
     }
   }
 }
+
+@media (max-width: 768px) {
+  ::ng-deep .mat-stepper-horizontal {
+    .mat-horizontal-stepper-header-container {
+      flex-direction: column;
+      align-items: start;
+    }
+
+    .mat-stepper-horizontal-line {
+      align-self: center;
+    }
+  }
+
+  .form-group {
+    .next-btn, .back-btn {
+      width: 100%;
+    }
+  }
+}

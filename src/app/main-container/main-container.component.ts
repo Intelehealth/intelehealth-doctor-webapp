@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { SetNewPasswordComponent } from '../component/set-new-password/set-new-password.component';
@@ -13,6 +13,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, RouterState, RouterStateSnapshot } from '@angular/router';
+import { MatDrawer } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-main-container',
@@ -38,6 +39,7 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
   subscription: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: any[];
+  @ViewChild('drawer') drawer: MatDrawer;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -194,6 +196,12 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
         child = child.firstChild;
     }
     return expectedChild;
+  }
+
+  toggleSidebar() {
+    if (this.isMobile) {
+      this.drawer.toggle();
+    }
   }
 
   ngOnDestroy(): void {

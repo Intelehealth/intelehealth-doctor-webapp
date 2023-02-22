@@ -18,7 +18,7 @@
                   Mobile number
                 </label>
                 <div class="phone-field">
-                  <input type="number"
+                  <input type="text"
                     ng2TelInput
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true}"
                     (hasError)="hasError($event)"
@@ -27,7 +27,8 @@
                     (countryChange)="onCountryChange($event)"
                     placeholder="Enter Mobile Number"
                     class="form-control"
-                    formControlName="phone"/>
+                    formControlName="phone"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
                   <button class="btn toggle-password-btn" type="button">
                     <img src="assets/svgs/mobile.svg" alt="">
                   </button>
