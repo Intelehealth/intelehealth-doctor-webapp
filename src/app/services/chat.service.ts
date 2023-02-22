@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { ToastrService } from "ngx-toastr";
 import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
@@ -10,7 +11,10 @@ import { environment } from "src/environments/environment";
 export class ChatService {
   private baseURL = environment.mindmapURL;
   popUpCloseEmitter = new Subject();
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private toastr: ToastrService
+  ) { }
 
   sendMessage(toUser, patientId, message, additionalPayload = {}, fromUser = this.user.uuid) {
     const payload = {
@@ -65,7 +69,25 @@ export class ChatService {
     }
   }
 
-  uploadAttachment(payload) {
-    return this.http.post(`${this.baseURL}/messages/upload?ngsw-bypass=true`, payload);
+  uploadAttachment(files) {
+    if (files.length) {
+      const file = files[0];
+      if ((file.size / 1000) > 2000) {
+        this.toastr.warning('File should be less than 2MB.');
+        return;
+      }
+
+      if (!['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'].includes(file.type)) {
+        this.toastr.warning(`${file.type} is not allowed to upload.`);
+        return;
+      }
+
+      const formData = new FormData();
+
+      const type = file.type.split('/')?.[1] || 'file';
+
+      formData.append(type, file);
+      return this.http.post(`${this.baseURL}/messages/upload?ngsw-bypass=true`, formData);
+    }
   }
 }

@@ -37,7 +37,6 @@ export class MessagesComponent implements OnInit {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private coreService: CoreService,
-    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -207,32 +206,14 @@ export class MessagesComponent implements OnInit {
   }
 
   uploadFile(files) {
-    if (files.length) {
-      const file = files[0];
-      if ((file.size / 1000) > 2000) {
-        this.toastr.warning('File should be less than 2MB.');
-        return;
+    this.chatSvc.uploadAttachment(files).subscribe({
+      next: (res: any) => {
+        this.isAttachment = true;
+
+        this.message = res.data;
+        this.sendMessage();
       }
-
-      if (!['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'].includes(file.type)) {
-        this.toastr.warning(`${file.type} is not allowed to upload.`);
-        return;
-      }
-
-      const formData = new FormData();
-
-      const type = file.type.split('/')?.[1] || 'file';
-
-      formData.append(type, file);
-      this.chatSvc.uploadAttachment(formData).subscribe({
-        next: (res: any) => {
-          this.isAttachment = true;
-
-          this.message = res.data;
-          this.sendMessage()
-        }
-      })
-    }
+    })
   }
 
 }

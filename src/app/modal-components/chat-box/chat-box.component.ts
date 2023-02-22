@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChatService } from 'src/app/services/chat.service';
+import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
@@ -15,13 +16,17 @@ export class ChatBoxComponent implements OnInit {
   messageList: any = [];
   toUser: any;
   hwName: any;
+  isAttachment = false;
   baseUrl: string = environment.baseURL;
+  defaultImage = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage = 'assets/images/pdf-icon.png';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ChatBoxComponent>,
     private chatSvc: ChatService,
-    private socketSvc: SocketService
+    private socketSvc: SocketService,
+    private coreService: CoreService
   ) { }
 
   ngOnInit(): void {
@@ -64,6 +69,7 @@ export class ChatBoxComponent implements OnInit {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
         hwName: this.hwName,
+        type: this.isAttachment ? 'attachment' : 'text'
       };
       this.chatSvc
         .sendMessage(this.toUser, this.data.patientId, this.message, payload)
@@ -90,6 +96,25 @@ export class ChatBoxComponent implements OnInit {
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
+  }
+
+  isPdf(url) {
+    return url.includes('.pdf');
+  }
+
+  uploadFile(files) {
+    this.chatSvc.uploadAttachment(files).subscribe({
+      next: (res: any) => {
+        this.isAttachment = true;
+
+        this.message = res.data;
+        this.sendMessage();
+      }
+    });
+  }
+
+  setImage(src) {
+    this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
 }
