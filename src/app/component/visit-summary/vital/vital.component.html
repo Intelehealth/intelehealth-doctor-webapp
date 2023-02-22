@@ -1,82 +1,99 @@
 <h4><i class="fas fa-heartbeat"></i> Vitals</h4>
-<hr>
-<div *ngIf='!vitalsPresent'>No Data</div>
-<div *ngIf='vitalsPresent'>
+<hr />
+<div *ngIf="!vitalsPresent">No Data</div>
+<div *ngIf="vitalsPresent">
   <table class="table table-responsive">
-    <tr *ngFor='let item of v'>
+    <tr *ngFor="let item of v">
       <th>Temp:</th>
-      <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>
+      <td>
+        <span *ngIf="item.temp">
+          {{ (item.temp * 9) / 5 + 32 | number : "1.2-2" }} F</span
+        >
+      </td>
       <th>Height:</th>
-      <td><span *ngIf="item.height">{{item.height}} cm</span></td>
+      <td>
+        <span *ngIf="item.height">{{ item.height }} cm</span>
+      </td>
       <th>Weight:</th>
-      <td><span *ngIf="item.weight">{{item.weight}} kg</span></td>
+      <td>
+        <span *ngIf="item.weight">{{ item.weight }} kg</span>
+      </td>
       <th>BMI:</th>
-      <td>{{item.weight/((item.height/100)*(item.height/100))| number : '1.2-2'}}</td>
+      <td>
+        {{
+          item.weight / ((item.height / 100) * (item.height / 100))
+            | number : "1.2-2"
+        }}
+      </td>
       <th>SP02:</th>
-      <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
+      <td>
+        <span *ngIf="item.sp02">{{ item.sp02 }} %</span>
+      </td>
       <th>BP:</th>
-      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
+      <td>
+        <span *ngIf="item.sbp && item.dbp">{{ item.sbp }}/{{ item.dbp }}</span>
+      </td>
       <th>HR:</th>
-      <td>{{item.pulse}}</td>
+      <td>{{ item.pulse }}</td>
       <th>RR:</th>
-      <td>{{item.respiratoryRate}}</td>
+      <td>{{ item.respiratoryRate }}</td>
       <ng-container *ngIf="item.glucoseAf">
         <th>Glucose (Non-Fasting):</th>
-        <td>{{item.glucoseAf}}</td>
+        <td>{{ item.glucoseAf }}</td>
       </ng-container>
       <ng-container *ngIf="item.glucoseF">
         <th>Glucose (Diabetes):</th>
-        <td>{{item.glucoseF}}</td>
+        <td>{{ item.glucoseF }}</td>
       </ng-container>
       <ng-container *ngIf="item.hgb">
         <th>HGB:</th>
-        <td>{{item.hgb}}</td>
+        <td>{{ item.hgb }}</td>
       </ng-container>
       <ng-container *ngIf="item.uricAcid">
         <th>Uric Acid:</th>
-        <td>{{item.uricAcid}}</td>
+        <td>{{ item.uricAcid }}</td>
       </ng-container>
       <ng-container *ngIf="item.totalChlolestrol">
         <th>Total Chlolestrol:</th>
-        <td>{{item.totalChlolestrol}}</td>
+        <td>{{ item.totalChlolestrol }}</td>
       </ng-container>
     </tr>
   </table>
 </div>
 
 <h4><i class="fas fa-heartbeat"></i> Diagnostics</h4>
-<hr>
-<div *ngIf='!d.length'>No Data</div>
-<div *ngIf='d.length'>
+<hr />
+<div *ngIf="!d.length">No Data</div>
+<div *ngIf="d.length">
   <table class="table table-responsive">
-    <tr *ngFor='let item of d'>
+    <tr *ngFor="let item of d">
       <ng-container>
         <th>Glucose (Random):</th>
-        <td *ngIf="item.glucoseRandom">{{item.glucoseRandom}}</td>
+        <td *ngIf="item.glucoseRandom">{{ item.glucoseRandom }}</td>
       </ng-container>
       <ng-container>
         <th>Glucose (Fasting):</th>
-        <td *ngIf="item.glucoseAf">{{item.glucoseAf}}</td>
+        <td *ngIf="item.glucoseAf">{{ item.glucoseAf }}</td>
       </ng-container>
-      <ng-container >
+      <ng-container>
         <th>Glucose (Post-prandial):</th>
-        <td *ngIf="item.glucosePrandial">{{item.glucosePrandial}}</td>
+        <td *ngIf="item.glucosePrandial">{{ item.glucosePrandial }}</td>
       </ng-container>
       <!-- <ng-container>
         <th>Glucose (Diabetes):</th>
         <td *ngIf="item.glucoseF">{{item.glucoseF}}</td>
       </ng-container> -->
-      <ng-container >
+      <ng-container>
         <th>HGB:</th>
-        <td *ngIf="item.hgb">{{item.hgb}}</td>
+        <td *ngIf="item.hgb">{{ item.hgb }}</td>
       </ng-container>
-      <ng-container >
+      <ng-container>
         <th>Uric Acid:</th>
-        <td *ngIf="item.uricAcid">{{item.uricAcid}}</td>
+        <td *ngIf="item.uricAcid">{{ item.uricAcid }}</td>
       </ng-container>
       <ng-container>
         <th>Total Chlolestrol:</th>
-        <td *ngIf="item.totalChlolestrol">{{item.totalChlolestrol}}</td>
+        <td *ngIf="item.totalChlolestrol">{{ item.totalChlolestrol }}</td>
       </ng-container>
     </tr>
   </table>
