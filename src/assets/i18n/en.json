@@ -258,6 +258,7 @@
     "kg":"kg",
     "cm":"cm",
     "F":"F",
+    "Not provided":"Not provided",
     "messages": {
       "welcome": "Welcome",
       "loginError": "Username & Password doesn't match",

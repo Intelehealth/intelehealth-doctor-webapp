@@ -30,11 +30,11 @@
                 </tr>
                 <tr>
                     <th scope="row">{{'Contact Info'|translate}}</th>
-                    <td *ngIf="info.telephone">{{info.telephone}}</td>
+                    <td *ngIf="info.telephone">{{ info.telephone === '-' ? ('Not provided'| translate ): info.telephone }}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'Occupation'|translate}}</th>
-                    <td *ngIf="info.occupation">{{info.occupation}}</td>
+                    <td>{{ info.occupation ? info.occupation : ('Not provided'| translate ) }}</td>
                 </tr>
                 <!-- <tr>
                     <th scope="row">{{'Health Scheme Card'|translate}}</th>
