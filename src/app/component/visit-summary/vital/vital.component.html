@@ -6,7 +6,7 @@
     <table class="table table-responsive">
       <tr *ngFor='let item of v'>
         <th>{{'Temp'|translate}}:</th>
-        <td><span *ngIf="item.temp"> {{ item.temp }} {{'F' | translate}}</span></td>
+        <td><span *ngIf="item.temp">{{(item.temp * 9/5) + 32 | number : '1.2-2'}} {{'F' | translate}}</span></td>
         <th>{{'Height'|translate}}:</th>
         <td><span *ngIf="item.height">{{item.height}} {{'cm'| translate }}</span></td>
         <th>{{'Weight'|translate}}:</th>
