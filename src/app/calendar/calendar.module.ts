@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule as MwlCalenderModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     MwlCalenderModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
-    })
+    }),
+    MatTabsModule
   ]
 })
 export class CalendarModule { }

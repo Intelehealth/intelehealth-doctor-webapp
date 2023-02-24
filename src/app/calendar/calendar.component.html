@@ -13,32 +13,255 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12 p-0">
-      <mwl-calendar-day-view
-        [viewDate]="viewDate"
-        [hourDuration]="30"
-        [dayStartHour]="9"
-        [dayEndHour]="19"
-        [hourSegmentHeight]="80"
-        [hourSegments]="1">
-      </mwl-calendar-day-view>
-      <ng-template #hourSegmentTemplate>
-        <div>
+    <div class="col-md-12 p-0 pt-3">
+      <div class="intel-card">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 p-0">
+              <mat-tab-group [disableRipple]="true" class="calendar-tab-group" mat-align-tabs="start" (selectedIndexChange)="onTabChanged($event)">
+                <mat-tab label="Daily"></mat-tab>
+                <mat-tab label="Weekly"></mat-tab>
+                <mat-tab label="Monthly"></mat-tab>
+              </mat-tab-group>
+            </div>
+            <div class="col-md-6 p-0">
+              <div class="header-date-con">
+                <img class="mr-2" src="assets/svgs/calendar-white.svg" alt="">
+                <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h6>
+                <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
+                  <img src="assets/svgs/chevron-left.svg" alt="" width="100%">
+                </button>
+                <button class="arrow-btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
+                  <img src="assets/svgs/chevron-right.svg" alt="" width="100%">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div [ngSwitch]="view">
+          <mwl-calendar-day-view
+            class="day-view-con"
+            *ngSwitchCase="CalendarView.Day"
+            [viewDate]="viewDate"
+            [hourDuration]="30"
+            [dayStartHour]="9"
+            [dayStartMinute]="0"
+            [dayEndHour]="19"
+            [dayEndMinute]="30"
+            [hourSegmentHeight]="100"
+            [hourSegments]="1"
+            [currentTimeMarkerTemplate]="currentTimeMarkerTemplate"
+            [hourSegmentTemplate]="hourSegmentTemplate"
+            [events]="events"
+            [eventTemplate]="eventTemplate"
+            (eventClicked)="handleEvent('Clicked', $event.event)">
+          </mwl-calendar-day-view>
 
+          <mwl-calendar-week-view
+            class="week-view-con"
+            *ngSwitchCase="CalendarView.Week"
+            [viewDate]="viewDate"
+            [events]="events"
+            [hourDuration]="30"
+            [dayStartHour]="9"
+            [dayStartMinute]="0"
+            [dayEndHour]="19"
+            [dayEndMinute]="30"
+            [hourSegmentHeight]="100"
+            [hourSegments]="1"
+            [headerTemplate]="headerTemplate"
+            [hourSegmentTemplate]="hourSegmentTemplate"
+            [currentTimeMarkerTemplate]="currentTimeMarkerTemplate2"
+            [eventTemplate]="eventTemplate2"
+            (eventClicked)="handleEvent('Clicked', $event.event)">
+          </mwl-calendar-week-view>
+
+          <mwl-calendar-month-view
+            *ngSwitchCase="CalendarView.Month"
+            [viewDate]="viewDate"
+            [events]="events"
+            [headerTemplate]="monthHeaderTemplate"
+            [cellTemplate]="cellTemplate"
+            (dayClicked)="dayClickedMonthView($event.day)"
+            (eventClicked)="handleEvent('Clicked', $event.event)">
+          </mwl-calendar-month-view>
         </div>
-      </ng-template>
-      <ng-template #currentTimeMarkerTemplate
-        let-columnDate="columnDate"
-        let-dayStartHour="dayStartHour"
-        let-dayStartMinute="dayStartMinute"
-        let-dayEndHour="dayEndHour"
-        let-dayEndMinute="dayEndMinute"
-        let-isVisible="isVisible"
-        let-topPx="topPx">
-        <div class="cal-current-time-marker" *ngIf="isVisible" [style.top.px]="topPx">
-          <div class="round"></div>
-        </div>
-      </ng-template>
+
+        <ng-template #hourSegmentTemplate
+          let-segment="segment"
+          let-locale="locale"
+          let-segmentHeight="segmentHeight"
+          let-isTimeLabel="isTimeLabel"
+          let-daysInWeek="daysInWeek">
+          <div [attr.aria-hidden]="{}|calendarA11y: (daysInWeek === 1? 'hideDayHourSegment':'hideWeekHourSegment')" class="cal-hour-segment-con" [style.height.px]="segmentHeight" [class.cal-hour-start]="segment.isStart" [class.cal-after-hour-start]="!segment.isStart" [ngClass]="segment.cssClass">
+            <div class="cal-time-con" *ngIf="isTimeLabel">
+              <span>{{ segment.displayDate|date:'hh:mm a' }}</span>
+              <div class="marker"></div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #currentTimeMarkerTemplate
+          let-columnDate="columnDate"
+          let-dayStartHour="dayStartHour"
+          let-dayStartMinute="dayStartMinute"
+          let-dayEndHour="dayEndHour"
+          let-dayEndMinute="dayEndMinute"
+          let-isVisible="isVisible"
+          let-topPx="topPx">
+          <div class="cal-current-time-marker" *ngIf="isVisible" [style.top.px]="topPx">
+            <div class="round"></div>
+          </div>
+        </ng-template>
+
+        <ng-template #currentTimeMarkerTemplate2
+          let-columnDate="columnDate"
+          let-dayStartHour="dayStartHour"
+          let-dayStartMinute="dayStartMinute"
+          let-dayEndHour="dayEndHour"
+          let-dayEndMinute="dayEndMinute"
+          let-isVisible="isVisible"
+          let-topPx="topPx">
+          <div class="cal-current-time-marker-2" *ngIf="isVisible" [style.top.px]="topPx">
+            <div class="round"></div>
+          </div>
+        </ng-template>
+
+        <ng-template #eventTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement" let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled" let-tooltipDelay="tooltipDelay" let-column="column" let-daysInWeek="daysInWeek">
+          <div class="cal-event-con">
+            <div class="event-con">
+              <div class="con-item">
+                <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
+                <div class="con-info">
+                  <h6 class="mb-0">Appointment</h6>
+                  <p class="mb-0">9:00 am - 9:30 am</p>
+                </div>
+              </div>
+              <div class="con-item">
+                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <div class="con-info">
+                  <h6 class="mb-0">Anurag Sangale (M, 32)</h6>
+                  <p class="mb-0">Patient</p>
+                </div>
+              </div>
+              <div class="con-item">
+                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <div class="con-info">
+                  <h6 class="mb-0">Anurag Sangale</h6>
+                  <p class="mb-0">Health Worker</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #eventTemplate2 let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement" let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled" let-tooltipDelay="tooltipDelay" let-column="column" let-daysInWeek="daysInWeek">
+          <div class="cal-event-con-2">
+            <div class="event-con">
+              <h6 class="mb-0">Appointment</h6>
+              <p class="mb-0">9:00 am - 9:30 am</p>
+              <div class="con-item">
+                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <div class="con-info">
+                  <h6 class="mb-0">Anurag Sangale (M, 32)</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #headerTemplate
+          let-days="days"
+          let-locale="locale"
+          let-dayHeaderClicked="dayHeaderClicked"
+          let-eventDropped="eventDropped"
+          let-trackByWeekDayHeaderDate="trackByWeekDayHeaderDate"
+          let-dragEnter="dragEnter">
+          <div role="row" class="cal-day-headers-con">
+            <div class="cal-header-con"
+              *ngFor="let day of days; trackBy: trackByWeekDayHeaderDate"
+              [class.cal-past]="day.isPast"
+              [class.cal-today]="day.isToday"
+              [class.cal-future]="day.isFuture"
+              [class.cal-weekend]="day.isWeekend"
+              [ngClass]="day.cssClass"
+              (mwlClick)="dayHeaderClicked.emit({ day: day, sourceEvent: $event })"
+              mwlDroppable
+              dragOverClass="cal-drag-over"
+              (drop)="eventDropped.emit({event: $event.dropData.event,newStart: day.date})"
+              (dragEnter)="dragEnter.emit({ date: day.date })"
+              tabindex="0"
+              role="columnheader">
+              {{day.date|date:'d EEE'|uppercase}}
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #monthHeaderTemplate
+          let-days="days"
+          let-locale="locale"
+          let-trackByWeekDayHeaderDate="trackByWeekDayHeaderDate">
+          <div class="cal-cell-row-con cal-header-con" role="row">
+            <div class="cal-cell-con" *ngFor="let day of days; trackBy: trackByWeekDayHeaderDate"
+              [class.cal-past]="day.isPast"
+              [class.cal-today]="day.isToday"
+              [class.cal-future]="day.isFuture"
+              [class.cal-weekend]="day.isWeekend"
+              (click)="columnHeaderClicked.emit({isoDayNumber: day.day,sourceEvent: $event})"
+              [ngClass]="day.cssClass"
+              tabindex="0"
+              role="columnheader">
+              {{day.date|date:'EEE'|uppercase}}
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #cellTemplate
+          let-day="day"
+          let-openDay="openDay"
+          let-locale="locale"
+          let-tooltipPlacement="tooltipPlacement"
+          let-highlightDay="highlightDay"
+          let-unhighlightDay="unhighlightDay"
+          let-eventClicked="eventClicked"
+          let-tooltipTemplate="tooltipTemplate"
+          let-tooltipAppendToBody="tooltipAppendToBody"
+          let-tooltipDelay="tooltipDelay"
+          let-trackByEventId="trackByEventId"
+          let-validateDrag="validateDrag">
+          <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'">
+            <span aria-hidden="true">
+              <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
+              <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
+            </span>
+          </div>
+          <div class="cal-events" *ngIf="day.events.length > 0">
+            <!-- <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span>s</span></div>
+            <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span>s</span></div> -->
+            <div class="cal-event" *ngFor="let event of day.events; trackBy: trackByEventId;"
+              [ngStyle]="{ backgroundColor: event.color?.primary }"
+              [ngClass]="event?.cssClass"
+              (mouseenter)="highlightDay.emit({ event: event })"
+              (mouseleave)="unhighlightDay.emit({ event: event })"
+              [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+              [tooltipPlacement]="tooltipPlacement"
+              [tooltipEvent]="event"
+              [tooltipTemplate]="tooltipTemplate"
+              [tooltipAppendToBody]="tooltipAppendToBody"
+              [tooltipDelay]="tooltipDelay"
+              mwlDraggable
+              [class.cal-draggable]="event.draggable"
+              dragActiveClass="cal-drag-active"
+              [dropData]="{ event: event, draggedFrom: day }"
+              [dragAxis]="{ x: event.draggable, y: event.draggable }"
+              [validateDrag]="validateDrag"
+              [touchStartLongPress]="{ delay: 300, delta: 30 }"
+              (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
+              [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
+            </div>
+          </div>
+        </ng-template>
+      </div>
     </div>
   </div>
 </div>

@@ -295,7 +295,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
 
             break;
             case 'consultationLanguage':
-            professionalFormValues.consultationLanguage = this.getAttributeValue(attrType.uuid, attrType.display).split(',');
+            professionalFormValues.consultationLanguage = this.getAttributeValue(attrType.uuid, attrType.display)?.split(',');
             break;
           case 'countryCode':
             personalFormValues.countryCode1 = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -318,7 +318,7 @@ export class ProfileComponent implements OnInit, AfterViewInit {
             professionalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'researchExperience':
-            professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display).split(',');
+            professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display)?.split(',');
             break;
           case 'signature':
             personalFormValues.signature = this.getAttributeValue(attrType.uuid, attrType.display);

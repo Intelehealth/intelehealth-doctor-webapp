@@ -323,6 +323,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
 
     .other-doc {
       display: flex;

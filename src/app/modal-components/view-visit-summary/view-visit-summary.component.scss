@@ -181,10 +181,13 @@
   align-items: center;
 
   .eye-item {
+    position: relative;
     width: 48px;
     height: 48px;
     border-radius: 4px;
     margin: 5px;
+    overflow: hidden;
+    cursor: pointer;
 
     img {
       width: 100%;
@@ -228,6 +231,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
 
     .other-doc {
       display: flex;
