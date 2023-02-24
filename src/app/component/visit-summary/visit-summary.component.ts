@@ -103,7 +103,10 @@ export class VisitSummaryComponent implements OnInit {
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
       if (userDetails && providerDetails) {
+        this.doctorDetails = providerDetails;
+        this.getDoctorValue();
         const providerUuid = providerDetails.uuid;
+        if (providerUuid === getEncounterProviderUUID()) {
         const json = {
           patient: this.patientUuid,
           encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
@@ -153,6 +156,11 @@ export class VisitSummaryComponent implements OnInit {
             });
           }
         });
+        }else {
+          this.snackbar.open("Another doctor is viewing this case", null, {
+            duration: 4000,
+          });
+        }
       } else {
         this.authService.logout();
       }
