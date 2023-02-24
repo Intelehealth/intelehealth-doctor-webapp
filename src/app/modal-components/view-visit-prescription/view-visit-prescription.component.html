@@ -358,7 +358,15 @@
                     <div class="list-item">
                       <label>Follow-up Date</label>
                       <div class="list-item-content">
-                        {{followUp.followUpDate}}
+                        {{followUp.followUpDate|date:'mediumDate'}}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>Follow-up Time</label>
+                      <div class="list-item-content">
+                        {{followUp.followUpTime}}
                       </div>
                     </div>
                   </li>
