@@ -44,13 +44,14 @@
                 }}
               </div>
               <div class="slot-column d-grid">
-                <div *ngFor="let slot of slot(day)?.slots" class="timings">
-                  <div *ngIf="slot.type === 'appointment'">
+                <div *ngFor="let slot of slot(day)?.slots; let i = index;let l = count;let last=last" class="timings">
+                  <div *ngIf="slot.type === 'appointment' && i<2">
                     {{ slot.startTime }} - {{ slot.endTime }}
                   </div>
-                  <div *ngIf="slot.type === 'followUp'">
+                  <div *ngIf="slot.type === 'followUp' && i<2">
                     {{ slot.startTime }}
                   </div>
+                  <a style="color: #7F7B92;" *ngIf="last && l>2"> {{l-2}} More</a>
                 </div>
               </div>
             </div>

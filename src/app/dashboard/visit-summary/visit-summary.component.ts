@@ -85,7 +85,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   tests: any = [];
   referrals: any = [];
   pastVisits: any = [];
-
+  minDate = new Date();
   specializations: any[] = [
     {
       id: 1,

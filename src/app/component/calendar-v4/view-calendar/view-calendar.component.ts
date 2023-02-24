@@ -314,8 +314,8 @@ export class ViewCalendarComponent implements OnInit {
     obj.visitUuid = visit.uuid;
     obj.appointmentDate = (followUpVisit.followup_text.includes(",")) ? followUpVisit.followup_text.split(", Time: ")[0] : followUpVisit.followup_text;
     obj.type = 'followUp';
-    obj.createdAt = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss");
-    obj.slotJsDate = moment(obj.appointmentDate, 'DD-MM-YYYY').format("YYYY-MM-DD HH:mm:ss")
+    obj.createdAt = moment(obj.appointmentDate, 'YYYY-MM-DD').format("YYYY-MM-DD HH:mm:ss");
+    obj.slotJsDate = moment(obj.appointmentDate, 'YYYY-MM-DD').format("YYYY-MM-DD HH:mm:ss")
     const encounters = visit.encounters;
         encounters.forEach(encounter => {
           const display = encounter.display;

@@ -1214,7 +1214,7 @@
                         <div class="col-sm-3">
                           <!-- <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate"> -->
                           <div class="input-group">
-                            <input type="text" class="form-control" formControlName="followUpDate" [matDatepicker]="fdp" placeholder="Enter date" aria-label="Birthdate"
+                            <input type="text" class="form-control" formControlName="followUpDate" [min]="minDate" [matDatepicker]="fdp" placeholder="Enter date" aria-label="Birthdate"
                               aria-describedby="basic-addon1" readonly>
                             <mat-datepicker #fdp></mat-datepicker>
                             <div class="input-group-append">
