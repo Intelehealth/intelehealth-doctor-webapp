@@ -75,8 +75,15 @@ export class ChatBoxComponent implements OnInit {
         .sendMessage(this.toUser, this.data.patientId, this.message, payload)
         .subscribe({
           next: (res) => {
+            this.isAttachment = false;
             this.getMessages();
           },
+          error: () => {
+            this.isAttachment = false;
+          },
+          complete: () => {
+            this.isAttachment = false;
+          }
         });
       this.message = "";
     }

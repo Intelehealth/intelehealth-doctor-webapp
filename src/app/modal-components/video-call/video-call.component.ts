@@ -37,6 +37,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   pc: any;
   isRemote: boolean = false;
   isStarted: boolean = false;
+  isAttachment = false;
   callStartedAt = null;
   changeDetForDuration: any = null;
 
@@ -103,13 +104,21 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
         hwName: this.hwName,
+        type: this.isAttachment ? 'attachment' : 'text'
       };
       this.chatSvc
         .sendMessage(this.toUser, this.data.patientId, this.message, payload)
         .subscribe({
           next: (res) => {
+            this.isAttachment = false;
             this.getMessages();
           },
+          error: () => {
+            this.isAttachment = false;
+          },
+          complete: () => {
+            this.isAttachment = false;
+          }
         });
       this.message = "";
     }
@@ -417,5 +426,21 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
     return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
   }
+
+  isPdf(url) {
+    return url.includes('.pdf');
+  }
+
+  uploadFile(files) {
+    this.chatSvc.uploadAttachment(files).subscribe({
+      next: (res: any) => {
+        this.isAttachment = true;
+
+        this.message = res.data;
+        this.sendMessage();
+      }
+    });
+  }
+
 
 }

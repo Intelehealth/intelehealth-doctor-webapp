@@ -185,9 +185,15 @@ export class MessagesComponent implements OnInit {
         )
         .subscribe({
           next: (res) => {
+            this.isAttachment = false;
             this.getMessages();
+          },
+          error: () => {
             this.isAttachment = false;
           },
+          complete: () => {
+            this.isAttachment = false;
+          }
         });
       this.message = "";
     }

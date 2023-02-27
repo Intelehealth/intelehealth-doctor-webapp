@@ -72,19 +72,29 @@ export class ChatService {
   uploadAttachment(files) {
     if (files.length) {
       const file = files[0];
-      if ((file.size / 1000) > 2000) {
-        this.toastr.warning('File should be less than 2MB.');
-        return;
-      }
 
       if (!['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'].includes(file.type)) {
         this.toastr.warning(`${file.type} is not allowed to upload.`);
         return;
       }
 
+      switch (true) {
+        case (['image/png', 'image/jpg', 'image/jpeg'].includes(file.type) && (file.size / 1000) > 500): {
+          this.toastr.warning('File should be less than 500KB.');
+          return;
+          break;
+        }
+
+        case (['application/pdf'].includes(file.type) && (file.size / 1000) > 1000): {
+          this.toastr.warning('File should be less than 500KB.');
+          return;
+          break;
+        }
+      }
+
       const formData = new FormData();
 
-      const type = file.type.split('/')?.[1] || 'file';
+      const type = file.type || 'file';
 
       formData.append(type, file);
       return this.http.post(`${this.baseURL}/messages/upload?ngsw-bypass=true`, formData);
