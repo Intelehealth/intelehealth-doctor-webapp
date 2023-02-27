@@ -212,7 +212,7 @@ export class MessagesComponent implements OnInit {
   }
 
   uploadFile(files) {
-    this.chatSvc.uploadAttachment(files).subscribe({
+    this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
       next: (res: any) => {
         this.isAttachment = true;
 

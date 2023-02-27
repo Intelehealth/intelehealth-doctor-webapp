@@ -432,7 +432,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   uploadFile(files) {
-    this.chatSvc.uploadAttachment(files).subscribe({
+    this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
       next: (res: any) => {
         this.isAttachment = true;
 
