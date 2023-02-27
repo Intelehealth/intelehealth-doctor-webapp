@@ -255,6 +255,7 @@ export class HomepageComponent implements OnInit {
       if (data.length) {
         this.flagPatientNo = getTotal(data, "Priority");
         this.activePatient = getTotal(data, "Awaiting Consult");
+        localStorage.awaitingVisitsCount = this.activePatient;
         this.visitNoteNo = getTotal(data, "Visit In Progress");
         this.completeVisitNo = getTotal(data, "Completed Visit");
       }
@@ -364,6 +365,7 @@ export class HomepageComponent implements OnInit {
   setVisitlengthAsPerLoadedData() {
     this.flagPatientNo = this.getLength(this.flagVisit);
     this.activePatient = this.getLength(this.waitingVisit);
+    localStorage.awaitingVisitsCount = this.activePatient;
     this.visitNoteNo = this.getLength(this.progressVisit);
     this.completeVisitNo = this.getLength(this.completedVisit);
   }

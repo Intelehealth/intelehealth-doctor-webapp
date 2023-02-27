@@ -46,7 +46,6 @@ export class MyAccountComponent implements OnInit {
   personImageURL: any;
   image: string;
   completedCount = [];
-  awaitngCount: any;
 
   constructor(
     private sessionService: SessionService,
@@ -60,15 +59,14 @@ export class MyAccountComponent implements OnInit {
   ngOnInit() {
     this.setSpiner = true;
     this.userDetails = getFromStorage("user");
-    this.awaitngCount = localStorage.getItem('awaitingVisitsCount')
     this.providerInfo = getFromStorage("provider");
     this.sessionService
-    .provider(this.userDetails.uuid)
-    .subscribe((provider) => {
-      const attributes = provider.results[0].attributes;
-      this.providerDetails = provider.results[0];
-      saveToStorage("provider", this.providerDetails);
-        
+      .provider(this.userDetails.uuid)
+      .subscribe((provider) => {
+        const attributes = provider.results[0].attributes;
+        this.providerDetails = provider.results[0];
+        saveToStorage("provider", this.providerDetails);
+
         attributes.forEach((attribute) => {
           if (
             attribute.attributeType.uuid === this.specializationProviderType &&
@@ -92,27 +90,31 @@ export class MyAccountComponent implements OnInit {
         this.setSpiner = false;
       });
 
-      // this.personImageURL = `${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
-      // var header = {
-      //   headers: new HttpHeaders({
-      //     "Content-Type": "application/json",
-      //     Authorization: "Basic " + btoa("nurse:Nurse123"),
-      //   }),
-      // };
-      
-      this.Imgservice.fetchProfileImage(this.providerInfo.person.uuid).subscribe((response) => {
-        this.personImageURL = `${this.baseURL}/personimage/${this.providerInfo.person.uuid}`;
-      },(err)=>{
-        this.personImageURL = 'assets/dummy profile image.jpg';
-      });
+    // this.personImageURL = `${this.baseURLProvider}/${this.providerInfo.person.uuid}`;
+    // var header = {
+    //   headers: new HttpHeaders({
+    //     "Content-Type": "application/json",
+    //     Authorization: "Basic " + btoa("nurse:Nurse123"),
+    //   }),
+    // };
+
+    this.Imgservice.fetchProfileImage(this.providerInfo.person.uuid).subscribe((response) => {
+      this.personImageURL = `${this.baseURL}/personimage/${this.providerInfo.person.uuid}`;
+    }, (err) => {
+      this.personImageURL = 'assets/dummy profile image.jpg';
+    });
+  }
+
+  get awaitngCount() {
+    return localStorage.getItem('awaitingVisitsCount') || 'loading';
   }
 
   onSelectFile(event) {
     if (event.target.files && event.target.files[0]) {
       var reader = new FileReader();
-    
+
       reader.readAsDataURL(event.target.files[0]); // read file as data url
-    
+
       reader.onload = (event) => { // called once readAsDataURL is completed
         this.url = event.target.result;
         let imageBolb = this.url.split(',');
@@ -123,15 +125,15 @@ export class MyAccountComponent implements OnInit {
           }),
         };
         const URL = this.baseURLProvider
-        let json ={
-            person: this.providerDetails.person.uuid,
-            base64EncodedImage: imageBolb[1]
+        let json = {
+          person: this.providerDetails.person.uuid,
+          base64EncodedImage: imageBolb[1]
         }
-        this.http.post(URL, json, header).subscribe((response) => {});
+        this.http.post(URL, json, header).subscribe((response) => { });
       }
     }
     window.location.reload();
-    }
+  }
   /** 
    * Open edit details modal
    */
@@ -153,6 +155,7 @@ export class MyAccountComponent implements OnInit {
     this.userDetails = getFromStorage("user");    
     this.service.getDoctorsVisit().subscribe((res)=>{
       const visits = res['rawData'];
+      console.log('visits: ', visits);
       const doctorFilter = visits.filter((v)=>
       v.Doctor_uuid === this.userDetails.uuid)
       const completedVisits = doctorFilter.filter(m=>m.Sign_Submit_time != null);
