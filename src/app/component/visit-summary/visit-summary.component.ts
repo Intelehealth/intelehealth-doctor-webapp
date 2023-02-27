@@ -98,69 +98,24 @@ export class VisitSummaryComponent implements OnInit {
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
+    const patientUuid = this.route.snapshot.paramMap.get("patient_id");
+    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
     if (!this.visitNotePresent) {
       const userDetails = getFromStorage("user");
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
       if (userDetails && providerDetails) {
-        this.doctorDetails = providerDetails;
-        this.getDoctorValue();
-        const providerUuid = providerDetails.uuid;
-        if (providerUuid === getEncounterProviderUUID()) {
-        const json = {
-          patient: this.patientUuid,
-          encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
-          encounterProviders: [
-            {
-              provider: providerUuid,
-              encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
-            },
-          ],
-          visit: this.visitUuid,
-          encounterDatetime: myDate,
-        };
-        this.service.postEncounter(json).subscribe((response) => {
-          if (response) {
-            this.visitNotePresent = true;
-            this.visitService
-              .fetchVisitDetails(this.visitUuid)
-              .subscribe((visitDetails) => {
-                saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
-              });
-            this.show = true;
-            this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
-            attributes.forEach((element) => {
-              if (
-                element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-                !element.voided
-              ) {
-                const payload = {
-                  speciality: element.value,
-                  patient: {
-                    name: response.patient.display,
-                    provider: response.encounterProviders[0].display,
-                  },
-                  skipFlag: true,
-                };
-                if (!this.pushNotificationService.snoozeTimeout) {
-                  this.pushNotificationService
-                    .postNotification(payload)
-                    .subscribe();
-                }
-              }
-            });
+        this.setSpiner = true;
+        this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+          let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
+          if (visitNote) {
+            this.diagnosisService.isSameDoctor();
+            this.setSpiner = false;
           } else {
-            this.snackbar.open(`Visit Note Not Created`, null, {
-              duration: 4000,
-            });
+            this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
+            this.setSpiner = false;
           }
         });
-        }else {
-          this.snackbar.open("Another doctor is viewing this case", null, {
-            duration: 4000,
-          });
-        }
       } else {
         this.authService.logout();
       }
@@ -322,5 +277,56 @@ export class VisitSummaryComponent implements OnInit {
         };
         this.service.postObs(json)
         .subscribe(() => { });
+  }
+
+  private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
+    const providerUuid = providerDetails.uuid;
+    const json = {
+      patient: patientUuid,
+      encounterType: "d7151f82-c1f3-4152-a605-2f9ea7414a79",
+      encounterProviders: [
+        {
+          provider: providerUuid,
+          encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
+        },
+      ],
+      visit: visitUuid,
+      encounterDatetime: myDate,
+    };
+    this.service.postEncounter(json).subscribe((response) => {
+      if (response) {
+        this.visitNotePresent = true;
+        this.visitService
+          .fetchVisitDetails(visitUuid)
+          .subscribe((visitDetails) => {
+            saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
+          });
+        this.show = true;
+        this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
+        attributes.forEach((element) => {
+          if (element.attributeType.uuid ===
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            !element.voided) {
+            const payload = {
+              speciality: element.value,
+              patient: {
+                name: response.patient.display,
+                provider: response.encounterProviders[0].display,
+              },
+              skipFlag: true,
+            };
+            if (!this.pushNotificationService.snoozeTimeout) {
+              this.pushNotificationService
+                .postNotification(payload)
+                .subscribe();
+            }
+          }
+        });
+      } else {
+        this.snackbar.open(`Visit Note Not Created`, null, {
+          duration: 4000,
+        });
+      }
+    });
   }
 }
