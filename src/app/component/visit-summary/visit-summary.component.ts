@@ -100,25 +100,23 @@ export class VisitSummaryComponent implements OnInit {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
     const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    if (!this.visitNotePresent) {
-      const userDetails = getFromStorage("user");
-      const providerDetails = getFromStorage("provider");
-      const attributes = providerDetails.attributes;
-      if (userDetails && providerDetails) {
-        this.setSpiner = true;
-        this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
-          let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
-          if (visitNote) {
-            this.diagnosisService.isSameDoctor();
-            this.setSpiner = false;
-          } else {
-            this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
-            this.setSpiner = false;
-          }
-        });
-      } else {
-        this.authService.logout();
-      }
+    const userDetails = getFromStorage("user");
+    const providerDetails = getFromStorage("provider");
+    const attributes = providerDetails.attributes;
+    if (userDetails && providerDetails) {
+      this.setSpiner = true;
+      this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+        let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
+        if (visitNote) {
+          this.setSpiner = false;
+          this.diagnosisService.isSameDoctor();
+        } else {
+          this.setSpiner = false;
+          this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
+        }
+      });
+    } else {
+      this.authService.logout();
     }
   }
 
