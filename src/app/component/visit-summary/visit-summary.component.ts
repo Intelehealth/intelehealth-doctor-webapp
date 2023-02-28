@@ -110,7 +110,9 @@ export class VisitSummaryComponent implements OnInit {
         let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
         if (visitNote) {
           this.setSpiner = false;
-          this.diagnosisService.isSameDoctor();
+          this.snackbar.open("Another doctor is viewing this case", null, {
+            duration: 4000,
+          });
         } else {
           this.setSpiner = false;
           this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
