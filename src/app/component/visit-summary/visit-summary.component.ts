@@ -38,6 +38,7 @@ export class VisitSummaryComponent implements OnInit {
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
   isManagerRole: boolean = false;
+  onSubmit = false;
 
   constructor(
     private service: EncounterService,
@@ -181,6 +182,7 @@ export class VisitSummaryComponent implements OnInit {
     } else {
       this.authService.logout();
     }
+    this.onSubmit = !this.onSubmit
   }
 
   getDoctorValue = () => {
