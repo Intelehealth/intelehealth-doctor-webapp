@@ -3,9 +3,12 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
 import { AppointmentDetailMonthComponent } from 'src/app/modal-components/appointment-detail-month/appointment-detail-month.component';
+import { AppointmentDetailComponent } from 'src/app/modal-components/appointment-detail/appointment-detail.component';
 import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/cancel-appointment-confirm/cancel-appointment-confirm.component';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
+import { ConfirmDayOffComponent } from 'src/app/modal-components/confirm-day-off/confirm-day-off.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
+import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
@@ -104,8 +107,13 @@ export class CoreService {
     return dialogRef.afterClosed();
   }
 
+  openAppointmentDetailDayViewModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(AppointmentDetailComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
   openAppointmentDetailMonthViewModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: "medium-modal", data } );
+    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: "modal-md", data } );
     return dialogRef.afterClosed();
   }
 
@@ -126,6 +134,16 @@ export class CoreService {
 
   openImagesPreviewModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ImagesPreviewComponent, { panelClass: ["modal-lg", "transparent"], data } );
+    return dialogRef.afterClosed();
+  }
+
+  openConfirmDayOffModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ConfirmDayOffComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openConfirmHoursOffModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ConfirmHoursOffComponent, { panelClass: "modal-md", data } );
     return dialogRef.afterClosed();
   }
 }

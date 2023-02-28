@@ -210,6 +210,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
 };
 import { BreadcrumbService } from "./services/breadcrumb.service";
 import { MomentModule } from 'ngx-moment';
+import { SharedModule } from "./shared.module";
 
 @NgModule({
   declarations: [
@@ -398,7 +399,8 @@ import { MomentModule } from 'ngx-moment';
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    })
+    }),
+    SharedModule
   ],
   providers: [
     PagerService,

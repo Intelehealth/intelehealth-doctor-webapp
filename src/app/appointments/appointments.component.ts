@@ -60,7 +60,7 @@ export class AppointmentsComponent implements OnInit {
         this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
-          appointmentsdata.forEach(appointment => {
+          appointmentsdata.forEach((appointment: any) => {
             if (appointment.status == 'booked') {
               let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
               if (matchedVisit) {

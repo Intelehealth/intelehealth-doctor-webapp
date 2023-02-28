@@ -30,6 +30,10 @@ import { AppointmentDetailMonthComponent } from './appointment-detail-month/appo
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ImagesPreviewComponent } from './images-preview/images-preview.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { SharedModule } from '../shared.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ConfirmDayOffComponent } from './confirm-day-off/confirm-day-off.component';
+import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.component';
 
 @NgModule({
     declarations: [
@@ -53,7 +57,9 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
         RescheduleAppointmentConfirmComponent,
         CancelAppointmentConfirmComponent,
         AppointmentDetailMonthComponent,
-        ImagesPreviewComponent
+        ImagesPreviewComponent,
+        ConfirmDayOffComponent,
+        ConfirmHoursOffComponent
     ],
     imports: [
         CommonModule,
@@ -66,7 +72,9 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
         MomentModule,
         MatListModule,
         MatDatepickerModule,
-        PdfViewerModule
+        PdfViewerModule,
+        SharedModule,
+        NgSelectModule
     ]
 })
 export class ModalComponentsModule { }

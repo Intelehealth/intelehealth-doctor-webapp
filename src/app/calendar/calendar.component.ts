@@ -2,6 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { setHours, setMinutes } from 'date-fns';
 import { PageTitleService } from '../core/page-title/page-title.service';
+import { AppointmentService } from '../services/appointment.service';
+import { VisitService } from '../services/visit.service';
+import * as moment from 'moment';
+import { environment } from 'src/environments/environment';
+import { CoreService } from '../services/core/core.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-calendar',
@@ -13,11 +21,175 @@ export class CalendarComponent implements OnInit {
   viewDate = new Date();
   view: CalendarView = CalendarView.Day;
   CalendarView = CalendarView;
-
-  constructor(private pageTitleService: PageTitleService) { }
+  events: CalendarEvent[] = [];
+  baseUrl: string = environment.baseURL;
+  base: string = environment.base;
+  provider: any;
+  user: any;
+  fetchedYears: number[] = [];
+  fetchedMonths: string[] = [];
+  daysOff: any[] = [];
+  monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  constructor(
+    private pageTitleService: PageTitleService,
+    private appointmentService: AppointmentService,
+    private visitService: VisitService,
+    private coreService: CoreService,
+    private router: Router,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Calendar", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
+    this.user = JSON.parse(localStorage.getItem('user'));
+    this.provider = JSON.parse(localStorage.getItem('provider'));
+    this.fetchedYears.push(new Date().getFullYear());
+    this.fetchedMonths.push(`${moment(new Date()).format("MMMM")} ${moment(new Date()).format("YYYY")}`);
+    this.getFollowUpVisit();
+    this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'));
+    this.getSchedule();
+  }
+
+  dateChanged(viewDate: Date) {
+    if (this.fetchedYears.indexOf(viewDate.getFullYear()) == -1) {
+      this.fetchedYears.push(viewDate.getFullYear());
+      this.getAppointments(moment(viewDate).startOf('year').format('DD/MM/YYYY'), moment(viewDate).endOf('year').format('DD/MM/YYYY'));
+    }
+    if (this.fetchedMonths.indexOf(`${moment(viewDate).format("MMMM")} ${moment(viewDate).format("YYYY")}`) == -1) {
+      this.fetchedMonths.push(`${moment(viewDate).format("MMMM")} ${moment(viewDate).format("YYYY")}`);
+      this.getSchedule(moment(viewDate).format("YYYY"), moment(viewDate).format("MMMM"));
+    }
+  }
+
+  getAppointments(from: any, to: any) {
+    this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, from, to)
+      .subscribe((res: any) => {
+        let appointmentsdata = res.data;
+        appointmentsdata.forEach((appointment: any) => {
+          if (!_.find(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } })) {
+            this.events.push({
+              id: appointment.visitUuid,
+              title: 'Appointment',
+              start: moment(appointment.slotJsDate).toDate(),
+              end: moment(appointment.slotJsDate).add(appointment.slotDuration, appointment.slotDurationUnit).toDate(),
+              meta: appointment
+            });
+          }
+        });
+    });
+  }
+
+  getSchedule(year = moment(new Date()).format("YYYY"), month = moment(new Date()).format("MMMM")) {
+    this.appointmentService.getUserAppoitment(this.userId, year, month)
+      .subscribe({
+        next: (res: any) => {
+          if (res && res.data) {
+            this.daysOff.push({
+              month: res.data.month,
+              year: res.data.year,
+              daysOff: (res.data.daysOff) ? res.data.daysOff : []
+            });
+          }
+        },
+      });
+  }
+
+  getFollowUpVisit() {
+    this.appointmentService.getFollowUpVisit(this.providerId).subscribe({
+      next: (res: any) => {
+        if(res) {
+          let followUpVisits = res;
+          followUpVisits.forEach((folloUp: any) => {
+            this.visitService.fetchVisitDetails(folloUp.visit_id).subscribe((visit)=> {
+              let followUpDate = (folloUp.followup_text.includes('Time:')) ? moment(folloUp.followup_text.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(folloUp.followup_text.split(', Remark: ')[0]).format('YYYY-MM-DD');
+              let followUpTime = (folloUp.followup_text.includes('Time:')) ? folloUp.followup_text.split(', Time: ')[1].split(', Remark: ')[0] : null;
+              let start = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').toDate() : setHours(setMinutes(new Date(followUpDate), 0), 9);
+              let end = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').add(30, 'minutes').toDate() : setHours(setMinutes(new Date(followUpDate), 30), 9);
+              if (moment(start).isValid() && moment(end).isValid()) {
+                let hw = this.getHW(visit.encounters);
+                this.events.push({
+                  id: visit.uuid,
+                  title: 'Follow-up visit',
+                  start,
+                  end,
+                  meta: {
+                    createdAt: this.getCreatedAtTime(visit.encounters),
+                    // createdBy: "612322d6-8b80-4027-af3a-c2805bd32007",
+                    drName: this.provider?.person.display,
+                    hwAge: hw.hwAge,
+                    hwGender: hw.hwGender,
+                    hwName: hw.hwName,
+                    hwPic: null,
+                    hwUUID: hw.hwProviderUuid,
+                    // id: 3,
+                    // locationUuid: "eb374eaf-430e-465e-81df-fe94c2c515be",
+                    openMrsId: visit.patient.identifiers[0].identifier,
+                    patientAge: visit.patient.person.age,
+                    patientGender: visit.patient.person.gender,
+                    patientId: visit.patient.uuid,
+                    patientName: visit.patient.person.display,
+                    patientPic: null,
+                    // reason: null,
+                    slotDate: moment(followUpDate).format('DD/MM/YYYY'),
+                    slotDay: moment(followUpDate).format('dddd'),
+                    slotDuration: 30,
+                    slotDurationUnit: "minutes",
+                    slotJsDate: moment(start).utc().format(),
+                    slotTime: (followUpTime)?followUpTime:"9:00 AM",
+                    // speciality: "General Physician",
+                    // status: "booked",
+                    type: "follow-up visit",
+                    // updatedAt: "2023-02-13T11:49:25.000Z",
+                    // updatedBy: null,
+                    userUuid: this.user.uuid,
+                    visitUuid: visit.uuid,
+                    visit_info: visit
+                  }
+                });
+              }
+            })
+          });
+        }
+      },
+    });
+  }
+
+  getCreatedAtTime(encounters: any) {
+    let encounterDateTime = '';
+    encounters.forEach((encounter: any) => {
+      const display = encounter.display;
+      if (display.match('Visit Note') !== null) {
+        encounterDateTime = encounter.encounterDatetime;
+      }
+    });
+    return encounterDateTime;
+  }
+
+  getHW(encounters: any) {
+    let obj: any = {
+      hwName: null,
+      hwAge: null,
+      hwGender: null,
+      hwProviderUuid: null
+    };
+    encounters.forEach((encounter: any) => {
+      const display = encounter.display;
+      if (display.match('ADULTINITIAL') !== null) {
+        obj.hwName = encounter.encounterProviders[0].provider.person.display;
+        obj.hwAge = encounter.encounterProviders[0].provider.person.age;
+        obj.hwGender = encounter.encounterProviders[0].provider.person.gender;
+        obj.hwProviderUuid = encounter.encounterProviders[0].provider.uuid;
+      }
+    });
+    return obj;
+  }
+
+  get providerId() {
+    return JSON.parse(localStorage.provider).uuid;
+  }
+
+  private get userId() {
+    return JSON.parse(localStorage.user).uuid;
   }
 
   onTabChanged(event: number) {
@@ -38,29 +210,183 @@ export class CalendarComponent implements OnInit {
     this.view = view;
   }
 
-  events: CalendarEvent[] = [
-    {
-      start: setHours(setMinutes(new Date(), 0), 9),
-      end: setHours(setMinutes(new Date(), 30), 9),
-      title: 'An event',
-    },
-    {
-      start: setHours(setMinutes(new Date(), 0), 12),
-      end: setHours(setMinutes(new Date(), 30), 12),
-      title: 'An event',
-    }
-  ];
-
   getCount(type: string, events: any) {
-    return 1;
+    let count = 0;
+    events.forEach((e: any) => {
+      if (e.title == type) {
+        count++;
+      }
+    });
+    return count;
   }
 
-  dayClickedMonthView(day: any) {
-    console.log(day);
+  hourSegmentClicked(hourSegment: any) {
+    console.log(hourSegment);
   }
 
-  handleEvent(action: any, event: any) {
-    console.log(action, event);
+  dayClicked(view: any, day: any) {
+    // console.log(day);
+    if (view == 'monthView') {
+      this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
+        if (res) {
+          switch (res.markAs) {
+            case 'dayOff':
+              this.coreService.openConfirmDayOffModal(day.date).subscribe((result: any) => {
+                if (result) {
+                  let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                  if (oldDaysOff) {
+                    if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
+                      this.toastr.warning("This day is already marked as Day Off", "Already DayOff");
+                      return;
+                    }
+                  }
+                  let body = {
+                    userUuid: this.userId,
+                    daysOff: (oldDaysOff)? oldDaysOff.daysOff.concat([moment(day.date).format('DD/MM/YYYY')]) : [moment(day.date).format('DD/MM/YYYY')],
+                    month: this.monthNames[day.date.getMonth()],
+                    year: day.date.getFullYear().toString()
+                  };
+                  this.appointmentService.updateDaysOff(body).subscribe({
+                    next: (res: any) => {
+                      if (res.status) {
+                        let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                        if (index != -1) {
+                          this.daysOff[index].daysOff = this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY'));
+                        } else {
+                          this.daysOff.push({
+                            month: res.data.month,
+                            year: res.data.year,
+                            daysOff: [moment(day.date).format('DD/MM/YYYY')]
+                          });
+                        }
+                        day.events.forEach((event: any) => {
+                          if (event.title == 'Appointment') {
+                            this.cancel(event.meta, false);
+                          }
+                        });
+                      }
+                    },
+                  });
+                }
+              });
+              break;
+            case 'hoursOff':
+              this.coreService.openConfirmHoursOffModal({ day: day.date, detail: res}).subscribe((result: any) => {
+                if (result) {
+                  day.events.forEach((event: any) => {
+                    if (event.title == 'Appointment') {
+                      if (moment(event.meta.slotTime,'LT').isBetween(moment(res.from, 'LT'), moment(res.to, 'LT'))) {
+                        this.cancel(event.meta, false);
+                      }
+                    }
+                  });
+                }
+              });
+              break;
+          }
+        }
+      });
+    }
+  }
+
+  handleEvent(view: any, event: any) {
+    // console.log(view, event);
+    if (view == 'dayView' || view == 'weekView') {
+      // if (event.title == 'Appointment') {
+        this.coreService.openAppointmentDetailDayViewModal(event).subscribe((res: any) => {
+          if (res) {
+            switch (res) {
+              case 'view':
+                this.router.navigate(['/dashboard/visit-summary', event.id]);
+                break;
+              case 'reschedule':
+                this.reschedule(event.meta);
+                break;
+              case 'cancel':
+                this.cancel(event.meta);
+                break;
+            }
+          }
+        });
+      // }
+    }
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
+  }
+
+  cancel(appointment: any, withConfirmation: boolean = true) {
+    if (withConfirmation) {
+      this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
+        if (res) {
+          this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+          this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        }
+      });
+    } else {
+      const payload = {
+        id: appointment.id,
+        visitUuid: appointment.visitUuid,
+        hwUUID: this.userId,
+      };
+      this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
+          if(res) {
+            if (res.status) {
+              this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+            }
+          }
+      });
+    }
+  }
+
+  reschedule(appointment: any) {
+    const len = appointment.visit_info.encounters.filter((e: any) => {
+      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    }).length;
+    const isCompleted = Boolean(len);
+    if (isCompleted) {
+      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+    } else {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
+        if (res) {
+          let newSlot = res;
+          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: any) => {
+            if (result) {
+              appointment.appointmentId = appointment.id;
+              appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
+              appointment.slotTime = newSlot.slot;
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
+                const message = res.message;
+                if (res.status) {
+                  this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+                  this.events.push({
+                    id: appointment.visitUuid,
+                    title: 'Appointment',
+                    start: moment(res.data.slotJsDate).toDate(),
+                    end: moment(res.data.slotJsDate).add(res.data.slotDuration, res.data.slotDurationUnit).toDate(),
+                    meta: res.data
+                  });
+                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
+                } else {
+                  this.toastr.success(message, 'Rescheduling failed!');
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  checkIfDayOff(date: Date) {
+    let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
+    if (oldDaysOff) {
+      if (oldDaysOff.daysOff.indexOf(moment(date).format('DD/MM/YYYY')) != -1) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

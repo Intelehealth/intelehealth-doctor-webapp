@@ -28,10 +28,10 @@
               <div class="header-date-con">
                 <img class="mr-2" src="assets/svgs/calendar-white.svg" alt="">
                 <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h6>
-                <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
+                <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)">
                   <img src="assets/svgs/chevron-left.svg" alt="" width="100%">
                 </button>
-                <button class="arrow-btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
+                <button class="arrow-btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)">
                   <img src="assets/svgs/chevron-right.svg" alt="" width="100%">
                 </button>
               </div>
@@ -54,13 +54,15 @@
             [hourSegmentTemplate]="hourSegmentTemplate"
             [events]="events"
             [eventTemplate]="eventTemplate"
-            (eventClicked)="handleEvent('Clicked', $event.event)">
+            (eventClicked)="handleEvent('dayView', $event.event)"
+            (hourSegmentClicked)="hourSegmentClicked($event)">
           </mwl-calendar-day-view>
 
           <mwl-calendar-week-view
             class="week-view-con"
             *ngSwitchCase="CalendarView.Week"
             [viewDate]="viewDate"
+            [weekStartsOn]="1"
             [events]="events"
             [hourDuration]="30"
             [dayStartHour]="9"
@@ -73,17 +75,20 @@
             [hourSegmentTemplate]="hourSegmentTemplate"
             [currentTimeMarkerTemplate]="currentTimeMarkerTemplate2"
             [eventTemplate]="eventTemplate2"
-            (eventClicked)="handleEvent('Clicked', $event.event)">
+            (eventClicked)="handleEvent('weekView', $event.event)"
+            (hourSegmentClicked)="hourSegmentClicked($event)"
+            (dayHeaderClicked)="dayClicked('weekView', $event.day)">
           </mwl-calendar-week-view>
 
           <mwl-calendar-month-view
             *ngSwitchCase="CalendarView.Month"
             [viewDate]="viewDate"
+            [weekStartsOn]="1"
             [events]="events"
             [headerTemplate]="monthHeaderTemplate"
             [cellTemplate]="cellTemplate"
-            (dayClicked)="dayClickedMonthView($event.day)"
-            (eventClicked)="handleEvent('Clicked', $event.event)">
+            (dayClicked)="dayClicked('monthView', $event.day)"
+            (eventClicked)="handleEvent('monthView', $event.event)">
           </mwl-calendar-month-view>
         </div>
 
@@ -93,7 +98,7 @@
           let-segmentHeight="segmentHeight"
           let-isTimeLabel="isTimeLabel"
           let-daysInWeek="daysInWeek">
-          <div [attr.aria-hidden]="{}|calendarA11y: (daysInWeek === 1? 'hideDayHourSegment':'hideWeekHourSegment')" class="cal-hour-segment-con" [style.height.px]="segmentHeight" [class.cal-hour-start]="segment.isStart" [class.cal-after-hour-start]="!segment.isStart" [ngClass]="segment.cssClass">
+          <div [attr.aria-hidden]="{}|calendarA11y: (daysInWeek === 1? 'hideDayHourSegment':'hideWeekHourSegment')" class="cal-hour-segment-con" [style.height.px]="segmentHeight" [class.cal-hour-start]="segment.isStart" [class.cal-after-hour-start]="!segment.isStart" [ngClass]="segment.cssClass" [class.dayOff]="checkIfDayOff(segment.date)">
             <div class="cal-time-con" *ngIf="isTimeLabel">
               <span>{{ segment.displayDate|date:'hh:mm a' }}</span>
               <div class="marker"></div>
@@ -127,27 +132,48 @@
           </div>
         </ng-template>
 
-        <ng-template #eventTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement" let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled" let-tooltipDelay="tooltipDelay" let-column="column" let-daysInWeek="daysInWeek">
-          <div class="cal-event-con">
+        <ng-template #eventTemplate
+          let-weekEvent="weekEvent"
+          let-tooltipPlacement="tooltipPlacement"
+          let-eventClicked="eventClicked"
+          let-tooltipTemplate="tooltipTemplate"
+          let-tooltipAppendToBody="tooltipAppendToBody"
+          let-tooltipDisabled="tooltipDisabled"
+          let-tooltipDelay="tooltipDelay"
+          let-column="column"
+          let-daysInWeek="daysInWeek">
+          <div class="cal-event-con"
+            [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
+            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [tooltipPlacement]="tooltipPlacement"
+            [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
+            [tooltipTemplate]="tooltipTemplate"
+            [tooltipAppendToBody]="tooltipAppendToBody"
+            [tooltipDelay]="tooltipDelay"
+            (mwlClick)="eventClicked.emit({ sourceEvent: $event })"
+            (mwlKeydownEnter)="eventClicked.emit({ sourceEvent: $event })"
+            tabindex="0"
+            role="application"
+            [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
             <div class="event-con">
               <div class="con-item">
                 <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
                 <div class="con-info">
-                  <h6 class="mb-0">Appointment</h6>
-                  <p class="mb-0">9:00 am - 9:30 am</p>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
+                  <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
                 </div>
               </div>
               <div class="con-item">
-                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">Anurag Sangale (M, 32)</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                   <p class="mb-0">Patient</p>
                 </div>
               </div>
               <div class="con-item">
-                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">Anurag Sangale</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
                   <p class="mb-0">Health Worker</p>
                 </div>
               </div>
@@ -155,15 +181,37 @@
           </div>
         </ng-template>
 
-        <ng-template #eventTemplate2 let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement" let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled" let-tooltipDelay="tooltipDelay" let-column="column" let-daysInWeek="daysInWeek">
-          <div class="cal-event-con-2">
+        <ng-template #eventTemplate2
+          let-weekEvent="weekEvent"
+          let-tooltipPlacement="tooltipPlacement"
+          let-eventClicked="eventClicked"
+          let-tooltipTemplate="tooltipTemplate"
+          let-tooltipAppendToBody="tooltipAppendToBody"
+          let-tooltipDisabled="tooltipDisabled"
+          let-tooltipDelay="tooltipDelay"
+          let-column="column"
+          let-daysInWeek="daysInWeek">
+          <div class="cal-event-con-2"
+            [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
+            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [tooltipPlacement]="tooltipPlacement"
+            [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
+            [tooltipTemplate]="tooltipTemplate"
+            [tooltipAppendToBody]="tooltipAppendToBody"
+            [tooltipDelay]="tooltipDelay"
+            (mwlClick)="eventClicked.emit({ sourceEvent: $event })"
+            (mwlKeydownEnter)="eventClicked.emit({ sourceEvent: $event })"
+            tabindex="0"
+            role="application"
+            [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
             <div class="event-con">
-              <h6 class="mb-0">Appointment</h6>
-              <p class="mb-0">9:00 am - 9:30 am</p>
+              <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
+              <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
               <div class="con-item">
-                <img class="mr-2" src="assets/svgs/user.svg" alt="">
+                <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">Anurag Sangale (M, 32)</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}}</h6>
+                  <h6 class="mb-0">({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                 </div>
               </div>
             </div>
@@ -229,35 +277,45 @@
           let-tooltipDelay="tooltipDelay"
           let-trackByEventId="trackByEventId"
           let-validateDrag="validateDrag">
-          <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'">
+          <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'" [class.dayOff]="checkIfDayOff(day.date)">
             <span aria-hidden="true">
               <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
               <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
             </span>
+            <div class="day-off-con">
+              Day Off
+            </div>
           </div>
-          <div class="cal-events" *ngIf="day.events.length > 0">
-            <!-- <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span>s</span></div>
-            <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span>s</span></div> -->
-            <div class="cal-event" *ngFor="let event of day.events; trackBy: trackByEventId;"
-              [ngStyle]="{ backgroundColor: event.color?.primary }"
-              [ngClass]="event?.cssClass"
-              (mouseenter)="highlightDay.emit({ event: event })"
-              (mouseleave)="unhighlightDay.emit({ event: event })"
-              [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
-              [tooltipPlacement]="tooltipPlacement"
-              [tooltipEvent]="event"
-              [tooltipTemplate]="tooltipTemplate"
-              [tooltipAppendToBody]="tooltipAppendToBody"
-              [tooltipDelay]="tooltipDelay"
-              mwlDraggable
-              [class.cal-draggable]="event.draggable"
-              dragActiveClass="cal-drag-active"
-              [dropData]="{ event: event, draggedFrom: day }"
-              [dragAxis]="{ x: event.draggable, y: event.draggable }"
-              [validateDrag]="validateDrag"
-              [touchStartLongPress]="{ delay: 300, delta: 30 }"
-              (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
-              [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
+          <div class="cal-events-con" *ngIf="day.events.length > 0">
+            <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span *ngIf="getCount('Appointment', day.events) > 1">s</span></div>
+            <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span *ngIf="getCount('Follow-up visit', day.events) > 1">s</span></div>
+            <ng-container *ngFor="let event of day.events; trackBy: trackByEventId;let i=index;">
+              <div class="cal-event-con2" *ngIf="i < 2"
+                [ngStyle]="{ backgroundColor: event.color?.primary }"
+                [ngClass]="event?.cssClass"
+                (mouseenter)="highlightDay.emit({ event: event })"
+                (mouseleave)="unhighlightDay.emit({ event: event })"
+                [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+                [tooltipPlacement]="tooltipPlacement"
+                [tooltipEvent]="event"
+                [tooltipTemplate]="tooltipTemplate"
+                [tooltipAppendToBody]="tooltipAppendToBody"
+                [tooltipDelay]="tooltipDelay"
+                mwlDraggable
+                [class.cal-draggable]="event.draggable"
+                dragActiveClass="cal-drag-active"
+                [dropData]="{ event: event, draggedFrom: day }"
+                [dragAxis]="{ x: event.draggable, y: event.draggable }"
+                [validateDrag]="validateDrag"
+                [touchStartLongPress]="{ delay: 300, delta: 30 }"
+                (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
+                [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
+                {{event.start|date:'h:mm a'|lowercase}} - {{event.end|date:'h:mm a'|lowercase}}
+              </div>
+            </ng-container>
+
+            <div class="cal-event-con2" *ngIf="day.events.length > 2">
+              {{day.events.length -2}} more...
             </div>
           </div>
         </ng-template>

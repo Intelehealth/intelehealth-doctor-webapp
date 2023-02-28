@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule as MwlCalenderModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MatTabsModule } from '@angular/material/tabs';
-
+import { SharedModule } from '../shared.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,8 @@ import { MatTabsModule } from '@angular/material/tabs';
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    MatTabsModule
+    MatTabsModule,
+    SharedModule
   ]
 })
 export class CalendarModule { }
