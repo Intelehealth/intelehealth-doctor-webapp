@@ -3,3 +3,8 @@
   <button class="help-btn" type="button" (click)="openHelpMenu()">Help</button>
 </div>
 <ngx-ui-loader></ngx-ui-loader>
+
+<app-common-modal
+  #confirmLogout
+  [modal]="confirmLogoutModal"
+></app-common-modal>

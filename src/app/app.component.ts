@@ -1,17 +1,9 @@
-import { SessionService } from './services/session.service';
-import { VisitService } from './services/visit.service';
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
-import { UserIdleService } from 'angular-user-idle';
-import * as introJs from 'intro.js/intro.js';
-import { Router } from '@angular/router';
-import { PushNotificationsService } from './services/push-notification.service';
-import { GlobalConstants } from './js/global-constants';
-import { SwPush, SwUpdate } from '@angular/service-worker';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HelpMenuComponent } from './modal-components/help-menu/help-menu.component';
+import { CommonModalComponent } from './modals/common-modal/common-modal.component';
+import { AuthService } from './services/auth.service';
 import { CoreService } from './services/core/core.service';
-declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
 
 @Component({
   selector: 'app-root',
@@ -19,14 +11,29 @@ declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveTo
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  @ViewChild("confirmLogout") confirmLogout: CommonModalComponent;
 
   dialogRef: MatDialogRef<HelpMenuComponent>;
 
-  constructor(private cs: CoreService) {
+  confirmLogoutModal: any = {
+    mainText: "Logout",
+    subText: "Are you sure you want to logout?",
+    leftBtnText: "No",
+    leftBtnOnClick: () => { },
+    rightBtnText: "Yes",
+    rightBtnOnClick: () => {
+      this.authSvc.confirmLogout();
+    },
+    windowClass: 'logout-confirm',
+    circleIconPath: "assets/svgs/warning-circle.svg",
+  };
 
-  }
+  constructor(private cs: CoreService, private authSvc: AuthService) { }
 
-  ngOnInit () {
+  ngOnInit() { }
+
+  ngAfterViewInit() {
+    this.authSvc.confirmLogoutModal = this.confirmLogout;
   }
 
   openHelpMenu() {

@@ -8,7 +8,7 @@ import { map } from "rxjs/operators";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
-declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
+declare var deleteFromStorage: any;
 
 @Injectable({
   providedIn: "root",
@@ -16,10 +16,10 @@ declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 export class AuthService {
 
   private baseUrl = environment.baseURL;
-  private base = environment.base;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
   private base64Cred: string;
+  public confirmLogoutModal: any = null;
 
   constructor(
     private myRoute: Router,
@@ -97,7 +97,7 @@ export class AuthService {
     // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-    this.http.delete(`${this.baseUrl}/session`).subscribe((res) => {});
+    this.http.delete(`${this.baseUrl}/session`).subscribe((res) => { });
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
     return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
@@ -122,11 +122,15 @@ export class AuthService {
   }
 
   logOut() {
+    this.confirmLogoutModal.openModal();
+  }
+
+  confirmLogout() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) =>{
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
@@ -153,17 +157,17 @@ export class AuthService {
   }
 
   extractPermissions(perm: any[]) {
-    let extractedPermissions = perm.map((val)=>{
+    let extractedPermissions = perm.map((val) => {
       return val.name;
     });
     return extractedPermissions;
   }
 
   extractRolesAndPermissions(perm: any[], roles: any[]) {
-    let extractedPermissions = perm.map((val)=>{
+    let extractedPermissions = perm.map((val) => {
       return val.name;
     });
-    let extractedRoles = roles.map((val)=>{
+    let extractedRoles = roles.map((val) => {
       return val.name.toUpperCase();
     });
     let rolesObj = {};
