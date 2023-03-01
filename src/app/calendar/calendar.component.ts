@@ -40,7 +40,7 @@ export class CalendarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: "Calendar", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
+    this.pageTitleService.setTitle({ title: "", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));
     this.fetchedYears.push(new Date().getFullYear());
@@ -227,19 +227,19 @@ export class CalendarComponent implements OnInit {
   dayClicked(view: any, day: any) {
     // console.log(day);
     if (view == 'monthView') {
+      let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+      if (oldDaysOff) {
+        if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
+          this.toastr.warning("This day is already marked as Day Off", "Already DayOff");
+          return;
+        }
+      }
       this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
         if (res) {
           switch (res.markAs) {
             case 'dayOff':
               this.coreService.openConfirmDayOffModal(day.date).subscribe((result: any) => {
                 if (result) {
-                  let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
-                  if (oldDaysOff) {
-                    if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
-                      this.toastr.warning("This day is already marked as Day Off", "Already DayOff");
-                      return;
-                    }
-                  }
                   let body = {
                     userUuid: this.userId,
                     daysOff: (oldDaysOff)? oldDaysOff.daysOff.concat([moment(day.date).format('DD/MM/YYYY')]) : [moment(day.date).format('DD/MM/YYYY')],

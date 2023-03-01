@@ -150,7 +150,7 @@ export class SetupCalendarComponent implements OnInit {
   get fs() { return this.addSlotsForm.get('slotSchedule') as FormArray; }
 
   ngOnInit(): void {
-    this.pageTitleService.setTitle({ title: 'Calendar', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
+    this.pageTitleService.setTitle({ title: '', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
     this.getScheduledMonths();
   }
 

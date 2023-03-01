@@ -462,6 +462,12 @@ body.font-lato td {
   }
 }
 
+.modal-md.dayView-con {
+  .mat-dialog-container {
+    overflow: visible;
+  }
+}
+
 .modal-md {
   width: 490px;
   max-width: 90% !important;

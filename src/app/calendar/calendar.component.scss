@@ -293,7 +293,11 @@
     color: #FFFFFF !important;
   }
 
-  .cal-header-con.cal-weekend {
+  // .cal-header-con.cal-weekend {
+  //   background: #F5F5F7;
+  // }
+
+  .cal-header-con.dayOff {
     background: #F5F5F7;
   }
 }
@@ -382,7 +386,11 @@
     flex: 1;
   }
 
-  .cal-cell-con.cal-weekend {
+  // .cal-cell-con.cal-weekend {
+  //   background: #F5F5F7;
+  // }
+
+  .cal-cell-con.dayOff {
     background: #F5F5F7;
   }
 }
@@ -432,12 +440,16 @@
   }
 }
 
-.cal-cell-top-con.dayOff {
+.dayOff .cal-cell-top-con {
   background: #F0EFF7;
   .day-off-con {
     display: block;
   }
 }
+
+// .dayOff .cal-events-con {
+//   display: none;
+// }
 
 .day-off-con {
   position: absolute;
@@ -514,9 +526,9 @@
   background: #FAF9FF;
 }
 
-::ng-deep .cal-month-view .cal-day-cell.cal-weekend {
-  background: #F0EFF7;
-}
+// ::ng-deep .cal-month-view .cal-day-cell.cal-weekend {
+//   background: #F0EFF7;
+// }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-weekend .cal-day-number-con {
   background: #F3F2F7;
