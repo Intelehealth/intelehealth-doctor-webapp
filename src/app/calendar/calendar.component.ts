@@ -100,7 +100,6 @@ export class CalendarComponent implements OnInit {
               slotDays: ""
             });
           }
-          console.log(this.daysOff);
         },
       });
   }

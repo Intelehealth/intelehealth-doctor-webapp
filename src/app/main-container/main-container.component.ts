@@ -121,7 +121,11 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
   }
 
   logout() {
-    this.authService.logOut();
+    this.coreService.openConfirmationDialog({ confirmationMsg: "Are you sure you want to logout?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(res => {
+      if (res) {
+        this.authService.logOut();
+      }
+    });
   }
 
   search() {

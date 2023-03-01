@@ -19,7 +19,6 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
   private base64Cred: string;
-  public confirmLogoutModal: any = null;
 
   constructor(
     private myRoute: Router,
@@ -122,10 +121,6 @@ export class AuthService {
   }
 
   logOut() {
-    this.confirmLogoutModal.openModal();
-  }
-
-  confirmLogout() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
