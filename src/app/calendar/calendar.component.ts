@@ -84,12 +84,23 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res && res.data) {
+            this.daysOff.push(res.data);
+          } else {
             this.daysOff.push({
-              month: res.data.month,
-              year: res.data.year,
-              daysOff: (res.data.daysOff) ? res.data.daysOff : []
+              type: "month",
+              month: month,
+              year: year,
+              daysOff: [],
+              slotSchedule: [],
+              startDate: moment(`${month} ${year}`, "MMMM yyyy").startOf('month').add(1, 'day').toISOString(),
+              endDate: moment(`${month} ${year}`, "MMMM yyyy").endOf('month').toISOString(),
+              drName: this.drName,
+              userUuid: this.userId,
+              speciality: this.getSpeciality(),
+              slotDays: ""
             });
           }
+          console.log(this.daysOff);
         },
       });
   }
@@ -192,6 +203,19 @@ export class CalendarComponent implements OnInit {
     return JSON.parse(localStorage.user).uuid;
   }
 
+  private get drName() {
+    return (
+      JSON.parse(localStorage.user)?.person?.display ||
+      JSON.parse(localStorage.user)?.display
+    );
+  }
+
+  private getSpeciality() {
+    return JSON.parse(localStorage.provider).attributes.find((a: any) =>
+      a.display.includes("specialization")
+    ).value;
+  }
+
   onTabChanged(event: number) {
     switch (event) {
       case 0:
@@ -251,19 +275,41 @@ export class CalendarComponent implements OnInit {
                       if (res.status) {
                         let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
                         if (index != -1) {
-                          this.daysOff[index].daysOff = this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY'));
-                        } else {
-                          this.daysOff.push({
-                            month: res.data.month,
-                            year: res.data.year,
-                            daysOff: [moment(day.date).format('DD/MM/YYYY')]
-                          });
+                          this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
                         }
+                        // else {
+                        //   this.daysOff.push({
+                        //     type: "month",
+                        //     month: res.data.month,
+                        //     year: res.data.year,
+                        //     slotSchedule: [],
+                        //     startDate: moment(day.date).startOf('month').toISOString(),
+                        //     endDate: moment(day.date).endOf('month').toISOString(),
+                        //     drName: this.drName,
+                        //     userUuid: this.userId,
+                        //     speciality: this.getSpeciality(),
+                        //     daysOff: [moment(day.date).format('DD/MM/YYYY')],
+                        //     slotDays: ""
+                        //   });
+                        // }
                         day.events.forEach((event: any) => {
                           if (event.title == 'Appointment') {
                             this.cancel(event.meta, false);
                           }
                         });
+
+                        // Update schedule as per new dayOff
+                        let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                        if (schedule.slotSchedule.length) {
+                          schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
+                          this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
+                            next: (res: any) => {
+                              if (res.status) {
+                                this.daysOff[index] = schedule;
+                              }
+                            },
+                          });
+                        }
                       }
                     },
                   });
@@ -356,6 +402,7 @@ export class CalendarComponent implements OnInit {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
+              delete appointment["visit_info"];
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
