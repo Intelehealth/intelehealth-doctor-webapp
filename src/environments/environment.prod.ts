@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  base:`${window.location.protocol}//${window.location.host}/`,
   baseURL: `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,
   baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,

@@ -24,6 +24,9 @@ export class PatientinfoComponent implements OnInit {
   age: any = {};
   now: any;
   a: any;
+  images: any = [];
+  selectedIndex: number = 0;
+  selectedImageName: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,6 +55,11 @@ export class PatientinfoComponent implements OnInit {
       });
       this.patientInfo.push(this.info);
     });
+
+    this.service.getAdditionalImage(uuid)
+    .subscribe(response => {
+        this.images = response.personimages;
+    });
   }
 
   getAge(dateString) {
@@ -76,4 +84,20 @@ export class PatientinfoComponent implements OnInit {
       " days";
     return ageString;
   }
+
+  setIndex(index,flag?) {
+    if(flag) {
+      this.selectedIndex = index;
+    }else{
+      this.selectedIndex =  this.selectedIndex + index;
+    }
+    this.getImage();
+  }
+
+  getImage() {
+    let str = this.images.filter((f,i) => i === this.selectedIndex)[0];
+    this.selectedImageName = str?.substring(str?.indexOf("pi/")+4);
+    return str;
+  }
+
 }

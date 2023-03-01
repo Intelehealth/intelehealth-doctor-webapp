@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  base: "https://development.mysmartcaredoc.com/",
   baseURL: "https://development.mysmartcaredoc.com/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://development.mysmartcaredoc.com/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://development.mysmartcaredoc.com/openmrs",

@@ -32,7 +32,7 @@ export class TablesComponent implements OnInit {
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   @Input() data;
   @Input() tableFor;
   @Input() visitCounts;

@@ -16,4 +16,9 @@ export class ImagesService {
     const url = `${this.baseURL}/personimage/${uuid}`;
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  getAdditionalImage(uuid) : Observable<any> {
+    const url = `${environment.base}/personimages/${uuid}`;
+    return this.http.get(url);
+  }
 }
