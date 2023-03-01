@@ -113,7 +113,7 @@ export class CoreService {
   }
 
   openAppointmentDetailMonthViewModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: ["modal-md","dayView-con"], data } );
     return dialogRef.afterClosed();
   }
 

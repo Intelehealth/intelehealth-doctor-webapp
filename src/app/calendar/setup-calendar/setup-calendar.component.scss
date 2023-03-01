@@ -363,3 +363,11 @@
   pointer-events: none;
   color: gray;
 }
+
+@media (max-width: 768px) {
+  .setup-title-con {
+    .view-btn {
+      width: 100%;
+    }
+  }
+}

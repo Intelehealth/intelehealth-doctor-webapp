@@ -11,11 +11,17 @@ const routes: Routes = [
   },
   {
     path: 'view-calendar',
-    component: CalendarComponent
+    component: CalendarComponent,
+    data: {
+      breadcrumb: 'View Calendar'
+    }
   },
   {
     path: 'setup-calendar',
-    component: SetupCalendarComponent
+    component: SetupCalendarComponent,
+    data: {
+      breadcrumb: 'Setup Calendar'
+    }
   }
 ];
 

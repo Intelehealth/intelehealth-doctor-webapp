@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row setup-title-con">
-    <div class="col-md-8 p-0 pb-2">
+    <div class="col p-0 pb-2">
       <div class="title-con d-flex align-items-center">
         <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
         <div class="d-flex flex-column">
@@ -8,7 +8,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4 p-0 pb-2">
+    <div class="col p-0 pb-2">
       <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">Manage calendar</button>
     </div>
   </div>
@@ -232,6 +232,7 @@
               [class.cal-today]="day.isToday"
               [class.cal-future]="day.isFuture"
               [class.cal-weekend]="day.isWeekend"
+              [class.dayOff]="checkIfDayOff(day.date)"
               [ngClass]="day.cssClass"
               (mwlClick)="dayHeaderClicked.emit({ day: day, sourceEvent: $event })"
               mwlDroppable
@@ -277,47 +278,50 @@
           let-tooltipDelay="tooltipDelay"
           let-trackByEventId="trackByEventId"
           let-validateDrag="validateDrag">
-          <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'" [class.dayOff]="checkIfDayOff(day.date)">
-            <span aria-hidden="true">
-              <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
-              <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
-            </span>
-            <div class="day-off-con">
-              Day Off
-            </div>
-          </div>
-          <div class="cal-events-con" *ngIf="day.events.length > 0">
-            <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span *ngIf="getCount('Appointment', day.events) > 1">s</span></div>
-            <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span *ngIf="getCount('Follow-up visit', day.events) > 1">s</span></div>
-            <ng-container *ngFor="let event of day.events; trackBy: trackByEventId;let i=index;">
-              <div class="cal-event-con2" *ngIf="i < 2"
-                [ngStyle]="{ backgroundColor: event.color?.primary }"
-                [ngClass]="event?.cssClass"
-                (mouseenter)="highlightDay.emit({ event: event })"
-                (mouseleave)="unhighlightDay.emit({ event: event })"
-                [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
-                [tooltipPlacement]="tooltipPlacement"
-                [tooltipEvent]="event"
-                [tooltipTemplate]="tooltipTemplate"
-                [tooltipAppendToBody]="tooltipAppendToBody"
-                [tooltipDelay]="tooltipDelay"
-                mwlDraggable
-                [class.cal-draggable]="event.draggable"
-                dragActiveClass="cal-drag-active"
-                [dropData]="{ event: event, draggedFrom: day }"
-                [dragAxis]="{ x: event.draggable, y: event.draggable }"
-                [validateDrag]="validateDrag"
-                [touchStartLongPress]="{ delay: 300, delta: 30 }"
-                (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
-                [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
-                {{event.start|date:'h:mm a'|lowercase}} - {{event.end|date:'h:mm a'|lowercase}}
+          <div [class.dayOff]="checkIfDayOff(day.date)">
+            <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'">
+              <span aria-hidden="true">
+                <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
+                <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
+              </span>
+              <div class="day-off-con">
+                Day Off
               </div>
-            </ng-container>
+            </div>
+            <div class="cal-events-con" *ngIf="day.events.length > 0">
+              <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span *ngIf="getCount('Appointment', day.events) > 1">s</span></div>
+              <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span *ngIf="getCount('Follow-up visit', day.events) > 1">s</span></div>
+              <ng-container *ngFor="let event of day.events; trackBy: trackByEventId;let i=index;">
+                <div class="cal-event-con2" *ngIf="i < 2"
+                  [ngStyle]="{ backgroundColor: event.color?.primary }"
+                  [ngClass]="event?.cssClass"
+                  (mouseenter)="highlightDay.emit({ event: event })"
+                  (mouseleave)="unhighlightDay.emit({ event: event })"
+                  [mwlCalendarTooltip]="event.title | calendarEventTitle: 'monthTooltip':event"
+                  [tooltipPlacement]="tooltipPlacement"
+                  [tooltipEvent]="event"
+                  [tooltipTemplate]="tooltipTemplate"
+                  [tooltipAppendToBody]="tooltipAppendToBody"
+                  [tooltipDelay]="tooltipDelay"
+                  mwlDraggable
+                  [class.cal-draggable]="event.draggable"
+                  dragActiveClass="cal-drag-active"
+                  [dropData]="{ event: event, draggedFrom: day }"
+                  [dragAxis]="{ x: event.draggable, y: event.draggable }"
+                  [validateDrag]="validateDrag"
+                  [touchStartLongPress]="{ delay: 300, delta: 30 }"
+                  (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
+                  [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
+                  {{event.start|date:'h:mm a'|lowercase}} - {{event.end|date:'h:mm a'|lowercase}}
+                </div>
+              </ng-container>
 
-            <div class="cal-event-con2" *ngIf="day.events.length > 2">
-              {{day.events.length -2}} more...
+              <div class="cal-event-con2" *ngIf="day.events.length > 2">
+                {{day.events.length -2}} more...
+              </div>
             </div>
           </div>
+
         </ng-template>
       </div>
     </div>
