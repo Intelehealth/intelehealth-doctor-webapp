@@ -254,6 +254,7 @@
     "Telemedicine Clinic 1":  "Telemedicine Clinic 1",
     "Telemedicine Clinic 2":  "Telemedicine Clinic 2",
     "Telemedicine Clinic 3":"Telemedicine Clinic 3",
+    "ECG":"ECG",
     "messages": {
       "welcome": "Welcome",
       "loginError": "Username & Password doesn't match",

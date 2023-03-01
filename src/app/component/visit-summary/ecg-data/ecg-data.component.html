@@ -1,0 +1,33 @@
+<b style="margin: 12px">{{'ECG'|translate}}:</b>
+<div *ngIf="ecgPresent">
+    <hr>
+    <div class="row">
+        <div *ngFor="let image of ecgImages" class="col">
+            <a href={{image.image}}><img src={{image.image}} class="image" alt=""></a>
+        </div>
+    </div>
+    <table class="table table-responsive">
+        <tr>
+            <th>{{'R-R interval'|translate}}:</th>
+            <td><span> {{ ecgData.rInterval }} ms</span></td>
+            <th>{{'HRV'|translate}}:</th>
+            <td><span>{{ecgData.hrv}} ms</span></td>
+            <th>{{'Mood'|translate}}:</th>
+            <td><span>{{ecgData.mood}}</span></td>
+            <th>{{'Heart beat'|translate}}:</th>
+            <td>{{ecgData.heartBeat}}</td>
+            <th>{{'Stress level'|translate}}:</th>
+            <td><span>{{ecgData.stressLevel}} </span></td>
+        </tr>
+        <tr>
+            <th>{{'Heart rate'|translate}}:</th>
+            <td><span>{{ecgData.heartRate}} BPM</span></td>
+            <th>{{'Repository rate'|translate}}:</th>
+            <td>{{ecgData.repositoryRate}}</td>
+            <th>{{'Heart age'|translate}}:</th>
+            <td>{{ecgData.heartAge}}</td>
+            <th>{{'Robust heart rate'|translate}}:</th>
+            <td>{{ecgData.robustHeartRate}}</td>
+        </tr>
+    </table>
+</div>

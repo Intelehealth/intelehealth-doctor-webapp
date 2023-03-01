@@ -95,6 +95,7 @@ import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { MatPaginationIntlService } from "./services/mat-pagination.service";
+import { EcgDataComponent } from './component/visit-summary/ecg-data/ecg-data.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -146,7 +147,8 @@ registerLocaleData(localeHi);
     ReassignSpecialityComponent,
     ConfirmDialogComponent,
     AppointmentViewComponent,
-    AppointmentScheduleComponent
+    AppointmentScheduleComponent,
+    EcgDataComponent
   ],
 
   imports: [

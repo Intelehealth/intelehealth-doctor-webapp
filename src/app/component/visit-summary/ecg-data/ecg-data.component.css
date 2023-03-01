@@ -1,0 +1,10 @@
+.image {
+    width: 60%;
+    margin-bottom: 10px;
+}
+
+td,
+th {
+  border: none;
+  white-space: nowrap;
+}
