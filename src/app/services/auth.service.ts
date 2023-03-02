@@ -9,6 +9,8 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 declare var deleteFromStorage: any;
+import examples from 'libphonenumber-js/examples.mobile.json';
+import {CountryCode, AsYouType, getExampleNumber, getCountryCallingCode} from "libphonenumber-js";
 
 @Injectable({
   providedIn: "root",
@@ -183,5 +185,42 @@ export class AuthService {
 
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/password`, { oldPassword, newPassword });
+  }
+
+  getInternationalMaskByCountryCode(countryCode: CountryCode, withPrefix: boolean = true) {
+    const number = getExampleNumber(countryCode, examples);
+    console.log(number);
+    const asYouType = new AsYouType(countryCode);
+    asYouType.input(number.formatInternational());
+    const template = asYouType.getTemplate();
+    const templateWithoutPlus = template.substr(1);
+    const mask = [];
+    let prefix = number.countryCallingCode.split("").reverse();
+    for (const char of templateWithoutPlus) {
+      if (char == 'x') {
+        if (withPrefix) {
+          if (prefix.length) {
+            mask.push(prefix.pop());
+          } else {
+            mask.push(/\d/);
+          }
+        } else {
+          if (prefix.length) {
+            prefix.pop();
+          } else {
+            mask.push(/\d/);
+          }
+        }
+      } else {
+        if (withPrefix) {
+          mask.push(char);
+        } else {
+          if (mask.length) {
+            mask.push(char);
+          }
+        }
+      }
+    }
+    return withPrefix ? ["+", ...mask] : mask;
   }
 }

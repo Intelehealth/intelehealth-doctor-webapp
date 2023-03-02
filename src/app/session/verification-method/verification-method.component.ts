@@ -1,38 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-verification-method',
   templateUrl: './verification-method.component.html',
   styleUrls: ['./verification-method.component.scss']
 })
-export class VerificationMethodComponent implements OnInit {
+export class VerificationMethodComponent implements OnInit, OnDestroy {
 
   active = 'phone';
   verificationForm: FormGroup;
   submitted: boolean = false;
   phoneIsValid: boolean = false;
   phoneNumber: string;
+  telObject: any;
+  maxTelLegth: number = 10;
+  subscription: Subscription;
 
   constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) {
     this.verificationForm = new FormGroup({
-      phone: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
+      phone: new FormControl('', [Validators.required]),
       email: new FormControl('', Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
       countryCode: new FormControl('91', Validators.required)
     });
   }
 
   ngOnInit(): void {
+    this.subscription = this.verificationForm.get('phone').valueChanges.subscribe((val: any) => {
+      if (val.length > this.maxTelLegth) {
+        this.verificationForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
+      }
+    });
   }
 
   get f() { return this.verificationForm.controls; }
 
   reset() {
     if (this.active == 'phone' ) {
-      this.verificationForm.get('phone').setValidators([Validators.required, Validators.pattern("^[0-9]{10}$")]);
+      this.verificationForm.get('phone').setValidators([Validators.required]);
       this.verificationForm.get('phone').updateValueAndValidity();
       this.verificationForm.get('email').clearValidators();
       this.verificationForm.get('email').updateValueAndValidity();
@@ -57,6 +67,9 @@ export class VerificationMethodComponent implements OnInit {
     if (this.verificationForm.invalid) {
       return;
     }
+    if (this.active == 'phone' && !this.phoneIsValid) {
+      return;
+    }
     this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
     this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'login', via: this.active, val: (this.active == 'phone') ? this.phoneNumber : this.verificationForm.value.email } });
   }
@@ -71,19 +84,27 @@ export class VerificationMethodComponent implements OnInit {
   }
 
   getNumber($event: any) {
+    console.log($event);
     this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
   telInputObject($event: any) {
     // console.log($event);
+    this.telObject = $event;
   }
 
   onCountryChange($event: any) {
-    console.log($event);
+    // console.log($event);
+    this.telObject.setCountry($event.iso2);
     this.verificationForm.patchValue({
       countryCode: $event.dialCode
     });
+    this.maxTelLegth = _.filter(this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
 }

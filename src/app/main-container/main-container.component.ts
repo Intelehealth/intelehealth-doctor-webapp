@@ -1,7 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
-import { SetNewPasswordComponent } from '../component/set-new-password/set-new-password.component';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { AuthService } from '../services/auth.service';
@@ -13,6 +12,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, RouterState, RouterStateSnapshot } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main-container',
@@ -34,7 +34,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
   _showBackdrop: boolean = false;
   _closeOnClickOutside: boolean = false;
   sidebarClosed: boolean = false;
-
+  subscription: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
@@ -76,6 +76,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
       this._opened = !this.isMobile;
       this.sidebarClosed = false;
     });
+
+    // this.subscription = this.searchForm.valueChanges.pipe(
+    //   debounceTime(1000),
+    //   distinctUntilChanged()
+    // ).subscribe(val => {
+    //   if (this.searchForm.invalid) {
+    //     return;
+    //   }
+    //   this.search();
+    // });
 
     this.router.events.pipe(
       filter((event: Event) => event instanceof NavigationEnd),
@@ -193,5 +203,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
     if (this.isMobile) {
       this.drawer.toggle();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }

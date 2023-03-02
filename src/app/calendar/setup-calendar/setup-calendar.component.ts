@@ -196,9 +196,18 @@ export class SetupCalendarComponent implements OnInit {
           this.scheduledMonths = res.data;
           if (this.scheduledMonths.length === 0) {
             this.scheduledMonths.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear() });
+            this.getSchedule(this.scheduledMonths[0].year, this.scheduledMonths[0].name);
+            this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
           }
-          this.getSchedule(this.scheduledMonths[0].year, this.scheduledMonths[0].name);
-          this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year }
+          else {
+            this.selectedMonth = _.find(this.scheduledMonths, { name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear().toString() });
+            if (this.selectedMonth) {
+              this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
+            } else {
+              this.getSchedule(this.scheduledMonths[0].year, this.scheduledMonths[0].name);
+              this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
+            }
+          }
         }
       });
   }

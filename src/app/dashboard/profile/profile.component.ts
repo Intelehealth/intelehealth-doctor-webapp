@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { SignaturePad } from 'angular2-signaturepad';
@@ -12,6 +12,8 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { AuthService } from 'src/app/services/auth.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -42,7 +44,7 @@ class PickDateAdapter extends NativeDateAdapter {
     { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS }
   ]
 })
-export class ProfileComponent implements OnInit, AfterViewInit {
+export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   file: any;
   user: any;
@@ -167,6 +169,10 @@ export class ProfileComponent implements OnInit, AfterViewInit {
   providerAttributeTypes: any = [];
   phoneNumberObj: any;
   whatsAppObj: any;
+  subscription1: Subscription;
+  subscription2: Subscription;
+  maxTelLegth1: number = 10;
+  maxTelLegth2: number = 10;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -184,8 +190,8 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       age: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
       countryCode1: new FormControl('+91'),
       countryCode2: new FormControl('+91'),
-      phoneNumber: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
-      whatsapp: new FormControl('',[Validators.required, Validators.pattern("^[0-9]{10}$")]),
+      phoneNumber: new FormControl('', [Validators.required]),
+      whatsapp: new FormControl('',[Validators.required]),
       emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
@@ -216,6 +222,16 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
+    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
+      if (val.length > this.maxTelLegth1) {
+        this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+      }
+    });
+    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
+      if (val.length > this.maxTelLegth2) {
+        this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -462,11 +478,15 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     switch (changedFor) {
       case 'phoneNumber':
         this.phoneNumberValid = false;
+        this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
+        this.maxTelLegth1 = _.filter(this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false), (o) => o != ' ').length;
         break;
       case 'whatsAppNumber':
         this.whatsAppNumberValid = false;
+        this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
+        this.maxTelLegth2 = _.filter(this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false), (o) => o != ' ').length;
         break;
     }
   }
@@ -695,6 +715,11 @@ export class ProfileComponent implements OnInit, AfterViewInit {
         return this.mimeTypes[s];
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
   }
 
 }

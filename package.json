@@ -41,6 +41,7 @@
     "intl-tel-input": "^17.0.19",
     "intro.js": "^2.9.3",
     "jquery": "^3.5.1",
+    "libphonenumber-js": "^1.10.18",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "ng-otp-input": "^1.8.5",

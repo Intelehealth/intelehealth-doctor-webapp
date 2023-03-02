@@ -36,7 +36,7 @@
                 <div *ngIf="submitted && f.phone.errors">
                   <small *ngIf="f.phone.errors.required" class="error-msg">Please enter mobile number</small>
                 </div>
-                <div *ngIf="submitted && f.phone?.errors?.pattern">
+                <div *ngIf="submitted && !phoneIsValid && !f.phone?.errors">
                   <small class="error-msg">Please enter valid mobile number</small>
                 </div>
               </div>

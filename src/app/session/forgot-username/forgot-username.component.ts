@@ -1,37 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-forgot-username',
   templateUrl: './forgot-username.component.html',
   styleUrls: ['./forgot-username.component.scss']
 })
-export class ForgotUsernameComponent implements OnInit {
+export class ForgotUsernameComponent implements OnInit, OnDestroy {
 
   active = 'phone';
   forgotUsernameForm: FormGroup;
   submitted: boolean = false;
   phoneIsValid: boolean = false;
   phoneNumber: string;
+  telObject: any;
+  maxTelLegth: number = 10;
+  subscription: Subscription;
 
-  constructor(private toastr: ToastrService, private router: Router) {
+  constructor(private toastr: ToastrService, private router: Router, private authService: AuthService) {
     this.forgotUsernameForm = new FormGroup({
-      phone: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
+      phone: new FormControl('', [Validators.required]),
       email: new FormControl('',Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
       countryCode: new FormControl('91', Validators.required)
     });
   }
 
   ngOnInit(): void {
+    this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
+      if (val.length > this.maxTelLegth) {
+        this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
+      }
+    });
   }
 
   get f() { return this.forgotUsernameForm.controls; }
 
   reset() {
     if (this.active == 'phone' ) {
-      this.forgotUsernameForm.get('phone').setValidators([Validators.required, Validators.pattern("^[0-9]{10}$")]);
+      this.forgotUsernameForm.get('phone').setValidators([Validators.required]);
       this.forgotUsernameForm.get('phone').updateValueAndValidity();
       this.forgotUsernameForm.get('email').clearValidators();
       this.forgotUsernameForm.get('email').updateValueAndValidity();
@@ -80,12 +91,20 @@ export class ForgotUsernameComponent implements OnInit {
 
   telInputObject($event: any) {
     // console.log($event);
+    this.telObject = $event;
   }
 
   onCountryChange($event: any) {
+    // console.log($event);
+    this.telObject.setCountry($event.iso2);
     this.forgotUsernameForm.patchValue({
       countryCode: $event.dialCode
     });
+    this.maxTelLegth = _.filter(this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
 }
