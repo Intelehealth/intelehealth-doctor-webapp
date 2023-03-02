@@ -98,12 +98,12 @@
             <ng-container *ngIf="header.title == 'Dashboard'">
               <form [formGroup]="searchForm">
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">
-                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
-                    </span>
-                  </div>
                     <input type="text" class="form-control" formControlName="keyword" placeholder="Search patient" aria-label="Username" aria-describedby="basic-addon1">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text click" id="basic-addon1" (click)="search()">
+                        <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                      </span>
+                    </div>
                 </div>
               </form>
             </ng-container>

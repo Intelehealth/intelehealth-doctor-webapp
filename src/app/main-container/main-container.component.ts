@@ -10,7 +10,6 @@ import { CoreService } from '../services/core/core.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, RouterState, RouterStateSnapshot } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -20,7 +19,7 @@ import { MatDrawer } from '@angular/material/sidenav';
   templateUrl: './main-container.component.html',
   styleUrls: ['./main-container.component.scss']
 })
-export class MainContainerComponent implements OnInit, OnDestroy, AfterContentChecked {
+export class MainContainerComponent implements OnInit, AfterContentChecked {
 
   collapsed = false;
   baseUrl: string = environment.baseURL;
@@ -36,7 +35,6 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
   _closeOnClickOutside: boolean = false;
   sidebarClosed: boolean = false;
 
-  subscription: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
@@ -78,17 +76,6 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
       this._opened = !this.isMobile;
       this.sidebarClosed = false;
     });
-
-    this.subscription = this.searchForm.valueChanges.pipe(
-      debounceTime(1000),
-      distinctUntilChanged()
-    ).subscribe(val => {
-      if (this.searchForm.invalid) {
-        return;
-      }
-      this.search();
-    });
-
 
     this.router.events.pipe(
       filter((event: Event) => event instanceof NavigationEnd),
@@ -207,9 +194,4 @@ export class MainContainerComponent implements OnInit, OnDestroy, AfterContentCh
       this.drawer.toggle();
     }
   }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-  }
-
 }
