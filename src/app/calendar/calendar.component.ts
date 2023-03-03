@@ -84,6 +84,9 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res && res.data) {
+            if (!res.data.dayOff) {
+              res.data.dayOff = [];
+            }
             this.daysOff.push(res.data);
           } else {
             this.daysOff.push({
@@ -427,7 +430,7 @@ export class CalendarComponent implements OnInit {
 
   checkIfDayOff(date: Date) {
     let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
-    if (oldDaysOff) {
+    if (oldDaysOff && oldDaysOff.daysOff) {
       if (oldDaysOff.daysOff.indexOf(moment(date).format('DD/MM/YYYY')) != -1) {
         return true;
       }
