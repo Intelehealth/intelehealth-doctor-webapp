@@ -84,8 +84,8 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           if (res && res.data) {
-            if (!res.data.dayOff) {
-              res.data.dayOff = [];
+            if (!res.data.daysOff) {
+              res.data.daysOff = [];
             }
             this.daysOff.push(res.data);
           } else {
