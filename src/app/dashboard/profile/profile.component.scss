@@ -84,8 +84,8 @@
   border-radius: 12px;
 
   .mat-horizontal-content-container {
-    padding: 24px;
-    overflow: visible;
+    padding: 24px 24px 100px;
+    // overflow: visible;
   }
 
   .mat-horizontal-stepper-header-container {
