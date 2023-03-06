@@ -22,6 +22,8 @@ import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     Ng2TelInputModule,
     NgxDropzoneModule,
     NgbTypeaheadModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatSelectModule,
+    MatInputModule
   ]
 })
 export class DashboardModule { }

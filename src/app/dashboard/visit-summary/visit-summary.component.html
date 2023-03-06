@@ -942,7 +942,10 @@
                           </td>
                           <td>
                             <div class="form-group mb-0">
-                              <input formControlName="timing" type="text" class="form-control" placeholder="Enter timing" [ngbTypeahead]="search6">
+                                <mat-select style="width: 194px" class="form-control" placeholder="Enter timing" formControlName="timing">
+                                  <mat-option *ngFor="let time of timingList" [value]="time.name">{{ time.name }}
+                                  </mat-option>
+                                </mat-select>                           
                             </div>
                           </td>
                           <td colspan="2">
