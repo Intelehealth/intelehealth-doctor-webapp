@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { AuthService } from 'src/app/services/auth.service';
@@ -20,9 +21,10 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private toatr: ToastrService,
+    private toastr: ToastrService,
     private router: Router,
-    private ngxUiLoader: NgxUiLoaderService) {
+    private ngxUiLoader: NgxUiLoaderService,
+    private rolesService: NgxRolesService) {
 
     this.loginForm = new FormGroup({
       username: new FormControl("", Validators.required),
@@ -51,14 +53,25 @@ export class LoginComponent implements OnInit {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
-            this.router.navigate(['/session/verification']);
+            if (provider.results[0].attributes.length) {
+              this.router.navigate(['/session/verification']);
+            } else {
+              this.authService.updateVerificationStatus();
+              this.toastr.success("You have sucessfully logged in.", "Login Successful");
+              let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+              if (role) {
+                this.router.navigate(['/admin']);
+              } else {
+                this.router.navigate(['/dashboard']);
+              }
+            }
           } else {
-            this.toatr.error("Couldn't find provider.", "Login Failed!");
+            this.toastr.error("Couldn't find provider.", "Login Failed!");
           }
         });
       }
       else {
-        this.toatr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
+        this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
       }
     });
   }

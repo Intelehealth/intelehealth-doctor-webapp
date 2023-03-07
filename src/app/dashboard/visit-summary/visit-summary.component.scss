@@ -495,6 +495,7 @@ textarea.form-control {
 
 ::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container, .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
   background: #FFFFFF;
+  min-width: 120px;
 }
 
 ::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {

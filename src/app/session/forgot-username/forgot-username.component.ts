@@ -70,8 +70,25 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     if (this.active == 'phone' && !this.phoneIsValid) {
       return;
     }
-    this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");
-    this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-username', via: this.active, val: (this.active == 'phone') ? this.phoneNumber : this.forgotUsernameForm.value.email } });
+
+    let payload: any = {
+      otpFor: "username"
+    };
+    if (this.active == 'phone') {
+      payload.phoneNumber = this.forgotUsernameForm.value.phone,
+      payload.countryCode = this.forgotUsernameForm.value.countryCode
+    } else {
+      payload.email = this.forgotUsernameForm.value.email
+    }
+
+    this.authService.requestOtp(payload).subscribe((res: any) => {
+      if (res.success) {
+        this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");
+        this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-username', via: this.active, val: (this.active == 'phone') ? `${this.forgotUsernameForm.value.countryCode}||${this.forgotUsernameForm.value.phone}` : this.forgotUsernameForm.value.email } });
+      } else {
+        this.toastr.error(res.message, "Error");
+      }
+    });
   }
 
   replaceWithStar(str: string) {

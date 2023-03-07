@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import { environment } from 'src/environments/environment';
@@ -26,6 +27,7 @@ export class SetupNewPasswordComponent implements OnInit {
     private coreService: CoreService,
     private router: Router,
     private toastr: ToastrService,
+    private authService: AuthService,
     private mindmapService: MindmapService
   ) {
     this.resetPasswordForm = new FormGroup({
@@ -63,11 +65,22 @@ export class SetupNewPasswordComponent implements OnInit {
       this.toastr.warning("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols.", "Password invalid!");
       return;
     }
-    this.mindmapService.changePassword({ newPassword: passwd, otp: '111111' }, this.userUuid).subscribe((result: any) => {
-      this.coreService.openPasswordResetSuccessModal().subscribe((res: any) => {
-        this.router.navigate(['/session/login']);
-      });
+
+    this.authService.resetPassword(this.userUuid, passwd).subscribe((res: any) => {
+      if (res.success) {
+        this.coreService.openPasswordResetSuccessModal().subscribe((result: any) => {
+          this.router.navigate(['/session/login']);
+        });
+      } else {
+        this.toastr.error(res.message, "Error");
+      }
     });
+
+    // this.mindmapService.changePassword({ newPassword: passwd, otp: '111111' }, this.userUuid).subscribe((result: any) => {
+    //   this.coreService.openPasswordResetSuccessModal().subscribe((res: any) => {
+    //     this.router.navigate(['/session/login']);
+    //   });
+    // });
   }
 
   generatePassword() {

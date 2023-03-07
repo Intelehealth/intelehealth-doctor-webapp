@@ -70,8 +70,25 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
     if (this.active == 'phone' && !this.phoneIsValid) {
       return;
     }
-    this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
-    this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'login', via: this.active, val: (this.active == 'phone') ? this.phoneNumber : this.verificationForm.value.email } });
+
+    let payload: any = {
+      otpFor: "verification"
+    };
+    if (this.active == 'phone') {
+      payload.phoneNumber = this.verificationForm.value.phone,
+      payload.countryCode = this.verificationForm.value.countryCode
+    } else {
+      payload.email = this.verificationForm.value.email
+    }
+
+    this.authService.requestOtp(payload).subscribe((res: any) => {
+      if (res.success) {
+        this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
+        this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'login', via: this.active, val: (this.active == 'phone') ? `${this.verificationForm.value.countryCode}||${this.verificationForm.value.phone}` : this.verificationForm.value.email } });
+      } else {
+        this.toastr.error(res.message, "Error");
+      }
+    });
   }
 
   replaceWithStar(str: string) {

@@ -858,7 +858,7 @@
               </mat-expansion-panel-header>
 
               <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
-                <div class="table-responsive">
+                <div class="table-responsive medication-con">
                   <table class="table">
                     <thead>
                       <tr>
@@ -941,12 +941,8 @@
                             </div>
                           </td>
                           <td>
-                            <div class="form-group mb-0">
-                                <mat-select style="width: 194px" class="form-control" placeholder="Enter timing" formControlName="timing">
-                                  <mat-option *ngFor="let time of timingList" [value]="time.name">{{ time.name }}
-                                  </mat-option>
-                                </mat-select>                           
-                            </div>
+                            <ng-select appendTo=".medication-con" formControlName="timing" class="visit-select custom" [items]="timingList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="true" [addTag]="true" placeholder="Select timing">
+                            </ng-select>
                           </td>
                           <td colspan="2">
                             <div class="form-group mb-0">

@@ -63,25 +63,61 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     if (this.otpVerificationForm.invalid) {
       return;
     }
+    let payload: any = {};
     switch (this.verificationFor) {
       case 'login':
-        this.authService.updateVerificationStatus();
-        this.toastr.success("You have sucessfully logged in.", "Login Successful");
-        let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-        if (role) {
-          this.router.navigate(['/admin']);
+        payload.verifyFor = "verification";
+        if (this.via == 'phone') {
+          payload.phoneNumber = this.cred.split('||')[1]
         } else {
-          this.router.navigate(['/dashboard']);
+          payload.email = this.cred
         }
+        payload.otp = this.otpVerificationForm.value.otp;
+        this.authService.verifyOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.authService.updateVerificationStatus();
+            this.toastr.success("You have sucessfully logged in.", "Login Successful");
+            let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+            if (role) {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
         break;
 
       case 'forgot-username':
-        this.toastr.success("Username has been successfully sent on your email and mobile number", "Username Sent");
-        this.router.navigate(['/session/login']);
+        payload.verifyFor = "username";
+        if (this.via == 'phone') {
+          payload.phoneNumber = this.cred.split('||')[1]
+        } else {
+          payload.email = this.cred
+        }
+        payload.otp = this.otpVerificationForm.value.otp;
+        this.authService.verifyOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.toastr.success("Username has been successfully sent on your email and mobile number", "Username Sent");
+            this.router.navigate(['/session/login']);
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
         break;
 
       case 'forgot-password':
-        this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
+        payload.verifyFor = "password";
+        payload.username = this.cred;
+        payload.otp = this.otpVerificationForm.value.otp;
+        this.authService.verifyOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
         break;
 
       default:
@@ -93,7 +129,59 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   resendOtp() {
     this.counter = 60;
     this.resendIn = '01:00';
-    this.toastr.success(`OTP re-sent on ${ (this.via == 'username') ? 'mobile number and email' :this.replaceWithStar(this.cred)} successfully!`, 'OTP Sent')
+    let payload: any = {};
+    switch (this.verificationFor) {
+      case 'login':
+        payload.otpFor = "verification";
+        if (this.via == 'phone') {
+          payload.phoneNumber = this.cred.split('||')[1],
+          payload.countryCode = this.cred.split('||')[0]
+        } else {
+          payload.email = this.cred
+        }
+        this.authService.requestOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.toastr.success(`OTP sent on ${this.via == 'phone' ? this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : this.replaceWithStar(this.cred) } successfully!`, "OTP Sent");
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
+        break;
+
+      case 'forgot-username':
+        payload.otpFor = "username";
+        if (this.via == 'phone') {
+          payload.phoneNumber = this.cred.split('||')[1],
+          payload.countryCode = this.cred.split('||')[0]
+        } else {
+          payload.email = this.cred
+        }
+        this.authService.requestOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.toastr.success(`OTP sent on ${this.via == 'phone' ? this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : this.replaceWithStar(this.cred) } successfully!`, "OTP Sent");
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
+        break;
+
+      case 'forgot-password':
+        payload = {
+          otpFor: "password",
+          username: this.cred
+        };
+        this.authService.requestOtp(payload).subscribe((res: any) => {
+          if (res.success) {
+            this.toastr.success(`OTP sent on your mobile number/email successfully!`, "OTP Sent");
+          } else {
+            this.toastr.error(res.message, "Error");
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
   }
 
   replaceWithStar(str: string) {

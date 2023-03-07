@@ -21,6 +21,7 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
   private base64Cred: string;
+  private mindmapUrl: string = environment.mindmapURL;
 
   constructor(
     private myRoute: Router,
@@ -222,5 +223,17 @@ export class AuthService {
       }
     }
     return withPrefix ? ["+", ...mask] : mask;
+  }
+
+  requestOtp(payload: any): Observable<any> {
+    return this.http.post(`${this.mindmapUrl}/auth/requestOtp`, payload);
+  }
+
+  verifyOtp(payload: any): Observable<any> {
+    return this.http.post(`${this.mindmapUrl}/auth/verifyOtp`, payload);
+  }
+
+  resetPassword(userUuid: string, newPassword: string) {
+    return this.http.post(`${this.mindmapUrl}/auth/resetPassword/${userUuid}`, { newPassword });
   }
 }
