@@ -597,8 +597,8 @@ export class SetupCalendarComponent implements OnInit {
           let body = { ...this.addSlotsForm.value };
           delete body['timings'];
           delete body['daysOff'];
-          body.startDate = this.minDate;
-          body.endDate = this.maxDate;
+          body.startDate = moment(this.minDate, 'YYYY-MM-DD').toISOString();
+          body.endDate = moment(this.maxDate, 'YYYY-MM-DD').toISOString();
           this.appointmentService.updateOrCreateAppointment(body).subscribe({
             next: (res: any) => {
               if (res.status) {
