@@ -24,12 +24,12 @@ export class DashboardGuard implements CanActivate {
           if (res.data.length && provider.attributes.length) {
             return true;
           } else {
-            this.router.navigate(['/dashboard/get-started']);
+            this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false, sc: (res.data.length)? true : false } });
             return true;
           }
         }
       }), catchError(() => {
-        this.router.navigate(['/dashboard/get-started']);
+        this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: false, sc: false } });
         return of(false);
       }));
   }

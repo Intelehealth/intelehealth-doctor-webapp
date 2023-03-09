@@ -223,13 +223,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
     this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
-      if (val.length > this.maxTelLegth1) {
-        this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+      if (val) {
+        if (val.length > this.maxTelLegth1) {
+          this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+        }
       }
     });
     this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
-      if (val.length > this.maxTelLegth2) {
-        this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+      if (val) {
+        if (val.length > this.maxTelLegth2) {
+          this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+        }
       }
     });
   }

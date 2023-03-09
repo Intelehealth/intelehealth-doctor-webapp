@@ -218,9 +218,11 @@ export class SetupCalendarComponent implements OnInit {
         next: (res: any) => {
           if (res && res.data) {
             this.selectedMonthSchedule = res.data;
+            this.selectedMonthSchedule.added = true;
             this.setData(res.data);
           } else {
             this.selectedMonthSchedule = {
+              added: false,
               month: month,
               year: year,
               startDate: null,
@@ -548,6 +550,8 @@ export class SetupCalendarComponent implements OnInit {
       else {
         this.daysOffSelected.splice(index, 1);
       }
+      this._picker.select(undefined);
+      this._picker.close();
     }
   }
 
@@ -566,22 +570,56 @@ export class SetupCalendarComponent implements OnInit {
         let finalDaysOff = _.map(_.uniq([...this.fd.value].concat(this.daysOffSelected)), (val: any)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
         });
-        let body = {
-          userUuid: this.userId,
-          daysOff: finalDaysOff,
-          month: this.selectedMonth.name,
-          year: this.selectedMonth.year
+
+        if (this.selectedMonthSchedule.added) {
+          let body = {
+            userUuid: this.userId,
+            daysOff: finalDaysOff,
+            month: this.selectedMonth.name,
+            year: this.selectedMonth.year
+          }
+          this.appointmentService.updateDaysOff(body).subscribe({
+            next: (res: any) => {
+              if (res.status) {
+                this.daysOffSelected.forEach(doff => {
+                  this.fd.push(new FormControl(doff, Validators.required));
+                });
+                this.daysOffSelected = [];
+                this.updateSlot();
+              }
+            },
+          });
+        } else {
+          if (moment(this.minDate).isAfter(this.maxDate)) {
+            this.toastr.warning("Cann't add daysOff's for the past dates!","Can't add daysOff's");
+            return;
+          }
+          let body = { ...this.addSlotsForm.value };
+          delete body['timings'];
+          delete body['daysOff'];
+          body.startDate = this.minDate;
+          body.endDate = this.maxDate;
+          this.appointmentService.updateOrCreateAppointment(body).subscribe({
+            next: (res: any) => {
+              if (res.status) {
+                let body2 = {
+                  userUuid: this.userId,
+                  daysOff: finalDaysOff,
+                  month: this.selectedMonth.name,
+                  year: this.selectedMonth.year
+                }
+                this.appointmentService.updateDaysOff(body2).subscribe({
+                  next: (res: any) => {
+                    if (res.status) {
+                      this.daysOffSelected = [];
+                      this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
+                    }
+                  },
+                });
+              }
+            },
+          });
         }
-        this.appointmentService.updateDaysOff(body).subscribe({
-          next: (res: any) => {
-            if (res.status) {
-              this.daysOffSelected.forEach(doff => {
-                this.fd.push(new FormControl(doff, Validators.required));
-              });
-              this.daysOffSelected = [];
-            }
-          },
-        });
       }
     });
   }
@@ -604,6 +642,7 @@ export class SetupCalendarComponent implements OnInit {
           next: (res: any) => {
             if (res.status) {
               this.fd.removeAt(index);
+              this.updateSlot();
             }
           },
         });
@@ -637,7 +676,90 @@ export class SetupCalendarComponent implements OnInit {
   private getSpeciality() {
     return JSON.parse(localStorage.provider).attributes.find((a: any) =>
       a.display.includes("specialization")
-    ).value;
+    )?.value;
+  }
+
+  updateSlot() {
+    this.fs.clear();
+    if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
+      this.toastr.warning("Start date should greater than end date.", "Invalid Dates!");
+      return;
+    }
+    let flag = 0;
+    let ts = [...this.ft.getRawValue()];
+    for (let i = 0; i < ts.length - 1; i++) {
+      if (this.validateTimeSlot({ startTime: `${ts[i].startTime} ${ts[i].startMeridiem}`, endTime: `${ts[i].endTime} ${ts[i].endMeridiem}` })) {
+        let newSlots = this.createSlots(ts[i].days, `${ts[i].startTime} ${ts[i].startMeridiem}`, `${ts[i].endTime} ${ts[i].endMeridiem}`);
+        let oldSlots = [...this.getSlotsFormArray(i).value];
+        this.getSlotsFormArray(i).clear();
+        for (let x = 0; x < oldSlots.length; x++) {
+          if (_.find(newSlots, { date: oldSlots[x].date, day: oldSlots[x].day })) {
+            this.getSlotsFormArray(i).push(
+              new FormGroup({
+                id: new FormControl(oldSlots[x].id, Validators.required),
+                day: new FormControl(oldSlots[x].day, Validators.required),
+                date: new FormControl(oldSlots[x].date, Validators.required),
+                startTime: new FormControl(oldSlots[x].startTime, Validators.required),
+                endTime: new FormControl(oldSlots[x].endTime, Validators.required)
+              })
+            );
+            this.fs.push(
+              new FormGroup({
+                id: new FormControl(oldSlots[x].id, Validators.required),
+                day: new FormControl(oldSlots[x].day, Validators.required),
+                date: new FormControl(oldSlots[x].date, Validators.required),
+                startTime: new FormControl(oldSlots[x].startTime, Validators.required),
+                endTime: new FormControl(oldSlots[x].endTime, Validators.required)
+              })
+            );
+          }
+        }
+        oldSlots = [...this.getSlotsFormArray(i).value];
+        for (let x = 0; x < newSlots.length; x++) {
+          if (!_.find(oldSlots, { date: newSlots[x].date, day: newSlots[x].day })) {
+            this.getSlotsFormArray(i).push(
+              new FormGroup({
+                id: new FormControl(newSlots[x].id, Validators.required),
+                day: new FormControl(newSlots[x].day, Validators.required),
+                date: new FormControl(newSlots[x].date, Validators.required),
+                startTime: new FormControl(newSlots[x].startTime, Validators.required),
+                endTime: new FormControl(newSlots[x].endTime, Validators.required)
+              })
+            );
+            this.fs.push(
+              new FormGroup({
+                id: new FormControl(newSlots[x].id, Validators.required),
+                day: new FormControl(newSlots[x].day, Validators.required),
+                date: new FormControl(newSlots[x].date, Validators.required),
+                startTime: new FormControl(newSlots[x].startTime, Validators.required),
+                endTime: new FormControl(newSlots[x].endTime, Validators.required)
+              })
+            );
+          }
+        }
+
+        this.addSlotsForm.get('slotDays').setValue('');
+      }
+      else {
+        this.toastr.warning("Slot start time should be less than end time.", "Invalid Slot Timings!");
+        flag = 1;
+        break;
+      }
+    }
+    if (flag == 1) {
+      return;
+    }
+    // console.log(this.addSlotsForm.getRawValue());
+    let body = { ...this.addSlotsForm.value };
+    delete body['timings'];
+    delete body['daysOff'];
+    this.appointmentService.updateOrCreateAppointment(body).subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
+        }
+      },
+    });
   }
 
 }

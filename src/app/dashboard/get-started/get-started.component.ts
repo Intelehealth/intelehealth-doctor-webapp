@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 // import { CoreService } from 'src/app/services/core/core.service';
 
@@ -16,7 +16,8 @@ export class GetStartedComponent implements OnInit {
   sc: boolean = true;
   constructor(
     private pageTitleService: PageTitleService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
     ) { }
 
   ngOnInit(): void {
@@ -30,6 +31,14 @@ export class GetStartedComponent implements OnInit {
       this.greetingMsg = 'Good Afternoon';
     else if (hrs >= 17 && hrs <= 24)
       this.greetingMsg = 'Good Evening';
+
+
+    if (this.route.snapshot.queryParamMap.get('pc') !=null && this.route.snapshot.queryParamMap.get('sc') != null) {
+      this.pc = !JSON.parse(this.route.snapshot.queryParamMap.get('pc'));
+      this.sc = !JSON.parse(this.route.snapshot.queryParamMap.get('sc'));
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   setupProfile() {
