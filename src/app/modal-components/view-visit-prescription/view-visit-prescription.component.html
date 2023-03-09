@@ -1,14 +1,14 @@
-<div class="modal-nav">
-  <button mat-icon-button (click)="close(false)">
-    <img src="assets/svgs/arrow-right-white.svg" alt="">
-  </button>
-  <button mat-icon-button>
-    <img src="assets/svgs/download-white.svg" alt="">
-  </button>
-</div>
+<div class="title-con position-relative" mat-dialog-title>
+  <h6>
+    {{ isDownloadPrescription ? "Intelehealth e-" : "" }}Prescription
 
-<div class="title-con" mat-dialog-title>
-  <h6>Prescription</h6>
+    <img
+      *ngIf="isDownloadPrescription"
+      class="logo position-absolute"
+      src="assets/images/Intelehealth-logo-white.png"
+      width="100%"
+    />
+  </h6>
 </div>
 <mat-dialog-content>
   <div class="main-content">
@@ -17,36 +17,52 @@
         <div class="col-md-4 patient-info-section p-3" *ngIf="patient">
           <div class="patient-img-item mb-2">
             <div class="patient-img">
-              <img src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}" (error) ="onImgError($event)" alt="" width="100%" height="100%">
+              <img
+                src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
+                (error)="onImgError($event)"
+                alt=""
+                width="100%"
+                height="100%"
+              />
             </div>
             <div class="ml-3">
-              <h6>{{patient?.person.display}} ({{patient?.person.gender}})</h6>
-              <p>{{getPatientIdentifier('OpenMRS ID')}}</p>
+              <h6>
+                {{ patient?.person.display }} ({{ patient?.person.gender }})
+              </h6>
+              <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
           </div>
           <div class="patient-info-item">
             <h6>Age</h6>
-            <p>{{ (patient?.person.birthdate) ? getAge(patient?.person.birthdate) : patient?.person.age }}</p>
+            <p>
+              {{
+                patient?.person.birthdate
+                  ? getAge(patient?.person.birthdate)
+                  : patient?.person.age
+              }}
+            </p>
           </div>
         </div>
         <div class="col-md-4 patient-info-section p-3">
           <div class="patient-info-item mb-3">
             <h6>Occupation</h6>
-            <p>{{getPersonAttributeValue('occupation')}}</p>
+            <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
           <div class="patient-info-item">
             <h6>Address</h6>
-            <p>{{patient?.person.preferredAddress.cityVillage}}</p>
+            <p>{{ patient?.person.preferredAddress.cityVillage }}</p>
           </div>
         </div>
         <div class="col-md-4 patient-info-section p-3">
           <div class="patient-info-item">
             <h6>Contact no.</h6>
             <p>
-              <img src="assets/svgs/phone-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+              <img src="assets/svgs/phone-black.svg" alt="" />
+              {{ getPersonAttributeValue("Telephone Number") }}
             </p>
             <p>
-              <img src="assets/svgs/whatsapp-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+              <img src="assets/svgs/whatsapp-black.svg" alt="" />
+              {{ getPersonAttributeValue("Telephone Number") }}
             </p>
           </div>
         </div>
@@ -55,16 +71,42 @@
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/consultation-details-blue.svg" alt="">
+              <img src="assets/svgs/consultation-details-blue.svg" alt="" />
               <h6>Consultation details</h6>
             </div>
-            <div class="data-section-content">
-              <ul class="items-list">
+            <div class="data-section-content consultation-details">
+              <ul *ngIf="isDownloadPrescription" class="items-list">
+                <li>
+                  <div class="list-item">
+                    <label>Patient Id</label>
+                    <div class="list-item-content">
+                      {{patient?.identifiers?.[0]?.identifier}}
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="list-item">
+                    <label>Prescription Issued</label>
+                    <div class="list-item-content">
+                      {{
+                        completedEncounter?.encounterDatetime
+                          | date : "dd MMM, yyyy"
+                      }}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+              <ul *ngIf="!isDownloadPrescription" class="items-list">
                 <li>
                   <div class="list-item">
                     <label>Visit ID</label>
                     <div class="list-item-content">
-                      {{(visit?.uuid)?(replaceWithStar(visit?.uuid)|uppercase):''}}
+                      {{
+                        visit?.uuid
+                          ? (replaceWithStar(visit?.uuid) | uppercase)
+                          : ""
+                      }}
                     </div>
                   </div>
                 </li>
@@ -72,7 +114,7 @@
                   <div class="list-item">
                     <label>Visit created</label>
                     <div class="list-item-content">
-                      {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
+                      {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
                     </div>
                   </div>
                 </li>
@@ -88,7 +130,19 @@
                   <div class="list-item">
                     <label>Status</label>
                     <div class="list-item-content">
-                      <span [ngClass]="{ 'text-important-red': visitStatus == 'Priority Visit', 'text-important-green': ['Awaiting Visit', 'In-progress Visit', 'Completed Visit', 'Ended Visit'].indexOf(visitStatus) != -1 }">{{visitStatus}}</span>
+                      <span
+                        [ngClass]="{
+                          'text-important-red': visitStatus == 'Priority Visit',
+                          'text-important-green':
+                            [
+                              'Awaiting Visit',
+                              'In-progress Visit',
+                              'Completed Visit',
+                              'Ended Visit'
+                            ].indexOf(visitStatus) != -1
+                        }"
+                        >{{ visitStatus }}</span
+                      >
                     </div>
                   </div>
                 </li>
@@ -96,7 +150,7 @@
                   <div class="list-item">
                     <label>Location</label>
                     <div class="list-item-content">
-                      {{clinicName|titlecase}}
+                      {{ clinicName | titlecase }}
                     </div>
                   </div>
                 </li>
@@ -105,7 +159,7 @@
                     <label>Provided by</label>
                     <div class="list-item-content">
                       <div class="visit-provider-con">
-                        <span>{{providerName}}</span>
+                        <span>{{ providerName }}</span>
                       </div>
                     </div>
                   </div>
@@ -115,10 +169,10 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="!isDownloadPrescription" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/patient-interaction.svg" alt="">
+              <img src="assets/svgs/patient-interaction.svg" alt="" />
               <h6>Consulted doctor details</h6>
             </div>
             <div class="data-section-content">
@@ -127,7 +181,7 @@
                   <div class="list-item">
                     <label>Name</label>
                     <div class="list-item-content">
-                      {{(consultedDoctor)? consultedDoctor.name : 'NA'}}
+                      {{ consultedDoctor ? consultedDoctor.name : "NA" }}
                     </div>
                   </div>
                 </li>
@@ -135,7 +189,9 @@
                   <div class="list-item">
                     <label>Qualification</label>
                     <div class="list-item-content">
-                      {{(consultedDoctor)? consultedDoctor.qualification : 'NA'}}
+                      {{
+                        consultedDoctor ? consultedDoctor.qualification : "NA"
+                      }}
                     </div>
                   </div>
                 </li>
@@ -143,7 +199,9 @@
                   <div class="list-item">
                     <label>Speciality</label>
                     <div class="list-item-content">
-                      {{(consultedDoctor)? consultedDoctor.specialization : 'NA'}}
+                      {{
+                        consultedDoctor ? consultedDoctor.specialization : "NA"
+                      }}
                     </div>
                   </div>
                 </li>
@@ -151,7 +209,7 @@
                   <div class="list-item">
                     <label>Spoken with patient</label>
                     <div class="list-item-content">
-                      {{spokenWithPatient}}
+                      {{ spokenWithPatient }}
                     </div>
                   </div>
                 </li>
@@ -163,16 +221,16 @@
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/diagnosis.svg" alt="">
+              <img src="assets/svgs/diagnosis.svg" alt="" />
               <h6>Diagnosis</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
-                <li>
+                <li *ngIf="!isDownloadPrescription">
                   <div class="list-item">
                     <label>Has enough information for diagnosis?</label>
                     <div class="list-item-content">
-                      {{(diagnosis)? diagnosis.diagnosisIdentified:'No'}}
+                      {{ diagnosis ? diagnosis.diagnosisIdentified : "No" }}
                     </div>
                   </div>
                 </li>
@@ -181,7 +239,7 @@
                     <div class="list-item">
                       <label>Diagnosed for</label>
                       <div class="list-item-content">
-                        {{diagnosis.diagnosisName}}
+                        {{ diagnosis.diagnosisName }}
                       </div>
                     </div>
                   </li>
@@ -189,7 +247,7 @@
                     <div class="list-item">
                       <label>Diagnosis type</label>
                       <div class="list-item-content">
-                        {{diagnosis.diagnosisType}}
+                        {{ diagnosis.diagnosisType }}
                       </div>
                     </div>
                   </li>
@@ -197,7 +255,7 @@
                     <div class="list-item">
                       <label>Diagnosis status</label>
                       <div class="list-item-content">
-                        {{diagnosis.diagnosisStatus}}
+                        {{ diagnosis.diagnosisStatus }}
                       </div>
                     </div>
                   </li>
@@ -210,25 +268,7 @@
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/note.svg" alt="">
-              <h6>Note</h6>
-            </div>
-            <div class="data-section-content">
-              <ul class="items-list">
-                <li *ngFor="let n of notes;">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span>{{n.value}}</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-12 px-3 mb-3">
-          <div class="data-section">
-            <div class="data-section-title">
-              <img src="assets/svgs/medication.svg" alt="">
+              <img src="assets/svgs/medication.svg" alt="" />
               <h6>Medication</h6>
             </div>
             <div class="data-section-content">
@@ -244,18 +284,20 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <ng-container *ngIf="medicines.length; else noMedicines;">
-                      <tr *ngFor="let m of medicines; let i=index;">
-                        <td>{{m.drug}}</td>
-                        <td>{{m.strength}}</td>
-                        <td>{{m.days}}</td>
-                        <td>{{m.timing}}</td>
-                        <td>{{m.remark}}</td>
+                    <ng-container *ngIf="medicines.length; else noMedicines">
+                      <tr *ngFor="let m of medicines; let i = index">
+                        <td>{{ m.drug }}</td>
+                        <td>{{ m.strength }}</td>
+                        <td>{{ m.days }}</td>
+                        <td>{{ m.timing }}</td>
+                        <td>{{ m.remark }}</td>
                       </tr>
                     </ng-container>
                     <ng-template #noMedicines>
                       <tr>
-                        <td colspan="5" class="text-center">No medicines added</td>
+                        <td colspan="5" class="text-center">
+                          No medicines added
+                        </td>
                       </tr>
                     </ng-template>
                   </tbody>
@@ -268,14 +310,36 @@
         <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/advice.svg" alt="">
+              <img src="assets/svgs/note.svg" alt="" />
+              <h6>Note</h6>
+            </div>
+            <div class="data-section-content">
+              <ul class="items-list">
+                <li *ngFor="let n of notes">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ n.value }}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="advices?.length" class="col-md-12 px-3 mb-3">
+          <div class="data-section">
+            <div class="data-section-title">
+              <img src="assets/svgs/advice.svg" alt="" />
               <h6>Advice</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
-                <li *ngFor="let a of advices;">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span>{{a.value}}</span>
+                <li *ngFor="let a of advices">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ a.value }}</span>
                   </div>
                 </li>
               </ul>
@@ -283,17 +347,19 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="tests?.length" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/test.svg" alt="">
+              <img src="assets/svgs/test.svg" alt="" />
               <h6>Test</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
-                <li *ngFor="let t of tests;">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span>{{t.value}}</span>
+                <li *ngFor="let t of tests">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ t.value }}</span>
                   </div>
                 </li>
               </ul>
@@ -301,10 +367,10 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="referrals?.length" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/referral.svg" alt="">
+              <img src="assets/svgs/referral.svg" alt="" />
               <h6>Referral</h6>
             </div>
             <div class="data-section-content">
@@ -317,10 +383,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <ng-container *ngIf="referrals.length; else noReferrals;">
-                      <tr *ngFor="let r of referrals; let i=index;">
-                        <td>{{r.speciality}}</td>
-                        <td>{{r.remark}}</td>
+                    <ng-container *ngIf="referrals.length; else noReferrals">
+                      <tr *ngFor="let r of referrals; let i = index">
+                        <td>{{ r.speciality }}</td>
+                        <td>{{ r.remark }}</td>
                       </tr>
                     </ng-container>
                     <ng-template #noReferrals>
@@ -337,10 +403,10 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="followUp" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
-              <img src="assets/svgs/follow-up.svg" alt="">
+              <img src="assets/svgs/follow-up.svg" alt="" />
               <h6>Follow-up</h6>
             </div>
             <div class="data-section-content">
@@ -349,7 +415,7 @@
                   <div class="list-item">
                     <label>Follow-up suggested</label>
                     <div class="list-item-content">
-                      {{(followUp)? followUp.wantFollowUp:'No'}}
+                      {{ followUp ? followUp.wantFollowUp : "No" }}
                     </div>
                   </div>
                 </li>
@@ -358,7 +424,7 @@
                     <div class="list-item">
                       <label>Follow-up Date</label>
                       <div class="list-item-content">
-                        {{followUp.followUpDate|date:'mediumDate'}}
+                        {{ followUp.followUpDate | date : "mediumDate" }}
                       </div>
                     </div>
                   </li>
@@ -366,7 +432,7 @@
                     <div class="list-item">
                       <label>Follow-up Time</label>
                       <div class="list-item-content">
-                        {{followUp.followUpTime}}
+                        {{ followUp.followUpTime }}
                       </div>
                     </div>
                   </li>
@@ -374,13 +440,28 @@
                     <div class="list-item">
                       <label>Reason for follow-up</label>
                       <div class="list-item-content">
-                        {{followUp.followUpReason}}
+                        {{ followUp.followUpReason }}
                       </div>
                     </div>
                   </li>
                 </ng-container>
               </ul>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isDownloadPrescription" class="signature w-100">
+        <div class="float-right my-4">
+          <ng-container
+            *ngIf="['Draw', 'Generate'].includes(signatureType?.value)"
+          >
+            <img class="signature" [src]="signature?.value" />
+          </ng-container>
+          <div class="title-name">{{ consultedDoctor?.name }}</div>
+          <div class="title">{{ consultedDoctor?.typeOfProfession }}</div>
+          <div class="sub-title">
+            Registration No:{{ consultedDoctor?.registrationNumber }}
           </div>
         </div>
       </div>

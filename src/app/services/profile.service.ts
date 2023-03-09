@@ -9,14 +9,22 @@ import { Observable } from 'rxjs';
 export class ProfileService {
   base = environment.base;
   baseURL = environment.baseURL;
+  mimeTypes = {
+    JVBERi0: "application/pdf",
+    R0lGODdh: "image/gif",
+    R0lGODlh: "image/gif",
+    iVBORw0KGgo: "image/png",
+    "/9j/": "image/jpg"
+  };
+
   constructor(private http: HttpClient) { }
 
-  getProfileImage(uuid:string): Observable<any> {
+  getProfileImage(uuid: string): Observable<any> {
     const url = `${this.baseURL}/personimage/${uuid}`;
     return this.http.get(url, { responseType: 'blob' });
   }
 
-  getPersonName(uuid:string) :  Observable<any> {
+  getPersonName(uuid: string): Observable<any> {
     const url = `${this.baseURL}/person/${uuid}/name`;
     return this.http.get(url);
   }
@@ -66,17 +74,17 @@ export class ProfileService {
     return this.http.post(URL, json, header);
   }
 
- creatSignature(providerId:string, textOfSign:string, fontName:string) : Observable<any> {
+  creatSignature(providerId: string, textOfSign: string, fontName: string): Observable<any> {
     const URL = `${this.base}/createsign`;
     const json = {
       textOfSign: textOfSign,
-      fontName : fontName,
+      fontName: fontName,
       providerId: providerId
     };
     return this.http.post(URL, json);
   }
 
-  updateSignature(file, providerId:string) : Observable<any> {
+  updateSignature(file, providerId: string): Observable<any> {
     const URL = `${this.base}/uploadsign`;
     const json = {
       file: file,
@@ -88,5 +96,13 @@ export class ProfileService {
   deleteProviderAttribute(uuid: string, existingUuid: string): Observable<any> {
     const URL = `${this.baseURL}/provider/${uuid}/attribute/${existingUuid}`
     return this.http.delete(URL);
+  }
+
+  detectMimeType(b64: string) {
+    for (var s in this.mimeTypes) {
+      if (b64.indexOf(s) === 0) {
+        return this.mimeTypes[s];
+      }
+    }
   }
 }

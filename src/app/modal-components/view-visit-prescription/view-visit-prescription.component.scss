@@ -41,7 +41,7 @@
 
       .patient-img {
         width: 56px;
-        height: 56px;
+        height: 50px;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -91,17 +91,19 @@
     align-items: center;
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
     padding: 5px 0px;
-     img {
+
+    img {
       width: 48px;
       margin-right: 10px;
-     }
-     h6 {
+    }
+
+    h6 {
       font-size: 20px;
       line-height: 150%;
       color: #1B163A;
       font-weight: bold;
       margin-bottom: 0px;
-     }
+    }
   }
 }
 
@@ -148,7 +150,8 @@
   font-weight: bold;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -185,13 +188,14 @@
 
   .data-section {
     .data-section-title {
-       img {
+      img {
         width: 38px;
         margin-right: 10px;
-       }
-       h6 {
+      }
+
+      h6 {
         font-size: 16px;
-       }
+      }
     }
   }
 
@@ -200,4 +204,9 @@
       font-size: 16px;
     }
   }
+}
+
+.signature {
+  height: 50px;
+  width: 150px;
 }

@@ -1,9 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-view-visit-prescription',
@@ -11,6 +12,8 @@ import * as moment from 'moment';
   styleUrls: ['./view-visit-prescription.component.scss']
 })
 export class ViewVisitPrescriptionComponent implements OnInit {
+  @Input() isDownloadPrescription: any = false;
+  @Input() visitId: any;
 
   visit: any;
   patient: any;
@@ -40,14 +43,19 @@ export class ViewVisitPrescriptionComponent implements OnInit {
   conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 
+  signaturePicUrl: any = null;
+  signatureFile: any = null;
+  completedEncounter: any = null;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
     private visitService: VisitService,
+    private profileService: ProfileService,
     private diagnosisService: DiagnosisService) { }
 
   ngOnInit(): void {
-    this.getVisit(this.data.uuid);
+    this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
   }
 
   getVisit(uuid: string) {
@@ -76,6 +84,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
 
             visit.encounters.forEach((encounter: any) => {
               if (encounter.encounterType.display == 'Visit Complete') {
+                this.completedEncounter = encounter;
                 encounter.obs.forEach((o: any) => {
                   if (o.concept.display == 'Doctor details') {
                     this.consultedDoctor = JSON.parse(o.value);
@@ -84,6 +93,10 @@ export class ViewVisitPrescriptionComponent implements OnInit {
                 encounter.encounterProviders.forEach((p: any) => {
                   this.consultedDoctor.gender = p.provider.person.gender;
                   this.consultedDoctor.person_uuid = p.provider.person.uuid;
+                  this.consultedDoctor.attributes = p.provider.attributes;
+                  if (this.isDownloadPrescription) {
+                    this.setSignature(this.signature?.value, this.signatureType?.value);
+                  }
                 });
               }
             });
@@ -135,7 +148,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptMed).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if(obs.value.includes(":")) {
+          if (obs.value.includes(":")) {
             this.medicines.push({
               drug: obs.value?.split(":")[0],
               strength: obs.value?.split(":")[1],
@@ -155,39 +168,39 @@ export class ViewVisitPrescriptionComponent implements OnInit {
   checkIfAdvicePresent() {
     this.advices = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAdvice)
-    .subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
-        if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-          if (!obs.value.includes('</a>')) {
-            this.advices.push(obs);
+      .subscribe((response: any) => {
+        response.results.forEach((obs: any) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            if (!obs.value.includes('</a>')) {
+              this.advices.push(obs);
+            }
           }
-        }
+        });
       });
-    });
   }
 
   checkIfTestPresent() {
     this.tests = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptTest)
-    .subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
-        if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-          this.tests.push(obs);
-        }
+      .subscribe((response: any) => {
+        response.results.forEach((obs: any) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            this.tests.push(obs);
+          }
+        });
       });
-    });
   }
 
   checkIfReferralPresent() {
     this.referrals = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
-    .subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
-        if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-          this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark:  obs.value.split(':')[1].trim() });
-        }
+      .subscribe((response: any) => {
+        response.results.forEach((obs: any) => {
+          if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
+            this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark: obs.value.split(':')[1].trim() });
+          }
+        });
       });
-    });
   }
 
   checkIfFollowUpPresent() {
@@ -196,7 +209,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           let followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
           let followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
-          let followUpReason = (obs.value.split(', Remark: ')[1])? obs.value.split(', Remark: ')[1] : null;
+          let followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
           this.followUp = {
             present: true,
             wantFollowUp: 'Yes',
@@ -290,4 +303,45 @@ export class ViewVisitPrescriptionComponent implements OnInit {
     this.dialogRef.close(val);
   }
 
+  get isPrescriptionModal() {
+    return location.hash.includes('#/i/')
+  }
+
+  get signatureType() {
+    const attributes = Array.isArray(this.consultedDoctor?.attributes) ? this.consultedDoctor.attributes : [];
+    return attributes.find(a => a?.attributeType?.display === "signatureType");
+  }
+
+  get signature() {
+    return this.consultedDoctor.attributes.find(a => a?.attributeType?.display === "signature");
+  }
+
+  detectMimeType(b64: string) {
+    return this.profileService.detectMimeType(b64);
+  }
+
+  // ngAfterViewInit() {
+  //   if (this.isDownloadPrescription) {
+  //     this.signaturePad.set('minWidth', 5);
+  //     this.signaturePad.clear();
+  //   }
+  // }
+
+  setSignature(signature, signatureType) {
+    console.log('signature, signatureType: ', signature, signatureType);
+    switch (signatureType) {
+      case 'Draw':
+      case 'Generate':
+      case 'Upload':
+        this.signaturePicUrl = signature;
+        fetch(signature)
+          .then(res => res.blob())
+          .then(blob => {
+            this.signatureFile = new File([blob], "intelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
+          });
+        break;
+      default:
+        break;
+    }
+  }
 }

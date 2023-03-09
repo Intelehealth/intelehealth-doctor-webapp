@@ -34,6 +34,7 @@ import { SharedModule } from '../shared.module';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ConfirmDayOffComponent } from './confirm-day-off/confirm-day-off.component';
 import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.component';
+import { SignaturePadModule } from 'angular2-signaturepad';
 
 @NgModule({
     declarations: [
@@ -74,7 +75,9 @@ import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.
         MatDatepickerModule,
         PdfViewerModule,
         SharedModule,
-        NgSelectModule
-    ]
+        NgSelectModule,
+        SignaturePadModule,
+    ],
+    exports: [ViewVisitPrescriptionComponent]
 })
 export class ModalComponentsModule { }
