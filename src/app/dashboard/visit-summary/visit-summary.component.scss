@@ -434,11 +434,14 @@
     padding: 10px 16px;
   }
 
-  .blue-btn:disabled, .white-btn:disabled, .gray-btn:disabled {
+  .blue-btn:disabled,
+  .white-btn:disabled,
+  .gray-btn:disabled {
     opacity: 0.5;
   }
 
-  .blue-btn:focus, .white-btn:focus {
+  .blue-btn:focus,
+  .white-btn:focus {
     box-shadow: none;
   }
 
@@ -493,12 +496,14 @@ textarea.form-control {
   }
 }
 
-::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container, .ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
+.ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
   background: #FFFFFF;
   min-width: 120px;
 }
 
-::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container, ::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
+::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
+::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
   height: 48px;
   width: 100%;
   background: #FAF9FF;
@@ -549,7 +554,8 @@ textarea.form-control {
   opacity: 0.5;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -582,7 +588,9 @@ th.mat-header-cell {
   height: 21px;
 }
 
-th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
   border: none;
   min-width: 60px;
   white-space: nowrap;
@@ -596,7 +604,8 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   }
 
   span.alert-success {
-    color: #0FD197;;
+    color: #0FD197;
+    ;
     font-weight: bold;
     background: transparent;
     border: none;
@@ -607,7 +616,8 @@ td.mat-cell {
   font-size: 16px;
 }
 
-tr.mat-row, tr.mat-footer-row {
+tr.mat-row,
+tr.mat-footer-row {
   height: 88px;
   border-radius: 8px;
 }
@@ -670,7 +680,8 @@ th.mat-header-cell:last-child {
   width: fit-content;
 }
 
-.pill-anchor, .pill-anchor:hover {
+.pill-anchor,
+.pill-anchor:hover {
   display: inline-block;
   width: fit-content;
   text-decoration: none !important;
@@ -692,6 +703,7 @@ th.mat-header-cell:last-child {
     height: 20px;
     width: 100%;
   }
+
   .t-line {
     position: absolute;
     top: 0px;
@@ -701,6 +713,7 @@ th.mat-header-cell:last-child {
     transform: translateX(-50%);
     background: #0FD197;
   }
+
   .b-line {
     position: absolute;
     bottom: 0px;
@@ -758,4 +771,21 @@ th.mat-header-cell:last-child {
   }
 }
 
+.webrtc-controls {
+  .chat {
+    z-index: 999;
+    bottom: 105px;
+    right: 50px;
+  }
+  
+  .video-call {
+    z-index: 999;
+    bottom: 50px;
+    right: 50px;
+  }
 
+  img {
+    cursor: pointer;
+    border-radius: 25px;
+  }
+}
