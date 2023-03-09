@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -307,28 +307,23 @@ export class ViewVisitPrescriptionComponent implements OnInit {
     return location.hash.includes('#/i/')
   }
 
+  get attributes() {
+    return Array.isArray(this.consultedDoctor?.attributes) ? this.consultedDoctor.attributes : [];
+  }
+
   get signatureType() {
-    const attributes = Array.isArray(this.consultedDoctor?.attributes) ? this.consultedDoctor.attributes : [];
-    return attributes.find(a => a?.attributeType?.display === "signatureType");
+    return this.attributes.find(a => a?.attributeType?.display === "signatureType");
   }
 
   get signature() {
-    return this.consultedDoctor.attributes.find(a => a?.attributeType?.display === "signature");
+    return this.attributes.find(a => a?.attributeType?.display === "signature");
   }
 
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
-  // ngAfterViewInit() {
-  //   if (this.isDownloadPrescription) {
-  //     this.signaturePad.set('minWidth', 5);
-  //     this.signaturePad.clear();
-  //   }
-  // }
-
   setSignature(signature, signatureType) {
-    console.log('signature, signatureType: ', signature, signatureType);
     switch (signatureType) {
       case 'Draw':
       case 'Generate':
