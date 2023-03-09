@@ -166,7 +166,7 @@ export class SetupCalendarComponent implements OnInit {
           }
         }
         if (flag == 0 && today.getMonth() <= x) {
-          this.scheduledMonths.push({ name: this.monthNames[x], year: new Date().getFullYear() });
+          this.scheduledMonths.push({ name: this.monthNames[x], year: new Date().getFullYear().toString() });
           break;
         }
       }
@@ -190,12 +190,12 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   getScheduledMonths() {
-    this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear())
+    this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear().toString())
       .subscribe({
         next: (res: any) => {
           this.scheduledMonths = res.data;
           if (this.scheduledMonths.length === 0) {
-            this.scheduledMonths.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear() });
+            this.scheduledMonths.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear().toString() });
             this.getSchedule(this.scheduledMonths[0].year, this.scheduledMonths[0].name);
             this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
           }
