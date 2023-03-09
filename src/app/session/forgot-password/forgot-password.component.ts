@@ -36,14 +36,30 @@ export class ForgotPasswordComponent implements OnInit {
     if (this.forgotPasswordForm.invalid) {
       return;
     }
-    this.mindmapService.postMindmapOTP({ userName: this.forgotPasswordForm.value.username }).subscribe((otp: any) => {
-      if (otp.success) {
-        this.toastr.success(`OTP sent on your mobile number and email successfully!`, "OTP Sent");
-        this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-password', via: 'username', val: this.forgotPasswordForm.value.username, id: otp?.data?.uuid } });
+
+    let payload: any = {
+      otpFor: "password",
+      username: this.forgotPasswordForm.value.username
+    };
+
+    this.authService.requestOtp(payload).subscribe((res: any) => {
+      if (res.success) {
+        this.toastr.success(`OTP sent on your mobile number/email successfully!`, "OTP Sent");
+        this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-password', via: 'username', val: this.forgotPasswordForm.value.username, id: res?.data?.userUuid } });
       } else {
-        this.toastr.warning("Couldn’t find you, please enter valid username","User doesn't exists!");
+        this.toastr.error(res.message, "Error");
       }
     });
+
+    // this.mindmapService.postMindmapOTP({ userName: this.forgotPasswordForm.value.username }).subscribe((otp: any) => {
+    //   if (otp.success) {
+    //     this.toastr.success(`OTP sent on your mobile number and email successfully!`, "OTP Sent");
+    //     this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-password', via: 'username', val: this.forgotPasswordForm.value.username, id: otp?.data?.uuid } });
+    //   } else {
+    //     this.toastr.warning("Couldn’t find you, please enter valid username","User doesn't exists!");
+    //   }
+    // });
+
     // this.authService.checkIfUsernameExists(this.forgotPasswordForm.value.username).subscribe((res: any) => {
     //   if (res.results) {
     //     res.results.forEach((user: any) => {
