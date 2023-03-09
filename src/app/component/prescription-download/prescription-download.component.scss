@@ -1,0 +1,82 @@
+body {
+    background: rgb(204, 204, 204);
+}
+
+page {
+    background: white;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+page[size="A4"] {
+    width: 21cm;
+    min-height: 29.7cm;
+}
+
+@media print {
+
+    body,
+    page {
+        margin: 0;
+        box-shadow: 0;
+    }
+}
+
+.blue-btn {
+    background: #2E1E91;
+    border: 1px solid #2E1E91;
+    color: #FFFFFF;
+
+    padding: 8px 24px;
+    min-width: 119px;
+    min-height: 48px;
+    border: 1px solid #EFE8FF;
+    border-radius: 8px;
+    font-size: 18px;
+    line-height: 150%;
+    font-weight: bold;
+}
+
+.title-con {
+    padding: 15px 10px 10px 10px !important;
+}
+
+.main-content {
+    padding-top: 10px !important;
+
+    .data-section-title {
+        img {
+            width: 25px !important;
+            height: 25px !important;
+        }
+
+        h6 {
+            font-size: 15px !important;
+        }
+    }
+}
+
+.logo {
+    right: 30px;
+    background: #2E1E91;
+    width: 60px !important;
+}
+
+.help-menu-container {
+    display: none !important;
+}
+
+
+.title-con {
+    h6 {
+        font-size: 18px !important;
+    }
+}
+
+.patient-img-item {
+    h6 {
+        font-size: 15px !important;
+    }
+}

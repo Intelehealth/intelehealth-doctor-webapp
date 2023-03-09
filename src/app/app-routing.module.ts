@@ -5,6 +5,7 @@ import { MainContainerComponent } from './main-container/main-container.componen
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { TestChatComponent } from './component/test-chat/test-chat.component';
+import { PrescriptionDownloadComponent } from './component/prescription-download/prescription-download.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'test/chat',
     component: TestChatComponent
+  },
+  {
+    path: 'i/:visitId',
+    loadChildren: () => import('./component/prescription-download/prescription-download.module').then(m => m.PrescriptionDownloadModule),
   },
   {
     path: '',

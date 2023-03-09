@@ -16,22 +16,22 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 export const PICK_FORMATS = {
-  parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
+  parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
   display: {
-      dateInput: 'input',
-      monthYearLabel: {year: 'numeric', month: 'short'},
-      dateA11yLabel: {year: 'numeric', month: 'long', day: 'numeric'},
-      monthYearA11yLabel: {year: 'numeric', month: 'long'}
+    dateInput: 'input',
+    monthYearLabel: { year: 'numeric', month: 'short' },
+    dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
+    monthYearA11yLabel: { year: 'numeric', month: 'long' }
   }
 };
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
-      if (displayFormat === 'input') {
-          return formatDate(date,'dd MMM yyyy',this.locale);
-      } else {
-          return date.toDateString();
-      }
+    if (displayFormat === 'input') {
+      return formatDate(date, 'dd MMM yyyy', this.locale);
+    } else {
+      return date.toDateString();
+    }
   }
 }
 
@@ -55,14 +55,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
-
-  mimeTypes = {
-    JVBERi0: "application/pdf",
-    R0lGODdh: "image/gif",
-    R0lGODlh: "image/gif",
-    iVBORw0KGgo: "image/png",
-    "/9j/": "image/jpg"
-  };
 
   fonts: any[] = [
     {
@@ -191,7 +183,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       countryCode1: new FormControl('+91'),
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
-      whatsapp: new FormControl('',[Validators.required]),
+      whatsapp: new FormControl('', [Validators.required]),
       emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
@@ -304,17 +296,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
       // personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
       personalFormValues.givenName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.givenName : null,
-      personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
-      personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
-      personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
-      personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
-      personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
+        personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
+        personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
+        personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
+        personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
+        personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
       this.providerAttributeTypes.forEach((attrType: any) => {
         switch (attrType.display) {
           case 'address':
 
             break;
-            case 'consultationLanguage':
+          case 'consultationLanguage':
             professionalFormValues.consultationLanguage = this.getAttributeValue(attrType.uuid, attrType.display)?.split(',');
             break;
           case 'countryCode':
@@ -329,7 +321,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'phoneNumber':
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
-            (personalFormValues.phoneNumber)? this.phoneNumberValid = true : this.phoneNumberValid = false;
+            (personalFormValues.phoneNumber) ? this.phoneNumberValid = true : this.phoneNumberValid = false;
             break;
           case 'qualification':
 
@@ -348,8 +340,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             personalFormValues.signatureType = this.signatureType;
             break;
           case 'specialization':
-              professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
-              break;
+            professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
+            break;
           case 'textOfSign':
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
@@ -358,7 +350,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'whatsapp':
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
-            (personalFormValues.whatsapp)? this.whatsAppNumberValid = true : this.whatsAppNumberValid = false;
+            (personalFormValues.whatsapp) ? this.whatsAppNumberValid = true : this.whatsAppNumberValid = false;
             break;
           case 'workExperience':
             professionalFormValues.workExperience = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -386,7 +378,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           fetch(signature)
             .then(res => res.blob())
             .then(blob => {
-              this.signatureFile = new File([blob], "inetelehealth",{ type: this.detectMimeType(signature.split(',')[0]) });
+              this.signatureFile = new File([blob], "inetelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
             });
           break;
         default:
@@ -574,15 +566,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let pf1 = this.personalInfoForm.value;
 
-    this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate ).subscribe(res1 => {
+    this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
       // console.log(res1);
       if (this.provider.person?.preferredName) {
-        this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
+        this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
           // console.log(res2);
           this.updateSignature();
         });
       } else {
-        this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 =>{
+        this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
           // console.log(res2);
           this.updateSignature();
         });
@@ -608,7 +600,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           if (res.fname) {
             fetch(res.fname).then(res => res.blob()).then(blob => {
               let reader = new FileReader();
-              reader.onload = () =>{
+              reader.onload = () => {
                 signature = reader.result.toString();
                 this.personalInfoForm.patchValue({ signature });
                 this.updateProviderAttributes();
@@ -669,7 +661,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case 'specialization':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
-            break;
+          break;
         case 'textOfSign':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
@@ -691,8 +683,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      this.toastr.success("Profile has been updated successfully","Profile Updated");
-      this.toastr.warning("Kindly re-login to see updated details","Re-login");
+      this.toastr.success("Profile has been updated successfully", "Profile Updated");
+      this.toastr.warning("Kindly re-login to see updated details", "Re-login");
       this.authService.logOut();
     });
   }
@@ -714,11 +706,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   detectMimeType(b64: string) {
-    for (var s in this.mimeTypes) {
-      if (b64.indexOf(s) === 0) {
-        return this.mimeTypes[s];
-      }
-    }
+    return this.profileService.detectMimeType(b64);
   }
 
   ngOnDestroy(): void {

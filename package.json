@@ -38,6 +38,7 @@
     "core-js": "^2.5.4",
     "date-fns": "^2.29.3",
     "firebase": "^8.10.0",
+    "html2pdf.js": "^0.10.1",
     "intl-tel-input": "^17.0.19",
     "intro.js": "^2.9.3",
     "jquery": "^3.5.1",

@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import {
   CommonModule,
   APP_BASE_HREF,
@@ -43,7 +43,6 @@ import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbActiveModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from 'ngx-cookie-service';
@@ -211,6 +210,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
 import { BreadcrumbService } from "./services/breadcrumb.service";
 import { MomentModule } from 'ngx-moment';
 import { SharedModule } from "./shared.module";
+import { PrescriptionDownloadModule } from "./component/prescription-download/prescription-download.module";
 
 @NgModule({
   declarations: [
@@ -326,7 +326,7 @@ import { SharedModule } from "./shared.module";
     PrescriptionSentComponent,
     HelpmenuComponent,
     AppointmentContainerComponent,
-    MainContainerComponent
+    MainContainerComponent,
   ],
 
   imports: [
@@ -400,7 +400,8 @@ import { SharedModule } from "./shared.module";
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    SharedModule
+    SharedModule,
+    PrescriptionDownloadModule
   ],
   providers: [
     PagerService,
@@ -429,7 +430,7 @@ import { SharedModule } from "./shared.module";
       multi: true,
     }
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
