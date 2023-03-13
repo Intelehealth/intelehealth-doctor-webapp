@@ -1,5 +1,5 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
@@ -9,7 +9,7 @@ import { CoreService } from '../services/core/core.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, RouterState, RouterStateSnapshot } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
@@ -20,8 +20,7 @@ import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.compo
   templateUrl: './main-container.component.html',
   styleUrls: ['./main-container.component.scss']
 })
-export class MainContainerComponent implements OnInit, AfterContentChecked {
-  dialogRef: MatDialogRef<HelpMenuComponent>;
+export class MainContainerComponent implements OnInit, AfterContentChecked, OnDestroy {
 
   collapsed = false;
   baseUrl: string = environment.baseURL;
@@ -44,6 +43,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
   constructor(
     private cdref: ChangeDetectorRef,
     private authService: AuthService,
+    private dialog: MatDialog,
     private pageTitleService: PageTitleService,
     private breakpointObserver: BreakpointObserver,
     private coreService: CoreService,
@@ -208,16 +208,5 @@ export class MainContainerComponent implements OnInit, AfterContentChecked {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
-  }
-
-  openHelpMenu() {
-    if (this.dialogRef) {
-      this.dialogRef.close();
-      return;
-    };
-    this.dialogRef = this.coreService.openHelpMenuModal();
-    this.dialogRef.afterClosed().subscribe(result => {
-      this.dialogRef = undefined;
-    });
   }
 }

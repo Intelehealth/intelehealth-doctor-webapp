@@ -210,7 +210,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
 import { BreadcrumbService } from "./services/breadcrumb.service";
 import { MomentModule } from 'ngx-moment';
 import { SharedModule } from "./shared.module";
-import { PrescriptionDownloadModule } from "./component/prescription-download/prescription-download.module";
 
 @NgModule({
   declarations: [
@@ -326,7 +325,7 @@ import { PrescriptionDownloadModule } from "./component/prescription-download/pr
     PrescriptionSentComponent,
     HelpmenuComponent,
     AppointmentContainerComponent,
-    MainContainerComponent,
+    MainContainerComponent
   ],
 
   imports: [
@@ -400,8 +399,7 @@ import { PrescriptionDownloadModule } from "./component/prescription-download/pr
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    SharedModule,
-    PrescriptionDownloadModule
+    SharedModule
   ],
   providers: [
     PagerService,

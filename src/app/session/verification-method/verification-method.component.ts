@@ -72,7 +72,8 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
     }
 
     let payload: any = {
-      otpFor: "verification"
+      otpFor: "verification",
+      username: (JSON.parse(localStorage.getItem('user'))).username
     };
     if (this.active == 'phone') {
       payload.phoneNumber = this.verificationForm.value.phone,

@@ -296,11 +296,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
       // personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
       personalFormValues.givenName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.givenName : null,
-        personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
-        personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
-        personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
-        personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
-        personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
+      personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
+      personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
+      personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
+      personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
+      personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
       this.providerAttributeTypes.forEach((attrType: any) => {
         switch (attrType.display) {
           case 'address':
