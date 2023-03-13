@@ -30,7 +30,7 @@
   "dataGroups": [
     {
       "name": "api-performance",
-      "urls": ["/assets/i18n/**", "/api/**"],
+      "urls": ["/assets/i18n/**"],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,
