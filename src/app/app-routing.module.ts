@@ -22,7 +22,7 @@ const routes: Routes = [
     component: TestChatComponent
   },
   {
-    path: 'i/:visitId',
+    path: 'i/:hash',
     loadChildren: () => import('./component/prescription-download/prescription-download.module').then(m => m.PrescriptionDownloadModule),
   },
   {
