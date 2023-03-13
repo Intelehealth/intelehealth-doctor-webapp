@@ -144,9 +144,13 @@ export class ConsultationDetailsV4Component implements OnInit {
     });
   }
 
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
+  }
+
   openModal() {
     localStorage.patientUuid = this.patientUuid;
-    localStorage.connectToDrId = this.provider?.person?.uuid;
+    localStorage.connectToDrId = this.userId;
 
     this.socket.openNewVCModal();
   }
