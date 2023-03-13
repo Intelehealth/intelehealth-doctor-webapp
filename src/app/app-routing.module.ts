@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from './main-container/main-container.component';
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard } from 'ngx-permissions';
-import { TestChatComponent } from './component/test-chat/test-chat.component';
+// import { TestChatComponent } from './component/test-chat/test-chat.component';
 
 const routes: Routes = [
   {
@@ -16,10 +16,10 @@ const routes: Routes = [
     path: 'session',
     loadChildren: () => import('./session/session.module').then(m => m.SessionModule)
   },
-  {
-    path: 'test/chat',
-    component: TestChatComponent
-  },
+  // {
+  //   path: 'test/chat',
+  //   component: TestChatComponent
+  // },
   {
     path: 'i/:visitId',
     loadChildren: () => import('./prescription-download/prescription-download.module').then(m => m.PrescriptionDownloadModule),

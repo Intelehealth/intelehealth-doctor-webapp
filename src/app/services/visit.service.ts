@@ -3,17 +3,17 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
-import { VisitData } from "../component/homepage/homepage.component";
+// import { VisitData } from "../component/homepage/homepage.component";
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
   private baseURL = environment.baseURL;
-  public flagVisit: VisitData[] = [];
-  public waitingVisit: VisitData[] = [];
-  public progressVisit: VisitData[] = [];
-  public completedVisit: VisitData[] = [];
+  // public flagVisit: VisitData[] = [];
+  // public waitingVisit: VisitData[] = [];
+  // public progressVisit: VisitData[] = [];
+  // public completedVisit: VisitData[] = [];
 
   public isVisitSummaryShow: boolean = false;
 
@@ -44,10 +44,10 @@ export class VisitService {
   }
 
   clearVisits() {
-    this.flagVisit = new Array();
-    this.waitingVisit = new Array();
-    this.progressVisit = new Array();
-    this.completedVisit = new Array();
+    // this.flagVisit = new Array();
+    // this.waitingVisit = new Array();
+    // this.progressVisit = new Array();
+    // this.completedVisit = new Array();
   }
 
   recentVisits(id): Observable<any> {
