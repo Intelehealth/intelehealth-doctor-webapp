@@ -1,4 +1,4 @@
-<div class="container-fluid position-relative">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
       <div class="appointment-banner">
@@ -1953,17 +1953,9 @@
       </button>
     </div>
   </div>
+</div>
 
-  <div class="webrtc-controls">
-    <img
-      class="img shadow position-fixed chat"
-      src="assets/svgs/video-frame.svg"
-      (click)="startCall()"
-    />
-    <img
-      class="img shadow position-fixed video-call"
-      src="assets/svgs/chat-icon-blue-circle.svg"
-      (click)="startChat()"
-    />
-  </div>
+<div class="webrtc-controls">
+  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()"/>
+  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()"/>
 </div>

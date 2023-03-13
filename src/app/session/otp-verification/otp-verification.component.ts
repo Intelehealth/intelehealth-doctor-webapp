@@ -168,6 +168,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
+        payload.username = (JSON.parse(localStorage.getItem('user'))).username;
         if (this.via == 'phone') {
           payload.phoneNumber = this.cred.split('||')[1],
             payload.countryCode = this.cred.split('||')[0]
