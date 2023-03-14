@@ -1302,7 +1302,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             followUpReason,
             uuid: obs.uuid
           });
-          console.log(this.followUpForm.value);
         }
       });
     });
