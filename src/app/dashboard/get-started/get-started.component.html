@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="col-md-8 p-0">
-      <div class="card intel-horz-card my-3" [class.disabled]="!pc">
+      <div *ngIf="pc" class="card intel-horz-card my-3">
         <div class="d-flex flex-row">
           <div class="pr-3">
             <img src="assets/svgs/user-pink-circle.svg" alt="..." width="44px">

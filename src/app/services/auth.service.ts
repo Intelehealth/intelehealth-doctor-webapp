@@ -10,7 +10,7 @@ import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 declare var deleteFromStorage: any;
 import examples from 'libphonenumber-js/examples.mobile.json';
-import {CountryCode, AsYouType, getExampleNumber, getCountryCallingCode} from "libphonenumber-js";
+import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 
 @Injectable({
   providedIn: "root",
@@ -235,5 +235,10 @@ export class AuthService {
 
   resetPassword(userUuid: string, newPassword: string) {
     return this.http.post(`${this.mindmapUrl}/auth/resetPassword/${userUuid}`, { newPassword });
+  }
+
+  replaceWithStar(str: string, type) {
+    let n = str?.length;
+    return str.replace(str.substring(5, (type == 'phone') ? n - 2 : n - 4), "*****");
   }
 }
