@@ -1,5 +1,5 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
@@ -39,6 +39,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   searchForm: FormGroup;
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
+  dialogRef: MatDialogRef<HelpMenuComponent>;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -204,6 +205,17 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     if (this.isMobile) {
       this.drawer.toggle();
     }
+  }
+
+  openHelpMenu() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+      return;
+    };
+    this.dialogRef = this.coreService.openHelpMenuModal();
+    this.dialogRef.afterClosed().subscribe(result => {
+      this.dialogRef = undefined;
+    });
   }
 
   ngOnDestroy(): void {

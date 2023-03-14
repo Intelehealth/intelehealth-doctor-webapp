@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { NavigationEnd, Router } from '@angular/router';
 import { HelpMenuComponent } from './modal-components/help-menu/help-menu.component';
 import { CoreService } from './services/core/core.service';
 
@@ -9,12 +10,18 @@ import { CoreService } from './services/core/core.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-
+  url: string;
   dialogRef: MatDialogRef<HelpMenuComponent>;
 
-  constructor(private cs: CoreService) { }
+  constructor(private cs: CoreService, private router: Router) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationEnd) {
+        this.url = e.urlAfterRedirects;
+      }
+    });
+  }
 
   openHelpMenu() {
     if (this.dialogRef) {

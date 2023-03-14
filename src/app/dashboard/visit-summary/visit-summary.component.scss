@@ -773,17 +773,17 @@ th.mat-header-cell:last-child {
 
 .webrtc-controls {
   position: fixed;
-  bottom: 80px;
+  bottom: 20px;
   right: 20px;
   z-index: 999;
   display: flex;
   flex-direction: column;
-  width: 87px;
+  // width: 87px;
   align-items: center;
 
   img {
     cursor: pointer;
     border-radius: 25px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 }

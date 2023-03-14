@@ -20,6 +20,9 @@ import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/mater
 import { formatDate } from '@angular/common';
 import * as _ from 'lodash';
 import { LinkService } from 'src/app/services/link.service';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
+import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -232,6 +235,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   diagnosis$: Observable<any>;
   private dSearchSubject: Subject<string> = new Subject();
 
+  dialogRef1: MatDialogRef<ChatBoxComponent>;
+  dialogRef2: MatDialogRef<VideoCallComponent>;
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -292,6 +298,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.patientInteractionForm = new FormGroup({
+      uuid: new FormControl(null),
       present: new FormControl(false, [Validators.required]),
       spoken: new FormControl(null, [Validators.required])
     });
@@ -338,7 +345,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       wantFollowUp: new FormControl('No', [Validators.required]),
       followUpDate: new FormControl(null),
       followUpTime: new FormControl(null),
-      followUpReason: new FormControl(null)
+      followUpReason: new FormControl(null),
+      uuid: new FormControl(null)
     });
 
     this.diagnosisSubject = new BehaviorSubject<any[]>([]);
@@ -393,8 +401,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.followUpForm.get('followUpTime').setValidators(Validators.required);
         this.followUpForm.get('followUpTime').updateValueAndValidity();
       } else {
-        this.diagnosisForm.get('followUpDate').clearValidators();
-        this.diagnosisForm.get('followUpDate').updateValueAndValidity();
+        this.followUpForm.get('followUpDate').clearValidators();
+        this.followUpForm.get('followUpDate').updateValueAndValidity();
         this.followUpForm.get('followUpTime').clearValidators();
         this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
@@ -790,19 +798,29 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   startChat() {
-    this.coreService.openChatBoxModal({
+    if (this.dialogRef1) {
+      this.dialogRef1.close();
+      return;
+    };
+    this.dialogRef1 = this.coreService.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
       patientName: this.patient.person.display,
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
-    }).subscribe((res: any) => {
+    });
 
+    this.dialogRef1.afterClosed().subscribe((res: any) => {
+      this.dialogRef1 = undefined;
     });
   }
 
   startCall() {
-    this.coreService.openVideoCallModal({
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
+      return;
+    };
+    this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
       connectToDrId: this.userId,
@@ -810,6 +828,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr'
+    });
+
+    this.dialogRef2.afterClosed().subscribe((res: any) => {
+      this.dialogRef2 = undefined;
     });
   }
 
@@ -854,7 +876,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   checkIfPatientInteractionPresent(attributes: any) {
     attributes.forEach((attr: any) => {
       if (attr.attributeType.display == 'Patient Interaction') {
-        this.patientInteractionForm.patchValue({ present: true, spoken: attr.value });
+        this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
     });
   }
@@ -867,9 +889,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.postAttribute(this.visit.uuid, { attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc", value: this.patientInteractionForm.value.spoken })
       .subscribe((res: any) => {
         if (res) {
-          this.patientInteractionForm.patchValue({ present: true });
+          this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
         }
       })
+  }
+
+  deletePatientInteraction() {
+    this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe((res: any) => {
+      this.patientInteractionForm.patchValue({ present: false, spoken: null, uuid: null });
+    });
   }
 
   toggleDiagnosis() {
@@ -1271,8 +1299,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             wantFollowUp: 'Yes',
             followUpDate,
             followUpTime,
-            followUpReason
+            followUpReason,
+            uuid: obs.uuid
           });
+          console.log(this.followUpForm.value);
         }
       });
     });
@@ -1290,8 +1320,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {
-        this.followUpForm.patchValue({ present: true });
+        this.followUpForm.patchValue({ present: true, uuid: res.uuid });
       }
+    });
+  }
+
+  deleteFollowUp() {
+    this.diagnosisService.deleteObs(this.followUpForm.value.uuid).subscribe(() => {
+      this.followUpForm.patchValue({ present: false, uuid: null, wantFollowUp: 'No', followUpDate: null, followUpTime: null, followUpReason: null });
     });
   }
 
