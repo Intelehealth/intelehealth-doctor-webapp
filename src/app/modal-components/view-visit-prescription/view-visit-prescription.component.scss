@@ -13,6 +13,19 @@
 .title-con {
   padding: 24px 24px 16px;
   background: #E6FFF3;
+  position: relative;
+
+  .close-btn-con {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+  }
 
   h6 {
     font-size: 24px;

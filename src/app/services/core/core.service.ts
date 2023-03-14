@@ -92,14 +92,14 @@ export class CoreService {
     return dialogRef.afterClosed();
   }
 
-  openChatBoxModal(data: any): Observable<any> {
+  openChatBoxModal(data: any): MatDialogRef<ChatBoxComponent> {
     const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false } );
-    return dialogRef.afterClosed();
+    return dialogRef;
   }
 
-  openVideoCallModal(data: any): Observable<any> {
+  openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
     const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false } );
-    return dialogRef.afterClosed();
+    return dialogRef;
   }
 
   openSearchedPatientModal(data: any): Observable<any> {

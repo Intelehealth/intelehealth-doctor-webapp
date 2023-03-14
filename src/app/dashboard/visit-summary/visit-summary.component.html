@@ -204,7 +204,7 @@
                       <div class="list-item-content">
                         <div class="visit-provider-con">
                           <span>{{ providerName }}</span>
-                          <div class="d-flex">
+                          <!-- <div class="d-flex">
                             <img class="mx-3" src="assets/svgs/dot.svg" />
                             <a
                               href="javascript:void(0)"
@@ -223,7 +223,7 @@
                           </div>
                           <span class="text-muted"
                             >Click here to connent with CHW</span
-                          >
+                          > -->
                         </div>
                       </div>
                     </div>
@@ -880,7 +880,7 @@
                       </ng-template>
                     </div>
                   </li>
-                  <li>
+                  <li *ngIf="!patientInteractionForm.value.present">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
                         >Have you spoken with the patient directly?</label
@@ -925,6 +925,34 @@
                   >
                     Save
                   </button>
+                </div>
+                <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Patient Interaction</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Spoken with the patient directly?</td>
+                        <td>{{ patientInteractionForm.value.spoken }}</td>
+                        <td class="pr-0">
+                          <button
+                            type="button"
+                            mat-icon-button
+                            class="float-right"
+                            *ngIf="isVisitNoteProvider && !visitEnded"
+                            (click)="deletePatientInteraction()"
+                          >
+                            <img src="assets/svgs/delete-icon.svg" alt="" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </form>
             </mat-expansion-panel>
@@ -1299,6 +1327,7 @@
                           <td>{{ m.remark }}</td>
                           <td class="pr-0">
                             <button
+                              type="button"
                               mat-icon-button
                               class="float-right"
                               *ngIf="isVisitNoteProvider && !visitEnded"
@@ -1705,6 +1734,7 @@
                           <td>{{ r.remark }}</td>
                           <td class="pr-0">
                             <button
+                              type="button"
                               class="float-right"
                               mat-icon-button
                               (click)="deleteReferral(i, r.uuid)"
@@ -1807,7 +1837,7 @@
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
-              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()">
+              <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
                 <ul class="items-list">
                   <li>
                     <div class="row">
@@ -1933,6 +1963,39 @@
                   </button>
                 </div>
               </form>
+
+              <div class="table-responsive" *ngIf="followUpForm.value.present">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Follow Up Requested</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Time</th>
+                      <th scope="col">Reason</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ followUpForm.value.wantFollowUp }}</td>
+                      <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
+                      <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
+                      <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
+                      <td class="pr-0">
+                        <button
+                          type="button"
+                          class="float-right"
+                          mat-icon-button
+                          (click)="deleteFollowUp()"
+                          *ngIf="isVisitNoteProvider && !visitEnded"
+                        >
+                          <img src="assets/svgs/delete-icon.svg" alt="" />
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </mat-expansion-panel>
           </mat-accordion>
         </div>
