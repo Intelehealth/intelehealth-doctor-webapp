@@ -6,6 +6,7 @@ import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
 import { Router } from "@angular/router";
+import { Observable } from "rxjs";
 declare var getFromStorage: any;
 
 @Component({
@@ -16,7 +17,7 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
- specializations = [
+  specializations = [
     "General Physician",
     "Dermatologist",
     "Physiotherapist",
@@ -27,12 +28,7 @@ export class EditDetailsComponent implements OnInit {
     "Infectionist",
     "Cardiologist"
   ];
-   locations = [
-    "Remote",
-    "Telemedicine Clinic 1",
-    "Telemedicine Clinic 2",
-    "Telemedicine Clinic 3"
-  ];
+  locations = [];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
@@ -72,6 +68,7 @@ export class EditDetailsComponent implements OnInit {
   ngOnInit() {
     this.userDetails = getFromStorage("user");
     this.providerDetails = getFromStorage("provider");
+    this.getLocations();
   }
 
   get attributes() {
@@ -80,6 +77,16 @@ export class EditDetailsComponent implements OnInit {
     } catch (error) {
       return [];
     }
+  }
+
+  getLocations() {
+    const URL = `${this.baseURL}/location`;
+    this.http.get(URL).subscribe(
+      (res: any) => {
+        res?.results.forEach(element => {
+          this.locations.push(element.display);
+        });
+      });
   }
 
   onClose() {
