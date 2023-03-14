@@ -805,12 +805,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
-      connectToDrId: this.provider?.person?.uuid,
+      connectToDrId: this.userId,
       patientName: this.patient.person.display,
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr'
     });
+  }
+
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
   }
 
   checkIfDateOldThanOneDay(data: any) {
