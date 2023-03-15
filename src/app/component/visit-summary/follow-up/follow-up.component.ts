@@ -66,7 +66,7 @@ followForm = new FormGroup({
   Submit() {
     const date = new Date();
     const form = this.followForm.value;
-    const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
+    const obsdate = this.datepipe.transform(form.date, 'dd-MMMM-yyyy');
     const advice = form.advice;
     if (this.diagnosisService.isSameDoctor()) {
       this.encounterUuid = getEncounterUUID();
@@ -107,7 +107,7 @@ followForm = new FormGroup({
       "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  (advice ? `${obsdate}, ملاحظة: ${advice}` : obsdate) 
       :  `${obsdate}, ملاحظة: غير متوفر  `,
       "en": localStorage.getItem('selectedLanguage') === 'en' ?  (advice ? `${obsdate}, Remark: ${advice}` : obsdate) 
-      :  `${obsdate}, Remark: NA`
+      :  `${obsdate}, Remark: Not provided`
     }
     return JSON.stringify(value1);
    } 
