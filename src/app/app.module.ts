@@ -15,7 +15,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbActiveModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from 'ngx-cookie-service';
-import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
 import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -96,7 +95,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   pbThickness: 3, // progress bar thickness
   text: "Please Wait..."
 };
-import { BreadcrumbService } from "./services/breadcrumb.service";
 import { MomentModule } from 'ngx-moment';
 import { SharedModule } from "./shared.module";
 
@@ -123,7 +121,6 @@ import { SharedModule } from "./shared.module";
     AngularFireAuthModule,
     AngularFirestoreModule,
     NgxCaptchaModule,
-    MatTabsModule,
     Ng2TelInputModule,
     BrowserModule,
     CommonModule,
@@ -185,13 +182,11 @@ import { SharedModule } from "./shared.module";
     PagerService,
     OtpService,
     CookieService,
-    AuthGuard,
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
     NgbActiveModal,
-    BreadcrumbService,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
