@@ -47,7 +47,20 @@
             formControlName="recaptcha">
           </ngx-recaptcha2>
         </div>
-        <div class="form-group mt-5">
+        <div class="form-group mb-0">
+          <div class="pretty p-image p-plain">
+            <input
+              type="checkbox"
+              (change)="authService.rememberMe = !authService.rememberMe"
+              [checked]="authService.rememberMe"
+            />
+            <div class="state">
+              <img class="image" src="assets/svgs/checkbox-tick.png" />
+              <label>Remember me</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group mt-3">
           <button type="submit" class="btn btn-block next-btn">
             Next
             <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
