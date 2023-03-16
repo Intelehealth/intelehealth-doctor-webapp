@@ -46,7 +46,7 @@ export class VcComponent implements OnInit {
     public dialogRef: MatDialogRef<VcComponent>,
     private snackbar: MatSnackBar,
     private translate: TranslateService
-  ) {}
+  ) { }
 
   close() {
     this.dialogRef.close();
@@ -119,7 +119,7 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
       video: true,
       audio: true,
@@ -322,7 +322,10 @@ export class VcComponent implements OnInit {
   }
 
   endCallInRoom() {
-    this.socketService.emitEvent("bye", this.room);
+    this.socketService.emitEvent("bye", {
+      nurseId: this.nurseId.uuid,
+      webapp: true
+    });
     this.close();
   }
 
