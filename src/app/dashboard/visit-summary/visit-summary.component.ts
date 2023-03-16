@@ -672,7 +672,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(event: number) {
-    console.log(event);
+    // console.log(event);
   }
 
   onImgError(event: any) {
