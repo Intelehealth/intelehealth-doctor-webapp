@@ -15,51 +15,52 @@ declare var getEncounterUUID: any;
   styleUrls: ['./follow-up.component.css'],
   animations: [
     trigger('moveInLeft', [
-       transition('void=> *', [style({transform: 'translateX(300px)'}),
-         animate(200, keyframes ([
-          style({transform: 'translateX(300px)'}),
-          style({transform: 'translateX(0)'})
-           ]))]),
-    transition('*=>void', [style({transform: 'translateX(0px)'}),
-         animate(100, keyframes([
-          style({transform: 'translateX(0px)'}),
-          style({transform: 'translateX(300px)'})
-        ]))])
-     ])
- ]
+      transition('void=> *', [style({ transform: 'translateX(300px)' }),
+      animate(200, keyframes([
+        style({ transform: 'translateX(300px)' }),
+        style({ transform: 'translateX(0)' })
+      ]))]),
+      transition('*=>void', [style({ transform: 'translateX(0px)' }),
+      animate(100, keyframes([
+        style({ transform: 'translateX(0px)' }),
+        style({ transform: 'translateX(300px)' })
+      ]))])
+    ])
+  ]
 })
 export class FollowUpComponent implements OnInit {
-@Input() isManagerRole : boolean;
-minDate = new Date();
-followUp: any = [];
-conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
-encounterUuid: string;
-patientId: string;
-visitUuid: string;
-errorText: string;
+  @Input() isManagerRole: boolean;
+  minDate = new Date();
+  followUp: any = [];
+  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
+  encounterUuid: string;
+  patientId: string;
+  visitUuid: string;
+  errorText: string;
 
-followForm = new FormGroup({
-  date: new FormControl('', [Validators.required]),
-  advice: new FormControl('')
-});
+  followForm = new FormGroup({
+    date: new FormControl('', [Validators.required]),
+    advice: new FormControl('')
+  });
 
   constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute,
-              private datepipe: DatePipe,
-              private dateAdapter: DateAdapter<any>) { }
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute,
+    private datepipe: DatePipe,
+    private dateAdapter: DateAdapter<any>) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.followUp.push(this.diagnosisService.getData(obs));
-        }
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            let obs1 = this.diagnosisService.getData(obs);
+            this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+          }
+        });
       });
-    });
     this.dateAdapter.setLocale(this.getLang());
   }
 
@@ -74,17 +75,17 @@ followForm = new FormGroup({
         concept: this.conceptFollow,
         person: this.patientId,
         obsDatetime: date,
-        value: this.getObj(obsdate,advice),
+        value: this.getObj(obsdate, advice),
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
-      .subscribe(resp => {
-        let obj = {
-          uuid : resp.uuid,
-          value: json.value
-        }
-        this.followUp.push(this.diagnosisService.getData(obj));
-      });
+        .subscribe(resp => {
+          let obj = {
+            uuid: resp.uuid,
+            value: json.value
+          }
+          this.followUp.push(this.diagnosisService.getData(obj));
+        });
     }
   }
 
@@ -92,23 +93,39 @@ followForm = new FormGroup({
     if (this.diagnosisService.isSameDoctor()) {
       const uuid = this.followUp[i].uuid;
       this.diagnosisService.deleteObs(uuid)
-      .subscribe(() => {
-        this.followUp.splice(i, 1);
-      });
-    } 
+        .subscribe(() => {
+          this.followUp.splice(i, 1);
+        });
+    }
   }
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+  }
 
   getObj(obsdate, advice) {
     let value1 = {
-      "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  (advice ? `${obsdate}, ملاحظة: ${advice}` : obsdate) 
-      :  `${obsdate}, ملاحظة: غير متوفر  `,
-      "en": localStorage.getItem('selectedLanguage') === 'en' ?  (advice ? `${obsdate}, Remark: ${advice}` : obsdate) 
-      :  `${obsdate}, Remark: Not provided`
+      "ar": advice ? `${obsdate}, ملاحظة: ${advice}` : obsdate,
+      "en": advice ? `${obsdate}, Remark: ${advice}` : obsdate
     }
     return JSON.stringify(value1);
-   } 
+  }
+
+  getArabicDate(obs) {
+    let valaue = obs.value
+      .replace("January", "كانون الثاني")
+      .replace("February", "شهر شباط")
+      .replace("March", "شهر اذار")
+      .replace("April", "أشهر نيسان")
+      .replace("May", "شهر أيار")
+      .replace("June", "شهر حزيران")
+      .replace("July", "شهر تموز")
+      .replace("August", "شهر أب")
+      .replace("September", "شهر أيلول")
+      .replace("October", "شهر تشرين الأول")
+      .replace("November", "شهر تشرين الثاني")
+      .replace("December", "شهر كانون الأول");
+    obs.value = valaue;
+    return obs;
+  }
 }

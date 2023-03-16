@@ -87,7 +87,7 @@ export class DiagnosisService {
       let value, ar1, en1;
       if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
         localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,
-          en1 = 'NA') : (en1 = elementName, ar1 = 'غير متوفر')
+          en1 = elementName) : (en1 = elementName, ar1 = elementName)
           value = {
             "ar": ar1,
             "en": en1
