@@ -22,6 +22,7 @@ export class AuthService {
   public currentUser: Observable<any>;
   private base64Cred: string;
   private mindmapUrl: string = environment.mindmapURL;
+  public rememberMe: boolean = false;
 
   constructor(
     private myRoute: Router,
@@ -240,5 +241,21 @@ export class AuthService {
   replaceWithStar(str: string, type) {
     let n = str?.length;
     return str.replace(str.substring(5, (type == 'phone') ? n - 2 : n - 4), "*****");
+  }
+
+  checkSession() {
+    return this.http.get(`${this.mindmapUrl}/auth/check`)
+  }
+
+  setRememberMe(userUuid = this.userId) {
+    return this.http.post(`${this.mindmapUrl}/auth/rememberme`, { userUuid })
+  }
+
+  get userId() {
+    try {
+      return JSON.parse(localStorage.user).uuid;
+    } catch (error) {
+      return null;
+    }
   }
 }
