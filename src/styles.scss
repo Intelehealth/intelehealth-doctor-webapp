@@ -915,3 +915,14 @@ body.font-lato td {
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
   padding: 14px 10px;
 }
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background: #FFFFFF !important;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+  background: #FFFFFF !important;
+  .ng-option-label {
+    font-weight: normal !important;
+  }
+}
