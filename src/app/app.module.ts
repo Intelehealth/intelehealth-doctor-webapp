@@ -54,6 +54,7 @@ import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { SharedModule } from "./shared.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -114,7 +115,9 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    SharedModule
+    SharedModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     CookieService,
