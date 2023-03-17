@@ -42,11 +42,7 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 
-//Firebase services
-import { AngularFireModule } from "@angular/fire";
-import { AngularFireAuthModule } from "@angular/fire/auth";
-import { AngularFirestoreModule } from "@angular/fire/firestore";
-
+//Regular Imports
 import { environment } from "../environments/environment";
 import { SocketService } from "./services/socket.service";
 import { AppRoutingModule } from './app-routing.module';
@@ -86,9 +82,6 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     ModalComponentsModule,
     CdkAccordionModule,
     MatTabsModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
     BrowserModule,
     CommonModule,
     BrowserAnimationsModule,
