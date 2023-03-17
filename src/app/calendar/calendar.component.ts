@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
 import { CoreService } from '../services/core/core.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-calendar',
@@ -66,7 +65,8 @@ export class CalendarComponent implements OnInit {
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: any) => {
-          if (!_.find(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } })) {
+          // if (!_.find(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } })) {
+          if (!this.events.find((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id)) {
             this.events.push({
               id: appointment.visitUuid,
               title: 'Appointment',
@@ -253,7 +253,8 @@ export class CalendarComponent implements OnInit {
   dayClicked(view: any, day: any) {
     // console.log(day);
     if (view == 'monthView') {
-      let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+      // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+      let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
       if (oldDaysOff) {
         if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
           this.toastr.warning("This day is already marked as Day Off", "Already DayOff");
@@ -275,7 +276,8 @@ export class CalendarComponent implements OnInit {
                   this.appointmentService.updateDaysOff(body).subscribe({
                     next: (res: any) => {
                       if (res.status) {
-                        let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                        // let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                        let index = this.daysOff.findIndex((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         if (index != -1) {
                           this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
                         }
@@ -301,9 +303,11 @@ export class CalendarComponent implements OnInit {
                         });
 
                         // Update schedule as per new dayOff
-                        let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
-                        if (schedule.slotSchedule.length) {
-                          schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
+                        // let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+                        let schedule = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+                        if (schedule?.slotSchedule.length) {
+                          // schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
+                          schedule.slotSchedule = schedule.slotSchedule.filter((s: any) => { return !moment(day.date).isSame(moment(s.date)) });
                           this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
                             next: (res: any) => {
                               if (res.status) {
@@ -368,7 +372,8 @@ export class CalendarComponent implements OnInit {
     if (withConfirmation) {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
-          this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+          // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+          this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
         }
       });
@@ -381,7 +386,8 @@ export class CalendarComponent implements OnInit {
       this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
           if(res) {
             if (res.status) {
-              this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+              // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+              this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
             }
           }
       });
@@ -408,7 +414,8 @@ export class CalendarComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+                  // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
+                  this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
                   this.events.push({
                     id: appointment.visitUuid,
                     title: 'Appointment',
@@ -429,8 +436,9 @@ export class CalendarComponent implements OnInit {
   }
 
   checkIfDayOff(date: Date) {
-    let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
-    if (oldDaysOff && oldDaysOff.daysOff) {
+    // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
+    let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[date.getMonth()] && o.year == date.getFullYear().toString());
+    if (oldDaysOff && oldDaysOff?.daysOff) {
       if (oldDaysOff.daysOff.indexOf(moment(date).format('DD/MM/YYYY')) != -1) {
         return true;
       }

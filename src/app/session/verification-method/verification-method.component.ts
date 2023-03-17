@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -118,7 +117,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
     this.verificationForm.patchValue({
       countryCode: $event.dialCode
     });
-    this.maxTelLegth = _.filter(this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+    this.maxTelLegth = this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
   }
 
   ngOnDestroy(): void {

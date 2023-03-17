@@ -18,7 +18,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SocketService } from 'src/app/services/socket.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
-import * as _ from 'lodash';
 import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
@@ -1001,7 +1000,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.toastr.warning("Please enter note text to add", "Invalid note");
       return;
     }
-    if (_.find(this.notes, { value: this.addNoteForm.value.note })) {
+    if (this.notes.find((o: any) => o.value == this.addNoteForm.value.note)) {
       this.toastr.warning("Note already added, please add another note.", "Already Added");
       return;
     }
@@ -1059,7 +1058,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addMedicineForm.invalid) {
       return;
     }
-    if (_.find(this.medicines, { drug: this.addMedicineForm.value.drug })) {
+    if (this.medicines.find((o: any) => o.drug == this.addMedicineForm.value.drug)) {
       this.toastr.warning("Drug already added, please add another drug.", "Already Added");
       return;
     }
@@ -1079,7 +1078,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addAdditionalInstructionForm.invalid) {
       return;
     }
-    if (_.find(this.additionalInstructions, { value: this.addAdditionalInstructionForm.value.note })) {
+    if (this.additionalInstructions.find((o: any) => o.value == this.addAdditionalInstructionForm.value.note)) {
       this.toastr.warning("Additional instruction already added, please add another instruction.", "Already Added");
       return;
     }
@@ -1140,7 +1139,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addAdviceForm.invalid) {
       return;
     }
-    if (_.find(this.advices, { value: this.addAdviceForm.value.advice })) {
+    if (this.advices.find((o: any) => o.value == this.addAdviceForm.value.advice)) {
       this.toastr.warning("Advice already added, please add another advice.", "Already Added");
       return;
     }
@@ -1193,7 +1192,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addTestForm.invalid) {
       return;
     }
-    if (_.find(this.tests, { value: this.addTestForm.value.test })) {
+    if (this.tests.find((o: any) => o.value == this.addTestForm.value.test)) {
       this.toastr.warning("Test already added, please add another test.", "Already Added");
       return;
     }
@@ -1236,7 +1235,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addReferralForm.invalid) {
       return;
     }
-    if (_.find(this.referrals, { speciality: this.addReferralForm.value.speciality })) {
+    if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
       this.toastr.warning("Referral already added, please add another referral.", "Already Added");
       return;
     }

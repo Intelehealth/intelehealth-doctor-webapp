@@ -12,7 +12,6 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { AuthService } from 'src/app/services/auth.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 export const PICK_FORMATS = {
@@ -476,13 +475,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
-        this.maxTelLegth1 = _.filter(this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+        this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
         break;
       case 'whatsAppNumber':
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
-        this.maxTelLegth2 = _.filter(this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+        this.maxTelLegth2 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
         break;
     }
   }

@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -117,7 +116,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     this.forgotUsernameForm.patchValue({
       countryCode: $event.dialCode
     });
-    this.maxTelLegth = _.filter(this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false), (o) => o != ' ').length;
+    this.maxTelLegth = this.authService.getInternationalMaskByCountryCode($event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
   }
 
   ngOnDestroy(): void {
