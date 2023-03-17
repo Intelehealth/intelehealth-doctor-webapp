@@ -14,12 +14,18 @@
       <td>{{item.bmi}}</td>
       <th>{{'SP02'|translate}}:</th>
       <td><span *ngIf="item.sp02">{{item.sp02}} %</span></td>
+    </tr>
+     <tr>
       <th>{{'BP'|translate}}:</th>
-      <td><span *ngIf="item.sbp && item.dbp">{{item.sbp}}/{{item.dbp}}</span></td>
+      <td><span *ngIf="v[0]?.sbp && v[0]?.dbp">{{v[0]?.sbp}}/{{v[0]?.dbp}}</span></td>
       <th>{{'HR'|translate}}:</th>
-      <td>{{item.pulse}}</td>
+      <td>{{v[0]?.pulse}}</td>
       <th>{{'RR'|translate}}:</th>
-      <td>{{item.respiratoryRate}}</td>
+      <td>{{v[0]?.respiratoryRate}}</td>
+      <th>Abdominal Girth:</th>
+      <td>{{v[0]?.abdominalGirth}}</td>
+      <th>Arm Girth:</th>
+      <td>{{v[0]?.armGirth}}</td>
     </tr>
   </table>
   <app-ecg-data></app-ecg-data>

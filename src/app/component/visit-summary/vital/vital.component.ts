@@ -71,6 +71,12 @@ vitalsPresent = false;
                   this.getTranslatedValue(Number(obs.display.slice(18, obs.display.length))) :
                   Number(obs.display.slice(18, obs.display.length));
                 }
+                if (displayObs.match('Abdominal Girth') !== null ) {
+                  this.answer.abdominalGirth = Number(obs.display.slice(17, obs.display.length));
+                }
+                if (displayObs.match('Arm Girth') !== null ) {
+                  this.answer.armGirth = Number(obs.display.slice(11, obs.display.length));
+                }
               });
               if(this.answer.height && this.answer.weight) {
                 this.answer.bmi = localStorage.getItem('selectedLanguage') === 'ru' ? 

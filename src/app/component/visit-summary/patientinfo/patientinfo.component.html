@@ -33,8 +33,7 @@
                 </tr>
                 <tr>
                     <th scope="row">{{'Sex'|translate}}</th>
-                    <td *ngIf="info.gender; else noData">{{ info.gender === 'M' ? ('Male'| translate ): ('Female'|
-                        translate) }}</td>
+                    <td *ngIf="info.gender; else noData">{{ info.gender === 'M' ? 'Male' : info.gender === 'F' ? 'Female' : 'Other'}}</td>
                 </tr>
                 <tr>
                     <th scope="row">{{'DOB'|translate}}</th>

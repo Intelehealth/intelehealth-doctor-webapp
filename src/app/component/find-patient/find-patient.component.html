@@ -7,7 +7,7 @@
           <span class="identifier">{{value.identifiers[0].identifier}}</span>
         </span>
         <span class="preferred-name">{{ value.person.display}}</span>
-        <span class="gender">{{ value.person.gender | translate}}, </span>
+        <span class="gender">{{ value.person.gender === 'M' ? 'Male' : value.person.gender === 'F' ? 'Female' : 'Other'}}, </span>
         <span class="age">{{ value.person.age}}</span>
         <button style="float: right" class="btn btn-primary" (click)="find(value.uuid)">{{ 'View' | translate }}</button>
       </div>
