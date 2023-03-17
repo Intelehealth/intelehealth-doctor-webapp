@@ -244,11 +244,19 @@ export class AuthService {
   }
 
   checkSession() {
-    return this.http.get(`${this.mindmapUrl}/auth/check`)
+    return this.http.get(`${this.mindmapUrl}/auth/check?ngsw-bypass=true`, {
+      headers: new HttpHeaders({
+        "ngsw-bypass": "true",
+      })
+    })
   }
 
   setRememberMe(userUuid = this.userId) {
-    return this.http.post(`${this.mindmapUrl}/auth/rememberme`, { userUuid })
+    return this.http.post(`${this.mindmapUrl}/auth/rememberme?ngsw-bypass=true`, { userUuid }, {
+      headers: new HttpHeaders({
+        "ngsw-bypass": "true",
+      })
+    })
   }
 
   get userId() {
