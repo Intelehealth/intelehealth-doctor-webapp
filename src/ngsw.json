@@ -83,10 +83,11 @@
     },
     {
       "name": "api",
-      "urls": ["/api/messages/**"],
+      "urls": ["/api/messages/**", "/api/auth/**"],
       "cacheConfig": {
-        "maxSize": 0,
-        "maxAge": "0u",
+        "timeout": "10s",
+        "maxSize": 100,
+        "maxAge": "15m",
         "strategy": "freshness"
       }
     }
