@@ -119,7 +119,7 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => { }): void {
+  startUserMedia(config?: any, cb = () => {}): void {
     let mediaConfig = {
       video: true,
       audio: true,
