@@ -3,6 +3,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -19,7 +20,8 @@ export class FindPatientComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data,
     private service: VisitService,
     private router: Router,
-    private translate: TranslateService) { }
+    private translate: TranslateService,
+    private snackbar: MatSnackBar) { }
 
   ngOnInit() {
     if (typeof this.data.value === 'string') {
@@ -34,8 +36,12 @@ export class FindPatientComponent implements OnInit {
   find(uuid) {
     this.service.recentVisits(uuid)
       .subscribe(response => {
-        this.router.navigate(['/visitSummary', response.results[0].patient.uuid, response.results[0].uuid]);
-        this.dialog.close();
+        if(response.results.length > 0) {
+          this.router.navigate(['/visitSummary', response.results[0].patient.uuid, response.results[0].uuid]);
+          this.dialog.close();
+        } else {
+          this.snackbar.open("Visit is not present for this patient", null, {duration: 4000});
+        }
       });
   }
 
