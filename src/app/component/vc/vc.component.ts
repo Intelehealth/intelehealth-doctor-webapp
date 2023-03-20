@@ -129,13 +129,7 @@ export class VcComponent implements OnInit {
       mediaConfig = config;
     }
 
-    const n = <any>navigator;
-    n.getUserMedia =
-      n.getUserMedia ||
-      n.webkitGetUserMedia ||
-      n.mozGetUserMedia ||
-      n.msGetUserMedia;
-    n.getUserMedia(
+    this.navigator.getUserMedia(
       mediaConfig,
       (stream: MediaStream) => {
         this.localStream = stream;
@@ -149,6 +143,14 @@ export class VcComponent implements OnInit {
         console.error(err);
       }
     );
+  }
+
+  get navigator() {
+    const n: any = navigator;
+    return n.getUserMedia ||
+      n.webkitGetUserMedia ||
+      n.mozGetUserMedia ||
+      n.msGetUserMedia || n.mediaDevices;
   }
 
   initSocketEvents() {
