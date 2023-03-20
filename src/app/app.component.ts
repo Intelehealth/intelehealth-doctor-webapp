@@ -1,14 +1,8 @@
-import { SessionService } from './services/session.service';
-import { VisitService } from './services/visit.service';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
-import { UserIdleService } from 'angular-user-idle';
-import * as introJs from 'intro.js/intro.js';
 import { Router } from '@angular/router';
-import { PushNotificationsService } from './services/push-notification.service';
-import { GlobalConstants } from './js/global-constants';
-import { SwPush, SwUpdate } from '@angular/service-worker';
-declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveToStorage: any;
+import { UserIdleService } from 'angular-user-idle';
+import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-root',
@@ -16,8 +10,27 @@ declare var CheckNewVisit: any, CheckVisitNote: any, getFromStorage: any, saveTo
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  privatesubscription: Subscription;
   
-  ngOnInit () {   
+  constructor(private userIdle: UserIdleService,
+    private myRoute: Router) {
+  }
+  
+  ngOnInit() {
+    //Start watching for user inactivity.
+    this.userIdle.startWatching();
+    // Start watching when user idle is starting and reset if user action is there.
+    this.userIdle.onTimerStart().subscribe(count => {
+      var eventList = ["click", "mouseover", "keydown", "DOMMouseScroll", "mousewheel",
+        "mousedown", "touchstart", "touchmove", "scroll", "keyup"];
+      for (let event of eventList) {
+        document.body.addEventListener(event, () => this.userIdle.resetTimer());
+      }
+    });
+    // Start watch when time is up.
+    this.userIdle.onTimeout().subscribe(() => {
+      this.myRoute.navigateByUrl('/login');
+    });
   }
 
 }
