@@ -119,7 +119,7 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
       video: true,
       audio: true,
@@ -129,28 +129,33 @@ export class VcComponent implements OnInit {
       mediaConfig = config;
     }
 
-    const n = <any>navigator;
-    n.getUserMedia =
-      n.getUserMedia ||
-      n.webkitGetUserMedia ||
-      n.mozGetUserMedia ||
-      n.msGetUserMedia || navigator.mediaDevices;
+    const successCB = (stream: MediaStream) => {
+      this.localStream = stream;
+      const localStream = new MediaStream();
+      localStream.addTrack(stream.getVideoTracks()[0]);
+      this.localVideoRef.nativeElement.srcObject = localStream;
+      cb();
+    }
 
-    n.getUserMedia(
-      mediaConfig,
-      (stream: MediaStream) => {
-        this.localStream = stream;
-        const localStream = new MediaStream();
-        localStream.addTrack(stream.getVideoTracks()[0]);
-        this.localVideoRef.nativeElement.srcObject = localStream;
-        cb();
-      },
-      (err) => {
-        this.isStreamAvailable = false;
-        console.error(err);
-      }
-    );
+    const errorCB = (err) => {
+      this.isStreamAvailable = false;
+      console.error(err);
+    }
+
+    const getUserMedia =
+      (navigator as any).getUserMedia ||
+      (navigator as any).getUserMedia ||
+      (navigator as any).webkitGetUserMedia ||
+      (navigator as any).mozGetUserMedia ||
+      (navigator as any).msGetUserMedia;
+
+    if (getUserMedia) {
+      getUserMedia(mediaConfig).then(successCB).catch(errorCB)
+    } else {
+      navigator.mediaDevices.getUserMedia(mediaConfig).then(successCB).catch(errorCB)
+    }
   }
+
 
   initSocketEvents() {
     this.socketService.onEvent("join").subscribe((room) => {
