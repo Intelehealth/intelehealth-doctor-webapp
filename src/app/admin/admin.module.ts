@@ -18,6 +18,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { SupportComponent } from './support/support.component';
+import { MomentModule } from 'ngx-moment';
 
 const routes: Routes = [
   {
@@ -29,13 +31,18 @@ const routes: Routes = [
         component: AyuComponent
       }
     ]
+  },
+  {
+    path: 'support',
+    component: SupportComponent
   }
 ];
 
 @NgModule({
   declarations: [
     AdminComponent,
-    AyuComponent
+    AyuComponent,
+    SupportComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +65,8 @@ const routes: Routes = [
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    })
+    }),
+    MomentModule
   ]
 })
 export class AdminModule { }

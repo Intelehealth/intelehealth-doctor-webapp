@@ -100,7 +100,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://uiux.intelehealth.org:3004/api/messages/'
+        'https://uiux.intelehealth.org:3004/api/messages/',
+        'https://uiux.intelehealth.org:3004/api/support/'
       ]
     }),
     NgxPermissionsModule.forRoot({

@@ -54,6 +54,12 @@
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+          <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img src="assets/svgs/menu-info.svg" alt="">
+            <span>Support</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img src="assets/svgs/user-settings.svg" alt="">
             <span>System Admin</span>

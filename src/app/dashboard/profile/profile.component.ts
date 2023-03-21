@@ -682,9 +682,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      this.toastr.success("Profile has been updated successfully", "Profile Updated");
-      this.toastr.warning("Kindly re-login to see updated details", "Re-login");
-      this.authService.logOut();
+      // this.toastr.success("Profile has been updated successfully", "Profile Updated");
+      // this.toastr.warning("Kindly re-login to see updated details", "Re-login");
+      // this.authService.logOut();
+      this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
+        if (provider.results.length) {
+          localStorage.setItem('provider', JSON.stringify(provider.results[0]));
+          localStorage.setItem("doctorName", provider.results[0].person.display);
+          let u = JSON.parse(localStorage.user);
+          u.person.display = provider.results[0].person.display;
+          localStorage.setItem("user", JSON.stringify(u));
+          this.toastr.success("Profile has been updated successfully", "Profile Updated");
+        }
+      });
     });
   }
 

@@ -17,13 +17,26 @@
     <li class="chat-item">Go to My profile where there is a Change language option. From that list select the preferred language.</li>
     <li class="chat-item timestamp-item">Mon at 5:41 PM</li>
     <li class="chat-item left">Hey! I am unable send prescriptions</li> -->
-    <li class="chat-item read-status" *ngIf="messages.length"><img src="assets/svgs/read-status.svg" alt="" width="12px"> Read</li>
-    <li class="chat-item left" *ngFor="let m of messages;">{{m}}</li>
+    <ng-container *ngFor="let m of messages; let first = first">
+      <li class="chat-item read-status">
+        <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
+        <ng-container *ngIf="first && m?.from === user?.uuid">
+          <ng-container *ngIf="m.isRead">
+            <img src="assets/svgs/read-status.svg" alt="" width="12px"> Read
+          </ng-container>
+          <ng-container *ngIf="!m.isRead">
+            <img src="assets/svgs/sent-status.svg" alt="" width="12px"> Sent
+          </ng-container>
+        </ng-container>
+      </li>
+      <li class="chat-item" [class.left]="m.from == user.uuid">{{m.message}}</li>
+    </ng-container>
+
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="Type Here" class="mr-2" [(ngModel)]="message" (keyup.enter)="addMessage()">
-  <button class="send-btn" (click)="addMessage()">
+  <input type="text" placeholder="Type Here" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()">
+  <button class="send-btn" (click)="sendMessage()">
     <mat-icon aria-hidden="false" aria-label="send icon">send</mat-icon>
   </button>
 </mat-dialog-actions>

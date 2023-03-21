@@ -178,4 +178,15 @@ export class SocketService {
   close() {
     this.socket.close();
   }
+
+  public initSocketSupport(forceInit = false) {
+    if (forceInit && this.socket?.id && this.socket?.disconnect) {
+      this.socket.disconnect();
+    }
+    if (!this.socket || forceInit) {
+      this.socket = io(environment.socketURL, {
+        query: `userId=${this.userUuid}&name=${this.userName}`,
+      });
+    }
+  }
 }
