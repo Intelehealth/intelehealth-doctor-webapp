@@ -142,20 +142,19 @@ export class VcComponent implements OnInit {
       console.error(err);
     }
 
-    const getUserMedia =
-      (navigator as any).getUserMedia ||
-      (navigator as any).getUserMedia ||
-      (navigator as any).webkitGetUserMedia ||
-      (navigator as any).mozGetUserMedia ||
-      (navigator as any).msGetUserMedia;
+    const n = <any>navigator;
+    n.getUserMedia =
+      n.getUserMedia ||
+      n.webkitGetUserMedia ||
+      n.mozGetUserMedia ||
+      n.msGetUserMedia;
 
-    if (getUserMedia) {
-      getUserMedia(mediaConfig).then(successCB).catch(errorCB)
+    if (n.getUserMedia) {
+      n.getUserMedia(mediaConfig, successCB, errorCB);
     } else {
-      navigator.mediaDevices.getUserMedia(mediaConfig).then(successCB).catch(errorCB)
+      navigator.mediaDevices.getUserMedia(mediaConfig).then(successCB).catch(errorCB);
     }
   }
-
 
   initSocketEvents() {
     this.socketService.onEvent("join").subscribe((room) => {
