@@ -10,10 +10,16 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field class="example-full-width">
-    <input matInput placeholder="{{ 'Phone No' | translate }}" formControlName="phoneNumber" />
+    <input matInput type="number" pattern="\d{10}" placeholder="{{ 'Phone No' | translate }}" formControlName="phoneNumber" />
   </mat-form-field>
   <mat-form-field class="example-full-width">
-    <input matInput placeholder="{{ 'WhatsApp No' | translate }}" formControlName="whatsapp" />
+    <mat-select placeholder="Country Code" formControlName="countryCode">
+      <mat-option *ngFor="let country of countryCodes" [value]="country">{{ country }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <input matInput type="number" pattern="\d{10}" placeholder="{{ 'WhatsApp No' | translate }}" formControlName="whatsapp" />
   </mat-form-field>
   <mat-form-field class="example-full-width">
     <input matInput placeholder="{{ 'Email Id' |translate}}" type="email" formControlName="emailId" />

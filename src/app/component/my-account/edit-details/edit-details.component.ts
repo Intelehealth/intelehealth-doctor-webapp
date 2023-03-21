@@ -28,11 +28,18 @@ export class EditDetailsComponent implements OnInit {
     "Infectionist",
     "Cardiologist"
   ];
+  countryCodes = [
+    "+1 United States",
+    "+91 India"
+  ];
   locations = [];
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
       this.data.phoneNumber ? this.data.phoneNumber.value : null
+    ),
+    countryCode: new FormControl(
+      this.data.countryCode ? this.data.countryCode.value : null, Validators.required
     ),
     whatsapp: new FormControl(
       this.data.whatsapp ? this.data.whatsapp.value : null
@@ -128,6 +135,17 @@ export class EditDetailsComponent implements OnInit {
       const json = {
         attributeType: "226c0494-d67e-47b4-b7ec-b368064844bd",
         value: value.emailId,
+      };
+      this.http.post(URL, json).subscribe((response) => { });
+    }
+
+    if (value.countryCode !== null) {
+      const URL = this.data.countryCode
+        ? `${this.baseURLProvider}/${this.data.countryCode.uuid}`
+        : this.baseURLProvider;
+      const json = {
+        attributeType: "bc51a49f-d909-40a0-8073-9c19e59261ef",
+        value: value.countryCode,
       };
       this.http.post(URL, json).subscribe((response) => { });
     }

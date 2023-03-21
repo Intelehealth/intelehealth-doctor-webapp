@@ -36,7 +36,7 @@
             <tr>
               <th>{{'WhatsApp No' | translate }}. :</th>
               <td *ngIf="providerDetails.whatsapp">
-                {{ providerDetails.whatsapp.value }}
+                {{ providerDetails?.countryCode?.value?.split(" ")[0]}}{{ providerDetails.whatsapp.value }}
               </td>
             </tr>
             <tr>

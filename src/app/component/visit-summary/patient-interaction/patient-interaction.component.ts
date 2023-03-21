@@ -48,6 +48,7 @@ export class PatientInteractionComponent implements OnInit {
   msg: any = [];
   whatsappLink: string;
   phoneNo;
+  whatsappNo;
   patientDetails: any;
   doctorDetails: any = {};
   conceptAdvice = "67a050c1-35e5-451c-a4ab-fff9d57b0db1";
@@ -89,12 +90,8 @@ export class PatientInteractionComponent implements OnInit {
                   this.phoneNo = attribute.value;
                 }
                 if (attribute.display.match("whatsapp") != null) {
-                  const whatsapp = attribute.value;
-                  // tslint:disable-next-line: max-line-length
-                  const text = encodeURI(
-                    `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
-                  );
-                  this.whatsappLink = `https://wa.me/91${whatsapp}?text=${text}`;
+                  this.whatsappNo = attribute.value;
+                  this.setLinks();
                 }
               });
             }
@@ -103,6 +100,26 @@ export class PatientInteractionComponent implements OnInit {
       });
   }
 
+  setLinks() {
+    const providerDetails = getFromStorage("provider");
+    let countryCode;
+    providerDetails.attributes.forEach((element) => {
+      if (
+        element.attributeType.uuid ===
+          "bc51a49f-d909-40a0-8073-9c19e59261ef" &&
+        !element.voided
+      ) {
+        countryCode = element.value;
+      }
+    });
+    const text = encodeURI(
+      `Hello I'm calling for patient ${this.patientDetails.person.display} OpenMRS ID ${this.patientDetails.identifiers[0].identifier}`
+    );
+    let newCode = countryCode.includes("India") ? "+91":"+1";
+    this.whatsappLink = `https://wa.me/${newCode}${this.whatsappNo}?text=${text}`;
+  }
+
+  
   getAttributes() {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
       const result = response.results;
