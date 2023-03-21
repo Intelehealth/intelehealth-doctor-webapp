@@ -9,7 +9,7 @@ import { environment } from "src/environments/environment";
 export class ChatService {
   private baseURL = environment.mindmapURL;
   popUpCloseEmitter = new Subject();
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   sendMessage(toUser, patientId, message, additionalPayload = {}) {
     const payload = {
@@ -19,12 +19,12 @@ export class ChatService {
       patientId,
       message,
     };
-    return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
+    return this.http.post(`${this.baseURL}/messages/sendMessage?ngsw-bypass=true`, payload);
   }
 
   getPatientMessages(toUser, patientId, fromUser = this.user.uuid) {
     return this.http.get(
-      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}`
+      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?ngsw-bypass=true`
     );
   }
 

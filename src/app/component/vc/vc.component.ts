@@ -46,7 +46,7 @@ export class VcComponent implements OnInit {
     public dialogRef: MatDialogRef<VcComponent>,
     private snackbar: MatSnackBar,
     private translate: TranslateService
-  ) {}
+  ) { }
 
   close() {
     this.dialogRef.close();
@@ -119,7 +119,7 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
       video: true,
       audio: true,
@@ -129,26 +129,31 @@ export class VcComponent implements OnInit {
       mediaConfig = config;
     }
 
+    const successCB = (stream: MediaStream) => {
+      this.localStream = stream;
+      const localStream = new MediaStream();
+      localStream.addTrack(stream.getVideoTracks()[0]);
+      this.localVideoRef.nativeElement.srcObject = localStream;
+      cb();
+    }
+
+    const errorCB = (err) => {
+      this.isStreamAvailable = false;
+      console.error(err);
+    }
+
     const n = <any>navigator;
     n.getUserMedia =
       n.getUserMedia ||
       n.webkitGetUserMedia ||
       n.mozGetUserMedia ||
       n.msGetUserMedia;
-    n.getUserMedia(
-      mediaConfig,
-      (stream: MediaStream) => {
-        this.localStream = stream;
-        const localStream = new MediaStream();
-        localStream.addTrack(stream.getVideoTracks()[0]);
-        this.localVideoRef.nativeElement.srcObject = localStream;
-        cb();
-      },
-      (err) => {
-        this.isStreamAvailable = false;
-        console.error(err);
-      }
-    );
+
+    if (n.getUserMedia) {
+      n.getUserMedia(mediaConfig, successCB, errorCB);
+    } else {
+      navigator.mediaDevices.getUserMedia(mediaConfig).then(successCB).catch(errorCB);
+    }
   }
 
   initSocketEvents() {
