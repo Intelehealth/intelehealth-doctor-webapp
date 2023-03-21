@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 
@@ -7,17 +8,19 @@ import { SupportService } from 'src/app/services/support.service';
   templateUrl: './help-menu.component.html',
   styleUrls: ['./help-menu.component.scss']
 })
-export class HelpMenuComponent implements OnInit {
+export class HelpMenuComponent implements OnInit, OnDestroy {
 
   messages: any = [];
   message: string = "";
+  subscription1: Subscription;
+  subscription2: Subscription;
 
   constructor(private socketService: SocketService, private supportService: SupportService) { }
 
   ngOnInit(): void {
-    this.getMessages();
+    this.getMessages(true);
     this.socketService.initSocketSupport(true);
-    this.socketService.onEvent("supportMessage").subscribe((data) => {
+    this.subscription1 = this.socketService.onEvent("supportMessage").subscribe((data) => {
       this.socketService.showNotification({
         title: "New message from support team",
         body: data.message,
@@ -28,7 +31,7 @@ export class HelpMenuComponent implements OnInit {
       this.messages= data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.socketService.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketService.onEvent("isreadSupport").subscribe((data) => {
       this.getMessages();
     });
   }
@@ -50,12 +53,18 @@ export class HelpMenuComponent implements OnInit {
     }
   }
 
-  getMessages() {
+  getMessages(init = false) {
     this.supportService.getSupportMessages(this.user.uuid, 'System Administrator')
       .subscribe({
         next: (res: any) => {
           if (res.success) {
             this.messages = res?.data;
+            if (init && this.messages.length) {
+              let mid = this.messages.find(m => m.from == 'System Administrator')?.id;
+              if (mid) {
+                this.readMessagesSupport(mid);
+              }
+            }
           }
         },
       });
@@ -73,6 +82,11 @@ export class HelpMenuComponent implements OnInit {
 
   get user() {
     return JSON.parse(localStorage.user);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
   }
 
 }
