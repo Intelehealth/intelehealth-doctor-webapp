@@ -77,6 +77,21 @@ vitalsPresent = false;
                 if (displayObs.match('Arm Girth') !== null ) {
                   this.answer.armGirth = Number(obs.display.slice(11, obs.display.length));
                 }
+                if (displayObs.match('BLOOD_GLUCOSE_FASTING') !== null ) {
+                  this.answer.glucoseFasting = Number(obs.display.slice(22, obs.display.length));
+                }
+                if (displayObs.match('Blood_Glucose_Non_Fasting') !== null ) {
+                  this.answer.glucoseNonFasting = Number(obs.display.slice(26, obs.display.length));
+                }
+                if (displayObs.match('HEMOGLOBIN_ID') !== null ) {
+                  this.answer.hemoglobin = Number(obs.display.slice(14, obs.display.length));
+                }
+                if (displayObs.match('HBA1_C') !== null ) {
+                  this.answer.hbA1c = Number(obs.display.slice(7, obs.display.length));
+                }
+                if (displayObs.match('TOTAL_CHOLESTEROL_ID') !== null ) {
+                  this.answer.cholesterol = Number(obs.display.slice(21, obs.display.length));
+                }
               });
               if(this.answer.height && this.answer.weight) {
                 this.answer.bmi = localStorage.getItem('selectedLanguage') === 'ru' ? 
