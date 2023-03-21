@@ -4,10 +4,10 @@
 <div mat-dialog-title>
   <div class="d-flex flex-row justify-content-between align-items-center">
     <h6 class="mb-0 font-weight-bold">Help</h6>
-    <div class="d-flex">
+    <!-- <div class="d-flex">
       <img src="assets/svgs/whatsapp-help-icon.svg" class="mr-2" alt="" width="24px">
       <img src="assets/svgs/phone-help-icon.svg" alt="" width="24px">
-    </div>
+    </div> -->
   </div>
 </div>
 <mat-dialog-content>
@@ -18,7 +18,7 @@
     <li class="chat-item timestamp-item">Mon at 5:41 PM</li>
     <li class="chat-item left">Hey! I am unable send prescriptions</li> -->
     <ng-container *ngFor="let m of messages; let first = first">
-      <li class="chat-item read-status">
+      <li class="chat-item read-status" [class.text-left]="m?.from === 'System Administrator'">
         <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
         <ng-container *ngIf="first && m?.from === user?.uuid">
           <ng-container *ngIf="m.isRead">
