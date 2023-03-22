@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./support.component.scss']
 })
 export class SupportComponent implements OnInit, OnDestroy {
-  conversations: any;
+  conversations: any = [];
   searchValue: string;
   baseURL = environment.baseURL;
   searchResults: any = [];
@@ -47,12 +47,23 @@ export class SupportComponent implements OnInit, OnDestroy {
         timestamp: new Date(data.createdAt).getTime(),
       });
 
-      this.readMessages(data.id);
-      this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      if (data.from == this.selectedConversation?.userUuid) {
+        this.readMessages(data.id);
+        this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      } else {
+        const doc = this.conversations.findIndex((d: any) => d.userUuid == data.from);
+        if (doc == -1) {
+          this.getDoctorsList(this.userId);
+        } else {
+          this.conversations[doc].message = data.message;
+        }
+      }
     });
 
     this.subscription2 = this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
-      this.getMessages();
+      if (data.msgTo == this.selectedConversation?.userUuid) {
+        this.getMessages();
+      }
     });
   }
 

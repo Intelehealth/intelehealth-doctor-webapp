@@ -32,7 +32,9 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     });
 
     this.subscription2 = this.socketService.onEvent("isreadSupport").subscribe((data) => {
-      this.getMessages();
+      if (data.msgTo == 'System Administrator') {
+        this.getMessages();
+      }
     });
   }
 
