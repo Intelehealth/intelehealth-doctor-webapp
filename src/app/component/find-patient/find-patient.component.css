@@ -41,4 +41,9 @@
   .age {
     font-size: 12px;
   }
+
+  .list-group-item .btn.btn-primary {
+    font-size: 10px;
+    margin-top: 5px;
+  }
 }

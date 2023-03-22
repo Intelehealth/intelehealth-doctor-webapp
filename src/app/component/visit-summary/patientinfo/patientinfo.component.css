@@ -1,129 +1,141 @@
 .align {
-    text-align: left;
+  text-align: left;
 }
 
-@media only screen and (max-width: 768px) { 
-    .align {
-        text-align: center;
-        padding-bottom: 15px;
-    }
+@media only screen and (max-width: 768px) {
+  .align {
+    text-align: center;
+    padding-bottom: 15px;
+  }
 
 }
 
 .addImg {
-   width: 70px;
-   height: 70px;
+  width: 70px;
+  height: 70px;
 }
 
 .container1 {
-    position: relative;
-    margin-left: 15px;
-    width: 70px;
-    height: 70px;
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height:70px;
-    width:70px;
-    background: rgba(0, 0, 0, 0);
-    transition: background 0.5s ease;
-  }
-  
+  position: relative;
+  margin-left: 15px;
+  width: 70px;
+  height: 70px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 70px;
+  width: 70px;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.5s ease;
+}
+
 
 .container1:hover .overlay {
-    display: block;
-    background: rgba(0, 0, 0, .3);
-  }
-  .button {
-    position: absolute;
-    top: 25px;
-    margin-left: 25px;
-    text-align: center;
-    opacity: 0;
-    transition: opacity .35s ease;
-  }
-  
-  .button a {
-    width: 200px;
-    text-align: center;
-    z-index: 1;
-  }
-  
-  .click {
-    cursor: pointer;
-  }
-
-  .container1:hover .button {
-    opacity: 1;
-  }
-
-  .modalStyle {
-    position:fixed;
-    background:linear-gradient(45deg, #7F7B92, transparent); 
-  }
-
-.img-size{
-    height: 558px;
-    border-radius: 12px;
-  }
-  .modal-content {
-    /* background: transparent; */
-    border: none;
-  }
-  .modal-body {
-     padding: 0;
-     margin-top: 34px;
-     margin-bottom: 34px;
-  }
-  
-  .carousel-control-prev-icon {
-    left: 50px;
-  }
-  .carousel-control-next-icon {
-    right: 50px;
-  }
-
-  .icon1 {
-    position: absolute;
-    box-sizing: border-box;
-
-    top: 50%;
-    height: 33px;
-    width: 33px;
-
-    background: #ffffff;
-    box-shadow: 0px 0px 16px rgba(46, 30, 145, 0.32);
-    border-radius: 50%;
-    border: none;
-  }
-  .imgSize {
-    height: 558px;
-    box-shadow: transparent;
-    text-align: center;
-  }
-  .header{
-    background: #1B163A;
-    opacity: 0.64;
-    height: 50px;
+  display: block;
+  background: rgba(0, 0, 0, .3);
 }
+
+.button {
+  position: absolute;
+  top: 25px;
+  margin-left: 25px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+
+.button a {
+  width: 200px;
+  text-align: center;
+  z-index: 1;
+}
+
+.click {
+  cursor: pointer;
+}
+
+.container1:hover .button {
+  opacity: 1;
+}
+
+.modalStyle {
+  position: fixed;
+  background: linear-gradient(45deg, #7F7B92, transparent);
+}
+
+.img-size {
+  height: 558px;
+  border-radius: 12px;
+}
+
+.modal-content {
+  /* background: transparent; */
+  border: none;
+}
+
+.modal-body {
+  padding: 0;
+  margin-top: 34px;
+  margin-bottom: 34px;
+}
+
+.carousel-control-prev-icon {
+  left: 50px;
+}
+
+.carousel-control-next-icon {
+  right: 50px;
+}
+
+.icon1 {
+  position: absolute;
+  box-sizing: border-box;
+
+  top: 50%;
+  height: 33px;
+  width: 33px;
+
+  background: #ffffff;
+  box-shadow: 0px 0px 16px rgba(46, 30, 145, 0.32);
+  border-radius: 50%;
+  border: none;
+}
+
+.imgSize {
+  height: 558px;
+  box-shadow: transparent;
+  text-align: center;
+}
+
+.header {
+  background: #1B163A;
+  opacity: 0.64;
+  height: 50px;
+  justify-content: space-between;
+}
+
 .attach {
-    float: right;
-    margin-right: 30px;
-    background: #FFFFFF;
-    margin-top: 15px;
+  float: right;
+  margin-right: 30px;
+  background: #FFFFFF;
+  margin-top: 15px;
 }
 
 .back {
-    margin-left: 30px;
-    color: #FFFFFF;
-    margin-top: 15px;
+  margin-left: 30px;
+  color: #FFFFFF;
+  margin-top: 15px;
 }
 
 .imageName {
-  vertical-align: sub;
-  margin: 56px;
   color: #FFFFFF;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 85%;
+  display: block;
 }

@@ -45,7 +45,7 @@ export class NavbarComponent implements OnInit {
   showData: any;
   error: any = { isError: false, errorMessage: "" };
   langs = ['en', 'hi', 'ru'];
-  selectedLanguage:string = 'en';
+  selectedLanguage: string = 'en';
 
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null },
@@ -75,7 +75,7 @@ export class NavbarComponent implements OnInit {
     public notificationService: PushNotificationsService,
     private translateService: TranslateService,
     private translationService: TranslationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (localStorage.getItem("selectedLanguage")) {
@@ -145,7 +145,7 @@ export class NavbarComponent implements OnInit {
     }, 0);
   }
 
-   useLanguage(lang: string): void {
+  useLanguage(lang: string): void {
     this.translateService.use(lang);
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
@@ -171,8 +171,9 @@ export class NavbarComponent implements OnInit {
     const search = this.searchForm.value;
     if (search.findInput === null || search.findInput.length < 3) {
       this.dialog.open(FindPatientComponent, {
-        width: "50%",
+        width: "100%",
         data: { value: "Please Enter min 3 characters" },
+        panelClass: 'find-pateint-modal'
       });
     } else {
       // tslint:disable-next-line: max-line-length
@@ -188,8 +189,9 @@ export class NavbarComponent implements OnInit {
             }
           });
           this.dialog.open(FindPatientComponent, {
-            width: "90%",
+            width: "100%",
             data: { value: this.values },
+            panelClass: 'find-pateint-modal'
           });
         },
         (err) => {
@@ -229,7 +231,7 @@ export class NavbarComponent implements OnInit {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 this.notificationService
@@ -278,9 +280,9 @@ export class NavbarComponent implements OnInit {
     this.condition1 =
       eDate1 < sDate1
         ? (this.error = {
-            isError: true,
-            errorMessage: "End Date can't before start time",
-          })
+          isError: true,
+          errorMessage: "End Date can't before start time",
+        })
         : "Success";
 
     if (this.condition == true && this.condition1 == "Success") {

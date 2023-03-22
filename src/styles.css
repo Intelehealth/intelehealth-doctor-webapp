@@ -115,3 +115,7 @@ body.font-lato td {
 .cdk-overlay-container{
   z-index: 1060;
 }
+
+.find-pateint-modal {
+  max-width: 100vw !important;
+}

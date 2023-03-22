@@ -10,38 +10,38 @@
       </div>
     </form>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
+    <button #navBtn class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
       aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
+        <li class="nav-item" data-toggle="collapse" data-target="#navbarSupportedContent-4">
           <a class="nav-link" routerLink="/home">{{'Home'| translate}}</a>
         </li>
-        <li class="nav-item" *ngIf="!subscribeAccess">
+        <li class="nav-item" *ngIf="!subscribeAccess" data-toggle="collapse" data-target="#navbarSupportedContent-4">
           <a class="nav-link" (click)="subscribeNotification(false)">{{'Subscribe' | translate}}</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown">
             {{ 'Appointment' | translate }}
           </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
+          <div data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a class="dropdown-item" [routerLink]="['/appointment', 'schedule']">
               {{ 'Appointment Schedule' | translate }}
             </a>
-            <a class="dropdown-item" [routerLink]="['/appointment', 'view']">
+            <a data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-item" [routerLink]="['/appointment', 'view']">
               {{ 'Appointment View' | translate }}
             </a>
           </div>
         </li>
-        <li *ngIf="systemAccess" class="nav-item">
+        <li data-toggle="collapse" data-target="#navbarSupportedContent-4" *ngIf="systemAccess" class="nav-item">
           <a class="nav-link" routerLink="/ayu">{{'Ayu' | translate}}</a>
         </li>
-        <li class="nav-item">
+        <li data-toggle="collapse" data-target="#navbarSupportedContent-4" class="nav-item">
           <a class="nav-link" (click)="callTour()">{{'Help' | translate}}</a>
         </li>
-        <li *ngIf="reportAccess" class="nav-item">
+        <li data-toggle="collapse" data-target="#navbarSupportedContent-4" *ngIf="reportAccess" class="nav-item">
           <a class="nav-link" href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page">{{'Reports' | translate}}</a>
         </li>
         <li class="nav-item dropdown">
@@ -49,10 +49,10 @@
               class="fa fa-user"></i> {{'Profile' | translate}}
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" routerLink="/myAccount">{{'My account' | translate}}</a>
-            <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System
+            <a data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-item" routerLink="/myAccount">{{'My account' | translate}}</a>
+            <a data-toggle="collapse" data-target="#navbarSupportedContent-4" *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System
               administration' | translate}}</a>
-            <a class="dropdown-item" (click)="changePassword()">{{'Change password' | translate}}</a>
+            <a data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-item" (click)="changePassword()">{{'Change password' | translate}}</a>
           </div>
         </li>
 
@@ -79,21 +79,21 @@
             {{ 'Notification' | translate }}
           </a>
           <div [class.d-block]="notificationMenu" class="bell-menu dropdown-menu dropdown-menu-right dropdown-cyan">
-            <a class="dropdown-item" (click)="setNotification('30m')">{{'Do not disturb' | translate}}
+            <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent-4" (click)="setNotification('30m')">{{'Do not disturb' | translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == 'dnd'" class="fa fa-check"></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('30m')">{{ '30 minutes' |translate}}
+            <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent-4" (click)="setNotification('30m')">{{ '30 minutes' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '30m'" class="fa fa-check"></i>
             </a>
-            <a class="dropdown-item" (click)="setNotification('1h')">{{ '1 hour' |translate}}
+            <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent-4" (click)="setNotification('1h')">{{ '1 hour' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '1h'" class="fa fa-check"></i></a>
-            <a class="dropdown-item" (click)="setNotification('2h')">{{ '2 hours' |translate}}
+            <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent-4" (click)="setNotification('2h')">{{ '2 hours' |translate}}
               <i *ngIf="snoozeTimeout && selectedNotification == '2h'" class="fa fa-check"></i></a>
-            <a class="dropdown-item" data-toggle="modal" data-target="#customNotification"
+            <a (click)="navBtn.click()" class="dropdown-item" data-toggle="modal" data-target="#customNotification"
               (click)="setNotification('custom')">{{'Custom' | translate}}
               <i *ngIf="selectedNotification == 'custom'" class="fa fa-check"></i></a>
             <hr />
-            <a class="dropdown-item" *ngIf="snoozeTimeout" (click)="setNotification('off')">{{ 'Turn Off' |translate}}
+            <a class="dropdown-item" data-toggle="collapse" data-target="#navbarSupportedContent-4" *ngIf="snoozeTimeout" (click)="setNotification('off')">{{ 'Turn Off' |translate}}
               <i *ngIf="selectedNotification == 'off'" class="fa fa-check"></i></a>
           </div>
         </li>
