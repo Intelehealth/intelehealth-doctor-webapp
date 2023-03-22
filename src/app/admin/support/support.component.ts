@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
@@ -9,7 +10,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss']
 })
-export class SupportComponent implements OnInit {
+export class SupportComponent implements OnInit, OnDestroy {
   conversations: any;
   searchValue: string;
   baseURL = environment.baseURL;
@@ -26,6 +27,8 @@ export class SupportComponent implements OnInit {
   images: any = {};
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
+  subscription1: Subscription;
+  subscription2: Subscription;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -37,7 +40,7 @@ export class SupportComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     this.socketSvc.initSocketSupport(true);
-    this.socketSvc.onEvent("supportMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent("supportMessage").subscribe((data) => {
       this.socketSvc.showNotification({
         title: "New chat message for support",
         body: data.message,
@@ -48,7 +51,7 @@ export class SupportComponent implements OnInit {
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
       this.getMessages();
     });
   }
@@ -176,5 +179,10 @@ export class SupportComponent implements OnInit {
   //     }
   //   })
   // }
+
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
+  }
 
 }
