@@ -62,10 +62,11 @@ i.fa {
 
 .button-tab {
   bottom: 5%;
+  /* right: 30%; */
 }
 .container {
   margin: 0 auto;
-  width: 25%;
+  /* width: 25%; */
 }
 
 .room_id {

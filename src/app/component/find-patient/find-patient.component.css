@@ -1,24 +1,44 @@
 .patient-identifier {
-    display: inline-block;
-}    
-    
+  display: inline-block;
+}
+
 .identifier-type {
-      display: block;
-      font-size: 0.6em;
-      text-decoration: underline;
+  display: block;
+  font-size: 0.6em;
+  text-decoration: underline;
 }
-    
+
 .identifier {
-      display: block;
+  display: block;
 }
 
-  .preferred-name {
-    display: inline-block;
-    font-size: 1.5em;
+.preferred-name {
+  display: inline-block;
+  font-size: 1.5em;
+  padding: 5px;
+  width: 50%;
+}
+
+.age,
+.gender {
+  font-size: 1.2em;
+}
+
+@media screen and (max-width: 615px) {
+  .list-group-item {
     padding: 5px;
-    width: 50%;
   }
 
-  .age, .gender {
-    font-size: 1.2em;
+  .list-group-item .identifier {
+    font-size: 12px;
   }
+
+  .list-group-item .preferred-name {
+    font-size: 15px;
+  }
+
+  .list-group-item .gender,
+  .age {
+    font-size: 12px;
+  }
+}

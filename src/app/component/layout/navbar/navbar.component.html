@@ -119,10 +119,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <ul>
+        <ul class="pl-0">
           <li *ngFor="let day of weekDays" class="d-flex">
-            <label class="py-2 col-2">{{(day.day) | translate }}</label>
-            <input class="form-control col-4 mx-4" [(ngModel)]="day.startTime" type="time" />
+            <label class="py-2 col-4">{{(day.day) | translate }}</label>
+            <input class="form-control col-4 mr-1" [(ngModel)]="day.startTime" type="time" />
             <input class="form-control col-4" [(ngModel)]="day.endTime" type="time" />
           </li>
         </ul>
