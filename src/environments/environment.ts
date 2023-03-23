@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://service.sila.care/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://service.sila.care/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://service.sila.care/openmrs",
-  mindmapURL: "https://service.sila.care:3004/api",
-  notificationURL: "https://service.sila.care:3004/notification",
-  socketURL: "https://service.sila.care:3004",
+  baseURL: "https://services.sila.care/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://services.sila.care/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://services.sila.care/openmrs",
+  mindmapURL: "https://services.sila.care:3004/api",
+  notificationURL: "https://services.sila.care:3004/notification",
+  socketURL: "https://services.sila.care:3004",
 };
 
 /*

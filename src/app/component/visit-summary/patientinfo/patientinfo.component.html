@@ -24,18 +24,18 @@
                     <th scope="row">{{'Age'|translate}}</th>
                     <td>{{info.age}} {{'Years'| translate}}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th scope="row">{{'Village'|translate}}</th>
                     <td>{{info.preferredAddress.cityVillage}}</td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th scope="row">{{'Contact Info'|translate}}</th>
                     <td *ngIf="info.telephone">{{ info.telephone === '-' ? ('Not provided'| translate ): info.telephone }}</td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <th scope="row">{{'Occupation'|translate}}</th>
                     <td>{{ info.occupation ? info.occupation : ('Not provided'| translate ) }}</td>
-                </tr>
+                </tr> -->
                 <!-- <tr>
                     <th scope="row">{{'Health Scheme Card'|translate}}</th>
                     <td *ngIf="info.medicalInsurance">{{info.medicalInsurance}}</td>
