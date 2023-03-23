@@ -2008,11 +2008,18 @@
     >
       <button
         type="button"
-        class="blue-btn"
-        [disabled]="visitCompleted"
+        class="blue-btn mr-2"
         (click)="sharePrescription()"
       >
-        Share prescription
+        {{ visitCompleted ? 'Update': 'Share' }} prescription
+      </button>
+      <button
+        type="button"
+        class="blue-btn"
+        (click)="viewPrescription()"
+        *ngIf="visitCompleted"
+        >
+        View prescription
       </button>
     </div>
   </div>

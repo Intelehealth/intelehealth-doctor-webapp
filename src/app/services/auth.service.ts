@@ -251,6 +251,10 @@ export class AuthService {
     return this.http.post(`${this.mindmapUrl}/auth/rememberme?ngsw-bypass=true`, { userUuid })
   }
 
+  resetSession(userUuid = this.userId) {
+    return this.http.post(`${this.mindmapUrl}/auth/reset?ngsw-bypass=true`, { userUuid })
+  }
+
   get userId() {
     try {
       return JSON.parse(localStorage.user).uuid;

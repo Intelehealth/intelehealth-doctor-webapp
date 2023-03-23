@@ -1335,57 +1335,68 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         if (this.isVisitNoteProvider) {
           if (this.provider.attributes.length) {
             if (navigator.onLine) {
-              this.encounterService.postEncounter({
-                patient: this.visit.patient.uuid,
-                encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e", //visit complete encounter type uuid
-                encounterProviders: [
-                  {
-                    provider: this.provider.uuid,
-                    encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
-                  },
-                ],
-                visit: this.visit.uuid,
-                encounterDatetime: new Date(Date.now() - 30000),
-                obs: [
-                  {
-                    concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e", // Doctor details concept uuid
-                    value: JSON.stringify(this.getDoctorDetails()),
-                  },
-                ]
-              }).subscribe((post) => {
-                this.visitCompleted = true;
-                this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                  next: (res: any) => {
-                    const link = res.data.hash;
-                    this.visitService.postAttribute(
-                      this.visit.uuid,
-                      {
-                        attributeType: "1e02db7e-e117-4b16-9a1e-6e583c3994da",/** Visit Attribute Type for Prescription Link */
-                        value: `/i/${link}`,
-                      }).subscribe();
+              if (!this.visitCompleted) {
+                this.encounterService.postEncounter({
+                  patient: this.visit.patient.uuid,
+                  encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e", //visit complete encounter type uuid
+                  encounterProviders: [
+                    {
+                      provider: this.provider.uuid,
+                      encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+                    },
+                  ],
+                  visit: this.visit.uuid,
+                  encounterDatetime: new Date(Date.now() - 30000),
+                  obs: [
+                    {
+                      concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e", // Doctor details concept uuid
+                      value: JSON.stringify(this.getDoctorDetails()),
+                    },
+                  ]
+                }).subscribe((post) => {
+                  this.visitCompleted = true;
+                  this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                    next: (res: any) => {
+                      const link = res.data.hash;
+                      this.visitService.postAttribute(
+                        this.visit.uuid,
+                        {
+                          attributeType: "1e02db7e-e117-4b16-9a1e-6e583c3994da",/** Visit Attribute Type for Prescription Link */
+                          value: `/i/${link}`,
+                        }).subscribe();
 
-                    this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                      if (result == 'view') {
-                        // Open visit summary modal here....
-                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                      } else if (result == 'dashboard') {
-                        this.router.navigate(['/dashboard']);
-                      }
-                    });
-                  },
-                  error: (err) => {
-                    this.toastr.error(err.message);
-                    this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                      if (result == 'view') {
-                        // Open visit summary modal here....
-                        this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                      } else if (result == 'dashboard') {
-                        this.router.navigate(['/dashboard']);
-                      }
-                    });
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                        if (result == 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result == 'dashboard') {
+                          this.router.navigate(['/dashboard']);
+                        }
+                      });
+                    },
+                    error: (err) => {
+                      this.toastr.error(err.message);
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                        if (result == 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result == 'dashboard') {
+                          this.router.navigate(['/dashboard']);
+                        }
+                      });
+                    }
+                  })
+                });
+              } else {
+                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                  if (result == 'view') {
+                    // Open visit summary modal here....
+                    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                  } else if (result == 'dashboard') {
+                    this.router.navigate(['/dashboard']);
                   }
-                })
-              });
+                });
+              }
             } else {
               this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: any) => {
                 if (c) {
@@ -1410,6 +1421,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  viewPrecription() {
+    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
   }
 
   getDoctorDetails() {
