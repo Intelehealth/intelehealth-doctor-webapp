@@ -39,7 +39,7 @@ export class EditDetailsComponent implements OnInit {
       this.data.phoneNumber ? this.data.phoneNumber.value : null
     ),
     countryCode: new FormControl(
-      this.data.countryCode ? this.data.countryCode.value : null, Validators.required
+      this.data.countryCode ? this.data.countryCode.value : null
     ),
     whatsapp: new FormControl(
       this.data.whatsapp ? this.data.whatsapp.value : null
@@ -54,7 +54,7 @@ export class EditDetailsComponent implements OnInit {
       this.data.specialization ? this.data.specialization.value : null
     ),
     location: new FormControl(
-      this.data.location ? this.data.location.value : null, Validators.required
+      this.data.location ? this.data.location.value : null
     ),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
