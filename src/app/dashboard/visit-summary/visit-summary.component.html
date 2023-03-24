@@ -2016,7 +2016,7 @@
       <button
         type="button"
         class="blue-btn"
-        (click)="viewPrescription()"
+        (click)="openVisitPrescriptionModal(visit?.uuid)"
         *ngIf="visitCompleted"
         >
         View prescription

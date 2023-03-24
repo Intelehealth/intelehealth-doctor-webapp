@@ -23,6 +23,9 @@ export class ErrorInterceptor implements HttpInterceptor {
       }
 
       const error = err.error.message || err.statusText;
+      if (request.method == 'DELETE' && request.url.includes('session')) {
+        return throwError(error);
+      }
       this.toastr.error(error);
       return throwError(error);
     }))

@@ -100,7 +100,7 @@ export class AuthService {
     // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-    this.http.delete(`${this.baseUrl}/session`).subscribe((res) => { });
+    this.http.delete(`${this.baseUrl}/session`).subscribe((res) => { }, (error) => { this.login(credBase64) });
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
     return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(

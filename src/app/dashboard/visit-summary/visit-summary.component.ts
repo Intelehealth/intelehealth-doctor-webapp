@@ -1423,10 +1423,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  viewPrescription() {
-    this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-  }
-
   getDoctorDetails() {
     let d: any = {};
     let attrs: string[] = [
