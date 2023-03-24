@@ -5,6 +5,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-video-call',
@@ -40,12 +41,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   isAttachment = false;
   callStartedAt = null;
   changeDetForDuration: any = null;
+  defaultImage = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage = 'assets/images/pdf-icon.png';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
+    private cs: CoreService,
     private toastr: ToastrService) { }
 
   async ngOnInit() {
@@ -442,5 +446,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  setImage(src) {
+    this.cs.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
 
 }
