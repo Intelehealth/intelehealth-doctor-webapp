@@ -50,7 +50,7 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-cyan">
             <a data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-item" routerLink="/myAccount">{{'My account' | translate}}</a>
-            <a data-toggle="collapse" data-target="#navbarSupportedContent-4" *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System
+            <a *ngIf="systemAccess" class="dropdown-item" href="{{ baseURLLegacy }}/admin/index.htm">{{'System
               administration' | translate}}</a>
             <a data-toggle="collapse" data-target="#navbarSupportedContent-4" class="dropdown-item" (click)="changePassword()">{{'Change password' | translate}}</a>
           </div>
