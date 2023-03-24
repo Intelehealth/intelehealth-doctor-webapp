@@ -142,7 +142,7 @@
                   <mat-icon>notifications_none</mat-icon>
                 </button>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
-                  <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider.person.uuid }}" (error) ="onImgError($event)" alt="">
+                  <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
                   <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
                 </div>
                 <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">

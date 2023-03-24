@@ -13,6 +13,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { formatDate } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -164,13 +166,16 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription2: Subscription;
   maxTelLegth1: number = 10;
   maxTelLegth2: number = 10;
+  oldPhoneNumber: string = '';
 
   constructor(
     private pageTitleService: PageTitleService,
     private profileService: ProfileService,
     private toastr: ToastrService,
     private providerService: ProviderService,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private router: Router,
+    private cookieService: CookieService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -321,6 +326,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           case 'phoneNumber':
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             (personalFormValues.phoneNumber) ? this.phoneNumberValid = true : this.phoneNumberValid = false;
+            this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'qualification':
 
@@ -682,19 +688,24 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      // this.toastr.success("Profile has been updated successfully", "Profile Updated");
-      // this.toastr.warning("Kindly re-login to see updated details", "Re-login");
-      // this.authService.logOut();
-      this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
-        if (provider.results.length) {
-          localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-          localStorage.setItem("doctorName", provider.results[0].person.display);
-          let u = JSON.parse(localStorage.user);
-          u.person.display = provider.results[0].person.display;
-          localStorage.setItem("user", JSON.stringify(u));
-          this.toastr.success("Profile has been updated successfully", "Profile Updated");
-        }
-      });
+      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
+        this.toastr.success("Profile has been updated successfully", "Profile Updated");
+        this.toastr.warning("Kindly re-login to see updated details", "Re-login");
+        this.cookieService.delete('app.sid', '/');
+        this.authService.logOut();
+      } else {
+        this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
+          if (provider.results.length) {
+            localStorage.setItem('provider', JSON.stringify(provider.results[0]));
+            localStorage.setItem("doctorName", provider.results[0].person.display);
+            let u = JSON.parse(localStorage.user);
+            u.person.display = provider.results[0].person.display;
+            localStorage.setItem("user", JSON.stringify(u));
+            this.toastr.success("Profile has been updated successfully", "Profile Updated");
+            this.router.navigate(['/dashboard']);
+          }
+        });
+      }
     });
   }
 

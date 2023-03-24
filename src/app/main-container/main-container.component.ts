@@ -25,8 +25,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   collapsed = false;
   baseUrl: string = environment.baseURL;
   baseURLLegacy: string = environment.baseURLLegacy;
-  user: any;
-  provider: any;
+  // user: any;
+  // provider: any;
   username: string = '';
   header: PageTitleItem;
   _mode: string = 'side';
@@ -59,8 +59,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    this.user = JSON.parse(localStorage.getItem('user'));
-    this.provider = JSON.parse(localStorage.getItem('provider'));
+    // this.user = JSON.parse(localStorage.getItem('user'));
+    // this.provider = JSON.parse(localStorage.getItem('provider'));
 
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
@@ -220,5 +220,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+  }
+
+  get user() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+
+  get provider() {
+    return JSON.parse(localStorage.getItem('provider'));
   }
 }
