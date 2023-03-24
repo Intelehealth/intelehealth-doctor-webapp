@@ -22,7 +22,7 @@ export class DiagnosisService {
   constructor(private http: HttpClient, private snackbar: MatSnackBar,
     private translateService: TranslateService,
     private translationService: TranslationService) {
-      this.getTranslationData();
+   //   this.getTranslationData();
      }
 
   concept(uuid): Observable<any> {
