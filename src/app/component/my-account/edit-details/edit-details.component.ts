@@ -134,7 +134,7 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "226c0494-d67e-47b4-b7ec-b368064844bd",
-        value: value.emailId,
+        value: value.emailId.trim().length > 0 ? value.emailId : " ",
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
@@ -156,7 +156,7 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "e3a7e03a-5fd0-4e6c-b2e3-938adb3bbb37",
-        value: value.phoneNumber.toString(),
+        value: value.phoneNumber ? value.phoneNumber.toString() : " ",
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
@@ -167,7 +167,7 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "fccc49f1-49ca-44bb-9e61-21c88ae6dd64",
-        value: value.whatsapp.toString(),
+        value: value.whatsapp ? value.whatsapp.toString() : " " ,
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
@@ -178,7 +178,7 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "4246639f-e9a8-48ea-b9ff-629a7c430543",
-        value: value.qualification,
+        value: value.qualification.trim().length > 0 ?  value.qualification : " ",
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
@@ -189,7 +189,7 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "992ccbdd-201a-44ef-8abb-c2eee079886d",
-        value: value.registrationNumber,
+        value: value.registrationNumber.trim().length > 0 ?  value.registrationNumber : " ",
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
