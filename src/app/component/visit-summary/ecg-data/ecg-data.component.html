@@ -1,4 +1,4 @@
-<b style="margin: 12px">{{'ECG'|translate}}:</b>
+<b style="margin: 12px 12px 12px 0px;">{{'ECG'|translate}}:</b>
 <div *ngIf="ecgPresent">
     <hr>
     <div class="row">
@@ -6,7 +6,20 @@
             <a href={{image.image}}><img src={{image.image}} class="image" alt=""></a>
         </div>
     </div>
-    <table class="table table-responsive">
+    <div class="vital-items-wrapper">
+      <div class="vital-item-row">
+        <div class="vital-item">
+          <b>{{'R-R interval'|translate}}:</b>&nbsp;<span> {{ ecgData.rInterval }} ms</span>
+        </div>
+        <div class="vital-item">
+          <b>{{'HRV'|translate}}:</b>&nbsp;<span>{{ecgData.hrv}} ms</span>
+        </div>
+        <div class="vital-item">
+          <b>{{'Heart rate'|translate}}:</b>&nbsp;<span>{{ecgData.heartRate}} BPM</span>
+        </div>
+      </div>
+    </div>
+    <!-- <table class="table table-responsive">
         <tr>
             <th>{{'R-R interval'|translate}}:</th>
             <td><span> {{ ecgData.rInterval }} ms</span></td>
@@ -29,5 +42,5 @@
             <th>{{'Robust heart rate'|translate}}:</th>
             <td>{{ecgData.robustHeartRate}}</td>
         </tr>
-    </table>
+    </table> -->
 </div>

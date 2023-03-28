@@ -2,7 +2,61 @@
 <hr>
 <div *ngIf='!vitalsPresent'>{{'No Data'|translate}}</div>
 <div *ngIf='vitalsPresent'>
-  <table class="table table-responsive">
+  <div class="vital-items-wrapper">
+    <div class="vital-item-row" *ngFor='let item of v'>
+      <div class="vital-item">
+        <b>{{'Temp'|translate}}:</b>&nbsp; <span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span>
+      </div>
+      <div class="vital-item">
+        <b>{{'Height'|translate}}:</b>&nbsp; <span *ngIf="item.height">{{item.height}} cm</span>
+      </div>
+      <div class="vital-item">
+        <b>{{'Weight'|translate}}:</b>&nbsp; <span *ngIf="item.weight">{{item.weight}} kg</span>
+      </div>
+      <div class="vital-item">
+        <b>{{'BMI'|translate}}:</b>&nbsp; {{item.bmi}}
+      </div>
+      <div class="vital-item">
+        <b>{{'SP02'|translate}}:</b>&nbsp; <span *ngIf="item.sp02">{{item.sp02}} %</span>
+      </div>
+    </div>
+    <div class="vital-item-row">
+      <div class="vital-item">
+        <b>{{'BP'|translate}}:</b>&nbsp; <span *ngIf="v[0]?.sbp && v[0]?.dbp">{{v[0]?.sbp}}/{{v[0]?.dbp}}</span>
+      </div>
+      <div class="vital-item">
+        <b>{{'HR'|translate}}:</b>&nbsp; {{v[0]?.pulse}}
+      </div>
+      <div class="vital-item">
+        <b>{{'RR'|translate}}:</b>&nbsp; {{v[0]?.respiratoryRate}}
+      </div>
+      <div class="vital-item">
+        <b>Abdominal Girth:</b>&nbsp; {{v[0]?.abdominalGirth}}
+      </div>
+      <div class="vital-item">
+        <b>Arm Girth:</b> {{v[0]?.armGirth}}
+      </div>
+    </div>
+    <div class="vital-item-row">
+      <div class="vital-item">
+        <b>BG(NF):</b>&nbsp; {{v[0]?.glucoseNonFasting}}
+      </div>
+      <div class="vital-item">
+        <b>BG(F):</b>&nbsp; {{v[0]?.glucoseFasting }}
+      </div>
+      <div class="vital-item">
+        <b>Hemoglobin(mg/dL):</b>&nbsp; {{v[0]?.hemoglobin}}
+      </div>
+      <div class="vital-item">
+        <b>HbA1c(%):</b>&nbsp; {{v[0]?.hbA1c}}
+      </div>
+      <div class="vital-item">
+        <b>Total Cholesterol:</b>&nbsp; {{v[0]?.cholesterol}}
+      </div>
+    </div>
+  </div>
+
+  <!-- <table class="table table-responsive">
     <tr *ngFor='let item of v'>
       <th>{{'Temp'|translate}}:</th>
       <td><span *ngIf="item.temp"> {{(item.temp * 9/5) + 32 | number : '1.2-2'}} F</span></td>
@@ -39,6 +93,6 @@
       <th>Total Cholesterol:</th>
       <td>{{v[0]?.cholesterol}}</td>
     </tr>
-  </table>
+  </table> -->
   <app-ecg-data></app-ecg-data>
 </div>
