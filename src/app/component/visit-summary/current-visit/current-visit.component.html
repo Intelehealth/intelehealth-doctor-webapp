@@ -3,7 +3,7 @@
 <hr>
 <div *ngIf="visitDetail">
   <div><b>{{ 'Current Visit' |translate}} : </b>{{visitDetail.startDatetime | date: 'dd-MMM-yyyy' }} <span *ngIf="visitDetail.stopDatetime == null" class="badge badge-pill badge-success" style="vertical-align: text-bottom;">{{ 'Active' |translate}}</span></div>
-  <div><b>{{ 'CHW Name' | translate }}:</b>{{providerName}}</div>
+  <div><b>{{ 'CHW Name' | translate }}: </b>{{providerName}}</div>
   <div><b>{{'Clinic'| translate}}: </b>{{clinicName}}</div>
 </div>
 </div>

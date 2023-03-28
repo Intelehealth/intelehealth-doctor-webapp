@@ -23,6 +23,8 @@ clinicName: string;
       visitDetail.encounters.forEach(encounter => {
         if (encounter.display.match('ADULTINITIAL') !== null) {
           this.providerName = encounter.encounterProviders[0].display;
+        } else if (encounter.display.match('Vitals')) {
+          this.providerName = encounter.encounterProviders[0].display;
         }
       });
     });

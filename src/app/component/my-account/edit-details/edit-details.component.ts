@@ -26,7 +26,8 @@ export class EditDetailsComponent implements OnInit {
     "Neurologist",
     "Neonatologist",
     "Infectionist",
-    "Cardiologist"
+    "Cardiologist",
+    "Doctor Not Needed"
   ];
   countryCodes = [
     "+1 United States",
