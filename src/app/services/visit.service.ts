@@ -103,6 +103,30 @@ export class VisitService {
     );
   }
 
+  getAwaitingVisits(visitState, speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getAwaitingVisits?state=${visitState}&speciality=${speciality}`
+    );
+  }
+
+  getPriorityVisits(visitState, speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getPriorityVisits?state=${visitState}&speciality=${speciality}`
+    );
+  }
+
+  getInProgressVisits(visitState, speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getInProgressVisits?state=${visitState}&speciality=${speciality}`
+    );
+  }
+  
+  getCompletedVisits(visitState, speciality) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getCompletedVisits?state=${visitState}&speciality=${speciality}`
+    );
+  }
+  
   clearVisits() {
     this.flagVisit = new Array();
     this.waitingVisit = new Array();

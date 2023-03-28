@@ -80,14 +80,117 @@ export class HomepageComponent implements OnInit {
             this.visitState = attribute.value;
           }
         });
-        this.getVisits();
-        this.getVisitCounts(this.specialization);
+        //  this.getVisits();
+        // this.getVisitCounts(this.specialization);
+        this.getPriorityVisits();
+        this.getAwaitingVisits();
+        this.getInProgressVisits();
+        this.getCompletedVisits();
       });
     } else {
       this.authService.logout();
     }
-    // this.getEndedVisits();
     this.getDrSlots();
+  }
+
+  /**
+   * Get all Awaiting Visits
+   */
+  getAwaitingVisits() {
+    this.service.getAwaitingVisits(this.visitState, this.specialization).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'awaitingVisit');
+        this.activePatient = response.count;
+      });
+  }
+
+  /**
+   * Get all Priority Visits
+   */
+  getPriorityVisits() {
+    this.service.getPriorityVisits(this.visitState, this.specialization).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'priorityVisit');
+        this.flagPatientNo = response.count;
+      });
+  }
+
+  /**
+   * Get all InProgress Visits
+   */
+  getInProgressVisits() {
+    this.service.getInProgressVisits(this.visitState, this.specialization).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'inProgressVisit');
+        this.visitNoteNo = response.count;
+      });
+  }
+
+  /**
+  * Get all Completed Visits
+  */
+  getCompletedVisits() {
+    this.service.getCompletedVisits(this.visitState, this.specialization).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'completedVisit');
+        this.completeVisitNo = response.count;
+      });
+  }
+
+  setVisitByType(stateVisits: any, typeOfVisit) {
+    stateVisits.forEach(visit => {
+      this.setVisitsWithData(visit, typeOfVisit);
+    });
+    this.setSpiner = false;
+  }
+
+  /**
+* Check for a visit and put it to the respective tab as per their type
+* @param visit Object
+*/
+  setVisitsWithData(visit, typeOfVisit) {
+    let value: any = {};
+    value.visitId = visit.uuid;
+    value.patientId = visit.person.uuid;
+    value.id = visit.patient.identifier;
+    value.name = visit.patient_name.given_name + " " + visit.patient_name.family_name;
+    value.gender = visit.person.gender;
+    value.age = this.getAge(visit.person.birthdate);
+    value.location = visit.location.name;
+    if(typeOfVisit === "awaitingVisit") {
+    value.status = visit.encounters[0].type.name;
+    value.provider = visit.encounters[0].encounter_provider.provider.person.person_name.given_name + " " +
+      visit.encounters[0].encounter_provider.provider.person.person_name.family_name;
+    value.lastSeen = visit.encounters[0].encounter_datetime
+    value.complaints = visit.encounters[0].obs.length > 0 ? this.getComplaints(visit.encounters[0].obs[0]?.value_text): "Missing encounter";
+    } else {
+      let encounter = visit.encounters.find(encounter => encounter.type.name === 'ADULTINITIAL');
+      value.status = visit.encounters[visit.encounters.length-1].type.name;
+      value.provider = visit.encounters[visit.encounters.length-1].encounter_provider.provider.person.person_name.given_name + " " +
+        visit.encounters[visit.encounters.length-1].encounter_provider.provider.person.person_name.family_name;
+      value.lastSeen = visit.encounters[visit.encounters.length-1].encounter_datetime
+      let obs1 = encounter?.obs.find(ob => ob.concept_id === 163212);
+      value.complaints = obs1 ? this.getComplaints(obs1.value_text): "Missing encounter";
+    }
+    value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
+    if (typeOfVisit === 'awaitingVisit') {
+      this.service.waitingVisit.push(value);
+    } else if (typeOfVisit === 'inProgressVisit') {
+      this.service.progressVisit.push(value);
+    } else if (typeOfVisit === 'priorityVisit') {
+      this.service.flagVisit.push(value);
+    } else if (typeOfVisit === 'completedVisit') {
+      this.service.completedVisit.push(value);
+    }
+  }
+
+  /**
+  * return age by birthdate
+  */
+  getAge(dateString) {
+    let date1 = moment(dateString);
+    var diffDuration = moment.duration(moment().diff(date1));
+    return diffDuration.years();
   }
 
   getStateFromVisit(provider) {
@@ -184,7 +287,7 @@ export class HomepageComponent implements OnInit {
         }
         this.helper.refreshTable.next();
         this.setSpiner = false;
-        this.isLoadingNextSlot = false;
+        // this.isLoadingNextSlot = false;
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -288,26 +391,15 @@ export class HomepageComponent implements OnInit {
     return this.value;
   }
 
-  getComplaints(visitDetails) {
+  getComplaints(currentObs) {
     let recent: any = [];
-    const encounters = visitDetails.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
+    const currentComplaint = currentObs.split('<b>');
+    for (let i = 1; i < currentComplaint.length; i++) {
+      const obs1 = currentComplaint[i].split('<');
+      if (!obs1[0].match('Associated symptoms')) {
+        recent.push(obs1[0]);
       }
-    });
+    }
     return recent;
   }
 
@@ -343,24 +435,24 @@ export class HomepageComponent implements OnInit {
     return Number((this.allVisits.length / this.limit).toFixed()) + 2;
   }
 
-  tableChange({ loadMore, refresh }) {
-    if (loadMore) {
-      if (!this.isLoadingNextSlot) this.setSpiner = true;
-      const query = {
-        limit: this.limit,
-        startIndex: this.allVisits.length,
-      };
-      this.getVisits(query, refresh);
-    }
-  }
+  // tableChange({ loadMore, refresh }) {
+  //   if (loadMore) {
+  //     if (!this.isLoadingNextSlot) this.setSpiner = true;
+  //     const query = {
+  //       limit: this.limit,
+  //       startIndex: this.allVisits.length,
+  //     };
+  //     this.getVisits(query, refresh);
+  //   }
+  // }
 
-  isLoadingNextSlot = false;
-  loadNextSlot() {
-    if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
-      this.isLoadingNextSlot = true;
-      this.tableChange({ loadMore: true, refresh: () => {} });
-    }
-  }
+  // isLoadingNextSlot = false;
+  // loadNextSlot() {
+  //   if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
+  //     this.isLoadingNextSlot = true;
+  //     this.tableChange({ loadMore: true, refresh: () => {} });
+  //   }
+  // }
 
   setVisitlengthAsPerLoadedData() {
     this.flagPatientNo = this.getLength(this.flagVisit);

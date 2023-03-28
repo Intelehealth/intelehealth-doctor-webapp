@@ -30,14 +30,14 @@ export class TablesComponent implements OnInit {
   @Input() data;
   @Input() tableFor;
   @Input() visitCounts;
-  @Output() tableEmitter = new EventEmitter();
-  @Output() emptyRow = new EventEmitter();
-  @Input() set allVisitsLoaded(val) {
-    this.dataLoaded = val;
-    if (this.dataLoaded) {
-      this.refresh();
-    }
-  }
+//  @Output() tableEmitter = new EventEmitter();
+  //@Output() emptyRow = new EventEmitter();
+  // @Input() set allVisitsLoaded(val) {
+  //   this.dataLoaded = val;
+  //   if (this.dataLoaded) {
+  //     this.refresh();
+  //   }
+  // }
   dataLoaded = false;
   loadedDataLength: Number = 0;
 
@@ -49,9 +49,9 @@ export class TablesComponent implements OnInit {
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.helper.refreshTable.subscribe(() => {
-      this.refresh();
-    });
+    // this.helper.refreshTable.subscribe(() => {
+    //   this.refresh();
+    // });
   }
 
   /**
@@ -82,18 +82,18 @@ export class TablesComponent implements OnInit {
     }
   }
 
-  hasEmptyRow() {
-    if (!this.dataLoaded) {
-      this.emptyRow.emit();
-    }
-  }
+  // hasEmptyRow() {
+  //   if (!this.dataLoaded) {
+  //     this.emptyRow.emit();
+  //   }
+  // }
 
-  changePage({ length, pageIndex, pageSize }) {
-    const data: any = {
-      loadMore: this.loadedDataLength === length ? false : true,
-      // loadMore: (pageIndex + 1) * pageSize >= length,
-      refresh: this.refresh.bind(this),
-    };
-    this.tableEmitter.emit(data);
-  }
+  // changePage({ length, pageIndex, pageSize }) {
+  //   const data: any = {
+  //     loadMore: this.loadedDataLength === length ? false : true,
+  //     // loadMore: (pageIndex + 1) * pageSize >= length,
+  //     refresh: this.refresh.bind(this),
+  //   };
+  //   this.tableEmitter.emit(data);
+  // }
 }
