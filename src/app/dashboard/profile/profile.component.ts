@@ -15,6 +15,7 @@ import { formatDate } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { NgxRolesService } from 'ngx-permissions';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -175,7 +176,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private providerService: ProviderService,
     private authService: AuthService,
     private router: Router,
-    private cookieService: CookieService) {
+    private cookieService: CookieService,
+    private rolesService: NgxRolesService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -702,7 +704,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));
             this.toastr.success("Profile has been updated successfully", "Profile Updated");
-            this.router.navigate(['/dashboard']);
+            let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+            if (role) {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
           }
         });
       }
