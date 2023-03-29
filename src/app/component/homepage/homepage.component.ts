@@ -35,7 +35,10 @@ export class HomepageComponent implements OnInit {
   endedVisitNo = 0;
   endVisitCount: any;
   endVisits = [];
-  setSpiner = true;
+  setSpiner1 = false; 
+  setSpiner2 = false;
+  setSpiner3 = false;
+  setSpiner4 = false;
   specialization;
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
@@ -84,8 +87,6 @@ export class HomepageComponent implements OnInit {
         // this.getVisitCounts(this.specialization);
         this.getPriorityVisits();
         this.getAwaitingVisits();
-        this.getInProgressVisits();
-        this.getCompletedVisits();
       });
     } else {
       this.authService.logout();
@@ -97,10 +98,12 @@ export class HomepageComponent implements OnInit {
    * Get all Awaiting Visits
    */
   getAwaitingVisits() {
+    this.setSpiner2 = true;
     this.service.getAwaitingVisits(this.visitState, this.specialization).subscribe(
       (response: any) => {
         this.setVisitByType(response.data, 'awaitingVisit');
         this.activePatient = response.count;
+        this.setSpiner2 = false;
       });
   }
 
@@ -108,10 +111,12 @@ export class HomepageComponent implements OnInit {
    * Get all Priority Visits
    */
   getPriorityVisits() {
+    this.setSpiner1 = true;
     this.service.getPriorityVisits(this.visitState, this.specialization).subscribe(
       (response: any) => {
         this.setVisitByType(response.data, 'priorityVisit');
         this.flagPatientNo = response.count;
+        this.setSpiner1 = false;
       });
   }
 
@@ -119,10 +124,12 @@ export class HomepageComponent implements OnInit {
    * Get all InProgress Visits
    */
   getInProgressVisits() {
+    this.setSpiner3 = true;
     this.service.getInProgressVisits(this.visitState, this.specialization).subscribe(
       (response: any) => {
         this.setVisitByType(response.data, 'inProgressVisit');
         this.visitNoteNo = response.count;
+        this.setSpiner3 = false;
       });
   }
 
@@ -130,10 +137,12 @@ export class HomepageComponent implements OnInit {
   * Get all Completed Visits
   */
   getCompletedVisits() {
+    this.setSpiner4 = true;
     this.service.getCompletedVisits(this.visitState, this.specialization).subscribe(
       (response: any) => {
         this.setVisitByType(response.data, 'completedVisit');
         this.completeVisitNo = response.count;
+        this.setSpiner4 = false;
       });
   }
 
@@ -141,7 +150,6 @@ export class HomepageComponent implements OnInit {
     stateVisits.forEach(visit => {
       this.setVisitsWithData(visit, typeOfVisit);
     });
-    this.setSpiner = false;
   }
 
   /**
@@ -286,7 +294,7 @@ export class HomepageComponent implements OnInit {
           this.allVisitsLoaded = true;
         }
         this.helper.refreshTable.next();
-        this.setSpiner = false;
+        //this.setSpiner = false;
         // this.isLoadingNextSlot = false;
       },
       (err) => {
@@ -345,7 +353,7 @@ export class HomepageComponent implements OnInit {
         this.endedVisitNo += 1
         localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
       });
-      this.setSpiner = false;
+     // this.setSpiner = false;
     })
   }
 
