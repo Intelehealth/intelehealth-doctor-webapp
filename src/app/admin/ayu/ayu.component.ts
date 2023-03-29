@@ -16,7 +16,7 @@ import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 })
 export class AyuComponent implements OnInit {
 
-  displayedColumns: string[] = ['select', 'id', 'name', 'updatedAt', 'active', 'download', 'info'];
+  displayedColumns: string[] = ['select', 'id', 'name', 'updatedAt', 'download', 'info'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(false, []);
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -198,5 +198,9 @@ th:last-child {
     box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
     border-radius: 8px;
     padding: 16px 20px;
+
+    h6 {
+      font-size: 16px;
+    }
   }
 }

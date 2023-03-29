@@ -61,23 +61,23 @@
                   <label for="gender">Gender *</label>
                   <div class="py-2">
                     <div class="pretty p-default p-round">
-                      <input type="radio" value="M"  formControlName="gender">
+                      <input type="radio" value="Male"  formControlName="gender">
                       <div class="state p-success">
                           <label>Male</label>
                       </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="F"  formControlName="gender">
+                          <input type="radio" value="Female"  formControlName="gender">
                           <div class="state p-success">
                               <label>Female</label>
                           </div>
                       </div>
-                      <div class="pretty p-default p-round">
+                      <!-- <div class="pretty p-default p-round">
                           <input type="radio" value="U"  formControlName="gender">
                           <div class="state p-success">
                               <label>Other</label>
                           </div>
-                      </div>
+                      </div> -->
                   </div>
                 </div>
                 <div class="form-group col-md-4">
@@ -112,7 +112,7 @@
                   <label for="phoneNumber">Phone Number *</label>
                   <input type="text"
                     ng2TelInput
-                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
+                    [ng2TelInputOptions]="{initialCountry: 'kg', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'phoneNumber')"
                     (ng2TelOutput)="getNumber($event, 'phoneNumber')"
                     (intlTelInputObject)="telInputObject($event, 'phoneNumber')"
@@ -132,7 +132,7 @@
                   <label for="whatsapp">WhatsApp Number *</label>
                   <input type="text"
                     ng2TelInput
-                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
+                    [ng2TelInputOptions]="{initialCountry: 'kg', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'whatsAppNumber')"
                     (ng2TelOutput)="getNumber($event, 'whatsAppNumber')"
                     (intlTelInputObject)="telInputObject($event, 'whatsAppNumber')"
@@ -163,7 +163,7 @@
                 <div class="col-md-12">
                   <h6>Add signature</h6>
                   <mat-tab-group class="signature-tab-group" mat-align-tabs="start" [selectedIndex]="selectedSignatureTabIndex" (selectedTabChange)="signatureTabChanged($event)">
-                    <mat-tab label="Draw">
+                    <!-- <mat-tab label="Draw">
                       <div class="container">
                         <div class="form-row">
                           <div class="form-group col-md-12">
@@ -174,7 +174,7 @@
                           </div>
                         </div>
                       </div>
-                    </mat-tab>
+                    </mat-tab> -->
 
                     <mat-tab label="Generate">
                       <div class="container">
@@ -204,7 +204,7 @@
                       </div>
                     </mat-tab>
 
-                    <mat-tab label="Upload">
+                    <!-- <mat-tab label="Upload">
                       <ng-container *ngIf="!signatureFile; else signaturePreview">
                         <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="50000" (change)="onFilesDropped($event)"></ngx-dropzone>
                         <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()">
@@ -220,7 +220,7 @@
                           </button>
                         </div>
                       </ng-template>
-                    </mat-tab>
+                    </mat-tab> -->
                   </mat-tab-group>
                   <p>
                     By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.
@@ -247,12 +247,19 @@
             </ng-template>
             <form [formGroup]="professionalInfoForm" (ngSubmit)="updateProfile()">
               <div class="form-row">
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label for="typeOfProfession">Type of profession *</label>
                   <ng-select class="profile-select" [items]="professions" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="Select type of profession">
                   </ng-select>
                   <div *ngIf="submitted && f2.typeOfProfession.errors">
                     <small class="error-msg" *ngIf="f2.typeOfProfession.errors.required">Select type of profession</small>
+                  </div>
+                </div> -->
+                <div class="form-group col-md-6">
+                  <label for="qualification">Qualification *</label>
+                  <input type="text" class="form-control" formControlName="qualification" placeholder="Enter qualification">
+                  <div *ngIf="submitted && f2.qualification.errors">
+                    <small class="error-msg" *ngIf="f2.qualification.errors.required">Enter qualification</small>
                   </div>
                 </div>
                 <div class="form-group col-md-6">
@@ -273,6 +280,14 @@
                   </div>
                 </div>
                 <div class="form-group col-md-6">
+                  <label for="typeOfProfession">Hospital Type *</label>
+                  <ng-select class="profile-select" [items]="hospitalTypes" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="hospitalType" placeholder="Select hospital type">
+                  </ng-select>
+                  <div *ngIf="submitted && f2.hospitalType.errors">
+                    <small class="error-msg" *ngIf="f2.hospitalType.errors.required">Select hospital type</small>
+                  </div>
+                </div>
+                <!-- <div class="form-group col-md-6">
                   <label for="consultationLanguage">Consultation Language *</label>
                   <ng-select class="profile-select" [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="consultationLanguage" placeholder="Select consultation language">
                     <ng-template ng-label-tmp let-item="item">
@@ -291,9 +306,9 @@
                   <div *ngIf="submitted && f2.consultationLanguage.errors">
                     <small class="error-msg" *ngIf="f2.consultationLanguage.errors.required">Select consultation language</small>
                   </div>
-                </div>
+                </div> -->
               </div>
-              <div class="form-row">
+              <!-- <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="workExperience">Work Experience*</label>
                   <ng-select class="profile-select" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="Eg. General Physician">
@@ -316,6 +331,15 @@
                   <textarea class="form-control" rows="3" formControlName="workExperienceDetails" placeholder="Type here"></textarea>
                   <div *ngIf="submitted && f2.workExperienceDetails.errors">
                     <small class="error-msg" *ngIf="f2.workExperienceDetails.errors.required">Enter experience</small>
+                  </div>
+                </div>
+              </div> -->
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="visitState">Visit State</label>
+                  <input type="text" class="form-control" formControlName="visitState" placeholder="Enter visit state" readonly>
+                  <div *ngIf="submitted && f2.visitState.errors">
+                    <small class="error-msg" *ngIf="f2.visitState.errors.required">Enter visit state</small>
                   </div>
                 </div>
               </div>

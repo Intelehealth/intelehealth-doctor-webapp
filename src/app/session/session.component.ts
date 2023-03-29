@@ -39,7 +39,7 @@ export class SessionComponent implements OnInit {
     },
     {
       id: 2,
-      name: 'Hindi'
+      name: 'русский'
     }
   ];
   constructor() { }

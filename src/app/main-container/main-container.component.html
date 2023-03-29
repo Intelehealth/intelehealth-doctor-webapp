@@ -17,12 +17,12 @@
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <!-- <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-message.svg" alt="">
             <span>Messages</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-video.svg" alt="">
@@ -41,24 +41,24 @@
             <span>Prescription</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <!-- <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>Help & Support</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/warning.svg" alt="">
             <span>Ayu</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <!-- <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>Support</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img src="assets/svgs/user-settings.svg" alt="">

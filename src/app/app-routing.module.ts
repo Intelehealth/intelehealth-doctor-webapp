@@ -43,13 +43,13 @@ const routes: Routes = [
         //   }
         // }
       },
-      {
-        path: 'messages',
-        data: {
-          breadcrumb: 'Messages'
-        },
-        loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
-      },
+      // {
+      //   path: 'messages',
+      //   data: {
+      //     breadcrumb: 'Messages'
+      //   },
+      //   loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
+      // },
       {
         path: 'calendar',
         data: {
@@ -71,13 +71,13 @@ const routes: Routes = [
         },
         loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
       },
-      {
-        path: 'help',
-        data: {
-          breadcrumb: 'Help & Support'
-        },
-        loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
-      },
+      // {
+      //   path: 'help',
+      //   data: {
+      //     breadcrumb: 'Help & Support'
+      //   },
+      //   loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
+      // },
       {
         path: 'admin',
         loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),

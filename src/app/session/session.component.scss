@@ -24,6 +24,24 @@
         height: 64px;
       }
     }
+
+    .grid-icon2 {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: 40px;
+      top: 40px;
+
+      .logo-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 85%;
+        width: 85%;
+        border-radius: 50%;
+      }
+    }
   }
 
   ::ng-deep .carousel-indicators li {
@@ -153,7 +171,12 @@
 
   .login-info-wrapper {
     .info-banner {
-      padding: 10px 40px 10px;
+      padding: 10px 10px 10px;
+
+      .grid-icon2 {
+        top: 10px;
+        right: 10px;
+      }
     }
 
     .carousel-container {

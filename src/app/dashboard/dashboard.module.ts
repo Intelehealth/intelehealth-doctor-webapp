@@ -22,6 +22,7 @@ import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,12 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     Ng2TelInputModule,
     NgxDropzoneModule,
     NgbTypeaheadModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    NgxPermissionsModule.forChild({
+      permissionsIsolate: false,
+      rolesIsolate: false,
+      configurationIsolate: false
+    })
   ]
 })
 export class DashboardModule { }

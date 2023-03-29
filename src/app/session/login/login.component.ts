@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    this.checkSession();
+    // this.checkSession();
   }
 
   login() {
@@ -53,13 +53,13 @@ export class LoginComponent implements OnInit {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
-            if (this.rememberMe) {
+            // if (this.rememberMe) {
               this.loginSuccess();
-            } else if (provider.results[0].attributes.length) {
-              this.router.navigate(['/session/verification']);
-            } else {
-              this.loginSuccess();
-            }
+            // } else if (provider.results[0].attributes.length) {
+            //   this.router.navigate(['/session/verification']);
+            // } else {
+            //   this.loginSuccess();
+            // }
           } else {
             this.toastr.error("Couldn't find provider.", "Login Failed!");
           }

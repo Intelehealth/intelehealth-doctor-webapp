@@ -15,6 +15,7 @@ import { formatDate } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { NgxRolesService } from 'ngx-permissions';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -125,19 +126,34 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   specializations: any[] = [
     {
       id: 1,
-      name: 'General Physician'
+      name: 'Pediatrician'
     },
     {
       id: 2,
-      name: 'Dermatologist'
+      name: 'Neonatologist'
     },
     {
       id: 3,
-      name: 'Gynecologist'
+      name: 'Family doctor'
     },
     {
       id: 4,
-      name: 'Pediatrician'
+      name: 'Neurologist'
+    },
+    {
+      id: 5,
+      name: 'Infectionist'
+    }
+  ];
+
+  hospitalTypes: any[] = [
+    {
+      id: 1,
+      name: 'Secondary'
+    },
+    {
+      id: 2,
+      name: 'Tertiary'
     }
   ];
 
@@ -150,7 +166,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   personalInfoForm: FormGroup;
   professionalInfoForm: FormGroup;
-  signatureType: string = 'Draw';
+  signatureType: string = 'Generate';
   selectedSignatureTabIndex: number = 0;
   signatureFile: any;
   signaturePicUrl: any;
@@ -164,8 +180,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   whatsAppObj: any;
   subscription1: Subscription;
   subscription2: Subscription;
-  maxTelLegth1: number = 10;
-  maxTelLegth2: number = 10;
+  maxTelLegth1: number = 9;
+  maxTelLegth2: number = 9;
   oldPhoneNumber: string = '';
 
   constructor(
@@ -175,34 +191,38 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private providerService: ProviderService,
     private authService: AuthService,
     private router: Router,
-    private cookieService: CookieService) {
+    private cookieService: CookieService,
+    private rolesService: NgxRolesService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
       middleName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
       familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-      gender: new FormControl('M', [Validators.required]),
+      gender: new FormControl('Male', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
-      countryCode1: new FormControl('+91'),
-      countryCode2: new FormControl('+91'),
+      countryCode1: new FormControl('+996'),
+      countryCode2: new FormControl('+996'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
       emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
-      signatureType: new FormControl('Draw', [Validators.required]),
-      textOfSign: new FormControl(null),
-      fontOfSign: new FormControl(null),
+      signatureType: new FormControl('Generate', [Validators.required]),
+      textOfSign: new FormControl(null, Validators.required),
+      fontOfSign: new FormControl(null, Validators.required),
       signature: new FormControl(null)
     });
 
     this.professionalInfoForm = new FormGroup({
-      typeOfProfession: new FormControl(null, [Validators.required]),
+      // typeOfProfession: new FormControl(null, [Validators.required]),
+      qualification: new FormControl(null, [Validators.required]),
       registrationNumber: new FormControl(null, [Validators.required]),
       specialization: new FormControl(null, [Validators.required]),
-      consultationLanguage: new FormControl(null, [Validators.required]),
-      workExperience: new FormControl(null, [Validators.required]),
-      researchExperience: new FormControl(null, [Validators.required]),
-      workExperienceDetails: new FormControl('', [Validators.required])
+      hospitalType: new FormControl(null, [Validators.required]),
+      visitState: new FormControl(null),
+      // consultationLanguage: new FormControl(null, [Validators.required]),
+      // workExperience: new FormControl(null, [Validators.required]),
+      // researchExperience: new FormControl(null, [Validators.required]),
+      // workExperienceDetails: new FormControl('', [Validators.required])
     });
   }
 
@@ -218,6 +238,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
+  }
+
+  ngAfterViewInit() {
+    // // this.signaturePad is now available
+    // this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
+    // this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
+  }
+
+  formControlValueChanges() {
     this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
@@ -232,15 +261,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
-  }
-
-  ngAfterViewInit() {
-    // this.signaturePad is now available
-    this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
-    this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
-  }
-
-  formControlValueChanges() {
     this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
       if (val) {
         this.fonts.map((f: any) => f.text = val);
@@ -329,7 +349,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'qualification':
-
+            professionalFormValues.qualification = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'registrationNumber':
             professionalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -362,6 +382,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'workExperienceDetails':
             professionalFormValues.workExperienceDetails = this.getAttributeValue(attrType.uuid, attrType.display);
+            break;
+          case 'hospitalType':
+            professionalFormValues.hospitalType = this.getAttributeValue(attrType.uuid, attrType.display);
+            break;
+          case 'visitState':
+            professionalFormValues.visitState = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           default:
             break;
@@ -551,14 +577,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid) {
       return;
     }
-    if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
-      this.toastr.warning("Please draw your signature.", "Draw Signature");
-      return;
-    }
-    if (this.selectedSignatureTabIndex == 2 && !this.signatureFile) {
-      this.toastr.warning("Please upload signature.", "Upload Signature");
-      return;
-    }
+    // if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
+    //   this.toastr.warning("Please draw your signature.", "Draw Signature");
+    //   return;
+    // }
+    // if (this.selectedSignatureTabIndex == 2 && !this.signatureFile) {
+    //   this.toastr.warning("Please upload signature.", "Upload Signature");
+    //   return;
+    // }
     this.stepper.next();
     this.submitted = false;
   }
@@ -601,19 +627,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
 
       case 'Generate':
-        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
-          if (res.fname) {
-            fetch(res.fname).then(res => res.blob()).then(blob => {
-              let reader = new FileReader();
-              reader.onload = () => {
-                signature = reader.result.toString();
-                this.personalInfoForm.patchValue({ signature });
+        // this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
+        //   if (res.fname) {
+        //     fetch(res.fname).then(res => res.blob()).then(blob => {
+        //       let reader = new FileReader();
+        //       reader.onload = () => {
+        //         signature = reader.result.toString();
+        //         this.personalInfoForm.patchValue({ signature });
                 this.updateProviderAttributes();
-              }
-              reader.readAsDataURL(blob);
-            });
-          }
-        });
+        //       }
+        //       reader.readAsDataURL(blob);
+        //     });
+        //   }
+        // });
         break;
 
       case 'Upload':
@@ -651,6 +677,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         case 'qualification':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         case 'registrationNumber':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
@@ -682,18 +709,24 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         case 'workExperienceDetails':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
+        case 'hospitalType':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          break;
+        case 'visitState':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          break;
         default:
           break;
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
-        this.toastr.success("Profile has been updated successfully", "Profile Updated");
-        this.toastr.warning("Kindly re-login to see updated details", "Re-login");
-        this.cookieService.delete('app.sid', '/');
-        this.authService.logOut();
-      } else {
+      // if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
+      //   this.toastr.success("Profile has been updated successfully", "Profile Updated");
+      //   this.toastr.warning("Kindly re-login to see updated details", "Re-login");
+      //   this.cookieService.delete('app.sid', '/');
+      //   this.authService.logOut();
+      // } else {
         this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
@@ -702,10 +735,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));
             this.toastr.success("Profile has been updated successfully", "Profile Updated");
-            this.router.navigate(['/dashboard']);
+            let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+            if (role) {
+              this.router.navigate(['/admin']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
           }
         });
-      }
+      // }
     });
   }
 

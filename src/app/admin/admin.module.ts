@@ -32,10 +32,10 @@ const routes: Routes = [
       }
     ]
   },
-  {
-    path: 'support',
-    component: SupportComponent
-  }
+  // {
+  //   path: 'support',
+  //   component: SupportComponent
+  // }
 ];
 
 @NgModule({
