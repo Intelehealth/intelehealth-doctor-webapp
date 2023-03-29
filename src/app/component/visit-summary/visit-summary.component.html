@@ -64,7 +64,7 @@
 
 
       <div class="text-center" *ngIf="!show">
-            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary">{{'Start Visit Note' | translate}}</button>
+            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="!specialityMatched">{{'Start Visit Note' | translate}}</button>
       </div>
 
       <br>
@@ -98,7 +98,7 @@
                   <app-follow-up></app-follow-up>
             </mat-card>
             <br>
-        
+
             <br>
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">

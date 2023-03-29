@@ -20,6 +20,7 @@ declare var getFromStorage: any,
 })
 export class VisitSummaryComponent implements OnInit {
   show = false;
+  specialityMatched = true;
   text: string;
   font: string;
   visitNotePresent = false;
@@ -42,7 +43,7 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
-    private translationService: TranslationService,
+    private translationService: TranslationService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -58,6 +59,13 @@ export class VisitSummaryComponent implements OnInit {
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
+        let speciality = getFromStorage("provider").attributes?.find(x => x.attributeType.display == 'specialization')?.value;
+        for (let z = 0; z < visitDetails.attributes.length; z++) {
+          if (visitDetails.attributes[z].attributeType.uuid == '3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d' && visitDetails.attributes[z].value != speciality) {
+            this.snackbar.open("Visit is assigned to another speciality doctor", null, {duration: 4000});
+            this.specialityMatched = false;
+          }
+        }
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
             saveToStorage("visitNoteProvider", visit);
