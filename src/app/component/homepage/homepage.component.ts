@@ -87,6 +87,8 @@ export class HomepageComponent implements OnInit {
         // this.getVisitCounts(this.specialization);
         this.getPriorityVisits();
         this.getAwaitingVisits();
+        this.getInProgressVisits();
+        this.getCompletedVisits();
       });
     } else {
       this.authService.logout();

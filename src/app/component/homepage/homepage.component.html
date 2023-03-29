@@ -96,7 +96,7 @@
     </mat-expansion-panel>
 
     <!-- In Progress Visit -->
-    <mat-expansion-panel (opened)="getInProgressVisits()" [expanded]="visitNoteNo > 0" id="visit-in-progress">
+    <mat-expansion-panel [expanded]="true" id="visit-in-progress">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
@@ -118,7 +118,7 @@
     </mat-expansion-panel>
 
     <!-- Complete Visit -->
-    <mat-expansion-panel (opened)="getCompletedVisits()" [expanded]="completeVisitNo > 0" id="visit-complete">
+    <mat-expansion-panel [expanded]="true" id="visit-complete">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
