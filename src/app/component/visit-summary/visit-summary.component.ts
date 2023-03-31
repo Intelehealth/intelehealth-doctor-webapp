@@ -9,10 +9,11 @@ import { VcComponent } from "../vc/vc.component";
 import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
+import { DiagnosisService } from "src/app/services/diagnosis.service";
 declare var getFromStorage: any,
   saveToStorage: any,
-  getEncounterProviderUUID: any;
-
+  getEncounterProviderUUID: any,
+  getEncounterUUID: any;
 @Component({
   selector: "app-visit-summary",
   templateUrl: "./visit-summary.component.html",
@@ -33,7 +34,7 @@ export class VisitSummaryComponent implements OnInit {
   videoIcon = environment.production
     ? "../../../intelehealth/assets/svgs/video-w.svg"
     : "../../../assets/svgs/video-w.svg";
-
+  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
   constructor(
     private service: EncounterService,
     private visitService: VisitService,
@@ -43,7 +44,8 @@ export class VisitSummaryComponent implements OnInit {
     private router: Router,
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private diagnosisService: DiagnosisService,
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -196,6 +198,7 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
+              this.checkFollowUp(getEncounterUUID());
               this.router.navigateByUrl("/home");
               this.translationService.getTranslation("Visit Complete");
             });
@@ -259,4 +262,34 @@ export class VisitSummaryComponent implements OnInit {
       },
     });
   }
+
+  checkFollowUp(encounterUuid) {
+    this.diagnosisService.getObs(this.patientUuid, this.conceptFollow)
+    .subscribe(response => {
+      let followUp =[];
+      response.results.forEach(obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+         followUp.push(obs);
+        }
+      });
+      if(followUp.length > 0) {
+        console.log("Follow up is present");
+      } else {
+        this.addMandatoryFollowUp("No follow up", encounterUuid);
+      }
+    });
+  }
+
+  addMandatoryFollowUp(obsdate,encounterUuid) {
+    const date = new Date();
+    const json = {
+      concept: this.conceptFollow,
+      person: this.patientUuid,
+      obsDatetime: date,
+      value: obsdate,
+      encounter: encounterUuid
+    };
+    this.service.postObs(json)
+    .subscribe(() => { });
+}
 }
