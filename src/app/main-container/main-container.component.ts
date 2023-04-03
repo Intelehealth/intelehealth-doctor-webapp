@@ -94,7 +94,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       distinctUntilChanged(),
     ).subscribe(() => {
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
-        document.getElementsByClassName('admin-sidenav-content')[0].scrollTo(0, 0);
+        document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
   }
 

@@ -192,10 +192,11 @@
   li .list-item {
     display: flex;
     flex-wrap: nowrap;
-    align-items: center;
+    // align-items: center;
 
     label {
       width: 25%;
+      min-width: 25%;
       margin-bottom: 0px;
       padding: 5px 0px;
     }
