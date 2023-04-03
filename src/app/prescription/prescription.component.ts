@@ -14,35 +14,56 @@ export class PrescriptionComponent implements OnInit {
   completedVisits: any = [];
   prescriptionSent: any = [];
   loaded: boolean = false;
+  specialization: string = '';
+  hospitalType: string = '';
 
   constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
-    this.getVisits();
+    let provider = JSON.parse(localStorage.getItem('provider'));
+    if (provider) {
+      if (provider.attributes.length) {
+        this.specialization = this.getSpecialization(provider.attributes);
+        this.hospitalType = this.getHospitalType(provider.attributes);
+        this.getVisits();
+      }
+    }
   }
 
   getVisits() {
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         res.results.forEach((visit: any) => {
-          let flag = 0;
-          visit.encounters.forEach((encounter: any) => {
-            if (encounter.encounterType.display == 'Patient Exit Survey') {
-              visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-              visit.cheif_complaint = this.getCheifComplaint(visit);
-              this.completedVisits.push(visit);
-              flag = 1;
-            }
-          });
-          if (flag == 0) {
-            visit.encounters.forEach((encounter: any) => {
-              if (encounter.encounterType.display == 'Visit Complete') {
-                visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-                visit.cheif_complaint = this.getCheifComplaint(visit);
-                this.prescriptionSent.push(visit);
+          if (visit.encounters.length > 0) {
+            if (visit.attributes.length) {
+              const visitSpeciality   =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d");
+              const visitHospitalType =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "f288fc8f-428a-4665-a1bd-7b08e64d66e1");
+              if (visitSpeciality && visitHospitalType) {
+                // If specialization and hospital type matches process visit
+                if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
+                  let flag = 0;
+                  visit.encounters.forEach((encounter: any) => {
+                    if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete') {
+                      visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+                      visit.cheif_complaint = this.getCheifComplaint(visit);
+                      this.completedVisits.push(visit);
+                      flag = 1;
+                    }
+                  });
+                  if (flag == 0) {
+                    visit.encounters.forEach((encounter: any) => {
+                      if (encounter.encounterType.display == 'Remote Prescription') {
+                        visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+                        visit.cheif_complaint = this.getCheifComplaint(visit);
+                        this.prescriptionSent.push(visit);
+                      }
+                    });
+                  }
+                }
               }
-            });
+
+            }
           }
         });
         this.loaded = true;
@@ -85,6 +106,26 @@ export class PrescriptionComponent implements OnInit {
       }
     });
     return recent;
+  }
+
+  getSpecialization(attr: any) {
+    let specialization = '';
+    attr.forEach((a: any) => {
+      if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
+        specialization = a.value;
+      }
+    });
+    return specialization;
+  }
+
+  getHospitalType(attr: any) {
+    let specialization = '';
+    attr.forEach((a: any) => {
+      if (a.attributeType.uuid == 'bdb290d6-97e8-45df-83e6-cadcaf5dcd0f' && !a.voided) {
+        specialization = a.value;
+      }
+    });
+    return specialization;
   }
 
 }

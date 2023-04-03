@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   inProgressVisits: any = [];
 
   specialization: string = '';
+  hospitalType: string = '';
   priorityVisitsCount: number = 0;
   awaitingVisitsCount: number = 0;
   inprogressVisitsCount: number = 0;
@@ -63,6 +64,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
+        this.hospitalType = this.getHospitalType(provider.attributes);
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
@@ -95,22 +97,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
           // Check if visit has encounters
           if (visit.encounters.length > 0) {
             /*
-              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
+              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization and hospital Type
               If no attributes, consider it as General Physician
             */
-            if (visit.attributes.length) {
-              let flag = 0;
-              visit.attributes.forEach((visitAttr: any) => {
-                if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                  // If specialization matches process visit
-                  if (visitAttr.value == this.specialization) {
-                    this.processVisit(visit);
-                  }
+           if (visit.attributes.length) {
+              const visitSpeciality   =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d");
+              const visitHospitalType =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "f288fc8f-428a-4665-a1bd-7b08e64d66e1");
+              // visit.attributes.forEach((visitAttr: any) => {
+              //   if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+              //     // If specialization matches process visit
+              //     if (visitAttr.value == this.specialization) {
+              //       this.processVisit(visit);
+              //     }
+              //   }
+              // });
+              if (visitSpeciality && visitHospitalType) {
+                // If specialization and hospital type matches process visit
+                if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
+                  this.processVisit(visit);
                 }
-              });
-            } else if(this.specialization == 'General Physician') {
-              this.processVisit(visit);
+              }
             }
+            // else if(this.specialization == 'General Physician') {
+            //   this.processVisit(visit);
+            // }
           }
         });
 
@@ -145,6 +155,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     visit.cheif_complaint = this.getCheifComplaint(visit);
     visit.visit_created = this.getEncounterCreated(visit, 'ADULTINITIAL');
     if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+
+    } else if (this.checkIfEncounterExists(encounters, 'Remote Prescription')) {
 
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
       visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
@@ -266,6 +278,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let specialization = '';
     attr.forEach((a: any) => {
       if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
+        specialization = a.value;
+      }
+    });
+    return specialization;
+  }
+
+  getHospitalType(attr: any) {
+    let specialization = '';
+    attr.forEach((a: any) => {
+      if (a.attributeType.uuid == 'bdb290d6-97e8-45df-83e6-cadcaf5dcd0f' && !a.voided) {
         specialization = a.value;
       }
     });
