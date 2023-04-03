@@ -1556,7 +1556,7 @@
               <ul class="items-list" *ngIf="advices.length">
                 <li *ngFor="let ad of advices; let i = index">
                   <div class="d-flex justify-content-between">
-                    <span>{{ ad.value|titlecase }}</span>
+                    <span>{{ ad.value }}</span>
                     <button
                       mat-icon-button
                       (click)="deleteAdvice(i, ad.uuid)"
