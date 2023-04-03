@@ -233,6 +233,34 @@
                   <div class="list-item">
                     <label>Has enough information for diagnosis?</label>
                     <div class="list-item-content">
+                      {{ existingDiagnosis.length ? "Yes" : "No" }}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div class="table-responsive" *ngIf="existingDiagnosis.length">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Diagnosis</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let d of existingDiagnosis; let i = index">
+                      <td>{{ d.diagnosisName }}</td>
+                      <td>{{ d.diagnosisType }}</td>
+                      <td>{{ d.diagnosisStatus }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- <ul class="items-list">
+                <li *ngIf="!isDownloadPrescription">
+                  <div class="list-item">
+                    <label>Has enough information for diagnosis?</label>
+                    <div class="list-item-content">
                       {{ diagnosis ? diagnosis.diagnosisIdentified : "No" }}
                     </div>
                   </div>
@@ -263,7 +291,7 @@
                     </div>
                   </li>
                 </ng-container>
-              </ul>
+              </ul> -->
             </div>
           </div>
         </div>

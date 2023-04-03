@@ -1,0 +1,17 @@
+<div *ngIf="data?.mobileType === 'android'" color="primary" class="android-prompt">
+  <span>Add to Home Screen</span>
+  <div>
+    <button mat-flat-button color="primary" (click)="installPwa()">
+      Install
+    </button>
+    <button mat-icon-button (click)="close(false)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="data?.mobileType === 'ios'" class="ios-prompt">
+  <div>To install this web app on your device tap the Menu button and then 'Add to Home screen' button</div>
+  <button class="close-ios-inv" mat-button (click)="close(false)"><mat-icon>close</mat-icon></button>
+  <!-- <div><img src="./assets/ios-menu-btn.png"> <mat-icon>navigate_next</mat-icon> <img src="./assets/ios-add-btn.png"></div> -->
+</div>

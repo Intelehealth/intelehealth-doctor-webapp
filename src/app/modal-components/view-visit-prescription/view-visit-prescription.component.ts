@@ -28,6 +28,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
   diagnosis: any;
   notes: any = [];
   medicines: any = [];
+  existingDiagnosis: any = [];
   advices: any = [];
   additionalInstructions: any = [];
   tests: any = [];
@@ -117,16 +118,23 @@ export class ViewVisitPrescriptionComponent implements OnInit {
   }
 
   checkIfDiagnosisPresent() {
+    this.existingDiagnosis = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          this.diagnosis = {
-            present: true,
-            diagnosisIdentified: 'Yes',
+          this.existingDiagnosis.push({
             diagnosisName: obs.value.split(':')[0].trim(),
             diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
-          };
+            diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
+            uuid: obs.uuid
+          });
+          // this.diagnosis = {
+          //   present: true,
+          //   diagnosisIdentified: 'Yes',
+          //   diagnosisName: obs.value.split(':')[0].trim(),
+          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
+          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
+          // };
         }
       });
     });

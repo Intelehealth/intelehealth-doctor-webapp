@@ -35,6 +35,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ConfirmDayOffComponent } from './confirm-day-off/confirm-day-off.component';
 import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.component';
 import { SignaturePadModule } from 'angular2-signaturepad';
+import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 
 @NgModule({
     declarations: [
@@ -60,7 +61,8 @@ import { SignaturePadModule } from 'angular2-signaturepad';
         AppointmentDetailMonthComponent,
         ImagesPreviewComponent,
         ConfirmDayOffComponent,
-        ConfirmHoursOffComponent
+        ConfirmHoursOffComponent,
+        PwaPromptComponent
     ],
     imports: [
         CommonModule,

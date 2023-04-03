@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
+import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import {
   CommonModule,
   APP_BASE_HREF,
@@ -41,6 +41,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Regular Imports
 import { environment } from "../environments/environment";
@@ -51,6 +52,7 @@ import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 import { ModalComponentsModule } from "./modal-components/modal-components.module";
 import { SharedModule } from "./shared.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { PwaService } from "./services/pwa.service";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -63,6 +65,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   pbThickness: 3, // progress bar thickness
   text: "Please Wait..."
 };
+
+const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt();
 
 @NgModule({
   declarations: [
@@ -111,7 +115,8 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     }),
     SharedModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatBottomSheetModule
   ],
   providers: [
     CookieService,
@@ -129,6 +134,12 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
       multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializer,
+      deps: [PwaService],
+      multi: true
     }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
