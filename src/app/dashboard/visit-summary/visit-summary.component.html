@@ -61,7 +61,7 @@
               </div>
               <div class="patient-info-item">
                 <h6>Address</h6>
-                <p>{{ patient?.person.preferredAddress.cityVillage }}</p>
+                <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
               </div>
             </div>
             <div class="col-md-4 patient-info-section p-3">
@@ -1556,7 +1556,7 @@
               <ul class="items-list" *ngIf="advices.length">
                 <li *ngFor="let ad of advices; let i = index">
                   <div class="d-flex justify-content-between">
-                    <span>{{ ad.value }}</span>
+                    <span>{{ ad.value|titlecase }}</span>
                     <button
                       mat-icon-button
                       (click)="deleteAdvice(i, ad.uuid)"

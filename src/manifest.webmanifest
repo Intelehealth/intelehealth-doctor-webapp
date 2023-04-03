@@ -1,8 +1,8 @@
 {
-  "name": "Intelehealth",
-  "short_name": "Intelehealth",
+  "name": "Intelehealth Doctor App",
+  "short_name": "Intelehealth Doctor App",
   "theme_color": "#2e1e91",
-  "background_color": "#fafafa",
+  "background_color": "#2E1E91",
   "display": "standalone",
   "scope": "./",
   "start_url": "/intelehealth/",
