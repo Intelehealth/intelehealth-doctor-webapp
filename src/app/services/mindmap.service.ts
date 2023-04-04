@@ -16,6 +16,12 @@ export class MindmapService {
     return this.http.get(url);
   }
 
+  getLocations(): Observable<any> {
+    const url = `${this.baseURL}/openmrs/getLocations`;
+    return this.http.get(url);
+  }
+
+
   postMindmap(value): Observable<any> {
     const url = `${this.baseURL}/mindmap/upload`;
     return this.http.post(url, value);

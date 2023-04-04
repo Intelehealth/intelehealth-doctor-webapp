@@ -7,6 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { MindmapService } from "src/app/services/mindmap.service";
 declare var getFromStorage: any;
 
 @Component({
@@ -70,7 +71,7 @@ export class EditDetailsComponent implements OnInit {
     private dialogRef: MatDialogRef<EditDetailsComponent>,
     private http: HttpClient,
     private dialog: MatDialog,
-    private router: Router
+    private mindmapService: MindmapService
   ) { }
 
   ngOnInit() {
@@ -88,12 +89,9 @@ export class EditDetailsComponent implements OnInit {
   }
 
   getLocations() {
-    const URL = `${this.baseURL}/location`;
-    this.http.get(URL).subscribe(
+    this.mindmapService.getLocations().subscribe(
       (res: any) => {
-        res?.results.forEach(element => {
-          this.locations.push(element.display);
-        });
+        this.locations = res.states;
       });
   }
 

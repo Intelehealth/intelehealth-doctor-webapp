@@ -117,12 +117,20 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  getStateFromVisit(provider) {
+    const attribute = provider.find(
+      ({ attributeType }) => attributeType.display.includes("Visit State")
+    );
+    return attribute && attribute.value ? attribute.value : "missing";
+  }
+
   getVisits(query: any = {}, cb = () => {}) {
     this.service.getVisits(query).subscribe(
       (response) => {
-        response.results.forEach((item) => {
-          this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
-        });
+          this.allVisits = response.results.filter(({ attributes }) => {
+            const visitState = this.getStateFromVisit(attributes);
+            return this.providerLocation === visitState;
+          });
         this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
             if (active.attributes.length) {
@@ -132,10 +140,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   attr.attributeType.uuid ===
                   "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
               );
-              const location = active.location.display;
-              if (speRequired.length && location.length) {
+              if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization  && this.providerLocation === location) {
+                  if (spe.value === this.specialization) {
                     this.visitCategory(active);
                   }
                 });

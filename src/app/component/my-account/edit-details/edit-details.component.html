@@ -34,8 +34,8 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-    <mat-select placeholder="{{ 'Location' | translate }}" formControlName="location">
-      <mat-option *ngFor="let location of locations" [value]="location">{{ (location) | translate }}
+    <mat-select placeholder="{{ 'State' | translate }}" formControlName="location">
+      <mat-option *ngFor="let location of locations" [value]="location.name">{{ location.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
