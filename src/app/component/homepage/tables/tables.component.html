@@ -129,8 +129,8 @@
   </table>
 
   <mat-paginator
-    [length]="visitCounts"
     [pageSizeOptions]="[5, 10, 20]"
+    (page)="changePage($event)"
     showFirstLastButtons
   ></mat-paginator>
 </div>

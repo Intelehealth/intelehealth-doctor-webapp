@@ -25,15 +25,17 @@ export class TablesComponent implements OnInit {
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @Input() data;
   @Input() tableFor;
   @Input() visitCounts;
-//  @Output() tableEmitter = new EventEmitter();
-  //@Output() emptyRow = new EventEmitter();
+  @Input() loadMore = false;
+  @Output() tableEmitter = new EventEmitter();
+  @Output() emptyRow = new EventEmitter();
   // @Input() set allVisitsLoaded(val) {
   //   this.dataLoaded = val;
+  //   console.log('this.dataLoaded: ', this.dataLoaded);
   //   if (this.dataLoaded) {
   //     this.refresh();
   //   }
@@ -41,17 +43,17 @@ export class TablesComponent implements OnInit {
   dataLoaded = false;
   loadedDataLength: Number = 0;
 
-  constructor(private service: VisitService, private helper: HelperService) {}
+  constructor(private service: VisitService, private helper: HelperService) { }
 
   ngOnInit() {
     this.loadedDataLength = Number(`${this.data.length}`);
-    this.data.length = this.visitCounts;
+    // this.data.length = this.visitCounts;
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    // this.helper.refreshTable.subscribe(() => {
-    //   this.refresh();
-    // });
+    this.helper.refreshTable.subscribe(() => {
+      this.refresh();
+    });
   }
 
   /**
@@ -73,7 +75,7 @@ export class TablesComponent implements OnInit {
       data = this.helper.getUpdatedValue(data, item, "id");
     });
     this.loadedDataLength = Number(`${data.length}`);
-    data.length = this.visitCounts;
+    // data.length = this.visitCounts;
     if (data && Array.isArray(data)) {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
@@ -82,18 +84,19 @@ export class TablesComponent implements OnInit {
     }
   }
 
-  // hasEmptyRow() {
-  //   if (!this.dataLoaded) {
-  //     this.emptyRow.emit();
-  //   }
-  // }
+  hasEmptyRow() {
+    if (!this.dataLoaded) {
+      this.emptyRow.emit();
+    }
+  }
 
-  // changePage({ length, pageIndex, pageSize }) {
-  //   const data: any = {
-  //     loadMore: this.loadedDataLength === length ? false : true,
-  //     // loadMore: (pageIndex + 1) * pageSize >= length,
-  //     refresh: this.refresh.bind(this),
-  //   };
-  //   this.tableEmitter.emit(data);
-  // }
+  changePage({ length, pageIndex, pageSize }) {
+    const data: any = {
+      loadMore: this.loadMore,
+      // loadMore: (pageIndex + 1) * pageSize >= length,
+      refresh: this.refresh.bind(this),
+      tableFor: this.tableFor
+    };
+    this.tableEmitter.emit(data);
+  }
 }

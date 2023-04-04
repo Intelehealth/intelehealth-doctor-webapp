@@ -1,4 +1,5 @@
 <div class="container">
+  <b> Showing total visit counts till date.* </b>
   <div class="modal-body row">
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #dd3c62">
@@ -50,6 +51,10 @@
     </div>
   </div>
 
+  <div class="mb-3">
+    <b> Showing paginated visit counts.* </b>
+  </div>
+
   <!-- PRIORITY Visit -->
   <mat-accordion class="example-headers-align" [multi]="true">
     <mat-expansion-panel [expanded]="true" id="flagged-table">
@@ -57,7 +62,7 @@
         <mat-panel-title>
           <h5>
             PRIORITY VISITS
-            <b>({{ flagPatientNo }})</b>
+            <b>({{ flagVisit.length }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -66,6 +71,8 @@
           [visitCounts]="flagPatientNo"
           [tableFor]="'flagVisit'"
           [data]="flagVisit"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.priority"
         ></app-tables>
       </ng-container>
       <ng-container *ngIf="setSpiner1">
@@ -79,7 +86,7 @@
         <mat-panel-title>
           <h5>
             AWAITING CONSULT
-            <b>({{ activePatient }})</b>
+            <b>({{ waitingVisit.length }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -88,6 +95,8 @@
           [visitCounts]="activePatient"
           [tableFor]="'waitingVisit'"
           [data]="waitingVisit"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.awaiting"
         ></app-tables>
       </ng-container>
       <ng-container *ngIf="setSpiner2">
@@ -96,12 +105,15 @@
     </mat-expansion-panel>
 
     <!-- In Progress Visit -->
-    <mat-expansion-panel [expanded]="true" id="visit-in-progress">
+    <mat-expansion-panel
+      (opened)="getInProgressVisits()"
+      id="visit-in-progress"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
             VISITS IN PROGRESS
-            <b>({{ visitNoteNo }})</b>
+            <b>({{ progressVisit.length }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -110,6 +122,8 @@
           [visitCounts]="visitNoteNo"
           [tableFor]="'progressVisit'"
           [data]="progressVisit"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.inProgress"
         ></app-tables>
       </ng-container>
       <ng-container *ngIf="setSpiner3">
@@ -118,12 +132,12 @@
     </mat-expansion-panel>
 
     <!-- Complete Visit -->
-    <mat-expansion-panel [expanded]="true" id="visit-complete">
+    <mat-expansion-panel (opened)="getCompletedVisits()" id="visit-complete">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
             COMPLETED VISITS
-            <b>({{ completeVisitNo }})</b>
+            <b>({{ completedVisit.length }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -132,6 +146,8 @@
           [visitCounts]="completeVisitNo"
           [tableFor]="'completedVisit'"
           [data]="completedVisit"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.completed"
         ></app-tables>
       </ng-container>
       <ng-container *ngIf="setSpiner4">

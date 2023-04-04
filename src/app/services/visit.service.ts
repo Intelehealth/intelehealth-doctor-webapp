@@ -16,7 +16,7 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
 
-  constructor(private http: HttpClient,private helper: HelperService) { }
+  constructor(private http: HttpClient, private helper: HelperService) { }
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
@@ -103,30 +103,30 @@ export class VisitService {
     );
   }
 
-  getAwaitingVisits(visitState, speciality) {
+  getAwaitingVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getAwaitingVisits?state=${visitState}&speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getAwaitingVisits?state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
-  getPriorityVisits(visitState, speciality) {
+  getPriorityVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getPriorityVisits?state=${visitState}&speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getPriorityVisits?state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
-  getInProgressVisits(visitState, speciality) {
+  getInProgressVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getInProgressVisits?state=${visitState}&speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getInProgressVisits?state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
-  
-  getCompletedVisits(visitState, speciality) {
+
+  getCompletedVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getCompletedVisits?state=${visitState}&speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getCompletedVisits?state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
-  
+
   clearVisits() {
     this.flagVisit = new Array();
     this.waitingVisit = new Array();
