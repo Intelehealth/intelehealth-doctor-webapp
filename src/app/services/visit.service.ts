@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
@@ -63,6 +63,24 @@ export class VisitService {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
     return this.http.get(url);
+  }
+
+  fetchVisitDetails2(
+    uuid,
+    v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier),attributes,person:(display,gender,age)),attributes)"
+  ): Observable<any> {
+    // tslint:disable-next-line:max-line-length
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + environment.externalPrescriptionCred);
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url, { headers });
+  }
+
+  fetchVisitPatient(uuid,v = "custom:(uuid,patient:(identifiers:(identifier)))"): Observable<any> {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + environment.externalPrescriptionCred);
+    const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
+    return this.http.get(url, { headers });
   }
 
   getVisitDetails(

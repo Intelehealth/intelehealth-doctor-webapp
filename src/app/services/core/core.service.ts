@@ -9,6 +9,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { ConfirmDayOffComponent } from 'src/app/modal-components/confirm-day-off/confirm-day-off.component';
 import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/confirm-dialog.component';
 import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
+import { ConfirmOpenmrsIdComponent } from 'src/app/modal-components/confirm-openmrs-id/confirm-openmrs-id.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
@@ -144,6 +145,11 @@ export class CoreService {
 
   openConfirmHoursOffModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmHoursOffComponent, { panelClass: "modal-md", data } );
+    return dialogRef.afterClosed();
+  }
+
+  openConfirmOpenMrsIdModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true } );
     return dialogRef.afterClosed();
   }
 }
