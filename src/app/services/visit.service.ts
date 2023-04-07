@@ -76,7 +76,7 @@ export class VisitService {
     return this.http.get(url, { headers });
   }
 
-  fetchVisitPatient(uuid,v = "custom:(uuid,patient:(identifiers:(identifier)))"): Observable<any> {
+  fetchVisitPatient(uuid,v = "custom:(uuid,patient:(attributes,identifiers:(identifier)))"): Observable<any> {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + environment.externalPrescriptionCred);
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;

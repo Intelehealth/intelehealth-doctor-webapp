@@ -35,7 +35,7 @@ export class PwaService {
     timer(3000)
       .pipe(take(1))
       .subscribe(() => {
-        if (!this.router.url.includes('/i/')) {
+        if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp'))) {
           this.bottomSheet.open(PwaPromptComponent, { data: { mobileType, promptEvent: this.promptEvent } })
         }
       });

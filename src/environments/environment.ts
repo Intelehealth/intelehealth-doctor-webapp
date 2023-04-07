@@ -29,7 +29,7 @@ export const environment = {
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
   siteKey: "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k",
-  externalPrescriptionCred: 'YW51cmFnOkFudXJhZ0AwMDc='
+  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM=='
 };
 
 /*

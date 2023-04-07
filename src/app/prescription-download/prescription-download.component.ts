@@ -41,19 +41,20 @@ export class PrescriptionDownloadComponent implements OnInit {
 
   ngOnInit(): void {
     this.hash = this.route.snapshot.paramMap.get("hash");
-    this.getVisitFromHash();
 
-    // const { accessToken, visitId } = window.history.state;
-    // if (accessToken) {
-    //   this.accessToken = accessToken;
-    //   this.visitId = visitId;
-    // }
+    const { accessToken, visitId } = window.history.state;
+    if (accessToken) {
+      this.accessToken = accessToken;
+      this.visitId = visitId;
+    }
 
-    // if (!this.accessToken) {
-    //   this.verifyMobileNumber();
-    // } else {
-    //   this.verifyToken();
-    // }
+    if (!this.accessToken) {
+      // this.verifyMobileNumber();
+      this.getVisitFromHash();
+    } else {
+      // this.verifyToken();
+      this.prescriptionVerified = true;
+    }
   }
 
   getVisitFromHash() {
@@ -77,11 +78,34 @@ export class PrescriptionDownloadComponent implements OnInit {
       next: (visit: any) => {
         if (visit) {
           this.patient = visit.patient;
-          this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
-            if(res) {
-              this.prescriptionVerified = true;
-            }
-          });
+          const attrs = Array.isArray(this.patient?.attributes) ? this.patient?.attributes : []
+          const patientPhoneNumber = attrs.find((attr: any) => attr?.attributeType?.display === 'Telephone Number');
+          if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
+            this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
+              if (res.success) {
+                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} successfully!`, "OTP Sent");
+                this.router.navigate(['/session/verify-otp'], {
+                  state: {
+                    verificationFor: 'presctiption-verification',
+                    via: 'phone',
+                    val: patientPhoneNumber?.value,
+                    visitId: this.visitId
+                  },
+                  queryParams: {
+                    hash: this.hash
+                  }
+                });
+              } else {
+                this.toastr.error(res.message, "Error");
+              }
+            });
+          } else {
+            this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
+              if(res) {
+                this.prescriptionVerified = true;
+              }
+            });
+          }
         }
       }
     });
