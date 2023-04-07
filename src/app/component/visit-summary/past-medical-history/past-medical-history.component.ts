@@ -25,7 +25,7 @@ conceptPastMedical = '62bff84b-795a-45ad-aae1-80e7f5163a82';
           this.pastMedical.push(obs);
         }
       });
-      if (this.pastMedical !== undefined) {
+      if (this.pastMedical !== undefined && this.pastMedical.length > 0) {
         this.pastMedicalHistoryPresent = true;
       }
     });

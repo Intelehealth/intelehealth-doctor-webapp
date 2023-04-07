@@ -26,25 +26,31 @@ export class PastVisitsComponent implements OnInit {
           this.recentVisit = [];
               this.recentVisit.details = visitDetails;
               const encounters = visitDetails.encounters;
-              encounters.forEach(encounter => {
-              const display = encounter.display;
-              if (display.match('ADULTINITIAL') !== null ) {
-                const obs = encounter.obs;
-                let b = ' ';
-                obs.forEach( res => {
-                  if (res.display.match('CURRENT COMPLAINT') !== null) {
-                    const currentComplaint = res.display.split('<b>');
-                    for (let i = 1; i < currentComplaint.length; i++) {
-                      const obs1 = currentComplaint[i].split('<');
-                      if (!obs1[0].match('Associated symptoms')) {
-                        b = b + ' | ' + obs1[0];
-                        this.recentVisit.observation = b;
+              let isAdultinitialEnc = encounters.find(en => en.display.match('ADULTINITIAL') !== null);
+              if(isAdultinitialEnc) {
+                encounters.forEach(encounter => {
+                  const display = encounter.display;
+                  if (display.match('ADULTINITIAL') !== null ) {
+                    const obs = encounter.obs;
+                    let b = ' ';
+                    obs.forEach( res => {
+                      if (res.display.match('CURRENT COMPLAINT') !== null) {
+                        const currentComplaint = res.display.split('<b>');
+                        for (let i = 1; i < currentComplaint.length; i++) {
+                          const obs1 = currentComplaint[i].split('<');
+                          if (!obs1[0].match('Associated symptoms')) {
+                            b = b + ' | ' + obs1[0];
+                            this.recentVisit.observation = b;
+                          }
+                        }
                       }
-                    }
+                    });
                   }
                 });
+              } else {
+                this.recentVisit.observation = "| Screening";
               }
-            });
+
         if (visitDetails.stopDatetime === null || visitDetails.stopDatetime === undefined) {
           this.recentVisit.visitStatus = 'Active';
         }

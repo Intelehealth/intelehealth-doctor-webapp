@@ -25,7 +25,7 @@ conceptOnExam = 'e1761e85-9b50-48ae-8c4d-e6b7eeeba084';
           this.onExam.push(obs);
         }
       });
-      if (this.onExam !== undefined) {
+      if (this.onExam !== undefined && this.onExam.length > 0) {
         this.onExamPresent = true;
       }
     });

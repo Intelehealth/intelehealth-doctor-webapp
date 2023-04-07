@@ -10,3 +10,6 @@
 	<small><i>{{'c. = Associated with, s. = Not associated with, h/o = History of'|translate}}</i></small>
 </div>
 </ng-container>
+<ng-container *ngIf="!complaintPresent">
+    {{'No Presenting Complaints Available'| translate}}!
+</ng-container>
