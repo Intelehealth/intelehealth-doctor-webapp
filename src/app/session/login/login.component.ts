@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    this.checkSession();
+    // this.checkSession();
   }
 
   login() {
