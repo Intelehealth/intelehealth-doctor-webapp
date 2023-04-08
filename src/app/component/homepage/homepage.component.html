@@ -52,7 +52,7 @@
   </div>
 
   <div class="mb-3">
-    <b> Showing paginated visit counts.* </b>
+    <b>Tables are showing paginated visit counts.* </b>
   </div>
 
   <!-- PRIORITY Visit -->
@@ -62,7 +62,7 @@
         <mat-panel-title>
           <h5>
             PRIORITY VISITS
-            <b>({{ flagVisit.length }})</b>
+            <b>({{ flagPatientNo }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -86,7 +86,7 @@
         <mat-panel-title>
           <h5>
             AWAITING CONSULT
-            <b>({{ waitingVisit.length }})</b>
+            <b>({{ activePatient }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -113,7 +113,7 @@
         <mat-panel-title>
           <h5>
             VISITS IN PROGRESS
-            <b>({{ progressVisit.length }})</b>
+            <b>({{ visitNoteNo }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -137,7 +137,7 @@
         <mat-panel-title>
           <h5>
             COMPLETED VISITS
-            <b>({{ completedVisit.length }})</b>
+            <b>({{ completeVisitNo }})</b>
           </h5>
         </mat-panel-title>
       </mat-expansion-panel-header>

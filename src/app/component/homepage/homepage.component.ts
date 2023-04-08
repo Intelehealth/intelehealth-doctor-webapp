@@ -109,6 +109,11 @@ export class HomepageComponent implements OnInit {
     this.getDrSlots();
   }
 
+  ngOnDestroy() {
+    console.log('visit cleared...');
+    this.service.clearVisits();
+  }
+
   /**
    * Get all Awaiting Visits
    */
@@ -117,7 +122,6 @@ export class HomepageComponent implements OnInit {
     this.service.getAwaitingVisits(this.visitState, this.specialization, page).subscribe(
       (response: any) => {
         this.setVisitByType(response.data, 'awaitingVisit');
-        this.activePatient = response.count;
         this.setSpiner2 = false;
         this.loadMore.awaiting = !!response?.data?.length;
         this.helper.refreshTable.next();
@@ -178,36 +182,31 @@ export class HomepageComponent implements OnInit {
 */
   setVisitsWithData(visit, typeOfVisit) {
     let value: any = {};
-    value.visitId = visit.uuid;
-    value.patientId = visit.person.uuid;
-    value.id = visit.patient.identifier;
-    value.name = visit.patient_name.given_name + " " + visit.patient_name.family_name;
+    value.visitId = visit?.uuid;
+    value.patientId = visit?.person?.uuid;
+    value.id = visit?.patient?.identifier;
+    value.name = visit?.patient_name?.given_name + " " + visit?.patient_name?.family_name;
     value.gender = visit.person.gender;
     value.age = this.getAge(visit.person.birthdate);
-    value.location = visit.location.name;
-    if (typeOfVisit === "awaitingVisit") {
-      value.status = visit.encounters[0].type.name;
-      value.provider = visit.encounters[0].encounter_provider.provider.person.person_name.given_name + " " +
-        visit.encounters[0].encounter_provider.provider.person.person_name.family_name;
-      value.lastSeen = visit.encounters[0].encounter_datetime
-      value.complaints = visit.encounters[0].obs.length > 0 ? this.getComplaints(visit.encounters[0].obs[0]?.value_text) : "Missing encounter";
-    } else {
-      let encounter = visit.encounters.find(encounter => encounter.type.name === 'ADULTINITIAL');
-      value.status = visit.encounters[visit.encounters.length - 1].type.name;
-      value.provider = visit.encounters[visit.encounters.length - 1].encounter_provider.provider.person.person_name.given_name + " " +
-        visit.encounters[visit.encounters.length - 1].encounter_provider.provider.person.person_name.family_name;
-      value.lastSeen = visit.encounters[visit.encounters.length - 1].encounter_datetime
-      let obs1 = encounter?.obs.find(ob => ob.concept_id === 163212);
-      value.complaints = obs1 ? this.getComplaints(obs1.value_text) : "Missing encounter";
-    }
+    value.location = visit?.location?.name;
+    const encounter = this.getMaxEncounter(visit);
+    value.status = encounter?.type?.name;
+    value.provider = encounter?.encounter_provider?.provider?.person?.person_name?.given_name + " " +
+      encounter?.encounter_provider?.provider?.person?.person_name?.family_name;
+    value.lastSeen = encounter?.encounter_datetime;
+
     value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
     if (typeOfVisit === 'awaitingVisit') {
+      value.status = 'ADULTINITIAL';
       this.service.waitingVisit.push(value);
     } else if (typeOfVisit === 'inProgressVisit') {
+      value.status = 'Visit Note';
       this.service.progressVisit.push(value);
     } else if (typeOfVisit === 'priorityVisit') {
+      value.status = 'Flagged';
       this.service.flagVisit.push(value);
     } else if (typeOfVisit === 'completedVisit') {
+      value.status = 'Visit Complete';
       this.service.completedVisit.push(value);
     }
   }
@@ -333,7 +332,21 @@ export class HomepageComponent implements OnInit {
    * @returns Object | null
    */
   checkVisit(encounters, visitType) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+    return encounters.find((enc: any) => enc?.type?.name === visitType);
+  }
+
+  getMaxEncounter(active) {
+    const { encounters = [] } = active;
+    let encounter = null;
+    if (encounter = this.checkVisit(encounters, "Visit Complete")) {
+    } else if (encounter = this.checkVisit(encounters, "Visit Note")) {
+    } else if (encounter = this.checkVisit(encounters, "Flagged")) {
+    } else if (
+      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
+      (encounter = this.checkVisit(encounters, "Vitals"))
+    ) {
+    }
+    return encounter;
   }
 
   /**
@@ -415,16 +428,21 @@ export class HomepageComponent implements OnInit {
     return this.value;
   }
 
-  getComplaints(currentObs) {
+  getComplaints(encounters = []) {
+    const encounter: any = encounters.find(encounter => encounter?.type?.name === 'ADULTINITIAL');
     let recent: any = [];
-    const currentComplaint = currentObs.split('<b>');
-    for (let i = 1; i < currentComplaint.length; i++) {
-      const obs1 = currentComplaint[i].split('<');
-      if (!obs1[0].match('Associated symptoms')) {
-        recent.push(obs1[0]);
+    const currentObs = Array.isArray(encounter?.obs) ? encounter.obs.find(o => o?.concept_id === 163212) : []
+    if (currentObs) {
+      const valueText = currentObs?.value_text || '';
+      const currentComplaint = valueText.split('<b>');
+      for (let i = 1; i < currentComplaint.length; i++) {
+        const obs1 = currentComplaint[i].split('<');
+        if (!obs1[0].match('Associated symptoms')) {
+          recent.push(obs1[0]);
+        }
       }
     }
-    return recent;
+    return recent?.length ? recent : ["Missing encounter or OBS"];
   }
 
   get userId() {
@@ -451,9 +469,9 @@ export class HomepageComponent implements OnInit {
       });
   }
 
-  ngAfterViewChecked() {
-    this.cdr.detectChanges();
-  }
+  // ngAfterViewChecked() {
+  //   this.cdr.detectChanges();
+  // }
 
   get nextPage() {
     return Number((this.allVisits.length / this.limit).toFixed()) + 2;
@@ -461,7 +479,6 @@ export class HomepageComponent implements OnInit {
 
   tableChange({ loadMore, refresh, tableFor }: any) {
     if (loadMore) {
-      console.log('tableFor: ', tableFor);
       switch (tableFor) {
         case 'flagVisit':
           this.pages.priority++;

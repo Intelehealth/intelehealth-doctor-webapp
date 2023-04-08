@@ -93,7 +93,7 @@ export class VisitService {
 
   getVisitCounts(speciality) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getVisitCounts?ngsw-bypass=true&speciality=${speciality}`
     );
   }
 
@@ -105,25 +105,25 @@ export class VisitService {
 
   getAwaitingVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getAwaitingVisits?state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.mindmapURL}/openmrs/getAwaitingVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getPriorityVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getPriorityVisits?state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.mindmapURL}/openmrs/getPriorityVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getInProgressVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getInProgressVisits?state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.mindmapURL}/openmrs/getInProgressVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getCompletedVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getCompletedVisits?state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.mindmapURL}/openmrs/getCompletedVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
