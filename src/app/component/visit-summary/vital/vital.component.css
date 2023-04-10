@@ -1,5 +1,22 @@
-td,
-th {
+td, th {
   border: none;
   white-space: nowrap;
+}
+
+.vital-items-wrapper {
+display: flex;
+flex-direction: column;
+}
+
+.vital-items-wrapper .vital-item-row {
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+}
+
+.vital-items-wrapper .vital-item-row .vital-item{
+padding: 5px;
+/* border: 1px solid black; */
+/* margin: 5px 5px 5px 0px; */
+min-width: 180px;
 }
