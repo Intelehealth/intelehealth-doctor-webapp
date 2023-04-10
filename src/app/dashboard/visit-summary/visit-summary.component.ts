@@ -92,19 +92,23 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   specializations: any[] = [
     {
       id: 1,
-      name: 'General Physician'
+      name: 'Pediatrician'
     },
     {
       id: 2,
-      name: 'Dermatologist'
+      name: 'Neonatologist'
     },
     {
       id: 3,
-      name: 'Gynecologist'
+      name: 'Family doctor'
     },
     {
       id: 4,
-      name: 'Pediatrician'
+      name: 'Neurologist'
+    },
+    {
+      id: 5,
+      name: 'Infectionist'
     }
   ];
   diagnosis: any[] = [
@@ -420,9 +424,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, 'Visit Note');
             // check if visit complete exists for this visit
-            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
+            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Remote Prescription');
             // check if visit note provider and logged in provider are same
-            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
+            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
             // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
@@ -628,7 +632,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               if (familyHistory[i]) {
                 const splitByColon = familyHistory[i].split(':');
                 const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });
+                // for (let x = 0; x < splitByComma.length; x++) {
+                //   if (splitByComma[x]) {
+                //     obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma[x] });
+                //   }
+                // }
+                // obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
               }
             }
             this.patientHistoryData.push(obj1);
