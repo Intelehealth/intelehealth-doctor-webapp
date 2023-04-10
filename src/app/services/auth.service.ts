@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { map } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
@@ -100,7 +100,10 @@ export class AuthService {
     // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-    this.http.delete(`${this.baseUrl}/session`).subscribe((res) => { }, (error) => { this.login(credBase64) });
+    this.http.delete(`${this.baseUrl}/session`).pipe(map((res) => { }), catchError((error) => { this.login(credBase64); throw error; }) ).subscribe({
+      next: x => console.log(x),
+      error: err => console.log(err)
+    });
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + credBase64);
     return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(

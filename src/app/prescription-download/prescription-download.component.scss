@@ -1,4 +1,4 @@
-page {
+.external-prescription-col page {
     background: white;
     display: block;
     margin: 0 auto;
@@ -6,7 +6,7 @@ page {
     box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
 }
 
-page[size="A4"] {
+.external-prescription-col page[size="A4"] {
     width: 21cm;
     min-height: 29.7cm;
 }
@@ -20,7 +20,7 @@ page[size="A4"] {
     }
 }
 
-.blue-btn {
+.external-prescription-col .blue-btn {
     background: #2E1E91;
     border: 1px solid #2E1E91;
     color: #FFFFFF;
@@ -35,11 +35,11 @@ page[size="A4"] {
     font-weight: bold;
 }
 
-.title-con {
+.external-prescription .title-con {
     padding: 15px 10px 10px 10px !important;
 }
 
-.main-content {
+.external-prescription .main-content {
     padding-top: 10px !important;
 
     .data-section-title {
@@ -54,25 +54,29 @@ page[size="A4"] {
     }
 }
 
-.logo {
+.external-prescription .logo {
     right: 30px;
     background: #2E1E91;
     width: 60px !important;
 }
 
-.help-menu-container {
-    display: none !important;
-}
+// .help-menu-container {
+//     display: none !important;
+// }
 
 
-.title-con {
+.external-prescription .title-con {
     h6 {
         font-size: 18px !important;
     }
 }
 
-.patient-img-item {
+.external-prescription .patient-img-item {
     h6 {
         font-size: 15px !important;
     }
+}
+
+.external-prescription .mat-dialog-content {
+  max-height: fit-content !important;
 }

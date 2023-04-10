@@ -315,6 +315,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
       this.pc.onicecandidate = this.onIceCandidate.bind(this);
       this.pc.onaddstream = this.onAddStream.bind(this);
+      this.pc.addEventListener('icecandidateerror', (event) => { console.log(event) });
       this.pc.addStream(this.localStream);
 
     } catch (e) {
@@ -342,7 +343,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   sendOffer() {
 
     this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-
+      console.log(error);
     });
   }
 
@@ -361,7 +362,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   sendAnswer() {
 
     this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-
+      console.log(error);
     });
   }
 

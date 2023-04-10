@@ -1,4 +1,4 @@
-<div *ngIf="visitId && prescriptionVerified" class="col">
+<div *ngIf="visitId && prescriptionVerified" class="col external-prescription-col">
   <div class="row justify-content-center">
     <div class="text-center">
       <button (click)="download()" type="button" class="blue-btn m-2">
@@ -7,7 +7,7 @@
     </div>
   </div>
   <div class="row">
-    <page #prescription id="prescription" size="A4">
+    <page #prescription id="prescription" size="A4" class="external-prescription">
       <app-view-visit-prescription
         [isDownloadPrescription]="true"
         [visitId]="visitId"

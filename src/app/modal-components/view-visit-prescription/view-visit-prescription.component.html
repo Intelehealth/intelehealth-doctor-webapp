@@ -334,11 +334,20 @@
                   </tbody>
                 </table>
               </div>
+              <ul class="items-list">
+                <li *ngFor="let ai of additionalInstructions">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ ai.value }}</span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="notes?.length" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/note.svg" alt="" />
