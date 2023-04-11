@@ -357,7 +357,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
     this.drugNameList = this.drugNameList.concat(medicines);
-    this.timeList = this.getHours();
+    // this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
@@ -404,6 +404,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.followUpForm.get('followUpDate').updateValueAndValidity();
         this.followUpForm.get('followUpTime').clearValidators();
         this.followUpForm.get('followUpTime').updateValueAndValidity();
+      }
+    });
+    this.followUpForm.get('followUpDate').valueChanges.subscribe((val: any) => {
+      if (val) {
+        this.timeList = this.getHours(false, val);
+      } else {
+        this.timeList = [];
       }
     });
   }
