@@ -1,5 +1,5 @@
-<mat-spinner *ngIf="setSpiner" [diameter]="70"></mat-spinner>
-<div class="container" [ngClass]="setSpiner ? 'spin' : ''">
+<div class="container">
+  <b> Showing total visit counts till date.* </b>
   <div class="modal-body row">
     <div class="col-sm-3" style="padding: 3px">
       <div class="card text-white" style="background: #dd3c62">
@@ -51,9 +51,13 @@
     </div>
   </div>
 
+  <div class="mb-3">
+    <b>Tables are showing paginated visit counts.* </b>
+  </div>
+
   <!-- PRIORITY Visit -->
   <mat-accordion class="example-headers-align" [multi]="true">
-    <mat-expansion-panel [expanded]="flagPatientNo > 0" id="flagged-table">
+    <mat-expansion-panel [expanded]="true" id="flagged-table">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
@@ -66,16 +70,18 @@
         <app-tables
           [visitCounts]="flagPatientNo"
           [tableFor]="'flagVisit'"
-          (tableEmitter)="tableChange($event)"
-          (emptyRow)="loadNextSlot($event)"
           [data]="flagVisit"
-          [allVisitsLoaded]="allVisitsLoaded"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.priority"
         ></app-tables>
+      </ng-container>
+      <ng-container *ngIf="setSpiner1">
+        <mat-spinner [diameter]="30"></mat-spinner>
       </ng-container>
     </mat-expansion-panel>
 
     <!-- Queue Visit table -->
-    <mat-expansion-panel [expanded]="activePatient > 0" id="queued-table">
+    <mat-expansion-panel [expanded]="true" id="queued-table">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
@@ -88,16 +94,21 @@
         <app-tables
           [visitCounts]="activePatient"
           [tableFor]="'waitingVisit'"
-          (tableEmitter)="tableChange($event)"
           [data]="waitingVisit"
-          (emptyRow)="loadNextSlot($event)"
-          [allVisitsLoaded]="allVisitsLoaded"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.awaiting"
         ></app-tables>
+      </ng-container>
+      <ng-container *ngIf="setSpiner2">
+        <mat-spinner [diameter]="30"></mat-spinner>
       </ng-container>
     </mat-expansion-panel>
 
     <!-- In Progress Visit -->
-    <mat-expansion-panel [expanded]="visitNoteNo > 0" id="visit-in-progress">
+    <mat-expansion-panel
+      (opened)="getInProgressVisits()"
+      id="visit-in-progress"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
@@ -110,16 +121,18 @@
         <app-tables
           [visitCounts]="visitNoteNo"
           [tableFor]="'progressVisit'"
-          (tableEmitter)="tableChange($event)"
           [data]="progressVisit"
-          (emptyRow)="loadNextSlot($event)"
-          [allVisitsLoaded]="allVisitsLoaded"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.inProgress"
         ></app-tables>
+      </ng-container>
+      <ng-container *ngIf="setSpiner3">
+        <mat-spinner [diameter]="30"></mat-spinner>
       </ng-container>
     </mat-expansion-panel>
 
     <!-- Complete Visit -->
-    <mat-expansion-panel [expanded]="completeVisitNo > 0" id="visit-complete">
+    <mat-expansion-panel (opened)="getCompletedVisits()" id="visit-complete">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h5>
@@ -132,11 +145,13 @@
         <app-tables
           [visitCounts]="completeVisitNo"
           [tableFor]="'completedVisit'"
-          (tableEmitter)="tableChange($event)"
           [data]="completedVisit"
-          (emptyRow)="loadNextSlot($event)"
-          [allVisitsLoaded]="allVisitsLoaded"
+          (tableEmitter)="tableChange($event)"
+          [loadMore]="loadMore.completed"
         ></app-tables>
+      </ng-container>
+      <ng-container *ngIf="setSpiner4">
+        <mat-spinner [diameter]="30"></mat-spinner>
       </ng-container>
     </mat-expansion-panel>
   </mat-accordion>

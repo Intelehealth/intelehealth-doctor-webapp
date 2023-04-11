@@ -35,7 +35,10 @@ export class HomepageComponent implements OnInit {
   endedVisitNo = 0;
   endVisitCount: any;
   endVisits = [];
-  setSpiner = true;
+  setSpiner1 = false;
+  setSpiner2 = false;
+  setSpiner3 = false;
+  setSpiner4 = false;
   specialization;
   visitStateAttributeType = "0e798578-96c1-450b-9927-52e45485b151";
   specializationProviderType = "ed1715f5-93e2-404e-b3c9-2a2d9600f062";
@@ -46,6 +49,19 @@ export class HomepageComponent implements OnInit {
   allVisits = [];
   limit = 100;
   allVisitsLoaded = false;
+  loadMore = {
+    priority: false,
+    awaiting: false,
+    inProgress: false,
+    completed: false,
+  }
+
+  pages = {
+    priority: 1,
+    awaiting: 1,
+    inProgress: 1,
+    completed: 1,
+  }
 
   constructor(
     private sessionService: SessionService,
@@ -80,14 +96,128 @@ export class HomepageComponent implements OnInit {
             this.visitState = attribute.value;
           }
         });
-        this.getVisits();
+        //  this.getVisits();
         this.getVisitCounts(this.specialization);
+        this.getPriorityVisits();
+        this.getAwaitingVisits();
+        // this.getInProgressVisits();
+        // this.getCompletedVisits();
       });
     } else {
       this.authService.logout();
     }
-    // this.getEndedVisits();
     this.getDrSlots();
+  }
+
+  ngOnDestroy() {
+    console.log('visit cleared...');
+    this.service.clearVisits();
+  }
+
+  /**
+   * Get all Awaiting Visits
+   */
+  getAwaitingVisits(page?) {
+    this.setSpiner2 = true;
+    this.service.getAwaitingVisits(this.visitState, this.specialization, page).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'awaitingVisit');
+        this.setSpiner2 = false;
+        this.loadMore.awaiting = !!response?.data?.length;
+        this.helper.refreshTable.next();
+      });
+  }
+
+  /**
+   * Get all Priority Visits
+   */
+  getPriorityVisits(page?) {
+    this.setSpiner1 = true;
+    this.service.getPriorityVisits(this.visitState, this.specialization, page).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'priorityVisit');
+        this.setSpiner1 = false;
+        this.loadMore.priority = !!response?.data?.length;
+        this.helper.refreshTable.next();
+      });
+  }
+
+  /**
+   * Get all InProgress Visits
+   */
+  getInProgressVisits(page?) {
+    this.setSpiner3 = true;
+    this.service.getInProgressVisits(this.visitState, this.specialization, page).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'inProgressVisit');
+        this.setSpiner3 = false;
+        this.loadMore.inProgress = !!response?.data?.length;
+        this.helper.refreshTable.next();
+      });
+  }
+
+  /**
+  * Get all Completed Visits
+  */
+  getCompletedVisits(page?) {
+    this.setSpiner4 = true;
+    this.service.getCompletedVisits(this.visitState, this.specialization, page).subscribe(
+      (response: any) => {
+        this.setVisitByType(response.data, 'completedVisit');
+        this.setSpiner4 = false;
+        this.loadMore.completed = !!response?.data?.length;
+        this.helper.refreshTable.next();
+      });
+  }
+
+  setVisitByType(stateVisits: any, typeOfVisit) {
+    stateVisits.forEach(visit => {
+      this.setVisitsWithData(visit, typeOfVisit);
+    });
+  }
+
+  /**
+* Check for a visit and put it to the respective tab as per their type
+* @param visit Object
+*/
+  setVisitsWithData(visit, typeOfVisit) {
+    let value: any = {};
+    value.visitId = visit?.uuid;
+    value.patientId = visit?.person?.uuid;
+    value.id = visit?.patient?.identifier;
+    value.name = visit?.patient_name?.given_name + " " + visit?.patient_name?.family_name;
+    value.gender = visit.person.gender;
+    value.age = this.getAge(visit.person.birthdate);
+    value.location = visit?.location?.name;
+    const encounter = this.getMaxEncounter(visit);
+    value.status = encounter?.type?.name;
+    value.provider = encounter?.encounter_provider?.provider?.person?.person_name?.given_name + " " +
+      encounter?.encounter_provider?.provider?.person?.person_name?.family_name;
+    value.lastSeen = encounter?.encounter_datetime;
+
+    value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
+    if (typeOfVisit === 'awaitingVisit') {
+      value.status = 'ADULTINITIAL';
+      this.service.waitingVisit.push(value);
+    } else if (typeOfVisit === 'inProgressVisit') {
+      value.status = 'Visit Note';
+      this.service.progressVisit.push(value);
+    } else if (typeOfVisit === 'priorityVisit') {
+      value.status = 'Flagged';
+      this.service.flagVisit.push(value);
+    } else if (typeOfVisit === 'completedVisit') {
+      value.status = 'Visit Complete';
+      this.service.completedVisit.push(value);
+    }
+  }
+
+  /**
+  * return age by birthdate
+  */
+  getAge(dateString) {
+    let date1 = moment(dateString);
+    var diffDuration = moment.duration(moment().diff(date1));
+    return diffDuration.years();
   }
 
   getStateFromVisit(provider) {
@@ -140,7 +270,7 @@ export class HomepageComponent implements OnInit {
   /**
    * Get all visits
    */
-  getVisits(query: any = {}, cb = () => {}) {
+  getVisits(query: any = {}, cb = () => { }) {
     this.service.getVisits(query).subscribe(
       (response) => {
         response.results.forEach((item) => {
@@ -179,12 +309,11 @@ export class HomepageComponent implements OnInit {
           this.value = {};
         });
         if (response.results.length === 0) {
-          this.setVisitlengthAsPerLoadedData();
+          // this.setVisitlengthAsPerLoadedData();
           this.allVisitsLoaded = true;
         }
         this.helper.refreshTable.next();
-        this.setSpiner = false;
-        this.isLoadingNextSlot = false;
+        //this.setSpiner = false;
       },
       (err) => {
         if (err.error instanceof Error) {
@@ -203,7 +332,21 @@ export class HomepageComponent implements OnInit {
    * @returns Object | null
    */
   checkVisit(encounters, visitType) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+    return encounters.find((enc: any) => enc?.type?.name === visitType);
+  }
+
+  getMaxEncounter(active) {
+    const { encounters = [] } = active;
+    let encounter = null;
+    if (encounter = this.checkVisit(encounters, "Visit Complete")) {
+    } else if (encounter = this.checkVisit(encounters, "Visit Note")) {
+    } else if (encounter = this.checkVisit(encounters, "Flagged")) {
+    } else if (
+      (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
+      (encounter = this.checkVisit(encounters, "Vitals"))
+    ) {
+    }
+    return encounter;
   }
 
   /**
@@ -239,10 +382,7 @@ export class HomepageComponent implements OnInit {
       let endvisits = this.endVisitData.filter(a => a.stopDatetime != null);
       endvisits.forEach(a => {
         this.endVisits.push(this.assignValueToProperty(a));
-        this.endedVisitNo += 1
-        localStorage.setItem('endVisitCount', this.endedVisitNo.toString())
       });
-      this.setSpiner = false;
     })
   }
 
@@ -288,27 +428,21 @@ export class HomepageComponent implements OnInit {
     return this.value;
   }
 
-  getComplaints(visitDetails) {
+  getComplaints(encounters = []) {
+    const encounter: any = encounters.find(encounter => encounter?.type?.name === 'ADULTINITIAL');
     let recent: any = [];
-    const encounters = visitDetails.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
+    const currentObs = Array.isArray(encounter?.obs) ? encounter.obs.find(o => o?.concept_id === 163212) : []
+    if (currentObs) {
+      const valueText = currentObs?.value_text || '';
+      const currentComplaint = valueText.split('<b>');
+      for (let i = 1; i < currentComplaint.length; i++) {
+        const obs1 = currentComplaint[i].split('<');
+        if (!obs1[0].match('Associated symptoms')) {
+          recent.push(obs1[0]);
+        }
       }
-    });
-    return recent;
+    }
+    return recent?.length ? recent : ["Missing encounter or OBS"];
   }
 
   get userId() {
@@ -335,30 +469,36 @@ export class HomepageComponent implements OnInit {
       });
   }
 
-  ngAfterViewChecked() {
-    this.cdr.detectChanges();
-  }
+  // ngAfterViewChecked() {
+  //   this.cdr.detectChanges();
+  // }
 
   get nextPage() {
     return Number((this.allVisits.length / this.limit).toFixed()) + 2;
   }
 
-  tableChange({ loadMore, refresh }) {
+  tableChange({ loadMore, refresh, tableFor }: any) {
     if (loadMore) {
-      if (!this.isLoadingNextSlot) this.setSpiner = true;
-      const query = {
-        limit: this.limit,
-        startIndex: this.allVisits.length,
-      };
-      this.getVisits(query, refresh);
-    }
-  }
-
-  isLoadingNextSlot = false;
-  loadNextSlot() {
-    if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
-      this.isLoadingNextSlot = true;
-      this.tableChange({ loadMore: true, refresh: () => {} });
+      switch (tableFor) {
+        case 'flagVisit':
+          this.pages.priority++;
+          this.getPriorityVisits(this.pages.priority);
+          break;
+        case 'waitingVisit':
+          this.pages.awaiting++;
+          this.getAwaitingVisits(this.pages.awaiting);
+          break;
+        case 'progressVisit':
+          this.pages.inProgress++;
+          this.getInProgressVisits(this.pages.inProgress);
+          break;
+        case 'completedVisit':
+          this.pages.completed++;
+          this.getCompletedVisits(this.pages.completed);
+          break;
+        default:
+          break;
+      }
     }
   }
 
