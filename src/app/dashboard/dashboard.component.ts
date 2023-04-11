@@ -19,7 +19,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  showAll: boolean = true;
+  showAll: boolean = false;
   displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
   displayedColumns2: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
   displayedColumns3: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
@@ -31,6 +31,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dataSource4 = new MatTableDataSource<any>();
 
   baseUrl: string = environment.baseURL;
+  normalCases: any = [];
+  priorityCases: any = [];
+  completedCases: any = [];
+
   appointments: any = [];
   priorityVisits: any = [];
   awaitingVisits: any = [];
@@ -66,9 +70,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      // this.getAppointments();
-      this.getVisits();
-      // this.getVisitCounts(this.specialization);
+      // this.getVisits();
     }
 
 

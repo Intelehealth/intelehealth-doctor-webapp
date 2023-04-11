@@ -33,6 +33,11 @@ $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0
   src: url(assets/fonts/Almondita.ttf) format("opentype");
 }
 
+@font-face {
+  font-family: Quicksand;
+  src: url(assets/fonts/Quicksand.ttf) format("opentype");
+}
+
 body {
   background-color: #ffffff;
   margin: 0;

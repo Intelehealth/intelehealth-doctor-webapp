@@ -1,111 +1,47 @@
+.bg-banner {
+  background-image: url('../../assets/ezazi/ezazi-bg.png');
+  background-size: 70% 100%;
+  background-repeat: no-repeat;
+}
+
 .login-info-wrapper {
   width: 100%;
   min-height: 100vh;
-  background: #2E1E91;
+  background: transparent;
   display: flex;
   flex-direction: column;
   font-family: 'DM Sans';
   font-style: normal;
+  align-items: center;
+  justify-content: center;
 
-  .info-banner {
-    width: 100%;
-    padding: 40px 40px 10px;
-
-    .grid-icon {
-      position: relative;
-      width: 100px;
-      height: 100px;
-
-      .logo-icon {
-        position: absolute;
-        top: 50%;
-        left: 30%;
-        transform: translateY(-50%);
-        height: 64px;
-      }
-    }
-  }
-
-  ::ng-deep .carousel-indicators li {
-    width: 10px;
-    height: 5px;
-    border: none;
-    border-radius: 2.5px;
-  }
-
-  ::ng-deep .carousel-indicators li.active {
-    width: 30px;
-  }
-
-  .carousel-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    .carousel-caption {
-      position: relative;
-      left: 0px;
-      right: 0px;
-      bottom: auto;
-      padding: 20px 0px;
-
-      h3 {
-        font-weight: 700;
-        font-size: 28px;
-        line-height: 132%;
-        color: #FFFFFF;
-        min-height: 74px;
-        text-align: center;
-        padding: 0px 30px;
-      }
-    }
-
-    .picsum-img-wrapper {
-      width: 100%;
-      position: relative;
+  .ezazi-logo {
+    h1 {
+      font-family: 'Quicksand';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 75px;
+      line-height: 150%;
       text-align: center;
-      min-height: 50vh;
+      color: #332F8C;
+    }
 
-      .main {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        height: 100%;
-        max-width: 80%;
-      }
-
-      .hb1 {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        width: 25%;
-        transform: rotateY(180deg);
-      }
-
-      .hb2 {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-        width: 25%;
-      }
+    img {
+      width: 304px;
+      height: 300px;
+      margin: 30px 0px;
     }
   }
 
-  .copy-right-footer {
-    padding: 30px 10px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    span {
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
-    }
+  .info-footer {
+    width: 60%;
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 150%;
+    text-align: center;
+    color: #2E1E91;
   }
 }
 
@@ -147,22 +83,15 @@
 }
 
 @media (max-width: 768px) {
-  .main-container {
-    padding: 20px 30px 80px;
+  .bg-banner {
+    background: none;
+
+    .login-info-wrapper {
+      background: #FFDEE7;
+    }
   }
 
-  .login-info-wrapper {
-    .info-banner {
-      padding: 10px 40px 10px;
-    }
-
-    .carousel-container {
-      .carousel-caption {
-        h3 {
-          font-size: 20px;
-          min-height: 80px;
-        }
-      }
-    }
+  .main-container {
+    padding: 20px 30px 80px;
   }
 }

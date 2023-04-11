@@ -60,7 +60,7 @@
 
   .iti__flag-container, .iti--separate-dial-code .iti__flag-container {
     height: 48px;
-    background: #FAF9FF;
+    background: #FFFFFF;
     border: 1px solid rgba(178, 175, 190, 0.2);
     border-radius: 8px;
     padding: 14px 16px;
@@ -80,7 +80,7 @@
 .form-group {
   label {
     font-size: 14px;
-    color: #1B163A;
+    color: #2E1E91;
     font-weight: bold;
     display: flex;
     flex-direction: row;
@@ -98,11 +98,13 @@
 
   .next-btn {
     height: 56px;
-    background: #2E1E91;
+    background: #FFFFFF;
     border-radius: 8px;
     font-size: 18px;
-    color: #FFFFFF;
+    color: #2E1E91;
     position: relative;
+    border: 3px solid #2E1E91;
+    font-weight: bold;
 
     .btn-icon {
       position: absolute;
@@ -130,7 +132,8 @@
       position: absolute;
       right: 2px;
       bottom: 6px;
-      background-color: #FAF9FF;
+      background-color: #FFFFFF;
+      cursor: default;
     }
 
     .btn:focus {
@@ -141,7 +144,7 @@
 
 .form-control {
   padding: 14px 16px;
-  background: #FAF9FF;
+  background: #FFFFFF;
   border: 1px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
   height: 48px;

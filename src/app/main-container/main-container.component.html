@@ -7,47 +7,42 @@
             <img [src]="getUrl()" alt="">
           </button>
         </div>
-        <img src="assets/images/Intelehealth-logo-white.png" alt="" width="100%" *ngIf="!collapsed">
-        <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
+        <div class="ezazi-logo d-flex flex-row justify-content-center align-items-center" *ngIf="!collapsed">
+          <img src="assets/ezazi/ezazi-logo.png" alt="" height="60px">
+          <h1 class="mb-0 ml-2">eZazi</h1>
+        </div>
+        <img src="assets/ezazi/ezazi-logo.png" alt="" width="100%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
-            <img src="assets/svgs/menu-home.svg" alt="">
+          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img class="i1" src="assets/svgs/home-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/home-white.svg" alt="">
             <span>Dashboard</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            <img src="assets/svgs/menu-message.svg" alt="">
-            <span>Messages</span>
+          <a class="nav-item-link" routerLink="/dashboard/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img class="i1" src="assets/svgs/user-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/user-white.svg" alt="">
+            <span>My Profile</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            <img src="assets/svgs/menu-video.svg" alt="">
-            <span>Appointment</span>
+          <a class="nav-item-link" routerLink="/dashboard/change-password" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img class="i1" src="assets/svgs/lock-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/lock-white.svg" alt="">
+            <span>Change Password</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active">
-            <img src="assets/svgs/menu-calendar.svg" alt="">
-            <span>Calendar</span>
+          <a class="nav-item-link">
+            <img class="i1" src="assets/svgs/info-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/info-white.svg" alt="">
+            <span>Help</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            <img src="assets/svgs/menu-treatment.svg" alt="">
-            <span>Prescription</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            <img src="assets/svgs/menu-info.svg" alt="">
-            <span>Help & Support</span>
-          </a>
-        </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <!-- <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/warning.svg" alt="">
             <span>Ayu</span>
@@ -58,7 +53,7 @@
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>Support</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img src="assets/svgs/user-settings.svg" alt="">
@@ -80,7 +75,8 @@
         <li class="nav-item" (click)="toggleSidebar()">
           <mat-divider class="mb-2"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()">
-            <img src="assets/svgs/power.svg" alt="">
+            <img class="i1" src="assets/svgs/power-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/power-white.svg" alt="">
             <span>Log-out</span>
           </a>
         </li>
@@ -135,9 +131,9 @@
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
               <div class="d-flex align-items-center justify-content-end">
-                <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+                <!-- <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
                   <mat-icon>help_outline</mat-icon>
-                </button>
+                </button> -->
                 <button mat-button class="notification-button mr-3">
                   <mat-icon>notifications_none</mat-icon>
                 </button>
@@ -145,14 +141,14 @@
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
                   <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
+                <!-- <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
                   <button mat-menu-item (click)="changePassword()">Change Password</button>
                   <button mat-menu-item (click)="selectLanguage()">Change Language</button>
                   <button mat-menu-item routerLink="/dashboard/profile">Profile</button>
-                </mat-menu>
+                </mat-menu> -->
               </div>
             </li>
           </ul>

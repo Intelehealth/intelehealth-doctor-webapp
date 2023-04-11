@@ -145,7 +145,7 @@
 }
 
 .menu-items-wrapper.collapsed .sidenav-logo {
-  padding: 30px 25px !important;
+  padding: 30px 15px !important;
 }
 
 .menu-items-wrapper.collapsed .admin-nav .nav-item .nav-item-link {
@@ -158,7 +158,7 @@
 }
 
 .menu-items-wrapper {
-  background: #2E1E91;
+  background: #FFE9EF;
   border-radius: 12px;
   width: 278px;
   height: 100%;
@@ -199,6 +199,18 @@
         outline: none;
       }
     }
+
+    .ezazi-logo {
+      h1 {
+        font-family: 'Quicksand';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 36px;
+        line-height: 150%;
+        text-align: center;
+        color: #332F8C;
+      }
+    }
   }
 
   .admin-nav {
@@ -229,10 +241,35 @@
 
       .nav-item-link:hover {
         background: #4B39B7;
+
+        .i1 {
+          display: none;
+        }
+
+        .i2 {
+          display: block;
+        }
+
+        span {
+          color: #FFFFFF;
+        }
       }
 
       .nav-item-link.active {
         background: #4B39B7;
+
+        .i1 {
+          display: none;
+        }
+
+        .i2 {
+          display: block;
+        }
+
+
+        span {
+          color: #FFFFFF;
+        }
       }
 
       .nav-item-link {
@@ -245,12 +282,21 @@
         flex-direction: row;
         padding: 0px 20px;
 
+        .i1 {
+          display: block;
+        }
+
+        .i2 {
+          display: none;
+        }
+
+
         span {
           font-family: 'DM Sans';
           font-style: normal;
           font-size: 16px;
-          font-weight: 500;
-          color: #FFFFFF;
+          font-weight: bold;
+          color: #2E1E91;
           width: 100%;
           padding: 0px 20px;
         }

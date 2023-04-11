@@ -53,16 +53,19 @@ export class LoginComponent implements OnInit {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
-            if (res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
-              this.loginSuccess();
-            }
-            else if (this.rememberMe) {
-              this.loginSuccess();
-            } else if (provider.results[0].attributes.length) {
-              this.router.navigate(['/session/verification']);
-            } else {
-              this.loginSuccess();
-            }
+            // if (res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
+            //   this.loginSuccess();
+            // }
+            // else if (this.rememberMe) {
+            //   this.loginSuccess();
+            // } else if (provider.results[0].attributes.length) {
+            //   this.router.navigate(['/session/verification']);
+            // } else {
+            //   this.loginSuccess();
+            // }
+
+            // OR
+            this.loginSuccess();
           } else {
             this.toastr.error("Couldn't find provider.", "Login Failed!");
           }
