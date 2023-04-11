@@ -8,9 +8,9 @@ export const environment = {
   baseURLCoreApp:
     "https://afitraining.ekalarogya.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://afitraining.ekalarogya.org/openmrs",
-  mindmapURL: "https://afitraining.ekalarogya.org:3004/api",
-  notificationURL: "https://afitraining.ekalarogya.org:3004/notification",
-  socketURL: "https://afitraining.ekalarogya.org:3004",
+  mindmapURL: "http://localhost:3004/api",
+  notificationURL: "http://localhost:3004/notification",
+  socketURL: "http://localhost:3004",
 };
 
 /*

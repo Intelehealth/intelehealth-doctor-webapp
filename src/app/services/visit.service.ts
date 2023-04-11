@@ -16,7 +16,7 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
 
-  constructor(private http: HttpClient,private helper: HelperService) { }
+  constructor(private http: HttpClient, private helper: HelperService) { }
   checkVisit(encounters, visitType) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
@@ -93,13 +93,37 @@ export class VisitService {
 
   getVisitCounts(speciality) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
+      `${environment.mindmapURL}/openmrs/getVisitCounts?ngsw-bypass=true&speciality=${speciality}`
     );
   }
 
   getDoctorsVisit() {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getDoctorVisits`
+    );
+  }
+
+  getAwaitingVisits(visitState, speciality, page = 1) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getAwaitingVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+    );
+  }
+
+  getPriorityVisits(visitState, speciality, page = 1) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getPriorityVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+    );
+  }
+
+  getInProgressVisits(visitState, speciality, page = 1) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getInProgressVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+    );
+  }
+
+  getCompletedVisits(visitState, speciality, page = 1) {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getCompletedVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 

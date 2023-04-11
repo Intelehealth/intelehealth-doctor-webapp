@@ -20,32 +20,34 @@ export class TablesComponent implements OnInit {
     "location",
     "status",
     "provider",
-    'complaints',
+    // 'complaints',
     "lastSeen"
   ];
   dataSource;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @Input() data;
   @Input() tableFor;
   @Input() visitCounts;
+  @Input() loadMore = false;
   @Output() tableEmitter = new EventEmitter();
   @Output() emptyRow = new EventEmitter();
-  @Input() set allVisitsLoaded(val) {
-    this.dataLoaded = val;
-    if (this.dataLoaded) {
-      this.refresh();
-    }
-  }
+  // @Input() set allVisitsLoaded(val) {
+  //   this.dataLoaded = val;
+  //   console.log('this.dataLoaded: ', this.dataLoaded);
+  //   if (this.dataLoaded) {
+  //     this.refresh();
+  //   }
+  // }
   dataLoaded = false;
   loadedDataLength: Number = 0;
 
-  constructor(private service: VisitService, private helper: HelperService) {}
+  constructor(private service: VisitService, private helper: HelperService) { }
 
   ngOnInit() {
     this.loadedDataLength = Number(`${this.data.length}`);
-    this.data.length = this.visitCounts;
+    // this.data.length = this.visitCounts;
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -73,7 +75,7 @@ export class TablesComponent implements OnInit {
       data = this.helper.getUpdatedValue(data, item, "id");
     });
     this.loadedDataLength = Number(`${data.length}`);
-    data.length = this.visitCounts;
+    // data.length = this.visitCounts;
     if (data && Array.isArray(data)) {
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator;
@@ -90,9 +92,10 @@ export class TablesComponent implements OnInit {
 
   changePage({ length, pageIndex, pageSize }) {
     const data: any = {
-      loadMore: this.loadedDataLength === length ? false : true,
+      loadMore: this.loadMore,
       // loadMore: (pageIndex + 1) * pageSize >= length,
       refresh: this.refresh.bind(this),
+      tableFor: this.tableFor
     };
     this.tableEmitter.emit(data);
   }
