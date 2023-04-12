@@ -14,7 +14,11 @@
         <b>Weight:</b>&nbsp; <span *ngIf="item.weight">{{item.weight}} kg</span>
       </div>
       <div class="vital-item">
-        <b>BMI:</b>&nbsp; {{item.bmi}}
+        <b>BMI:</b>&nbsp; 
+        <span *ngIf="item.weight && item.height"> 
+          {{
+          item.weight / ((item.height / 100) * (item.height / 100))
+            | number: "1.2-2"}} </span>
       </div>
       <div class="vital-item">
         <b>SP02:</b>&nbsp; <span *ngIf="item.sp02">{{item.sp02}} %</span>
