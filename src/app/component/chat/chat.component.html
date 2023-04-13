@@ -25,7 +25,8 @@
           </div>
         </div>
       </div>
-      <div class="no-history" *ngIf="!chats?.length">No chat history found.</div>
+      <mat-spinner class="spinner" *ngIf="loading" [diameter]="70"></mat-spinner>
+      <div class="no-history" *ngIf="!loading && !chats?.length">No chat history found.</div>
     </div>
     <div class="message-form card-footer">
       <div class="input-group mb-3">

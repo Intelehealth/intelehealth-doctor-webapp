@@ -20,6 +20,7 @@ export class ChatComponent implements OnInit {
   message;
   patientId = null;
   visitId = null;
+  loading = true;
 
   constructor(
     private chatService: ChatService,
@@ -53,25 +54,42 @@ export class ChatComponent implements OnInit {
 
   sendMessage(event) {
     if (this.toUser && this.patientId && this.chatElem.value) {
+      this.loading = true;
       this.chatService
         .sendMessage(this.toUser, this.patientId, this.chatElem.value, {
           visitId: this.visitId,
           patientName: localStorage.patientName,
         })
-        .subscribe((res) => {
-          this.updateMessages();
+        .subscribe({
+          next: (res) => {
+            this.updateMessages();
+          },
+          error: () => {
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          },
         });
     }
     this.chatElem.value = "";
   }
 
   updateMessages() {
-    this.chatService
-      .getPatientMessages(this.toUser, this.patientId)
-      .subscribe((res: { data }) => {
+    this.chatService.getPatientMessages(this.toUser, this.patientId).subscribe({
+      next: (res: { data }) => {
         this.chats = res.data;
+        this.loading = false;
         this.scroll();
-      });
+      },
+      error: (err) => {
+        console.log("err:>>>> ", err);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   onPressEnter(e) {
