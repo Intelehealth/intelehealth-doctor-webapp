@@ -194,6 +194,7 @@ export class HomepageComponent implements OnInit {
     value.provider = encounter?.encounter_provider?.provider?.person?.person_name?.given_name + " " +
       encounter?.encounter_provider?.provider?.person?.person_name?.family_name;
     value.lastSeen = encounter?.encounter_datetime;
+    value.complaints = this.getComplaints(visit);
 
     value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
     if (typeOfVisit === 'awaitingVisit') {
@@ -428,21 +429,15 @@ export class HomepageComponent implements OnInit {
     return this.value;
   }
 
-  getComplaints(encounters = []) {
-    const encounter: any = encounters.find(encounter => encounter?.type?.name === 'ADULTINITIAL');
-    let recent: any = [];
-    const currentObs = Array.isArray(encounter?.obs) ? encounter.obs.find(o => o?.concept_id === 163212) : []
-    if (currentObs) {
-      const valueText = currentObs?.value_text || '';
-      const currentComplaint = valueText.split('<b>');
-      for (let i = 1; i < currentComplaint.length; i++) {
-        const obs1 = currentComplaint[i].split('<');
-        if (!obs1[0].match('Associated symptoms')) {
-          recent.push(obs1[0]);
-        }
-      }
+  getComplaints(visit) {
+    const attr = Array.isArray(visit?.attributes) ? visit?.attributes : [];
+    const complaint = attr.find(atr => atr.attribute_type_id === 8);
+    let recent: any = []
+    if (complaint) {
+      recent = complaint.value_reference.split(',').filter(val => val)
     }
-    return recent?.length ? recent : ["Missing encounter or OBS"];
+
+    return recent?.length ? recent : ["Missing attribute"];
   }
 
   get userId() {

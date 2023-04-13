@@ -20,7 +20,7 @@ export class TablesComponent implements OnInit {
     "location",
     "status",
     "provider",
-    // 'complaints',
+    'complaints',
     "lastSeen"
   ];
   dataSource;
