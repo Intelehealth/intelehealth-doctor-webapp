@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { CoreService } from 'src/app/services/core/core.service';
 import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
@@ -199,7 +200,12 @@ export class PartogramComponent implements OnInit {
   encuuid1: string[] = Array(12).fill(null);
   encuuid2: string[] = Array(3).fill(null);
 
-  constructor(private route: ActivatedRoute, private router: Router, private visitService: VisitService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private visitService: VisitService,
+    private coreService: CoreService
+  ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -372,6 +378,22 @@ export class PartogramComponent implements OnInit {
     const fullName = name.split(' ');
     const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
     return initials.toUpperCase();
+  }
+
+  addAssessmentAndPlan() {
+    this.coreService.openAddAssessmentAndPlanModal(null).subscribe(res => {
+      if (res) {
+
+      }
+    });
+  }
+
+  startCall() {
+
+  }
+
+  startChat() {
+
   }
 
 }

@@ -1307,13 +1307,13 @@
                     <td colspan="2">
                       <div class="add-plan-wrapper" *ngIf="item && !(parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                         <span>Add <br> Plan / Assessment</span>
-                        <button type="button" [disabled]="visitCompleted">
+                        <button type="button" [disabled]="visitCompleted" (click)="addAssessmentAndPlan()">
                           <img src="assets/svgs/add-btn.svg" alt="" width="100%">
                         </button>
                       </div>
                       <div class="add-plan-wrapper" *ngIf="item && (parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                         <span>Plan / Assessment <br> Added</span>
-                        <button type="button" [disabled]="visitCompleted">
+                        <button type="button" [disabled]="visitCompleted" (click)="addAssessmentAndPlan()">
                           <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
                         </button>
                       </div>
@@ -1419,13 +1419,13 @@
                     <td colspan="4">
                       <div class="add-plan-wrapper" *ngIf="item && !(parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                         <span>Add <br> Plan / Assessment</span>
-                        <button type="button" [disabled]="visitCompleted">
+                        <button type="button" [disabled]="visitCompleted" (click)="addAssessmentAndPlan()">
                           <img src="assets/svgs/add-btn.svg" alt="" width="100%">
                         </button>
                       </div>
                       <div class="add-plan-wrapper" *ngIf="item && (parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                         <span>Plan / Assessment <br> Added</span>
-                        <button type="button" [disabled]="visitCompleted">
+                        <button type="button" [disabled]="visitCompleted" (click)="addAssessmentAndPlan()">
                           <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
                         </button>
                       </div>
@@ -1505,4 +1505,9 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="webrtc-controls">
+  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()"/>
+  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()"/>
 </div>

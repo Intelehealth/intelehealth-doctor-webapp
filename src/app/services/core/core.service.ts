@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
+import { AddPlanAssessmentComponent } from 'src/app/modal-components/add-plan-assessment/add-plan-assessment.component';
 import { AppointmentDetailMonthComponent } from 'src/app/modal-components/appointment-detail-month/appointment-detail-month.component';
 import { AppointmentDetailComponent } from 'src/app/modal-components/appointment-detail/appointment-detail.component';
 import { CancelAppointmentConfirmComponent } from 'src/app/modal-components/cancel-appointment-confirm/cancel-appointment-confirm.component';
@@ -150,6 +151,11 @@ export class CoreService {
 
   openConfirmOpenMrsIdModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true } );
+    return dialogRef.afterClosed();
+  }
+
+  openAddAssessmentAndPlanModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(AddPlanAssessmentComponent, { panelClass: "modal-md", data } );
     return dialogRef.afterClosed();
   }
 }
