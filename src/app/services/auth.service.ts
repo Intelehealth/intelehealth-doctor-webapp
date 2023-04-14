@@ -4,8 +4,8 @@ import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { catchError, map } from "rxjs/operators";
-import { BehaviorSubject, Observable } from "rxjs";
+import { catchError, map, mergeMap } from "rxjs/operators";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 declare var deleteFromStorage: any;
@@ -100,27 +100,29 @@ export class AuthService {
     // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-    this.http.delete(`${this.baseUrl}/session`).pipe(map((res) => { }), catchError((error) => { this.login(credBase64); throw error; }) ).subscribe({
-      next: x => console.log(x),
-      error: err => console.log(err)
-    });
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Authorization', 'Basic ' + credBase64);
-    return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
-      map((user: any) => {
-        if (user.authenticated) {
-          user.verified = false;
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          localStorage.setItem('user', JSON.stringify(user.user));
-          this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
-          this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
-          this.currentUserSubject.next(user);
-          if (user.sessionId) {
-            this.cookieService.set('JSESSIONID', user.sessionId);
-          }
-        }
-        return user;
-      }));
+    return this.http.delete(`${this.baseUrl}/session`).pipe(
+      catchError((err) => throwError(err)),
+      map(res => res),
+      mergeMap((item) => {
+        let headers: HttpHeaders = new HttpHeaders();
+        headers = headers.append('Authorization', 'Basic ' + credBase64);
+        return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
+          map((user: any) => {
+            if (user.authenticated) {
+              user.verified = false;
+              localStorage.setItem('currentUser', JSON.stringify(user));
+              localStorage.setItem('user', JSON.stringify(user.user));
+              this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
+              this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
+              this.currentUserSubject.next(user);
+              if (user.sessionId) {
+                this.cookieService.set('JSESSIONID', user.sessionId);
+              }
+            }
+            return user;
+          }));
+      })
+    );
   }
 
   getProvider(userId: string): Observable<any> {

@@ -587,7 +587,7 @@
 
               <mat-expansion-panel
                 [expanded]="!visitNotePresent"
-                *ngIf="!visitNotePresent"
+                *ngIf="!visitNotePresent && !visitEnded && !visitCompleted"
               >
                 <mat-expansion-panel-header>
                   <mat-panel-title>

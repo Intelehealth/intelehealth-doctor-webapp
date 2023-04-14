@@ -290,7 +290,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         break;
       case "candidate":
         this.callStartedAt = moment();
-        console.log(data.candidate.usernameFragment);
         data.candidate.usernameFragment = null;
         this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
         break;

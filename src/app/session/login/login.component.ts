@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
   submitted: boolean = false;
   visible: boolean = false;
   rememberMe: boolean = false;
+  loginAttempt: number = 0;
 
   constructor(
     public authService: AuthService,
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.loginAttempt++;
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -71,6 +73,9 @@ export class LoginComponent implements OnInit {
       else {
         this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
       }
+    }, err => {
+      console.log(err);
+      if(this.loginAttempt < 3) this.login();
     });
   }
 
