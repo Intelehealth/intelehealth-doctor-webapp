@@ -189,10 +189,10 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   getScheduledMonths() {
-    this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear().toString())
-      .subscribe({
-        next: (res: any) => {
-          this.scheduledMonths = res.data;
+    // this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear().toString())
+    //   .subscribe({
+    //     next: (res: any) => {
+          // this.scheduledMonths = res.data;
           if (this.scheduledMonths.length === 0) {
             this.scheduledMonths.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear().toString() });
             this.getSchedule(this.scheduledMonths[0].year, this.scheduledMonths[0].name);
@@ -208,8 +208,8 @@ export class SetupCalendarComponent implements OnInit {
               this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
             }
           }
-        }
-      });
+      //   }
+      // });
   }
 
   getSchedule(year = moment(this.minDate).format("YYYY"), month = moment(this.minDate).format("MMMM")) {
@@ -572,73 +572,73 @@ export class SetupCalendarComponent implements OnInit {
     this.daysOffSelected = [];
   }
 
-  saveDaysOff() {
-    if(!this.daysOffSelected.length) {
-      this.toastr.warning("Please select atleast 1 date for day off.","Select dates!");
-      return;
-    }
+  // saveDaysOff() {
+  //   if(!this.daysOffSelected.length) {
+  //     this.toastr.warning("Please select atleast 1 date for day off.","Select dates!");
+  //     return;
+  //   }
 
-    this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
-      if (res) {
-        // let finalDaysOff = _.map(_.uniq([...this.fd.value].concat(this.daysOffSelected)), (val: any)=> {
-        //   return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
-        // });
-        let finalDaysOff = [...new Set([...this.fd.value].concat(this.daysOffSelected))].map((val: any)=> {
-          return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
-        });
+  //   this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
+  //     if (res) {
+  //       // let finalDaysOff = _.map(_.uniq([...this.fd.value].concat(this.daysOffSelected)), (val: any)=> {
+  //       //   return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
+  //       // });
+  //       let finalDaysOff = [...new Set([...this.fd.value].concat(this.daysOffSelected))].map((val: any)=> {
+  //         return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
+  //       });
 
-        if (this.selectedMonthSchedule.added) {
-          let body = {
-            userUuid: this.userId,
-            daysOff: finalDaysOff,
-            month: this.selectedMonth.name,
-            year: this.selectedMonth.year
-          }
-          this.appointmentService.updateDaysOff(body).subscribe({
-            next: (res: any) => {
-              if (res.status) {
-                this.daysOffSelected.forEach(doff => {
-                  this.fd.push(new FormControl(doff, Validators.required));
-                });
-                this.daysOffSelected = [];
-                this.updateSlot();
-              }
-            },
-          });
-        } else {
-          if (moment(this.minDate).isAfter(this.maxDate)) {
-            this.toastr.warning("Cann't add daysOff's for the past dates!","Can't add daysOff's");
-            return;
-          }
-          let body = { ...this.addSlotsForm.value };
-          delete body['timings'];
-          delete body['daysOff'];
-          body.startDate = moment(this.minDate, 'YYYY-MM-DD').toISOString();
-          body.endDate = moment(this.maxDate, 'YYYY-MM-DD').toISOString();
-          this.appointmentService.updateOrCreateAppointment(body).subscribe({
-            next: (res: any) => {
-              if (res.status) {
-                let body2 = {
-                  userUuid: this.userId,
-                  daysOff: finalDaysOff,
-                  month: this.selectedMonth.name,
-                  year: this.selectedMonth.year
-                }
-                this.appointmentService.updateDaysOff(body2).subscribe({
-                  next: (res: any) => {
-                    if (res.status) {
-                      this.daysOffSelected = [];
-                      this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
-                    }
-                  },
-                });
-              }
-            },
-          });
-        }
-      }
-    });
-  }
+  //       if (this.selectedMonthSchedule.added) {
+  //         let body = {
+  //           userUuid: this.userId,
+  //           daysOff: finalDaysOff,
+  //           month: this.selectedMonth.name,
+  //           year: this.selectedMonth.year
+  //         }
+  //         this.appointmentService.updateDaysOff(body).subscribe({
+  //           next: (res: any) => {
+  //             if (res.status) {
+  //               this.daysOffSelected.forEach(doff => {
+  //                 this.fd.push(new FormControl(doff, Validators.required));
+  //               });
+  //               this.daysOffSelected = [];
+  //               this.updateSlot();
+  //             }
+  //           },
+  //         });
+  //       } else {
+  //         if (moment(this.minDate).isAfter(this.maxDate)) {
+  //           this.toastr.warning("Cann't add daysOff's for the past dates!","Can't add daysOff's");
+  //           return;
+  //         }
+  //         let body = { ...this.addSlotsForm.value };
+  //         delete body['timings'];
+  //         delete body['daysOff'];
+  //         body.startDate = moment(this.minDate, 'YYYY-MM-DD').toISOString();
+  //         body.endDate = moment(this.maxDate, 'YYYY-MM-DD').toISOString();
+  //         this.appointmentService.updateOrCreateAppointment(body).subscribe({
+  //           next: (res: any) => {
+  //             if (res.status) {
+  //               let body2 = {
+  //                 userUuid: this.userId,
+  //                 daysOff: finalDaysOff,
+  //                 month: this.selectedMonth.name,
+  //                 year: this.selectedMonth.year
+  //               }
+  //               this.appointmentService.updateDaysOff(body2).subscribe({
+  //                 next: (res: any) => {
+  //                   if (res.status) {
+  //                     this.daysOffSelected = [];
+  //                     this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
+  //                   }
+  //                 },
+  //               });
+  //             }
+  //           },
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
 
   removeDaysOff(index: number) {
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to remove this day off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {

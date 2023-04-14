@@ -10,6 +10,10 @@ import { AppointmentService } from 'src/app/services/appointment.service';
 })
 export class CancelAppointmentConfirmComponent implements OnInit {
 
+  selectedReason = "";
+  otherReason = "";
+  reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
+  
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
@@ -20,10 +24,18 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  get reason() {
+    let reason;
+    if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+    else reason = this.selectedReason;
+    return reason;
+  }
+
   cancel() {
     const payload = {
       id: this.data.id,
       visitUuid: this.data.visitUuid,
+      reason: this.reason,
       hwUUID: this.userId,
     };
     this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {

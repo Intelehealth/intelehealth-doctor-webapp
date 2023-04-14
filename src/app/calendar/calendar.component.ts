@@ -29,6 +29,9 @@ export class CalendarComponent implements OnInit {
   fetchedMonths: string[] = [];
   daysOff: any[] = [];
   monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  selectedReason = "";
+  otherReason = "";
+  reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
   constructor(
     private pageTitleService: PageTitleService,
     private appointmentService: AppointmentService,
@@ -44,7 +47,7 @@ export class CalendarComponent implements OnInit {
     this.provider = JSON.parse(localStorage.getItem('provider'));
     this.fetchedYears.push(new Date().getFullYear());
     this.fetchedMonths.push(`${moment(new Date()).format("MMMM")} ${moment(new Date()).format("YYYY")}`);
-    this.getFollowUpVisit();
+    // this.getFollowUpVisit();
     this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'));
     this.getSchedule();
   }
@@ -107,65 +110,65 @@ export class CalendarComponent implements OnInit {
       });
   }
 
-  getFollowUpVisit() {
-    this.appointmentService.getFollowUpVisit(this.providerId).subscribe({
-      next: (res: any) => {
-        if(res) {
-          let followUpVisits = res;
-          followUpVisits.forEach((folloUp: any) => {
-            this.visitService.fetchVisitDetails(folloUp.visit_id).subscribe((visit)=> {
-              let followUpDate = (folloUp.followup_text.includes('Time:')) ? moment(folloUp.followup_text.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(folloUp.followup_text.split(', Remark: ')[0]).format('YYYY-MM-DD');
-              let followUpTime = (folloUp.followup_text.includes('Time:')) ? folloUp.followup_text.split(', Time: ')[1].split(', Remark: ')[0] : null;
-              let start = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').toDate() : setHours(setMinutes(new Date(followUpDate), 0), 9);
-              let end = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').add(30, 'minutes').toDate() : setHours(setMinutes(new Date(followUpDate), 30), 9);
-              if (moment(start).isValid() && moment(end).isValid()) {
-                let hw = this.getHW(visit.encounters);
-                this.events.push({
-                  id: visit.uuid,
-                  title: 'Follow-up visit',
-                  start,
-                  end,
-                  meta: {
-                    createdAt: this.getCreatedAtTime(visit.encounters),
-                    // createdBy: "612322d6-8b80-4027-af3a-c2805bd32007",
-                    drName: this.provider?.person.display,
-                    hwAge: hw.hwAge,
-                    hwGender: hw.hwGender,
-                    hwName: hw.hwName,
-                    hwPic: null,
-                    hwUUID: hw.hwProviderUuid,
-                    // id: 3,
-                    // locationUuid: "eb374eaf-430e-465e-81df-fe94c2c515be",
-                    openMrsId: visit.patient.identifiers[0].identifier,
-                    patientAge: visit.patient.person.age,
-                    patientGender: visit.patient.person.gender,
-                    patientId: visit.patient.uuid,
-                    patientName: visit.patient.person.display,
-                    patientPic: null,
-                    // reason: null,
-                    slotDate: moment(followUpDate).format('DD/MM/YYYY'),
-                    slotDay: moment(followUpDate).format('dddd'),
-                    slotDuration: 30,
-                    slotDurationUnit: "minutes",
-                    slotJsDate: moment(start).utc().format(),
-                    slotTime: (followUpTime)?followUpTime:"9:00 AM",
-                    // speciality: "General Physician",
-                    // status: "booked",
-                    type: "follow-up visit",
-                    // updatedAt: "2023-02-13T11:49:25.000Z",
-                    // updatedBy: null,
-                    userUuid: this.user.uuid,
-                    visitUuid: visit.uuid,
-                    visit_info: visit
-                  }
-                });
-              }
-            })
-          });
-        }
-      },
-    });
-  }
+  // getFollowUpVisit() {
+  //   this.appointmentService.getFollowUpVisit(this.providerId).subscribe({
+  //     next: (res: any) => {
+  //       if(res) {
+  //         let followUpVisits = res;
+  //         followUpVisits.forEach((folloUp: any) => {
+  //           this.visitService.fetchVisitDetails(folloUp.visit_id).subscribe((visit)=> {
+  //             let followUpDate = (folloUp.followup_text.includes('Time:')) ? moment(folloUp.followup_text.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(folloUp.followup_text.split(', Remark: ')[0]).format('YYYY-MM-DD');
+  //             let followUpTime = (folloUp.followup_text.includes('Time:')) ? folloUp.followup_text.split(', Time: ')[1].split(', Remark: ')[0] : null;
+  //             let start = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').toDate() : setHours(setMinutes(new Date(followUpDate), 0), 9);
+  //             let end = (followUpTime)?  moment(followUpDate + ' ' + followUpTime, 'YYYY-MM-DD hh:mm a').add(30, 'minutes').toDate() : setHours(setMinutes(new Date(followUpDate), 30), 9);
+  //             if (moment(start).isValid() && moment(end).isValid()) {
+  //               let hw = this.getHW(visit.encounters);
+  //               this.events.push({
+  //                 id: visit.uuid,
+  //                 title: 'Follow-up visit',
+  //                 start,
+  //                 end,
+  //                 meta: {
+  //                   createdAt: this.getCreatedAtTime(visit.encounters),
+  //                   // createdBy: "612322d6-8b80-4027-af3a-c2805bd32007",
+  //                   drName: this.provider?.person.display,
+  //                   hwAge: hw.hwAge,
+  //                   hwGender: hw.hwGender,
+  //                   hwName: hw.hwName,
+  //                   hwPic: null,
+  //                   hwUUID: hw.hwProviderUuid,
+  //                   // id: 3,
+  //                   // locationUuid: "eb374eaf-430e-465e-81df-fe94c2c515be",
+  //                   openMrsId: visit.patient.identifiers[0].identifier,
+  //                   patientAge: visit.patient.person.age,
+  //                   patientGender: visit.patient.person.gender,
+  //                   patientId: visit.patient.uuid,
+  //                   patientName: visit.patient.person.display,
+  //                   patientPic: null,
+  //                   // reason: null,
+  //                   slotDate: moment(followUpDate).format('DD/MM/YYYY'),
+  //                   slotDay: moment(followUpDate).format('dddd'),
+  //                   slotDuration: 30,
+  //                   slotDurationUnit: "minutes",
+  //                   slotJsDate: moment(start).utc().format(),
+  //                   slotTime: (followUpTime)?followUpTime:"9:00 AM",
+  //                   // speciality: "General Physician",
+  //                   // status: "booked",
+  //                   type: "follow-up visit",
+  //                   // updatedAt: "2023-02-13T11:49:25.000Z",
+  //                   // updatedBy: null,
+  //                   userUuid: this.user.uuid,
+  //                   visitUuid: visit.uuid,
+  //                   visit_info: visit
+  //                 }
+  //               });
+  //             }
+  //           })
+  //         });
+  //       }
+  //     },
+  //   });
+  // }
 
   getCreatedAtTime(encounters: any) {
     let encounterDateTime = '';
@@ -394,6 +397,13 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  get reason() {
+    let reason;
+    if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+    else reason = this.selectedReason;
+    return reason;
+  }
+
   reschedule(appointment: any) {
     const len = appointment.visit_info.encounters.filter((e: any) => {
       return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
@@ -410,6 +420,7 @@ export class CalendarComponent implements OnInit {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
+              appointment.reason = this.reason;
               delete appointment["visit_info"];
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;

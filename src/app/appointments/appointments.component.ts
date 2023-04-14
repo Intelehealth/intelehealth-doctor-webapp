@@ -23,6 +23,9 @@ export class AppointmentsComponent implements OnInit {
   baseUrl: string = environment.baseURL;
   isLoaded: boolean = false;
   appointments: any = [];
+  selectedReason = "";
+  otherReason = "";
+  reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -116,6 +119,13 @@ export class AppointmentsComponent implements OnInit {
     return recent;
   }
 
+  get reason() {
+    let reason;
+    if (this.selectedReason === this.reasons[2]) reason = this.otherReason;
+    else reason = this.selectedReason;
+    return reason;
+  }
+
   reschedule(appointment: any) {
     const len = appointment.visit_info.encounters.filter((e: any) => {
       return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
@@ -132,6 +142,7 @@ export class AppointmentsComponent implements OnInit {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
+              appointment.reason = this.reason;
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {

@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3 p-1">
+    <!-- <div class="col-md-3 p-1">
       <div class="chip-item chip-item-blue">
         <img class="chip-img" src="assets/svgs/video-frame.svg" alt="" />
         <div class="chip-info">
@@ -8,7 +8,7 @@
           <span>Appointments</span>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="col-md-3 p-1">
       <div class="chip-item chip-item-red">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
@@ -44,7 +44,7 @@
         <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">Hide all</span> <mat-icon>expand_less</mat-icon></button>
       </div>
       <mat-accordion class="intel-accordion-con" multi>
-        <mat-expansion-panel [expanded]="true">
+        <!-- <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div class="intel-accordion-title">
@@ -55,10 +55,10 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource1">
+            <table mat-table [dataSource]="dataSource1"> -->
 
               <!-- Name Column -->
-              <ng-container matColumnDef="name">
+              <!-- <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> Patient </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]">
 
@@ -67,34 +67,34 @@
                     <span class="font-bold ml-2">{{element.patientName}} ({{element.patientGender}})</span>
                   </div>
                 </td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Age Column -->
-              <ng-container matColumnDef="age">
+              <!-- <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.patientAge}}y </td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Starts In Column -->
-              <ng-container matColumnDef="starts_in">
+              <!-- <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> Starts in </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Location Column -->
-              <ng-container matColumnDef="location">
+              <!-- <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> Location </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.visit_info?.location.display}} </td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Cheif Complaint Column -->
-              <ng-container matColumnDef="cheif_complaint">
+              <!-- <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> Cheif Complaint </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.visit_info?.cheif_complaint}} </td>
-              </ng-container>
+              </ng-container> -->
 
               <!-- Prescription Sent Column -->
-              <ng-container matColumnDef="actions">
+              <!-- <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let element">
                   <div class="actions-btn-wrap d-flex align-items-center">
@@ -118,7 +118,7 @@
               aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
-        </mat-expansion-panel>
+        </mat-expansion-panel> -->
 
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
