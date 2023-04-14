@@ -56,6 +56,7 @@ export class SupportComponent implements OnInit, OnDestroy {
           this.getDoctorsList(this.userId);
         } else {
           this.conversations[doc].message = data.message;
+          this.conversations[doc].unread++;
           this.conversations.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
       }

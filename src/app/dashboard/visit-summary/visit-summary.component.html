@@ -59,9 +59,13 @@
                 <h6>Occupation</h6>
                 <p>{{ getPersonAttributeValue("occupation") }}</p>
               </div>
-              <div class="patient-info-item">
+              <div class="patient-info-item mb-3">
                 <h6>Address</h6>
                 <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+              </div>
+              <div class="patient-info-item">
+                <h6>National ID</h6>
+                <p>{{ getPersonAttributeValue("NationalID") }}</p>
               </div>
             </div>
             <div class="col-md-4 patient-info-section p-3">
@@ -793,7 +797,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 mb-5">
+    <div class="col-md-12 p-0 mb-5" *ngIf="selectedTabIndex == 0">
       <div class="intel-card">
         <div class="card-body">
           <p class="note-con">
@@ -811,13 +815,13 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
       <button type="button" class="blue-btn" (click)="startVisitNote()">
         Start visit note
       </button>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent">
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent && selectedTabIndex == 0">
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con" multi>
@@ -2006,7 +2010,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
       <button
         type="button"
         class="blue-btn mr-2"

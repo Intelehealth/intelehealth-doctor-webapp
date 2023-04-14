@@ -89,6 +89,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   referrals: any = [];
   pastVisits: any = [];
   minDate = new Date();
+  selectedTabIndex: number = 0;
   specializations: any[] = [
     {
       id: 1,
@@ -679,6 +680,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   onTabChange(event: number) {
     // console.log(event);
+    this.selectedTabIndex = event;
   }
 
   onImgError(event: any) {

@@ -253,6 +253,17 @@
           color: #FFFFFF;
           width: 100%;
           padding: 0px 20px;
+          display: flex;
+          align-items: center;
+
+          .dot {
+            width: 10px;
+            height: 10px;
+            background: red;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+          }
         }
       }
 

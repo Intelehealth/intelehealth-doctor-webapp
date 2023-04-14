@@ -1,5 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './chat-box.component.html',
   styleUrls: ['./chat-box.component.scss']
 })
-export class ChatBoxComponent implements OnInit {
+export class ChatBoxComponent implements OnInit, OnDestroy {
 
   message: string;
   messageList: any = [];
@@ -20,6 +21,8 @@ export class ChatBoxComponent implements OnInit {
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
+  subscription1: Subscription;
+  subscription2: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -37,7 +40,7 @@ export class ChatBoxComponent implements OnInit {
       this.getMessages();
     }
     this.socketSvc.initSocket(true);
-    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       this.socketSvc.showNotification({
         title: "New chat message",
         body: data.message,
@@ -48,7 +51,7 @@ export class ChatBoxComponent implements OnInit {
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? 1 : -1);
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
   }
@@ -122,6 +125,11 @@ export class ChatBoxComponent implements OnInit {
 
   setImage(src) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
   }
 
 }

@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { ChatService } from '../services/chat.service';
 import { SocketService } from '../services/socket.service';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss']
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent implements OnInit, OnDestroy {
 
   conversations: any;
   searchValue: string;
@@ -31,6 +32,8 @@ export class MessagesComponent implements OnInit {
   images: any = {};
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
+  subscription1: Subscription;
+  subscription2: Subscription;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -43,7 +46,7 @@ export class MessagesComponent implements OnInit {
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
-    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       this.socketSvc.showNotification({
         title: "New chat message",
         body: data.message,
@@ -54,7 +57,7 @@ export class MessagesComponent implements OnInit {
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
   }
@@ -220,6 +223,11 @@ export class MessagesComponent implements OnInit {
         this.sendMessage();
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
   }
 
 }
