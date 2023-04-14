@@ -26,24 +26,47 @@ export class PrescriptionComponent implements OnInit {
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         res.results.forEach((visit: any) => {
-          let flag = 0;
-          visit.encounters.forEach((encounter: any) => {
-            if (encounter.encounterType.display == 'Patient Exit Survey') {
-              visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+          let vcenc = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
+          let pesenc = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
+
+          if (visit.stopDateTime) {
+            if (vcenc) visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
+            if (pesenc) visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounterDatetime);
+            if (!pesenc) visit.visit_ended = this.checkIfDateOldThanOneDay(visit.stopDatetime);
+            visit.cheif_complaint = this.getCheifComplaint(visit);
+            this.completedVisits.push(visit);
+          } else {
+            if (vcenc && pesenc) {
+              visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
+              visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounterDatetime);
               visit.cheif_complaint = this.getCheifComplaint(visit);
               this.completedVisits.push(visit);
-              flag = 1;
+            } else if (vcenc && !pesenc) {
+              if (vcenc) visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
+              visit.cheif_complaint = this.getCheifComplaint(visit);
+              this.prescriptionSent.push(visit);
             }
-          });
-          if (flag == 0) {
-            visit.encounters.forEach((encounter: any) => {
-              if (encounter.encounterType.display == 'Visit Complete') {
-                visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-                visit.cheif_complaint = this.getCheifComplaint(visit);
-                this.prescriptionSent.push(visit);
-              }
-            });
           }
+
+
+          // let flag = 0;
+          // visit.encounters.forEach((encounter: any) => {
+          //   if (encounter.encounterType.display == 'Patient Exit Survey') {
+          //     visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+          //     visit.cheif_complaint = this.getCheifComplaint(visit);
+          //     this.completedVisits.push(visit);
+          //     flag = 1;
+          //   }
+          // });
+          // if (flag == 0) {
+          //   visit.encounters.forEach((encounter: any) => {
+          //     if (encounter.encounterType.display == 'Visit Complete') {
+          //       visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+          //       visit.cheif_complaint = this.getCheifComplaint(visit);
+          //       this.prescriptionSent.push(visit);
+          //     }
+          //   });
+          // }
         });
         this.loaded = true;
       }
@@ -56,7 +79,7 @@ export class PrescriptionComponent implements OnInit {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
-      return moment(data).format('DD MMM, YYYY');
+      return moment(data).format('DD MMM, YYYY hh:mm A');
     };
     if (hours < 1) {
       return `${minutes} minutes ago`;
@@ -85,6 +108,10 @@ export class PrescriptionComponent implements OnInit {
       }
     });
     return recent;
+  }
+
+  checkIfEncounterExists(encounters: any, visitType: string) {
+    return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
 }

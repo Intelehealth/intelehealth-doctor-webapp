@@ -40,6 +40,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
+  routeUrl: string = '';
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -56,6 +57,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       keyword: new FormControl('', Validators.required)
     });
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
+    this.routeUrl = this.breadcrumbs[0]?.url;
   }
 
   ngOnInit(): void {
@@ -89,10 +91,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     //   this.search();
     // });
 
-    this.router.events.pipe(
+    this.subscription = this.router.events.pipe(
       filter((event: Event) => event instanceof NavigationEnd),
       distinctUntilChanged(),
     ).subscribe(() => {
+        this.routeUrl = this.router.url;
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });

@@ -429,7 +429,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             // check if visit complete exists for this visit
             this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
             // check if visit note provider and logged in provider are same
-            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
+            this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || visit.stopDatetime;
             // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
             if (this.visitNotePresent) {

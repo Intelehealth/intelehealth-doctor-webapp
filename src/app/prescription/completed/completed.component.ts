@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CompletedComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
+  displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'visit_ended'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   @Input() completedVisits: any = [];

@@ -161,6 +161,9 @@
     </div>
     <div class="main-container">
       <router-outlet></router-outlet>
+      <div class="help-menu-container" *ngIf="routeUrl.includes('/help') && !dialogRef">
+        <button class="help-btn" type="button" (click)="openHelpMenu()">Help</button>
+      </div>
     </div>
   </div>
 </mat-drawer-container>

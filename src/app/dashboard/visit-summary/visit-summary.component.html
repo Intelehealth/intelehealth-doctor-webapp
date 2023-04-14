@@ -811,7 +811,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent">
+    <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded">
       <button type="button" class="blue-btn" (click)="startVisitNote()">
         Start visit note
       </button>
@@ -820,7 +820,7 @@
     <div class="col-md-12 p-0 mb-5" *ngIf="visitNotePresent">
       <div class="intel-card">
         <div class="card-body">
-          <mat-accordion class="intel-accordion-con">
+          <mat-accordion class="intel-accordion-con" multi>
             <mat-expansion-panel [expanded]="true" #panel1 hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -962,7 +962,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel2
               hideToggle
               class="bg-gray"
@@ -1209,7 +1209,7 @@
               </form> -->
             </mat-expansion-panel>
 
-            <mat-expansion-panel [expanded]="false" #panel3 hideToggle>
+            <mat-expansion-panel [expanded]="true" #panel3 hideToggle>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="intel-accordion-title">
@@ -1293,7 +1293,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel4
               hideToggle
               class="bg-gray overflow-show"
@@ -1542,7 +1542,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel5
               hideToggle
               class="overflow-show"
@@ -1624,7 +1624,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel6
               hideToggle
               class="bg-gray overflow-show"
@@ -1706,7 +1706,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel7
               hideToggle
               class="overflow-show"
@@ -1826,7 +1826,7 @@
             </mat-expansion-panel>
 
             <mat-expansion-panel
-              [expanded]="false"
+              [expanded]="true"
               #panel8
               hideToggle
               class="bg-gray"
@@ -2006,14 +2006,12 @@
       </div>
     </div>
 
-    <div
-      class="col-md-12 p-0 py-2 mb-5 text-center"
-      *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
-    >
+    <div class="col-md-12 p-0 py-2 mb-5 text-center">
       <button
         type="button"
         class="blue-btn mr-2"
         (click)="sharePrescription()"
+        *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
       >
         {{ visitCompleted ? 'Update': 'Share' }} prescription
       </button>
@@ -2021,7 +2019,7 @@
         type="button"
         class="blue-btn"
         (click)="openVisitPrescriptionModal(visit?.uuid)"
-        *ngIf="visitCompleted"
+        *ngIf="visitNotePresent && visitCompleted"
         >
         View prescription
       </button>

@@ -58,7 +58,18 @@
                 <td mat-cell *matCellDef="let element">
                   <div class="green-pill">
                     <img src="assets/svgs/green-pad.svg" alt="">
-                    <span class="ml-2">{{element.prescription_sent}}</span>
+                    <span class="ml-2">{{element?.prescription_sent}}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Prescription Sent Column -->
+              <ng-container matColumnDef="visit_ended">
+                <th mat-header-cell *matHeaderCellDef> Visit Ended </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="green-pill">
+                    <img src="assets/svgs/green-pad.svg" alt="">
+                    <span class="ml-2">{{element?.visit_ended}}</span>
                   </div>
                 </td>
               </ng-container>
