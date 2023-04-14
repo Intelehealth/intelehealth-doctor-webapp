@@ -4,13 +4,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
-import { AppointmentService } from '../services/appointment.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
-import { CoreService } from '../services/core/core.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,46 +17,78 @@ import { ToastrService } from 'ngx-toastr';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   showAll: boolean = false;
-  displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
-  displayedColumns2: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
-  displayedColumns3: string[] = ['name', 'age', 'location', 'cheif_complaint', 'visit_created'];
-  displayedColumns4: string[] = ['name', 'age', 'location', 'cheif_complaint', 'prescription_started'];
+  displayedColumns1: string[] = ['name', 'age', 'visit_created', 'status', 'stage', 'alert_for_readings', 'provider'];
+  displayedColumns2: string[] = ['name', 'age', 'visit_created', 'status', 'stage', 'alert_for_readings', 'provider'];
+  displayedColumns3: string[] = ['name', 'age', 'status', 'stage', 'alert_for_readings', 'birth_outcome', 'provider', 'date_of_birth'];
 
   dataSource1 = new MatTableDataSource<any>();
   dataSource2 = new MatTableDataSource<any>();
   dataSource3 = new MatTableDataSource<any>();
-  dataSource4 = new MatTableDataSource<any>();
 
   baseUrl: string = environment.baseURL;
   normalCases: any = [];
   priorityCases: any = [];
   completedCases: any = [];
 
-  appointments: any = [];
-  priorityVisits: any = [];
-  awaitingVisits: any = [];
-  inProgressVisits: any = [];
-
   specialization: string = '';
-  priorityVisitsCount: number = 0;
-  awaitingVisitsCount: number = 0;
-  inprogressVisitsCount: number = 0;
+  hourlyStages = [
+    'Stage1_Hour1_1',
+    'Stage1_Hour1_2',
+    'Stage1_Hour2_1',
+    'Stage1_Hour2_2',
+    'Stage1_Hour3_1',
+    'Stage1_Hour3_2',
+    'Stage1_Hour4_1',
+    'Stage1_Hour4_2',
+    'Stage1_Hour5_1',
+    'Stage1_Hour5_2',
+    'Stage1_Hour6_1',
+    'Stage1_Hour6_2',
+    'Stage1_Hour7_1',
+    'Stage1_Hour7_2',
+    'Stage1_Hour8_1',
+    'Stage1_Hour8_2',
+    'Stage1_Hour9_1',
+    'Stage1_Hour9_2',
+    'Stage1_Hour10_1',
+    'Stage1_Hour10_2',
+    'Stage1_Hour11_1',
+    'Stage1_Hour11_2',
+    'Stage1_Hour12_1',
+    'Stage1_Hour12_2',
+    'Stage2_Hour1_1',
+    'Stage2_Hour1_2',
+    'Stage2_Hour1_3',
+    'Stage2_Hour1_4',
+    'Stage2_Hour2_1',
+    'Stage2_Hour2_2',
+    'Stage2_Hour2_3',
+    'Stage2_Hour2_4',
+    'Stage2_Hour3_1',
+    'Stage2_Hour3_2',
+    'Stage2_Hour3_3',
+    'Stage2_Hour3_4',
+  ];
+
+  allowedNotesToShow = [
+    'Baseline FHR',
+    'FHR Deceleration',
+    'Amniotic fluid',
+    'Moulding',
+    'Systolic BP',
+    'Diastolic BP'
+  ];
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
-  @ViewChild('appointmentPaginator') appointmentPaginator: MatPaginator;
+  @ViewChild('normalPaginator') normalPaginator: MatPaginator;
   @ViewChild('priorityPaginator') priorityPaginator: MatPaginator;
-  @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
-  @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
-
+  @ViewChild('completedPaginator') completedPaginator: MatPaginator;
 
   constructor(
     private pageTitleService: PageTitleService,
-    private appointmentService: AppointmentService,
     private visitService: VisitService,
     private socket: SocketService,
-    private router: Router,
-    private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private router: Router) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -70,26 +99,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      // this.getVisits();
+      this.getVisits();
     }
 
 
-    this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
-      this.playNotify();
-    });
+    // this.socket.initSocket(true);
+    // this.socket.onEvent("updateMessage").subscribe((data) => {
+    //   this.socket.showNotification({
+    //     title: "New chat message",
+    //     body: data.message,
+    //     timestamp: new Date(data.createdAt).getTime(),
+    //   });
+    //   this.playNotify();
+    // });
   }
 
   getVisits() {
-    this.appointments = [];
-    this.awaitingVisits = [];
-    this.inProgressVisits = [];
-    this.priorityVisits = [];
+    this.normalCases = [];
+    this.priorityCases = [];
+    this.completedCases = [];
     this.visitService.getVisits({ includeInactive: true }).subscribe(
       (response: any) => {
         let visits = response.results;
@@ -101,38 +129,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
               If no attributes, consider it as General Physician
             */
             if (visit.attributes.length) {
-              let flag = 0;
-              visit.attributes.forEach((visitAttr: any) => {
-                if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+              for (let t = 0; t < visit.attributes.length; t++) {
+                if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
                   // If specialization matches process visit
-                  if (visitAttr.value == this.specialization) {
+                  if (visit.attributes[t].value == this.specialization) {
                     this.processVisit(visit);
+                    break;
                   }
                 }
-              });
+              }
             } else if(this.specialization == 'General Physician') {
               this.processVisit(visit);
             }
           }
-        });
-
-        // Check appointments
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
-        .subscribe((res: any) => {
-          let appointmentsdata = res.data;
-          appointmentsdata.forEach(appointment => {
-            if (appointment.status == 'booked') {
-              let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-              if (matchedVisit) {
-                matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                appointment.visit_info = matchedVisit;
-                appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                this.appointments.push(appointment);
-              }
-            }
-          });
-          this.dataSource1 = new MatTableDataSource(this.appointments);
-          this.dataSource1.paginator = this.appointmentPaginator;
         });
       }
     );
@@ -143,78 +152,116 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   processVisit(visit: any) {
+    let notes = [];
+    let notesObj = {};
     const { encounters } = visit;
-    visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = this.getEncounterCreated(visit, 'ADULTINITIAL');
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    encounters.sort((a: any, b: any) => {
+      return (
+        new Date(a.encounterDatetime).getTime() -
+        new Date(b.encounterDatetime).getTime()
+      );
+    });
+    visit.score = this.setScore(encounters);
+    visit.visit_created = this.getCreatedAt(visit.startDatetime);
+    visit.stage = encounters.filter((e: any) => e.display.includes('Stage2')).length ? 2 : 1;
+    visit.notesObj = {};
+    if (Array.isArray(encounters)) {
+      for (let x = 0; x < encounters.length; x++) {
+        if (Array.isArray(encounters[x].obs)) {
+          for (let y = 0; y < encounters[x].obs.length; y++) {
+            if (encounters[x].obs[y]?.comment === "R") {
+              const key = encounters[x].obs[y].display.split(':')[0]?.trim();
+              const value = encounters[x].obs[y].display.split(':')[1]?.trim();
+              if (this.allowedNotesToShow.includes(key)) {
+                notesObj[key] = value;
+              }
+            }
+          }
 
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
-      this.inProgressVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
-      this.priorityVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
-      this.awaitingVisits.push(visit);
+          if (encounters[x].display.includes('Visit Complete')) {
+            for (let y = 0; y < encounters[x].obs.length; y++) {
+              if (encounters[x].obs[y].display.includes('Birth Outcome')) {
+                visit.birthOutcome = encounters[x].obs[y].value;
+              }
+              if (encounters[x].obs[y].display.includes('Refer to other Hospital')) {
+                visit.birthOutcome = 'RTOH';
+              }
+              if (encounters[x].obs[y].display.includes('Self discharge against Medical Advice')) {
+                visit.birthOutcome = 'DAMA';
+              }
+              visit.dateTimeOfBirth = encounters[x].encounterDatetime;
+            }
+          }
+        }
+      }
+      if (Array.isArray(notes)) {
+        for (const k in notesObj) {
+          if (Object.prototype.hasOwnProperty.call(notesObj, k)) {
+            notes.push({
+              key: k,
+              value: notesObj[k]
+            })
+          }
+        }
+        notes = notes.sort((a, b) => a?.key.localeCompare(b?.key));
+      }
+    }
+    visit.notes = notes;
+    visit.provider = encounters[0]?.encounterProviders[0]?.provider.name || 'NA';
+
+    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey') || visit.stopDatetime != null) {
+      this.completedCases.push(visit);
+    } else if (visit.score >= 22) {
+      this.priorityCases.push(visit);
+    } else {
+      this.normalCases.push(visit);
     }
 
-    this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+    this.dataSource1 = new MatTableDataSource(this.normalCases);
+    this.dataSource1.paginator = this.normalPaginator;
+    this.dataSource2 = new MatTableDataSource(this.priorityCases);
     this.dataSource2.paginator = this.priorityPaginator;
-    this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
-    this.dataSource3.paginator = this.awaitingPaginator;
-    this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
-    this.dataSource4.paginator = this.inprogressPaginator;
+    this.dataSource3 = new MatTableDataSource(this.completedCases);
+    this.dataSource3.paginator = this.completedPaginator;
   }
 
-  // getVisitCounts(specialization: string) {
-  //   const getTotal = (data, type) => {
-  //     const item = data.find(({ Status }: any) => Status === type);
-  //     return item?.Total || 0;
-  //   };
-  //   this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
-  //     if (data.length) {
-  //       this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
-  //       this.priorityVisitsCount = getTotal(data, "Priority");
-  //       this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
-  //     }
-  //   });
-  // }
+  setScore(encounters: any) {
+    let score: any = 0;
+    let stageData = {};
+    let statusData = {};
+    for (let t = 0; t < encounters.length; t++) {
+      if (Array.isArray(encounters[t].obs) && encounters[t].obs.length) {
+        const stage = encounters[t].display;
+        if (!stageData[stage]) stageData[stage] = 0;
 
-  // getAppointments() {
-  //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
-  //     if (res) {
-  //       let visits = res.results;
-  //       this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
-  //       .subscribe((res: any) => {
-  //         let appointmentsdata = res.data;
-  //         appointmentsdata.forEach(appointment => {
-  //           if (appointment.status == 'booked') {
-  //             let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-  //             if (matchedVisit) {
-  //               matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-  //             }
-  //             appointment.visit_info = matchedVisit;
-  //             appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-  //             this.appointments.push(appointment);
-  //           }
-  //         });
-  //         this.dataSource1 = new MatTableDataSource(this.appointments);
-  //         this.dataSource1.paginator = this.appointmentPaginator;
-  //       });
-  //     }
-  //   });
-  // }
-
-  checkIfDateOldThanOneDay(data: any) {
-    let hours = moment(data).diff(moment(), 'hours');
-    let minutes = moment(data).diff(moment(), 'minutes');
-    if(hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm A');
-    };
-    if (hours < 1) {
-      if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+        let score1 = stageData[stage];
+        const yellow = encounters[t].obs.filter(
+          (obs: any) => obs.comment === "Y"
+        ).length;
+        const red = encounters[t].obs.filter(
+          (obs: any) => obs.comment === "R"
+        ).length;
+        score1 += red * 2;
+        score1 += yellow * 1;
+        stageData[stage] = score1;
+      }
     }
-    return `${hours} hrs`;
+
+    for (const key in stageData) {
+      if (Object.prototype.hasOwnProperty.call(stageData, key)) {
+        const value = stageData[key];
+        this.hourlyStages.forEach(stage => {
+          if (!statusData[stage]) statusData[stage] = 0;
+          if (key.includes(stage)) {
+            statusData[stage] += value;
+          }
+        });
+      }
+    }
+
+    score = Object.values(statusData).filter(a => a).pop();
+    if (!score) score = 0;
+    return score;
   }
 
   getCreatedAt(data: any) {
@@ -229,41 +276,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return `${hours} hrs ago`;
   }
 
-  getEncounterCreated(visit: any, encounterName: string) {
-    let created_at = '';
-    const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
-      const display = encounter.display;
-      if (display.match(encounterName) !== null) {
-        created_at = this.getCreatedAt(encounter.encounterDatetime);
-      }
-    });
-    return created_at;
-  }
-
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    const encounters = visit.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
-      }
-    });
-    return recent;
-  }
-
   getSpecialization(attr: any) {
     let specialization = '';
     attr.forEach((a: any) => {
@@ -272,47 +284,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
     return specialization;
-  }
-
-  reschedule(appointment: any) {
-    const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
-    }).length;
-    const isCompleted = Boolean(len);
-    if (isCompleted) {
-      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
-    } else {
-      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
-        if (res) {
-          let newSlot = res;
-          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: any) => {
-            if (result) {
-              appointment.appointmentId = appointment.id;
-              appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
-              appointment.slotTime = newSlot.slot;
-              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
-                const message = res.message;
-                if (res.status) {
-                  this.getVisits();
-                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
-                } else {
-                  this.toastr.success(message, 'Rescheduling failed!');
-                }
-              });
-            }
-          })
-        }
-      });
-    }
-  }
-
-  cancel(appointment: any) {
-    this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
-      if (res) {
-        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
-        this.getVisits();
-      }
-    });
   }
 
   onImgError(event: any) {

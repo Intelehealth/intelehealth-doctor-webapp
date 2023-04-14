@@ -23,6 +23,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { SharedModule } from '../shared.module';
+import { PartogramComponent } from './partogram/partogram.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     ProfileComponent,
     GetStartedComponent,
     VisitSummaryComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    PartogramComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    })
+    }),
+    SharedModule
   ]
 })
 export class DashboardModule { }

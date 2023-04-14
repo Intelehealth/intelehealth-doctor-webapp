@@ -72,6 +72,14 @@
     }
   }
 
+  .next-btn:disabled {
+    border: 3px solid #2E1E91;
+    font-weight: bold;
+    color: #2E1E91;
+    background: #FFFFFF;
+    opacity: 1;
+  }
+
   .next-btn:focus {
     box-shadow: none;
   }

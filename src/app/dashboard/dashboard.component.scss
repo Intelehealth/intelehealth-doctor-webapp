@@ -95,7 +95,7 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 td.mat-cell {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 tr.mat-row, tr.mat-footer-row {
@@ -157,6 +157,16 @@ th:last-child {
   .pink-btn {
     background: #FFE8E8;
     color: #FF475D;
+  }
+}
+
+.notes-list {
+  list-style-type: none;
+  margin: 0px;
+  padding: 10px 0px;
+
+  li {
+
   }
 }
 

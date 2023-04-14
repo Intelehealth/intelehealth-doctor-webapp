@@ -1,5 +1,82 @@
-.user-profile-con {
-  background: #FFFFFF;
+// .user-profile-con {
+//   background: #FFFFFF;
+//   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
+//   border-radius: 12px;
+//   min-height: 192px;
+//   width: 100%;
+//   overflow: hidden;
+
+//   .profile-content {
+//     padding: 60px 24px 24px;
+
+//     h6 {
+//       color: #1B163A;
+//       font-size: 16px;
+//       line-height: 150%;
+//       font-weight: bold;
+//       margin-bottom: 0px;
+//     }
+
+//     p {
+//       font-size: 16px;
+//       line-height: 150%;
+//       color: #7F7B92;
+//       margin-bottom: 0px;
+//     }
+//   }
+
+//   .profile-pic-con {
+//     position: relative;
+//     min-height: 95px;
+//     background: #EFE8FF url('../../../assets/images/ecg-bg.png') no-repeat;
+//     background-size: 100% 100%;
+
+//     .profile-pic {
+//       position: absolute;
+//       bottom: 0px;
+//       left: 10px;
+//       transform: translateY(50%);
+//       border: 1px solid rgba(178, 175, 190, 0.2);
+//       border-radius: 50%;
+
+//       img {
+//         border-radius: 50%;
+//       }
+
+//       .file-input-con {
+//         position: absolute;
+//         width: 24px;
+//         height: 24px;
+//         bottom: 0px;
+//         right: 0px;
+//         border-radius: 50%;
+//         background: #EFE8FF;
+//         overflow: hidden;
+//         text-align: center;
+//         border: 1px solid rgba(178, 175, 190, 0.2);
+
+//         label {
+//           position: absolute;
+//           left: 0;
+//           right: 0;
+//           top: 0;
+//           bottom: 0;
+//           cursor: pointer;
+//         }
+
+//         input[type="file"] {
+//           width: 0px;
+//           height: 0px;
+//           opacity: 0;
+//         }
+//       }
+//     }
+//   }
+// }
+
+.user-profile-con-2 {
+  background: url('../../../assets/images/profile-bg.png');
+  background-size: 100% 100%;
   box-shadow: 0px 4px 24px rgba(31, 28, 58, 0.08);
   border-radius: 12px;
   min-height: 192px;
@@ -27,30 +104,35 @@
 
   .profile-pic-con {
     position: relative;
-    min-height: 95px;
-    background: #EFE8FF url('../../../assets/images/ecg-bg.png') no-repeat;
-    background-size: 100% 100%;
+    min-height: 192px;
+    width: 50%;
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 10px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     .profile-pic {
-      position: absolute;
-      bottom: 0px;
-      left: 10px;
-      transform: translateY(50%);
-      border: 1px solid rgba(178, 175, 190, 0.2);
-      border-radius: 50%;
+      position: relative;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      padding: 0px 20px;
 
       img {
-        border-radius: 50%;
+        border-radius: 12px;
+        width: 100%;
       }
 
       .file-input-con {
         position: absolute;
         width: 24px;
         height: 24px;
-        bottom: 0px;
-        right: 0px;
+        top: -5px;
+        right: 10px;
         border-radius: 50%;
-        background: #EFE8FF;
+        background: #FFFFFF;
         overflow: hidden;
         text-align: center;
         border: 1px solid rgba(178, 175, 190, 0.2);
@@ -62,6 +144,11 @@
           top: 0;
           bottom: 0;
           cursor: pointer;
+
+          img {
+            width: 70%;
+            border-radius: 0px;
+          }
         }
 
         input[type="file"] {
@@ -69,6 +156,65 @@
           height: 0px;
           opacity: 0;
         }
+      }
+    }
+
+    h6 {
+      color: #1B163A;
+      font-size: 16px;
+      line-height: 150%;
+      font-weight: bold;
+      margin-bottom: 0px;
+      text-align: center;
+      padding: 0px 5px;
+    }
+  }
+}
+
+.profile-items-list {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+
+  li {
+    padding: 10px;
+
+    .label {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 150%;
+      color: #7F7B92;
+      width: 40%;
+    }
+
+    .label-val {
+      font-family: 'DM Sans';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 150%;
+      color: #1B163A;
+    }
+  }
+
+  li.signature-item {
+    background: rgba(215, 212, 234, 0.4);
+    border-radius: 6px;
+
+    div {
+      min-height: 80px;
+      flex-direction: column;
+      align-items: center;
+
+      .label {
+         align-self: flex-start;
+      }
+
+      .label-val {
+        align-self: center;
+        font-size: 40px;
       }
     }
   }

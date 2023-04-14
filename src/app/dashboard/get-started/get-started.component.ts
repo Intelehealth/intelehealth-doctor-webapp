@@ -13,7 +13,6 @@ export class GetStartedComponent implements OnInit {
   doctorName : string = '';
   greetingMsg: string = 'Hi';
   pc: boolean = true;
-  sc: boolean = true;
   constructor(
     private pageTitleService: PageTitleService,
     private router: Router,
@@ -33,9 +32,8 @@ export class GetStartedComponent implements OnInit {
       this.greetingMsg = 'Good Evening';
 
 
-    if (this.route.snapshot.queryParamMap.get('pc') !=null && this.route.snapshot.queryParamMap.get('sc') != null) {
+    if (this.route.snapshot.queryParamMap.get('pc') !=null) {
       this.pc = !JSON.parse(this.route.snapshot.queryParamMap.get('pc'));
-      this.sc = !JSON.parse(this.route.snapshot.queryParamMap.get('sc'));
     } else {
       this.router.navigate(['/dashboard']);
     }

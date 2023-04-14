@@ -16,21 +16,13 @@ export class DashboardGuard implements CanActivate {
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> {
-      const user = JSON.parse(localStorage.getItem('user'));
+    state: RouterStateSnapshot): boolean {
       const provider = JSON.parse(localStorage.getItem('provider'));
-      return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
-        if (res) {
-          if (res.data.length && provider.attributes.length) {
-            return true;
-          } else {
-            this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false, sc: (res.data.length)? true : false } });
-            return true;
-          }
-        }
-      }), catchError(() => {
-        this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: false, sc: false } });
-        return of(false);
-      }));
+      if (provider.attributes.length) {
+        return true;
+      } else {
+        this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false } });
+        return true;
+      }
   }
 }

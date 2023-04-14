@@ -5,11 +5,13 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
-import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
+// import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
+import { PartogramComponent } from './partogram/partogram.component';
 
 const routes: Routes = [
   {
     path: '',
+    canActivate: [DashboardGuard],
     component: DashboardComponent
   },
   {
@@ -26,12 +28,19 @@ const routes: Routes = [
     },
     component: GetStartedComponent
   },
+  // {
+  //   path: 'visit-summary/:id',
+  //   data: {
+  //     breadcrumb: 'Visit Summary'
+  //   },
+  //   component: VisitSummaryComponent
+  // },
   {
     path: 'visit-summary/:id',
     data: {
-      breadcrumb: 'Visit Summary'
+      breadcrumb: 'Patient Partogram'
     },
-    component: VisitSummaryComponent
+    component: PartogramComponent
   },
   {
     path: 'change-password',

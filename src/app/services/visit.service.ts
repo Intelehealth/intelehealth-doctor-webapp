@@ -29,7 +29,7 @@ export class VisitService {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,startDatetime,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+        v: "custom:(uuid,startDatetime,stopDatetime,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value,comment),encounterDatetime,voided,encounterType:(display),encounterProviders:(display,provider:(uuid,attributes,name))),attributes)",
       },
       ...params,
     };
@@ -58,7 +58,7 @@ export class VisitService {
 
   fetchVisitDetails(
     uuid,
-    v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier),attributes,person:(display,gender,age)),attributes)"
+    v = "custom:(location:(display),uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,encounterDatetime,encounterType:(display),obs:(display,uuid,value,comment,concept:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes,person:(uuid,display,gender,age)))),patient:(uuid,identifiers:(identifier),attributes,person:(display,gender,age,birthdate)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;

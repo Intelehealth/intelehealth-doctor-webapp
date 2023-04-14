@@ -61,22 +61,22 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   fonts: any[] = [
     {
       id: 1,
-      name: 'Arty',
+      name: 'arty',
       text: 'arty'
     },
     {
       id: 2,
-      name: 'Asem',
+      name: 'asem',
       text: 'asem'
     },
     {
       id: 3,
-      name: 'Youthness',
+      name: 'youthness',
       text: 'youthness'
     },
     {
       id: 4,
-      name: 'Almondita',
+      name: 'almondita',
       text: 'almondita'
     }
   ];
@@ -115,10 +115,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     },
     {
       id: 3,
-      name: 'Dentist'
-    },
-    {
-      id: 4,
       name: 'Other'
     }
   ];
@@ -128,18 +124,18 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       id: 1,
       name: 'General Physician'
     },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
-      id: 3,
-      name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
-    }
+    // {
+    //   id: 2,
+    //   name: 'Dermatologist'
+    // },
+    // {
+    //   id: 3,
+    //   name: 'Gynecologist'
+    // },
+    // {
+    //   id: 4,
+    //   name: 'Pediatrician'
+    // }
   ];
 
   signaturePadOptions: Object = { // passed through to szimek/signature_pad constructor
@@ -168,6 +164,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   maxTelLegth1: number = 10;
   maxTelLegth2: number = 10;
   oldPhoneNumber: string = '';
+  editMode: boolean = false;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -191,10 +188,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
       emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
-      signatureType: new FormControl('Draw', [Validators.required]),
-      textOfSign: new FormControl(null),
-      fontOfSign: new FormControl(null),
-      signature: new FormControl(null)
+      // signatureType: new FormControl('Draw', [Validators.required]),
+      textOfSign: new FormControl(null, [Validators.required]),
+      fontOfSign: new FormControl(null, [Validators.required]),
+      signature: new FormControl(null),
+      visitState: new FormControl(null),
+      qualification: new FormControl(null, [Validators.required]),
+      specialization: new FormControl(null, [Validators.required]),
+      registrationNumber: new FormControl(null, [Validators.required]),
     });
 
     this.professionalInfoForm = new FormGroup({
@@ -238,8 +239,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // this.signaturePad is now available
-    this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
-    this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
+    // this.signaturePad.set('minWidth', 5); // set szimek/signature_pad options at runtime
+    // this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
   formControlValueChanges() {
@@ -251,36 +252,36 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
-      let tabs = ['Draw', 'Generate', 'Upload'];
-      if (val) {
-        this.signatureType = val;
-        if (val == 'Generate') {
-          this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
-        } else {
-          this.personalInfoForm.get('textOfSign').clearValidators();
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').clearValidators();
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
-        }
-        if (this.selectedSignatureTabIndex != tabs.indexOf(val)) {
-          setTimeout(() => {
-            this.selectedSignatureTabIndex = tabs.indexOf(val);
-          }, 1000);
-        }
-      } else {
-        this.personalInfoForm.get('textOfSign').clearValidators();
-        this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-        this.personalInfoForm.get('fontOfSign').clearValidators();
-        this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
-        setTimeout(() => {
-          this.personalInfoForm.patchValue({ signatureType: 'Draw' });
-        }, 1000);
-      }
-    });
+    // this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
+    //   let tabs = ['Draw', 'Generate', 'Upload'];
+    //   if (val) {
+    //     this.signatureType = val;
+    //     if (val == 'Generate') {
+    //       this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
+    //       this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+    //       this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
+    //       this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+    //     } else {
+    //       this.personalInfoForm.get('textOfSign').clearValidators();
+    //       this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+    //       this.personalInfoForm.get('fontOfSign').clearValidators();
+    //       this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+    //     }
+    //     if (this.selectedSignatureTabIndex != tabs.indexOf(val)) {
+    //       setTimeout(() => {
+    //         this.selectedSignatureTabIndex = tabs.indexOf(val);
+    //       }, 1000);
+    //     }
+    //   } else {
+    //     this.personalInfoForm.get('textOfSign').clearValidators();
+    //     this.personalInfoForm.get('textOfSign').updateValueAndValidity();
+    //     this.personalInfoForm.get('fontOfSign').clearValidators();
+    //     this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+    //     setTimeout(() => {
+    //       this.personalInfoForm.patchValue({ signatureType: 'Draw' });
+    //     }, 1000);
+    //   }
+    // });
   }
 
   getProviderAttributeTypes() {
@@ -298,9 +299,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       let personalFormValues: any = {};
       let professionalFormValues: any = {};
 
-      // personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
-      // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
-      // personalFormValues.familyName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].familyName : null,
       personalFormValues.givenName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.givenName : null,
       personalFormValues.middleName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.middleName : null,
       personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
@@ -331,10 +329,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'qualification':
-
+            personalFormValues.qualification = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'registrationNumber':
-            professionalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
+            personalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'researchExperience':
             professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -347,7 +345,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             personalFormValues.signatureType = this.signatureType;
             break;
           case 'specialization':
-            professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
+            personalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'textOfSign':
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -365,32 +363,35 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           case 'workExperienceDetails':
             professionalFormValues.workExperienceDetails = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
+          case 'visitState':
+            personalFormValues.visitState = this.getAttributeValue(attrType.uuid, attrType.display);
+            break;
           default:
             break;
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
       this.professionalInfoForm.patchValue(professionalFormValues);
-      let signature = this.personalInfoForm.value.signature;
-      switch (this.signatureType) {
-        case 'Draw':
-          this.signaturePad.clear();
-          this.signaturePad.fromDataURL(signature);
-          break;
-        case 'Generate':
+      // let signature = this.personalInfoForm.value.signature;
+      // switch (this.signatureType) {
+      //   case 'Draw':
+      //     this.signaturePad.clear();
+      //     this.signaturePad.fromDataURL(signature);
+      //     break;
+      //   case 'Generate':
 
-          break;
-        case 'Upload':
-          this.signaturePicUrl = signature;
-          fetch(signature)
-            .then(res => res.blob())
-            .then(blob => {
-              this.signatureFile = new File([blob], "inetelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
-            });
-          break;
-        default:
-          break;
-      }
+      //     break;
+      //   case 'Upload':
+      //     this.signaturePicUrl = signature;
+      //     fetch(signature)
+      //       .then(res => res.blob())
+      //       .then(blob => {
+      //         this.signatureFile = new File([blob], "inetelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
+      //       });
+      //     break;
+      //   default:
+      //     break;
+      // }
     }
   }
 
@@ -567,7 +568,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateProfile() {
     this.submitted = true;
-    if (this.professionalInfoForm.invalid) {
+    if (this.personalInfoForm.pristine) {
+      this.editMode = false;
+      return;
+    }
+    if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid) {
       return;
     }
 
@@ -592,43 +597,43 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateSignature() {
     let signature: string;
+    this.updateProviderAttributes();
+    // switch (this.signatureType) {
+    //   case 'Draw':
+    //     signature = this.signaturePad.toDataURL("image/jpeg");
+    //     this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+    //       this.personalInfoForm.patchValue({ signature });
+    //       this.updateProviderAttributes();
+    //     });
+    //     break;
 
-    switch (this.signatureType) {
-      case 'Draw':
-        signature = this.signaturePad.toDataURL("image/jpeg");
-        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
-          this.personalInfoForm.patchValue({ signature });
-          this.updateProviderAttributes();
-        });
-        break;
+    //   case 'Generate':
+    //     this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
+    //       if (res.fname) {
+    //         fetch(res.fname).then(res => res.blob()).then(blob => {
+    //           let reader = new FileReader();
+    //           reader.onload = () => {
+    //             signature = reader.result.toString();
+    //             this.personalInfoForm.patchValue({ signature });
+    //             this.updateProviderAttributes();
+    //           }
+    //           reader.readAsDataURL(blob);
+    //         });
+    //       }
+    //     });
+    //     break;
 
-      case 'Generate':
-        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
-          if (res.fname) {
-            fetch(res.fname).then(res => res.blob()).then(blob => {
-              let reader = new FileReader();
-              reader.onload = () => {
-                signature = reader.result.toString();
-                this.personalInfoForm.patchValue({ signature });
-                this.updateProviderAttributes();
-              }
-              reader.readAsDataURL(blob);
-            });
-          }
-        });
-        break;
+    //   case 'Upload':
+    //     signature = this.signaturePicUrl;
+    //     this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
+    //       this.personalInfoForm.patchValue({ signature });
+    //       this.updateProviderAttributes();
+    //     });
+    //     break;
 
-      case 'Upload':
-        signature = this.signaturePicUrl;
-        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
-          this.personalInfoForm.patchValue({ signature });
-          this.updateProviderAttributes();
-        });
-        break;
-
-      default:
-        break;
-    }
+    //   default:
+    //     break;
+    // }
   }
 
   updateProviderAttributes() {
@@ -684,18 +689,21 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         case 'workExperienceDetails':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
+        case 'visitState':
+          requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          break;
         default:
           break;
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
-        this.toastr.success("Profile has been updated successfully", "Profile Updated");
-        this.toastr.warning("Kindly re-login to see updated details", "Re-login");
-        this.cookieService.delete('app.sid', '/');
-        this.authService.logOut();
-      } else {
+      // if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
+      //   this.toastr.success("Profile has been updated successfully", "Profile Updated");
+      //   this.toastr.warning("Kindly re-login to see updated details", "Re-login");
+      //   this.cookieService.delete('app.sid', '/');
+      //   this.authService.logOut();
+      // } else {
         this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
@@ -704,15 +712,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));
             this.toastr.success("Profile has been updated successfully", "Profile Updated");
-            let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-            if (role) {
-              this.router.navigate(['/admin']);
-            } else {
-              this.router.navigate(['/dashboard']);
-            }
+            this.editMode = false;
+            this.personalInfoForm.markAsPristine();
+            // let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+            // if (role) {
+            //   this.router.navigate(['/admin']);
+            // } else {
+            //   this.router.navigate(['/dashboard']);
+            // }
           }
         });
-      }
+      // }
     });
   }
 
@@ -728,7 +738,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getAttributeValueFromForm(key: string) {
-    const formValue = { ...this.personalInfoForm.value, ...this.professionalInfoForm.value };
+    // const formValue = { ...this.personalInfoForm.value, ...this.professionalInfoForm.value };
+    const formValue = { ...this.personalInfoForm.value};
     return formValue[key];
   }
 
