@@ -306,21 +306,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             username: "ihuser",
             credential: "keepitsecrect",
           },
-          {
-            urls: ["turn:testing.intelehealth.org:3478"],
-            username: "ihuser",
-            credential: "keepitsecrect",
-          },
-          {
-            "username": "dc2d2894d5a9023620c467b0e71cfa6a35457e6679785ed6ae9856fe5bdfa269",
-            "credential": "tE2DajzSJwnsSbc123",
-            "urls": "turn:global.turn.twilio.com:3478?transport=udp"
-          },
-          {
-            "username": "dc2d2894d5a9023620c467b0e71cfa6a35457e6679785ed6ae9856fe5bdfa269",
-            "credential": "tE2DajzSJwnsSbc123",
-            "urls": "turn:global.turn.twilio.com:3478?transport=tcp"
-          },
           { urls: ["stun:stun.l.google.com:19302"] },
           { urls: ["stun:stun1.l.google.com:19302"] },
         ],
