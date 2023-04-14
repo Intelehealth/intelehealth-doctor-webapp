@@ -437,7 +437,7 @@ export class HomepageComponent implements OnInit {
       recent = complaint.value_reference.split(',').filter(val => val)
     }
 
-    return recent?.length ? recent : ["Missing attribute"];
+    return recent?.length ? recent : ["-"];
   }
 
   get userId() {
