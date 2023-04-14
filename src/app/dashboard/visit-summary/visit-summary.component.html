@@ -25,7 +25,7 @@
       <div class="intel-card">
         <div class="card-body">
           <div class="row patient-info-wrapper" *ngIf="patient">
-            <div class="col-md-4 patient-info-section p-3">
+            <div class="col-md-3 patient-info-section p-3">
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
@@ -54,7 +54,7 @@
                 </p>
               </div>
             </div>
-            <div class="col-md-4 patient-info-section p-3">
+            <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3">
                 <h6>Occupation</h6>
                 <p>{{ getPersonAttributeValue("occupation") }}</p>
@@ -63,12 +63,14 @@
                 <h6>Address</h6>
                 <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
               </div>
+            </div>
+            <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item">
                 <h6>National ID</h6>
                 <p>{{ getPersonAttributeValue("NationalID") }}</p>
               </div>
             </div>
-            <div class="col-md-4 patient-info-section p-3">
+            <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item">
                 <h6>Contact no.</h6>
                 <p  *ngIf="getPersonAttributeValue('Telephone Number') === 'NA'">
