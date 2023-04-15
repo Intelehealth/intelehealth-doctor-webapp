@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
+import { Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-prescription-download',
@@ -36,7 +37,8 @@ export class PrescriptionDownloadComponent implements OnInit {
     private linkSvc: LinkService,
     private toastr: ToastrService,
     private visitService: VisitService,
-    private cs: CoreService
+    private cs: CoreService,
+    private meta: Meta
   ) { }
 
   ngOnInit(): void {
@@ -179,7 +181,9 @@ export class PrescriptionDownloadComponent implements OnInit {
 
   download() {
     this.opt.filename = `e-prescription-${Date.now()}.pdf`;
-    html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
+    this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
+    setTimeout(async () => {
+      await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
       .then(function (pdf) {
         pdf.deletePage(1);
         var totalPages = pdf.internal.getNumberOfPages();
@@ -190,5 +194,10 @@ export class PrescriptionDownloadComponent implements OnInit {
           pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
         }
       }).save();
+      setTimeout(() => {
+        this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=1' });
+      }, 100);
+    }, 3000);
+
   }
 }
