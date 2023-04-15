@@ -469,7 +469,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getVisitProvider(encounters: any) {
     encounters.forEach((encounter: any) => {
       if (encounter.display.match("ADULTINITIAL") !== null) {
-        this.providerName = encounter.encounterProviders[0].display;
+        this.providerName = encounter.encounterProviders[0].provider.person.display;
         // store visit provider in localStorage
         localStorage.setItem('patientVisitProvider', JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
