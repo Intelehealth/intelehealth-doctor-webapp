@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
 import * as html2pdf from 'html2pdf.js';
 import { ToastrService } from 'ngx-toastr';
@@ -14,7 +14,7 @@ import { Meta } from '@angular/platform-browser';
   styleUrls: ['./prescription-download.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class PrescriptionDownloadComponent implements OnInit {
+export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   @ViewChild('prescription') prescription: ElementRef;
   opt = {
     margin: 1,
@@ -56,6 +56,7 @@ export class PrescriptionDownloadComponent implements OnInit {
     } else {
       // this.verifyToken();
       this.prescriptionVerified = true;
+      this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
     }
   }
 
@@ -105,6 +106,7 @@ export class PrescriptionDownloadComponent implements OnInit {
             this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
               if(res) {
                 this.prescriptionVerified = true;
+                this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
               }
             });
           }
@@ -179,11 +181,9 @@ export class PrescriptionDownloadComponent implements OnInit {
   //   this.getVisit(this.visitId, true);
   // }
 
-  download() {
+  async download() {
     this.opt.filename = `e-prescription-${Date.now()}.pdf`;
-    this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
-    setTimeout(async () => {
-      await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
+    await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
       .then(function (pdf) {
         pdf.deletePage(1);
         var totalPages = pdf.internal.getNumberOfPages();
@@ -194,10 +194,9 @@ export class PrescriptionDownloadComponent implements OnInit {
           pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
         }
       }).save();
-      setTimeout(() => {
-        this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=1' });
-      }, 100);
-    }, 3000);
+  }
 
+  ngOnDestroy(): void {
+    this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=1' });
   }
 }
