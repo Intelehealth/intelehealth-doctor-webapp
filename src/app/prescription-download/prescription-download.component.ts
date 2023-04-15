@@ -56,7 +56,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     } else {
       // this.verifyToken();
       this.prescriptionVerified = true;
-      this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
+      this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
     }
   }
 
@@ -106,7 +106,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
             this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
               if(res) {
                 this.prescriptionVerified = true;
-                this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=0.1' });
+                this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
               }
             });
           }
