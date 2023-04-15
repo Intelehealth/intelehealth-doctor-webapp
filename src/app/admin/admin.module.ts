@@ -29,12 +29,12 @@ const routes: Routes = [
       {
         path: '',
         component: AyuComponent
+      },
+      {
+        path: 'support',
+        component: SupportComponent
       }
     ]
-  },
-  {
-    path: 'support',
-    component: SupportComponent
   }
 ];
 

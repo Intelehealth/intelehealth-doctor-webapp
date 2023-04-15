@@ -1,5 +1,5 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
@@ -44,12 +44,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   dialogRef: MatDialogRef<HelpMenuComponent>;
   routeUrl: string = '';
   adminUnread: number = 0;
-  interval: any;
 
   constructor(
     private cdref: ChangeDetectorRef,
     private authService: AuthService,
-    private dialog: MatDialog,
     private pageTitleService: PageTitleService,
     private breakpointObserver: BreakpointObserver,
     private coreService: CoreService,
@@ -57,7 +55,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private socketSvc: SocketService) {
+    private socketService: SocketService
+  ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
     });
@@ -105,16 +104,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
 
-    this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("adminUnreadCount").subscribe((data) => {
-      this.adminUnread = data;
+    this.subscription1 = this.socketService.adminUnread.subscribe(res => {
+      this.adminUnread = res;
     });
-    setTimeout(() => {
-      this.socketSvc.emitEvent('getAdminUnreadCount', null);
-    }, 1500);
-    this.interval = setInterval(() => {
-      this.socketSvc.emitEvent('getAdminUnreadCount', null);
-    }, 60000)
   }
 
   ngAfterContentChecked(): void {
@@ -241,9 +233,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
   }
 
   get user() {
