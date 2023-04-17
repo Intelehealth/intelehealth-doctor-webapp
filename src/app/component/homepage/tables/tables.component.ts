@@ -25,7 +25,7 @@ export class TablesComponent implements OnInit {
     "gender",
     "age",
     "location",
-    "status",
+    // "status",
     "provider",
     "lastSeen",
   ];
@@ -55,6 +55,10 @@ export class TablesComponent implements OnInit {
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    if (this.tableFor === "completedVisit") {
+      this.displayColumns.splice(6,0,"healthWorker");
+      this.displayColumns.splice(7,0,"diagnosis");
+    }
     this.helper.refreshTable.subscribe(() => {
       this.refresh();
     });

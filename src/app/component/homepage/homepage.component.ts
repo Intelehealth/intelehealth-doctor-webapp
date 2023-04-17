@@ -46,7 +46,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private socket: SocketService,
     private helper: HelperService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (getFromStorage("visitNoteProvider")) {
@@ -60,7 +60,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
@@ -68,12 +68,12 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
         userDetails["roles"].forEach((role) => {
           if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
-              role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
+            role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a") {
             this.systemAccess = true;
           }
         });
         this.getVisits();
-      //  this.getVisitCounts(this.specialization);
+        //  this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -113,7 +113,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  getVisits(query: any = {}, cb = () => {}) {
+  getVisits(query: any = {}, cb = () => { }) {
     this.service.getVisits(query).subscribe(
       (response) => {
         response.results.forEach((item) => {
@@ -121,9 +121,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
         this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if(this.systemAccess) {
+            if (this.systemAccess) {
               this.visitCategory(active);
-            }else if (active.attributes.length) {
+            } else if (active.attributes.length) {
               const attributes = active.attributes;
               const speRequired = attributes.filter(
                 (attr) =>
@@ -202,7 +202,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.checkVisit(encounters, "Patient Exit Survey"))
     ) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.completedVisit.push(values);
+      this.service.completedVisit.push(this.setValues(values, active));
     } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
       const values = this.assignValueToProperty(active, encounter);
       this.service.progressVisit.push(values);
@@ -240,7 +240,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   loadNextSlot() {
     if (!this.isLoadingNextSlot && !this.allVisitsLoaded) {
       this.isLoadingNextSlot = true;
-      this.tableChange({ loadMore: true, refresh: () => {} });
+      this.tableChange({ loadMore: true, refresh: () => { } });
     }
   }
   getPhoneNumber(attributes) {
@@ -263,6 +263,27 @@ export class HomepageComponent implements OnInit, OnDestroy {
       encounter.encounterProviders[0].provider.display.split("- ")[1];
     this.value.lastSeen = encounter.encounterDatetime;
     return this.value;
+  }
+
+  setValues(value, visitDetail) {
+    let values = value;
+    visitDetail.encounters.forEach(encounter => {
+      if (encounter.display.match('ADULTINITIAL') !== null) {
+        values.healthWorker = encounter.encounterProviders[0].provider.display.split("- ")[1];
+      }
+
+      if (encounter.display.match('Visit Note') !== null) {
+        let diagnosis = [];
+        encounter.obs.forEach(res => {
+          if (res.display.match('TELEMEDICINE DIAGNOSIS') !== null) {
+            diagnosis.push(res.value);
+          }
+        });
+        values.diagnosis = diagnosis.length > 0  ?  diagnosis : "Not Provided";
+      }
+      return values;
+    });
+    return values;
   }
 
   playNotify() {
