@@ -21,7 +21,10 @@ export class EditDetailsComponent implements OnInit {
   "Neonatologist",
   "Family doctor",
   "Neurologist",
-  "Infectionist"
+  "Infectionist",
+  "Psychiatrist",
+  "Endocrinologist",
+  "Gastroenterologist"
   ];
   hospitalTypes = [
     "Secondary",

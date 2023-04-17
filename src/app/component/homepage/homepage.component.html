@@ -11,7 +11,7 @@
         </mat-tab>
         <mat-tab id="queued-table">
             <ng-template mat-tab-label>
-                <p style="color: #F6B825;"class="name">{{'AWAITING CONSULT'|translate}} <br> <b class="name">({{activePatient}})</b></p>
+                <p style="color: #F6B825;"class="name">{{'AWAITING CONSULTATION'|translate}} <br> <b class="name">({{activePatient}})</b></p>
             </ng-template><br>  
             <ng-container *ngIf="waitingVisit.length > 0;else no_data">
                 <app-tables [data]="waitingVisit"></app-tables>
