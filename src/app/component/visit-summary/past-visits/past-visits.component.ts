@@ -53,4 +53,10 @@ export class PastVisitsComponent implements OnInit {
       });
     });
   }
+
+  get sortByLastModifiedAsend() {
+    return this.recent.sort((a: any, b: any) => {
+      return <any>new Date(a.details.startDatetime ) - <any>new Date(b.details.startDatetime );
+    });
+  }
 }
