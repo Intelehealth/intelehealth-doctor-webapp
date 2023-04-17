@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
+import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
 
 @Component({
@@ -23,6 +26,7 @@ export class PartogramComponent implements OnInit {
   birthOutcome: string;
   birthtime: string;
   visitCompleted: boolean = false;
+  assessments: any[] = [];
   parameters: any[] = [
     {
       name: 'Companion',
@@ -199,12 +203,19 @@ export class PartogramComponent implements OnInit {
   initialsStage2: string[] = Array(3).fill(null);
   encuuid1: string[] = Array(12).fill(null);
   encuuid2: string[] = Array(3).fill(null);
+  displayedColumns: string[] = ['timeAndStage', 'medicine', 'assessment', 'plan'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
+  conceptPlan = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  conceptAssessment = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
+  conceptMedicine = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private visitService: VisitService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private encounterService: EncounterService
   ) { }
 
   ngOnInit(): void {
@@ -320,7 +331,7 @@ export class PartogramComponent implements OnInit {
                   valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
                 }
               }
-              this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment } : encs[x].obs[y].value;
+              this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
             }
           }
         }
@@ -330,6 +341,37 @@ export class PartogramComponent implements OnInit {
     // console.log(this.timeStage1, this.timeStage2);
     // console.log(this.initialsStage1, this.initialsStage2);
 
+    this.getAssessments();
+  }
+
+  getAssessments() {
+    this.assessments = [];
+    for (let d = 0; d < 12; d++) {
+      if (this.parameters[20].stage1values[d]||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
+        this.assessments.push({
+          time: this.timeStage1[d],
+          stage: 1,
+          medicine: this.parameters[20].stage1values[d]?.value,
+          assessment: this.parameters[22].stage1values[d]?.value,
+          plan: this.parameters[23].stage1values[d]?.value
+        });
+      }
+    }
+
+    for (let d = 0; d < 3; d++) {
+      if (this.parameters[20].stage2values[d]||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
+        this.assessments.push({
+          time: this.timeStage2[d],
+          stage: 2,
+          medicine: this.parameters[20].stage2values[d]?.value,
+          assessment: this.parameters[22].stage2values[d]?.value,
+          plan: this.parameters[23].stage2values[d]?.value
+        });
+      }
+    }
+
+    this.dataSource = new MatTableDataSource(this.assessments);
+    this.dataSource.paginator = this.assessmentPaginator;
   }
 
   mouseDownHandler(e: any) {
@@ -380,10 +422,82 @@ export class PartogramComponent implements OnInit {
     return initials.toUpperCase();
   }
 
-  addAssessmentAndPlan() {
+  addAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal(null).subscribe(res => {
       if (res) {
+        console.log(res);
+        if (res.assessment) {
+          this.encounterService.postObs({
+            concept: this.conceptAssessment,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: res.assessment,
+            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+          }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[22].stage1values[index] = { value: res.assessment, uuid: result.uuid } : this.parameters[22].stage2values[index] = { value: res.assessment, uuid: result.uuid };
+          });
+        }
 
+        if (res.plan) {
+          this.encounterService.postObs({
+            concept: this.conceptPlan,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: res.plan,
+            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+          }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[23].stage1values[index] = { value: res.plan, uuid: result.uuid } : this.parameters[23].stage2values[index] = { value: res.plan, uuid: result.uuid };
+          });
+        }
+
+        if (res.medicine) {
+          this.encounterService.postObs({
+            concept: this.conceptMedicine,
+            person: this.visit.patient.uuid,
+            obsDatetime: new Date(),
+            value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`,
+            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+          }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[20].stage1values[index] = { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`, uuid: result.uuid } : this.parameters[20].stage2values[index] = { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`, uuid: result.uuid };
+          });
+        }
+
+        setTimeout(() => {
+          this.getAssessments();
+        }, 5000);
+      }
+    });
+  }
+
+  editAssessmentAndPlan(stage: number, index: number) {
+    this.coreService.openAddAssessmentAndPlanModal({
+      assessment: (stage == 1) ? this.parameters[22].stage1values[index].value : this.parameters[22].stage2values[index].value,
+      plan: (stage == 1) ? this.parameters[23].stage1values[index].value : this.parameters[23].stage2values[index].value,
+      medicine: (stage == 1) ? this.parameters[20].stage1values[index].value : this.parameters[20].stage2values[index].value
+    }).subscribe(res => {
+      if (res) {
+        console.log(res);
+        if (res.assessment) {
+          this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment: this.parameters[22].stage2values[index].value = res.assessment;
+          });
+        }
+
+        if (res.plan) {
+          this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan: this.parameters[23].stage2values[index].value = res.plan;
+          });
+        }
+
+        if (res.medicine) {
+          this.encounterService.updateObs((stage == 1) ? this.parameters[20].stage1values[index].uuid : this.parameters[20].stage2values[index].uuid, { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}` }).subscribe((result: any) => {
+            (stage == 1) ? this.parameters[20].stage1values[index].value = (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`: this.parameters[20].stage2values[index].value = (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`;
+          });
+        }
+
+        setTimeout(() => {
+          this.getAssessments();
+        }, 5000);
       }
     });
   }
@@ -394,6 +508,18 @@ export class PartogramComponent implements OnInit {
 
   startChat() {
 
+  }
+
+  checkIfFutureEncounterExists(futureStartIndex) {
+    let flag = false;
+    let t = this.timeStage1.concat(this.timeStage2);
+    for (let x = futureStartIndex; x < t.length; x++) {
+      if (t[x] != null) {
+        flag = true;
+        break;
+      }
+    }
+    return flag;
   }
 
 }

@@ -46,6 +46,11 @@ export class EncounterService {
     return this.http.post(url, json);
   }
 
+  updateObs(obsuuid: string, payload: any): Observable<any> {
+    const url = `${this.baseURL}/obs/${obsuuid}`;
+    return this.http.post(url, payload);
+  }
+
   signRequest(uuid): Observable<any> {
     const url = `${this.baseURL}/provider/${uuid}/attribute`;
     return this.http.get(url);

@@ -86,19 +86,7 @@ export class AuthService {
   login(credBase64: string) {
     this.base64Cred = credBase64;
     localStorage.setItem('xsddsdass', credBase64);
-    // console.log(this.cookieService.getAll());
-    // this.cookieService.delete('JSESSIONID');
-    // this.cookieService.delete('JSESSIONID', '/');
-    // this.cookieService.delete('JSESSIONID', '/openmrs');
-    // this.cookieService.delete('JSESSIONID', '/', this.base);
-    // this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
     this.cookieService.deleteAll();
-    // this.cookieService.deleteAll('/');
-    // this.cookieService.deleteAll('/openmrs');
-    // this.cookieService.deleteAll('/', this.base);
-    // this.cookieService.deleteAll('/openmrs', this.base);
-    // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
     return this.http.delete(`${this.baseUrl}/session`).pipe(
       catchError((err) => throwError(err)),
@@ -140,19 +128,7 @@ export class AuthService {
       localStorage.removeItem('provider');
       localStorage.removeItem('doctorName');
       localStorage.removeItem('xsddsdass');
-      // console.log(this.cookieService.getAll());
-      // this.cookieService.delete('JSESSIONID');
-      // this.cookieService.delete('JSESSIONID', '/');
-      // this.cookieService.delete('JSESSIONID', '/openmrs');
-      // this.cookieService.delete('JSESSIONID', '/', this.base);
-      // this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
       this.cookieService.deleteAll();
-      // this.cookieService.deleteAll('/');
-      // this.cookieService.deleteAll('/openmrs');
-      // this.cookieService.deleteAll('/', this.base);
-      // this.cookieService.deleteAll('/openmrs', this.base);
-      // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       this.currentUserSubject.next(null);
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();

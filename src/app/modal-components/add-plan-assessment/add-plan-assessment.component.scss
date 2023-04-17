@@ -60,3 +60,46 @@
   color: #FFFFFF;
   font-weight: bold;
 }
+
+.form-group {
+  label {
+    font-size: 14px;
+    color: #1B163A;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .error-msg {
+    color: red;
+  }
+}
+
+.form-control {
+  padding: 14px 16px;
+  background: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  color: #1B163A;
+}
+
+textarea.form-control {
+  height: fit-content;
+  padding: 0px;
+  background: transparent;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.pretty .state label {
+  font-weight: normal !important;
+}
+
+.pretty.p-image .state img {
+  transform: none;
+}

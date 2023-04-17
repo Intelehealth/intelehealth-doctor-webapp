@@ -29,7 +29,8 @@
 
   .chip-info span {
     font-size: 16px;
-    color: #7F7B92;
+    color: #2E1E91;
+    font-weight: bold;
   }
 }
 
@@ -43,6 +44,10 @@
 
 .chip-item-red {
   background: #FFE8E8;
+
+  .chip-info span {
+    color: #ED1A56;
+  }
 }
 
 .chip-item-outline {

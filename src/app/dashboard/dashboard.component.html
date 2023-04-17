@@ -1,20 +1,20 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-4 p-1">
-      <div class="chip-item chip-item-blue">
-        <img class="chip-img" src="assets/svgs/prescription-square.svg" alt="" />
-        <div class="chip-info">
-          <h6>{{normalCases.length ? normalCases.length : 0}}</h6>
-          <span>Normal cases</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 p-1">
       <div class="chip-item chip-item-red">
         <img class="chip-img" src="assets/svgs/priority-square.svg" alt="" />
         <div class="chip-info">
           <h6>{{priorityCases.length ? priorityCases.length : 0}}</h6>
           <span>Priority cases</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 p-1">
+      <div class="chip-item chip-item-blue">
+        <img class="chip-img" src="assets/svgs/prescription-square.svg" alt="" />
+        <div class="chip-info">
+          <h6>{{normalCases.length ? normalCases.length : 0}}</h6>
+          <span>Normal cases</span>
         </div>
       </div>
     </div>
@@ -35,86 +35,6 @@
         <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">Hide all</span> <mat-icon>expand_less</mat-icon></button>
       </div>
       <mat-accordion class="intel-accordion-con" multi>
-        <mat-expansion-panel [expanded]="false">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <div class="intel-accordion-title">
-                <img src="assets/svgs/prescription-square.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">Normal cases ({{normalCases.length ? normalCases.length : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress normal cases" matTooltipPosition="right">help_outline</mat-icon>
-              </div>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource1">
-
-              <!-- Name Column -->
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Patient Name & ID </th>
-                <td mat-cell *matCellDef="let element">
-
-                  <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <div class="d-flex flex-column ml-2">
-                      <span class="font-bold">{{element.patient.person.display}}</span>
-                      <span>{{element.patient.identifiers[0]?.identifier}}</span>
-                    </div>
-                  </div>
-                </td>
-              </ng-container>
-
-              <!-- Age Column -->
-              <ng-container matColumnDef="age">
-                <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
-              </ng-container>
-
-              <!-- Starts In Column -->
-              <ng-container matColumnDef="visit_created">
-                <th mat-header-cell *matHeaderCellDef> Visit Created </th>
-                <td mat-cell *matCellDef="let element"> {{element.visit_created}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef> Status </th>
-                <td mat-cell *matCellDef="let element"> {{element.score}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="stage">
-                <th mat-header-cell *matHeaderCellDef> Stage </th>
-                <td mat-cell *matCellDef="let element"> Stage {{element.stage}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="alert_for_readings">
-                <th mat-header-cell *matHeaderCellDef> Alert for readings </th>
-                <td mat-cell *matCellDef="let element">
-                  <ul class="notes-list">
-                    <li *ngFor="let n of element?.notes;">{{n.key}} ({{n.value}})</li>
-                  </ul>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="provider">
-                <th mat-header-cell *matHeaderCellDef> Provider </th>
-                <td mat-cell *matCellDef="let element"> {{element.provider}} </td>
-              </ng-container>
-
-              <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell text-center" [attr.colspan]="displayedColumns1.length">
-                  No any normal cases.
-                </td>
-              </tr>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns1;" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
-            </table>
-
-            <mat-paginator #normalPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-              aria-label="Select page of periodic elements">
-            </mat-paginator>
-          </div>
-        </mat-expansion-panel>
-
         <mat-expansion-panel [expanded]="false">
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -195,6 +115,86 @@
             </mat-paginator>
           </div>
 
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/prescription-square.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">Normal cases ({{normalCases.length ? normalCases.length : 0}})</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress normal cases" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource1">
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Patient Name & ID </th>
+                <td mat-cell *matCellDef="let element">
+
+                  <div class="d-flex align-items-center">
+                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <div class="d-flex flex-column ml-2">
+                      <span class="font-bold">{{element.patient.person.display}}</span>
+                      <span>{{element.patient.identifiers[0]?.identifier}}</span>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Age Column -->
+              <ng-container matColumnDef="age">
+                <th mat-header-cell *matHeaderCellDef> Age </th>
+                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
+              </ng-container>
+
+              <!-- Starts In Column -->
+              <ng-container matColumnDef="visit_created">
+                <th mat-header-cell *matHeaderCellDef> Visit Created </th>
+                <td mat-cell *matCellDef="let element"> {{element.visit_created}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="stage">
+                <th mat-header-cell *matHeaderCellDef> Stage </th>
+                <td mat-cell *matCellDef="let element"> Stage {{element.stage}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="alert_for_readings">
+                <th mat-header-cell *matHeaderCellDef> Alert for readings </th>
+                <td mat-cell *matCellDef="let element">
+                  <ul class="notes-list">
+                    <li *ngFor="let n of element?.notes;">{{n.key}} ({{n.value}})</li>
+                  </ul>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="provider">
+                <th mat-header-cell *matHeaderCellDef> Provider </th>
+                <td mat-cell *matCellDef="let element"> {{element.provider}} </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns1.length">
+                  No any normal cases.
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns1;" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
+            </table>
+
+            <mat-paginator #normalPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+              aria-label="Select page of periodic elements">
+            </mat-paginator>
+          </div>
         </mat-expansion-panel>
 
         <mat-expansion-panel [expanded]="false">

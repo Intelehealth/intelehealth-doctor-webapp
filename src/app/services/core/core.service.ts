@@ -155,7 +155,7 @@ export class CoreService {
   }
 
   openAddAssessmentAndPlanModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(AddPlanAssessmentComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(AddPlanAssessmentComponent, { panelClass: "modal-lg", data } );
     return dialogRef.afterClosed();
   }
 }
