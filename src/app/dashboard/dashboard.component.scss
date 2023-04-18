@@ -175,3 +175,35 @@ th:last-child {
   }
 }
 
+.alert-count {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 150%;
+}
+
+.alert-count.red {
+  background-image: url('../../assets/svgs/red-triangle.svg');
+  background-size: 100% 100%;
+  color: #FD1053;
+  align-items: end;
+  padding-bottom: 2px;
+}
+
+.alert-count.yellow {
+  background-image: url('../../assets/svgs/yellow-circle.svg');
+  background-size: 100% 100%;
+  color: #FD8C3E;
+}
+
+.alert-count.green {
+  background-image: url('../../assets/svgs/green-circle.svg');
+  background-size: 100% 100%;
+  color: #019283;
+}

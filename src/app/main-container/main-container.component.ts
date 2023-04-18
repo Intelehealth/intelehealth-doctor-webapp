@@ -14,6 +14,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, R
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.component';
+import * as introJs from 'intro.js/intro.js';
 
 @Component({
   selector: 'app-main-container',
@@ -40,6 +41,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
+  introJs: any;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -96,6 +98,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
+
+    this.introJs = introJs();
   }
 
   ngAfterContentChecked(): void {
@@ -217,6 +221,57 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.dialogRef.afterClosed().subscribe(result => {
       this.dialogRef = undefined;
     });
+  }
+
+  startTour() {
+    this.introJs.setOptions({
+      steps: [
+        {
+          intro: 'Welcome to the Doctor portal. In less than 1 min, we will show you how to check labour status and give consultation to a patient.'
+        },
+        {
+          element: document.querySelector('#priority-cases'),
+          intro: 'These are visits that are marked as priority by health worker. Tip - Always provide consultation for priority visit table first.'
+        },
+        {
+          element: document.querySelector('#normal-cases'),
+          intro: 'These are visits that are in-progress.'
+        },
+        {
+          element: document.querySelector('#completed-cases'),
+          intro: 'All visits that are completed by the doctor.'
+        },
+        {
+          element: document.querySelector('.search-bar'),
+          intro: 'Type patients name, id to search a patient.'
+        },
+        // {
+        //   element: ,
+        //   intro: "Click on anywhere on row to add doctor's consultation for the patient."
+        // },
+        {
+          element: document.querySelector('.user-info-wrap'),
+          intro: 'Click here to view and edit your profile.'
+        },
+        {
+          intro: 'Great job, you have completed the tour'
+        }
+      ],
+      showProgress: false,
+      nextLabel: 'Next',
+      prevLabel: 'Back',
+      doneLabel: 'Finish',
+      skipLabel: 'X',
+      hidePrev: true,
+      showStepNumbers: true,
+      showBullets: false,
+      autoPosition: false,
+      tooltipClass: 'my-tooltip-class',
+      highlightClass: 'my-highlight-class',
+      helperElementPadding: 10,
+      buttonClass: 'my-button-class',
+      progressBarAdditionalClass: 'my-progress-bar-class'
+    }).start();
   }
 
   ngOnDestroy(): void {

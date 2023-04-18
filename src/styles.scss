@@ -931,3 +931,89 @@ body.font-lato td {
     font-weight: normal !important;
   }
 }
+
+
+
+.my-highlight-class {
+  box-shadow: rgba(33, 33, 33, 0.8) 0px 0px 0px 0px, rgba(33, 33, 33, 0.5) 0px 0px 0px 5000px !important;
+  border-radius: 12px 12px 12px 0px !important;
+}
+
+.my-tooltip-class {
+  box-shadow: none !important;
+  border-radius: 0px !important;
+  background: transparent !important;
+
+  .introjs-tooltip-header {
+    background: #D7D4EA;
+    border-radius: 20px 20px 0px 0px;
+    padding-top: 0px;
+
+    .introjs-tooltip-title {
+      margin: 0px;
+    }
+
+    .introjs-skipbutton {
+      left: 0;
+      font-size: 14px;
+    }
+  }
+
+  .introjs-tooltiptext {
+    background: #D7D4EA;
+    border-radius: 0px 0px 0px 20px;
+    padding: 10px 20px 20px;
+  }
+
+  .introjs-helperNumberLayer {
+    position: absolute;
+    background: #2E1E91;
+    border-radius: 6px;
+    color: #FFFFFF;
+    padding: 10px;
+    bottom: 40px;
+    left: -60px;
+    font-weight: bold;
+  }
+
+  .introjs-tooltipbuttons {
+    border-top: none;
+    padding: 20px 0px 0px !important;
+  }
+
+  .introjs-arrow {
+    display: none !important;
+  }
+}
+
+.my-tooltip-class.introjs-bottom {
+  margin-top: -10px !important;
+
+  .introjs-tooltip-header {
+    border-radius: 0px;
+  }
+}
+
+.my-button-class {
+  background: #FFFFFF;
+  border-radius: 6px;
+  color: #2E1E91;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.my-button-class:hover {
+  text-decoration: none;
+  color: #2E1E91;
+}
+
+.my-button-class.introjs-prevbutton {
+  margin-right: 5px;
+  float: none;
+}
+
+.my-button-class.introjs-nextbutton {
+  float: none;
+  background: #2E1E91;
+  color: #FFFFFF;
+}

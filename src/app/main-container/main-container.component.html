@@ -36,7 +36,7 @@
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link">
+          <a class="nav-item-link" (click)="startTour()">
             <img class="i1" src="assets/svgs/info-blue.svg" alt="">
             <img class="i2" src="assets/svgs/info-white.svg" alt="">
             <span>Help</span>
@@ -99,7 +99,7 @@
             </ng-container>
             <ng-container *ngIf="header.title == 'Dashboard'">
               <form [formGroup]="searchForm">
-                <div class="input-group">
+                <div class="input-group search-bar">
                     <input type="text" class="form-control" formControlName="keyword" placeholder="Search patient" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()">
                     <div class="input-group-append">
                       <span class="input-group-text click" id="basic-addon1" (click)="search()">

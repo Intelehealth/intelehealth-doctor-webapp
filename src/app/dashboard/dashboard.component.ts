@@ -17,9 +17,9 @@ import { Router } from '@angular/router';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   showAll: boolean = false;
-  displayedColumns1: string[] = ['name', 'age', 'visit_created', 'status', 'stage', 'alert_for_readings', 'provider'];
-  displayedColumns2: string[] = ['name', 'age', 'visit_created', 'status', 'stage', 'alert_for_readings', 'provider'];
-  displayedColumns3: string[] = ['name', 'age', 'status', 'stage', 'alert_for_readings', 'birth_outcome', 'provider', 'date_of_birth'];
+  displayedColumns1: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
+  displayedColumns2: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
+  displayedColumns3: string[] = ['name', 'age', 'date_of_birth', 'no_of_alerts', 'stage', 'alarming_readings', 'birth_outcome', 'provider'];
 
   dataSource1 = new MatTableDataSource<any>();
   dataSource2 = new MatTableDataSource<any>();
@@ -162,7 +162,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     });
     visit.score = this.setScore(encounters);
-    visit.visit_created = this.getCreatedAt(visit.startDatetime);
+    visit.in_labour_duration = this.getCreatedAt(visit.startDatetime);
     visit.stage = encounters.filter((e: any) => e.display.includes('Stage2')).length ? 2 : 1;
     visit.notesObj = {};
     if (Array.isArray(encounters)) {
@@ -268,12 +268,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
-      return moment(data).format('DD MMM, YYYY');
+      return moment(data).format('DD MMM, YYYY hh:mm a');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return `${minutes} minutes`;
     }
-    return `${hours} hrs ago`;
+    return `${hours} hrs`;
   }
 
   getSpecialization(attr: any) {
