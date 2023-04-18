@@ -10,7 +10,7 @@ import { VisitService } from 'src/app/services/visit.service';
   styleUrls: ['./tables.component.css']
 })
 export class TablesComponent implements OnInit {
-  displayColumns: string[] = ['id', 'name', 'gender', 'age', 'location', 'status', 'provider', 'lastSeen'];
+  displayColumns: string[] = ['id', 'name', 'gender', 'age', 'location', 'provider', 'lastSeen'];
   dataSource;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;

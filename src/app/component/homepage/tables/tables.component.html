@@ -37,7 +37,7 @@
       <td mat-cell *matCellDef="let row"> {{row.location}} </td>
     </ng-container>
 
-    <!-- Status column -->
+    <!-- Status column 
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Status'|translate}} </th>
       <td mat-cell *matCellDef="let row">
@@ -46,7 +46,7 @@
            'badge-success': row.status === 'Visit Complete', 'badge-info': row.status === 'Visit Note', 'badge-primary': row.status === 'Remote Prescription'}">
           {{row.status === 'Flagged' ? ('Priority'| translate) : (row.status) | translate}}</div>
       </td>
-    </ng-container>
+    </ng-container> -->
 
     <!-- Provider column -->
     <ng-container matColumnDef="provider">
@@ -65,5 +65,5 @@
     </tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons></mat-paginator>
 </div>
