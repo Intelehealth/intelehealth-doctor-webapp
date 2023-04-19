@@ -246,7 +246,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           intro: 'Type patients name, id to search a patient.'
         },
         // {
-        //   element: ,
+        //   element: document.querySelector('.table-record'),
         //   intro: "Click on anywhere on row to add doctor's consultation for the patient."
         // },
         {
@@ -263,14 +263,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       doneLabel: 'Finish',
       skipLabel: 'X',
       hidePrev: true,
-      showStepNumbers: true,
+      showStepNumbers: false,
       showBullets: false,
       autoPosition: false,
       tooltipClass: 'my-tooltip-class',
       highlightClass: 'my-highlight-class',
       helperElementPadding: 10,
       buttonClass: 'my-button-class',
-      progressBarAdditionalClass: 'my-progress-bar-class'
+      progressBarAdditionalClass: 'my-progress-bar-class',
+      overlayOpacity: 1,
+      exitOnOverlayClick: false
     }).start();
   }
 

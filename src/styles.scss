@@ -971,14 +971,15 @@ body.font-lato td {
     border-radius: 6px;
     color: #FFFFFF;
     padding: 10px;
-    bottom: 40px;
+    bottom: 90px;
     left: -60px;
     font-weight: bold;
   }
 
   .introjs-tooltipbuttons {
     border-top: none;
-    padding: 20px 0px 0px !important;
+    padding: 20px 0px 50px !important;
+    height: fit-content;
   }
 
   .introjs-arrow {
