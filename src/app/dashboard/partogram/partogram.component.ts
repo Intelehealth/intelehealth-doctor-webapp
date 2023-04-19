@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
+import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
@@ -209,6 +212,8 @@ export class PartogramComponent implements OnInit {
   conceptPlan = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   conceptAssessment = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   conceptMedicine = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
+  dialogRef1: MatDialogRef<ChatBoxComponent>;
+  dialogRef2: MatDialogRef<VideoCallComponent>;
 
   constructor(
     private route: ActivatedRoute,
@@ -302,6 +307,7 @@ export class PartogramComponent implements OnInit {
     const encs = this.visit.encounters;
     for (let x = 0; x < encs.length; x++) {
       if (encs[x].display.includes('Stage')) {
+        if (!localStorage.patientVisitProvider) localStorage.setItem('patientVisitProvider', JSON.stringify(encs[x].encounterProviders[0]));
         let indices = encs[x].encounterType.display.replace('Stage','').replace('Hour','').split('_').map((val)=> +val);
         // Get timing and initials
         if (indices[0] == 1 && indices[1] <= 12) {
@@ -503,11 +509,41 @@ export class PartogramComponent implements OnInit {
   }
 
   startCall() {
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
+      return;
+    };
+    this.dialogRef2 = this.coreService.openVideoCallModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      connectToDrId: this.userId,
+      patientName: this.patient.person.display,
+      patientPersonUuid: this.patient.person.uuid,
+      patientOpenMrsId: this.patient.identifiers[0].identifier,
+      initiator: 'dr'
+    });
 
+    this.dialogRef2.afterClosed().subscribe((res: any) => {
+      this.dialogRef2 = undefined;
+    });
   }
 
   startChat() {
+    if (this.dialogRef1) {
+      this.dialogRef1.close();
+      return;
+    };
+    this.dialogRef1 = this.coreService.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.patient.person.display,
+      patientPersonUuid: this.patient.person.uuid,
+      patientOpenMrsId: this.patient.identifiers[0].identifier
+    });
 
+    this.dialogRef1.afterClosed().subscribe((res: any) => {
+      this.dialogRef1 = undefined;
+    });
   }
 
   checkIfFutureEncounterExists(futureStartIndex) {
@@ -520,6 +556,22 @@ export class PartogramComponent implements OnInit {
       }
     }
     return flag;
+  }
+
+  get userId() {
+    return JSON.parse(localStorage.user).uuid;
+  }
+
+  getPatientIdentifier(identifierType: string) {
+    let identifier = '';
+    if (this.patient) {
+      this.patient.identifiers.forEach((idf: any) => {
+        if (idf.identifierType.display == identifierType) {
+          identifier = idf.identifier;
+        }
+      });
+    }
+    return identifier;
   }
 
 }

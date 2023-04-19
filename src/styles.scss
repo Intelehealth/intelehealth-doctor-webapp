@@ -936,7 +936,7 @@ body.font-lato td {
 
 .my-highlight-class {
   box-shadow: rgba(33, 33, 33, 0.8) 0px 0px 0px 0px, rgba(33, 33, 33, 0.5) 0px 0px 0px 5000px !important;
-  border-radius: 12px 12px 12px 0px !important;
+  border-radius: 12px 12px 0px 12px !important;
 }
 
 .my-tooltip-class {
@@ -961,7 +961,7 @@ body.font-lato td {
 
   .introjs-tooltiptext {
     background: #D7D4EA;
-    border-radius: 0px 0px 0px 20px;
+    border-radius: 0px 0px 20px 0px;
     padding: 10px 20px 20px;
   }
 
@@ -989,6 +989,8 @@ body.font-lato td {
 
 .my-tooltip-class.introjs-bottom {
   margin-top: -10px !important;
+  right: 0px !important;
+  left: auto !important;
 
   .introjs-tooltip-header {
     border-radius: 0px;

@@ -15,6 +15,8 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.component';
 import * as introJs from 'intro.js/intro.js';
+import { SwPush, SwUpdate } from "@angular/service-worker";
+import { PushNotificationsService } from '../services/push-notification.service';
 
 @Component({
   selector: 'app-main-container',
@@ -43,6 +45,20 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   dialogRef: MatDialogRef<HelpMenuComponent>;
   introJs: any;
 
+
+  subscribed: boolean = false;
+  readonly VapidKEY = "BLDLmm1FrOhRJsumFL3lZ8fgnC_c1rFoNp-mz6KWObQpgPkhWzUh66GCGPzioTWBc4u0SB8P4spimU8SH2eWNfg";
+  weekDays: any = [
+    { day: "Monday", startTime: null, endTime: null },
+    { day: "Tuesday", startTime: null, endTime: null },
+    { day: "Wednesday", startTime: null, endTime: null },
+    { day: "Thursday", startTime: null, endTime: null },
+    { day: "Friday", startTime: null, endTime: null },
+    { day: "Saturday", startTime: null, endTime: null },
+    { day: "Sunday", startTime: null, endTime: null },
+  ];
+  selectedNotification = "";
+
   constructor(
     private cdref: ChangeDetectorRef,
     private authService: AuthService,
@@ -53,7 +69,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private toastr: ToastrService,
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
-    private router: Router) {
+    private router: Router,
+    public swUpdate: SwUpdate,
+    public swPush: SwPush,
+    public notificationService: PushNotificationsService) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
     });
@@ -100,6 +119,30 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
 
     this.introJs = introJs();
+    this.authService.getFingerPrint();
+    setTimeout(() => {
+      this.subscribeNotification(true);
+    }, 1000);
+    this.notificationService.getUserSettings().subscribe((res: { data: any; snooze_till: any }) => {
+      if (res && res.data && res.data.snooze_till) {
+        const snoozeTill = (() => {
+          try {
+            return JSON.parse(res.data.snooze_till);
+          } catch (error) {
+            return res.data.snooze_till;
+          }
+        })();
+        if (Array.isArray(snoozeTill)) {
+          this.weekDays = snoozeTill;
+        } else {
+          this.setSnoozeTimeout(res.snooze_till);
+        }
+      }
+    });
+
+    if (this.swPush.isEnabled) {
+      this.notificationService.notificationHandler();
+    }
   }
 
   ngAfterContentChecked(): void {
@@ -127,7 +170,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   logout() {
     this.coreService.openConfirmationDialog({ confirmationMsg: "Are you sure you want to logout?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(res => {
       if (res) {
-        this.authService.logOut();
+        this.unsubscribeNotification();
+        setTimeout(() => {
+          this.authService.logOut();
+        }, 100);
       }
     });
   }
@@ -258,8 +304,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         }
       ],
       showProgress: false,
-      nextLabel: 'Next',
-      prevLabel: 'Back',
+      nextLabel: 'Next →',
+      prevLabel: '← Back',
       doneLabel: 'Finish',
       skipLabel: 'X',
       hidePrev: true,
@@ -272,8 +318,91 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       buttonClass: 'my-button-class',
       progressBarAdditionalClass: 'my-progress-bar-class',
       overlayOpacity: 1,
-      exitOnOverlayClick: false
+      exitOnOverlayClick: false,
+      scrollToElement: true,
+      scrollTo: 'element'
     }).start();
+  }
+
+  subscribeNotification(reSubscribe = false) {
+    if (this.swUpdate.isEnabled) {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VapidKEY,
+        })
+        .then((sub) => {
+          const provider = JSON.parse(localStorage.getItem('provider'));
+          if (provider) {
+            const attributes = provider.attributes;
+            attributes.forEach((element) => {
+              if (
+                element.attributeType.uuid ===
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                !element.voided
+              ) {
+                this.notificationService
+                  .postSubscription(
+                    sub,
+                    element.value,
+                    provider.person.display,
+                    this.user.uuid,
+                    this.authService.fingerPrint
+                  )
+                  .subscribe((response) => {
+                    if (response) {
+                      if (!reSubscribe) {
+                        this.toastr.success('Notification subscribed successfully!', 'Subscribed');
+                      }
+                      localStorage.setItem("subscribed", JSON.stringify(true));
+                      this.subscribed = true;
+                    }
+                  });
+              }
+            });
+          }
+        });
+    }
+  }
+
+  unsubscribeNotification() {
+    this.swPush.unsubscribe();
+    localStorage.removeItem("subscribed");
+    this.notificationService
+      .unsubscribeNotification({
+        user_uuid: this.user.uuid,
+        finger_print: this.authService.fingerPrint,
+      })
+      .subscribe();
+  }
+
+  setSnoozeTimeout(timeout: any) {
+    if (this.notificationService.snoozeTimeout)
+      clearTimeout(this.notificationService.snoozeTimeout);
+    this.notificationService.snoozeTimeout = setTimeout(() => {
+      this.notificationService.setSnoozeFor("off").subscribe((response) => {
+        if (this.notificationService.snoozeTimeout)
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+      });
+    }, timeout);
+  }
+
+  setNotification(period: string) {
+    if (period !== "custom") {
+      this.selectedNotification = period;
+      this.notificationService.setSnoozeFor(period).subscribe((response) => {
+        if (!response["snooze_till"]) {
+          this.notificationService.snoozeTimeout = clearTimeout(
+            this.notificationService.snoozeTimeout
+          );
+        } else {
+          this.setSnoozeTimeout(response["snooze_till"]);
+        }
+      });
+    } else {
+
+    }
   }
 
   ngOnDestroy(): void {
@@ -286,5 +415,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   get provider() {
     return JSON.parse(localStorage.getItem('provider'));
+  }
+
+  get snoozeTimeout() {
+    return this.notificationService.snoozeTimeout;
   }
 }

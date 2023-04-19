@@ -134,9 +134,18 @@
                 <!-- <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
                   <mat-icon>help_outline</mat-icon>
                 </button> -->
-                <button mat-button class="notification-button mr-3">
+                <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3">
                   <mat-icon>notifications_none</mat-icon>
                 </button>
+                <mat-menu #notificationmenu="matMenu" class="notification-menu">
+                  <button mat-menu-item (click)="setNotification('30m')">Do Not Disturb</button>
+                  <button mat-menu-item (click)="setNotification('30m')">30 Minutes</button>
+                  <button mat-menu-item (click)="setNotification('1h')">1 Hour</button>
+                  <button mat-menu-item (click)="setNotification('2h')">2 Hours</button>
+                  <button mat-menu-item (click)="setNotification('custom')">Custom</button>
+                  <button mat-menu-item (click)="setNotification('off')" *ngIf="snoozeTimeout">Turn Off</button>
+                  <button mat-menu-item class="subscribe" (click)="subscribeNotification(false)" *ngIf="!subscribed">Subscribe</button>
+                </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
                   <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
