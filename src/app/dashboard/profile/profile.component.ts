@@ -168,6 +168,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   maxTelLegth1: number = 10;
   maxTelLegth2: number = 10;
   oldPhoneNumber: string = '';
+  today: any;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -213,6 +214,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.today = moment().format('YYYY-MM-DD');
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));
     this.doctorName = localStorage.getItem('doctorName');
@@ -279,6 +281,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
           this.personalInfoForm.patchValue({ signatureType: 'Draw' });
         }, 1000);
+      }
+    });
+
+    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+      if (val) {
+        this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
     });
   }
