@@ -10,7 +10,7 @@ import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 const routes: Routes = [
   {
     path: '',
-    // canActivate: [DashboardGuard],
+    canActivate: [DashboardGuard],
     component: DashboardComponent
   },
   {
