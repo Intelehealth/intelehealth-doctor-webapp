@@ -135,7 +135,8 @@
                   <mat-icon>help_outline</mat-icon>
                 </button> -->
                 <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3">
-                  <mat-icon>notifications_none</mat-icon>
+                  <mat-icon *ngIf="!snoozeTimeout">notifications_none</mat-icon>
+                  <mat-icon *ngIf="snoozeTimeout">notifications_off</mat-icon>
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu">
                   <button mat-menu-item (click)="setNotification('30m')">Do Not Disturb</button>
