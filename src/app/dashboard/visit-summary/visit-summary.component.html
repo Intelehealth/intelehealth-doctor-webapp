@@ -671,7 +671,7 @@
           </mat-tab>
 
           <mat-tab label="Past visit history">
-            <div class="mat-elevation-z8">
+            <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
               <table mat-table [dataSource]="dataSource">
                 <!-- Action Column -->
                 <ng-container matColumnDef="action">
@@ -779,14 +779,14 @@
                   </td>
                 </ng-container>
 
-                <tr class="mat-row" *matNoDataRow>
+                <!-- <tr class="mat-row" *matNoDataRow>
                   <td
                     class="mat-cell text-center"
                     [attr.colspan]="displayedColumns.length"
                   >
                     No past visit history
                   </td>
-                </tr>
+                </tr> -->
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr
@@ -794,6 +794,11 @@
                   *matRowDef="let row; columns: displayedColumns"
                 ></tr>
               </table>
+            </div>
+            <div *ngIf="pastVisits.length <= 0"  class="mat-elevation-z8">
+              <span style="text-align: center;font-size: 16px;">
+                No past visit history
+              </span>
             </div>
           </mat-tab>
         </mat-tab-group>
