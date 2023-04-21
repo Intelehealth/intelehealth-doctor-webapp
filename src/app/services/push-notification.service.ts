@@ -9,7 +9,7 @@ export class PushNotificationsService {
   private baseURL = environment.notificationURL;
   public snoozeTimeout = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   postSubscription(
     sub: PushSubscription,
@@ -40,7 +40,7 @@ export class PushNotificationsService {
   //Snooze notification functionality
   setSnoozeFor(snooze_for, custom = false) {
     return this.http.put(
-      `${environment.mindmapURL}/mindmap/snooze_notification`,
+      `${environment.authGatwayURL}node/api/mindmap/snooze_notification`,
       {
         user_uuid: JSON.parse(localStorage.user).uuid,
         snooze_for,
@@ -52,7 +52,7 @@ export class PushNotificationsService {
   getUserSettings(_uuid?) {
     const uuid = _uuid ? _uuid : JSON.parse(localStorage.user).uuid;
     return this.http.get(
-      `${environment.mindmapURL}/mindmap/user_settings/${uuid}`
+      `${environment.authGatwayURL}node/api/mindmap/user_settings/${uuid}`
     );
   }
 

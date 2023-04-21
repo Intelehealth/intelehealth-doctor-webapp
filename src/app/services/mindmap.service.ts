@@ -7,37 +7,37 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class MindmapService {
-  private baseURL = environment.mindmapURL;
+  private baseURL = environment.authGatwayURL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getMindmapKey(): Observable<any> {
-    const url = `${this.baseURL}/mindmap`;
+    const url = `${this.baseURL}node/api/mindmap`;
     return this.http.get(url);
   }
 
   postMindmap(value): Observable<any> {
-    const url = `${this.baseURL}/mindmap/upload`;
+    const url = `${this.baseURL}node/api/mindmap/upload`;
     return this.http.post(url, value);
   }
 
   detailsMindmap(key): Observable<any> {
-    const url = `${this.baseURL}/mindmap/details/${key}`;
+    const url = `${this.baseURL}node/api/mindmap/details/${key}`;
     return this.http.get(url);
   }
 
   addUpdateLicenseKey(payload): Observable<any> {
-    const url = `${this.baseURL}/mindmap/addUpdatekey`;
+    const url = `${this.baseURL}node/api/mindmap/addUpdatekey`;
     return this.http.post(url, payload);
   }
 
   updateImage(key, imageName, value): Observable<any> {
-    const url = `${this.baseURL}/mindmap/${key}/${imageName}`;
+    const url = `${this.baseURL}node/api/mindmap/${key}/${imageName}`;
     return this.http.put(url, value);
   }
 
   deleteMindmap(key, data): Observable<any> {
-    const url = `${this.baseURL}/mindmap/delete/${key}`;
+    const url = `${this.baseURL}node/api/mindmap/delete/${key}`;
     return this.http.post(url, data);
   }
 }

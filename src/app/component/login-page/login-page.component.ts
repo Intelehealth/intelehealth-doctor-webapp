@@ -5,7 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
 import { VisitService } from "src/app/services/visit.service";
-declare var saveToStorage: any,  getFromStorage: any
+declare var saveToStorage: any, getFromStorage: any
 @Component({
   selector: "app-login-page",
   templateUrl: "./login-page.component.html",
@@ -32,7 +32,7 @@ export class LoginPageComponent implements OnInit {
     private snackbar: MatSnackBar,
     private authService: AuthService,
     private service: VisitService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.service.clearVisits();
@@ -84,13 +84,15 @@ export class LoginPageComponent implements OnInit {
               this.router.navigate(["home"]);
             }
           );
-          
+
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
           });
         }
       });
+
+      this.authService.loginAuthGateway(value.username, value.password).subscribe();
     }
   }
 }

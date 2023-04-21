@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -97,6 +97,7 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { SendSmsComponent } from './component/send-sms/send-sms.component';
+import { TokenInterceptor } from "./interceptors/token.interceptor";
 
 @NgModule({
   declarations: [
@@ -273,6 +274,7 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
     }),
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     CookieService,
     AuthGuard,
     DatePipe,
@@ -285,4 +287,4 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

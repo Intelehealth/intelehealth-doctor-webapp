@@ -8,7 +8,7 @@ declare const window: any, document: any;
   providedIn: "root",
 })
 export class MonitoringService {
-  private url = environment.mindmapURL;
+  private url = environment.authGatwayURL;
 
   constructor(private http: HttpClient, private helper: HelperService) {}
 
@@ -22,15 +22,15 @@ export class MonitoringService {
     };
     const query = this.helper.toParamString(_payload);
     localStorage.socketQuery = query;
-    return this.http.post(`${this.url}/user/createUpdateStatus`, _payload);
+    return this.http.post(`${this.url}node/api/user/createUpdateStatus`, _payload);
   }
 
   getUserStatuses(userUuid) {
-    return this.http.get(`${this.url}/user/getStatuses/${userUuid}`);
+    return this.http.get(`${this.url}node/api/user/getStatuses/${userUuid}`);
   }
 
   getAllStatuses() {
-    return this.http.get(`${this.url}/user/getAllStatuses`);
+    return this.http.get(`${this.url}node/api/user/getAllStatuses`);
   }
 
   public getBrowser() {

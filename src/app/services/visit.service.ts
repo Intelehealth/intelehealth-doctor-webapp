@@ -84,46 +84,46 @@ export class VisitService {
   }
 
   getLocations() {
-    return this.http.get(`${environment.mindmapURL}/openmrs/getLocations`);
+    return this.http.get(`${environment.authGatwayURL}node/api/openmrs/getLocations`);
   }
 
   getBaselineSurveyPatients(location_id) {
-    return this.http.get(`${environment.mindmapURL}/openmrs/getBaselineSurveyPatients/${location_id}`);
+    return this.http.get(`${environment.authGatwayURL}node/api/openmrs/getBaselineSurveyPatients/${location_id}`);
   }
 
   getVisitCounts(speciality) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getVisitCounts?ngsw-bypass=true&speciality=${speciality}`
+      `${environment.authGatwayURL}node/api/openmrs/getVisitCounts?ngsw-bypass=true&speciality=${speciality}`
     );
   }
 
   getDoctorsVisit() {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getDoctorVisits`
+      `${environment.authGatwayURL}node/api/openmrs/getDoctorVisits`
     );
   }
 
   getAwaitingVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getAwaitingVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.authGatwayURL}node/api/openmrs/getAwaitingVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getPriorityVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getPriorityVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.authGatwayURL}node/api/openmrs/getPriorityVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getInProgressVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getInProgressVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.authGatwayURL}node/api/openmrs/getInProgressVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 
   getCompletedVisits(visitState, speciality, page = 1) {
     return this.http.get(
-      `${environment.mindmapURL}/openmrs/getCompletedVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
+      `${environment.authGatwayURL}node/api/openmrs/getCompletedVisits?ngsw-bypass=true&state=${visitState}&speciality=${speciality}&page=${page}`
     );
   }
 

@@ -6,4 +6,5 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
+  authGatwayURL: `${window.location.protocol}//${window.location.hostname}:3030/v2/`
 };

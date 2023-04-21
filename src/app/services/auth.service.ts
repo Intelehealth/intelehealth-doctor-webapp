@@ -3,6 +3,9 @@ import { Injectable } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment";
+import { map } from "rxjs/operators";
 declare var deleteFromStorage: any;
 
 @Injectable({
@@ -12,9 +15,11 @@ export class AuthService {
   constructor(
     private myRoute: Router,
     private sessionService: SessionService,
-    private cookieService: CookieService
-  ) {}
+    private cookieService: CookieService,
+    private http: HttpClient
+  ) { }
   public fingerPrint;
+  gatewayURL = environment.authGatwayURL;
 
   /**
    * Set passed JSESSIONID token
@@ -51,6 +56,7 @@ export class AuthService {
         deleteFromStorage("provider");
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
+        deleteFromStorage("token");
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
@@ -66,5 +72,19 @@ export class AuthService {
       const result = await fp.get();
       this.fingerPrint = result.visitorId;
     })();
+  }
+
+  loginAuthGateway(username, password) {
+    const url = this.gatewayURL.replace('/v2', '');
+    return this.http.post(`${url}auth/login`, { username, password }).pipe(
+      map((res: any) => {
+        localStorage.setItem('token', res.token);
+        return res;
+      })
+    )
+  }
+
+  get authToken() {
+    return localStorage.getItem('token') || '';
   }
 }

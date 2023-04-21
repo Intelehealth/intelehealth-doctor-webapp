@@ -6,8 +6,8 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class ChatService {
-  private baseURL = environment.mindmapURL;
-  constructor(private http: HttpClient) {}
+  private baseURL = environment.authGatwayURL;
+  constructor(private http: HttpClient) { }
 
   sendMessage(toUser, patientId, message, additionalPayload = {}) {
     const payload = {
@@ -17,17 +17,17 @@ export class ChatService {
       patientId,
       message,
     };
-    return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
+    return this.http.post(`${this.baseURL}node/api/messages/sendMessage`, payload);
   }
 
   getPatientMessages(toUser, patientId, fromUser = this.user.uuid) {
     return this.http.get(
-      `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}`
+      `${this.baseURL}node/api/messages/${fromUser}/${toUser}/${patientId}`
     );
   }
 
   sendSMS(payload) {
-    return this.http.post(`${this.baseURL}/messages/sendSMS`, payload);
+    return this.http.post(`${this.baseURL}node/api/messages/sendSMS`, payload);
   }
 
   get user() {
