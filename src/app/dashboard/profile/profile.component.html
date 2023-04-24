@@ -132,7 +132,7 @@
                   <div *ngIf="submitted && !f1?.phoneNumber?.errors && !phoneNumberValid">
                     <small class="error-msg">Enter valid phone number</small>
                   </div>
-                  <div *ngIf="submitted && !f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid">
+                  <div *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid">
                     <small class="error-msg">Phone number already exists. Please enter another phone number.</small>
                   </div>
                 </div>
@@ -169,6 +169,8 @@
                   <div *ngIf="submitted && f1.emailId.errors">
                     <small class="error-msg" *ngIf="f1.emailId.errors.required">Enter email</small>
                     <small class="error-msg" *ngIf="f1.emailId.errors.pattern">Enter valid email</small>
+                  </div>
+                  <div *ngIf="f1.emailId.errors">
                     <small class="error-msg" *ngIf="f1.emailId.errors?.alreadyExists">Email already exists. Please enter another email.</small>
                   </div>
                 </div>
