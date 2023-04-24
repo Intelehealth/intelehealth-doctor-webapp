@@ -11,34 +11,40 @@
         <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
             <img src="assets/svgs/menu-home.svg" alt="">
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-message.svg" alt="">
             <span>Messages</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-video.svg" alt="">
             <span>Appointment</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active">
             <img src="assets/svgs/menu-calendar.svg" alt="">
             <span>Calendar</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-treatment.svg" alt="">
             <span>Prescription</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
+          <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img src="assets/svgs/menu-home.svg" alt="">
+            <span>My Profile</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">

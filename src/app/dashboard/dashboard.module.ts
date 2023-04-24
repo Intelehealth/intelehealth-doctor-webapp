@@ -23,6 +23,7 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { HwProfileComponent } from './hw-profile/hw-profile.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     ProfileComponent,
     GetStartedComponent,
     VisitSummaryComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    HwProfileComponent
   ],
   imports: [
     CommonModule,
