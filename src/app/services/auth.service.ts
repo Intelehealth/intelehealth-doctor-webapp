@@ -267,4 +267,8 @@ export class AuthService {
       return null;
     }
   }
+
+  validateProviderAttribute(attributeType: string, attributeValue: any, providerUuid: string): Observable<any> {
+    return this.http.post(`${this.mindmapUrl}/auth/validateProviderAttribute`, { attributeType, attributeValue, providerUuid });
+  }
 }

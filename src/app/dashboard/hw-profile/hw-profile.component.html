@@ -108,7 +108,7 @@
                 </div>
               </div>
               <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-6 email-field">
                   <label for="phoneNumber">Phone Number *</label>
                   <input type="text"
                     ng2TelInput
@@ -121,11 +121,19 @@
                     class="form-control"
                     formControlName="phoneNumber"
                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+                  <div class="check">
+                    <mat-spinner diameter="20" *ngIf="checkingPhoneValidity"></mat-spinner>
+                    <mat-icon class="success" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && phoneValid && !checkingPhoneValidity">done_all</mat-icon>
+                    <mat-icon class="error" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid && !checkingPhoneValidity">error_outline</mat-icon>
+                  </div>
                   <div *ngIf="submitted && f1.phoneNumber.errors">
                     <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">Enter phone number</small>
                   </div>
                   <div *ngIf="submitted && !f1?.phoneNumber?.errors && !phoneNumberValid">
                     <small class="error-msg">Enter valid phone number</small>
+                  </div>
+                  <div *ngIf="submitted && !f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid">
+                    <small class="error-msg">Phone number already exists. Please enter another phone number.</small>
                   </div>
                 </div>
                 <div class="form-group col-md-6">
@@ -150,12 +158,18 @@
                 </div>
               </div>
               <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-6 email-field">
                   <label for="emailId">Email ID *</label>
                   <input type="email" class="form-control" formControlName="emailId" placeholder="Enter email">
+                  <div class="check">
+                    <mat-spinner diameter="20" *ngIf="f1.emailId?.pending"></mat-spinner>
+                    <mat-icon class="success" *ngIf="!f1?.emailId?.errors && !f1.emailId?.pending">done_all</mat-icon>
+                    <mat-icon class="error" *ngIf="f1?.emailId?.errors?.alreadyExists && !f1.emailId?.pending">error_outline</mat-icon>
+                  </div>
                   <div *ngIf="submitted && f1.emailId.errors">
-                    <small class="error-msg" *ngIf="f1.emailId.errors.required">Enter email</small>
-                    <small class="error-msg" *ngIf="f1.emailId.errors.pattern">Enter valid email</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.required">Enter email</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.pattern">Enter valid email</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.alreadyExists">Email already exists. Please enter another email.</small>
                   </div>
                 </div>
               </div>

@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
+import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -169,6 +170,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   maxTelLegth2: number = 10;
   oldPhoneNumber: string = '';
   today: any;
+  phoneValid: boolean = false;
+  emailValid: boolean = false;
+  checkingPhoneValidity: boolean = false;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -191,7 +195,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
-      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
+      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', JSON.parse(localStorage.getItem('provider')).uuid)]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
       fontOfSign: new FormControl(null),
@@ -378,6 +382,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
+      if (personalFormValues.phoneNumber) this.validateProviderAttribute('phoneNumber');
       this.professionalInfoForm.patchValue(professionalFormValues);
       let signature = this.personalInfoForm.value.signature;
       switch (this.signatureType) {
@@ -464,6 +469,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'phoneNumber':
         this.phoneNumberValid = true;
         this.phoneNumber = event;
+        this.validateProviderAttribute('phoneNumber');
         break;
       case 'whatsAppNumber':
         this.whatsAppNumberValid = true;
@@ -558,7 +564,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   goToNextStep() {
     this.submitted = true;
-    if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid) {
+    if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
       return;
     }
     if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
@@ -742,6 +748,18 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
+  }
+
+  validateProviderAttribute(type: string) {
+    this.checkingPhoneValidity = true;
+    this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
+      if (res.success) {
+        (type == 'phoneNumber') ? this.phoneValid = res.data : this.emailValid = res.data;
+        setTimeout(() => {
+          this.checkingPhoneValidity = false;
+        }, 500);
+      }
+    });
   }
 
   ngOnDestroy(): void {

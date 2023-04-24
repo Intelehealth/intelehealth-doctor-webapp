@@ -24,6 +24,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { HwProfileComponent } from './hw-profile/hw-profile.component';
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    })
+    }),
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardModule { }
