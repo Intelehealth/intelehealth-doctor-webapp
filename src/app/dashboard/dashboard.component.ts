@@ -73,14 +73,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
     this.socket.initSocket(true);
-    this.socket.onEvent("updateMessage").subscribe((data) => {
-      this.socket.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
-      this.playNotify();
-    });
+    // this.socket.onEvent("updateMessage").subscribe((data) => {
+    //   this.socket.showNotification({
+    //     title: "New chat message",
+    //     body: data.message,
+    //     timestamp: new Date(data.createdAt).getTime(),
+    //   });
+    //   this.playNotify();
+    // });
+    // this.socket.onEvent("supportMessage").subscribe((data) => {
+    //   this.socket.showNotification({
+    //     title: "New support chat message",
+    //     body: data.message,
+    //     timestamp: new Date(data.createdAt).getTime(),
+    //   });
+    //   this.playNotify();
+    // });
   }
 
   getVisits() {
@@ -318,7 +326,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   playNotify() {
-    const audioUrl = "../../../../intelehealth/assets/notification.mp3";
+    const audioUrl = "assets/notification.mp3";
     new Audio(audioUrl).play();
   }
 

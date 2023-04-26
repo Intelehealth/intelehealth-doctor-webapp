@@ -22,6 +22,7 @@ export class AuthService {
   public currentUser: Observable<any>;
   private base64Cred: string;
   private mindmapUrl: string = environment.mindmapURL;
+  private notificationUrl: string = environment.notificationURL;
   public rememberMe: boolean = false;
 
   constructor(
@@ -270,5 +271,17 @@ export class AuthService {
 
   validateProviderAttribute(attributeType: string, attributeValue: any, providerUuid: string): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/validateProviderAttribute`, { attributeType, attributeValue, providerUuid });
+  }
+
+  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
+    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
+  }
+
+  getNotificationStatus(user_uuid: string) {
+    return this.http.get(`${environment.mindmapURL}/mindmap/getNotificationStatus/${user_uuid}`);
+  }
+
+  toggleNotificationStatus(user_uuid: string) {
+    return this.http.put(`${environment.mindmapURL}/mindmap/toggleNotificationStatus/${user_uuid}`, null);
   }
 }

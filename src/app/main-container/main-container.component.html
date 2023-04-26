@@ -144,8 +144,9 @@
                 <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
                   <mat-icon>help_outline</mat-icon>
                 </button>
-                <button mat-button class="notification-button mr-3">
-                  <mat-icon>notifications_none</mat-icon>
+                <button mat-button class="notification-button mr-3" (click)="toggleNotification()">
+                  <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
+                  <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
                 </button>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">

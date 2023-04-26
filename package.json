@@ -25,7 +25,7 @@
     "@angular/platform-browser-dynamic": "^14.3.0",
     "@angular/router": "^14.3.0",
     "@angular/service-worker": "^14.3.0",
-    "@fingerprintjs/fingerprintjs": "^3.0.5",
+    "@fingerprintjs/fingerprintjs": "^3.4.1",
     "@ng-bootstrap/ng-bootstrap": "^11.0.1",
     "@ng-select/ng-select": "^8.3.0",
     "angular-calendar": "^0.29.0",
