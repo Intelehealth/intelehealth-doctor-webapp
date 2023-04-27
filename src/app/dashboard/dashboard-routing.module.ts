@@ -6,6 +6,8 @@ import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
+import { HwProfileComponent } from './hw-profile/hw-profile.component';
+import { NgxPermissionsGuard } from 'ngx-permissions';
 
 const routes: Routes = [
   {
@@ -15,8 +17,13 @@ const routes: Routes = [
   },
   {
     path: 'profile',
+    canActivate: [NgxPermissionsGuard],
     data: {
-      breadcrumb: 'Profile'
+      breadcrumb: 'Profile',
+      permissions: {
+        except: ['ORGANIZATIONAL: NURSE'],
+        redirectTo: '/dashboard/hw-profile'
+      }
     },
     component: ProfileComponent
   },
@@ -40,6 +47,13 @@ const routes: Routes = [
       breadcrumb: 'Change Password'
     },
     component: ChangePasswordComponent
+  },
+  {
+    path: 'hw-profile',
+    data: {
+      breadcrumb: 'Profile'
+    },
+    component: HwProfileComponent
   }
 ];
 

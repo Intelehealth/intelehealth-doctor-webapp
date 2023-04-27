@@ -23,6 +23,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { HwProfileComponent } from './hw-profile/hw-profile.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     ProfileComponent,
     GetStartedComponent,
     VisitSummaryComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    HwProfileComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
-    })
+    }),
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardModule { }

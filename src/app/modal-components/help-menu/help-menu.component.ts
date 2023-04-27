@@ -21,11 +21,11 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     this.getMessages(true);
     this.socketService.initSocketSupport(true);
     this.subscription1 = this.socketService.onEvent("supportMessage").subscribe((data) => {
-      this.socketService.showNotification({
-        title: "New message from support team",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
+      // this.socketService.showNotification({
+      //   title: "New message from support team",
+      //   body: data.message,
+      //   timestamp: new Date(data.createdAt).getTime(),
+      // });
 
       this.readMessagesSupport(data.id);
       this.messages= data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);

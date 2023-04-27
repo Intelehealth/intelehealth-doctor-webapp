@@ -15,6 +15,8 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.component';
 import { SocketService } from '../services/socket.service';
+import { SwPush } from '@angular/service-worker';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 @Component({
   selector: 'app-main-container',
@@ -44,6 +46,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   dialogRef: MatDialogRef<HelpMenuComponent>;
   routeUrl: string = '';
   adminUnread: number = 0;
+  notificationEnabled: boolean = false;
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -55,7 +58,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private _swPush: SwPush
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -107,6 +111,64 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.subscription1 = this.socketService.adminUnread.subscribe(res => {
       this.adminUnread = res;
     });
+
+    this.requestSubscription();
+    this.getNotificationStatus();
+  }
+
+  requestSubscription() {
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
+    }
+    this._swPush.subscription.subscribe(sub => {
+      if (!sub) {
+        this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then((_) => {
+          console.log(JSON.stringify(_));
+          (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization()
+            ).subscribe(response => {
+              console.log(response);
+            });
+          })();
+        }).catch((_) => console.log);
+      } else {
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
+  }
+
+  getNotificationStatus() {
+    this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
+      // console.log(res);
+      if (res.success) {
+        this.notificationEnabled = res.data?.notification_status;
+      }
+    });
+  }
+
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = null;
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
   }
 
   ngAfterContentChecked(): void {
@@ -227,6 +289,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.dialogRef = this.coreService.openHelpMenuModal();
     this.dialogRef.afterClosed().subscribe(result => {
       this.dialogRef = undefined;
+    });
+  }
+
+  toggleNotification() {
+    this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
+      // console.log(res);
+      if (res.success) {
+        this.notificationEnabled = res.data?.notification_status;
+        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+      }
     });
   }
 

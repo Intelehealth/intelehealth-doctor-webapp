@@ -1,0 +1,192 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 p-1">
+      <div class="user-profile-con">
+        <div class="profile-pic-con">
+          <div class="profile-pic">
+            <img [src]="profilePicUrl" (error)="onImgError($event)" alt="" width="80px" height="80px">
+            <div class="file-input-con">
+              <label for="profile-pic">
+                <img src="assets/svgs/camera.svg" alt="">
+              </label>
+              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)">
+            </div>
+          </div>
+        </div>
+        <div class="profile-content">
+          <h6>{{hwName|titlecase}}</h6>
+          <p>Username: {{user?.display}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 p-1">
+      <div class="intel-card">
+        <mat-stepper linear #stepper [disableRipple]="true" (selectionChange)="stepChanged($event)">
+          <mat-step>
+            <ng-template matStepLabel>
+              <div class="custom-step-label">
+                <span class="label-index">1</span>
+                Personal Information
+              </div>
+            </ng-template>
+            <form [formGroup]="personalInfoForm" (ngSubmit)="updateProfile()">
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label for="givenName">First name *</label>
+                  <input type="text" class="form-control" formControlName="givenName" placeholder="Enter first name">
+                  <div *ngIf="submitted && f1.givenName.errors">
+                    <small class="error-msg" *ngIf="f1.givenName.errors.required">Enter first name</small>
+                    <small class="error-msg" *ngIf="f1.givenName.errors.pattern">Enter alphabates only</small>
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="middleName">Middle name *</label>
+                  <input type="text" class="form-control" formControlName="middleName" placeholder="Enter middle name">
+                  <div *ngIf="submitted && f1.middleName.errors">
+                    <small class="error-msg" *ngIf="f1.middleName.errors.required">Enter middle name</small>
+                    <small class="error-msg" *ngIf="f1.middleName.errors.pattern">Enter alphabates only</small>
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="familyName">Last name *</label>
+                  <input type="text" class="form-control" formControlName="familyName" placeholder="Enter last name">
+                  <div *ngIf="submitted && f1.familyName.errors">
+                    <small class="error-msg" *ngIf="f1.familyName.errors.required">Enter last name</small>
+                    <small class="error-msg" *ngIf="f1.familyName.errors.pattern">Enter alphabates only</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="gender">Gender *</label>
+                  <div class="py-2">
+                    <div class="pretty p-default p-round">
+                      <input type="radio" value="M"  formControlName="gender">
+                      <div class="state p-success">
+                          <label>Male</label>
+                      </div>
+                      </div>
+                      <div class="pretty p-default p-round">
+                          <input type="radio" value="F"  formControlName="gender">
+                          <div class="state p-success">
+                              <label>Female</label>
+                          </div>
+                      </div>
+                      <div class="pretty p-default p-round">
+                          <input type="radio" value="U"  formControlName="gender">
+                          <div class="state p-success">
+                              <label>Other</label>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="birthdate">Date of birth *</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" formControlName="birthdate" [max]="today" [matDatepicker]="dobdp" placeholder="Enter DOB" aria-label="Birthdate"
+                      aria-describedby="basic-addon1" readonly>
+                    <mat-datepicker #dobdp></mat-datepicker>
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon1">
+                        <mat-datepicker-toggle matSuffix [for]="dobdp">
+                          <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+                        </mat-datepicker-toggle>
+                      </span>
+                    </div>
+                  </div>
+                  <div *ngIf="submitted && f1.birthdate.errors">
+                    <small class="error-msg" *ngIf="f1.birthdate.errors.required">Enter DOB</small>
+                  </div>
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="age">Age *</label>
+                  <input type="number" class="form-control" formControlName="age" placeholder="Enter age" readonly>
+                  <div *ngIf="submitted && f1.age.errors">
+                    <small class="error-msg" *ngIf="f1.age.errors.required">Enter age</small>
+                    <small class="error-msg" *ngIf="f1.age.errors.pattern">Enter numeric value only</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 email-field">
+                  <label for="phoneNumber">Phone Number *</label>
+                  <input type="text"
+                    ng2TelInput
+                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
+                    (hasError)="hasError($event, 'phoneNumber')"
+                    (ng2TelOutput)="getNumber($event, 'phoneNumber')"
+                    (intlTelInputObject)="telInputObject($event, 'phoneNumber')"
+                    (countryChange)="onCountryChange($event, 'phoneNumber')"
+                    placeholder="Enter Mobile Number"
+                    class="form-control"
+                    formControlName="phoneNumber"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+                  <div class="check">
+                    <mat-spinner diameter="20" *ngIf="checkingPhoneValidity"></mat-spinner>
+                    <mat-icon class="success" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && phoneValid && !checkingPhoneValidity">done_all</mat-icon>
+                    <mat-icon class="error" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid && !checkingPhoneValidity">error_outline</mat-icon>
+                  </div>
+                  <div *ngIf="submitted && f1.phoneNumber.errors">
+                    <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">Enter phone number</small>
+                  </div>
+                  <div *ngIf="submitted && !f1?.phoneNumber?.errors && !phoneNumberValid">
+                    <small class="error-msg">Enter valid phone number</small>
+                  </div>
+                  <div *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid">
+                    <small class="error-msg">Phone number already exists. Please enter another phone number.</small>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="whatsapp">WhatsApp Number *</label>
+                  <input type="text"
+                    ng2TelInput
+                    [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
+                    (hasError)="hasError($event, 'whatsAppNumber')"
+                    (ng2TelOutput)="getNumber($event, 'whatsAppNumber')"
+                    (intlTelInputObject)="telInputObject($event, 'whatsAppNumber')"
+                    (countryChange)="onCountryChange($event, 'whatsAppNumber')"
+                    placeholder="Enter Mobile Number"
+                    class="form-control"
+                    formControlName="whatsapp"
+                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
+                  <div *ngIf="submitted && f1.whatsapp.errors">
+                    <small class="error-msg" *ngIf="f1.whatsapp.errors.required">Enter whatsApp number</small>
+                  </div>
+                  <div *ngIf="submitted && !f1.whatsapp?.errors && !whatsAppNumberValid">
+                    <small class="error-msg">Enter valid whatsApp number</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6 email-field">
+                  <label for="emailId">Email ID *</label>
+                  <input type="email" class="form-control" formControlName="emailId" placeholder="Enter email">
+                  <div class="check">
+                    <mat-spinner diameter="20" *ngIf="f1.emailId?.pending"></mat-spinner>
+                    <mat-icon class="success" *ngIf="!f1?.emailId?.errors && !f1.emailId?.pending">done_all</mat-icon>
+                    <mat-icon class="error" *ngIf="f1?.emailId?.errors?.alreadyExists && !f1.emailId?.pending">error_outline</mat-icon>
+                  </div>
+                  <div *ngIf="submitted && f1.emailId.errors">
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.required">Enter email</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.pattern">Enter valid email</small>
+                  </div>
+                  <div *ngIf="f1.emailId.errors">
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.alreadyExists">Email already exists. Please enter another email.</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-12 text-right">
+                  <button type="submit" class="btn next-btn">
+                    Save
+                    <!-- <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt=""> -->
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+        </mat-stepper>
+      </div>
+    </div>
+  </div>
+</div>

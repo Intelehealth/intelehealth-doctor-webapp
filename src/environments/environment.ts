@@ -29,7 +29,8 @@ export const environment = {
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
   siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
-  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM=='
+  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
+  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
 };
 
 /*
