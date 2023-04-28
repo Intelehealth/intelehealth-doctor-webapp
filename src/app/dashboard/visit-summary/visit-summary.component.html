@@ -927,7 +927,7 @@
                   </li>
                 </ul>
                 <div
-                  class="form-group mb-0"
+                  class="form-group mb-0 mt-3"
                   *ngIf="
                     isVisitNoteProvider &&
                     !visitEnded &&
@@ -1019,7 +1019,7 @@
                     </ng-container>
                     <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                       <tr *ngIf="addMoreDiagnosis">
-                        <td colspan="4">
+                        <td colspan="4" class="px-0">
                           <div class="form-group mb-0">
                             <button
                               type="button"
@@ -1128,7 +1128,7 @@
                   <div class="form-group mb-0">
                     <button
                       type="button"
-                      class="white-btn mr-2"
+                      class="white-btn mr-2 mt-3"
                       (click)="toggleDiagnosis()"
                     >
                       Cancel
@@ -1363,7 +1363,7 @@
                       </ng-template>
                       <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreMedicine">
-                          <td colspan="6">
+                          <td colspan="6" class="px-0">
                             <div class="form-group mb-0">
                               <button
                                 type="button"
@@ -1770,7 +1770,7 @@
                       </ng-template>
                       <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreReferral">
-                          <td colspan="3">
+                          <td colspan="3" class="px-0">
                             <div class="form-group mb-0">
                               <button
                                 type="button"
@@ -1962,7 +1962,7 @@
                   </ng-container>
                 </ul>
                 <div
-                  class="form-group mb-0"
+                  class="form-group mb-0 mt-3"
                   *ngIf="
                     isVisitNoteProvider &&
                     !visitEnded &&
@@ -2021,7 +2021,7 @@
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
       <button
         type="button"
-        class="blue-btn mr-2"
+        class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
       >
@@ -2029,7 +2029,7 @@
       </button>
       <button
         type="button"
-        class="blue-btn"
+        class="blue-btn mb-2"
         (click)="openVisitPrescriptionModal(visit?.uuid)"
         *ngIf="visitNotePresent && visitCompleted"
         >

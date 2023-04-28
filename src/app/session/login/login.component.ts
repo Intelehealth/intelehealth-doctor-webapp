@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
-            if (res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
+            if (res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
               this.loginSuccess();
             }
             else if (this.rememberMe) {
