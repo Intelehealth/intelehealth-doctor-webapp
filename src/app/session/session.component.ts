@@ -41,17 +41,21 @@ export class SessionComponent implements OnInit {
     },
     {
       id: 2,
-      name: 'русский',
+      name: 'Russian',
       code: 'ru'
     }
   ];
   constructor(public translate: TranslateService) { }
 
   ngOnInit(): void {
+    if(localStorage.getItem('selectedLanguage')) {
+      this.selectedLanguage = localStorage.getItem('selectedLanguage');
+    }
   }
 
   changeLanguage() {
     this.translate.use(this.selectedLanguage);
+    localStorage.setItem("selectedLanguage", this.selectedLanguage);
   }
 
 }

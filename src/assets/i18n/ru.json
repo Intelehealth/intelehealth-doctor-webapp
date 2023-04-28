@@ -2,7 +2,7 @@
   "Deliver quality health care where there is no doctor": "Предоставляйте качественную медицинскую помощь там, где нет врача",
   "2,75,000 population covered from 215 villages in 2 countries": "Охвачено 2 75 000 человек из 215 деревень в 2 странах",
   "Take online consultations and send prescriptions to the patients virtually": "Проводите онлайн-консультации и отправляйте рецепты пациентам виртуально",
-  "Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation": "Copyright © 2023 Intelehealth, некоммерческая организация 501 (c) (3) и раздела 8.",
+  "Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation": "Авторские права © 2023 Intelehealth, некоммерческая организация 501 (c) (3) и раздела 8.",
   "LOGIN": "авторизоваться",
   "Login with your provided username and password then you can choose the verification method.": "Войдите в систему с вашим именем пользователя и паролем, затем вы можете выбрать метод проверки.",
   "Username": "Имя пользователя",
@@ -37,5 +37,11 @@
   "Resend": "Отправить",
   "Resend in": "Отправить повторно",
   "New password": "Новый пароль",
-  "Confirm new password": "Подтвердите новый пароль"
+  "Confirm new password": "Подтвердите новый пароль",
+  "You have sucessfully logged in.":"Подтвердите новый пароль",
+  "Login Successful": "Новый пароль",
+  "Enter Mobile Number":"введите номер мобильного телефона",
+  "Enter Email ID":"введите адрес электронной почты",
+  "Enter username":"Имя пользователя",
+  "Please Wait":"Пожалуйста, подождите..."
 }

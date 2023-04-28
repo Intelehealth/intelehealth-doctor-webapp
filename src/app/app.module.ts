@@ -65,7 +65,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness
-  text: "Please Wait..."
+  text: localStorage.getItem('selectedLanguage') === 'ru' ? "Пожалуйста, подождите..." : "Please Wait..."
 };
 
 const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt();

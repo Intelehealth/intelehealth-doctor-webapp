@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { TranslationService } from 'src/app/services/translation.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -19,12 +21,14 @@ export class LoginComponent implements OnInit {
   visible: boolean = false;
   rememberMe: boolean = false;
   loginAttempt: number = 0;
+  selectedLanguage:string ='en'
 
   constructor(
     public authService: AuthService,
-    private toastr: ToastrService,
     private router: Router,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    public translate: TranslateService,
+    public translationService: TranslationService) {
 
     this.loginForm = new FormGroup({
       username: new FormControl("", Validators.required),
@@ -37,6 +41,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
+    if(localStorage.getItem('selectedLanguage')) {
+      this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
+      this.translate.use(localStorage.getItem('selectedLanguage'));
+    } else {
+      let browserlang = this.translate.getBrowserLang();
+      this.translate.setDefaultLang(browserlang);
+      localStorage.setItem("selectedLanguage", browserlang);
+    }
+    this.selectedLanguage = localStorage.getItem('selectedLanguage');
     // this.checkSession();
   }
 
@@ -66,12 +79,12 @@ export class LoginComponent implements OnInit {
               this.loginSuccess();
             }
           } else {
-            this.toastr.error("Couldn't find provider.", "Login Failed!");
+            this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
           }
         });
       }
       else {
-        this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
+        this.translationService.getTranslation("Couldn't find you, credentials provided are wrong.", "Login Failed!",false);
       }
     }, err => {
       console.log(err);
@@ -90,7 +103,7 @@ export class LoginComponent implements OnInit {
 
   loginSuccess() {
     this.authService.updateVerificationStatus();
-    this.toastr.success("You have sucessfully logged in.", "Login Successful");
+    this.translationService.getTranslation("You have sucessfully logged in.", "Login Successful",true);
     let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
     if (role) {

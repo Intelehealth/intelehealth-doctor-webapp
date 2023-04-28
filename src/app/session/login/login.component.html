@@ -39,6 +39,7 @@
           <label for="capcha">{{'Before logging in, please confirm you are not a robot'|translate}}</label>
           <ngx-recaptcha2 #captchaElem
             [siteKey]="siteKey"
+            [hl]="selectedLanguage"
             (reset)="handleReset()"
             (expire)="handleExpire()"
             (load)="handleLoad()"
