@@ -23,6 +23,11 @@ export class PresentingComplaintsComponent implements OnInit {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === visitUuid) {
           this.complaint.push(obs);
+          if(this.complaint.length > 1) {
+            if(this.complaint[0].value.length === this.complaint[1].value.length){
+              this.complaint.pop();
+            }
+          }
         }
       });
       if (this.complaint !== undefined) {

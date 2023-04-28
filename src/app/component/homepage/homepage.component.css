@@ -66,3 +66,36 @@ mat-form-field {
   margin-right: auto;
   width: 50%;
 }
+
+.cell{
+  font-size: 20px;
+  font-weight: 500;
+  color: #807f7f;
+  position: absolute;
+  top: 70%;
+  left: 43%;
+  /* word-spacing: 4px; */
+}
+
+@media only screen and (max-width: 769px) {
+  /* For tablets: */
+  .cell{
+    font-size: 12px;
+    font-weight: 400;
+    color: #807f7f;
+    position: absolute;
+    top: 72%;
+    left: 41%;
+  }
+}
+@media only screen and (max-width: 991px) {
+  /* For desktop: */
+  .cell{
+    font-size: 14px;
+    font-weight: 400;
+    color: #807f7f;
+    position: absolute;
+    top: 72%;
+    left: 43%;
+  }
+}
