@@ -2,6 +2,7 @@ import {
   Component,
   HostListener,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from "@angular/core";
@@ -14,7 +15,7 @@ declare const getFromStorage: Function;
   templateUrl: "./vc.component.html",
   styleUrls: ["./vc.component.css"],
 })
-export class VcComponent implements OnInit {
+export class VcComponent implements OnInit, OnDestroy {
   @ViewChild("remoteVideo") remoteVideoRef: any;
   @ViewChild("localVideo") localVideoRef: any;
   @ViewChild("mainContainer") mainContainer: any;
@@ -22,6 +23,7 @@ export class VcComponent implements OnInit {
 
   callerStream: any;
   localStream: MediaStream;
+  remoteStream: MediaStream;
   myId;
   callerSignal;
   callerInfo;
@@ -35,6 +37,7 @@ export class VcComponent implements OnInit {
   isVideoOff = false;
   isFullscreen = false;
   classFlag = false;
+  setSpiner = false;
   patientUuid = "";
   nurseId: { uuid } = { uuid: null };
   doctorName = "";
@@ -44,10 +47,17 @@ export class VcComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<VcComponent>,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   close() {
     this.dialogRef.close();
+    this.localStream.getTracks().forEach(function (track) {
+      track.stop();
+    });
+    if (this.remoteStream)
+      this.remoteStream.getTracks().forEach(function (track) {
+        track.stop();
+      });
   }
 
   toast({
@@ -83,6 +93,16 @@ export class VcComponent implements OnInit {
       roomId: this.room,
     });
     this.makeCall();
+    this.socketService.onEvent("toast").subscribe((data) => {
+      if (data?.message) {
+        this.toast(data);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.socketService.close();
+    this.close();
   }
 
   @HostListener("fullscreenchange")
@@ -94,7 +114,10 @@ export class VcComponent implements OnInit {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
     console.log("Attempted to create or  join room", this.room);
-    this.toast({ message: "Calling....", duration: 8000 });
+    this.toast({
+      message: "Calling....",
+      duration: 8000,
+    });
   }
 
   mute() {
@@ -117,10 +140,17 @@ export class VcComponent implements OnInit {
   }
 
   isStreamAvailable;
-  startUserMedia(config?: any, cb = () => {}): void {
+  startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
-      video: true,
-      audio: true,
+      audio: {
+        echoCancellation: true,
+        channelCount: 2,
+      },
+      video: {
+        width: { min: 160, ideal: 480 },
+        height: { min: 120, ideal: 640 },
+        frameRate: { min: 10, ideal: 25 },
+      },
     };
 
     if (config) {
@@ -201,12 +231,6 @@ export class VcComponent implements OnInit {
   }
 
   maybeStart() {
-    console.log(
-      ">>>>>>> maybeStart() ",
-      this.isStarted,
-      this.localStream,
-      this.isChannelReady
-    );
     if (
       !this.isStarted &&
       typeof this.localStream !== "undefined" &&
@@ -216,7 +240,6 @@ export class VcComponent implements OnInit {
       this.createPeerConnection();
       this.pc.addStream(this.localStream);
       this.isStarted = true;
-      console.log("isInitiator", this.isInitiator);
       if (this.isInitiator) {
         this.doCall();
       }
@@ -260,6 +283,8 @@ export class VcComponent implements OnInit {
     console.log("Remote stream added.");
     const remoteStream = event.stream;
     this.remoteVideoRef.nativeElement.srcObject = remoteStream;
+    this.remoteStream = remoteStream;
+    this.setSpiner = true;
   }
 
   handleIceCandidate(event) {
@@ -274,6 +299,10 @@ export class VcComponent implements OnInit {
     } else {
       console.log("End of candidates.");
     }
+    this.setSpiner = true;
+    setTimeout(() => {
+      this.setSpiner = false;
+    }, 2000);
   }
 
   doCall() {
@@ -321,6 +350,7 @@ export class VcComponent implements OnInit {
 
   endCallInRoom() {
     this.socketService.emitEvent("bye", this.room);
+    this.setSpiner = false;
     this.close();
   }
 
@@ -334,6 +364,7 @@ export class VcComponent implements OnInit {
       this.pc.close();
       this.pc = null;
     }
+    this.setSpiner = false;
     this.close();
   }
 
