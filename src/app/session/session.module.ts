@@ -18,6 +18,7 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgOtpInputModule } from  'ng-otp-input';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { SharedModule } from '../shared.module';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     NgbNavModule,
     Ng2TelInputModule,
     NgOtpInputModule,
-    NgxPermissionsModule.forChild()
+    NgxPermissionsModule.forChild(),
+    SharedModule
   ]
 })
 export class SessionModule { }

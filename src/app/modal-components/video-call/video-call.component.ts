@@ -6,6 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-video-call',
@@ -50,7 +51,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private cs: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private translateService: TranslateService
+  ) { }
 
   async ngOnInit() {
     this.room = this.data.patientId;
@@ -198,7 +201,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
 
     if (this.initiator === "dr") {
-      this.toastr.info("Calling....", null, { timeOut: 2000 });
+      this.toastr.info(this.translateService.instant(`messages.${"Calling...."}`), null, { timeOut: 2000 });
       this.call();
     } else {
       this.socketSvc.emitEvent("create_or_join_hw", {
@@ -247,7 +250,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
       if (data === 'app') {
-        this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
+        this.toastr.info(this.translateService.instant(`messages.${"Call ended from Health Worker end."}`), null, { timeOut: 2000 });
       }
       this.stop();
     });

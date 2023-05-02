@@ -3,7 +3,7 @@
     <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
       <div class="appointment-banner">
         <div>
-          <h6>Appointment starts in</h6>
+          <h6>{{'Appointment starts in'|translate}}</h6>
           <p>
             <img src="assets/svgs/clock-green.svg" alt="" />
             {{ checkIfDateOldThanOneDay(visitAppointment) }}
@@ -15,7 +15,7 @@
             href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
             target="_blank"
           >
-            Start call
+            {{'Start call'|translate}}
           </a>
         </div>
       </div>
@@ -44,7 +44,7 @@
                 </div>
               </div>
               <div class="patient-info-item">
-                <h6>Age</h6>
+                <h6>{{'Age'|translate}}</h6>
                 <p>
                   {{
                     patient?.person.birthdate
@@ -56,21 +56,21 @@
             </div>
             <div class="col-md-4 patient-info-section p-3">
               <div class="patient-info-item mb-3">
-                <h6>Citizen ID</h6>
+                <h6>{{'Citizen ID'|translate}}</h6>
                 <p>{{ getPersonAttributeValue("Citizen Id") }}</p>
               </div>
               <div class="patient-info-item mb-3">
-                <h6>Occupation</h6>
+                <h6>{{'Occupation'|translate}}</h6>
                 <p>{{ getPersonAttributeValue("occupation") }}</p>
               </div>
               <div class="patient-info-item">
-                <h6>Address</h6>
+                <h6>{{'Address'|translate}}</h6>
                 <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
               </div>
             </div>
             <div class="col-md-4 patient-info-section p-3">
               <div class="patient-info-item">
-                <h6>Contact no.</h6>
+                <h6>{{'Contact no.'|translate}}</h6>
                 <p>
                   {{ getPersonAttributeValue("Telephone Number") }}
                   <a
@@ -106,14 +106,14 @@
           [disableRipple]="true"
           (selectedIndexChange)="onTabChange($event)"
         >
-          <mat-tab label="Current visit summary">
+          <mat-tab label="{{'Current visit summary'|translate}}">
             <div class="text-right">
               <button
                 *ngIf="!showAll"
                 mat-button
                 (click)="accordion.openAll(); showAll = !showAll"
               >
-                <span class="text-muted">Show all</span>
+                <span class="text-muted">{{'Show all'|translate}}</span>
                 <mat-icon>expand_more</mat-icon>
               </button>
               <button
@@ -121,7 +121,7 @@
                 mat-button
                 (click)="accordion.closeAll(); showAll = !showAll"
               >
-                <span class="text-muted">Hide all</span>
+                <span class="text-muted">{{'Hide all'|translate}}</span>
                 <mat-icon>expand_less</mat-icon>
               </button>
             </div>
@@ -135,7 +135,7 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Consultation details</h6>
+                      <h6 class="mb-0 ml-2">{{'Consultation details'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -143,7 +143,7 @@
                 <ul class="items-list">
                   <li>
                     <div class="list-item">
-                      <label>Visit ID</label>
+                      <label>{{'Visit ID'|translate}}</label>
                       <div class="list-item-content">
                         {{
                           visit?.uuid
@@ -155,7 +155,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Visit created</label>
+                      <label>{{'Visit created'|translate}}</label>
                       <div class="list-item-content">
                         {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
                       </div>
@@ -163,19 +163,19 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Appointment on</label>
+                      <label>{{'Appointment on'|translate}}</label>
                       <div class="list-item-content">
                         <span [class.text-muted]="!visitAppointment">{{
                           visitAppointment
                             ? (visitAppointment | date : "dd MMM, yyyy")
-                            : "No appointment"
+                            : "No appointment"|translate
                         }}</span>
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Status</label>
+                      <label>{{'Status'|translate}}</label>
                       <div class="list-item-content">
                         <span
                           [ngClass]="{
@@ -189,14 +189,14 @@
                                 'Ended Visit'
                               ].indexOf(visitStatus) != -1
                           }"
-                          >{{ visitStatus }}</span
+                          >{{ visitStatus|translate }}</span
                         >
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Location</label>
+                      <label>{{'Location'|translate}}</label>
                       <div class="list-item-content">
                         {{ clinicName | titlecase }}
                       </div>
@@ -204,7 +204,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Provided by</label>
+                      <label>{{'Provided by'|translate}}</label>
                       <div class="list-item-content">
                         <div class="visit-provider-con">
                           <span>{{ providerName }}</span>
@@ -240,7 +240,7 @@
                   <mat-panel-title>
                     <div class="intel-accordion-title">
                       <img src="assets/svgs/vitals.svg" alt="" width="44px" />
-                      <h6 class="mb-0 ml-2">Vitals</h6>
+                      <h6 class="mb-0 ml-2">{{'Vitals'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -248,7 +248,7 @@
                 <ul class="items-list">
                   <li>
                     <div class="list-item">
-                      <label>Height (cm)</label>
+                      <label>{{'Height (cm)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Height (cm)')"
@@ -256,14 +256,14 @@
                         {{
                           getObsValue("Height (cm)")
                             ? getObsValue("Height (cm)")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Weight (kg)</label>
+                      <label>{{'Weight (kg)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Weight (kg)')"
@@ -271,14 +271,14 @@
                         {{
                           getObsValue("Weight (kg)")
                             ? getObsValue("Weight (kg)")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>BMI</label>
+                      <label>{{'BMI'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="
@@ -293,14 +293,14 @@
                                 ((getObsValue("Height (cm)") / 100) *
                                   (getObsValue("Height (cm)") / 100))
                               | number : "1.2-2")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>BP</label>
+                      <label>{{'BP'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="
@@ -312,14 +312,14 @@
                             ? getObsValue("SYSTOLIC BLOOD PRESSURE") +
                               " / " +
                               getObsValue("DIASTOLIC BLOOD PRESSURE")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Pulse</label>
+                      <label>{{'Pulse'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Pulse')"
@@ -327,14 +327,14 @@
                         {{
                           getObsValue("Pulse")
                             ? getObsValue("Pulse")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Temprature (F)</label>
+                      <label>{{'Temprature (F)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('TEMPERATURE (C)')"
@@ -343,14 +343,14 @@
                           getObsValue("TEMPERATURE (C)")
                             ? ((getObsValue("TEMPERATURE (C)") * 9) / 5 + 32
                               | number : "0.2-2")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>SpO2 (%)</label>
+                      <label>{{'SpO2 (%)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="
@@ -360,14 +360,14 @@
                         {{
                           getObsValue("BLOOD OXYGEN SATURATION")
                             ? getObsValue("BLOOD OXYGEN SATURATION")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Respiratory Rate</label>
+                      <label>{{'Respiratory Rate'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Respiratory rate')"
@@ -375,7 +375,7 @@
                         {{
                           getObsValue("Respiratory rate")
                             ? getObsValue("Respiratory rate")
-                            : "No information"
+                            : "No information"|translate
                         }}
                       </div>
                     </div>
@@ -392,13 +392,13 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Check-up reason</h6>
+                      <h6 class="mb-0 ml-2">{{'Check-up reason'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
 
                 <div class="cheif-complaint-wrapper">
-                  <h6>Cheif Complaint</h6>
+                  <h6>{{'Cheif Complaint'|translate}}</h6>
                   <div class="complaint-chips">
                     <div class="chip-item" *ngFor="let c of cheifComplaints">
                       {{ c }}
@@ -407,7 +407,7 @@
                   <div class="check-up-reason-con">
                     <ng-container *ngFor="let ckr of checkUpReasonData">
                       <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title }}</h6>
+                        <h6 class="my-3">{{ ckr.title|translate }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item">
@@ -452,7 +452,7 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Physical examination</h6>
+                      <h6 class="mb-0 ml-2">{{'Physical examination'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -475,7 +475,7 @@
                         </li>
                         <li *ngIf="eyeImages.length">
                           <div class="list-item">
-                            <label>Eye images</label>
+                            <label>{{'Eye images'|translate}}</label>
                             <div class="list-item-content">
                               <div class="eye-images-con">
                                 <div
@@ -520,7 +520,7 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Medical history</h6>
+                      <h6 class="mb-0 ml-2">{{'Medical history'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -554,7 +554,7 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Additional documents</h6>
+                      <h6 class="mb-0 ml-2">{{'Additional documents'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -582,7 +582,7 @@
                 </ng-container>
 
                 <ng-template #noAdditionaDocs>
-                  <div class="no-docs">No additional docs available!</div>
+                  <div class="no-docs">{{'No additional docs available!'|translate}}</div>
                 </ng-template>
               </mat-expansion-panel>
 
@@ -598,7 +598,7 @@
                         alt=""
                         width="44px"
                       />
-                      <h6 class="mb-0 ml-2">Refer to specialist</h6>
+                      <h6 class="mb-0 ml-2">{{'Refer to specialist'|translate}}</h6>
                     </div>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
@@ -610,7 +610,7 @@
                 >
                   <div class="form-group row">
                     <label for="refer" class="col-sm-3 col-form-label"
-                      >Refer to another speciality</label
+                      >{{'Refer to another speciality'|translate}}</label
                     >
                     <div class="col-sm-9 d-flex align-items-center">
                       <div class="pretty p-default p-round">
@@ -620,7 +620,7 @@
                           formControlName="refer"
                         />
                         <div class="state p-success">
-                          <label>Yes</label>
+                          <label>{{'Yes'|translate}}</label>
                         </div>
                       </div>
                       <div class="pretty p-default p-round">
@@ -630,7 +630,7 @@
                           formControlName="refer"
                         />
                         <div class="state p-success">
-                          <label>No</label>
+                          <label>{{'No'|translate}}</label>
                         </div>
                       </div>
                     </div>
@@ -638,7 +638,7 @@
                   <ng-container *ngIf="referSpecialityForm.value.refer">
                     <div class="form-group row">
                       <label for="refer" class="col-sm-3 col-form-label"
-                        >Specialization</label
+                        >{{'Specialization'|translate}}</label
                       >
                       <div class="col-sm-3">
                         <ng-select
@@ -650,13 +650,13 @@
                           bindValue="name"
                           [clearable]="false"
                           [searchable]="true"
-                          placeholder="Select specialization"
+                          placeholder="{{'Select specialization'|translate}}"
                         >
                         </ng-select>
                       </div>
                     </div>
                     <div class="form-group">
-                      <button type="submit" class="next-btn">Re-assign</button>
+                      <button type="submit" class="next-btn">{{'Re-assign'|translate}}</button>
                     </div>
                   </ng-container>
                 </form>
@@ -664,7 +664,7 @@
             </mat-accordion>
           </mat-tab>
 
-          <mat-tab label="Past visit history">
+          <mat-tab label="{{'Past visit history'|translate}}">
             <div class="mat-elevation-z8">
               <table mat-table [dataSource]="dataSource">
                 <!-- Action Column -->
@@ -681,7 +681,7 @@
 
                 <!-- Created on Column -->
                 <ng-container matColumnDef="created_on">
-                  <th mat-header-cell *matHeaderCellDef>Created on</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Created on'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     {{ element.created_on | date : "dd MM, yyyy" }}
                   </td>
@@ -689,7 +689,7 @@
 
                 <!-- Consulted by Column -->
                 <ng-container matColumnDef="consulted_by">
-                  <th mat-header-cell *matHeaderCellDef>Consulted by</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Consulted by'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     <div
                       class="d-flex align-items-center"
@@ -718,7 +718,7 @@
 
                 <!-- Cheif Complaint Column -->
                 <ng-container matColumnDef="cheif_complaint">
-                  <th mat-header-cell *matHeaderCellDef>Cheif Complaint</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Cheif Complaint'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     {{ element.cheif_complaint }}
                   </td>
@@ -726,7 +726,7 @@
 
                 <!-- Summary Column -->
                 <ng-container matColumnDef="summary">
-                  <th mat-header-cell *matHeaderCellDef>Summary</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Summary'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     <a
                       class="pill-anchor"
@@ -738,7 +738,7 @@
                           src="assets/svgs/summary-list-blue-icon.svg"
                           alt=""
                         />
-                        <span class="ml-1">View</span>
+                        <span class="ml-1">{{'View'|translate}}</span>
                       </div>
                     </a>
                   </td>
@@ -746,7 +746,7 @@
 
                 <!-- Prescription Column -->
                 <ng-container matColumnDef="prescription">
-                  <th mat-header-cell *matHeaderCellDef>Prescription</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Prescription'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     <a
                       *ngIf="element.prescription_sent"
@@ -756,7 +756,7 @@
                     >
                       <div class="green-pill">
                         <img src="assets/svgs/green-pad.svg" alt="" />
-                        <span class="ml-1">View</span>
+                        <span class="ml-1">{{'View'|translate}}</span>
                       </div>
                     </a>
                   </td>
@@ -764,7 +764,7 @@
 
                 <!-- Prescription sent Column -->
                 <ng-container matColumnDef="prescription_sent">
-                  <th mat-header-cell *matHeaderCellDef>Prescription sent</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Prescription sent'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     <div class="blue-pill" *ngIf="element.prescription_sent">
                       <img src="assets/svgs/pad-4.svg" alt="" />
@@ -778,7 +778,7 @@
                     class="mat-cell text-center"
                     [attr.colspan]="displayedColumns.length"
                   >
-                    No past visit history
+                    {{'No past visit history'|translate}}
                   </td>
                 </tr>
 
@@ -798,15 +798,13 @@
       <div class="intel-card">
         <div class="card-body">
           <p class="note-con">
-            <span class="important-text">Note:</span> This history note and
-            physical exam note was generated by a community health worker with
-            the support of the Intelehealth mobile application and Ayu, a
-            digital assistant. It collects only preliminary findings and may not
-            gather all of the patient's clinical information, especially
-            sensitive information or complex physical exam information which is
-            hard for the health worker to collect. Please verify crucial
-            clinical information and collect any additional information you
-            require by speaking with the patient directly.
+            <span class="important-text">{{'Note:'|translate}}</span> 
+            {{ 'This history note and physical exam note was generated by a community health worker with the'| translate }}
+            {{ 'support of the Intelehealth mobile application and Ayu, a digital assistant. It collects only'| translate }}
+            {{ 'preliminary findings and may not gather all of the patient clinical information, especially' | translate }}
+            {{ 'sensitive information or complex physical exam information which is hard for the health worker' | translate }}
+            {{ 'to collect. Please verify crucial clinical information and collect any additional information' | translate }}
+            {{ 'you require by speaking with the patient directly.' | translate }}
           </p>
         </div>
       </div>
@@ -814,7 +812,7 @@
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent">
       <button type="button" class="blue-btn" (click)="startVisitNote()">
-        Start visit note
+        {{'Start visit note'|translate}}
       </button>
     </div>
 
@@ -831,7 +829,7 @@
                       alt=""
                       width="44px"
                     />
-                    <h6 class="mb-0 ml-2">Patient interaction</h6>
+                    <h6 class="mb-0 ml-2">{{'Patient interaction'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel1.expanded ? "remove" : "add" }}</mat-icon>
@@ -845,7 +843,7 @@
                   <li>
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
-                        >Connect with patient</label
+                        >{{'Connect with patient'|translate}}</label
                       >
                       <div
                         class="col-sm-9 d-flex align-items-center"
@@ -873,13 +871,13 @@
                           </a>
                         </div>
                         <span class="text-muted"
-                          >Click here to connent with the patient</span
+                          >{{'Click here to connent with the patient'|translate}}</span
                         >
                       </div>
                       <ng-template #noContactDetails>
                         <div class="col-sm-9 d-flex align-items-center">
                           <span class="text-muted"
-                            >Patient Mobile number is not available</span
+                            >{{'Patient Mobile number is not available'|translate}}</span
                           >
                         </div>
                       </ng-template>
@@ -888,7 +886,7 @@
                   <li *ngIf="!patientInteractionForm.value.present">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
-                        >Have you spoken with the patient directly?</label
+                        >{{'Have you spoken with the patient directly?'|translate}}</label
                       >
                       <div class="col-sm-9 d-flex align-items-center">
                         <div class="pretty p-default p-round">
@@ -898,7 +896,7 @@
                             formControlName="spoken"
                           />
                           <div class="state p-success">
-                            <label>Yes</label>
+                            <label>{{'Yes'|translate}}</label>
                           </div>
                         </div>
                         <div class="pretty p-default p-round">
@@ -908,7 +906,7 @@
                             formControlName="spoken"
                           />
                           <div class="state p-success">
-                            <label>No</label>
+                            <label>{{'No'|translate}}</label>
                           </div>
                         </div>
                       </div>
@@ -928,21 +926,21 @@
                     class="gray-btn"
                     [disabled]="patientInteractionForm.invalid"
                   >
-                    Save
+                    {{'Save'|translate}}
                   </button>
                 </div>
                 <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col">Patient Interaction</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">{{'Patient interaction'|translate}}</th>
+                        <th scope="col">{{'Status'|translate}}</th>
                         <th scope="col"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Spoken with the patient directly?</td>
+                        <td>{{'Spoken with the patient directly?'|translate}}</td>
                         <td>{{ patientInteractionForm.value.spoken }}</td>
                         <td class="pr-0">
                           <button
@@ -972,7 +970,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Diagnosis</h6>
+                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
@@ -982,9 +980,9 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Diagnosis</th>
-                      <th scope="col">Type</th>
-                      <th scope="col">Status</th>
+                      <th scope="col">{{'Diagnosis'|translate}}</th>
+                      <th scope="col">{{'Type'|translate}}</th>
+                      <th scope="col">{{'Status'|translate}}</th>
                       <th scope="col"></th>
                     </tr>
                   </thead>
@@ -1016,7 +1014,7 @@
                               (click)="toggleDiagnosis()"
                             >
                               <img src="assets/svgs/plus-circle.svg" alt="" />
-                              <span class="ml-2">Add more diagnosis</span>
+                              <span class="ml-2">{{'Add more diagnosis'|translate}}</span>
                             </button>
                           </div>
                         </td>
@@ -1038,7 +1036,7 @@
                         <label
                           for="select-diagnosis"
                           class="col-sm-3 col-form-label"
-                          >Select diagnosis</label
+                          >{{'Select diagnosis'|translate}}</label
                         >
                         <div class="col-sm-3">
                           <ng-select
@@ -1050,7 +1048,7 @@
                             bindValue="name"
                             [clearable]="true"
                             [searchable]="true"
-                            placeholder="Select diagnosis"
+                            placeholder="{{'Select diagnosis'|translate}}"
                             [addTag]="true"
                           >
                           </ng-select>
@@ -1060,7 +1058,7 @@
                     <li>
                       <div class="row">
                         <label class="col-sm-3 col-form-label"
-                          >Diagnosis type</label
+                          >{{'Diagnosis type'|translate}}</label
                         >
                         <div class="col-sm-9 d-flex align-items-center">
                           <div class="pretty p-default p-round">
@@ -1070,7 +1068,7 @@
                               formControlName="diagnosisType"
                             />
                             <div class="state p-success">
-                              <label>Primary</label>
+                              <label>{{'Primary'|translate}}</label>
                             </div>
                           </div>
                           <div class="pretty p-default p-round">
@@ -1080,7 +1078,7 @@
                               formControlName="diagnosisType"
                             />
                             <div class="state p-success">
-                              <label>Secondary</label>
+                              <label>{{'Secondary'|translate}}</label>
                             </div>
                           </div>
                         </div>
@@ -1088,7 +1086,7 @@
                     </li>
                     <li>
                       <div class="row">
-                        <label class="col-sm-3 col-form-label">Select</label>
+                        <label class="col-sm-3 col-form-label">{{'Select'|translate}}</label>
                         <div class="col-sm-9 d-flex align-items-center">
                           <div class="pretty p-default p-round">
                             <input
@@ -1097,7 +1095,7 @@
                               formControlName="diagnosisStatus"
                             />
                             <div class="state p-success">
-                              <label>Provisional</label>
+                              <label>{{'Provisional'|translate}}</label>
                             </div>
                           </div>
                           <div class="pretty p-default p-round">
@@ -1107,7 +1105,7 @@
                               formControlName="diagnosisStatus"
                             />
                             <div class="state p-success">
-                              <label>Confirmed</label>
+                              <label>{{'Confirmed'|translate}}</label>
                             </div>
                           </div>
                         </div>
@@ -1120,14 +1118,14 @@
                       class="white-btn mr-2"
                       (click)="toggleDiagnosis()"
                     >
-                      Cancel
+                    {{'Cancel'|translate}}
                     </button>
                     <button
                       type="submit"
                       class="gray-btn"
                       [disabled]="diagnosisForm.invalid"
                     >
-                      Add
+                      {{'Add'|translate}}
                     </button>
                   </div>
                 </form>
@@ -1215,7 +1213,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/note.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Note</h6>
+                    <h6 class="mb-0 ml-2">{{'Note'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel3.expanded ? "remove" : "add" }}</mat-icon>
@@ -1239,7 +1237,7 @@
               </ul>
               <ng-template #noNotes>
                 <div class="no-docs text-center font-weight-bold">
-                  No notes added!
+                  {{'No notes added!'|translate}}
                 </div>
               </ng-template>
               <form
@@ -1261,15 +1259,15 @@
                 <ng-container *ngIf="!addMoreNote">
                   <div class="form-group">
                     <label for="note"
-                      ><b>Note&nbsp;</b>
+                      ><b>{{'Note'|translate}}&nbsp;</b>
                       <span class="text-muted"
-                        >(Not shared with patient)</span
+                        >{{'(Not shared with patient)'|translate}}</span
                       ></label
                     >
                     <textarea
                       class="form-control"
                       rows="3"
-                      placeholder="Type here"
+                      placeholder="{{'Type here'|translate}}"
                       formControlName="note"
                     ></textarea>
                   </div>
@@ -1279,14 +1277,14 @@
                       class="white-btn mr-2"
                       (click)="toggleNote()"
                     >
-                      Cancel
+                    {{'Cancel'|translate}}
                     </button>
                     <button
                       type="submit"
                       class="gray-btn"
                       [disabled]="addNoteForm.invalid"
                     >
-                      Add note
+                      {{'Add note'|translate}}
                     </button>
                   </div>
                 </ng-container>
@@ -1303,7 +1301,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/medication.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Medication</h6>
+                    <h6 class="mb-0 ml-2">{{'Medication'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel4.expanded ? "remove" : "add" }}</mat-icon>
@@ -1314,18 +1312,18 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col">Drug name</th>
-                        <th scope="col">Strength</th>
-                        <th scope="col">No. of days</th>
-                        <th scope="col">Timing</th>
-                        <th scope="col">Remarks</th>
+                        <th scope="col">{{'Drug name'|translate}}</th>
+                        <th scope="col">{{'Strength'|translate}}</th>
+                        <th scope="col">{{'No. of days'|translate}}</th>
+                        <th scope="col">{{'Timing'|translate}}</th>
+                        <th scope="col">{{'Remarks'|translate}}</th>
                         <th scope="col"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <ng-container *ngIf="medicines.length">
                         <tr *ngFor="let m of medicines; let i = index">
-                          <td>{{ m.drug }}</td>
+                          <!-- <td>{{ m.drug }}</td> -->
                           <td>{{ m.strength }}</td>
                           <td>{{ m.days }}</td>
                           <td>{{ m.timing }}</td>
@@ -1346,7 +1344,7 @@
                       <ng-template #noMedicines>
                         <tr>
                           <td colspan="6" class="text-center font-weight-bold">
-                            No medicines added!
+                            {{'No medicines added!'|translate}}
                           </td>
                         </tr>
                       </ng-template>
@@ -1360,7 +1358,7 @@
                                 (click)="toggleMedicine()"
                               >
                                 <img src="assets/svgs/plus-circle.svg" alt="" />
-                                <span class="ml-2">Add more medicine</span>
+                                <span class="ml-2">{{'Add more medicine'|translate}}</span>
                               </button>
                             </div>
                           </td>
@@ -1395,7 +1393,7 @@
                                 formControlName="drug"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter drug"
+                                placeholder="{{'Enter drug'|translate}}"
                                 [ngbTypeahead]="search3"
                               />
                             </div>
@@ -1406,7 +1404,7 @@
                                 formControlName="strength"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter strength"
+                                placeholder="{{'Enter strength'|translate}}"
                                 [ngbTypeahead]="search4"
                               />
                             </div>
@@ -1417,7 +1415,7 @@
                                 formControlName="days"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter days"
+                                placeholder="{{'Enter days'|translate}}"
                                 [ngbTypeahead]="search5"
                               />
                             </div>
@@ -1433,7 +1431,7 @@
                               [clearable]="false"
                               [searchable]="true"
                               [addTag]="true"
-                              placeholder="Select timing"
+                              placeholder="{{'Select timing'|translate}}"
                             >
                             </ng-select>
                           </td>
@@ -1443,7 +1441,7 @@
                                 formControlName="remark"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter Remark"
+                                placeholder="{{'Enter Remark'|translate}}"
                               />
                             </div>
                           </td>
@@ -1456,14 +1454,14 @@
                                 class="white-btn mr-2"
                                 (click)="toggleMedicine()"
                               >
-                                Cancel
+                                {{'Cancel'|translate}}
                               </button>
                               <button
                                 type="submit"
                                 class="gray-btn"
                                 [disabled]="addMedicineForm.invalid"
                               >
-                                Add
+                                {{'Add'|translate}}
                               </button>
                             </div>
                           </td>
@@ -1474,7 +1472,7 @@
                 </div>
               </form>
 
-              <h6 class="list-header mt-3 mb-2">Additional instructions</h6>
+              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}</h6>
               <ng-container *ngIf="additionalInstructions.length">
                 <ul class="items-list">
                   <li *ngFor="let ai of additionalInstructions; let i = index">
@@ -1494,7 +1492,7 @@
 
               <ng-template #noAdditionalInstructions>
                 <div class="no-docs text-center font-weight-bold">
-                  No additional instructions added!
+                  {{'No additional instructions added!'|translate}}
                 </div>
               </ng-template>
               <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
@@ -1505,7 +1503,7 @@
                     (click)="toggleAdditionalInstruction()"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">Add more instructions</span>
+                    <span class="ml-2">{{'Add more instructions'|translate}}</span>
                   </button>
                 </div>
                 <form
@@ -1519,7 +1517,7 @@
                       formControlName="note"
                       class="form-control"
                       rows="3"
-                      placeholder="Type here"
+                      placeholder="{{'Type here'|translate}}"
                     ></textarea>
                   </div>
                   <div class="form-group">
@@ -1528,14 +1526,14 @@
                       class="white-btn mr-2"
                       (click)="toggleAdditionalInstruction()"
                     >
-                      Cancel
+                      {{'Cancel'|translate}}
                     </button>
                     <button
                       type="submit"
                       class="gray-btn"
                       [disabled]="addAdditionalInstructionForm.invalid"
                     >
-                      Save
+                      {{'Save'|translate}}
                     </button>
                   </div>
                 </form>
@@ -1552,7 +1550,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/advice.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Advice</h6>
+                    <h6 class="mb-0 ml-2">{{'Advice'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel5.expanded ? "remove" : "add" }}</mat-icon>
@@ -1574,7 +1572,7 @@
               </ul>
               <ng-template #noAdvices>
                 <div class="no-docs text-center font-weight-bold">
-                  No advices added!
+                  {{'No advices added!'|translate}}
                 </div>
               </ng-template>
               <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
@@ -1585,7 +1583,7 @@
                     (click)="toggleAdvice()"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">Add more advice</span>
+                    <span class="ml-2">{{'Add more advice'|translate}}</span>
                   </button>
                 </div>
                 <form
@@ -1595,12 +1593,12 @@
                   *ngIf="!addMoreAdvice"
                 >
                   <div class="form-group">
-                    <label for="note"><b>Advice</b></label>
+                    <label for="note"><b>{{'Advice'|translate}}</b></label>
                     <input
                       type="text"
                       class="form-control"
                       formControlName="advice"
-                      placeholder="Type here"
+                      placeholder="{{'Type here'|translate}}"
                       [ngbTypeahead]="search"
                     />
                   </div>
@@ -1610,14 +1608,14 @@
                       class="white-btn mr-2"
                       (click)="toggleAdvice()"
                     >
-                      Cancel
+                      {{'Cancel'|translate}}
                     </button>
                     <button
                       type="submit"
                       class="gray-btn"
                       [disabled]="addAdviceForm.invalid"
                     >
-                      Add advice
+                      {{'Add advice'|translate}}
                     </button>
                   </div>
                 </form>
@@ -1634,7 +1632,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/test.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Test</h6>
+                    <h6 class="mb-0 ml-2">{{'Test'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel6.expanded ? "remove" : "add" }}</mat-icon>
@@ -1656,7 +1654,7 @@
               </ul>
               <ng-template #noTests>
                 <div class="no-docs text-center font-weight-bold">
-                  No tests added!
+                  {{'No tests added!'|translate}}
                 </div>
               </ng-template>
               <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
@@ -1667,7 +1665,7 @@
                     (click)="toggleTest()"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
-                    <span class="ml-2">Add more test</span>
+                    <span class="ml-2">{{'Add more test'|translate}}</span>
                   </button>
                 </div>
                 <form
@@ -1677,12 +1675,12 @@
                   *ngIf="!addMoreTest"
                 >
                   <div class="form-group">
-                    <label for="note"><b>Test</b></label>
+                    <label for="note"><b>{{'Test'|translate}}</b></label>
                     <input
                       type="text"
                       class="form-control"
                       formControlName="test"
-                      placeholder="Type here"
+                      placeholder="{{'Type here'|translate}}"
                       [ngbTypeahead]="search2"
                     />
                   </div>
@@ -1692,21 +1690,21 @@
                       class="white-btn mr-2"
                       (click)="toggleTest()"
                     >
-                      Cancel
+                      {{'Cancel'|translate}}
                     </button>
                     <button
                       type="submit"
                       class="gray-btn"
                       [disabled]="addTestForm.invalid"
                     >
-                      Add test
+                     {{'Add test'|translate}}
                     </button>
                   </div>
                 </form>
               </ng-container>
             </mat-expansion-panel>
 
-            <mat-expansion-panel
+            <!-- <mat-expansion-panel
               [expanded]="false"
               #panel7
               hideToggle
@@ -1716,7 +1714,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/referral.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Referral</h6>
+                    <h6 class="mb-0 ml-2">{{'Referral'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
@@ -1727,8 +1725,8 @@
                   <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col">Referral facility</th>
-                        <th scope="col">Remarks</th>
+                        <th scope="col">{{'Referral facility'|translate}}</th>
+                        <th scope="col">{{'Remarks'|translate}}</th>
                         <th scope="col"></th>
                       </tr>
                     </thead>
@@ -1753,7 +1751,7 @@
                       <ng-template #noReferrals>
                         <tr>
                           <td colspan="3" class="text-center font-weight-bold">
-                            No referrals added!
+                            {{'No referrals added!'|translate}}
                           </td>
                         </tr>
                       </ng-template>
@@ -1767,7 +1765,7 @@
                                 (click)="toggleReferral()"
                               >
                                 <img src="assets/svgs/plus-circle.svg" alt="" />
-                                <span class="ml-2">Add more referral</span>
+                                <span class="ml-2">{{'Add more referral'|translate}}</span>
                               </button>
                             </div>
                           </td>
@@ -1778,14 +1776,12 @@
                               class="visit-select"
                               appendTo=".scrollable-box"
                               formControlName="speciality"
-                              [items]="specializations"
-                              bindLabel="name"
-                              bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
                               [addTag]="true"
-                              placeholder="Select specialization"
+                              placeholder="{{'Select specialization'|translate}}"
                             >
+                              <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">{{ (specialization.name) | translate }}</ng-option>
                             </ng-select>
                           </td>
                           <td colspan="2">
@@ -1794,7 +1790,7 @@
                                 formControlName="remark"
                                 type="text"
                                 class="form-control"
-                                placeholder="Type here"
+                                placeholder="{{'Type here'|translate}}"
                               />
                             </div>
                           </td>
@@ -1807,14 +1803,14 @@
                                 class="white-btn mr-2"
                                 (click)="toggleReferral()"
                               >
-                                Cancel
+                                {{'Cancel'|translate}}
                               </button>
                               <button
                                 type="submit"
                                 class="gray-btn"
                                 [disabled]="addReferralForm.invalid"
                               >
-                                Add
+                                {{'Add'|translate}}
                               </button>
                             </div>
                           </td>
@@ -1824,7 +1820,7 @@
                   </table>
                 </div>
               </form>
-            </mat-expansion-panel>
+            </mat-expansion-panel> -->
 
             <mat-expansion-panel
               [expanded]="false"
@@ -1836,7 +1832,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">Follow-up</h6>
+                    <h6 class="mb-0 ml-2">{{'Follow-up'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
@@ -1847,7 +1843,7 @@
                   <li>
                     <div class="row">
                       <label for="follow-up" class="col-sm-3 col-form-label"
-                        >Do you want to have follow up with the patient?</label
+                        >{{'Do you want to have follow up with the patient?'|translate}}</label
                       >
                       <div class="col-sm-9 d-flex align-items-center">
                         <div class="pretty p-default p-round">
@@ -1857,7 +1853,7 @@
                             formControlName="wantFollowUp"
                           />
                           <div class="state p-success">
-                            <label>Yes</label>
+                            <label>{{'Yes'|translate}}</label>
                           </div>
                         </div>
                         <div class="pretty p-default p-round">
@@ -1867,7 +1863,7 @@
                             formControlName="wantFollowUp"
                           />
                           <div class="state p-success">
-                            <label>No</label>
+                            <label>{{'No'|translate}}</label>
                           </div>
                         </div>
                       </div>
@@ -1879,7 +1875,7 @@
                     <li>
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label"
-                          >Select date</label
+                          >{{'Select date'|translate}}</label
                         >
                         <div class="col-sm-3">
                           <!-- <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate"> -->
@@ -1890,7 +1886,7 @@
                               formControlName="followUpDate"
                               [min]="minDate"
                               [matDatepicker]="fdp"
-                              placeholder="Enter date"
+                              placeholder="{{'Enter date'|translate}}"
                               aria-label="Birthdate"
                               aria-describedby="basic-addon1"
                               readonly
@@ -1914,7 +1910,7 @@
                     <li>
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label"
-                          >Select time</label
+                          >{{'Select time'|translate}}</label
                         >
                         <div class="col-sm-3">
                           <ng-select
@@ -1925,7 +1921,7 @@
                             bindLabel="name"
                             [clearable]="false"
                             [searchable]="true"
-                            placeholder="Select time"
+                            placeholder="{{'Select time'|translate}}"
                           >
                           </ng-select>
                         </div>
@@ -1936,13 +1932,13 @@
                         <label
                           for="follow-reason"
                           class="col-sm-3 col-form-label"
-                          >Reason for follow-up</label
+                          >{{'Reason for follow-up'|translate}}</label
                         >
                         <div class="col-sm-9">
                           <input
                             type="text"
                             class="form-control"
-                            placeholder="Type here"
+                            placeholder="{{'Type here'|translate}}"
                             formControlName="followUpReason"
                           />
                         </div>
@@ -1964,7 +1960,7 @@
                     class="gray-btn"
                     [disabled]="followUpForm.invalid"
                   >
-                    Save
+                    {{'Save'|translate}}
                   </button>
                 </div>
               </form>
@@ -1973,10 +1969,10 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Follow Up Requested</th>
-                      <th scope="col">Date</th>
-                      <th scope="col">Time</th>
-                      <th scope="col">Reason</th>
+                      <th scope="col">{{'Follow Up Requested'|translate}}</th>
+                      <th scope="col">{{'Date'|translate}}</th>
+                      <th scope="col">{{'Time'|translate}}</th>
+                      <th scope="col">{{'Reason'|translate}}</th>
                       <th scope="col"></th>
                     </tr>
                   </thead>
@@ -2016,7 +2012,7 @@
         class="blue-btn mr-2"
         (click)="sharePrescription()"
       >
-        {{ visitCompleted ? 'Update': 'Share' }} prescription
+        {{ visitCompleted ? 'Update': 'Share' }} {{'prescription'|translate}}
       </button>
       <button
         type="button"
@@ -2024,7 +2020,7 @@
         (click)="openVisitPrescriptionModal(visit?.uuid)"
         *ngIf="visitCompleted"
         >
-        View prescription
+        {{'View prescription'|translate}}
       </button>
     </div>
   </div>

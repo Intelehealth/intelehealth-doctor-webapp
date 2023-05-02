@@ -13,7 +13,7 @@ import { TestComponent } from "./test/test.component";
 import { MainContainerComponent } from './main-container/main-container.component';
 
 // Package Import
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from "@angular/common/http";
 import { CookieService } from 'ngx-cookie-service';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ServiceWorkerModule } from "@angular/service-worker";
@@ -53,6 +53,10 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
 import { SharedModule } from "./shared.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { PwaService } from "./services/pwa.service";
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+import { MatPaginatorIntl } from "@angular/material/paginator";
+import { MatPaginationIntlService } from "./services/mat-pagination.service";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -63,10 +67,15 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness
-  text: "Please Wait..."
+  text: localStorage.getItem('selectedLanguage') === 'ru' ? "Пожалуйста, подождите..." : "Please Wait..."
 };
 
 const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt();
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -116,7 +125,14 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     CookieService,
@@ -140,7 +156,8 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
       useFactory: initializer,
       deps: [PwaService],
       multi: true
-    }
+    },
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent],

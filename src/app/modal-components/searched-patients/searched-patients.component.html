@@ -1,5 +1,5 @@
 <div mat-dialog-title class="modal-title">
-  <h6 class="mb-0">Patients</h6>
+  <h6 class="mb-0">{{'Patients'|translate}}</h6>
 </div>
 <mat-dialog-content>
   <div class="table-responsive">
@@ -18,7 +18,7 @@
             <td>{{ value.person.display}} ({{ value.person.gender}}, {{ value.person.age}})</td>
             <td>
               <button mat-button type="button" class="blue-btn float-right" (click)="view(value.uuid)">
-                View
+                {{'View'|translate}}
               </button>
             </td>
           </tr>
@@ -26,7 +26,7 @@
         <ng-template #noPatientsFound>
           <tr>
             <td colspan="3" class="text-center">
-              No patients found!
+              {{'No patients found!'|translate}}
             </td>
           </tr>
         </ng-template>
@@ -36,6 +36,6 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button mat-dialog-close="false" class="blue-btn mr-2">
-    Close
+    {{'Close'|translate}}
   </button>
 </mat-dialog-actions>

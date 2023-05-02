@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -58,7 +59,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
-  fonts: any[] = [
+  fontsEn: any[] = [
     {
       id: 1,
       name: 'Arty',
@@ -78,6 +79,29 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       id: 4,
       name: 'Almondita',
       text: 'almondita'
+    }
+  ];
+
+  fontsRu: any[] = [
+    {
+      id: 1,
+      name: 'RobotoItalic',
+      text: 'robotoitalic'
+    },
+    {
+      id: 2,
+      name: 'Caveat',
+      text: 'caveat'
+    },
+    {
+      id: 3,
+      name: 'Cormorant',
+      text: 'cormorant'
+    },
+    {
+      id: 4,
+      name: 'Pacifico',
+      text: 'pacifico'
     }
   ];
 
@@ -192,7 +216,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private cookieService: CookieService,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService
+    ) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -262,11 +288,20 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
-      if (val) {
-        this.fonts.map((f: any) => f.text = val);
-      } else {
-        this.fonts.map((f: any) => f.text = f.name);
+      if(localStorage.getItem("selectedLanguage") === "ru") {
+        if (val) {
+          this.fontsRu.map((f: any) => f.text = val);
+        } else {
+          this.fontsRu.map((f: any) => f.text = f.name);
+        }
+      }else{
+        if (val) {
+          this.fontsEn.map((f: any) => f.text = val);
+        } else {
+          this.fontsEn.map((f: any) => f.text = f.name);
+        }
       }
+
     });
 
     this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
@@ -439,7 +474,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.file = event.target.files[0];
       console.log(this.file.name);
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
-        this.toastr.warning("Upload JPG/JPEG format image only.", "Upload error!");
+        this.toastr.warning(this.translateService.instant(`messages.${"Upload JPG/JPEG format image only."}`), this.translateService.instant(`messages.${"Upload error!"}`));
         return;
       }
       const reader = new FileReader();
@@ -451,7 +486,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           base64EncodedImage: imageBolb[1]
         }
         this.profileService.updateProfileImage(payload).subscribe((res: any) => {
-          this.toastr.success("Profile picture uploaded successfully!", "Profile Pic Uploaded");
+          this.toastr.success(this.translateService.instant(`messages.${"Password Changed!"}`), this.translateService.instant(`messages.${"Profile Pic Uploaded"}`));
         });
       }
       reader.readAsDataURL(this.file);
@@ -559,10 +594,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (event.rejectedFiles.length) {
       if (event.rejectedFiles[0].reason == 'size') {
-        this.toastr.error('Upload a scanned image of your signature. having size (5kb to 50kb)', 'Invalid File!');
+        this.toastr.error(this.translateService.instant(`messages.${"Upload a scanned image of your signature. having size (5kb to 50kb)"}`), this.translateService.instant(`messages.${"Invalid File!"}`));
       }
       if (event.rejectedFiles[0].reason == 'type') {
-        this.toastr.error('Upload a scanned image of your signature. having type png, jpg, jpeg only.', 'Invalid File!');
+        this.toastr.error(this.translateService.instant(`messages.${"Upload a scanned image of your signature. having type png, jpg, jpeg only."}`), this.translateService.instant(`messages.${"Invalid File!"}`));
       }
     }
   }
@@ -734,7 +769,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             let u = JSON.parse(localStorage.user);
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));
-            this.toastr.success("Profile has been updated successfully", "Profile Updated");
+            this.toastr.success(this.translateService.instant(`messages.${"Profile has been updated successfully"}`), this.translateService.instant(`messages.${"Profile Updated"}`));
             let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
               this.router.navigate(['/admin']);

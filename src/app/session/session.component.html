@@ -21,13 +21,13 @@
                 <img class="hb2" [src]="slide.heartbeat2" alt="">
               </div>
               <div class="carousel-caption">
-                <h3>{{slide.title}}</h3>
+                <h3>{{slide.title|translate}}</h3>
               </div>
             </ng-template>
           </ngb-carousel>
         </div>
         <div class="copy-right-footer justify-self-end">
-          <span>Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation</span>
+          <span>{{'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation'|translate}}</span>
         </div>
       </div>
     </div>
@@ -35,8 +35,8 @@
       <div class="main-container">
         <div class="container">
           <div class="row">
-            <div class="col-md-12 px-0 py-2">
-              <ng-select class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="id" [searchable]="false" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage">
+            <div class="col-md-12 px-0 py-4">
+              <ng-select class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="code" [searchable]="false" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage" (ngModelChange)="changeLanguage()">
               </ng-select>
             </div>
           </div>

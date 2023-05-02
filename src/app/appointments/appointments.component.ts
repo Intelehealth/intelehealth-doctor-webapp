@@ -8,6 +8,7 @@ import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-appointments',
@@ -38,7 +39,9 @@ export class AppointmentsComponent implements OnInit {
     private visitService: VisitService,
     private pageTitleService: PageTitleService,
     private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private translateService: TranslateService
+    ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
@@ -132,7 +135,7 @@ export class AppointmentsComponent implements OnInit {
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
-      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+      this.toastr.error(this.translateService.instant(`messages.${"Visit is already completed, it can't be rescheduled."}`), this.translateService.instant(`messages.${"Rescheduling failed"}`));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
@@ -147,9 +150,9 @@ export class AppointmentsComponent implements OnInit {
                 const message = res.message;
                 if (res.status) {
                   this.getVisits();
-                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
+                  this.toastr.success(this.translateService.instant(`messages.${"The appointment has been rescheduled successfully!"}`), this.translateService.instant(`messages.${"Rescheduling successful!"}`));
                 } else {
-                  this.toastr.success(message, 'Rescheduling failed!');
+                  this.toastr.success(this.translateService.instant(`messages.${message}`), this.translateService.instant(`messages.${"Rescheduling failed!"}`));
                 }
               });
             }
@@ -162,7 +165,7 @@ export class AppointmentsComponent implements OnInit {
   cancel(appointment: any) {
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
-        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        this.toastr.success(this.translateService.instant(`messages.${"The Appointment has been successfully canceled."}`), this.translateService.instant(`messages.${"Canceling successful"}`));
         this.getVisits();
       }
     });

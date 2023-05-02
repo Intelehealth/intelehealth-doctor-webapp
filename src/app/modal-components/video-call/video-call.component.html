@@ -10,7 +10,7 @@
     <img src="assets/svgs/patient.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
-      <span>Patient</span>
+      <span>{{'Patient'|translate}}</span>
     </div>
   </div>
 </div>
@@ -182,11 +182,11 @@
                   >
                     <ng-container *ngIf="item.isRead">
                       <img src="assets/svgs/read-status.svg" alt="" />
-                      <span class="ml-1">Read</span>
+                      <span class="ml-1">{{'Read'|translate}}</span>
                     </ng-container>
                     <ng-container *ngIf="!item.isRead">
                       <img src="assets/svgs/sent-status.svg" alt="" />
-                      <span class="ml-1">Sent</span>
+                      <span class="ml-1">{{'Sent'|translate}}</span>
                     </ng-container>
                   </ng-container>
                 </li>

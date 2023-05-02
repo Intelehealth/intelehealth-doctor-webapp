@@ -5,6 +5,7 @@ import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
@@ -18,12 +19,15 @@ export class LoginComponent implements OnInit {
   submitted: boolean = false;
   visible: boolean = false;
   rememberMe: boolean = false;
+  selectedLanguage:string = localStorage.getItem('selectedLanguage');
 
   constructor(
     public authService: AuthService,
     private toastr: ToastrService,
     private router: Router,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService
+    ) {
 
     this.loginForm = new FormGroup({
       username: new FormControl("", Validators.required),
@@ -61,12 +65,12 @@ export class LoginComponent implements OnInit {
             //   this.loginSuccess();
             // }
           } else {
-            this.toastr.error("Couldn't find provider.", "Login Failed!");
+            this.toastr.error(this.translateService.instant(`messages.${"Couldn't find provider."}`), this.translateService.instant(`messages.${"Login Failed!"}`));
           }
         });
       }
       else {
-        this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
+        this.toastr.error(this.translateService.instant(`messages.${"Couldn't find you, credentials provided are wrong."}`), this.translateService.instant(`messages.${"Login Failed!"}`));
       }
     });
   }
@@ -82,7 +86,7 @@ export class LoginComponent implements OnInit {
 
   loginSuccess() {
     this.authService.updateVerificationStatus();
-    this.toastr.success("You have sucessfully logged in.", "Login Successful");
+    this.toastr.success(this.translateService.instant(`messages.${"You have sucessfully logged in."}`), this.translateService.instant(`messages.${"Login Successful"}`));
     let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     if (role) {
       this.router.navigate(['/admin']);

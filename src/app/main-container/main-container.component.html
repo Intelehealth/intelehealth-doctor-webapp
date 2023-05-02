@@ -14,7 +14,7 @@
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
             <img src="assets/svgs/menu-home.svg" alt="">
-            <span>Dashboard</span>
+            <span>{{'Dashboard'|translate}}</span>
           </a>
         </li>
         <!-- <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
@@ -26,19 +26,19 @@
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-video.svg" alt="">
-            <span>Appointment</span>
+            <span>{{'Appointment'|translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active">
             <img src="assets/svgs/menu-calendar.svg" alt="">
-            <span>Calendar</span>
+            <span>{{'Calendar'|translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-treatment.svg" alt="">
-            <span>Prescription</span>
+            <span>{{'Prescription'|translate}}</span>
           </a>
         </li>
         <!-- <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
@@ -50,7 +50,7 @@
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/warning.svg" alt="">
-            <span>Ayu</span>
+            <span>{{'Ayu'|translate}}</span>
           </a>
         </li>
         <!-- <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
@@ -62,26 +62,26 @@
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img src="assets/svgs/user-settings.svg" alt="">
-            <span>System Admin</span>
+            <span>{{'System Admin'|translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank">
             <img src="assets/svgs/add-user.svg" alt="">
-            <span>User Creation</span>
+            <span>{{'User Creation'|translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank">
             <img src="assets/svgs/report.svg" alt="">
-            <span>Report</span>
+            <span>{{'Report'|translate}}</span>
           </a>
         </li>
         <li class="nav-item" (click)="toggleSidebar()">
           <mat-divider class="mb-2"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()">
             <img src="assets/svgs/power.svg" alt="">
-            <span>Log-out</span>
+            <span>{{'Log-out'|translate}}</span>
           </a>
         </li>
       </ul>
@@ -93,18 +93,18 @@
       <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="javascript:void(0)">
           <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile">
-            <mat-icon>menu</mat-icon>
+            <mat-icon>{{'menu'|translate}}</mat-icon>
           </button>
           <div class="header-title d-flex justify-content-between align-items-center" *ngIf="header?.title">
             <ng-container *ngIf="header.title != 'Dashboard'">
               <img src="{{header?.imgUrl}}" alt="" width="44px">
-              <h6 class="mb-0 ml-2">{{header?.title}}</h6>
-              <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon">help_outline</mat-icon>
+              <h6 class="mb-0 ml-2">{{header?.title|translate}}</h6>
+              <mat-icon *ngIf="header?.info" aria-hidden="false" aria-label="help icon">{{'help_outline'|translate}}</mat-icon>
             </ng-container>
             <ng-container *ngIf="header.title == 'Dashboard'">
               <form [formGroup]="searchForm">
                 <div class="input-group">
-                    <input type="text" class="form-control" formControlName="keyword" placeholder="Search patient" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()">
+                    <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'|translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()">
                     <div class="input-group-append">
                       <span class="input-group-text click" id="basic-addon1" (click)="search()">
                         <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
@@ -118,10 +118,10 @@
             <ol class="breadcrumb">
               <ng-container *ngFor="let breadcrumb of breadcrumbs; let last=last;">
                 <li class="breadcrumb-item" *ngIf="!last">
-                  <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                  <a [routerLink]="breadcrumb.url">{{ breadcrumb.label|translate }}</a>
                 </li>
                 <li class="breadcrumb-item" aria-current="page" *ngIf="last">
-                  {{ breadcrumb.label }}
+                  {{ breadcrumb.label|translate }}
                 </li>
               </ng-container>
             </ol>
@@ -143,15 +143,15 @@
                 </button>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
-                  <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+                  <h6 class="user-title mb-0">{{'Hello'|translate}}, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
                 </div>
                 <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
-                  <button mat-menu-item (click)="changePassword()">Change Password</button>
-                  <button mat-menu-item (click)="selectLanguage()">Change Language</button>
-                  <button mat-menu-item routerLink="/dashboard/profile">Profile</button>
+                  <button mat-menu-item (click)="changePassword()">{{'Change Password'|translate}}</button>
+                  <button mat-menu-item (click)="selectLanguage()">{{'Change Language'|translate}}</button>
+                  <button mat-menu-item routerLink="/dashboard/profile">{{'Profile'|translate}}</button>
                 </mat-menu>
               </div>
             </li>

@@ -14,7 +14,7 @@ export class CompletedComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   @Input() completedVisits: any = [];
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
   constructor() { }
 

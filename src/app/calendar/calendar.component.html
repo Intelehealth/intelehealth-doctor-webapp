@@ -4,12 +4,12 @@
       <div class="title-con d-flex align-items-center">
         <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
         <div class="d-flex flex-column">
-          <h6 class="mb-0">Your calendar</h6>
+          <h6 class="mb-0">{{'Your calendar'|translate}}</h6>
         </div>
       </div>
     </div>
     <div class="col p-0 pb-2">
-      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">Manage calendar</button>
+      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">{{'Manage calendar'|translate}}</button>
     </div>
   </div>
   <div class="row">
@@ -19,9 +19,9 @@
           <div class="row">
             <div class="col-md-6 p-0">
               <mat-tab-group [disableRipple]="true" class="calendar-tab-group" mat-align-tabs="start" (selectedIndexChange)="onTabChanged($event)">
-                <mat-tab label="Daily"></mat-tab>
-                <mat-tab label="Weekly"></mat-tab>
-                <mat-tab label="Monthly"></mat-tab>
+                <mat-tab label="{{'Daily'|translate}}"></mat-tab>
+                <mat-tab label="{{'Weekly'|translate}}"></mat-tab>
+                <mat-tab label="{{'Monthly'|translate}}"></mat-tab>
               </mat-tab-group>
             </div>
             <div class="col-md-6 p-0">
@@ -144,7 +144,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"
@@ -167,14 +167,14 @@
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
-                  <p class="mb-0">Patient</p>
+                  <p class="mb-0">{{'Patient'|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
-                  <p class="mb-0">Health Worker</p>
+                  <p class="mb-0">{{'Health Worker'|translate}}</p>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con-2"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"
@@ -205,7 +205,7 @@
             role="application"
             [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
             <div class="event-con">
-              <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
+              <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title|translate}}</h6>
               <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
@@ -281,16 +281,15 @@
           <div [class.dayOff]="checkIfDayOff(day.date)">
             <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'">
               <span aria-hidden="true">
-                <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
                 <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
               </span>
               <div class="day-off-con">
-                Day Off
+                {{'Day Off'|translate}}
               </div>
             </div>
             <div class="cal-events-con" *ngIf="day.events.length > 0">
-              <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span *ngIf="getCount('Appointment', day.events) > 1">s</span></div>
-              <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span *ngIf="getCount('Follow-up visit', day.events) > 1">s</span></div>
+              <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} {{'Appointment'|translate}}<span *ngIf="getCount('Appointment', day.events) > 1">{{'s'|translate}}</span></div>
+              <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} {{'Follow-up visit'|translate}}<span *ngIf="getCount('Follow-up visit', day.events) > 1">{{'s'|translate}}</span></div>
               <ng-container *ngFor="let event of day.events; trackBy: trackByEventId;let i=index;">
                 <div class="cal-event-con2" *ngIf="i < 2"
                   [ngStyle]="{ backgroundColor: event.color?.primary }"
@@ -317,7 +316,7 @@
               </ng-container>
 
               <div class="cal-event-con2" *ngIf="day.events.length > 2">
-                {{day.events.length -2}} more...
+                {{day.events.length -2}} {{'more...'|translate}}
               </div>
             </div>
           </div>

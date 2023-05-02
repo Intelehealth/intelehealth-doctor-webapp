@@ -22,6 +22,7 @@ import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -89,6 +90,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   referrals: any = [];
   pastVisits: any = [];
   minDate = new Date();
+  strengthDataList: any = [];
   specializations: any[] = [
     {
       id: 1,
@@ -245,28 +247,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.advicesList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+      map(term => term.length < 1 ? [] : this.advicesList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
     )
 
   search2 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+      map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
     )
 
   search3 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare))
     )
 
   search4 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.strengthList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+      map(term => term.length < 1 ? [] : this.strengthDataList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare))
     )
 
   search5 = (text$: Observable<string>) =>
@@ -294,7 +296,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private encounterService: EncounterService,
     private linkSvc: LinkService,
-    private socket: SocketService) {
+    private socket: SocketService,
+    private translateService: TranslateService
+    ) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -360,7 +364,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
-    this.drugNameList = this.drugNameList.concat(medicines);
+    let drugsList = this.drugNameList.concat(medicines);
+    console.log(this.drugNameList,"drugs");
+    drugsList.forEach(ans => {
+      this.drugNameList.push(this.translateService.instant(`medicines.${ans.name}`));
+    });
+    this.strengthList.forEach(ans => {
+      this.strengthDataList.push(this.translateService.instant(`strengths.${ans.name}`));
+    });
     this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
@@ -742,12 +753,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   referSpecialist() {
     if (this.referSpecialityForm.invalid) {
-      this.toastr.warning("Please select specialization", "Invalid!");
+      this.toastr.warning(this.translateService.instant(`messages.${"Please select specialization"}`), this.translateService.instant(`messages.${"Invalid!"}`));
       return;
     }
 
     if (this.visitNotePresent) {
-      this.toastr.warning("Can't refer, visit note already exists for this visit!", "Can't refer");
+      this.toastr.warning(this.translateService.instant(`messages.${"Can't refer, visit note already exists for this visit!"}`), this.translateService.instant(`messages.${"Can't refer"}`));
       return;
     }
 
@@ -791,7 +802,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
         this.router.navigate(["/dashboard"]);
-        this.toastr.success("Visit has been re-assigned to the another speciality doctor successfully.", "Visit Re-assigned!")
+        this.toastr.success(this.translateService.instant(`messages.${"Visit has been re-assigned to the another speciality doctor successfully."}`), this.translateService.instant(`messages.${"Visit Re-assigned!"}`))
       }
     });
   }
@@ -1007,7 +1018,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   addNote() {
     if (this.addNoteForm.invalid) {
-      this.toastr.warning("Please enter note text to add", "Invalid note");
+      this.toastr.warning(this.translateService.instant(`messages.${"Please enter note text to add"}`), this.translateService.instant(`messages.${"Invalid note"}`));
       return;
     }
     if (this.notes.find((o: any) => o.value == this.addNoteForm.value.note)) {
@@ -1069,7 +1080,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.medicines.find((o: any) => o.drug == this.addMedicineForm.value.drug)) {
-      this.toastr.warning("Drug already added, please add another drug.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Invalid!"}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({
@@ -1089,7 +1100,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.additionalInstructions.find((o: any) => o.value == this.addAdditionalInstructionForm.value.note)) {
-      this.toastr.warning("Additional instruction already added, please add another instruction.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Additional instruction already added, please add another instruction."}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({
@@ -1121,7 +1132,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.concept(adviceUuid).subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.advicesList.push(ans.display);
+        this.advicesList.push(this.translateService.instant(`advice.${ans.display}`));
       });
     });
   }
@@ -1150,7 +1161,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.advices.find((o: any) => o.value == this.addAdviceForm.value.advice)) {
-      this.toastr.warning("Advice already added, please add another advice.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Advice already added, please add another advice."}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({
@@ -1175,8 +1186,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
     this.diagnosisService.concept(testUuid).subscribe(res => {
       const result = res.answers;
+      console.log(result,"result");
+      
       result.forEach(ans => {
-        this.testsList.push(ans.display);
+        this.testsList.push(this.translateService.instant(`tests.${ans.display}`));
       });
     });
   }
@@ -1203,7 +1216,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.tests.find((o: any) => o.value == this.addTestForm.value.test)) {
-      this.toastr.warning("Test already added, please add another test.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Test already added, please add another test."}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({
@@ -1246,7 +1259,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
-      this.toastr.warning("Referral already added, please add another referral.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Referral already added, please add another referral."}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({

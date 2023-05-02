@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -50,7 +51,9 @@ export class RescheduleAppointmentComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<RescheduleAppointmentComponent>,
     private appointmentService: AppointmentService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private translateService: TranslateService
+    ) {
     this.minDate = new Date();
   }
 
@@ -88,7 +91,7 @@ export class RescheduleAppointmentComponent implements OnInit {
     if (this.selectedDate && this.selectedSlot) {
       this.close({ date: this.selectedDate, slot: this.selectedSlot });
     } else {
-      this.toastr.warning("Please select slot to reschedule.", "Select Slot");
+      this.toastr.warning(this.translateService.instant(`messages.${"Please select slot to reschedule."}`), this.translateService.instant(`messages.${"Select Slot"}`));
     }
   }
 

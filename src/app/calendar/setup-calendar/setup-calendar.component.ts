@@ -8,6 +8,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -124,7 +125,9 @@ export class SetupCalendarComponent implements OnInit {
     private appointmentService: AppointmentService,
     private pageTitleService: PageTitleService,
     private toastr: ToastrService,
-    private coreService: CoreService) {
+    private coreService: CoreService,
+    private translateService: TranslateService
+    ) {
 
     this.addSlotsForm = new FormGroup({
       drName: new FormControl(this.drName, Validators.required),
@@ -336,7 +339,7 @@ export class SetupCalendarComponent implements OnInit {
       return;
     }
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-      this.toastr.warning("Start date should greater than end date.", "Invalid Dates!");
+      this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
       return;
     }
     let flag = 0;
@@ -400,7 +403,7 @@ export class SetupCalendarComponent implements OnInit {
         }
       }
       else {
-        this.toastr.warning("Slot start time should be less than end time.", "Invalid Slot Timings!");
+        this.toastr.warning(this.translateService.instant(`messages.${"Slot start time should be less than end time."}`), this.translateService.instant(`messages.${"Invalid Slot Timings!"}`));
         flag = 1;
         break;
       }
@@ -427,7 +430,7 @@ export class SetupCalendarComponent implements OnInit {
       if (res) {
         this.fs.clear();
         if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-          this.toastr.warning("Start date should greater than end date.", "Invalid Dates!");
+          this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
           return;
         }
         let flag = 0;
@@ -489,7 +492,7 @@ export class SetupCalendarComponent implements OnInit {
               this.addSlotsForm.get('slotDays').setValue('');
             }
             else {
-              this.toastr.warning("Slot start time should be less than end time.", "Invalid Slot Timings!");
+              this.toastr.warning(this.translateService.instant(`messages.${"Slot start time should be less than end time."}`), this.translateService.instant(`messages.${"Invalid Slot Timings!"}`));
               flag = 1;
               break;
             }
@@ -701,7 +704,7 @@ export class SetupCalendarComponent implements OnInit {
   updateSlot() {
     this.fs.clear();
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {
-      this.toastr.warning("Start date should greater than end date.", "Invalid Dates!");
+      this.toastr.warning(this.translateService.instant(`messages.${"Start date should greater than end date."}`), this.translateService.instant(`messages.${"Invalid Dates!"}`));
       return;
     }
     let flag = 0;
@@ -762,7 +765,7 @@ export class SetupCalendarComponent implements OnInit {
         this.addSlotsForm.get('slotDays').setValue('');
       }
       else {
-        this.toastr.warning("Slot start time should be less than end time.", "Invalid Slot Timings!");
+        this.toastr.warning(this.translateService.instant(`messages.${"Slot start time should be less than end time."}`), this.translateService.instant(`messages.${"Invalid Slot Timings!"}`));
         flag = 1;
         break;
       }

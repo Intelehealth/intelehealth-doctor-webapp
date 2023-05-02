@@ -20,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SupportComponent } from './support/support.component';
 import { MomentModule } from 'ngx-moment';
+import { SharedModule } from '../shared.module';
 
 const routes: Routes = [
   {
@@ -66,7 +67,8 @@ const routes: Routes = [
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    MomentModule
+    MomentModule,
+    SharedModule
   ]
 })
 export class AdminModule { }

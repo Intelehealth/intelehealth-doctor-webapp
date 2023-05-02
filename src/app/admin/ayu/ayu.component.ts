@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-ayu',
@@ -32,7 +33,9 @@ export class AyuComponent implements OnInit {
     private snackbar: MatSnackBar,
     private coreService: CoreService,
     private toastr: ToastrService,
-    private pageTitleService: PageTitleService) { }
+    private pageTitleService: PageTitleService,
+    private translateService: TranslateService,
+    ) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
@@ -92,9 +95,9 @@ export class AyuComponent implements OnInit {
               this.mindmapDatas.push(res.data);
               this.dataSource = new MatTableDataSource(this.mindmapDatas);
               this.dataSource.paginator = this.paginator;
-              this.toastr.success(`${result.filename} has been uploaded successfully!`, "Mindmap Uploaded");
+              this.toastr.success(`${result.filename}`+ " " + this.translateService.instant(`messages.${"has been uploaded successfully!"}`), this.translateService.instant(`messages.${"Mindmap Uploaded"}`));
             } else {
-              this.toastr.error(`Failed to upload ${result.filename}`, "Mindmap Upload Failed");
+              this.toastr.error(this.translateService.instant(`messages.${"Failed to upload"}`) + " " + `${result.filename}`, this.translateService.instant(`messages.${"Mindmap Upload Failed"}`));
             }
           });
         }
@@ -117,7 +120,7 @@ export class AyuComponent implements OnInit {
         } else {
           this.mindmaps.push(result);
         }
-        this.toastr.success(`License Key ${result.keyName} has been ${mode == 'add' ? 'added' : 'updated' } successfully!`, `License Key ${mode == 'add' ? 'Added' : 'Updated' }`);
+        this.toastr.success(this.translateService.instant(`messages.${"License Key"}`) + " " + `${result.keyName}` + " " + this.translateService.instant(`messages.${"has been"}`) + " " + this.translateService.instant(`messages.${mode == 'add' ? 'added' : 'updated' }`) + " " + this.translateService.instant(`messages.${"successfully!"}`), this.translateService.instant(`messages.${"License Key"}`) + " " + this.translateService.instant(`messages.${mode == 'add' ? 'Added' : 'Updated' }`));
       }
     });
   }
@@ -152,26 +155,26 @@ export class AyuComponent implements OnInit {
     this.mindmapService.deleteMindmap(this.selection.selected[0].keyName, { mindmapName: this.selection.selected[0].name })
     .subscribe((res: any) => {
       if (res) {
-        this.toastr.success(res.message, "Mindmap Deleted");
+        this.toastr.success(this.translateService.instant(`messages.${res.message}`), this.translateService.instant(`messages.${"Mindmap Deleted"}`));
         this.selection.clear();
         this.licenceKeySelecter();
       } else {
-        this.toastr.error("Something went wrong", "Mindmap Delete Failed");
+        this.toastr.success(this.translateService.instant(`messages.${"Something went wrong"}`), this.translateService.instant(`messages.${"Mindmap Delete Failed"}`));
       }
     });
   }
 
   /** Toggle status selected mindmap protocol. */
-  toggleStatus(mindmap: any) {
-    this.mindmapService.toggleMindmapStatus({ mindmapName: mindmap.name, keyName: mindmap.keyName })
-    .subscribe((res: any) => {
-      if (res.success) {
-        this.toastr.success(res.message, "Mindmap Status Updated");
-      } else {
-        this.toastr.error("Something went wrong", "Mindmap Update Failed");
-      }
-    });
-  }
+  // toggleStatus(mindmap: any) {
+  //   this.mindmapService.toggleMindmapStatus({ mindmapName: mindmap.name, keyName: mindmap.keyName })
+  //   .subscribe((res: any) => {
+  //     if (res.success) {
+  //       this.toastr.success(res.message, "Mindmap Status Updated");
+  //     } else {
+  //       this.toastr.error("Something went wrong", "Mindmap Update Failed");
+  //     }
+  //   });
+  // }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

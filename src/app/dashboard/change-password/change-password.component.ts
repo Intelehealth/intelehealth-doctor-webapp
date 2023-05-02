@@ -5,6 +5,7 @@ import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-change-password',
@@ -27,7 +28,8 @@ export class ChangePasswordComponent implements OnInit {
     private coreService: CoreService,
     private toastr: ToastrService,
     private authService: AuthService,
-    private pageTitleService: PageTitleService
+    private pageTitleService: PageTitleService,
+    private translateService: TranslateService
   ) {
     this.resetPasswordForm = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
@@ -51,16 +53,16 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning("New Password and Confirm Password doesn't match.", "Password doesn't match!");
+      this.toastr.warning(this.translateService.instant(`messages.${"New Password and Confirm Password doesn't match."}`), this.translateService.instant(`messages.${"Password doesn't match!"}`));
       return;
     }
     let passwd = this.resetPasswordForm.value.password;
     if (!this.hasLowerCase(passwd) || !this.hasUpperCase(passwd) || !this.hasSpecialCharacter(passwd) || !this.hasNumber(passwd)) {
-      this.toastr.warning("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols.", "Password invalid!");
+      this.toastr.warning(this.translateService.instant(`messages.${"Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols."}`), this.translateService.instant(`messages.${"Password invalid!"}`));
       return;
     }
     this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res: any) => {
-      this.toastr.success("Password has been changed successfully!", "Password Changed!");
+      this.toastr.success(this.translateService.instant(`messages.${"Password has been changed successfully!"}`), this.translateService.instant(`messages.${"Password Changed!"}`));
     });
   }
 

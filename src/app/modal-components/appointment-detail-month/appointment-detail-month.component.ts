@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-appointment-detail-month',
@@ -18,7 +19,8 @@ export class AppointmentDetailMonthComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AppointmentDetailMonthComponent>,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) {
     this.dayOffForm = new FormGroup({
       markAs: new FormControl('dayOff'),
@@ -50,7 +52,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
 
   markDayOff() {
     if (this.dayOffForm.invalid) {
-      this.toastr.warning("Please select from and to time", "Invalid Time!");
+      this.toastr.warning(this.translateService.instant(`messages.${"Please select from and to time"}`), this.translateService.instant(`messages.${"Invalid Time!"}`));
       return;
     }
     if (this.dayOffForm.value.markAs == 'dayOff') {
@@ -59,7 +61,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
       if (this.validateTimeSlot(this.dayOffForm.value.from, this.dayOffForm.value.to)) {
         this.close(this.dayOffForm.value);
       } else {
-        this.toastr.warning("Please select valid from and to time", "Invalid Time!");
+        this.toastr.warning(this.translateService.instant(`messages.${"Please select valid from and to time"}`), this.translateService.instant(`messages.${"Invalid Time!"}`));
       }
     }
   }

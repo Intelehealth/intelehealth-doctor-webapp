@@ -12,7 +12,7 @@
               <ul>
                 <li>
                   <div class="info-row">
-                    <div class="info-label">Appointments ({{appointmentCount}})</div>
+                    <div class="info-label">{{'Appointments'|translate}} ({{appointmentCount}})</div>
                     <div class="info-con">
                       <ng-container *ngFor="let e of data?.events;">
                         <div *ngIf="e.title == 'Appointment'">{{e.start|date:'h:mm a'|lowercase}} - {{e.end|date:'h:mm a'|lowercase}}</div>
@@ -22,7 +22,7 @@
                 </li>
                 <li>
                   <div class="info-row">
-                    <div class="info-label">Follow-ups ({{followupCount}})</div>
+                    <div class="info-label">{{'Follow-ups'|translate}} ({{followupCount}})</div>
                     <div class="info-con">
                       <ng-container *ngFor="let e of data?.events;">
                         <div *ngIf="e.title == 'Follow-up visit'">{{e.start|date:'h:mm a'|lowercase}} - {{e.end|date:'h:mm a'|lowercase}}</div>

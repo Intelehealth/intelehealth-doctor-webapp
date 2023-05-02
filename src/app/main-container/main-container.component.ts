@@ -14,6 +14,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, R
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-main-container',
@@ -51,7 +52,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private toastr: ToastrService,
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
-    private router: Router) {
+    private router: Router,
+    private translateService: TranslateService
+    ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
     });
@@ -130,7 +133,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   search() {
     if (this.searchForm.value.keyword === null || this.searchForm.value.keyword.length < 3) {
-      this.toastr.warning("Please enter minimum 3 characters to search patient....", "Warning");
+      this.toastr.warning(this.translateService.instant(`messages.${"Please enter minimum 3 characters to search patient...."}`), this.translateService.instant(`messages.${"Warning"}`));
     } else {
       const url = `${this.baseUrl}/patient?q=${this.searchForm.value.keyword}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe((response: any) => {
@@ -147,9 +150,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       },
         (err) => {
           if (err.error instanceof Error) {
-            this.toastr.error("Client-side error", null, { timeOut: 2000 });
+            this.toastr.error(this.translateService.instant(`messages.${"Client-side error"}`), null, { timeOut: 2000 });
           } else {
-            this.toastr.error("Server-side error", null, { timeOut: 2000 });
+            this.toastr.error(this.translateService.instant(`messages.${"Server-side error"}`), null, { timeOut: 2000 });
           }
         }
       );

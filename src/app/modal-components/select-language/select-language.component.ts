@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-select-language',
@@ -12,9 +13,9 @@ export class SelectLanguageComponent implements OnInit {
   languageForm: FormGroup;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-  private dialogRef: MatDialogRef<SelectLanguageComponent>) {
+  private dialogRef: MatDialogRef<SelectLanguageComponent>, private translate: TranslateService) {
     this.languageForm = new FormGroup({
-      language: new FormControl('en', Validators.required)
+      language: new FormControl(this.translate.currentLang, Validators.required)
     });
   }
 
@@ -22,6 +23,8 @@ export class SelectLanguageComponent implements OnInit {
   }
 
   select() {
+    localStorage.setItem("selectedLanguage", this.languageForm.value.language);
+    this.translate.use(this.languageForm.value.language);
     this.dialogRef.close(this.languageForm.value);
   }
 

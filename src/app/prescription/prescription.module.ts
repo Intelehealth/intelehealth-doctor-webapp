@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { SharedModule } from '../shared.module';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatIconModule,
     MatTooltipModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    SharedModule
   ]
 })
 export class PrescriptionModule { }
