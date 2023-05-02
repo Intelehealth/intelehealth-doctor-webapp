@@ -1,8 +1,13 @@
-<h4><i class="fas fa-book"></i> Follow Up</h4>
+<h4><i class="fas fa-book"></i> Follow Up<span class="red-star">*</span></h4>
 <hr>
-<div>
+<div id="patient-interaction">
+  <mat-radio-group name="type" aria-label="Select an option" [(ngModel)]="type">
+      <mat-radio-button name="type"  (change)="type = 'Y'"  [value]="'Y'">Yes </mat-radio-button>
+      <mat-radio-button name="type"  (change)="type = 'N'" [value]="'N'">No</mat-radio-button>
+  </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp; 
+</div>
 <form [formGroup]="followForm">
-<div id="followup-button">
+<div id="followup-button" *ngIf="type == 'Y'">
   <p>
     <mat-form-field>
       <input matInput readonly [matDatepicker]="dp3" [min]="minDate" placeholder="Choose a date" formControlName='date'>
@@ -15,9 +20,16 @@
       </mat-form-field>
 <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid || isManagerRole" [hidden]='followUp.length > 0'>Schedule a follow up</button>
 </div>
+<div id="followup-button" *ngIf="type == 'N'">
+      <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Remark" formControlName='advice'></textarea>
+      </mat-form-field>
+<button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="isManagerRole" [hidden]='followUp.length > 0'>Add Remark</button>
+</div>
 {{errorText}}
 </form>
 <ng-container *ngIf="followUp.length > 0">
+  <br>
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">
         <div class="doctor-value">{{followUp.value}}</div>
@@ -26,4 +38,3 @@
     </ul>
     <p>*please delete current schedule to schedule a new follow up.</p>
 </ng-container>
-</div>

@@ -29,6 +29,7 @@ export class VisitSummaryComponent implements OnInit {
   font: string;
   visitNotePresent = false;
   visitCompletePresent = false;
+  isVisitSummaryChanged:boolean = false
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -62,9 +63,10 @@ export class VisitSummaryComponent implements OnInit {
     setTimeout(() => {
       this.setSpiner = false;
     }, 1000);
-    this.checkProviderRole();
     this.patientUuid = this.route.snapshot.paramMap.get("patient_id");
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.checkProviderRole();
+    this.checkMadnatoryTabs();
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
@@ -250,35 +252,35 @@ export class VisitSummaryComponent implements OnInit {
 
   checkFollowUp(visitEncounterDatetime, encounterUuid) {
     this.diagnosisService.getObs(this.patientUuid, this.conceptFollow)
-    .subscribe(response => {
-      let followUp =[];
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-         followUp.push(obs);
+      .subscribe(response => {
+        let followUp = [];
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            followUp.push(obs);
+          }
+        });
+        if (followUp.length > 0) {
+          console.log("Follow up is present");
+        } else {
+          const date = moment(visitEncounterDatetime);
+          let new_date = moment(date, "YYYY-MM-DD HH:mm:ss").add(5, 'days').toDate();
+          const obsdate = this.datepipe.transform(new_date, 'dd-MM-yyyy');
+          this.addMandatoryFollowUp(obsdate, encounterUuid);
         }
       });
-      if(followUp.length > 0) {
-        console.log("Follow up is present");
-      } else {
-        const date = moment(visitEncounterDatetime);
-        let new_date = moment(date,"YYYY-MM-DD HH:mm:ss").add(5, 'days').toDate();
-        const obsdate = this.datepipe.transform(new_date, 'dd-MM-yyyy');
-        this.addMandatoryFollowUp(obsdate, encounterUuid);
-      }
-    });
   }
 
-  addMandatoryFollowUp(obsdate,encounterUuid) {
-        const date = new Date();
-        const json = {
-          concept: this.conceptFollow,
-          person: this.patientUuid,
-          obsDatetime: date,
-          value: obsdate,
-          encounter: encounterUuid
-        };
-        this.service.postObs(json)
-        .subscribe(() => { });
+  addMandatoryFollowUp(obsdate, encounterUuid) {
+    const date = new Date();
+    const json = {
+      concept: this.conceptFollow,
+      person: this.patientUuid,
+      obsDatetime: date,
+      value: obsdate,
+      encounter: encounterUuid
+    };
+    this.service.postObs(json)
+      .subscribe(() => { });
   }
 
   private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
@@ -330,5 +332,26 @@ export class VisitSummaryComponent implements OnInit {
         });
       }
     });
+  }
+
+  getIsDataPresent() {
+    this.checkMadnatoryTabs();
+  }
+
+  checkMadnatoryTabs() {
+    this.diagnosisService.getObs(this.patientUuid, this.conceptFollow)
+      .subscribe(response => {
+        let followUp = [];
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            followUp.push(obs);
+          }
+        });
+        if (followUp.length > 0) {
+          this.isVisitSummaryChanged = false;
+        } else {
+          this.isVisitSummaryChanged = true;
+        }
+      });
   }
 }

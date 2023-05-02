@@ -96,7 +96,7 @@
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up [isManagerRole]="isManagerRole"></app-follow-up>
+                  <app-follow-up (isDataPresent)="getIsDataPresent($event)" [isManagerRole]="isManagerRole"></app-follow-up>
             </mat-card>
             <br>
         
@@ -112,7 +112,7 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent || isManagerRole || onSubmit">Sign and Submit</button>
+                        [disabled]="visitCompletePresent || isVisitSummaryChanged || isManagerRole || onSubmit">Sign and Submit</button>
             </div>
       </div>
 </div>

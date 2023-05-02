@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -28,6 +28,7 @@ declare var getEncounterUUID: any;
 })
 export class FollowUpComponent implements OnInit {
 @Input() isManagerRole : boolean;
+@Output() isDataPresent = new EventEmitter<boolean>();
 minDate = new Date();
 followUp: any = [];
 conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
@@ -35,6 +36,7 @@ encounterUuid: string;
 patientId: string;
 visitUuid: string;
 errorText: string;
+type = "";
 
 followForm = new FormGroup({
   date: new FormControl('', [Validators.required]),
@@ -70,11 +72,12 @@ followForm = new FormGroup({
         concept: this.conceptFollow,
         person: this.patientId,
         obsDatetime: date,
-        value: advice ? `${obsdate}, Remark: ${advice}` : obsdate,
+        value: this.type == 'Y' ? (advice ? `${obsdate}, Remark: ${advice}` : obsdate) : advice,
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
       .subscribe(resp => {
+        this.isDataPresent.emit(true);
         this.followUp.push({uuid: resp.uuid, value: json.value});
       });
     }
@@ -86,6 +89,7 @@ followForm = new FormGroup({
       this.diagnosisService.deleteObs(uuid)
       .subscribe(() => {
         this.followUp.splice(i, 1);
+        this.isDataPresent.emit(false);
       });
     } 
   }
