@@ -14,80 +14,80 @@
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
             <img src="assets/svgs/menu-home.svg" alt="">
-            <span>Dashboard</span>
+            <span>{{'Dashboard' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-message.svg" alt="">
-            <span>Messages</span>
+            <span>{{'Messages' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-video.svg" alt="">
-            <span>Appointment</span>
+            <span>{{'Appointment' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active">
             <img src="assets/svgs/menu-calendar.svg" alt="">
-            <span>Calendar</span>
+            <span>{{'Calendar' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-treatment.svg" alt="">
-            <span>Prescription</span>
+            <span>{{'Prescription' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-home.svg" alt="">
-            <span>My Profile</span>
+            <span>{{'My Profile'| translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-info.svg" alt="">
-            <span>Help & Support</span>
+            <span>{{'Help & Support' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/warning.svg" alt="">
-            <span>Ayu</span>
+            <span>{{'Ayu'| translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/menu-info.svg" alt="">
-            <span>Support <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div> </span>
+            <span>{{'Support' | translate}} <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div> </span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img src="assets/svgs/user-settings.svg" alt="">
-            <span>System Admin</span>
+            <span>{{'System Admin' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank">
             <img src="assets/svgs/add-user.svg" alt="">
-            <span>User Creation</span>
+            <span>{{'User Creation' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank">
             <img src="assets/svgs/report.svg" alt="">
-            <span>Report</span>
+            <span>{{'Report' | translate}}</span>
           </a>
         </li>
         <li class="nav-item" (click)="toggleSidebar()">
           <mat-divider class="mb-2"></mat-divider>
           <a class="nav-item-link" href="javascript:void(0)" (click)="logout()">
             <img src="assets/svgs/power.svg" alt="">
-            <span>Log-out</span>
+            <span>{{'Log-out' | translate}}</span>
           </a>
         </li>
       </ul>
@@ -150,15 +150,15 @@
                 </button>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
-                  <h6 class="user-title mb-0">Hello, {{(user)? user?.person?.display : 'User'}} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
                 </div>
                 <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
-                  <button mat-menu-item (click)="changePassword()">Change Password</button>
-                  <button mat-menu-item (click)="selectLanguage()">Change Language</button>
-                  <button mat-menu-item routerLink="/dashboard/profile">Profile</button>
+                  <button mat-menu-item (click)="changePassword()">{{'Change Password' | translate}}</button>
+                  <button mat-menu-item (click)="selectLanguage()">{{'Change Language' | translate}}</button>
+                  <button mat-menu-item routerLink="/dashboard/profile">{{'Profile' | translate}}</button>
                 </mat-menu>
               </div>
             </li>
@@ -169,7 +169,7 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container" *ngIf="routeUrl.includes('/help') && !dialogRef">
-        <button class="help-btn" type="button" (click)="openHelpMenu()">Help</button>
+        <button class="help-btn" type="button" (click)="openHelpMenu()">{{'Help'| translate}}</button>
       </div>
     </div>
   </div>
