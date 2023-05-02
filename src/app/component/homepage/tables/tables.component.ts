@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from "@angular/core";
 import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
+import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTable, MatTableDataSource } from "@angular/material/table";
 import { HelperService } from "src/app/services/helper.service";
 import { VisitService } from "src/app/services/visit.service";
@@ -54,10 +54,14 @@ export class TablesComponent implements OnInit {
     this.data.length = this.visitCounts;
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
+    this.sort.sort(({ id: 'lastSeen', start: 'desc'}) as MatSortable);
     this.dataSource.sort = this.sort;
     if (this.tableFor === "completedVisit") {
       this.displayColumns.splice(6,0,"healthWorker");
       this.displayColumns.splice(7,0,"diagnosis");
+    }
+    if(this.tableFor === "followUpVisit") {
+      this.displayColumns.push("date");
     }
     this.helper.refreshTable.subscribe(() => {
       this.refresh();

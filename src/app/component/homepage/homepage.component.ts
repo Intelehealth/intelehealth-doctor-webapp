@@ -5,6 +5,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { SocketService } from "src/app/services/socket.service";
 import { HelperService } from "src/app/services/helper.service";
+import * as moment from "moment";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -31,9 +32,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
   activePatient = 0;
   visitNoteNo = 0;
   completeVisitNo = 0;
+  followUpVisitNo = 0;
   setSpiner = true;
   specialization;
   allVisits = [];
+  followUpVisit=[];
   limit = 100;
   allVisitsLoaded = false;
   systemAccess = false;
@@ -203,6 +206,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     ) {
       const values = this.assignValueToProperty(active, encounter);
       this.service.completedVisit.push(this.setValues(values, active));
+      this.getFollowUpVisits(active);
     } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
       const values = this.assignValueToProperty(active, encounter);
       this.service.progressVisit.push(values);
@@ -249,7 +253,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     );
     return phoneObj ? phoneObj.value : "NA";
   }
-  assignValueToProperty(active, encounter) {
+  assignValueToProperty(active, encounter, followUpDate?) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -262,6 +266,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.provider =
       encounter.encounterProviders[0].provider.display.split("- ")[1];
     this.value.lastSeen = encounter.encounterDatetime;
+    this.value.date = followUpDate;
+    this.value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
     return this.value;
   }
 
@@ -289,5 +295,35 @@ export class HomepageComponent implements OnInit, OnDestroy {
   playNotify() {
     const audioUrl = "../../../../intelehealth/assets/notification.mp3";
     new Audio(audioUrl).play();
+  }
+
+  getFollowUpVisits(visit) {
+    this.getFollowUpDateAndExamination(visit);
+    if(visit.followUp && /\d/.test(visit.followUp)) {
+      let v = this.assignValueToProperty(visit,visit.encounters[0], visit.followUp);
+      this.updateFollowUpVisits(v);
+     }
+  }
+
+  getFollowUpDateAndExamination(visit) {
+    visit?.encounters?.forEach((encounter) => { 
+      const display = encounter.display;
+      if (display.match("Visit Note") !== null) {
+        const observations = encounter.obs;
+        observations?.forEach((obs) => {
+          if (obs.display.match("Follow up visit") !== null) {
+             visit.followUp = obs.value?.split(',')[0]?.trim();
+          }
+        });
+      }
+    });
+  }
+
+  private updateFollowUpVisits(v: any) {
+    let found = this.followUpVisit.find(c => c.id === v.id);
+    if (!found) {
+      this.followUpVisit.push(v);
+      this.followUpVisitNo += 1;
+    }
   }
 }
