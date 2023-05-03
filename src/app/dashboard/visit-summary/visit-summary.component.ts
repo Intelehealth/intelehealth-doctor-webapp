@@ -1576,7 +1576,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           data: []
         };
         let maxCol = 1;
-        const rows = res?.choices[0]?.message.content.split('\n');
+        const rows = res?.data.choices[0]?.message.content.split('\n');
         rows.forEach(r => {
           const cols = r.split('|');
           if(cols.length > maxCol) maxCol = cols.length;
@@ -1598,7 +1598,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           obs: [
             {
               concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
-              value: res?.choices[0]?.message.content,
+              value: res?.data.choices[0]?.message.content,
             },
           ]
         }).subscribe((post) => {
