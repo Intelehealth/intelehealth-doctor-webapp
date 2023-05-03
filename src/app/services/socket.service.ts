@@ -8,11 +8,7 @@ import { environment } from "../../environments/environment";
 export class SocketService {
   public socket: any;
   public activeUsers = [];
-  appIcon =
-    false && environment.production
-      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
-      : "/assets/images/intelehealth-logo-reverse.png";
-
+  appIcon = "assets/images/intelehealth-logo-reverse.png";
   private baseURL = environment.socketURL;
 
   constructor(private http: HttpClient) {}
@@ -44,6 +40,10 @@ export class SocketService {
     return new Observable<any>((observer) => {
       this.socket.on(action, (data) => observer.next(data));
     });
+  }
+
+  public close() {
+    this.socket.close();
   }
 
   async showNotification({ title, body, timestamp = Date.now() }) {
