@@ -129,4 +129,19 @@ export class VisitService {
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
   }
+
+  chatGPTCompletionDDx(data: any) {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    headers = headers.append('Authorization', `Bearer ${environment.chatGptAPIKey}`);
+    return this.http.post(`https://api.openai.com/v1/chat/completions`, {
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: "user",
+          content: `Please provide a likelihood-likelihood-matrix of differential diagnosis for the symptoms - ${data}`
+        }
+      ]
+    }, { headers });
+  }
 }

@@ -144,6 +144,12 @@
   }
 }
 
+.intel-accordion-con.ddx {
+  .mat-expansion-panel {
+    background: aliceblue;
+  }
+}
+
 .intel-accordion-con {
 
   .mat-expansion-panel.overflow-show {
@@ -581,6 +587,14 @@ textarea.form-control {
 table {
   width: 100%;
   font-family: DM Sans;
+}
+
+.ddx-table {
+  width: fit-content;
+
+  th, td {
+    padding: 0.2rem 0.5rem;
+  }
 }
 
 th.mat-header-cell {

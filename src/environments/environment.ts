@@ -30,7 +30,8 @@ export const environment = {
   },
   siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
+  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
+  chatGptAPIKey: "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"
 };
 
 /*

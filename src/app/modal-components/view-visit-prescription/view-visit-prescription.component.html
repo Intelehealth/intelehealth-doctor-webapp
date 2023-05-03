@@ -17,7 +17,7 @@
   <div class="main-content">
     <div class="container-fluid">
       <div class="row patient-info-wrapper">
-        <div class="col-md-4 patient-info-section p-3" *ngIf="patient">
+        <div class="col-md-3 patient-info-section p-3" *ngIf="patient">
           <div class="patient-img-item mb-2">
             <div class="patient-img">
               <img
@@ -35,28 +35,34 @@
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
           </div>
-          <div class="patient-info-item">
+        </div>
+        <div class="col-md-3 patient-info-section p-3">
+          <div class="patient-info-item mb-3">
             <h6>Age</h6>
             <p>
               {{
                 patient?.person.birthdate
-                  ? getAge(patient?.person.birthdate)
-                  : patient?.person.age
+                ? getAge(patient?.person.birthdate)
+                : patient?.person.age
               }}
             </p>
-          </div>
-        </div>
-        <div class="col-md-4 patient-info-section p-3">
-          <div class="patient-info-item mb-3">
-            <h6>Occupation</h6>
-            <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
           <div class="patient-info-item">
             <h6>Address</h6>
             <p>{{ patient?.person.preferredAddress.cityVillage }}</p>
           </div>
         </div>
-        <div class="col-md-4 patient-info-section p-3">
+        <div class="col-md-3 patient-info-section p-3">
+          <div class="patient-info-item mb-3">
+            <h6>Occupation</h6>
+            <p>{{ getPersonAttributeValue("occupation") }}</p>
+          </div>
+          <div class="patient-info-item">
+            <h6>National ID</h6>
+            <p>{{ getPersonAttributeValue("NationalID") }}</p>
+          </div>
+        </div>
+        <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item">
             <h6>Contact no.</h6>
             <p>

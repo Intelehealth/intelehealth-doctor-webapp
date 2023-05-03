@@ -805,6 +805,47 @@
       </div>
     </div>
 
+    <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
+      <div class="intel-card">
+        <div class="card-body">
+          <mat-accordion class="intel-accordion-con ddx" multi>
+            <mat-expansion-panel [expanded]="true" #panelDDx hideToggle [disabled]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img
+                      src="assets/svgs/ic_ayu.png"
+                      alt=""
+                      width="44px"
+                      style="border-radius: 50%; background-color: #FFFFFF;"
+                    />
+                    <h6 class="mb-0 ml-2">Differential Diagnosis (DDx)</h6>
+                  </div>
+                </mat-panel-title>
+                <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->
+              </mat-expansion-panel-header>
+              <table *ngIf="ddx" class="ddx-table mt-3">
+                <thead>
+                  <tr>
+                    <th *ngFor="let h of ddx.data[0]" [attr.colspan]="ddx.data[0].length == 1 && ddx.maxCols > ddx.data[0].length ? ddx.maxCols : 1">{{h}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let d of ddx.data; let i=index;">
+                    <tr *ngIf="i!=0">
+                      <ng-container *ngFor="let dd of d">
+                        <td [attr.colspan]="d.length == 1 && ddx.maxCols > d.length ? ddx.maxCols : 1">{{dd}}</td>
+                      </ng-container>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-12 p-0 mb-5" *ngIf="selectedTabIndex == 0">
       <div class="intel-card">
         <div class="card-body">
