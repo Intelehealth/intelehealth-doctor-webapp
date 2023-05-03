@@ -27,8 +27,8 @@
     <ul class="list-unstyled">
     <mat-list [@moveInLeft] *ngFor='let followUp of followUp, index as i' class="alert alert-primary">
         <div class="doctor-value">{{followUp.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" [class.disabled]="isManagerRole">delete</i>
+        <i (click)="delete(i)" [hidden]="isVisitCompleted" class="material-icons float-right" style="color:rgb(235, 30, 30);cursor: pointer;" [class.disabled]="isManagerRole">delete</i>
     </mat-list>
     </ul>
-    <p>*please delete current schedule to schedule a new follow up.</p>
+    <p [hidden]="isVisitCompleted">*please delete current schedule to schedule a new follow up.</p>
 </ng-container>

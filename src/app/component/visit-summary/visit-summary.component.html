@@ -96,7 +96,10 @@
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up (isDataPresent)="getIsDataPresent($event)" [isManagerRole]="isManagerRole"></app-follow-up>
+                  <app-follow-up
+                   (isDataPresent)="getIsDataPresent($event)"
+                   [isManagerRole]="isManagerRole"
+                   [isVisitCompleted]="visitCompletePresent" ></app-follow-up>
             </mat-card>
             <br>
         

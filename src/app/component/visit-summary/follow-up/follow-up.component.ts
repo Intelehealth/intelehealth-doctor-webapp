@@ -28,6 +28,7 @@ declare var getEncounterUUID: any;
 })
 export class FollowUpComponent implements OnInit {
   @Input() isManagerRole: boolean;
+  @Input() isVisitCompleted: boolean;
   @Output() isDataPresent = new EventEmitter<boolean>();
   minDate = new Date();
   followUp: any = [];
@@ -56,7 +57,7 @@ export class FollowUpComponent implements OnInit {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
             this.followUp.push(obs);
-            obs.value === "Follow-up not required" ? this.type = 'N': this.type = 'Y';
+            obs.value === "Remark: Follow-up not required" ? this.type = 'N': this.type = 'Y';
           }
         });
       });
@@ -74,7 +75,7 @@ export class FollowUpComponent implements OnInit {
           concept: this.conceptFollow,
           person: this.patientId,
           obsDatetime: date,
-          value: this.type == 'Y' ? (advice ? `${obsdate}, Remark: ${advice}` : obsdate) : "Follow-up not required",
+          value: this.type == 'Y' ? (advice ? `${obsdate}, Remark: ${advice}` : obsdate) : "Remark: Follow-up not required",
           encounter: this.encounterUuid
         };
         this.service.postObs(json)
