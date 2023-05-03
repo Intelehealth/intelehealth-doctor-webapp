@@ -46,6 +46,7 @@ declare var getFromStorage: any,
 export class PatientInteractionComponent implements OnInit {
   @Input() isManagerRole : boolean;
   msg: any = [];
+  interactionType = '';
   whatsappLink: string;
   phoneNo;
   patientDetails: any;
@@ -110,6 +111,7 @@ export class PatientInteractionComponent implements OnInit {
       );
       if (result.length !== 0) {
         this.msg = tempMsg;
+        this.interactionType = this.msg[0].value;
       }
     });
   }
@@ -185,6 +187,7 @@ export class PatientInteractionComponent implements OnInit {
     if (this.diagnosisService.isSameDoctor()) {
       this.visitService.deleteAttribute(this.visitId, i).subscribe(() => {
         this.msg = [];
+        this.interactionType = '';
       });
       if (this.adviceObs.length > 0) {
         this.adviceObs.forEach(({ uuid }) => {
