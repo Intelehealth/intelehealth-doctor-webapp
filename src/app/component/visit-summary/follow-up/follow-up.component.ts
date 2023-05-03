@@ -13,73 +13,76 @@ declare var getEncounterUUID: any;
   styleUrls: ['./follow-up.component.css'],
   animations: [
     trigger('moveInLeft', [
-       transition('void=> *', [style({transform: 'translateX(300px)'}),
-         animate(200, keyframes ([
-          style({transform: 'translateX(300px)'}),
-          style({transform: 'translateX(0)'})
-           ]))]),
-    transition('*=>void', [style({transform: 'translateX(0px)'}),
-         animate(100, keyframes([
-          style({transform: 'translateX(0px)'}),
-          style({transform: 'translateX(300px)'})
-        ]))])
-     ])
- ]
+      transition('void=> *', [style({ transform: 'translateX(300px)' }),
+      animate(200, keyframes([
+        style({ transform: 'translateX(300px)' }),
+        style({ transform: 'translateX(0)' })
+      ]))]),
+      transition('*=>void', [style({ transform: 'translateX(0px)' }),
+      animate(100, keyframes([
+        style({ transform: 'translateX(0px)' }),
+        style({ transform: 'translateX(300px)' })
+      ]))])
+    ])
+  ]
 })
 export class FollowUpComponent implements OnInit {
-@Input() isManagerRole : boolean;
-@Output() isDataPresent = new EventEmitter<boolean>();
-minDate = new Date();
-followUp: any = [];
-conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
-encounterUuid: string;
-patientId: string;
-visitUuid: string;
-errorText: string;
-type = "";
+  @Input() isManagerRole: boolean;
+  @Output() isDataPresent = new EventEmitter<boolean>();
+  minDate = new Date();
+  followUp: any = [];
+  conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
+  encounterUuid: string;
+  patientId: string;
+  visitUuid: string;
+  errorText: string;
+  type = "";
 
-followForm = new FormGroup({
-  date: new FormControl('', [Validators.required]),
-  advice: new FormControl('')
-});
+  followForm = new FormGroup({
+    date: new FormControl('', [Validators.required]),
+    advice: new FormControl('')
+  });
 
   constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute,
-              private datepipe: DatePipe) { }
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute,
+    private datepipe: DatePipe) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.followUp.push(obs);
-        }
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            this.followUp.push(obs);
+            obs.value === "Follow-up not required" ? this.type = 'N': this.type = 'Y';
+          }
+        });
       });
-    });
   }
 
-  Submit() {
-    const date = new Date();
-    const form = this.followForm.value;
-    const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
-    const advice = form.advice;
-    if (this.diagnosisService.isSameDoctor()) {
-      this.encounterUuid = getEncounterUUID();
-      const json = {
-        concept: this.conceptFollow,
-        person: this.patientId,
-        obsDatetime: date,
-        value: this.type == 'Y' ? (advice ? `${obsdate}, Remark: ${advice}` : obsdate) : advice,
-        encounter: this.encounterUuid
-      };
-      this.service.postObs(json)
-      .subscribe(resp => {
-        this.isDataPresent.emit(true);
-        this.followUp.push({uuid: resp.uuid, value: json.value});
-      });
+  submit() {
+    if (this.followUp.length === 0) {
+      const date = new Date();
+      const form = this.followForm.value;
+      const obsdate = this.datepipe.transform(form.date, 'dd-MM-yyyy');
+      const advice = form.advice;
+      if (this.diagnosisService.isSameDoctor()) {
+        this.encounterUuid = getEncounterUUID();
+        const json = {
+          concept: this.conceptFollow,
+          person: this.patientId,
+          obsDatetime: date,
+          value: this.type == 'Y' ? (advice ? `${obsdate}, Remark: ${advice}` : obsdate) : "Follow-up not required",
+          encounter: this.encounterUuid
+        };
+        this.service.postObs(json)
+          .subscribe(resp => {
+            this.isDataPresent.emit(true);
+            this.followUp.push({ uuid: resp.uuid, value: json.value });
+          });
+      }
     }
   }
 
@@ -87,11 +90,11 @@ followForm = new FormGroup({
     if (this.diagnosisService.isSameDoctor()) {
       const uuid = this.followUp[i].uuid;
       this.diagnosisService.deleteObs(uuid)
-      .subscribe(() => {
-        this.followUp.splice(i, 1);
-        this.isDataPresent.emit(false);
-      });
-    } 
+        .subscribe(() => {
+          this.followUp.splice(i, 1);
+          this.isDataPresent.emit(false);
+        });
+    }
   }
 
 }
