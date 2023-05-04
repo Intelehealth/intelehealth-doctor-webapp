@@ -142,14 +142,11 @@ export class VcComponent implements OnInit, OnDestroy {
   isStreamAvailable;
   startUserMedia(config?: any, cb = () => { }): void {
     let mediaConfig = {
-      audio: {
-        echoCancellation: true,
-        channelCount: 2,
-      },
+      audio: true,
       video: {
         width: { min: 160, ideal: 480 },
         height: { min: 120, ideal: 640 },
-        frameRate: { min: 10, ideal: 25 },
+        frameRate: { min: 5, ideal: 20 },
       },
     };
 

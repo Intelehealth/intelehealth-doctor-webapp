@@ -1,5 +1,6 @@
 .remoteVideo {
-  width: 78vw;
+  width: 100%;
+  min-width: 60vw;
   height: 79vh;
 }
 
