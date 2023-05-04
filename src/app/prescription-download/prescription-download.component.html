@@ -11,6 +11,7 @@
       <app-view-visit-prescription
         [isDownloadPrescription]="true"
         [visitId]="visitId"
+        [download]="eventsSubject.asObservable()"
       ></app-view-visit-prescription>
     </page>
   </div>
