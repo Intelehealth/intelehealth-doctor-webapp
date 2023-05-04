@@ -11,8 +11,6 @@ import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { DatePipe } from '@angular/common';
-import * as moment from "moment";
-declare var getEncounterUUID: any;
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -52,7 +50,6 @@ export class VisitSummaryComponent implements OnInit {
     private dialog: MatDialog,
     private dialogService: ConfirmDialogService,
     private diagnosisService: DiagnosisService,
-    private datepipe: DatePipe
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -164,7 +161,6 @@ export class VisitSummaryComponent implements OnInit {
             };
             this.service.postEncounter(json).subscribe((post) => {
               this.visitCompletePresent = true;
-              this.checkFollowUp(json.encounterDatetime, getEncounterUUID());
               this.router.navigateByUrl("/home");
               this.snackbar.open("Visit Complete", null, { duration: 4000 });
             });
@@ -250,38 +246,6 @@ export class VisitSummaryComponent implements OnInit {
     }
   }
 
-  checkFollowUp(visitEncounterDatetime, encounterUuid) {
-    this.diagnosisService.getObs(this.patientUuid, this.conceptFollow)
-      .subscribe(response => {
-        let followUp = [];
-        response.results.forEach(obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            followUp.push(obs);
-          }
-        });
-        if (followUp.length > 0) {
-          console.log("Follow up is present");
-        } else {
-          const date = moment(visitEncounterDatetime);
-          let new_date = moment(date, "YYYY-MM-DD HH:mm:ss").add(5, 'days').toDate();
-          const obsdate = this.datepipe.transform(new_date, 'dd-MM-yyyy');
-          this.addMandatoryFollowUp(obsdate, encounterUuid);
-        }
-      });
-  }
-
-  addMandatoryFollowUp(obsdate, encounterUuid) {
-    const date = new Date();
-    const json = {
-      concept: this.conceptFollow,
-      person: this.patientUuid,
-      obsDatetime: date,
-      value: obsdate,
-      encounter: encounterUuid
-    };
-    this.service.postObs(json)
-      .subscribe(() => { });
-  }
 
   private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
     const providerUuid = providerDetails.uuid;
