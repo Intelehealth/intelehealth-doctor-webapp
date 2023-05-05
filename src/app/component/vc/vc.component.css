@@ -1,16 +1,19 @@
-.remoteVideo {
+.remoteVideo,
+.localVideo {
   width: 100%;
-  min-width: 60vw;
-  height: 79vh;
+  /* min-width: 60vw; */
+  height: auto;
+  max-height: 40vh;
 }
 
-.localVideo {
+/* .localVideo {
   height: 180px;
-}
+} */
 
 .main {
   position: relative;
 }
+
 .local-container {
   position: absolute;
   bottom: 15%;
@@ -21,25 +24,25 @@ i.fa {
   font-size: 25px;
   padding: 10px;
 }
+
 .mute i {
   padding-left: 14px;
 }
+
 .fa-microphone-slash {
   padding-left: 7px !important;
 }
+
 .icon img {
   height: 25px;
   width: 50px;
   margin-top: 8px;
 }
 
-.localVideo {
-  height: 180px;
-}
-
 .main {
   position: relative;
 }
+
 .local-container {
   position: absolute;
   bottom: 15%;
@@ -57,13 +60,15 @@ i.fa {
   height: 45px;
   width: 45px;
 }
+
 .fa-microphone-slash {
   padding-left: 7px !important;
 }
 
 .button-tab {
-  bottom: 5%;
+  bottom: 0;
 }
+
 .container {
   margin: 0 auto;
   width: 25%;
@@ -74,6 +79,4 @@ i.fa {
   justify-content: center;
 }
 
-@media screen and (max-width: 600px) {
-
-}
+@media screen and (max-width: 600px) {}

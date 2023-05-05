@@ -27,7 +27,7 @@ export class VisitSummaryComponent implements OnInit {
   font: string;
   visitNotePresent = false;
   visitCompletePresent = false;
-  isVisitSummaryChanged:boolean = false
+  isVisitSummaryChanged: boolean = false
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -224,6 +224,7 @@ export class VisitSummaryComponent implements OnInit {
       .afterClosed().subscribe(res => {
         if (res) {
           this.dialog.open(VcComponent, {
+            id: 'video-call',
             disableClose: true,
             data: {
               patientUuid: this.patientUuid,

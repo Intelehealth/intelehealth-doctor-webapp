@@ -60,6 +60,13 @@ export class VcComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngAfterViewInit() {
+    const vcModal = document.getElementById('video-call')
+    if (vcModal) {
+      vcModal.parentElement.style.maxWidth = '';
+    }
+  }
+
   toast({
     message,
     duration = 5000,
@@ -144,8 +151,8 @@ export class VcComponent implements OnInit, OnDestroy {
     let mediaConfig = {
       audio: true,
       video: {
-        width: { min: 160, ideal: 480 },
-        height: { min: 120, ideal: 640 },
+        width: { min: 512, ideal: 512 },
+        height: { min: 384, ideal: 384 },
         frameRate: { min: 5, ideal: 20 },
       },
     };
@@ -167,6 +174,7 @@ export class VcComponent implements OnInit, OnDestroy {
         const localStream = new MediaStream();
         localStream.addTrack(stream.getVideoTracks()[0]);
         this.localVideoRef.nativeElement.srcObject = localStream;
+        this.remoteVideoRef.nativeElement.srcObject = localStream;
         cb();
       },
       (err) => {

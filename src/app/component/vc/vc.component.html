@@ -1,7 +1,12 @@
 <div #mainContainer class="main bg-dark">
-  <video #remoteVideo class="remoteVideo" autoplay></video>
+  <!-- <video #remoteVideo class="remoteVideo" autoplay></video>
   <div #localContainer class="local-container col-xs-6">
     <video #localVideo autoplay class="localVideo"></video>
+  </div> -->
+  <div class="col p-0">
+    <video #remoteVideo class="remoteVideo row m-0" autoplay></video>
+    <hr class="m-1"> 
+    <video #localVideo autoplay class="localVideo row m-0"></video>
   </div>
 
   <div class="button-tab p-3 w-100 position-absolute">
