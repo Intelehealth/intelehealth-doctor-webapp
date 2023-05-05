@@ -174,7 +174,6 @@ export class VcComponent implements OnInit, OnDestroy {
         const localStream = new MediaStream();
         localStream.addTrack(stream.getVideoTracks()[0]);
         this.localVideoRef.nativeElement.srcObject = localStream;
-        this.remoteVideoRef.nativeElement.srcObject = localStream;
         cb();
       },
       (err) => {
