@@ -87,6 +87,13 @@
         </tr>
       </table>
       <table class="table">
+        <tr *ngFor="let w3 of selectedDate">
+          <td>
+            <input id="check4" type="date" [(ngModel)]="newDate">
+          </td>
+        </tr>
+      </table>
+      <table class="table">
         <tr *ngFor="let w1 of weekDays">
           <td>
             <input id="check2" type="checkbox" [(ngModel)]="w1.checked" (change)="set(w1)">

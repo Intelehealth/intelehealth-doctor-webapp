@@ -58,6 +58,7 @@ export class AppointmentComponent implements OnInit {
   types: any = [
     { day: "All Days", startTime: null, endTime: null, checked: false },
     { day: "Week Day", startTime: null, endTime: null, checked: false },
+    { day: "Date", startTime: null, endTime: null, checked: false }
   ];
   weekDays: any = [
     { day: "Monday", startTime: null, endTime: null, checked: false },
@@ -70,6 +71,10 @@ export class AppointmentComponent implements OnInit {
     { day: "Saturday", startTime: null, endTime: null, checked: false },
     { day: "Sunday", startTime: null, endTime: null, checked: false },
   ];
+  selectedDate: any = [
+    { day: "Date", startTime: null, endTime: null, checked: false }
+  ];
+  newDate: string;
   slotHours = [];
   errorMsg: string = null;
   modalData: {
@@ -110,6 +115,7 @@ export class AppointmentComponent implements OnInit {
       }
       let weekDayCheck = true;
       let allDayCheck = true;
+      let dateCheck = true;
       this.weekDays.forEach((day) => {
         if (!day.checked) {
           weekDayCheck = false;
@@ -121,9 +127,15 @@ export class AppointmentComponent implements OnInit {
           allDayCheck = false;
         }
       });
-      let [allDay, weekDay] = this.types;
+      this.selectedDate.forEach((day) => {
+        if (!day.checked) {
+          dateCheck = true;
+        }
+      });
+      let [allDay, weekDay, date] = this.types;
       weekDay.checked = weekDayCheck;
       allDay.checked = allDayCheck;
+      date.checked = dateCheck;
     } catch (error) {
       console.log("error: ", error);
     }
@@ -271,17 +283,29 @@ export class AppointmentComponent implements OnInit {
       this.weekDays.forEach((element) => (element.checked = !!type.checked));
       this.weekends.forEach((element) => (element.checked = !!type.checked));
       this.types.forEach((element) => (element.checked = !!type.checked));
+      this.selectedDays = this.weekDays
+      .filter((day) => day.checked)
+      .concat(this.weekends.filter((day) => day.checked));
     } else if (type.day === "Week Day") {
       this.weekDays.forEach((element) => (element.checked = !!type.checked));
       this.type = "week";
-    } else {
-      this.type = "week";
-    }
-    this.selectedDays = this.weekDays
+      this.selectedDays = this.weekDays
       .filter((day) => day.checked)
       .concat(this.weekends.filter((day) => day.checked));
+    } else if (type.day === "Date") {     
+      this.selectedDate.forEach((element) => (element.checked = !!type.checked));
+      this.type = "date";
+      this.selectedDays = this.selectedDate.filter((day) => day.checked)
+      .concat(this.selectedDate.filter((day) => day.checked));
+    }else{
+      this.type = "week";
+      this.selectedDays = this.weekDays
+      .filter((day) => day.checked)
+      .concat(this.weekends.filter((day) => day.checked));
+    }
     let weekDayCheck = true;
     let allDayCheck = true;
+    let dateCheck = true;
     this.weekDays.forEach((day) => {
       if (!day.checked) {
         weekDayCheck = false;
@@ -293,9 +317,15 @@ export class AppointmentComponent implements OnInit {
         allDayCheck = false;
       }
     });
-    let [allDay, weekDay] = this.types;
+    this.selectedDate.forEach((day) => {      
+      if (!day.checked) {
+        dateCheck = false;
+      }
+    });
+    let [allDay, weekDay, date] = this.types;
     weekDay.checked = weekDayCheck;
     allDay.checked = allDayCheck;
+    date.checked = dateCheck;    
   }
 
   getSlotSchedule(selectedDays) {
@@ -316,6 +346,19 @@ export class AppointmentComponent implements OnInit {
             date: currentDay.format('YYYY-MM-DD HH:mm:ss'),
             id: this.getUniqueId()
           });
+        }else{
+          if(selectedDays.length){
+            if("Date"=== selectedDays[0].day){
+              schedules.push({
+                day,
+                endTime: this.scheduleForm.value.endTime,
+                startTime: this.scheduleForm.value.startTime,
+                date: moment(this.newDate).format('YYYY-MM-DD HH:mm:ss'),
+                id: this.getUniqueId()
+              });
+              break
+            }
+          }
         }
       }
       currentDay.add(1, "day");
