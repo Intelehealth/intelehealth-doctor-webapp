@@ -256,7 +256,7 @@ require by speaking with the patient directly.  -->
 
     <div class="text-center">
       <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-        [disabled]="visitCompletePresent || isVisitSummaryChanged || isSevikaVisit || requiredNotFilled">Sign and Submit</button>
+        [disabled]="visitCompletePresent || isVisitSummaryChanged || isSevikaVisit || requiredNotFilled || managerRoleAccess">Sign and Submit</button>
     </div>
   </div>
 </div>

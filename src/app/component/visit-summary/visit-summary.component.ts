@@ -73,7 +73,7 @@ export class VisitSummaryComponent implements OnInit {
     if (userDetails) {
       const roles = userDetails['roles'];
       roles.forEach(role => {
-        if (role.name === "Project Manager") {
+        if (role.name === "Project Manager" || role.name === "Reporting Module") {
           this.managerRoleAccess = true;
         }
       });

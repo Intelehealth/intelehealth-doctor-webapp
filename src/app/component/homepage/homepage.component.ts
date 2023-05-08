@@ -96,6 +96,12 @@ export class HomepageComponent implements OnInit {
             this.visitState = attribute.value;
           }
         });
+        const roles = userDetails['roles'];
+        roles.forEach(role => {
+          if (role.name === "Reporting Module") {
+            this.specialization = "General Physician";
+          }
+        });
         //  this.getVisits();
         this.getVisitCounts(this.specialization);
         this.getPriorityVisits();
