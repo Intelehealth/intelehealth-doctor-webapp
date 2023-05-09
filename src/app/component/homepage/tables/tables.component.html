@@ -110,6 +110,6 @@
     <tr mat-row *matRowDef="let row; columns: displayColumns" [ngClass]="{'make-red': row?.isPastDate && tableFor === 'followUpVisit' }" ></tr>
   </table>
 
-  <mat-paginator [length]="visitCounts" (page)="changePage($event)" [pageSizeOptions]="[5, 10, 20]"
+  <mat-paginator [length]="visitCounts" [pageSizeOptions]="[5, 10, 20]"
     showFirstLastButtons></mat-paginator>
 </div>

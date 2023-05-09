@@ -28,6 +28,7 @@ export class VisitSummaryComponent implements OnInit {
   visitNotePresent = false;
   visitCompletePresent = false;
   isVisitSummaryChanged: boolean = false
+  isVisitEnded:boolean = false;
   setSpiner = true;
   doctorDetails;
   doctorValue;
@@ -91,6 +92,9 @@ export class VisitSummaryComponent implements OnInit {
             visit.display.includes("Vitals")
           ) {
             saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
+          }
+          if (visitDetails.stopDatetime !== null) {
+            this.isVisitEnded = true;
           }
         });
       });

@@ -36,7 +36,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   setSpiner = true;
   specialization;
   allVisits = [];
-  followUpVisit=[];
+  followUpVisit = [];
   limit = 100;
   allVisitsLoaded = false;
   systemAccess = false;
@@ -120,7 +120,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.service.getVisits(query).subscribe(
       (response) => {
         response.results.forEach((item) => {
-          this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
+          var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
+          if (i <= -1) {
+            this.allVisits.push(item);
+          }
         });
         this.allVisits.forEach((active) => {
           if (active.encounters.length > 0) {
@@ -199,26 +202,29 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitCategory(active) {
     const { encounters = [] } = active;
     let encounter;
-    if (
-      (encounter =
-        this.checkVisit(encounters, "Visit Complete") ||
-        this.checkVisit(encounters, "Patient Exit Survey"))
-    ) {
+    if (this.checkVisit(encounters, "Visit Complete") ||
+      this.checkVisit(encounters, "Patient Exit Survey")
+      || active.stopDatetime != null) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.completedVisit.push(this.setValues(values, active));
+      let found = this.service.completedVisit.find(c => c.id === values.id);
+      if (!found) {
+        this.service.completedVisit.push(this.setValues(values, active));
+      }
       this.getFollowUpVisits(active);
-    } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
+    } else if (this.checkVisit(encounters, "Visit Note") &&
+      active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
       this.service.progressVisit.push(values);
-    } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+    } else if (this.checkVisit(encounters, "Flagged") &&
+      active.stopDatetime == null) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
         this.service.flagVisit.push(values);
       }
     } else if (
-      (encounter =
-        this.checkVisit(encounters, "ADULTINITIAL") ||
-        this.checkVisit(encounters, "Vitals"))
+      this.checkVisit(encounters, "ADULTINITIAL") ||
+      this.checkVisit(encounters, "Vitals") &&
+      active.stopDatetime == null
     ) {
       const values = this.assignValueToProperty(active, encounter);
       this.service.waitingVisit.push(values);
@@ -262,10 +268,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.gender = active.patient.person.gender;
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
-    this.value.status = encounter.encounterType.display;
-    this.value.provider =
-      encounter.encounterProviders[0].provider.display.split("- ")[1];
-    this.value.lastSeen = encounter.encounterDatetime;
+    this.value.status = active.encounters[0]?.encounterType.display;
+    this.value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split("- ")[1];
+    this.value.lastSeen = active.encounters[0]?.encounterDatetime;
     this.value.date = followUpDate;
     this.value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
     return this.value;
@@ -285,7 +290,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
             diagnosis.push(res.value);
           }
         });
-        values.diagnosis = diagnosis.length > 0  ?  diagnosis : "Not Provided";
+        values.diagnosis = diagnosis.length > 0 ? diagnosis : "Not Provided";
       }
       return values;
     });
@@ -299,20 +304,20 @@ export class HomepageComponent implements OnInit, OnDestroy {
 
   getFollowUpVisits(visit) {
     this.getFollowUpDateAndExamination(visit);
-    if(visit.followUp && /\d/.test(visit.followUp)) {
-      let v = this.assignValueToProperty(visit,visit.encounters[0], visit.followUp);
+    if (visit.followUp && /\d/.test(visit.followUp)) {
+      let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);
       this.updateFollowUpVisits(v);
-     }
+    }
   }
 
   getFollowUpDateAndExamination(visit) {
-    visit?.encounters?.forEach((encounter) => { 
+    visit?.encounters?.forEach((encounter) => {
       const display = encounter.display;
       if (display.match("Visit Note") !== null) {
         const observations = encounter.obs;
         observations?.forEach((obs) => {
           if (obs.display.match("Follow up visit") !== null) {
-             visit.followUp = obs.value?.split(',')[0]?.trim();
+            visit.followUp = obs.value?.split(',')[0]?.trim();
           }
         });
       }
