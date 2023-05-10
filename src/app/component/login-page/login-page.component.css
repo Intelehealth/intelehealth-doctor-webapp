@@ -51,3 +51,10 @@
     max-height: 75px;
   }
 }
+
+.version {
+  color: #f8f9fa;
+  position: absolute;
+  right: 15px;
+  bottom: 0;
+}

@@ -10,6 +10,8 @@ export const environment = {
   mindmapURL: "https://as.intelehealth.org:3004/api",
   notificationURL: "https://as.intelehealth.org:3004/notification",
   socketURL: "https://as.intelehealth.org:3004",
+  version: "NAS-v1.2.9",
+  versionCode: "26",
 };
 
 /*

@@ -8,6 +8,7 @@ import { PushNotificationsService } from "src/app/services/push-notification.ser
 import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
+import { environment } from "src/environments/environment";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -22,6 +23,7 @@ export class LoginPageComponent implements OnInit {
 
   submitted = false;
   fieldTextType: boolean;
+  version = environment.version + "(" + environment.versionCode + ")";
   constructor(
     private sessionService: SessionService,
     private router: Router,

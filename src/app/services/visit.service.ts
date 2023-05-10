@@ -20,7 +20,7 @@ export class VisitService {
   getVisits(params): Observable<any> {
     const query = {
       ...{
-        includeInactive: true,
+        includeInactive: false,
         v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)",
       },
       ...params,
