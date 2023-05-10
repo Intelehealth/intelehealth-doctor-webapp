@@ -9,6 +9,7 @@
   
   .main {
     position: relative;
+    background-color: #343a40!important;
   }
   .local-container {
     position: absolute;
@@ -73,7 +74,30 @@
     justify-content: center;
   }
   
-  @media screen and (max-width: 600px) {
+  @media only screen and (max-width: 768px) {
+    .main {
+      background-color: #fff !important;
+      height: 79vh;
+    }
+    .cdk-overlay-pane {
+      max-width: 97vw;
+    }
+    .localVideo {
+      width: 79vw;
+      height: 39vh;
+    }
+    .remoteVideo {
+      width: 72vw;
+      height: 310px;
+    }
+    .mat-dialog-container {
+      padding: 15px;
+    }
+    .local-container {
+      position: relative;
+      right: 22px;
+      bottom: -8%;
+    }
   }
   
   .loader {
