@@ -5,6 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
 import { VisitService } from "src/app/services/visit.service";
+import { environment } from "src/environments/environment";
 declare var saveToStorage: any,  getFromStorage: any
 @Component({
   selector: "app-login-page",
@@ -26,6 +27,7 @@ export class LoginPageComponent implements OnInit {
   });
 
   fieldTextType: boolean;
+  version = environment.version + "(" + environment.versionCode+")";
   constructor(
     private sessionService: SessionService,
     private router: Router,
