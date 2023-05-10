@@ -507,28 +507,32 @@ export class AppointmentComponent implements OnInit {
   }
   
   saveSlots(slots) {
-    if (this.validateSlotTime(slots)) {
-      let array = this.userSchedule.slotSchedule;
-      slots.forEach(selectedDay => {
-        let element = array.find((a) => a.id === selectedDay.id);
-        if (element && new Date(element.date).getTime() ===
-          new Date(selectedDay.start).getTime() &&
-          element.id === selectedDay.id
-        ) {
-          element.startTime = selectedDay.startTime;
-          element.endTime = selectedDay.endTime;
-        } else {
-          let newSlot = this.selectedDaySlots.find(i => i.id === selectedDay.id);
-          newSlot.startTime = selectedDay.startTime;
-          newSlot.endTime = selectedDay.endTime;
-          array.push(newSlot);
-        }
-      });
-      this.userSchedule.slotSchedule = array;
-      let body = this.getBody(array);
-      this.saveSchedule(body);
-    } else {
-      this.translationService.getTranslation("Please check the slot start & end time it cannot be same and between the other slots");
+    if(Object.keys(slots[0]).length >= 6) {
+      if (this.validateSlotTime(slots)) {
+        let array = this.userSchedule.slotSchedule;
+        slots.forEach(selectedDay => {
+          let element = array.find((a) => a.id === selectedDay.id);
+          if (element && new Date(element.date).getTime() ===
+            new Date(selectedDay.start).getTime() &&
+            element.id === selectedDay.id
+          ) {
+            element.startTime = selectedDay.startTime;
+            element.endTime = selectedDay.endTime;
+          } else {
+            let newSlot = this.selectedDaySlots.find(i => i.id === selectedDay.id);
+            newSlot.startTime = selectedDay.startTime;
+            newSlot.endTime = selectedDay.endTime;
+            array.push(newSlot);
+          }
+        });
+        this.userSchedule.slotSchedule = array;
+        let body = this.getBody(array);
+        this.saveSchedule(body);
+      } else {
+        this.translationService.getTranslation("Please check the slot start & end time it cannot be same and between the other slots");
+      }
+    }else{
+      this.translationService.getTranslation("Please check the start and end time of the slot, it cannot be empty.");
     }
   }
 
@@ -556,7 +560,8 @@ export class AppointmentComponent implements OnInit {
         let totalSameToIgnore = strt.isSame(newStart) || end.isSame(newEnd);
         let endTimeBetween = newEnd.isBetween(strt, end);
         let startTimeBetween = newStart.isBetween(strt, end);
-        if (sameStartEndTime || sameStartGreaterEndTime || totalSameToIgnore || endTimeBetween || startTimeBetween) {
+        let overLap = strt <= newEnd && end >= newStart;
+        if (sameStartEndTime || sameStartGreaterEndTime || totalSameToIgnore || endTimeBetween || startTimeBetween || overLap) {
           isSameSlotAvailable.push(daySchedules[i]);
         }
       }

@@ -271,7 +271,8 @@
     "Please check the slot start & end time it cannot be same and between the other slots":
     "Please check the slot start & end time it cannot be same and between the other slots",
     "Appointment started": "Appointment started.",
-    "Appointment released": "Appointment released."
+    "Appointment released": "Appointment released.",
+    "Please check the start and end time of the slot, it cannot be empty.":"Please check the start and end time of the slot, it cannot be empty."
   },
   "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
   "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
