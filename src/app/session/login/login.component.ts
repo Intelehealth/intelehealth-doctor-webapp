@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
       }
     }, err => {
       console.log('Login error.....', err);
-      // if(this.loginAttempt < 3) this.login();
+      if(this.loginAttempt <= 3) this.login();
     });
   }
 

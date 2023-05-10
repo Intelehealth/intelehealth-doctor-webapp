@@ -14,7 +14,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       if ([401, 403].indexOf(err.status) != -1) {
         // auto logout if 401 response returned from api
         if (request.method == 'DELETE' && request.url.includes('session')) {
-          return of(err.status);
+          console.log('DELETE API 401 ERROR....');
+          return of(null);
         } else {
           this.authService.logOut();
         }
