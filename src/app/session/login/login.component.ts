@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.loginAttempt++;
+    console.log('Login Attempt: ', this.loginAttempt);
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -77,8 +78,8 @@ export class LoginComponent implements OnInit {
         this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
       }
     }, err => {
-      console.log(err);
-      if(this.loginAttempt < 3) this.login();
+      console.log('Login error.....', err);
+      // if(this.loginAttempt < 3) this.login();
     });
   }
 
@@ -94,12 +95,13 @@ export class LoginComponent implements OnInit {
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.toastr.success("You have sucessfully logged in.", "Login Successful");
-    let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-    if (role) {
-      this.router.navigate(['/admin']);
-    } else {
-      this.router.navigate(['/dashboard']);
-    }
+    this.router.navigate(['/dashboard']);
+    // let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+    // if (role) {
+    //   this.router.navigate(['/admin']);
+    // } else {
+    //   this.router.navigate(['/dashboard']);
+    // }
   }
 
   checkSession() {

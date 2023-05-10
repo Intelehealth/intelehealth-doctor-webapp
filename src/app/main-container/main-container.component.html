@@ -14,28 +14,28 @@
         <img src="assets/ezazi/ezazi-sm-logo.svg" alt="" width="80%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img class="i1" src="assets/svgs/home-blue.svg" alt="">
             <img class="i2" src="assets/svgs/home-white.svg" alt="">
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img class="i1" src="assets/svgs/user-blue.svg" alt="">
             <img class="i2" src="assets/svgs/user-white.svg" alt="">
             <span>My Profile</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/dashboard/change-password" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img class="i1" src="assets/svgs/lock-blue.svg" alt="">
             <img class="i2" src="assets/svgs/lock-white.svg" alt="">
             <span>Change Password</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()">
           <a class="nav-item-link" (click)="startTour()">
             <img class="i1" src="assets/svgs/info-blue.svg" alt="">
             <img class="i2" src="assets/svgs/info-white.svg" alt="">
@@ -56,19 +56,22 @@
         </li> -->
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
-            <img src="assets/svgs/user-settings.svg" alt="">
+            <img class="i1" src="assets/svgs/user-settings-2.svg" alt="">
+            <img class="i2" src="assets/svgs/user-settings.svg" alt="">
             <span>System Admin</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank">
-            <img src="assets/svgs/add-user.svg" alt="">
+            <img class="i1" src="assets/svgs/add-user-2.svg" alt="">
+            <img class="i2" src="assets/svgs/add-user.svg" alt="">
             <span>User Creation</span>
           </a>
         </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank">
-            <img src="assets/svgs/report.svg" alt="">
+            <img class="i1" src="assets/svgs/report-2.svg" alt="">
+            <img class="i2" src="assets/svgs/report.svg" alt="">
             <span>Report</span>
           </a>
         </li>
