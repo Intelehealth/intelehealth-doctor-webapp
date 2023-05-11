@@ -103,9 +103,9 @@ export class AuthService {
               this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
               this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
               this.currentUserSubject.next(user);
-              if (user.sessionId) {
-                this.cookieService.set('JSESSIONID', user.sessionId);
-              }
+              // if (user.sessionId) {
+              //   this.cookieService.set('JSESSIONID', user.sessionId);
+              // }
             }
             return user;
           }));
@@ -120,9 +120,8 @@ export class AuthService {
   logOut() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
-    // headers = headers.set('cookie', `JSESSIONID=${id}`);
-    headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
+    // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
+    // this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
@@ -133,18 +132,7 @@ export class AuthService {
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();
       this.router.navigate(['/session/login']);
-    }, (err: any) => {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('user');
-      localStorage.removeItem('provider');
-      localStorage.removeItem('doctorName');
-      localStorage.removeItem('xsddsdass');
-      this.cookieService.deleteAll();
-      this.currentUserSubject.next(null);
-      this.permissionsService.flushPermissions();
-      this.rolesService.flushRoles();
-      this.router.navigate(['/session/login']);
-    });
+    // });
   }
 
   extractPermissions(perm: any[]) {

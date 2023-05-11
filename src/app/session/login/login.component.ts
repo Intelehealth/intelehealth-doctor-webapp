@@ -78,8 +78,7 @@ export class LoginComponent implements OnInit {
         this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
       }
     }, err => {
-      console.log('Login error.....', err);
-      if(this.loginAttempt <= 3) this.login();
+      // if(this.loginAttempt < 3) this.login();
     });
   }
 
