@@ -11,12 +11,11 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
+      console.log(request.method, request.url);
       if ([401, 403].indexOf(err.status) != -1) {
         // auto logout if 401 response returned from api
-        if (request.method == 'DELETE' && request.url.includes('session')) {
+        if (!(request.method == 'DELETE' && request.url.includes('session'))) {
           console.log('DELETE API 401 ERROR....');
-          return of(null);
-        } else {
           this.authService.logOut();
         }
         // location.reload(true);

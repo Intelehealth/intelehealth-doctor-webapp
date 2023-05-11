@@ -88,10 +88,10 @@ export class AuthService {
     localStorage.setItem('xsddsdass', credBase64);
     this.cookieService.deleteAll();
 
-    return this.http.delete(`${this.baseUrl}/session`).pipe(
-      catchError((err) => throwError(err)),
-      map(res => res),
-      mergeMap((item) => {
+    // return this.http.delete(`${this.baseUrl}/session`).pipe(
+    //   catchError((err) => throwError(err)),
+    //   map(res => res),
+    //   mergeMap((item) => {
         let headers: HttpHeaders = new HttpHeaders();
         headers = headers.append('Authorization', 'Basic ' + credBase64);
         return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
@@ -109,8 +109,8 @@ export class AuthService {
             }
             return user;
           }));
-      })
-    );
+    //   })
+    // );
   }
 
   getProvider(userId: string): Observable<any> {
@@ -123,6 +123,17 @@ export class AuthService {
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('user');
+      localStorage.removeItem('provider');
+      localStorage.removeItem('doctorName');
+      localStorage.removeItem('xsddsdass');
+      this.cookieService.deleteAll();
+      this.currentUserSubject.next(null);
+      this.permissionsService.flushPermissions();
+      this.rolesService.flushRoles();
+      this.router.navigate(['/session/login']);
+    }, (err: any) => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
