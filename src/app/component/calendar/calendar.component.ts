@@ -239,8 +239,8 @@ export class CalendarComponent implements OnInit {
 
   getDrSlots(fromDate, toDate) {
     this.appointmentService
-      .getSpecialitySlots(
-        this.getSpeciality(),
+    .getUserSlots(
+      this.userId,
         moment(fromDate).format("DD/MM/YYYY"),
         moment(toDate).format("DD/MM/YYYY")
       )
