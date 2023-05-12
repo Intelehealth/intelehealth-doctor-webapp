@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
+import { environment } from "src/environments/environment";
 declare var saveToStorage: any,  getFromStorage: any
 @Component({
   selector: "app-login-page",
@@ -11,6 +12,7 @@ declare var saveToStorage: any,  getFromStorage: any
   styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
+  version = environment.version + "(" + environment.versionCode+")";
   submitted = false;
   loginForm = new FormGroup({
     username: new FormControl("", [

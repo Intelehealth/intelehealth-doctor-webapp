@@ -8,7 +8,9 @@ export const environment = {
   baseURLCoreApp:"https://msftraining.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://msftraining.intelehealth.org/openmrs",
   mindmapURL: "http://localhost:3004/api",
-  notificationURL: 'http://localhost:3004/notification'
+  notificationURL: 'http://localhost:3004/notification',
+  version:"MSF-v1.7.19",
+  versionCode:"39"
 };
 
 /*

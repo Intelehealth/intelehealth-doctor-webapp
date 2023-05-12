@@ -4,5 +4,7 @@ export const environment = {
   baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
-  notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`
+  notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
+  version:"MSF-v1.7.19",
+  versionCode:"39"
 };
