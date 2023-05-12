@@ -9,6 +9,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
 import { TranslateService } from "@ngx-translate/core";
+import { environment } from "src/environments/environment";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -16,6 +17,7 @@ declare var saveToStorage: any;
   styleUrls: ["./login-page.component.css"],
 })
 export class LoginPageComponent implements OnInit {
+  version = environment.version + "(" + environment.versionCode+")";
   loginForm = new FormGroup({
     username: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),

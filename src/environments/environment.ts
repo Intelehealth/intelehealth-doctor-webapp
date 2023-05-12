@@ -11,6 +11,8 @@ export const environment = {
   mindmapURL: "https://development.mysmartcaredoc.com:3004/api",
   notificationURL: "https://development.mysmartcaredoc.com:3004/notification",
   socketURL: "https://development.mysmartcaredoc.com:3004",
+  version:"SCD-v1.5.0",
+  versionCode:"6"
 };
 
 /*

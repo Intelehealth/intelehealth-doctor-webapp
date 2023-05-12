@@ -7,4 +7,6 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
+  version:"SCD-v1.5.0",
+  versionCode:"6"
 };
