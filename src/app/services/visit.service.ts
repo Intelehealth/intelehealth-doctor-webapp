@@ -17,10 +17,10 @@ export class VisitService {
 
   constructor(private http: HttpClient, private helper: HelperService) {}
 
-  getVisits(params): Observable<any> {
+  getVisits(params, flag): Observable<any> {
     const query = {
       ...{
-        includeInactive: false,
+        includeInactive: flag,
         v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value),encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)",
       },
       ...params,

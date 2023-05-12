@@ -34,6 +34,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completeVisitNo = 0;
   followUpVisitNo = 0;
   setSpiner = true;
+  setSpiner1 = true;
   specialization;
   allVisits = [];
   followUpVisit = [];
@@ -117,7 +118,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   getVisits(query: any = {}, cb = () => { }) {
-    this.service.getVisits(query).subscribe(
+    this.service.getVisits(query, false).subscribe(
       (response) => {
         response.results.forEach((item) => {
           var i = this.allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
@@ -210,7 +211,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
       if (!found) {
         this.service.completedVisit.push(this.setValues(values, active));
       }
-      this.getFollowUpVisits(active);
     } else if (this.checkVisit(encounters, "Visit Note") &&
       active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
@@ -260,20 +260,21 @@ export class HomepageComponent implements OnInit, OnDestroy {
     return phoneObj ? phoneObj.value : "NA";
   }
   assignValueToProperty(active, encounter, followUpDate?) {
-    this.value.visitId = active.uuid;
-    this.value.patientId = active.patient.uuid;
-    this.value.id = active.patient.identifiers[0].identifier;
-    this.value.name = active.patient.person.display;
-    this.value.telephone = this.getPhoneNumber(active.patient.attributes);
-    this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.age;
-    this.value.location = active.location.display;
-    this.value.status = active.encounters[0]?.encounterType.display;
-    this.value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split("- ")[1];
-    this.value.lastSeen = active.encounters[0]?.encounterDatetime;
-    this.value.date = followUpDate;
-    this.value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
-    return this.value;
+    let value:any= {}
+    value.visitId = active.uuid;
+    value.patientId = active.patient.uuid;
+    value.id = active.patient.identifiers[0].identifier;
+    value.name = active.patient.person.display;
+    value.telephone = this.getPhoneNumber(active.patient.attributes);
+    value.gender = active.patient.person.gender;
+    value.age = active.patient.person.age;
+    value.location = active.location.display;
+    value.status = active.encounters[0]?.encounterType.display;
+    value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split("- ")[1];
+    value.lastSeen = active.encounters[0]?.encounterDatetime;
+    value.date = followUpDate;
+    value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
+    return value;
   }
 
   setValues(value, visitDetail) {
@@ -302,29 +303,57 @@ export class HomepageComponent implements OnInit, OnDestroy {
     new Audio(audioUrl).play();
   }
 
-  getFollowUpVisits(visit) {
+  getFollowUpdVisits() {
+    this.setSpiner1= true;
+    this.followUpVisit = [];
+    this.followUpVisitNo = 0;
+    this.service.getVisits({}, true).subscribe(
+      (response) => {
+        let allVisits = [];
+        response.results.forEach((item) => {
+          var i = allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
+          if (i <= -1) {
+            allVisits.push(item);
+          }
+        });
+        allVisits.forEach((visit) => {
+          this.getFollowUpVisits(visit);
+        });
+        this.setSpiner1 = false;
+      });
+  }
+
+  private getFollowUpVisits(visit: any) {
     this.getFollowUpDateAndExamination(visit);
     if (visit.followUp && /\d/.test(visit.followUp)) {
-      let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);
-      this.updateFollowUpVisits(v);
+      let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);  
+      let found = this.followUpVisit.find(c => c.id === v.id);
+      if (!found) {
+      this.followUpVisit.push(v);
+      this.followUpVisitNo += 1;
     }
+  }
   }
 
   getFollowUpDateAndExamination(visit) {
+    let visit1 = visit;
     visit?.encounters?.forEach((encounter) => {
       const display = encounter.display;
       if (display.match("Visit Note") !== null) {
         const observations = encounter.obs;
         observations?.forEach((obs) => {
           if (obs.display.match("Follow up visit") !== null) {
-            visit.followUp = obs.value?.split(',')[0]?.trim();
+            visit1.followUp = obs.value?.split(',')[0]?.trim();
           }
         });
+        return visit1;
+      } else {
+        return visit1;
       }
     });
   }
 
-  private updateFollowUpVisits(v: any) {
+ updateFollowUpVisits(v: any) {
     let found = this.followUpVisit.find(c => c.id === v.id);
     if (!found) {
       this.followUpVisit.push(v);
