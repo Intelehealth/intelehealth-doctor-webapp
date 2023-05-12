@@ -10,6 +10,8 @@ export const environment = {
   mindmapURL: "https://service.sila.care:3004/api",
   notificationURL: "https://service.sila.care:3004/notification",
   socketURL: "https://service.sila.care:3004",
+  version:"SYR-v1.1.2",
+  versionCode:"9"
 };
 
 /*

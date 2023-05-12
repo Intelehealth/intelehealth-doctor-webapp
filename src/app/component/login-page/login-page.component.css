@@ -46,6 +46,13 @@
   font-weight: bold;
 }
 
+.version {
+  color: #f8f9fa;
+  position: absolute;
+  right: 15px;
+  bottom: 0;
+}
+
 @media screen and (device-aspect-ratio: 40/71) {
   .hih-logo{
     max-height: 50px;
