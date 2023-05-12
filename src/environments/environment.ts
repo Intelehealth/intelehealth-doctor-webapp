@@ -11,6 +11,8 @@ export const environment = {
   mindmapURL: "https://uniceftraining.intelehealth.org:3004/api",
   notificationURL: "https://uniceftraining.intelehealth.org:3004/notification",
   socketURL: "https://uniceftraining.intelehealth.org:3004",
+  version:"UK-v4.1.0",
+  versionCode:"33"
 };
 
 /*

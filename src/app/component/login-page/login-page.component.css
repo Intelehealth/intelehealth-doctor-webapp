@@ -37,5 +37,10 @@
       font-size: 1.1rem;
     }
   
-
+.version {
+  color: #f8f9fa;
+  position: absolute;
+  right: 15px;
+  bottom: 0;
+}
 
