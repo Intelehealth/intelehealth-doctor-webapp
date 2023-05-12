@@ -93,7 +93,7 @@
               >System administration</a
             >
             <a
-              *ngIf="systemAccess"
+              *ngIf="systemAccess || reportAccess"
               class="dropdown-item"
               data-target="#navbarSupportedContent-4" data-toggle="collapse"
               routerLink="/monitoring"

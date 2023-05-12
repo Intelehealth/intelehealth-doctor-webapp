@@ -235,7 +235,7 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
             {
               path: "monitoring",
               component: MonitoringComponent,
-              canActivate: [AuthGuard, AdminGuard],
+              canActivate: [AuthGuard],
             },
             {
               path: "send-sms",
