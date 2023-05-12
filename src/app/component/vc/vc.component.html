@@ -1,6 +1,6 @@
 <div #mainContainer class="main">
     <video #remoteVideo class="remoteVideo" autoplay></video>
-    <div #localContainer class="local-container col-xs-6">
+    <div #localContainer class="local-container">
       <video #localVideo autoplay class="localVideo"></video>
     </div>
     <div *ngIf="setSpiner" class="loader">
@@ -11,8 +11,6 @@
     <div class="button-tab p-3 w-100 position-absolute">
       <div class="container d-flex justify-content-center">
         <div
-          [class.bg-primary]="isVideoOff"
-          hover-class="bg-info"
           class="icon rounded-circle mr-2 video"
           (click)="video()"
         >
@@ -28,8 +26,6 @@
           />
         </div>
         <div
-          [class.bg-primary]="isMute"
-          hover-class="bg-info"
           class="icon rounded-circle mr-2 mute"
           (click)="mute()"
         >
@@ -38,14 +34,11 @@
         </div>
         <div
           (click)="endCallInRoom()"
-          hover-class="bg-info"
           class="icon rounded-circle mr-2 end-call"
         >
           <i class="fa fa-phone text-danger"></i>
         </div>
         <div
-          [class.bg-primary]="isFullscreen"
-          hover-class="bg-info"
           (click)="fullscreen()"
           class="icon rounded-circle full-screen"
         >
