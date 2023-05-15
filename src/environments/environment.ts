@@ -9,8 +9,8 @@ export const environment = {
     "https://afitraining.ekalarogya.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://afitraining.ekalarogya.org/openmrs",
   mindmapURL: "https://afitraining.ekalarogya.org:3004/api",
-  notificationURL: "http://localhost:3004/notification",
-  socketURL: "http://localhost:3004",
+  notificationURL: "https://afitraining.ekalarogya.org:3004/notification",
+  socketURL: "https://afitraining.ekalarogya.org:3004",
   version:"AEAT-v1.7.2",
   versionCode:"42"
 };

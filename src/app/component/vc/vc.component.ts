@@ -128,12 +128,14 @@ export class VcComponent implements OnInit, OnDestroy {
   }
 
   fullscreen() {
+    setTimeout(() => {
+      this.isFullscreen = !this.isFullscreen;
+    }, 0);
     if (this.isFullscreen) {
       document.exitFullscreen();
     } else {
-      this.mainContainer.nativeElement.requestFullscreen();
+      this.mainContainer.nativeElement.parentElement.parentElement.parentElement.requestFullscreen();
     }
-    this.isFullscreen = !this.isFullscreen;
   }
 
   isStreamAvailable;

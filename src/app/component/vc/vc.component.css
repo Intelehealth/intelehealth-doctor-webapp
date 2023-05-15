@@ -1,107 +1,141 @@
 .remoteVideo {
-    width: 78vw;
-    height: 79vh;
-  }
+  width: 78vw;
+  height: 79vh;
+}
 
-  .localVideo {
-    height: 180px;
-  }
+.localVideo {
+  height: 180px;
+}
 
+.main {
+  position: relative;
+  background-color: #343a40 !important;
+}
+
+.local-container {
+  position: absolute;
+  bottom: 15%;
+  right: 3%;
+}
+
+i.fa {
+  font-size: 25px;
+  padding: 10px;
+}
+
+.mute i {
+  padding-left: 14px;
+}
+
+.fa-microphone-slash {
+  padding-left: 7px !important;
+}
+
+.icon img {
+  height: 25px;
+  width: 50px;
+  margin-top: 8px;
+}
+
+.localVideo {
+  height: 180px;
+}
+
+.local-container {
+  position: absolute;
+  bottom: 15%;
+  right: 3%;
+}
+
+i.fa {
+  font-size: 25px;
+  padding: 10px;
+}
+
+.icon {
+  cursor: pointer;
+  background-color: #fff;
+  height: 45px;
+  width: 45px;
+}
+
+.fa-microphone-slash {
+  padding-left: 7px !important;
+}
+
+.button-tab {
+  bottom: 5%;
+}
+
+.container {
+  gap: 15px;
+  margin: 0 auto;
+  /* width: 25%; */
+}
+
+.room_id {
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 768px) {
   .main {
-    position: relative;
-    background-color: #343a40!important;
-  }
-  .local-container {
-    position: absolute;
-    bottom: 15%;
-    right: 3%;
+    background-color: #fff !important;
   }
 
-  i.fa {
-    font-size: 25px;
-    padding: 10px;
-  }
-  .mute i {
-    padding-left: 14px;
-  }
-  .fa-microphone-slash {
-    padding-left: 7px !important;
-  }
-  .icon img {
-    height: 25px;
-    width: 50px;
-    margin-top: 8px;
+  .cdk-overlay-pane {
+    max-width: 97vw;
   }
 
   .localVideo {
-    height: 180px;
+    width: 68vw;
+    height: 39vh;
+    border: 1px solid;
+    background: grey;
+  }
+
+  .remoteVideo {
+    width: 68vw;
+    height: 39vh;
+    border: 1px solid;
+    background: grey;
   }
 
   .local-container {
-    position: absolute;
-    bottom: 15%;
-    right: 3%;
+    position: relative;
+    bottom: -8%;
   }
+}
 
-  i.fa {
-    font-size: 25px;
-    padding: 10px;
-  }
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+}
 
-  .icon {
-    cursor: pointer;
-    background-color: #fff;
-    height: 45px;
-    width: 45px;
-  }
-  .fa-microphone-slash {
-    padding-left: 7px !important;
-  }
+.loader label {
+  color: lightgray;
+}
 
-  .button-tab {
-    bottom: 5%;
-  }
-  .container {
-    gap: 15px;
-    margin: 0 auto;
-    /* width: 25%; */
-  }
+.is-fullscreen.main {
+  display: grid !important;
+}
 
-  .room_id {
-    display: flex;
-    justify-content: center;
-  }
+.is-fullscreen .remoteVideo {
+  margin: auto !important;
 
-  @media only screen and (max-width: 768px) {
-    .main {
-      background-color: #fff !important;
-    }
-    .cdk-overlay-pane {
-      max-width: 97vw;
-    }
-    .localVideo {
-      width: 68vw;
-      height: 39vh;
-      border: 1px solid;
-      background: grey;
-    }
-    .remoteVideo {
-      width: 68vw;
-      height: 39vh;
-      border: 1px solid;
-      background: grey;
-    }
-    .local-container {
-      position: relative;
-      bottom: -8%;
-    }
-  }
+  height: 46vh !important;
+  width: 65vw !important;
+}
 
-  .loader {
-    position: absolute;
-    top: 40%;
-    left: 45%;
-  }
-  .loader label {
-    color: lightgray;
-  }
+.is-fullscreen .local-container {
+  margin: auto !important;
+
+  right: 0;
+  bottom: -3%;
+}
+
+.is-fullscreen .local-container .localVideo {
+  height: 46vh !important;
+  width: 65vw !important;
+}

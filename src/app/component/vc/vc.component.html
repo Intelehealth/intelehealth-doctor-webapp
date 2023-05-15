@@ -1,51 +1,39 @@
-<div #mainContainer class="main">
-    <video #remoteVideo class="remoteVideo" autoplay></video>
-    <div #localContainer class="local-container">
-      <video #localVideo autoplay class="localVideo mx-2"></video>
-    </div>
-    <div *ngIf="setSpiner" class="loader">
-      <label for="loader">Connecting...</label>
-      <mat-spinner [diameter]="70"></mat-spinner>
-    </div>
+<div #mainContainer class="main" [class.is-fullscreen]="isFullscreen">
+  <video #remoteVideo class="remoteVideo" autoplay></video>
+  <div #localContainer class="local-container">
+    <video #localVideo autoplay class="localVideo mx-2"></video>
+  </div>
+  <div *ngIf="setSpiner" class="loader">
+    <label for="loader">Connecting...</label>
+    <mat-spinner [diameter]="70"></mat-spinner>
+  </div>
 
-    <div class="button-tab p-3 w-100 position-absolute">
-      <div class="container d-flex justify-content-center">
-        <div
-          class="icon rounded-circle video"
-          (click)="video()"
-        >
-          <img
-            *ngIf="!isVideoOff"
-            class="text-secondary"
-            src="assets/svgs/video.svg"
-          />
-          <img
-            *ngIf="isVideoOff"
-            class="text-secondary"
-            src="assets/svgs/video-slash.svg"
-          />
-        </div>
-        <div
-          class="icon rounded-circle mute"
-          (click)="mute()"
-        >
-          <i *ngIf="!isMute" class="fa fa-microphone"></i>
-          <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
-        </div>
-        <div
-          (click)="endCallInRoom()"
-          class="icon rounded-circle end-call"
-        >
-          <i class="fa fa-phone text-danger"></i>
-        </div>
-        <!-- <div
-          (click)="fullscreen()"
-          class="icon rounded-circle full-screen"
-        >
-          <i class="fa fa-arrows-alt"></i>
-        </div> -->
+  <div class="button-tab p-3 w-100 position-absolute">
+    <div class="container d-flex justify-content-center">
+      <div class="icon rounded-circle video" (click)="video()">
+        <img
+          *ngIf="!isVideoOff"
+          class="text-secondary"
+          src="assets/svgs/video.svg"
+        />
+        <img
+          *ngIf="isVideoOff"
+          class="text-secondary"
+          src="assets/svgs/video-slash.svg"
+        />
       </div>
-      <!-- <div class="room_id">
+      <div class="icon rounded-circle mute" (click)="mute()">
+        <i *ngIf="!isMute" class="fa fa-microphone"></i>
+        <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
+      </div>
+      <div (click)="endCallInRoom()" class="icon rounded-circle end-call">
+        <i class="fa fa-phone text-danger"></i>
+      </div>
+      <div (click)="fullscreen()" class="icon rounded-circle full-screen">
+        <i class="fa fa-arrows-alt"></i>
+      </div>
+    </div>
+    <!-- <div class="room_id">
         <div class="form-group">
           <input
             type="text"
@@ -58,5 +46,5 @@
           <button class="btn btn-success" (click)="makeCall()">Call</button>
         </div>
       </div> -->
-    </div>
   </div>
+</div>
