@@ -104,6 +104,7 @@
                   <div *ngIf="submitted && f1.age.errors">
                     <small class="error-msg" *ngIf="f1.age.errors.required">Enter age</small>
                     <small class="error-msg" *ngIf="f1.age.errors.pattern">Enter numeric value only</small>
+                    <small class="error-msg" *ngIf="f1.age.errors.min">Age should be greater than or equal to 18</small>
                   </div>
                 </div>
               </div>
