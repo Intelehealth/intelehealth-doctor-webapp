@@ -56,9 +56,13 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
             this.loginSuccess();
-            // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
-            //   this.loginSuccess();
-            // }
+            if (res.user.username != 'Doctor23') {
+              this.loginSuccess();
+            } else if (provider.results[0].attributes.length) {
+              this.router.navigate(['/session/verification']);
+            } else {
+              this.loginSuccess();
+            }
             // else if (this.rememberMe) {
             //   this.loginSuccess();
             // } else if (provider.results[0].attributes.length) {
