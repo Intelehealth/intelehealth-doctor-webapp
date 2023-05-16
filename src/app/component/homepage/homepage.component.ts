@@ -124,15 +124,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   attr.attributeType.uuid ===
                   "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
               );
-              if (speRequired.length && hospitalType.length) {
+              if (speRequired.length) {
                 speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization && this.hostpitalType === hospitalType[0].value) {
-                    if (index === 0) {
-                      this.visitCategory(active);
+                  if (spe.value === this.specialization && hospitalType.length === 0) {
+                    if ((index === 0) || (index === 1 && spe[0] !== spe[1])) {
+                        this.visitCategory(active);
                     }
-                    if (index === 1 && spe[0] !== spe[1]) {
-                      this.visitCategory(active);
-                    }
+                  } else if(spe.value === this.specialization &&  hospitalType.length && this.hostpitalType === hospitalType[0]?.value) {
+                    this.visitCategory(active);
                   }
                 });
               }
