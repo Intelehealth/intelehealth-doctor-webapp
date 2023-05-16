@@ -83,6 +83,28 @@
   padding: 0.15rem;
 }
 
+.table-bordered td.divider2 {
+  border: none;
+  padding: 0rem;
+  position: relative;
+}
+
+.birth-outcome-con {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  max-height: 300px;
+  font-size: 20px;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 10px 5px;
+}
+
 .page-title-row {
   border: none !important;
 

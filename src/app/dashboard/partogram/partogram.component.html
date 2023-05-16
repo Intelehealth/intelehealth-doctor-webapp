@@ -104,7 +104,7 @@
                   <td colspan="41" class="divider"></td>
                 </tr>
                 <tr>
-                  <td rowspan="4" class="vrt-header"><span>SUPPORTIVE CARE</span> </td>
+                  <td rowspan="5" class="vrt-header"><span>SUPPORTIVE CARE</span> </td>
                   <td colspan="2">Companion</td>
                   <td>N</td>
                   <ng-container *ngFor="let item of parameters[0].stage1values;">
@@ -169,6 +169,14 @@
                   <!-- <td colspan="4"></td>
                   <td colspan="4"></td>
                   <td colspan="4"></td> -->
+                </tr>
+                <tr *ngIf="visitCompleted">
+                  <td colspan="27" class="divider2"></td>
+                  <td colspan="12" class="divider2">
+                    <div class="birth-outcome-con">
+                      {{birthOutcome|uppercase}}
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <td colspan="2">Oral Fluid</td>
@@ -962,7 +970,7 @@
                   <td class="bg-secondary"></td>
                   <ng-container *ngFor="let item of parameters[18].stage1values;">
                     <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '5'" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                      <div class="value-item" *ngIf="item?.value == '5'">
                         O
                       </div>
                     </td>
@@ -979,12 +987,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '5'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td>4</td>
@@ -1008,12 +1023,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '4'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td>3</td>
@@ -1037,12 +1059,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '3'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td>2</td>
@@ -1066,12 +1095,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '2'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td>1</td>
@@ -1095,12 +1131,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '1'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td>0</td>
@@ -1124,12 +1167,19 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
+                  <ng-container *ngFor="let item of parameters[18].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item?.value == '0'">
+                        O
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
                 </tr>
                 <tr>
                   <td colspan="41" class="divider"></td>

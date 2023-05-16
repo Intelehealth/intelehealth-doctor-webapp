@@ -164,6 +164,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   maxTelLegth1: number = 10;
   maxTelLegth2: number = 10;
   oldPhoneNumber: string = '';
+  today: any;
   editMode: boolean = false;
 
   constructor(
@@ -182,7 +183,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
-      age: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
+      age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),
       countryCode1: new FormControl('+91'),
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
@@ -214,6 +215,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.today = moment().format('YYYY-MM-DD');
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));
     this.doctorName = localStorage.getItem('doctorName');
@@ -249,6 +251,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fonts.map((f: any) => f.text = val);
       } else {
         this.fonts.map((f: any) => f.text = f.name);
+      }
+    });
+
+    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+      if (val) {
+        this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
     });
 
@@ -708,6 +716,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
+            this.doctorName = provider.results[0].person.display;
             let u = JSON.parse(localStorage.user);
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));

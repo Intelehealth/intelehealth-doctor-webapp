@@ -332,7 +332,7 @@ export class PartogramComponent implements OnInit {
                 if (parameterValue.stage2Count == 3) {
                   valueIndex = valueIndex = indices[1]-1;
                 } else if(parameterValue.stage2Count == 6) {
-                  valueIndex = ((2*(indices[1]-1))+(indices[2]-1));
+                  valueIndex = (indices[2] == 1) ? ((2*(indices[1]-1))+(indices[2]-1)) : ((2*(indices[1]-1))+(indices[2]-2));
                 } else {
                   valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
                 }

@@ -172,7 +172,7 @@
               <div class="form-group col-md-4">
                 <label for="birthdate">Date of birth *</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" formControlName="birthdate" [matDatepicker]="dobdp" placeholder="Enter DOB" aria-label="Birthdate"
+                  <input type="text" class="form-control" formControlName="birthdate" [matDatepicker]="dobdp" [max]="today" placeholder="Enter DOB" aria-label="Birthdate"
                     aria-describedby="basic-addon1" readonly>
                   <mat-datepicker #dobdp></mat-datepicker>
                   <div class="input-group-append">
@@ -189,10 +189,11 @@
               </div>
               <div class="form-group col-md-2">
                 <label for="age">Age *</label>
-                <input type="number" class="form-control" formControlName="age" placeholder="Enter age">
+                <input type="number" class="form-control" formControlName="age" placeholder="Enter age" readonly>
                 <div *ngIf="submitted && f1.age.errors">
                   <small class="error-msg" *ngIf="f1.age.errors.required">Enter age</small>
                   <small class="error-msg" *ngIf="f1.age.errors.pattern">Enter numeric value only</small>
+                  <small class="error-msg" *ngIf="f1.age.errors.min">Age should be greater than or equal to 18</small>
                 </div>
               </div>
             </div>
