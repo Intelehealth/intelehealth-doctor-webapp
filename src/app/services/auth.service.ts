@@ -121,7 +121,7 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
+    // this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
@@ -132,19 +132,7 @@ export class AuthService {
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();
       this.router.navigate(['/session/login']);
-    }, (error: any) => {
-      console.log('DELETE SESSION API ERROR', error);
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('user');
-      localStorage.removeItem('provider');
-      localStorage.removeItem('doctorName');
-      localStorage.removeItem('xsddsdass');
-      this.cookieService.deleteAll();
-      this.currentUserSubject.next(null);
-      this.permissionsService.flushPermissions();
-      this.rolesService.flushRoles();
-      this.router.navigate(['/session/login']);
-    });
+    // });
   }
 
   extractPermissions(perm: any[]) {
