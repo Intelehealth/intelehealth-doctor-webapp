@@ -84,7 +84,7 @@
               <ng-container matColumnDef="no_of_alerts">
                 <th mat-header-cell *matHeaderCellDef> No. of Alerts </th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="alert-count" [ngClass]="{ 'red': element.score > 20, 'yellow': element.score > 9 && element.score <= 20, 'green': element.score <= 9 }">
+                  <div class="alert-count" [ngClass]="{ 'red': element.score >= 22, 'yellow': element.score >= 15 && element.score < 22, 'green': element.score < 15 }">
                     {{ element.score }}
                   </div>
                 </td>
@@ -169,7 +169,7 @@
               <ng-container matColumnDef="no_of_alerts">
                 <th mat-header-cell *matHeaderCellDef> No. of Alerts </th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="alert-count" [ngClass]="{ 'red': element.score > 20, 'yellow': element.score > 9 && element.score <= 20, 'green': element.score <= 9 }">
+                  <div class="alert-count" [ngClass]="{ 'red': element.score >= 22, 'yellow': element.score >= 15 && element.score < 22, 'green': element.score < 15 }">
                     {{ element.score }}
                   </div>
                 </td>
@@ -253,7 +253,7 @@
               <ng-container matColumnDef="no_of_alerts">
                 <th mat-header-cell *matHeaderCellDef> No. of Alerts </th>
                 <td mat-cell *matCellDef="let element">
-                  <div class="alert-count" [ngClass]="{ 'red': element.score > 20, 'yellow': element.score > 9 && element.score <= 20, 'green': element.score <= 9 }">
+                  <div class="alert-count" [ngClass]="{ 'red': element.score >= 22, 'yellow': element.score >= 15 && element.score < 22, 'green': element.score < 15 }">
                     {{ element.score }}
                   </div>
                 </td>
