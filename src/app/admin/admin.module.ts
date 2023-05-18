@@ -20,6 +20,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SupportComponent } from './support/support.component';
 import { MomentModule } from 'ngx-moment';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 const routes: Routes = [
   {
@@ -65,6 +73,13 @@ const routes: Routes = [
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
+    }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
     }),
     MomentModule
   ]

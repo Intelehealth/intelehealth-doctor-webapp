@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CoreService } from 'src/app/services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-ayu',
@@ -28,13 +29,13 @@ export class AyuComponent implements OnInit {
 
   constructor(
     private mindmapService: MindmapService,
-    private matDialog: MatDialog,
-    private snackbar: MatSnackBar,
     private coreService: CoreService,
     private toastr: ToastrService,
-    private pageTitleService: PageTitleService) { }
+    private pageTitleService: PageTitleService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
     this.fetchMindmaps();
   }
@@ -117,7 +118,10 @@ export class AyuComponent implements OnInit {
         } else {
           this.mindmaps.push(result);
         }
-        this.toastr.success(`License Key ${result.keyName} has been ${mode == 'add' ? 'added' : 'updated' } successfully!`, `License Key ${mode == 'add' ? 'Added' : 'Updated' }`);
+        this.toastr.success(`${this.translateService.instant('License Key')} ${result.keyName} ${this.translateService.instant('has been')} 
+        ${mode == 'add' ? this.translateService.instant('added') : this.translateService.instant('updated')} 
+        ${this.translateService.instant('successfully')}!`, `${this.translateService.instant('License Key')} 
+        ${mode == 'add' ? this.translateService.instant('added') : this.translateService.instant('updated')}`);
       }
     });
   }
