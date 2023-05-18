@@ -45,7 +45,6 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 //Regular Imports
 import { environment } from "../environments/environment";
-import { SocketService } from "./services/socket.service";
 import { AppRoutingModule } from './app-routing.module';
 import { NetworkInterceptor } from "./core/interceptors/network.interceptor";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
@@ -120,7 +119,7 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
   ],
   providers: [
     CookieService,
-    SocketService,
+    // SocketService,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

@@ -13,7 +13,9 @@ import { environment } from "../../environments/environment";
 // import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
 
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class SocketService {
   public socket: any;
   public incoming;
@@ -194,7 +196,7 @@ export class SocketService {
     }
     if (!this.socket || forceInit) {
       this.socket = io(environment.socketURL, {
-        query: `userId=${this.userUuid}&name=${this.userName}`,
+        query: `userId=${this.userUuid}&name=${this.userName}`
       });
     }
   }

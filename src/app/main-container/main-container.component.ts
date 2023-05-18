@@ -43,6 +43,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   subscription: Subscription;
   subscription1: Subscription;
   subscription2: Subscription;
+  subscription3: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
@@ -142,17 +143,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.subscription1 = this.socketService.adminUnread.subscribe(res => {
         this.adminUnread = res;
       });
-
-      this.socketService.initSocketSupport(true);
-      this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
-        this.socketService.addCount(data);
-      });
-      setTimeout(() => {
-        this.socketService.emitEvent('getAdminUnreadCount', null);
-      }, 1500);
-      this.interval = setInterval(() => {
-        this.socketService.emitEvent('getAdminUnreadCount', null);
-      }, 30000);
+      this.socketInitialize();
     }
 
 
@@ -181,6 +172,27 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     if (this.swPush.isEnabled) {
       this.notificationService.notificationHandler();
     }
+  }
+
+  socketInitialize() {
+    this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.socketService.initSocketSupport(true);
+    this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
+      this.socketService.addCount(data);
+    });
+    this.subscription3 = this.socketService.onEvent("disconnect").subscribe((data) => {
+      this.socketInitialize();
+    });
+    setTimeout(() => {
+      this.socketService.emitEvent('getAdminUnreadCount', null);
+    }, 1500);
+    this.interval = setInterval(() => {
+      this.socketService.emitEvent('getAdminUnreadCount', null);
+    }, 30000);
   }
 
   ngAfterContentChecked(): void {
@@ -447,6 +459,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
     this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
     if (this.interval) {
       clearInterval(this.interval);
     }
