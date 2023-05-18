@@ -17,6 +17,8 @@ import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.compo
 import * as introJs from 'intro.js/intro.js';
 import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from '../services/push-notification.service';
+import { SocketService } from '../services/socket.service';
+import { NgxRolesService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-main-container',
@@ -39,12 +41,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   _closeOnClickOutside: boolean = false;
   sidebarClosed: boolean = false;
   subscription: Subscription;
+  subscription1: Subscription;
+  subscription2: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
+  routeUrl: string = '';
   introJs: any;
-
+  adminUnread: number = 0;
+  interval: any;
 
   subscribed: boolean = false;
   readonly VapidKEY = "BLDLmm1FrOhRJsumFL3lZ8fgnC_c1rFoNp-mz6KWObQpgPkhWzUh66GCGPzioTWBc4u0SB8P4spimU8SH2eWNfg";
@@ -70,6 +76,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private socketService: SocketService,
+    private rolesService: NgxRolesService,
     public swUpdate: SwUpdate,
     public swPush: SwPush,
     public notificationService: PushNotificationsService) {
@@ -77,6 +85,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       keyword: new FormControl('', Validators.required)
     });
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
+    this.routeUrl = this.breadcrumbs[0]?.url;
   }
 
   ngOnInit(): void {
@@ -114,9 +123,31 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       filter((event: Event) => event instanceof NavigationEnd),
       distinctUntilChanged(),
     ).subscribe(() => {
+        this.routeUrl = this.router.url;
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
+
+
+    // If user role is admin then suscribe for support messages
+    let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+    if (role) {
+      this.subscription1 = this.socketService.adminUnread.subscribe(res => {
+        this.adminUnread = res;
+      });
+
+      this.socketService.initSocketSupport(true);
+      this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
+        this.socketService.addCount(data);
+      });
+      setTimeout(() => {
+        this.socketService.emitEvent('getAdminUnreadCount', null);
+      }, 1500);
+      this.interval = setInterval(() => {
+        this.socketService.emitEvent('getAdminUnreadCount', null);
+      }, 30000);
+    }
+
 
     this.introJs = introJs();
     this.authService.getFingerPrint();
@@ -407,6 +438,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   get user() {

@@ -26,10 +26,10 @@ const routes: Routes = [
     path: '',
     component: AdminComponent,
     children: [
-      {
-        path: '',
-        component: AyuComponent
-      },
+      // {
+      //   path: '',
+      //   component: AyuComponent
+      // },
       {
         path: 'support',
         component: SupportComponent

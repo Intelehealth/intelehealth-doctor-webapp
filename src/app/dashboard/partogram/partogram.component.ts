@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { CoreService } from 'src/app/services/core/core.service';
@@ -216,6 +217,7 @@ export class PartogramComponent implements OnInit {
   dialogRef2: MatDialogRef<VideoCallComponent>;
 
   constructor(
+    private pageTitleService: PageTitleService,
     private route: ActivatedRoute,
     private router: Router,
     private visitService: VisitService,
@@ -224,6 +226,7 @@ export class PartogramComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
     setTimeout(()=> {

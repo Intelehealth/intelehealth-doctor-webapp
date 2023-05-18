@@ -47,13 +47,14 @@
             <img src="assets/svgs/warning.svg" alt="">
             <span>Ayu</span>
           </a>
-        </li>
+        </li> -->
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            <img src="assets/svgs/menu-info.svg" alt="">
-            <span>Support</span>
+            <img class="i1" src="assets/svgs/info-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/info-white.svg" alt="">
+            <span>Support <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div></span>
           </a>
-        </li> -->
+        </li>
         <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
             <img class="i1" src="assets/svgs/user-settings-2.svg" alt="">
@@ -170,6 +171,9 @@
     </div>
     <div class="main-container">
       <router-outlet></router-outlet>
+      <div class="help-menu-container" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+        <button class="help-btn" type="button" (click)="openHelpMenu()" *ngIf="!routeUrl.includes('/visit-summary/') && !dialogRef">Help</button>
+      </div>
     </div>
   </div>
 </mat-drawer-container>

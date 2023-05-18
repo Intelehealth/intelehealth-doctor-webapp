@@ -299,6 +299,21 @@
           color: #2E1E91;
           width: 100%;
           padding: 0px 20px;
+          display: flex;
+          align-items: center;
+
+          .dot {
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            background: red;
+            border-radius: 3px;
+            margin-left: 5px;
+            padding: 0px 5px;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: DM Sans;
+          }
         }
       }
 
@@ -332,6 +347,30 @@
     text-decoration: none;
     color: #7F7B92;
   }
+}
+
+.help-menu-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.help-menu-container .help-btn {
+  width: 87px;
+  height: 56px;
+  top: 804px;
+  background: #4B39B7;
+  box-shadow: 0px 4px 16px #4c39b747;
+  border-radius: 80px;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
 }
 
 ::ng-deep .notification-menu {
