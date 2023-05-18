@@ -172,7 +172,7 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
-        <button class="help-btn" type="button" (click)="openHelpMenu()" *ngIf="!routeUrl.includes('/visit-summary/') && !dialogRef">Help</button>
+        <button class="help-btn" type="button" (click)="openHelpMenu()" *ngIf="!(routeUrl.includes('/visit-summary/')) && !dialogRef">Help</button>
       </div>
     </div>
   </div>
