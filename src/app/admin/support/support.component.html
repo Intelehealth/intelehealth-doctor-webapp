@@ -40,8 +40,9 @@
                             ? (conversation.doctorName | titlecase)
                             : "Unknown"
                             }}
+                            <span class="badge badge-success" *ngIf="conversation?.unread">{{conversation?.unread}}</span>
                           </h6>
-                          <p>{{ conversation.message }}</p>
+                          <!-- <p>{{ conversation.message }}</p> -->
                         </div>
                       </div>
                     </li>

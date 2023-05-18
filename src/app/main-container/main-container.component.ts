@@ -126,6 +126,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.routeUrl = this.router.url;
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
+        if (this.routeUrl.includes('visit-summary')) {
+          localStorage.setItem('collapsed', JSON.stringify(this.collapsed));
+          this.collapsed = true;
+        } else {
+          this.collapsed = !!JSON.parse(localStorage.getItem('collapsed'));
+          localStorage.removeItem('collapsed');
+        }
     });
 
 

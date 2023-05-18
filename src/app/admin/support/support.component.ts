@@ -55,6 +55,8 @@ export class SupportComponent implements OnInit, OnDestroy {
         if (doc == -1) {
           this.getDoctorsList(this.userId);
         } else {
+          this.conversations[doc].createdAt = data.createdAt;
+          this.conversations[doc].unread++;
           this.conversations[doc].message = data.message;
           this.conversations.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
@@ -99,6 +101,7 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.selectedConversation = conversation;
     this.getMessages();
     this.readMessages(this.selectedConversation?.id);
+    this.selectedConversation.unread = 0;
   }
 
   onImgError(event: any) {
