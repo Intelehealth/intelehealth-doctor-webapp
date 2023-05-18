@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 // import { CoreService } from 'src/app/services/core/core.service';
 
@@ -17,10 +18,12 @@ export class GetStartedComponent implements OnInit {
   constructor(
     private pageTitleService: PageTitleService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translateService: TranslateService
     ) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.doctorName = localStorage.getItem('doctorName');
     let now = new Date();

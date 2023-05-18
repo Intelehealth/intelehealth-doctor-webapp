@@ -124,10 +124,10 @@
             <ol class="breadcrumb">
               <ng-container *ngFor="let breadcrumb of breadcrumbs; let last=last;">
                 <li class="breadcrumb-item" *ngIf="!last">
-                  <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                  <a [routerLink]="breadcrumb.url">{{ breadcrumb.label | translate}}</a>
                 </li>
                 <li class="breadcrumb-item" aria-current="page" *ngIf="last">
-                  {{ breadcrumb.label }}
+                  {{ breadcrumb.label | translate }}
                 </li>
               </ng-container>
             </ol>

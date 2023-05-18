@@ -3,8 +3,8 @@
     <div class="col-md-8 p-0">
       <div class="welcome-banner-con">
         <span>x</span>
-        <h6>{{greetingMsg}}, {{doctorName|titlecase}}! <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
-        <p>Complete the following actions to start treating the patients</p>
+        <h6>{{greetingMsg | translate}}, {{doctorName|titlecase}}! <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
+        <p>{{'Complete the following actions to start treating the patients' | translate}}</p>
       </div>
     </div>
     <div class="col-md-8 p-0">
@@ -15,10 +15,10 @@
           </div>
           <div>
             <div class="card-body p-0">
-              <h6 class="card-title">Set up your profile</h6>
-              <p class="card-text">You need to set-up your profile by adding few details of yours & start receiving the patient prescription requests.</p>
+              <h6 class="card-title">{{'Set up your profile'|translate}}</h6>
+              <p class="card-text">{{'You need to set-up your profile by adding few details of yours & start receiving the patient prescription requests.' |translate}}</p>
               <button type="button" class="intel-blue-btn" (click)="setupProfile()" [disabled]="!pc">
-                Setup profile
+                {{'Setup profile'| translate}}
               </button>
             </div>
           </div>
@@ -33,10 +33,10 @@
           </div>
           <div>
             <div class="card-body p-0">
-              <h6 class="card-title">Set up your calendar</h6>
-              <p class="card-text">You need to set-up your calendar so you can start taking appointments of the patients.</p>
+              <h6 class="card-title">{{'Set up your calendar' | translate}}</h6>
+              <p class="card-text">{{'You need to set-up your calendar so you can start taking appointments of the patients.' | translate}}</p>
               <button type="button" class="intel-blue-btn" (click)="setupCalendar()" [disabled]="!sc">
-                Setup calendar
+                {{'Setup calendar' | translate}}
               </button>
             </div>
           </div>

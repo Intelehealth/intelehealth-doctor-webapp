@@ -25,6 +25,14 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -58,6 +66,13 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
       permissionsIsolate: false,
       rolesIsolate: false,
       configurationIsolate: false
+    }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
     }),
     MatProgressSpinnerModule
   ]
