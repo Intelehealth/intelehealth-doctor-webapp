@@ -7,7 +7,7 @@ import { environment } from "src/environments/environment";
 })
 export class AppointmentService {
   private baseURL = environment.mindmapURL;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   updateOrCreateAppointment(payload) {
     return this.http.post(
@@ -25,6 +25,12 @@ export class AppointmentService {
   getUserSlots(userUuid, fromDate, toDate) {
     return this.http.get(
       `${this.baseURL}/appointment/getUserSlots/${userUuid}?fromDate=${fromDate}&toDate=${toDate}`
+    );
+  }
+
+  getAllSlotsBwDates(fromDate, toDate) {
+    return this.http.get(
+      `${this.baseURL}/appointment/getAllSlotsBwDates?fromDate=${fromDate}&toDate=${toDate}`
     );
   }
 

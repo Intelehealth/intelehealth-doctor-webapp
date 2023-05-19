@@ -202,7 +202,7 @@ export class HomepageComponent implements OnInit {
     value.lastSeen = encounter?.encounter_datetime;
     value.complaints = this.getComplaints(visit);
 
-    value.disable = !!this.slots.find(slot => slot.openMrsId === this.value.id);
+    value.disable = !!this.slots.find(slot => slot.openMrsId === value.id);
     if (typeOfVisit === 'awaitingVisit') {
       value.status = 'ADULTINITIAL';
       this.service.waitingVisit.push(value);
@@ -457,8 +457,7 @@ export class HomepageComponent implements OnInit {
   getDrSlots() {
     let toDate = moment().add(1, 'year');
     this.apnmntSvc
-      .getUserSlots(
-        this.userId,
+      .getAllSlotsBwDates(
         moment().format("DD/MM/YYYY"),
         toDate.format("DD/MM/YYYY")
       )
