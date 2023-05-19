@@ -6,8 +6,10 @@ import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
-import { SocketService } from '../services/socket.service';
+// import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -84,11 +86,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('priorityPaginator') priorityPaginator: MatPaginator;
   @ViewChild('completedPaginator') completedPaginator: MatPaginator;
 
+  subscription: Subscription;
+
   constructor(
     private pageTitleService: PageTitleService,
     private visitService: VisitService,
-    private socket: SocketService,
-    private router: Router) { }
+    // private socket: SocketService,
+    private router: Router,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -100,6 +105,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/get-started']);
       }
       this.getVisits();
+
+      this.subscription = this.authService.$tour.subscribe(val => {
+        if (val) {
+          this.showAll = true;
+          this.accordion.openAll();
+        }
+      });
     }
 
 
@@ -296,8 +308,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.socket.socket && this.socket.socket.close)
-      this.socket.socket.close();
+    // if (this.socket.socket && this.socket.socket.close)
+    //   this.socket.socket.close();
+    this.subscription?.unsubscribe();
   }
 
 }

@@ -50,7 +50,7 @@
         height: 52px;
         align-items: center;
         max-width: 60vw;
-
+        min-width: 400px;
         .input-group-text {
           background: none;
           border: none;
@@ -332,6 +332,10 @@
 
     img {
       height: 36px;
+    }
+
+    .input-group {
+      min-width: 1px !important;
     }
   }
 }

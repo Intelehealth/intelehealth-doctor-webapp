@@ -20,6 +20,10 @@ export class AuthService {
   private baseUrl = environment.baseURL;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
+
+  private tourSubject: BehaviorSubject<any>;
+  public $tour: Observable<any>;
+
   private base64Cred: string;
   private mindmapUrl: string = environment.mindmapURL;
   public rememberMe: boolean = false;
@@ -36,6 +40,8 @@ export class AuthService {
     let localStorageUser = JSON.parse(localStorage.getItem('currentUser'));
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
+    this.tourSubject = new BehaviorSubject<boolean>(false);
+    this.$tour = this.tourSubject.asObservable();
     if (localStorageUser) {
       this.permissionsService.loadPermissions(this.extractPermissions(localStorageUser.user.privileges));
       this.rolesService.addRoles(this.extractRolesAndPermissions(localStorageUser.user.privileges, localStorageUser.user.roles));
@@ -43,6 +49,10 @@ export class AuthService {
     this.base64Cred = localStorage.getItem('xsddsdass');
   }
   public fingerPrint;
+
+  addTourStatus(status: boolean) {
+    this.tourSubject.next(status);
+  }
 
   sendToken(token) {
     this.cookieService.set("JSESSIONID", token);

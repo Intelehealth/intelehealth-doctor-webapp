@@ -86,7 +86,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       keyword: new FormControl('', Validators.required)
     });
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
-    this.routeUrl = this.breadcrumbs[0]?.url;
+    this.routeUrl = this.breadcrumbs[this.breadcrumbs.length - 1]?.url;
     if (localStorage.getItem('collapsed') && this.breadcrumbs.filter((val => val.url.includes('visit-summary'))).length) {
       this.collapsed = true;
       this.routeUrl = this.breadcrumbs.filter((val => val.url.includes('visit-summary')))[0].url;
@@ -324,6 +324,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   startTour() {
+    this.authService.addTourStatus(true);
     this.introJs.setOptions({
       steps: [
         {
@@ -381,6 +382,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       scrollToElement: true,
       scrollTo: 'element'
     }).start();
+
+    this.introJs.onexit(() => {
+      this.authService.addTourStatus(false);
+    });
   }
 
   subscribeNotification(reSubscribe = false) {
