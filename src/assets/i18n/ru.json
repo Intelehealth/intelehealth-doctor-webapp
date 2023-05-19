@@ -350,7 +350,7 @@
   "Provide Prescription":"Предоставить рецепт",
   "In-progress":"В процессе",
   "Go back":"Возвращаться",
-  "Awaiting":"Ожидание-----",
+  "Awaiting":"Ожидание",
   "Date of birth *":"Дата рождения *",
   "Phone Number *":"Номер телефона *",
   "New password":"Новый пароль",
@@ -364,6 +364,9 @@
   "Ooops, page not found":"Ой, страница не найдена",
   "Sorry, but the requested page is not found.":"Извините, но запрошенная страница не найдена.",
   "Close": "Закрывать",
+  "Enter username":"Введите имя пользователя",
+  "Enter password":"Введите пароль",
+  
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
     "Login Successful":"Вход выполнен успешно",

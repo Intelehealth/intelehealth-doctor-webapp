@@ -5,8 +5,9 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
+  registerLocaleData
 } from "@angular/common";
-
+import localeRu from '@angular/common/locales/ru';
 // Component Import
 import { AppComponent } from "./app.component";
 import { TestComponent } from "./test/test.component";
@@ -77,6 +78,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
 
+registerLocaleData(localeRu);
 @NgModule({
   declarations: [
     AppComponent,

@@ -73,7 +73,12 @@ export class AppointmentsComponent implements OnInit {
                 matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
                 appointment.visit_info = matchedVisit;
                 appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                this.appointments.push(appointment);
+                const len = appointment.visit_info.encounters.filter((e: any) => {
+                  return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+                }).length;
+                if(!Boolean(len)){
+                  this.appointments.push(appointment);
+                }
               }
             }
           });

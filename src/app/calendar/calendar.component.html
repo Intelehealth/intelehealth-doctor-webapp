@@ -27,7 +27,7 @@
             <div class="col-md-6 p-0">
               <div class="header-date-con">
                 <img class="mr-2" src="assets/svgs/calendar-white.svg" alt="">
-                <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h6>
+                <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'):lang }}</h6>
                 <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)">
                   <img src="assets/svgs/chevron-left.svg" alt="" width="100%">
                 </button>

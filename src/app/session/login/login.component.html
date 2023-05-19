@@ -13,7 +13,7 @@
             {{'Username'|translate}}
             <!-- <span class="link"><a routerLink="/session/forgot-username">Forgot Username ?</a></span> -->
           </label>
-          <input type="text" class="form-control" formControlName="username" placeholder="Enter username">
+          <input type="text" class="form-control" formControlName="username" placeholder="{{'Enter username'|translate}}">
           <div *ngIf="submitted && f.username.errors">
             <small *ngIf="f.username.errors.required" class="error-msg">{{'Please enter username'|translate}}</small>
             <small *ngIf="f.username.errors.usernameExists" class="error-msg">{{'Couldn’t find you, please enter valid username'|translate}}</small>
@@ -25,7 +25,7 @@
             <!-- <span class="link"><a routerLink="/session/forgot-password">Forgot Password ?</a></span> -->
           </label>
           <div class="password-field">
-            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="{{'Enter password'|translate}}">
             <button class="btn toggle-password-btn" type="button" (click)="visible = !visible">
               <img src="assets/svgs/icon-eye.svg" alt="">
             </button>

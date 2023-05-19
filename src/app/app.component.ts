@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class AppComponent implements OnInit {
 
   languages = ["en", "ru"];
-  selectedLanguage: string = "en";
+  selectedLanguage: string = "ru";
   constructor(public translate: TranslateService) {}
 
   ngOnInit() {
@@ -17,11 +17,11 @@ export class AppComponent implements OnInit {
       this.translate.setDefaultLang(localStorage.getItem("selectedLanguage"));
       this.selectedLanguage = localStorage.getItem("selectedLanguage");
       const browserLang = this.translate.getBrowserLang();
-      this.translate.use(browserLang.match(/ru|fr/) ? browserLang : localStorage.getItem("selectedLanguage"));  
+      this.translate.use(browserLang.match(/en|fr/) ? browserLang : localStorage.getItem("selectedLanguage"));  
     } else {
       this.translate.setDefaultLang(this.selectedLanguage);
       const browserLang = this.translate.getBrowserLang();
-      this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+      this.translate.use(browserLang.match(/ru|fr/) ? browserLang : 'ru');
       localStorage.setItem("selectedLanguage", this.selectedLanguage);
     }
   }

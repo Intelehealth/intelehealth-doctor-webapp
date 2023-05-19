@@ -363,6 +363,9 @@
   "Ooops, page not found":"Ooops, page not found",
   "Sorry, but the requested page is not found.":"Sorry, but the requested page is not found.",
   "Close": "Close",
+  "Enter username":"Enter username",
+  "Enter password":"Enter password",
+  
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",
     "Login Successful":"Login Successful",

@@ -33,6 +33,7 @@ export class CalendarComponent implements OnInit {
   selectedReason = "";
   otherReason = "";
   reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
+  lang = localStorage.getItem('selectedLanguage');
   constructor(
     private pageTitleService: PageTitleService,
     private appointmentService: AppointmentService,
@@ -260,89 +261,89 @@ export class CalendarComponent implements OnInit {
     if (view == 'monthView') {
       // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
       let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
-      if (oldDaysOff) {
-        if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
-          this.toastr.warning(this.translateService.instant(`messages.${"This day is already marked as Day Off"}`), this.translateService.instant(`messages.${"Already DayOff"}`));
-          return;
-        }
-      }
-      this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
-        if (res) {
-          switch (res.markAs) {
-            case 'dayOff':
-              this.coreService.openConfirmDayOffModal(day.date).subscribe((result: any) => {
-                if (result) {
-                  let body = {
-                    userUuid: this.userId,
-                    daysOff: (oldDaysOff)? oldDaysOff.daysOff.concat([moment(day.date).format('DD/MM/YYYY')]) : [moment(day.date).format('DD/MM/YYYY')],
-                    month: this.monthNames[day.date.getMonth()],
-                    year: day.date.getFullYear().toString()
-                  };
-                  this.appointmentService.updateDaysOff(body).subscribe({
-                    next: (res: any) => {
-                      if (res.status) {
-                        // let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
-                        let index = this.daysOff.findIndex((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
-                        if (index != -1) {
-                          this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
-                        }
-                        // else {
-                        //   this.daysOff.push({
-                        //     type: "month",
-                        //     month: res.data.month,
-                        //     year: res.data.year,
-                        //     slotSchedule: [],
-                        //     startDate: moment(day.date).startOf('month').toISOString(),
-                        //     endDate: moment(day.date).endOf('month').toISOString(),
-                        //     drName: this.drName,
-                        //     userUuid: this.userId,
-                        //     speciality: this.getSpeciality(),
-                        //     daysOff: [moment(day.date).format('DD/MM/YYYY')],
-                        //     slotDays: ""
-                        //   });
-                        // }
-                        day.events.forEach((event: any) => {
-                          if (event.title == 'Appointment') {
-                            this.cancel(event.meta, false);
-                          }
-                        });
+      // if (oldDaysOff) {
+      //   if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
+      //     this.toastr.warning(this.translateService.instant(`messages.${"This day is already marked as Day Off"}`), this.translateService.instant(`messages.${"Already DayOff"}`));
+      //     return;
+      //   }
+      // }
+      // this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
+      //   if (res) {
+      //     switch (res.markAs) {
+      //       case 'dayOff':
+      //         this.coreService.openConfirmDayOffModal(day.date).subscribe((result: any) => {
+      //           if (result) {
+      //             let body = {
+      //               userUuid: this.userId,
+      //               daysOff: (oldDaysOff)? oldDaysOff.daysOff.concat([moment(day.date).format('DD/MM/YYYY')]) : [moment(day.date).format('DD/MM/YYYY')],
+      //               month: this.monthNames[day.date.getMonth()],
+      //               year: day.date.getFullYear().toString()
+      //             };
+      //             this.appointmentService.updateDaysOff(body).subscribe({
+      //               next: (res: any) => {
+      //                 if (res.status) {
+      //                   // let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+      //                   let index = this.daysOff.findIndex((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+      //                   if (index != -1) {
+      //                     this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
+      //                   }
+      //                   // else {
+      //                   //   this.daysOff.push({
+      //                   //     type: "month",
+      //                   //     month: res.data.month,
+      //                   //     year: res.data.year,
+      //                   //     slotSchedule: [],
+      //                   //     startDate: moment(day.date).startOf('month').toISOString(),
+      //                   //     endDate: moment(day.date).endOf('month').toISOString(),
+      //                   //     drName: this.drName,
+      //                   //     userUuid: this.userId,
+      //                   //     speciality: this.getSpeciality(),
+      //                   //     daysOff: [moment(day.date).format('DD/MM/YYYY')],
+      //                   //     slotDays: ""
+      //                   //   });
+      //                   // }
+      //                   day.events.forEach((event: any) => {
+      //                     if (event.title == 'Appointment') {
+      //                       this.cancel(event.meta, false);
+      //                     }
+      //                   });
 
-                        // Update schedule as per new dayOff
-                        // let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
-                        let schedule = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
-                        if (schedule?.slotSchedule.length) {
-                          // schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
-                          schedule.slotSchedule = schedule.slotSchedule.filter((s: any) => { return !moment(day.date).isSame(moment(s.date)) });
-                          this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
-                            next: (res: any) => {
-                              if (res.status) {
-                                this.daysOff[index] = schedule;
-                              }
-                            },
-                          });
-                        }
-                      }
-                    },
-                  });
-                }
-              });
-              break;
-            case 'hoursOff':
-              this.coreService.openConfirmHoursOffModal({ day: day.date, detail: res}).subscribe((result: any) => {
-                if (result) {
-                  day.events.forEach((event: any) => {
-                    if (event.title == 'Appointment') {
-                      if (moment(event.meta.slotTime,'LT').isBetween(moment(res.from, 'LT'), moment(res.to, 'LT'))) {
-                        this.cancel(event.meta, false);
-                      }
-                    }
-                  });
-                }
-              });
-              break;
-          }
-        }
-      });
+      //                   // Update schedule as per new dayOff
+      //                   // let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
+      //                   let schedule = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+      //                   if (schedule?.slotSchedule.length) {
+      //                     // schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
+      //                     schedule.slotSchedule = schedule.slotSchedule.filter((s: any) => { return !moment(day.date).isSame(moment(s.date)) });
+      //                     this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
+      //                       next: (res: any) => {
+      //                         if (res.status) {
+      //                           this.daysOff[index] = schedule;
+      //                         }
+      //                       },
+      //                     });
+      //                   }
+      //                 }
+      //               },
+      //             });
+      //           }
+      //         });
+      //         break;
+      //       case 'hoursOff':
+      //         this.coreService.openConfirmHoursOffModal({ day: day.date, detail: res}).subscribe((result: any) => {
+      //           if (result) {
+      //             day.events.forEach((event: any) => {
+      //               if (event.title == 'Appointment') {
+      //                 if (moment(event.meta.slotTime,'LT').isBetween(moment(res.from, 'LT'), moment(res.to, 'LT'))) {
+      //                   this.cancel(event.meta, false);
+      //                 }
+      //               }
+      //             });
+      //           }
+      //         });
+      //         break;
+      //     }
+      //   }
+      // });
     }
   }
 
