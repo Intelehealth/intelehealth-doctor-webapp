@@ -52,16 +52,23 @@ export class TablesComponent implements OnInit {
   ngOnInit() {
     this.loadedDataLength = Number(`${this.data.length}`);
     this.data.length = this.visitCounts;
+    if(this.tableFor === "followUpVisit") {
+      this.data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }
     this.dataSource = new MatTableDataSource([...this.data]);
     this.dataSource.paginator = this.paginator;
+    if(this.tableFor !== "followUpVisit") {
     this.sort.sort(({ id: 'lastSeen', start: 'desc'}) as MatSortable);
     this.dataSource.sort = this.sort;
+    }
     if (this.tableFor === "completedVisit") {
       this.displayColumns.splice(6,0,"healthWorker");
       this.displayColumns.splice(7,0,"diagnosis");
     }
     if(this.tableFor === "followUpVisit") {
       this.displayColumns.push("date");
+      this.sort.sort(({}) as MatSortable);
+      this.dataSource.sort = this.sort;
     }
     this.helper.refreshTable.subscribe(() => {
       this.refresh();
