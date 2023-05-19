@@ -345,10 +345,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           element: document.querySelector('.search-bar'),
           intro: 'Type patients name, id to search a patient.'
         },
-        // {
-        //   element: document.querySelector('.table-record'),
-        //   intro: "Click on anywhere on row to add doctor's consultation for the patient."
-        // },
+        {
+          element: document.querySelector('.header-row'),
+          intro: 'Click on the headings of the table to sort.'
+        },
+        {
+          element: document.querySelector('.table-record'),
+          intro: "Click on anywhere on row to add doctor's consultation for the patient."
+        },
         {
           element: document.querySelector('.user-info-wrap'),
           intro: 'Click here to view and edit your profile.'
@@ -363,7 +367,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       doneLabel: 'Finish',
       skipLabel: 'X',
       hidePrev: true,
-      showStepNumbers: false,
+      showStepNumbers: true,
+      stepNumbersOfLabel: '/',
       showBullets: false,
       autoPosition: false,
       tooltipClass: 'my-tooltip-class',

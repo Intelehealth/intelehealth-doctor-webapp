@@ -25,6 +25,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SharedModule } from '../shared.module';
 import { PartogramComponent } from './partogram/partogram.component';
+import { NgxPanZoomModule } from 'ngx-panzoom';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { PartogramComponent } from './partogram/partogram.component';
       rolesIsolate: false,
       configurationIsolate: false
     }),
-    SharedModule
+    SharedModule,
+    NgxPanZoomModule
   ]
 })
 export class DashboardModule { }

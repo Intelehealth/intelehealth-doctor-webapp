@@ -110,7 +110,7 @@
                 </td>
               </tr>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns2" class="header-row"></tr>
               <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns2;" [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.table-record]="i==0"></tr>
             </table>
 
