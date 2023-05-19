@@ -321,6 +321,8 @@ export class PartogramComponent implements OnInit {
           this.timeStage2[indices[1]-1] = encs[x].encounterDatetime;
           this.initialsStage2[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
           this.encuuid2[indices[1]-1] = encs[x].uuid;
+        } else {
+          continue;
         }
         // Read observations
         if (encs[x].obs.length) {
