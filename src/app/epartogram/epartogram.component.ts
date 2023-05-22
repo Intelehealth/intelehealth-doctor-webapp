@@ -214,12 +214,12 @@ export class EpartogramComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    setTimeout(()=> {
-      this.ele = document.getElementsByClassName('table-responsive')[0];
-      this.ele.scrollTop = 0;
-      this.ele.scrollLeft = 0;
-      this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
-    }, 1000);
+    // setTimeout(()=> {
+    //   this.ele = document.getElementsByClassName('table-responsive')[0];
+    //   this.ele.scrollTop = 0;
+    //   this.ele.scrollLeft = 0;
+    //   this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+    // }, 1000);
     this.getVisit(id);
   }
 
@@ -233,7 +233,7 @@ export class EpartogramComponent implements OnInit {
         this.readStageData();
       }
     }, (error: any) => {
-      this.router.navigate(['/dashboard']);
+      // this.router.navigate(['/dashboard']);
     });
   }
 
