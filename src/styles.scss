@@ -943,7 +943,8 @@ body.font-lato td {
   box-shadow: none !important;
   border-radius: 0px !important;
   background: transparent !important;
-
+  min-width: 328px !important;
+  max-width: 328px !important;
   .introjs-tooltip-header {
     background: #D7D4EA;
     border-radius: 20px 20px 0px 0px;
