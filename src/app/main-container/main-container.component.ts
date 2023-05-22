@@ -234,6 +234,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   logout() {
     this.coreService.openConfirmationDialog({ confirmationMsg: "Are you sure you want to logout?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(res => {
       if (res) {
+        if (this.dialogRef) {
+          this.dialogRef.close();
+        }
         // this.unsubscribeNotification();
         // setTimeout(() => {
           this.authService.logOut();
@@ -459,7 +462,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
-        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+        // this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
       }
     });
   }
