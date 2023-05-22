@@ -460,4 +460,7 @@ export class CalendarComponent implements OnInit {
     return false;
   }
 
+  get locale() {
+    return localStorage.getItem("selectedLanguage");
+  }
 }

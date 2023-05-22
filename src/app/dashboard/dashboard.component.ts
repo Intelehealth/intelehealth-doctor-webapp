@@ -71,6 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // this.getAppointments();
       this.getVisits();
       // this.getVisitCounts(this.specialization);
+      moment.locale(localStorage.getItem('selectedLanguage'));
     }
 
 

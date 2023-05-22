@@ -7,8 +7,8 @@
             <div class="col-md-4 p-0">
               <div class="chat-sidebar-wrapper">
                 <div class="chat-sidebar-title">
-                  <h6 class="mb-0">Doctors</h6>
-                  <span>(Via doctors web protal)</span>
+                  <h6 class="mb-0">{{'Doctors' | translate }}</h6>
+                  <span>({{'Via doctors web protal' | translate}})</span>
                 </div>
                 <div class="chat-sidebar-body">
                   <div class="chat-items-search">
@@ -19,7 +19,7 @@
                         </span>
                       </div>
                       <input type="text" [(ngModel)]="searchValue" (ngModelChange)="search()" class="form-control"
-                        placeholder="Search by doctor name or ID" aria-label="Username"
+                        placeholder="{{'Search by doctor name or ID' | translate}}" aria-label="Username"
                         aria-describedby="basic-addon1" />
                     </div>
                   </div>
@@ -38,7 +38,7 @@
                             {{
                             conversation.doctorName
                             ? (conversation.doctorName | titlecase)
-                            : "Unknown"
+                            : 'Unknown'| translate
                             }}
                           </h6>
                           <p>{{ conversation.message }}</p>
@@ -59,7 +59,7 @@
                         {{
                         selectedConversation.doctorName
                         ? (selectedConversation.doctorName | titlecase)
-                        : "Unknown"
+                        : 'Unknown'| translate
                         }}
                       </h6>
                       <!-- <span>
@@ -84,11 +84,11 @@
                           ">
                           <ng-container *ngIf="item.isRead">
                             <img src="assets/svgs/read-status.svg" alt="" />
-                            <span class="ml-1">Read</span>
+                            <span class="ml-1">{{'Read'|translate}}</span>
                           </ng-container>
                           <ng-container *ngIf="!item.isRead">
                             <img src="assets/svgs/sent-status.svg" alt="" />
-                            <span class="ml-1">Sent</span>
+                            <span class="ml-1">{{'Sent' | translate}}</span>
                           </ng-container>
                         </ng-container>
                       </li>
@@ -108,7 +108,7 @@
                   </ul>
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
-                      <input type="text" class="form-control" placeholder="Type here" [(ngModel)]="message"
+                      <input type="text" class="form-control" placeholder="{{'Type here' | translate}}" [(ngModel)]="message"
                         (keyup.enter)="sendMessage()" />
                       <!-- <div class="input-group-append">
                         <button type="button" (click)="fileInput.click()">
@@ -131,10 +131,10 @@
               <ng-template #noConversationSelected>
                 <div class="no-conversation-selected">
                   <img src="assets/svgs/chat-messages.png" alt="" />
-                  <h6>No messages selected</h6>
+                  <h6>{{'No messages selected' | translate}}</h6>
                   <p>
-                    Please select doctor from the list <br />
-                    to view the messages
+                    {{'Please select doctor from the list' | translate}} <br />
+                    {{'to view the messages' | translate}}
                   </p>
                 </div>
               </ng-template>

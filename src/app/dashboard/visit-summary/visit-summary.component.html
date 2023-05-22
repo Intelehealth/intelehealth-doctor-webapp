@@ -1835,7 +1835,7 @@
                     <h6 class="mb-0 ml-2">{{'Follow-up'|translate}}</h6>
                   </div>
                 </mat-panel-title>
-                <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
+                <mat-icon>{{ panel8.expanded ? ("remove"|translate) : ("add"|translate) }}</mat-icon>
               </mat-expansion-panel-header>
 
               <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
@@ -2012,7 +2012,7 @@
         class="blue-btn mr-2"
         (click)="sharePrescription()"
       >
-        {{ visitCompleted ? 'Update': 'Share' }} {{'prescription'|translate}}
+        {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
       </button>
       <button
         type="button"
