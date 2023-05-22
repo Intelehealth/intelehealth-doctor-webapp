@@ -26,6 +26,7 @@ export class AuthService {
 
   private base64Cred: string;
   private mindmapUrl: string = environment.mindmapURL;
+  private notificationUrl: string = environment.notificationURL;
   public rememberMe: boolean = false;
 
   constructor(
@@ -131,7 +132,7 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     // headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    // this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
@@ -142,7 +143,7 @@ export class AuthService {
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();
       this.router.navigate(['/session/login']);
-    // });
+    });
   }
 
   extractPermissions(perm: any[]) {
@@ -251,5 +252,9 @@ export class AuthService {
     } catch (error) {
       return null;
     }
+  }
+
+  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
+    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
   }
 }

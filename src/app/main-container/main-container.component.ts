@@ -19,6 +19,7 @@ import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from '../services/push-notification.service';
 import { SocketService } from '../services/socket.service';
 import { NgxRolesService } from 'ngx-permissions';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 @Component({
   selector: 'app-main-container',
@@ -80,7 +81,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private socketService: SocketService,
     private rolesService: NgxRolesService,
     public swUpdate: SwUpdate,
-    public swPush: SwPush,
+    public _swPush: SwPush,
     public notificationService: PushNotificationsService) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -152,30 +153,32 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
 
     this.introJs = introJs();
-    this.authService.getFingerPrint();
-    setTimeout(() => {
-      this.subscribeNotification(true);
-    }, 1000);
-    this.notificationService.getUserSettings().subscribe((res: { data: any; snooze_till: any }) => {
-      if (res && res.data && res.data.snooze_till) {
-        const snoozeTill = (() => {
-          try {
-            return JSON.parse(res.data.snooze_till);
-          } catch (error) {
-            return res.data.snooze_till;
-          }
-        })();
-        if (Array.isArray(snoozeTill)) {
-          this.weekDays = snoozeTill;
-        } else {
-          this.setSnoozeTimeout(res.snooze_till);
-        }
-      }
-    });
+    this.requestSubscription();
 
-    if (this.swPush.isEnabled) {
-      this.notificationService.notificationHandler();
-    }
+    // this.authService.getFingerPrint();
+    // setTimeout(() => {
+    //   this.subscribeNotification(true);
+    // }, 1000);
+    // this.notificationService.getUserSettings().subscribe((res: { data: any; snooze_till: any }) => {
+    //   if (res && res.data && res.data.snooze_till) {
+    //     const snoozeTill = (() => {
+    //       try {
+    //         return JSON.parse(res.data.snooze_till);
+    //       } catch (error) {
+    //         return res.data.snooze_till;
+    //       }
+    //     })();
+    //     if (Array.isArray(snoozeTill)) {
+    //       this.weekDays = snoozeTill;
+    //     } else {
+    //       this.setSnoozeTimeout(res.snooze_till);
+    //     }
+    //   }
+    // });
+
+    // if (this.swPush.isEnabled) {
+    //   this.notificationService.notificationHandler();
+    // }
   }
 
   socketInitialize() {
@@ -224,10 +227,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   logout() {
     this.coreService.openConfirmationDialog({ confirmationMsg: "Are you sure you want to logout?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(res => {
       if (res) {
-        this.unsubscribeNotification();
-        setTimeout(() => {
+        // this.unsubscribeNotification();
+        // setTimeout(() => {
           this.authService.logOut();
-        }, 100);
+        // }, 100);
       }
     });
   }
@@ -388,56 +391,102 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
-  subscribeNotification(reSubscribe = false) {
-    if (this.swUpdate.isEnabled) {
-      this.swPush
-        .requestSubscription({
-          serverPublicKey: this.VapidKEY,
-        })
-        .then((sub) => {
-          const provider = JSON.parse(localStorage.getItem('provider'));
-          if (provider) {
-            const attributes = provider.attributes;
-            attributes.forEach((element) => {
-              if (
-                element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-                !element.voided
-              ) {
-                this.notificationService
-                  .postSubscription(
-                    sub,
-                    element.value,
-                    provider.person.display,
-                    this.user.uuid,
-                    this.authService.fingerPrint
-                  )
-                  .subscribe((response) => {
-                    if (response) {
-                      if (!reSubscribe) {
-                        this.toastr.success('Notification subscribed successfully!', 'Subscribed');
-                      }
-                      localStorage.setItem("subscribed", JSON.stringify(true));
-                      this.subscribed = true;
-                    }
-                  });
-              }
-            });
-          }
-        });
+  requestSubscription() {
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
     }
+    this._swPush.subscription.subscribe(sub => {
+      if (!sub) {
+        this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then((_) => {
+          console.log(JSON.stringify(_));
+          (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization()
+            ).subscribe(response => {
+              console.log(response);
+            });
+          })();
+        }).catch((_) => console.log);
+      } else {
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
   }
 
-  unsubscribeNotification() {
-    this.swPush.unsubscribe();
-    localStorage.removeItem("subscribed");
-    this.notificationService
-      .unsubscribeNotification({
-        user_uuid: this.user.uuid,
-        finger_print: this.authService.fingerPrint,
-      })
-      .subscribe();
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = null;
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
   }
+
+  // subscribeNotification(reSubscribe = false) {
+  //   if (this.swUpdate.isEnabled) {
+  //     this.swPush
+  //       .requestSubscription({
+  //         serverPublicKey: this.VapidKEY,
+  //       })
+  //       .then((sub) => {
+  //         const provider = JSON.parse(localStorage.getItem('provider'));
+  //         if (provider) {
+  //           const attributes = provider.attributes;
+  //           attributes.forEach((element) => {
+  //             if (
+  //               element.attributeType.uuid ===
+  //               "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+  //               !element.voided
+  //             ) {
+  //               this.notificationService
+  //                 .postSubscription(
+  //                   sub,
+  //                   element.value,
+  //                   provider.person.display,
+  //                   this.user.uuid,
+  //                   this.authService.fingerPrint
+  //                 )
+  //                 .subscribe((response) => {
+  //                   if (response) {
+  //                     if (!reSubscribe) {
+  //                       this.toastr.success('Notification subscribed successfully!', 'Subscribed');
+  //                     }
+  //                     localStorage.setItem("subscribed", JSON.stringify(true));
+  //                     this.subscribed = true;
+  //                   }
+  //                 });
+  //             }
+  //           });
+  //         }
+  //       });
+  //   }
+  // }
+
+  // unsubscribeNotification() {
+  //   this.swPush.unsubscribe();
+  //   localStorage.removeItem("subscribed");
+  //   this.notificationService
+  //     .unsubscribeNotification({
+  //       user_uuid: this.user.uuid,
+  //       finger_print: this.authService.fingerPrint,
+  //     })
+  //     .subscribe();
+  // }
 
   setSnoozeTimeout(timeout: any) {
     if (this.notificationService.snoozeTimeout)
