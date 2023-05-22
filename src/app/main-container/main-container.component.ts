@@ -52,6 +52,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   routeUrl: string = '';
   introJs: any;
   adminUnread: number = 0;
+  notificationEnabled: boolean = false;
   interval: any;
 
   subscribed: boolean = false;
@@ -154,6 +155,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
     this.introJs = introJs();
     this.requestSubscription();
+    this.getNotificationStatus();
+    setTimeout(() => {
+      if (!this.notificationEnabled) {
+        this.toggleNotification();
+      }
+    }, 5000);
 
     // this.authService.getFingerPrint();
     // setTimeout(() => {
@@ -426,6 +433,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  getNotificationStatus() {
+    this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
+      // console.log(res);
+      if (res.success) {
+        this.notificationEnabled = res.data?.notification_status;
+      }
+    });
+  }
+
+
   getSpecialization(attr: any = this.provider.attributes) {
     let specialization = null;
     for (let x = 0; x < attr.length; x++) {
@@ -435,6 +452,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       }
     }
     return specialization;
+  }
+
+  toggleNotification() {
+    this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
+      // console.log(res);
+      if (res.success) {
+        this.notificationEnabled = res.data?.notification_status;
+        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+      }
+    });
   }
 
   // subscribeNotification(reSubscribe = false) {

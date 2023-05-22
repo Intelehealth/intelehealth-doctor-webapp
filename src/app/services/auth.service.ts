@@ -257,4 +257,12 @@ export class AuthService {
   subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
     return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
   }
+
+  getNotificationStatus(user_uuid: string) {
+    return this.http.get(`${environment.mindmapURL}/mindmap/getNotificationStatus/${user_uuid}`);
+  }
+
+  toggleNotificationStatus(user_uuid: string) {
+    return this.http.put(`${environment.mindmapURL}/mindmap/toggleNotificationStatus/${user_uuid}`, null);
+  }
 }
