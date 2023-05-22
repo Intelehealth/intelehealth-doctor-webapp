@@ -53,7 +53,7 @@
     },
     {
       "name": "api",
-      "urls": ["/api/messages/**", "/api/support/**"],
+      "urls": ["/api/messages/**", "/api/support/**", "/api/mindmap/**"],
       "cacheConfig": {
         "maxSize": 0,
         "maxAge": "0u",
