@@ -223,7 +223,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey') || visit.stopDatetime != null) {
       this.completedCases.push(visit);
-    } else if (visit.score >= 22) {
+    } else if (visit.score > 22) {
       this.priorityCases.push(visit);
     } else {
       this.normalCases.push(visit);
