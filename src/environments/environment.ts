@@ -13,7 +13,7 @@ export const environment = {
   socketURL: "https://ezazi.intelehealth.org:3004",
   captchaSiteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   siteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
-  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
+  externalPrescriptionCred: 'c3lzbnVyc2U6SUhOdXJzZSMx',
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA"
 };
 

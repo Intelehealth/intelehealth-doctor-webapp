@@ -92,6 +92,7 @@ const routes: Routes = [
       }
     ]
   },
+  { path: 'epartogram', loadChildren: () => import('./epartogram/epartogram.module').then(m => m.EpartogramModule) },
   {
     path: '**',
     redirectTo: 'session/page-not-found'
