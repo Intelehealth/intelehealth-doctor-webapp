@@ -1,17 +1,15 @@
-.remoteVideo,
-.localVideo {
-  width: 100%;
-  /* min-width: 60vw; */
-  height: auto;
-  max-height: 40vh;
+.remoteVideo {
+  width: 78vw;
+  height: 79vh;
 }
 
-/* .localVideo {
+.localVideo {
   height: 180px;
-} */
+}
 
 .main {
   position: relative;
+  background-color: #343a40 !important;
 }
 
 .local-container {
@@ -39,8 +37,8 @@ i.fa {
   margin-top: 8px;
 }
 
-.main {
-  position: relative;
+.localVideo {
+  height: 180px;
 }
 
 .local-container {
@@ -66,12 +64,13 @@ i.fa {
 }
 
 .button-tab {
-  bottom: 0;
+  bottom: 5%;
 }
 
 .container {
+  gap: 15px;
   margin: 0 auto;
-  width: 25%;
+  /* width: 25%; */
 }
 
 .room_id {
@@ -79,4 +78,64 @@ i.fa {
   justify-content: center;
 }
 
-@media screen and (max-width: 600px) {}
+@media only screen and (max-width: 768px) {
+  .main {
+    background-color: #fff !important;
+  }
+
+  .cdk-overlay-pane {
+    max-width: 97vw;
+  }
+
+  .localVideo {
+    width: 68vw;
+    height: 39vh;
+    border: 1px solid;
+    background: grey;
+  }
+
+  .remoteVideo {
+    width: 68vw;
+    height: 39vh;
+    border: 1px solid;
+    background: grey;
+  }
+
+  .local-container {
+    position: relative;
+    bottom: -8%;
+  }
+}
+
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+}
+
+.loader label {
+  color: lightgray;
+}
+
+.is-fullscreen.main {
+  display: grid !important;
+}
+
+.is-fullscreen .remoteVideo {
+  margin: auto !important;
+
+  height: 46vh !important;
+  width: 65vw !important;
+}
+
+.is-fullscreen .local-container {
+  margin: auto !important;
+
+  right: 0;
+  bottom: -3%;
+}
+
+.is-fullscreen .local-container .localVideo {
+  height: 46vh !important;
+  width: 65vw !important;
+}

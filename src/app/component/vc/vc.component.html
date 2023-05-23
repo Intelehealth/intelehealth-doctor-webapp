@@ -1,22 +1,16 @@
-<div #mainContainer class="main bg-dark">
-  <!-- <video #remoteVideo class="remoteVideo" autoplay></video>
-  <div #localContainer class="local-container col-xs-6">
-    <video #localVideo autoplay class="localVideo"></video>
-  </div> -->
-  <div class="col p-0">
-    <video #remoteVideo class="remoteVideo row m-0" autoplay></video>
-    <hr class="m-1"> 
-    <video #localVideo autoplay class="localVideo row m-0"></video>
+<div #mainContainer class="main" [class.is-fullscreen]="isFullscreen">
+  <video #remoteVideo class="remoteVideo" autoplay></video>
+  <div #localContainer class="local-container">
+    <video #localVideo autoplay class="localVideo mx-2"></video>
+  </div>
+  <div *ngIf="setSpiner" class="loader">
+    <label for="loader">Connecting...</label>
+    <mat-spinner [diameter]="70"></mat-spinner>
   </div>
 
   <div class="button-tab p-3 w-100 position-absolute">
     <div class="container d-flex justify-content-center">
-      <div
-        [class.bg-primary]="isVideoOff"
-        hover-class="bg-info"
-        class="icon rounded-circle mr-2 video"
-        (click)="video()"
-      >
+      <div class="icon rounded-circle video" (click)="video()">
         <img
           *ngIf="!isVideoOff"
           class="text-secondary"
@@ -28,43 +22,29 @@
           src="assets/svgs/video-slash.svg"
         />
       </div>
-      <div
-        [class.bg-primary]="isMute"
-        hover-class="bg-info"
-        class="icon rounded-circle mr-2 mute"
-        (click)="mute()"
-      >
+      <div class="icon rounded-circle mute" (click)="mute()">
         <i *ngIf="!isMute" class="fa fa-microphone"></i>
         <i *ngIf="isMute" class="fa fa-microphone-slash"></i>
       </div>
-      <div
-        (click)="endCallInRoom()"
-        hover-class="bg-info"
-        class="icon rounded-circle mr-2 end-call"
-      >
+      <div (click)="endCallInRoom()" class="icon rounded-circle end-call">
         <i class="fa fa-phone text-danger"></i>
       </div>
-      <div
-        [class.bg-primary]="isFullscreen"
-        hover-class="bg-info"
-        (click)="fullscreen()"
-        class="icon rounded-circle full-screen"
-      >
+      <div (click)="fullscreen()" class="icon rounded-circle full-screen">
         <i class="fa fa-arrows-alt"></i>
       </div>
     </div>
     <!-- <div class="room_id">
-      <div class="form-group">
-        <input
-          type="text"
-          id="room"
-          name="room"
-          class="form-control"
-          [(ngModel)]="room"
-          placeholder="Room Id"
-        />
-        <button class="btn btn-success" (click)="makeCall()">Call</button>
-      </div>
-    </div> -->
+        <div class="form-group">
+          <input
+            type="text"
+            id="room"
+            name="room"
+            class="form-control"
+            [(ngModel)]="room"
+            placeholder="Room Id"
+          />
+          <button class="btn btn-success" (click)="makeCall()">Call</button>
+        </div>
+      </div> -->
   </div>
 </div>

@@ -87,10 +87,7 @@ export class VcComponent implements OnInit, OnDestroy {
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
 
-    this.nurseId =
-      patientVisitProvider && patientVisitProvider.provider
-        ? patientVisitProvider.provider
-        : this.nurseId;
+    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
 
     this.socketService.initSocket(true);
     this.initSocketEvents();
@@ -353,7 +350,8 @@ export class VcComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
-    this.socketService.emitEvent("bye", this.room);
+    // this.socketService.emitEvent("bye", this.room);
+    this.socketService.emitEvent("bye", { room: this.room, nurseId: this.nurseId });
     this.setSpiner = false;
     this.close();
   }
