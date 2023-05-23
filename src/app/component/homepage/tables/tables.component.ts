@@ -66,6 +66,7 @@ export class TablesComponent implements OnInit {
       this.displayColumns.splice(7,0,"diagnosis");
     }
     if(this.tableFor === "followUpVisit") {
+      this.displayColumns.splice(6,0,"diagnosis");
       this.displayColumns.push("date");
       this.sort.sort(({}) as MatSortable);
       this.dataSource.sort = this.sort;
