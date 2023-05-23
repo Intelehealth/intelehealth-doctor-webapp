@@ -75,7 +75,12 @@ export class MonitoringComponent implements OnInit {
       this.data = this.data.map(item => {
         return this.setTableData(item);
       });
-      this.dataSource = new MatTableDataSource(this.data);
+      this.data.sort((a, b) => new Date(b.lastSyncTimestamp).getTime() - new Date(a.lastSyncTimestamp).getTime());
+      const arry = this.data.filter(
+        (obj, index) =>
+        this.data.findIndex((item) => item.name === obj.name) === index
+      )
+      this.dataSource = new MatTableDataSource(arry);
       this.dataSource.paginator = page == 1 ? this.paginator0 : this.paginator1;
       this.dataSource.sort = page === 1 ? this.sort0 : this.sort1;
     }, 0);
@@ -188,7 +193,12 @@ export class MonitoringComponent implements OnInit {
       console.log('item: ', item);
       return this.setTableData(item)
     });
-    const data = _data.map(({ userType, ...rest }) => rest);
+    _data.sort((a, b) => new Date(b.lastSyncTimestamp).getTime() - new Date(a.lastSyncTimestamp).getTime());
+    const arry = _data.filter(
+      (obj, index) =>
+      _data.findIndex((item) => item.name === obj.name) === index
+    )
+    const data = arry.map(({ userType, ...rest }) => rest);
     csvExporter.generateCsv(data);
   }
 
