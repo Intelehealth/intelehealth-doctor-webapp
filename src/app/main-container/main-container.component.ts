@@ -407,6 +407,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       return;
     }
     this._swPush.subscription.subscribe(sub => {
+      console.log(sub);
       if (!sub) {
         this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
@@ -429,6 +430,21 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           })();
         }).catch((_) => console.log);
       } else {
+        (async () => {
+          // Get the visitor identifier when you need it.
+          const fp = await FingerprintJS.load();
+          const result = await fp.get();
+          console.log(result.visitorId);
+          this.authService.subscribePushNotification(
+            sub,
+            this.user.uuid,
+            result.visitorId,
+            this.provider.person.display,
+            this.getSpecialization()
+          ).subscribe(response => {
+            console.log(response);
+          });
+        })();
         this._swPush.messages.subscribe(payload => {
           console.log(payload);
         });

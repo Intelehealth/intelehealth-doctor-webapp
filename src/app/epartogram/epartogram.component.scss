@@ -1,7 +1,8 @@
 .intel-card {
-  background: #F7F7FA;
+  background: #FFFFFF !important;
   .card-body {
-    border-radius: 12px;
+    border-radius: 6px;
+    padding: 5px !important;
 
     h1 {
       font-family: 'DM Sans';
