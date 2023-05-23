@@ -312,7 +312,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.setSpiner1= true;
     this.followUpVisit = [];
     this.followUpVisitNo = 0;
-    this.service.getVisits({}, true).subscribe(
+    let fromStartDate = moment().add(-2, 'months').startOf('month').format();
+    this.service.getVisitWithDateFilter({}, false, fromStartDate).subscribe(
       (response) => {
         let allVisits = [];
         response.results.forEach((item) => {
@@ -352,7 +353,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);  
       let found = this.followUpVisit.find(c => c.id === v.id);
       if (!found) {
-      this.followUpVisit.push(v);
+      this.followUpVisit.push(this.setValues(v, visit));
       this.followUpVisitNo += 1;
     }
   }
