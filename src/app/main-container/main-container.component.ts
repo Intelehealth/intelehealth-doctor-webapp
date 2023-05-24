@@ -153,9 +153,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
 
     this.introJs = introJs();
-    this.requestSubscription();
     this.getNotificationStatus();
     setTimeout(() => {
+      this.requestSubscription();
       if (!this.notificationEnabled) {
         this.toggleNotification();
       }
@@ -409,20 +409,20 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
-  requestSubscription() {
+  async requestSubscription() {
     if (!this._swPush.isEnabled) {
       console.log("Notification is not enabled.");
       return;
     }
-    console.log("Push notification checking subscription....");
-    this._swPush.subscription.subscribe(async (sub) => {
-      console.log("Currently active subscription:", sub);
-      if (!sub) {
+    console.log("Request subscription....");
+    // this._swPush.subscription.subscribe(async (sub) => {
+    //   console.log("Currently active subscription:", sub);
+    //   if (!sub) {
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
-        }).then((_) => {
+        }).then(async (_) => {
           console.log("New subscription: ", JSON.stringify(_));
-          (async () => {
+          // (async () => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
             const result = await fp.get();
@@ -436,14 +436,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             ).subscribe(response => {
               console.log(response);
             });
-          })();
+          // })();
         }).catch((_) => console.log);
-      } else {
-        this._swPush.messages.subscribe(payload => {
-          console.log(payload);
-        });
-      }
-    });
+    //   } else {
+    //     this._swPush.messages.subscribe(payload => {
+    //       console.log(payload);
+    //     });
+    //   }
+    // });
   }
 
 
