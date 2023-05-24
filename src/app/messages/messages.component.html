@@ -7,8 +7,8 @@
             <div class="col-md-4 p-0">
               <div class="chat-sidebar-wrapper">
                 <div class="chat-sidebar-title">
-                  <h6 class="mb-0">Patients</h6>
-                  <span>(Via Comunity health workers)</span>
+                  <h6 class="mb-0">{{'Patients'| translate}}</h6>
+                  <span>({{'Via Comunity health workers' | translate}})</span>
                 </div>
                 <div class="chat-sidebar-body">
                   <div class="chat-items-search">
@@ -28,7 +28,7 @@
                         [(ngModel)]="searchValue"
                         (ngModelChange)="search()"
                         class="form-control"
-                        placeholder="Search by patient name or ID"
+                        placeholder="{{'Search by patient name or ID'|translate}}"
                         aria-label="Username"
                         aria-describedby="basic-addon1"
                       />
@@ -57,7 +57,7 @@
                             {{
                               conversation.patientName
                                 ? (conversation.patientName | titlecase)
-                                : "Unknown"
+                                : "Unknown" |translate
                             }}
                           </h6>
                           <p>{{ conversation.message }}</p>
@@ -81,11 +81,11 @@
                         {{
                           selectedConversation.patientName
                             ? (selectedConversation.patientName | titlecase)
-                            : "Unknown"
+                            :  "Unknown" |translate
                         }}
                       </h6>
                       <span>
-                        CHW: {{ selectedConversation?.hwName | titlecase }}
+                        {{'CHW' |translate}}: {{ selectedConversation?.hwName | titlecase }}
                       </span>
                     </div>
                   </div>
@@ -139,11 +139,11 @@
                         >
                           <ng-container *ngIf="item.isRead">
                             <img src="assets/svgs/read-status.svg" alt="" />
-                            <span class="ml-1">Read</span>
+                            <span class="ml-1">{{'Read'|translate}}</span>
                           </ng-container>
                           <ng-container *ngIf="!item.isRead">
                             <img src="assets/svgs/sent-status.svg" alt="" />
-                            <span class="ml-1">Sent</span>
+                            <span class="ml-1">{{'Sent'|translate}}</span>
                           </ng-container>
                         </ng-container>
                       </li>
@@ -213,10 +213,10 @@
               <ng-template #noConversationSelected>
                 <div class="no-conversation-selected">
                   <img src="assets/svgs/chat-messages.png" alt="" />
-                  <h6>No messages selected</h6>
+                  <h6>{{'No messages selected'|translate}}</h6>
                   <p>
-                    Please select patient from the list <br />
-                    to view the messages
+                    {{'Please select patient from the list'|translate}} <br />
+                    {{'to view the messages'|translate}}
                   </p>
                 </div>
               </ng-template>

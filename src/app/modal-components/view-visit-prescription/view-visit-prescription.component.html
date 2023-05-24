@@ -1,6 +1,6 @@
 <div class="title-con position-relative" mat-dialog-title>
   <h6>
-    {{ isDownloadPrescription ? "Intelehealth e-" : "" }}Prescription
+    {{ isDownloadPrescription ? ('Intelehealth e-'|translate) : "" }} {{'Prescription'|translate}}
 
     <img
       *ngIf="isDownloadPrescription"
@@ -30,7 +30,7 @@
             </div>
             <div class="ml-3">
               <h6>
-                {{ patient?.person.display }} ({{ patient?.person.gender }})
+                {{ patient?.person.display }} ({{ (patient?.person.gender)| translate }})
               </h6>
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>Age</h6>
+            <h6>{{'Age'|translate}}</h6>
             <p>
               {{
                 patient?.person.birthdate
@@ -48,23 +48,23 @@
             </p>
           </div>
           <div class="patient-info-item">
-            <h6>Address</h6>
+            <h6>{{"Address"|translate}}</h6>
             <p>{{ patient?.person.preferredAddress.cityVillage }}</p>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>Occupation</h6>
+            <h6>{{'Occupation'|translate}}</h6>
             <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
           <div class="patient-info-item">
-            <h6>National ID</h6>
+            <h6>{{'National ID'|translate}}</h6>
             <p>{{ getPersonAttributeValue("NationalID") }}</p>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item">
-            <h6>Contact no.</h6>
+            <h6>{{'Contact no.'|translate}}</h6>
             <p>
               <img src="assets/svgs/phone-black.svg" alt="" />
               {{ getPersonAttributeValue("Telephone Number") }}
@@ -81,13 +81,13 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/consultation-details-blue.svg" alt="" />
-              <h6>Consultation details</h6>
+              <h6>{{'Consultation details'|translate}}</h6>
             </div>
             <div class="data-section-content consultation-details">
               <ul *ngIf="isDownloadPrescription" class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Patient Id</label>
+                    <label>{{'Patient Id'|translate}}</label>
                     <div class="list-item-content">
                       {{patient?.identifiers?.[0]?.identifier}}
                     </div>
@@ -95,7 +95,7 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Prescription Issued</label>
+                    <label>{{'Prescription Issued'|translate}}</label>
                     <div class="list-item-content">
                       {{
                         completedEncounter?.encounterDatetime
@@ -109,7 +109,7 @@
               <ul *ngIf="!isDownloadPrescription" class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Visit ID</label>
+                    <label>{{'Visit ID'|translate}}</label>
                     <div class="list-item-content">
                       {{
                         visit?.uuid
@@ -121,7 +121,7 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Visit created</label>
+                    <label>{{'Visit Created'|translate}}</label>
                     <div class="list-item-content">
                       {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
                     </div>
@@ -129,15 +129,15 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Appointment on</label>
+                    <label>{{'Appointment on'|translate}}</label>
                     <div class="list-item-content">
-                      <span class="text-muted">No appointment</span>
+                      <span class="text-muted">{{'No appointment'|translate}}</span>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Status</label>
+                    <label>{{'Status'|translate}}</label>
                     <div class="list-item-content">
                       <span
                         [ngClass]="{
@@ -150,14 +150,14 @@
                               'Ended Visit'
                             ].indexOf(visitStatus) != -1
                         }"
-                        >{{ visitStatus }}</span
+                        >{{ (visitStatus)|translate }}</span
                       >
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Location</label>
+                    <label>{{'Location'|translate}}</label>
                     <div class="list-item-content">
                       {{ clinicName | titlecase }}
                     </div>
@@ -165,7 +165,7 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Provided by</label>
+                    <label>{{'Provided by'|translate}}</label>
                     <div class="list-item-content">
                       <div class="visit-provider-con">
                         <span>{{ providerName }}</span>
@@ -182,41 +182,41 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/patient-interaction.svg" alt="" />
-              <h6>Consulted doctor details</h6>
+              <h6>{{'Consulted doctor details'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Name</label>
+                    <label>{{'Name'|translate}}</label>
                     <div class="list-item-content">
-                      {{ consultedDoctor ? consultedDoctor.name : "NA" }}
+                      {{ consultedDoctor ? consultedDoctor.name : ('NA'|translate) }}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Qualification</label>
+                    <label>{{'Qualification'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.typeOfProfession : "NA"
+                        consultedDoctor ? consultedDoctor.typeOfProfession : ('NA'|translate)
                       }}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Speciality</label>
+                    <label>{{'Speciality'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.specialization : "NA"
+                        consultedDoctor ? consultedDoctor.specialization : ('NA'|translate)
                       }}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Spoken with patient</label>
+                    <label>{{'Spoken with patient'|translate}}</label>
                     <div class="list-item-content">
                       {{ spokenWithPatient }}
                     </div>
@@ -231,15 +231,15 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/diagnosis.svg" alt="" />
-              <h6>Diagnosis</h6>
+              <h6>{{'Diagnosis'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
                 <li *ngIf="!isDownloadPrescription">
                   <div class="list-item">
-                    <label>Has enough information for diagnosis?</label>
+                    <label>{{'Has enough information for diagnosis?'|translate}}</label>
                     <div class="list-item-content">
-                      {{ existingDiagnosis.length ? "Yes" : "No" }}
+                      {{ existingDiagnosis.length ? ('Yes'|translate) : ('No'|translate) }}
                     </div>
                   </div>
                 </li>
@@ -248,9 +248,9 @@
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Diagnosis</th>
-                      <th scope="col">Type</th>
-                      <th scope="col">Status</th>
+                      <th scope="col">{{'Diagnosis'|translate}}</th>
+                      <th scope="col">{{'Type'|translate}}</th>
+                      <th scope="col">{{'Status'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -306,18 +306,18 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/medication.svg" alt="" />
-              <h6>Medication</h6>
+              <h6>{{'Medication'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <div class="table-responsive">
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Drug name</th>
-                      <th scope="col">Strength</th>
-                      <th scope="col">No. of days</th>
-                      <th scope="col">Timing</th>
-                      <th scope="col">Remarks</th>
+                      <th scope="col">{{'Drug name'|translate}}</th>
+                      <th scope="col">{{'Strength'|translate}}</th>
+                      <th scope="col">{{'No. of days'|translate}}</th>
+                      <th scope="col">{{'Timing'|translate}}</th>
+                      <th scope="col">{{'Remarks'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -333,7 +333,7 @@
                     <ng-template #noMedicines>
                       <tr>
                         <td colspan="5" class="text-center">
-                          No medicines added
+                         {{'No medicines added' | translate}}
                         </td>
                       </tr>
                     </ng-template>
@@ -357,7 +357,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/note.svg" alt="" />
-              <h6>Note</h6>
+              <h6>{{'Note'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
@@ -377,7 +377,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/advice.svg" alt="" />
-              <h6>Advice</h6>
+              <h6>{{'Advice'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
@@ -397,7 +397,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/test.svg" alt="" />
-              <h6>Test</h6>
+              <h6>{{'Test'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
@@ -417,15 +417,15 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/referral.svg" alt="" />
-              <h6>Referral</h6>
+              <h6>{{'Referral'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <div class="table-responsive">
                 <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Referral facility</th>
-                      <th scope="col">Remarks</th>
+                      <th scope="col">{{'Referral facility'|translate}}</th>
+                      <th scope="col">{{'Remarks'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -438,7 +438,7 @@
                     <ng-template #noReferrals>
                       <tr>
                         <td colspan="3" class="text-center">
-                          No referrals added
+                          {{'No referrals added'|translate}}
                         </td>
                       </tr>
                     </ng-template>
@@ -453,22 +453,22 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/follow-up.svg" alt="" />
-              <h6>Follow-up</h6>
+              <h6>{{'Follow-up'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Follow-up suggested</label>
+                    <label>{{'Follow-up suggested'|translate}}</label>
                     <div class="list-item-content">
-                      {{ followUp ? followUp.wantFollowUp : "No" }}
+                      {{ followUp ? followUp.wantFollowUp : ('No'|translate) }}
                     </div>
                   </div>
                 </li>
                 <ng-container *ngIf="followUp">
                   <li>
                     <div class="list-item">
-                      <label>Follow-up Date</label>
+                      <label>{{'Follow-up Date'|translate}}</label>
                       <div class="list-item-content">
                         {{ followUp.followUpDate | date : "mediumDate" }}
                       </div>
@@ -476,7 +476,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Follow-up Time</label>
+                      <label>{{'Follow-up Time'|translate}}</label>
                       <div class="list-item-content">
                         {{ followUp.followUpTime }}
                       </div>
@@ -484,7 +484,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>Reason for follow-up</label>
+                      <label>{{'Reason for follow-up'|translate}}</label>
                       <div class="list-item-content">
                         {{ followUp.followUpReason }}
                       </div>
@@ -503,7 +503,7 @@
           <div class="title-name">{{ consultedDoctor?.name }}</div>
           <div class="title">{{ consultedDoctor?.typeOfProfession }}</div>
           <div class="sub-title">
-            Registration No:{{ consultedDoctor?.registrationNumber }}
+            {{'Registration No'|translate}}:{{ consultedDoctor?.registrationNumber }}
           </div>
         </div>
       </div>

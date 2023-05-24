@@ -73,7 +73,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnInit(): void {
     // this.user = JSON.parse(localStorage.getItem('user'));
     // this.provider = JSON.parse(localStorage.getItem('provider'));
-    this.translateService.use(localStorage.getItem('selectedLanguage'))
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -299,7 +299,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
-        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+        this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
+         `${this.translateService.instant('Notifications')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off') }`);
       }
     });
   }

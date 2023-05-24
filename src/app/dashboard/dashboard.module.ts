@@ -7,7 +7,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +28,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatPaginationIntlService } from '../services/mat-pagination.service';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -75,6 +76,9 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
       }
     }),
     MatProgressSpinnerModule
+  ],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
   ]
 })
 export class DashboardModule { }

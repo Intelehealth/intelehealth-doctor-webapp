@@ -7,7 +7,7 @@
   </button>
 </div>
 <div class="title-con" mat-dialog-title>
-  <h6>Visit summary</h6>
+  <h6>{{'Visit summary'|translate}}</h6>
 </div>
 <mat-dialog-content>
   <div class="main-content">
@@ -19,28 +19,28 @@
               <img src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}" (error) ="onImgError($event)" alt="" width="100%" height="100%">
             </div>
             <div class="ml-3">
-              <h6>{{patient?.person.display}} ({{patient?.person.gender}})</h6>
+              <h6>{{patient?.person.display}} ({{(patient?.person.gender)|translate}})</h6>
               <p>{{getPatientIdentifier('OpenMRS ID')}}</p>
             </div>
           </div>
           <div class="patient-info-item">
-            <h6>Age</h6>
+            <h6>{{'Age'|translate}}</h6>
             <p>{{ (patient?.person.birthdate) ? getAge(patient?.person.birthdate) : patient?.person.age }}</p>
           </div>
         </div>
         <div class="col-md-4 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>Occupation</h6>
+            <h6>{{'Occupation'|translate}}</h6>
             <p>{{getPersonAttributeValue('occupation')}}</p>
           </div>
           <div class="patient-info-item">
-            <h6>Address</h6>
+            <h6>{{'Address'|translate}}</h6>
             <p>{{patient?.person.preferredAddress.cityVillage}}</p>
           </div>
         </div>
         <div class="col-md-4 patient-info-section p-3">
           <div class="patient-info-item">
-            <h6>Contact no.</h6>
+            <h6>{{'Contact no.'|translate}}</h6>
             <p>
               <img src="assets/svgs/phone-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
             </p>
@@ -55,13 +55,13 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/consultation-details.svg" alt="">
-              <h6>Consultation details</h6>
+              <h6>{{'Consultation details'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Visit ID</label>
+                    <label>{{'Visit ID'|translate}}</label>
                     <div class="list-item-content">
                       {{(visit?.uuid)?(replaceWithStar(visit?.uuid)|uppercase):''}}
                     </div>
@@ -69,7 +69,7 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Visit created</label>
+                    <label>{{'Visit Created'|translate}}</label>
                     <div class="list-item-content">
                       {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
                     </div>
@@ -77,23 +77,23 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Appointment on</label>
+                    <label>{{'Appointment on'|translate}}</label>
                     <div class="list-item-content">
-                      <span class="text-muted">No appointment</span>
+                      <span class="text-muted">{{'No appointment'|translate}}</span>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Status</label>
+                    <label>{{'Status'|translate}}</label>
                     <div class="list-item-content">
-                      <span [ngClass]="{ 'text-important-red': visitStatus == 'Priority Visit', 'text-important-green': ['Awaiting Visit', 'In-progress Visit', 'Completed Visit', 'Ended Visit'].indexOf(visitStatus) != -1 }">{{visitStatus}}</span>
+                      <span [ngClass]="{ 'text-important-red': visitStatus == 'Priority Visit', 'text-important-green': ['Awaiting Visit', 'In-progress Visit', 'Completed Visit', 'Ended Visit'].indexOf(visitStatus) != -1 }">{{(visitStatus)|translate}}</span>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Location</label>
+                    <label>{{'Location'|translate}}</label>
                     <div class="list-item-content">
                       {{clinicName|titlecase}}
                     </div>
@@ -101,7 +101,7 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Provided by</label>
+                    <label>{{'Provided by'|translate}}</label>
                     <div class="list-item-content">
                       <div class="visit-provider-con">
                         <span>{{providerName}}</span>
@@ -118,71 +118,71 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/vitals.svg" alt="">
-              <h6>Vitals</h6>
+              <h6>{{'Vitals'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>Height (cm)</label>
+                    <label>{{'Height (cm)'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)')">
-                      {{(getObsValue('Height (cm)'))?getObsValue('Height (cm)'):'No information'}}
+                      {{(getObsValue('Height (cm)'))?getObsValue('Height (cm)'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Weight (kg)</label>
+                    <label>{{'Weight (kg)'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
-                      {{(getObsValue('Weight (kg)'))?getObsValue('Weight (kg)'):'No information'}}
+                      {{(getObsValue('Weight (kg)'))?getObsValue('Weight (kg)'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>BMI</label>
+                    <label>{{'BMI'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)') || !getObsValue('Weight (kg)')">
-                      {{(getObsValue('Height (cm)') && getObsValue('Weight (kg)'))? ((getObsValue('Weight (kg)')/((getObsValue('Height (cm)')/100)*(getObsValue('Height (cm)')/100)))|number:'1.2-2') :'No information'}}
+                      {{(getObsValue('Height (cm)') && getObsValue('Weight (kg)'))? ((getObsValue('Weight (kg)')/((getObsValue('Height (cm)')/100)*(getObsValue('Height (cm)')/100)))|number:'1.2-2') :'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>BP</label>
+                    <label>{{'BP'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('SYSTOLIC BLOOD PRESSURE')">
-                      {{getObsValue('SYSTOLIC BLOOD PRESSURE') ? getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information'}}
+                      {{getObsValue('SYSTOLIC BLOOD PRESSURE') ? getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Pulse</label>
+                    <label>{{'Pulse'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('Pulse')">
-                      {{(getObsValue('Pulse'))?getObsValue('Pulse'):'No information'}}
+                      {{(getObsValue('Pulse'))?getObsValue('Pulse'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Temprature (F)</label>
+                    <label>{{'Temprature (F)'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('TEMPERATURE (C)')">
-                      {{(getObsValue('TEMPERATURE (C)'))?(((getObsValue('TEMPERATURE (C)')* 9/5)+32)|number:'0.2-2'):'No information'}}
+                      {{(getObsValue('TEMPERATURE (C)'))?(((getObsValue('TEMPERATURE (C)')* 9/5)+32)|number:'0.2-2'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>SpO2 (%)</label>
+                    <label>{{'SpO2'|translate}} (%)</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('BLOOD OXYGEN SATURATION')">
-                      {{(getObsValue('BLOOD OXYGEN SATURATION'))?getObsValue('BLOOD OXYGEN SATURATION'):'No information'}}
+                      {{(getObsValue('BLOOD OXYGEN SATURATION'))?getObsValue('BLOOD OXYGEN SATURATION'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>Respiratory Rate</label>
+                    <label>{{'Respiratory Rate'|translate}}</label>
                     <div class="list-item-content" [class.text-muted]="!getObsValue('Respiratory rate')">
-                      {{(getObsValue('Respiratory rate'))?getObsValue('Respiratory rate'):'No information'}}
+                      {{(getObsValue('Respiratory rate'))?getObsValue('Respiratory rate'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
@@ -195,11 +195,11 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/check-up-reason.svg" alt="">
-              <h6>Check-up reason</h6>
+              <h6>{{'Check-up reason'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <div class="cheif-complaint-wrapper">
-                <h6>Cheif Complaint</h6>
+                <h6>{{'Cheif Complaint'|translate}}</h6>
                 <div class="complaint-chips">
                   <div class="chip-item" *ngFor="let c of cheifComplaints;">
                     {{c}}
@@ -227,7 +227,7 @@
                           <div class="list-item-col">
                             <label>{{ckri.key}}</label>
                             <div class="list-item-content" [class.text-muted]="!ckri.value">
-                              {{(ckri.value)?ckri.value:'None'}}
+                              {{(ckri.value)?ckri.value:'None'|translate}}
                             </div>
                           </div>
                         </li>
@@ -244,7 +244,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/physical-examination.svg" alt="">
-              <h6>Physical examination</h6>
+              <h6>{{'Physical examination'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ng-container *ngFor="let pe of physicalExaminationData;">
@@ -262,7 +262,7 @@
                       </li>
                       <li *ngIf="eyeImages.length">
                         <div class="list-item">
-                          <label>Eye images</label>
+                          <label>{{'Eye images'|translate}}</label>
                           <div class="list-item-content">
                             <div class="eye-images-con">
                               <div class="eye-item" *ngFor="let e of eyeImages;let x=index;">
@@ -295,7 +295,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/medical-history.svg" alt="">
-              <h6>Medical history</h6>
+              <h6>{{'Medical history'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ng-container *ngFor="let ph of patientHistoryData;">
@@ -321,7 +321,7 @@
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/additional-documents.svg" alt="">
-              <h6>Additional documents</h6>
+              <h6>{{'Additional documents'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <ng-container *ngIf="additionalDocs.length; else noAdditionaDocs;">
@@ -342,7 +342,7 @@
               </ng-container>
               <ng-template #noAdditionaDocs>
                 <div class="no-docs">
-                  No additional docs available!
+                {{'No additional docs available!' |translate}}
                 </div>
               </ng-template>
             </div>

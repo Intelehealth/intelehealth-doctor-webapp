@@ -11,6 +11,7 @@ import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -55,9 +56,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private socket: SocketService,
     private router: Router,
     private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
     let provider = JSON.parse(localStorage.getItem('provider'));
     if (provider) {
