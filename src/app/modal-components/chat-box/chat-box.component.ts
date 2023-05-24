@@ -38,11 +38,11 @@ export class ChatBoxComponent implements OnInit {
     }
     this.socketSvc.initSocket(true);
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
-      this.socketSvc.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
+      // this.socketSvc.showNotification({
+      //   title: "New chat message",
+      //   body: data.message,
+      //   timestamp: new Date(data.createdAt).getTime(),
+      // });
 
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? 1 : -1);

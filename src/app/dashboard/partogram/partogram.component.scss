@@ -19,9 +19,9 @@
   cursor: grab;
 }
 
-.table {
-  margin: 5px;
-}
+// .table {
+//   margin: 5px;
+// }
 
 .table-bordered th, .table-bordered td {
   border: 1px solid #000000;
@@ -305,4 +305,15 @@ th:first-child {
 td:last-child,
 th:last-child {
   border-radius: 0 8px 8px 0;
+}
+
+.blue-btn {
+  outline: none;
+  border: none;
+  background: #2E1E91;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  padding: 10px;
 }

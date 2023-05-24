@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { PanZoomAPI, PanZoomConfig } from 'ngx-panzoom';
+import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
@@ -16,7 +18,7 @@ import { VisitService } from 'src/app/services/visit.service';
   templateUrl: './partogram.component.html',
   styleUrls: ['./partogram.component.scss']
 })
-export class PartogramComponent implements OnInit {
+export class PartogramComponent implements OnInit, OnDestroy {
 
   pos = { top: 0, left: 0, x: 0, y: 0 };
   ele: any;
@@ -216,6 +218,17 @@ export class PartogramComponent implements OnInit {
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
 
+  panZoomConfig: PanZoomConfig = new PanZoomConfig({
+    zoomOnMouseWheel: false,
+    zoomOnDoubleClick: false,
+    scalePerZoomLevel: 1.5,
+    freeMouseWheel: false,
+    invertMouseWheel: true
+  });
+  private panZoomAPI: PanZoomAPI;
+  private apiSubscription: Subscription;
+  private zoomLevel: number = 2;
+
   constructor(
     private pageTitleService: PageTitleService,
     private route: ActivatedRoute,
@@ -225,15 +238,43 @@ export class PartogramComponent implements OnInit {
     private encounterService: EncounterService
   ) { }
 
+  ngOnDestroy(): void {
+    this.apiSubscription.unsubscribe();
+  }
+
+  zoomIn() {
+    if (this.zoomLevel < 4) {
+      this.zoomLevel++;
+      this.panZoomAPI.changeZoomLevel(this.zoomLevel, { x: 0, y: 0 });
+      this.panZoomAPI.centerX();
+    }
+  }
+
+  zoomOut() {
+    if (this.zoomLevel > 0) {
+      this.zoomLevel--;
+      this.panZoomAPI.changeZoomLevel(this.zoomLevel, { x: 0, y: 0 });
+      this.panZoomAPI.centerX();
+    }
+  }
+
+  zoomReset() {
+    this.zoomLevel = 2;
+    this.panZoomAPI.resetView();
+  }
+
   ngOnInit(): void {
+    this.apiSubscription = this.panZoomConfig.api.subscribe( (api: PanZoomAPI) => this.panZoomAPI = api );
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
     setTimeout(()=> {
       this.ele = document.getElementsByClassName('table-responsive')[0];
-      this.ele.scrollTop = 0;
-      this.ele.scrollLeft = 0;
-      this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+      if (this.ele) {
+        this.ele.scrollTop = 0;
+        this.ele.scrollLeft = 0;
+        this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+      }
     }, 1000);
     this.getVisit(id);
   }

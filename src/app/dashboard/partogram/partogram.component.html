@@ -4,1552 +4,1561 @@
       <div class="intel-card">
         <div class="card-body">
           <!-- <h1>WHO LABOUR CARE GUIDE</h1> -->
-          <div class="table-responsive d-flex">
-            <table class="table table-bordered bg-white">
-              <tbody>
-                <tr class="page-title-row">
-                  <td colspan="41"><h1 class="mb-0">WHO LABOUR CARE GUIDE</h1></td>
-                </tr>
-                <tr class="page-title-row">
-                  <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
-                  <td colspan="4"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
-                  <td colspan="10"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
-                  <td colspan="22"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
-                </tr>
-                <tr class="page-title-row">
-                  <td colspan="10"><span>
-                    Raptured membranes:</span>&nbsp;
-                    <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp == 'U'">U</ng-container>
-                    <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp != 'U'">
-                      <span>[Date</span> {{pinfo?.MembraneRupturedTimestamp|date:'dd/MM/yyyy'|noValue:'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
-                    </ng-container>
-                  </td>
-                  <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="nb"></td>
-                  <td>Time</td>
-                  <ng-container *ngFor="let item of timeStage1;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item">
-                        {{item|date:'hh:mm a'}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <td rowspan="51" class="divider"></td>
-                  <ng-container *ngFor="let item of timeStage2;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item">
-                        {{item|date:'hh:mm a'}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="3" class="nb"></td>
-                  <td>Hours</td>
-                  <td colspan="2">1</td>
-                  <td colspan="2">2</td>
-                  <td colspan="2">3</td>
-                  <td colspan="2">4</td>
-                  <td colspan="2">5</td>
-                  <td colspan="2">6</td>
-                  <td colspan="2">7</td>
-                  <td colspan="2">8</td>
-                  <td colspan="2">9</td>
-                  <td colspan="2">10</td>
-                  <td colspan="2">11</td>
-                  <td colspan="2">12</td>
-                  <td colspan="4">1</td>
-                  <td colspan="4">2</td>
-                  <td colspan="4">3</td>
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr class="alert-row">
-                  <td colspan="3" class="nb"></td>
-                  <td>ALERT</td>
-                  <td colspan="24" class="nb">
-                    <div class="d-flex align-items-center">
-                      <div class="arrow left"></div>
-                      <span>ACTIVE FIRST STAGE</span>
-                      <div class="arrow right"></div>
-                    </div>
-                  </td>
-                  <td colspan="12" class="nb">
-                    <div class="d-flex align-items-center">
-                      <div class="arrow left"></div>
-                      <span>SECOND STAGE</span>
-                      <div class="arrow right"></div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="5" class="vrt-header"><span>SUPPORTIVE CARE</span> </td>
-                  <td colspan="2">Companion</td>
-                  <td>N</td>
-                  <ng-container *ngFor="let item of parameters[0].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[0].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Pain Relief</td>
-                  <td>N</td>
-                  <ng-container *ngFor="let item of parameters[1].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[1].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr *ngIf="visitCompleted">
-                  <td colspan="27" class="divider2"></td>
-                  <td colspan="12" class="divider2">
-                    <div class="birth-outcome-con">
-                      {{birthOutcome|uppercase}}
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">Oral Fluid</td>
-                  <td>N</td>
-                  <ng-container *ngFor="let item of parameters[2].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[2].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Posture</td>
-                  <td>SP</td>
-                  <ng-container *ngFor="let item of parameters[3].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[3].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="6" class="vrt-header"><span>BABY</span></td>
-                  <td colspan="2">Baseline FHR</td>
-                  <td>≤110, ≥160</td>
-                  <ng-container *ngFor="let item of parameters[4].stage1values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item vertical" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[4].stage2values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item vertical" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">FHR deceleration</td>
-                  <td>L</td>
-                  <ng-container *ngFor="let item of parameters[5].stage1values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[5].stage2values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Amniotic Fluid</td>
-                  <td>M+++, B</td>
-                  <ng-container *ngFor="let item of parameters[6].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[6].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Fetal Position</td>
-                  <td>P, T</td>
-                  <ng-container *ngFor="let item of parameters[7].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[7].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Caput</td>
-                  <td>+++</td>
-                  <ng-container *ngFor="let item of parameters[8].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[8].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Moulding</td>
-                  <td>+++</td>
-                  <ng-container *ngFor="let item of parameters[9].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[9].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="5" class="vrt-header"><span>WOMEN</span></td>
-                  <td colspan="2">Pulse</td>
-                  <td>≤60, ≥120</td>
-                  <ng-container *ngFor="let item of parameters[10].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[10].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Systolic BP</td>
-                  <td>≤80, ≥140</td>
-                  <ng-container *ngFor="let item of parameters[11].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[11].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Diastolic BP</td>
-                  <td>≥90</td>
-                  <ng-container *ngFor="let item of parameters[12].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[12].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Temprature °C</td>
-                  <td>≤35.0, ≥37.5</td>
-                  <ng-container *ngFor="let item of parameters[13].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[13].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Urine</td>
-                  <td>P++, A++</td>
-                  <ng-container *ngFor="let item of parameters[14].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[14].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="16" class="vrt-header"><span>LABOUR PROGRESS</span></td>
-                  <td colspan="2">Contractions per 10 min</td>
-                  <td>≤2, >5</td>
-                  <ng-container *ngFor="let item of parameters[15].stage1values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[15].stage2values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="2">Duration of contractions</td>
-                  <td>≤20, >60</td>
-                  <ng-container *ngFor="let item of parameters[16].stage1values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngFor="let item of parameters[16].stage2values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="40" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="6">Cervix [Plot X]</td>
-                  <td>10</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item == '10'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
+          <div class="py-2 d-flex align-items-center justify-content-end">
+            <button class="blue-btn mr-1" type="button" (click)="zoomIn()">ZoomIn [+]</button>
+            <button class="blue-btn mr-1" type="button" (click)="zoomOut()">ZoomOut [-]</button>
+            <button class="blue-btn" type="button" (click)="zoomReset()">Reset</button>
+          </div>
+          <div style="height: 2000px; border: 1px solid black;">
+            <pan-zoom [config]="panZoomConfig">
+              <div class="d-flex">
+                <table class="table table-bordered bg-white">
+                  <tbody>
+                    <tr class="page-title-row">
+                      <td colspan="41"><h1 class="mb-0">WHO LABOUR CARE GUIDE</h1></td>
+                    </tr>
+                    <tr class="page-title-row">
+                      <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                      <td colspan="4"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
+                      <td colspan="10"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
+                      <td colspan="22"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
+                    </tr>
+                    <tr class="page-title-row">
+                      <td colspan="10"><span>
+                        Raptured membranes:</span>&nbsp;
+                        <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp == 'U'">U</ng-container>
+                        <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp != 'U'">
+                          <span>[Date</span> {{pinfo?.MembraneRupturedTimestamp|date:'dd/MM/yyyy'|noValue:'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
+                        </ng-container>
+                      </td>
+                      <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="nb"></td>
+                      <td>Time</td>
+                      <ng-container *ngFor="let item of timeStage1;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item">
+                            {{item|date:'hh:mm a'}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <td rowspan="51" class="divider"></td>
+                      <ng-container *ngFor="let item of timeStage2;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item">
+                            {{item|date:'hh:mm a'}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="nb"></td>
+                      <td>Hours</td>
+                      <td colspan="2">1</td>
+                      <td colspan="2">2</td>
+                      <td colspan="2">3</td>
+                      <td colspan="2">4</td>
+                      <td colspan="2">5</td>
+                      <td colspan="2">6</td>
+                      <td colspan="2">7</td>
+                      <td colspan="2">8</td>
+                      <td colspan="2">9</td>
+                      <td colspan="2">10</td>
+                      <td colspan="2">11</td>
+                      <td colspan="2">12</td>
+                      <td colspan="4">1</td>
+                      <td colspan="4">2</td>
+                      <td colspan="4">3</td>
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr class="alert-row">
+                      <td colspan="3" class="nb"></td>
+                      <td>ALERT</td>
+                      <td colspan="24" class="nb">
+                        <div class="d-flex align-items-center">
+                          <div class="arrow left"></div>
+                          <span>ACTIVE FIRST STAGE</span>
+                          <div class="arrow right"></div>
+                        </div>
+                      </td>
+                      <td colspan="12" class="nb">
+                        <div class="d-flex align-items-center">
+                          <div class="arrow left"></div>
+                          <span>SECOND STAGE</span>
+                          <div class="arrow right"></div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="5" class="vrt-header"><span>SUPPORTIVE CARE</span> </td>
+                      <td colspan="2">Companion</td>
+                      <td>N</td>
+                      <ng-container *ngFor="let item of parameters[0].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[0].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Pain Relief</td>
+                      <td>N</td>
+                      <ng-container *ngFor="let item of parameters[1].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[1].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr *ngIf="visitCompleted">
+                      <td colspan="27" class="divider2"></td>
+                      <td colspan="12" class="divider2">
+                        <div class="birth-outcome-con">
+                          {{birthOutcome|uppercase}}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2">Oral Fluid</td>
+                      <td>N</td>
+                      <ng-container *ngFor="let item of parameters[2].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[2].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Posture</td>
+                      <td>SP</td>
+                      <ng-container *ngFor="let item of parameters[3].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[3].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="6" class="vrt-header"><span>BABY</span></td>
+                      <td colspan="2">Baseline FHR</td>
+                      <td>≤110, ≥160</td>
+                      <ng-container *ngFor="let item of parameters[4].stage1values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item vertical" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[4].stage2values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item vertical" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">FHR deceleration</td>
+                      <td>L</td>
+                      <ng-container *ngFor="let item of parameters[5].stage1values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[5].stage2values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Amniotic Fluid</td>
+                      <td>M+++, B</td>
+                      <ng-container *ngFor="let item of parameters[6].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[6].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Fetal Position</td>
+                      <td>P, T</td>
+                      <ng-container *ngFor="let item of parameters[7].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[7].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Caput</td>
+                      <td>+++</td>
+                      <ng-container *ngFor="let item of parameters[8].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[8].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Moulding</td>
+                      <td>+++</td>
+                      <ng-container *ngFor="let item of parameters[9].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[9].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="5" class="vrt-header"><span>WOMEN</span></td>
+                      <td colspan="2">Pulse</td>
+                      <td>≤60, ≥120</td>
+                      <ng-container *ngFor="let item of parameters[10].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[10].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Systolic BP</td>
+                      <td>≤80, ≥140</td>
+                      <ng-container *ngFor="let item of parameters[11].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[11].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Diastolic BP</td>
+                      <td>≥90</td>
+                      <ng-container *ngFor="let item of parameters[12].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[12].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Temprature °C</td>
+                      <td>≤35.0, ≥37.5</td>
+                      <ng-container *ngFor="let item of parameters[13].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[13].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Urine</td>
+                      <td>P++, A++</td>
+                      <ng-container *ngFor="let item of parameters[14].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[14].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="16" class="vrt-header"><span>LABOUR PROGRESS</span></td>
+                      <td colspan="2">Contractions per 10 min</td>
+                      <td>≤2, >5</td>
+                      <ng-container *ngFor="let item of parameters[15].stage1values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[15].stage2values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="2">Duration of contractions</td>
+                      <td>≤20, >60</td>
+                      <ng-container *ngFor="let item of parameters[16].stage1values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngFor="let item of parameters[16].stage2values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="40" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="6">Cervix [Plot X]</td>
+                      <td>10</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item == '10'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
 
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[17].stage2values; let odd=odd;">
-                    <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
-                      <div class="value-item" *ngIf="item?.value == '10'||item?.value == 'P'">
-                        P
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td>
-                  <td class="brd"></td>
-                  <td class="bld"></td> -->
-                </tr>
-                <tr>
-                  <td>9</td>
-                  <td>≥2h</td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '9'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <td colspan="12" rowspan="5">
-                    In active first stage, plot ‘X’ to <br> record cervical dilatation. Alert<br> triggered when lag time for<br> current cervical dilatation is<br> exceeded with no progress. In<br> second stage, insert ‘P’ to indicate<br> when pushing begins.
-                  </td>
-                </tr>
-                <tr>
-                  <td>8</td>
-                  <td>≥2.5h</td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '8'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>7</td>
-                  <td>≥3h</td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '7'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>6</td>
-                  <td>≥5h</td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '6'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>≥6h</td>
-                  <ng-container *ngFor="let item of parameters[17].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '5'">
-                        X
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="40" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="6">Descent [Plot O]</td>
-                  <td>5</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '5'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '5'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '4'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '4'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '3'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '3'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '2'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '2'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '1'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '1'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td>0</td>
-                  <td class="bg-secondary"></td>
-                  <ng-container *ngFor="let item of parameters[18].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '0'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item?.value == '0'">
-                        O
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="3" class="vrt-header"><span>MEDICATION</span></td>
-                  <td colspan="3">Oxytocin (U/L, drops/min)</td>
-                  <ng-container *ngFor="let item of parameters[19].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[19].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="3">Medicine</td>
-                  <ng-container *ngFor="let item of parameters[20].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[20].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="3">IV fluids</td>
-                  <ng-container *ngFor="let item of parameters[21].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[21].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td rowspan="4" class="vrt-header"><span>SHARED DECISION-MAKING</span></td>
-                  <td colspan="3">ASSESSMENT</td>
-                  <ng-container *ngFor="let item of parameters[22].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[22].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <td colspan="40" class="divider"></td>
-                </tr>
-                <tr>
-                  <td colspan="3" rowspan="2">PLAN</td>
-                  <ng-container *ngFor="let item of parameters[23].stage1values;">
-                    <td colspan="2">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of parameters[23].stage2values;">
-                    <td colspan="4">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr>
-                  <ng-container *ngFor="let item of encuuid1; let i=index;">
-                    <td colspan="2">
-                      <div class="add-plan-wrapper" *ngIf="item && !(parameters[22].stage1values[i]||parameters[23].stage1values[i])">
-                        <span>Add <br> Plan / Assessment</span>
-                        <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="addAssessmentAndPlan(1, i)">
-                          <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                        </button>
-                      </div>
-                      <div class="add-plan-wrapper" *ngIf="item && (parameters[22].stage1values[i]||parameters[23].stage1values[i])">
-                        <span>Plan / Assessment <br> Added</span>
-                        <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="editAssessmentAndPlan(1, i)">
-                          <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Plan / Assessment <br> Added</span>
-                      <button type="button">
-                        <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="2">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td> -->
-                  <ng-container *ngFor="let item of encuuid2; let i=index;">
-                    <td colspan="4">
-                      <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
-                        <span>Add <br> Plan / Assessment</span>
-                        <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="addAssessmentAndPlan(2, i)">
-                          <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                        </button>
-                      </div>
-                      <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
-                        <span>Plan / Assessment <br> Added</span>
-                        <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="editAssessmentAndPlan(2, i)">
-                          <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
-                        </button>
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="4">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td>
-                  <td colspan="4">
-                    <div class="add-plan-wrapper">
-                      <span>Add <br> Plan / Assessment</span>
-                      <button type="button">
-                        <img src="assets/svgs/add-btn.svg" alt="" width="100%">
-                      </button>
-                    </div>
-                  </td> -->
-                </tr>
-                <tr>
-                  <td colspan="41" class="divider"></td>
-                </tr>
-                <tr>
-                  <td class="nb"></td>
-                  <td colspan="3">INITIALS</td>
-                  <ng-container *ngFor="let item of initialsStage1;">
-                    <td colspan="2">
-                      <div class="value-item" *ngIf="item">
-                        {{item}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td>
-                  <td colspan="2"></td> -->
-                  <ng-container *ngFor="let item of initialsStage2;">
-                    <td colspan="4">
-                      <div class="value-item" *ngIf="item">
-                        {{item}}
-                      </div>
-                    </td>
-                  </ng-container>
-                  <!-- <td colspan="4"></td>
-                  <td colspan="4"></td>
-                  <td colspan="4"></td> -->
-                </tr>
-                <tr class="footer-row">
-                  <td colspan="41" class="nb">
-                    INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR DOCTOR AND RECORD THE ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H, PLEASE CONTINUE ON A NEW LABOUR CARE GUIDE.<br>
-                    Abbreviations: Y – <span>Yes</span>, N – <span>No</span>, D – <span>Declined</span>, U – <span>Unknown</span>, SP – <span>Supine</span>, MO – <span>Mobile</span>, E – <span>Early</span>, L – <span>Late</span>, V – <span>Variable</span>, I – <span>Intact</span>, C – <span>Clear</span>, M – <span>Meconium</span>, B – <span>Blood</span>, A – <span>Anterior</span>, P – <span>Posterior</span>, T – <span>Transverse</span>, P+ – <span>Protein</span>, A+ – <span>Acetone</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[17].stage2values; let odd=odd;">
+                        <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
+                          <div class="value-item" *ngIf="item?.value == '10'||item?.value == 'P'">
+                            P
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td>
+                      <td class="brd"></td>
+                      <td class="bld"></td> -->
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td>≥2h</td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '9'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <td colspan="12" rowspan="5">
+                        In active first stage, plot ‘X’ to <br> record cervical dilatation. Alert<br> triggered when lag time for<br> current cervical dilatation is<br> exceeded with no progress. In<br> second stage, insert ‘P’ to indicate<br> when pushing begins.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td>≥2.5h</td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '8'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td>≥3h</td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '7'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>≥5h</td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '6'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>≥6h</td>
+                      <ng-container *ngFor="let item of parameters[17].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '5'">
+                            X
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="40" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="6">Descent [Plot O]</td>
+                      <td>5</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '5'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '5'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '4'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '4'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '3'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '3'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '2'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '2'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>1</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '1'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '1'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td>0</td>
+                      <td class="bg-secondary"></td>
+                      <ng-container *ngFor="let item of parameters[18].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '0'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[18].stage2values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item?.value == '0'">
+                            O
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="3" class="vrt-header"><span>MEDICATION</span></td>
+                      <td colspan="3">Oxytocin (U/L, drops/min)</td>
+                      <ng-container *ngFor="let item of parameters[19].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[19].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="3">Medicine</td>
+                      <ng-container *ngFor="let item of parameters[20].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[20].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="3">IV fluids</td>
+                      <ng-container *ngFor="let item of parameters[21].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[21].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="4" class="vrt-header"><span>SHARED DECISION-MAKING</span></td>
+                      <td colspan="3">ASSESSMENT</td>
+                      <ng-container *ngFor="let item of parameters[22].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[22].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="40" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" rowspan="2">PLAN</td>
+                      <ng-container *ngFor="let item of parameters[23].stage1values;">
+                        <td colspan="2">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of parameters[23].stage2values;">
+                        <td colspan="4">
+                          <div class="value-item note" *ngIf="item">
+                            {{item?.value}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr>
+                      <ng-container *ngFor="let item of encuuid1; let i=index;">
+                        <td colspan="2">
+                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[22].stage1values[i]||parameters[23].stage1values[i])">
+                            <span>Add <br> Plan / Assessment</span>
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="addAssessmentAndPlan(1, i)">
+                              <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                            </button>
+                          </div>
+                          <div class="add-plan-wrapper" *ngIf="item && (parameters[22].stage1values[i]||parameters[23].stage1values[i])">
+                            <span>Plan / Assessment <br> Added</span>
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="editAssessmentAndPlan(1, i)">
+                              <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
+                            </button>
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Plan / Assessment <br> Added</span>
+                          <button type="button">
+                            <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="2">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td> -->
+                      <ng-container *ngFor="let item of encuuid2; let i=index;">
+                        <td colspan="4">
+                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
+                            <span>Add <br> Plan / Assessment</span>
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="addAssessmentAndPlan(2, i)">
+                              <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                            </button>
+                          </div>
+                          <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
+                            <span>Plan / Assessment <br> Added</span>
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="editAssessmentAndPlan(2, i)">
+                              <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
+                            </button>
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="4">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td>
+                      <td colspan="4">
+                        <div class="add-plan-wrapper">
+                          <span>Add <br> Plan / Assessment</span>
+                          <button type="button">
+                            <img src="assets/svgs/add-btn.svg" alt="" width="100%">
+                          </button>
+                        </div>
+                      </td> -->
+                    </tr>
+                    <tr>
+                      <td colspan="41" class="divider"></td>
+                    </tr>
+                    <tr>
+                      <td class="nb"></td>
+                      <td colspan="3">INITIALS</td>
+                      <ng-container *ngFor="let item of initialsStage1;">
+                        <td colspan="2">
+                          <div class="value-item" *ngIf="item">
+                            {{item}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td>
+                      <td colspan="2"></td> -->
+                      <ng-container *ngFor="let item of initialsStage2;">
+                        <td colspan="4">
+                          <div class="value-item" *ngIf="item">
+                            {{item}}
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- <td colspan="4"></td>
+                      <td colspan="4"></td>
+                      <td colspan="4"></td> -->
+                    </tr>
+                    <tr class="footer-row">
+                      <td colspan="41" class="nb">
+                        INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR DOCTOR AND RECORD THE ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H, PLEASE CONTINUE ON A NEW LABOUR CARE GUIDE.<br>
+                        Abbreviations: Y – <span>Yes</span>, N – <span>No</span>, D – <span>Declined</span>, U – <span>Unknown</span>, SP – <span>Supine</span>, MO – <span>Mobile</span>, E – <span>Early</span>, L – <span>Late</span>, V – <span>Variable</span>, I – <span>Intact</span>, C – <span>Clear</span>, M – <span>Meconium</span>, B – <span>Blood</span>, A – <span>Anterior</span>, P – <span>Posterior</span>, T – <span>Transverse</span>, P+ – <span>Protein</span>, A+ – <span>Acetone</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </pan-zoom>
           </div>
 
           <div class="intel-card mt-5">
