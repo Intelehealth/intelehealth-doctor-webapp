@@ -76,6 +76,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
   conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
+  conceptDDx = 'bc48889e-b461-4e5e-98d1-31eb9dd6160e';
 
   baseURL = environment.baseURL;
   additionalDocs: any = [];
@@ -237,6 +238,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
+  currentComplaint: any;
+  ddx: any;
+  ddxPresent: any = false;
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -431,6 +435,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.visitCompleted = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
             // check if visit note provider and logged in provider are same
             this.visitEnded = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey') || visit.stopDatetime;
+            // check if visit note exists for this visit
+            this.ddxPresent = this.checkIfEncounterExists(visit.encounters, 'Differential Diagnosis');
             // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
@@ -458,6 +464,33 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getEyeImages(visit);
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
+            if (this.ddxPresent) {
+              if (this.username == 'doctorai') {
+                this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDDx).subscribe((response: any) => {
+                  response.results.forEach((obs: any) => {
+                    if (obs.encounter.visit.uuid === this.visit.uuid) {
+                      this.ddx = {
+                        maxCols: 1,
+                        data: []
+                      };
+                      let maxCol = 1;
+                      const rows = obs?.value.split('\n');
+                      rows.forEach(r => {
+                        const cols = r.split('|');
+                        if(cols.length > maxCol) maxCol = cols.length;
+                        this.ddx.data.push(cols);
+                      });
+                      this.ddx.maxCols = maxCol;
+                      console.log(this.ddx);
+                    }
+                  });
+                });
+              }
+            } else {
+              setTimeout(() => {
+                this.getDDx();
+              }, 1000);
+            }
           }
         });
       }
@@ -528,6 +561,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
+            this.currentComplaint = obs.value;
             const currentComplaint = obs.value.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
@@ -845,6 +879,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   get userId() {
     return JSON.parse(localStorage.user).uuid;
+  }
+
+  get username() {
+    return JSON.parse(localStorage.user).username;
   }
 
   checkIfDateOldThanOneDay(data: any) {
@@ -1528,6 +1566,46 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   openVisitPrescriptionModal(uuid: string) {
     this.coreService.openVisitPrescriptionModal({ uuid });
+  }
+
+  getDDx() {
+    if (this.currentComplaint && this.username == 'doctorai') {
+      this.visitService.chatGPTCompletionDDx(this.currentComplaint).subscribe((res: any) => {
+        this.ddx = {
+          maxCols: 1,
+          data: []
+        };
+        let maxCol = 1;
+        const rows = res?.data.choices[0]?.message.content.split('\n');
+        rows.forEach(r => {
+          const cols = r.split('|');
+          if(cols.length > maxCol) maxCol = cols.length;
+          this.ddx.data.push(cols);
+        });
+        this.ddx.maxCols = maxCol;
+        console.log(this.ddx);
+        this.encounterService.postEncounter({
+          patient: this.visit.patient.uuid,
+          encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
+          encounterProviders: [
+            {
+              provider: this.provider.uuid,
+              encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+            },
+          ],
+          visit: this.visit.uuid,
+          encounterDatetime: new Date(Date.now() - 30000),
+          obs: [
+            {
+              concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
+              value: res?.data.choices[0]?.message.content,
+            },
+          ]
+        }).subscribe((post) => {
+          this.ddxPresent = true;
+        });
+      });
+    }
   }
 
   ngOnDestroy(): void {

@@ -129,4 +129,8 @@ export class VisitService {
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
   }
+
+  chatGPTCompletionDDx(payload: any) {
+    return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload });
+  }
 }

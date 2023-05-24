@@ -192,7 +192,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
-      age: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]*$/)]),
+      age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),
       countryCode1: new FormControl('+91'),
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),

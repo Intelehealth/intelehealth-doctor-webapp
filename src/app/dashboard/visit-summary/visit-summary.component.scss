@@ -144,6 +144,12 @@
   }
 }
 
+.intel-accordion-con.ddx {
+  .mat-expansion-panel {
+    background: aliceblue;
+  }
+}
+
 .intel-accordion-con {
 
   .mat-expansion-panel.overflow-show {
@@ -583,6 +589,14 @@ table {
   font-family: DM Sans;
 }
 
+.ddx-table {
+  width: fit-content;
+
+  th, td {
+    padding: 0.2rem 0.5rem;
+  }
+}
+
 th.mat-header-cell {
   border: none;
   font-size: 14px !important;
@@ -771,6 +785,14 @@ th.mat-header-cell:last-child {
       }
     }
 
+  }
+
+  .blue-btn {
+    width: 100%;
+  }
+
+  .col-form-label {
+    font-weight: bold;
   }
 }
 
