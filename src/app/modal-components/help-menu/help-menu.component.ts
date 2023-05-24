@@ -19,7 +19,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getMessages(true);
-    this.socketService.initSocketSupport(true);
+    // this.socketService.initSocketSupport(true);
     this.subscription1 = this.socketService.onEvent("supportMessage").subscribe((data) => {
       // this.socketService.showNotification({
       //   title: "New message from support team",

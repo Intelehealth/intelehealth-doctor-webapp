@@ -36,7 +36,7 @@ export class ChatBoxComponent implements OnInit {
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
     }
-    this.socketSvc.initSocket(true);
+    // this.socketSvc.initSocket(true);
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       // this.socketSvc.showNotification({
       //   title: "New chat message",

@@ -143,19 +143,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
 
 
-    // If user role is admin then suscribe for support messages
-    let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-    if (role) {
-      this.subscription1 = this.socketService.adminUnread.subscribe(res => {
-        this.adminUnread = res;
-      });
-      this.socketInitialize();
-    }
-
+    this.socketInitialize();
     this.introJs = introJs();
+    this.requestSubscription();
     this.getNotificationStatus();
     setTimeout(() => {
-      this.requestSubscription();
       if (!this.notificationEnabled) {
         this.toggleNotification();
       }
@@ -188,24 +180,45 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   socketInitialize() {
+    // If user role is admin then suscribe for support messages
+    let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+    this.subscription1 = this.socketService.adminUnread.subscribe(res => {
+      this.adminUnread = res;
+    });
     this.subscription2?.unsubscribe();
     this.subscription3?.unsubscribe();
     if (this.interval) {
       clearInterval(this.interval);
     }
     this.socketService.initSocketSupport(true);
-    this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
-      this.socketService.addCount(data);
-    });
+    if (role) {
+      this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
+        this.socketService.addCount(data);
+      });
+    } else {
+      this.subscription2 = this.socketService.onEvent("drUnreadCount").subscribe((data) => {
+        this.socketService.addCount(data);
+      });
+    }
     this.subscription3 = this.socketService.onEvent("disconnect").subscribe((data) => {
       this.socketInitialize();
     });
-    setTimeout(() => {
-      this.socketService.emitEvent('getAdminUnreadCount', null);
-    }, 1500);
-    this.interval = setInterval(() => {
-      this.socketService.emitEvent('getAdminUnreadCount', null);
-    }, 30000);
+    if (role) {
+      setTimeout(() => {
+        this.socketService.emitEvent('getAdminUnreadCount', null);
+      }, 1500);
+      // this.interval = setInterval(() => {
+      //   this.socketService.emitEvent('getAdminUnreadCount', null);
+      // }, 30000);
+    } else {
+      setTimeout(() => {
+        this.socketService.emitEvent('getDrUnreadCount', this.user?.uuid);
+      }, 1500);
+      // this.interval = setInterval(() => {
+      //   this.socketService.emitEvent('getDrUnreadCount', this.user?.uuid);
+      // }, 30000);
+    }
+
   }
 
   ngAfterContentChecked(): void {
@@ -409,15 +422,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
-  async requestSubscription() {
+  requestSubscription() {
     if (!this._swPush.isEnabled) {
       console.log("Notification is not enabled.");
       return;
     }
-    console.log("Request subscription....");
-    // this._swPush.subscription.subscribe(async (sub) => {
-    //   console.log("Currently active subscription:", sub);
-    //   if (!sub) {
+    console.log("Checking subscription....");
+    this._swPush.subscription.subscribe(async (sub) => {
+      console.log("Currently active subscription:", sub);
+      if (!sub) {
+        console.log("Requesting subscription....");
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then(async (_) => {
@@ -438,12 +452,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             });
           // })();
         }).catch((_) => console.log);
-    //   } else {
-    //     this._swPush.messages.subscribe(payload => {
-    //       console.log(payload);
-    //     });
-    //   }
-    // });
+      } else {
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
   }
 
 
