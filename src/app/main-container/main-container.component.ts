@@ -82,6 +82,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private socketService: SocketService,
     private rolesService: NgxRolesService,
     public swUpdate: SwUpdate,
+    public _swPush: SwPush,
     public notificationService: PushNotificationsService) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -152,6 +153,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
 
     this.introJs = introJs();
+    this.requestSubscription();
     this.getNotificationStatus();
     setTimeout(() => {
       if (!this.notificationEnabled) {
@@ -407,17 +409,54 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  requestSubscription() {
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
+    }
+    console.log("Push notification checking subscription....");
+    this._swPush.subscription.subscribe(async (sub) => {
+      console.log("Currently active subscription:", sub);
+      if (!sub) {
+        await this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then((_) => {
+          console.log("New subscription: ", JSON.stringify(_));
+          (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization()
+            ).subscribe(response => {
+              console.log(response);
+            });
+          })();
+        }).catch((_) => console.log);
+      } else {
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
+  }
 
-  // getSpecialization(attr: any = this.provider.attributes) {
-  //   let specialization = null;
-  //   for (let x = 0; x < attr.length; x++) {
-  //     if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
-  //       specialization = attr[x].value;
-  //       break;
-  //     }
-  //   }
-  //   return specialization;
-  // }
+
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = null;
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
+  }
 
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
