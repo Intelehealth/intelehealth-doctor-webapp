@@ -39,7 +39,7 @@ export class VcComponent implements OnInit, OnDestroy {
   classFlag = false;
   setSpiner = false;
   patientUuid = "";
-  nurseId: { uuid } = { uuid: null };
+  nurseId: string = "";
   doctorName = "";
 
   constructor(
@@ -92,7 +92,7 @@ export class VcComponent implements OnInit, OnDestroy {
     this.socketService.initSocket(true);
     this.initSocketEvents();
     this.socketService.emitEvent("call", {
-      nurseId: this.nurseId.uuid,
+      nurseId: this.nurseId,
       doctorName: this.doctorName,
       roomId: this.room,
     });
