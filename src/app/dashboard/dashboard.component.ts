@@ -10,6 +10,8 @@ import * as moment from 'moment';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { SwPush } from '@angular/service-worker';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -93,7 +95,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private visitService: VisitService,
     // private socket: SocketService,
     private router: Router,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    public _swPush: SwPush) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -137,16 +140,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           // Check if visit has encounters
           if (visit.encounters.length > 0) {
             /*
-              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
-              If no attributes, consider it as General Physician
+            Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
+            If no attributes, consider it as General Physician
             */
-            if (visit.attributes.length) {
-              for (let t = 0; t < visit.attributes.length; t++) {
-                if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                  // If specialization matches process visit
-                  if (visit.attributes[t].value == this.specialization) {
-                    this.processVisit(visit);
-                    break;
+           if (visit.attributes.length) {
+             for (let t = 0; t < visit.attributes.length; t++) {
+               if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+                 // If specialization matches process visit
+                 if (visit.attributes[t].value == this.specialization) {
+                   this.processVisit(visit);
+                   break;
                   }
                 }
               }
@@ -155,13 +158,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
           }
         });
+        this.requestSubscription();
       }
-    );
-  }
+      );
+    }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
-  }
+    checkIfEncounterExists(encounters: any, visitType: string) {
+      return encounters.find(({ display = "" }) => display.includes(visitType));
+    }
 
   processVisit(visit: any) {
     let notes = [];
@@ -288,15 +292,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return `${hours} hrs`;
   }
 
-  getSpecialization(attr: any) {
-    let specialization = '';
-    attr.forEach((a: any) => {
-      if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
-        specialization = a.value;
-      }
-    });
-    return specialization;
-  }
+  // getSpecialization(attr: any) {
+  //   let specialization = '';
+  //   attr.forEach((a: any) => {
+  //     if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
+  //       specialization = a.value;
+  //     }
+  //   });
+  //   return specialization;
+  // }
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
@@ -305,6 +309,61 @@ export class DashboardComponent implements OnInit, OnDestroy {
   playNotify() {
     const audioUrl = "../../../../intelehealth/assets/notification.mp3";
     new Audio(audioUrl).play();
+  }
+
+  requestSubscription() {
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
+    }
+    this._swPush.subscription.subscribe(sub => {
+      console.log(sub);
+      if (!sub) {
+        this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then((_) => {
+          console.log(JSON.stringify(_));
+          (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization()
+            ).subscribe(response => {
+              console.log(response);
+            });
+          })();
+        }).catch((_) => console.log);
+      } else {
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
+  }
+
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = '';
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
+  }
+
+  get user() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+
+  get provider() {
+    return JSON.parse(localStorage.getItem('provider'));
   }
 
   ngOnDestroy() {
