@@ -11,6 +11,7 @@ import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,7 +57,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private socket: SocketService,
     private router: Router,
     private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private translateService: TranslateService,) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
@@ -223,9 +225,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     if (hours < 1) {
       if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+      return `${minutes}` + `${this.translateService.instant(" minutes")}`;
     }
-    return `${hours} hrs`;
+    return `${hours}` + `${this.translateService.instant(" hrs")}`;
+
   }
 
   getCreatedAt(data: any) {
@@ -235,9 +238,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return `${minutes}` + `${this.translateService.instant(" minutes ago")}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours}` + `${this.translateService.instant(" hrs ago")}`;
   }
 
   getEncounterCreated(visit: any, encounterName: string) {

@@ -867,9 +867,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     };
     if (hours < 1) {
       if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes ago`;
+      return `${minutes}` + " " + `${this.translateService.instant("minutes ago")}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours}` + " " +`${this.translateService.instant("hrs ago")}`;
   }
 
   startVisitNote() {

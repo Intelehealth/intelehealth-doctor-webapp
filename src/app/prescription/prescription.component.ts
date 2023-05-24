@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-prescription',
@@ -17,7 +18,9 @@ export class PrescriptionComponent implements OnInit {
   specialization: string = '';
   hospitalType: string = '';
 
-  constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
+  constructor(private pageTitleService: PageTitleService, 
+    private visitService: VisitService,
+    private translateService: TranslateService,) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
@@ -29,6 +32,7 @@ export class PrescriptionComponent implements OnInit {
         this.getVisits();
       }
     }
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   getVisits() {
@@ -80,9 +84,9 @@ export class PrescriptionComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} minutes ago`;
+      return `${minutes}` + `${this.translateService.instant(" minutes ago")}`;
     }
-    return `${hours} hrs ago`;
+    return `${hours}` + `${this.translateService.instant(" hrs ago")}`;
   }
 
   getCheifComplaint(visit: any) {
