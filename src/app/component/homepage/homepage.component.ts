@@ -313,7 +313,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.followUpVisit = [];
     this.followUpVisitNo = 0;
     let fromStartDate = moment().add(-2, 'months').startOf('month').format();
-    this.service.getVisitWithDateFilter({}, false, fromStartDate).subscribe(
+    this.service.getVisitWithDateFilter({}, true, fromStartDate).subscribe(
       (response) => {
         let allVisits = [];
         response.results.forEach((item) => {
