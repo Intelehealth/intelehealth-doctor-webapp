@@ -145,7 +145,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
     this.socketInitialize();
     this.introJs = introJs();
-    this.requestSubscription();
+    this.getSubscription();
     this.getNotificationStatus();
     setTimeout(() => {
       if (!this.notificationEnabled) {
@@ -420,6 +420,22 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.notificationEnabled = res.data?.notification_status;
       }
     });
+  }
+
+  getSubscription() {
+    console.log(Notification.permission);
+    if(Notification.permission === 'default') {
+      Notification.requestPermission().then(() => {
+        this.requestSubscription();
+      }).catch(() => {
+        // show permission denied error
+      });
+    }
+    else if(Notification.permission === 'denied') {
+      // show permission is denied, please allow it error
+    } else {
+      this.requestSubscription();
+    }
   }
 
   requestSubscription() {
