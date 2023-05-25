@@ -22,6 +22,7 @@ import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -295,7 +296,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private encounterService: EncounterService,
     private linkSvc: LinkService,
-    private socket: SocketService) {
+    private socket: SocketService,
+    private translateService: TranslateService) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -358,6 +360,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
@@ -775,12 +778,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   referSpecialist() {
     if (this.referSpecialityForm.invalid) {
-      this.toastr.warning("Please select specialization", "Invalid!");
+      this.toastr.warning(this.translateService.instant("Please select specialization"), this.translateService.instant("Invalid!"));
       return;
     }
 
     if (this.visitNotePresent) {
-      this.toastr.warning("Can't refer, visit note already exists for this visit!", "Can't refer");
+      this.toastr.warning(this.translateService.instant("Can't refer, visit note already exists for this visit!"), this.translateService.instant("Can't refer"));
       return;
     }
 
@@ -824,7 +827,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
         this.router.navigate(["/dashboard"]);
-        this.toastr.success("Visit has been re-assigned to the another speciality doctor successfully.", "Visit Re-assigned!")
+        this.toastr.success(this.translateService.instant("Visit has been re-assigned to the another speciality doctor successfully."), this.translateService.instant("Visit Re-assigned!"))
       }
     });
   }
@@ -1044,11 +1047,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   addNote() {
     if (this.addNoteForm.invalid) {
-      this.toastr.warning("Please enter note text to add", "Invalid note");
+      this.toastr.warning(this.translateService.instant("Please enter note text to add"), this.translateService.instant("Invalid note"));
       return;
     }
     if (this.notes.find((o: any) => o.value == this.addNoteForm.value.note)) {
-      this.toastr.warning("Note already added, please add another note.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Note already added, please add another note."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1106,7 +1109,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.medicines.find((o: any) => o.drug == this.addMedicineForm.value.drug)) {
-      this.toastr.warning("Drug already added, please add another drug.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Drug already added, please add another drug."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1126,7 +1129,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.additionalInstructions.find((o: any) => o.value == this.addAdditionalInstructionForm.value.note)) {
-      this.toastr.warning("Additional instruction already added, please add another instruction.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Additional instruction already added, please add another instruction."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1187,7 +1190,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.advices.find((o: any) => o.value == this.addAdviceForm.value.advice)) {
-      this.toastr.warning("Advice already added, please add another advice.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Advice already added, please add another advice."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1240,7 +1243,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.tests.find((o: any) => o.value == this.addTestForm.value.test)) {
-      this.toastr.warning("Test already added, please add another test.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Test already added, please add another test."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1283,7 +1286,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
-      this.toastr.warning("Referral already added, please add another referral.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Referral already added, please add another referral."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({

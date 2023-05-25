@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { AppointmentService } from 'src/app/services/appointment.service';
 
@@ -13,7 +14,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService, private translateService:TranslateService) {
 
   }
 
@@ -31,7 +32,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
           if (res.status) {
             this.close(true);
           } else {
-            this.toastr.error("You can't cancel the past appointment", "Can't Cancel");
+            this.toastr.error(this.translateService.instant("You can't cancel the past appointment"), this.translateService.instant("Can't Cancel"));
             this.close(false);
           }
         }
