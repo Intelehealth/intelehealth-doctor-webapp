@@ -65,8 +65,26 @@ export class PrescriptionComponent implements OnInit {
                     });
                   }
                 }
+              }else if (visitSpeciality.value == this.specialization && visitHospitalType === undefined) {
+                let flag = 0;
+                visit.encounters.forEach((encounter: any) => {
+                  if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete') {
+                    visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+                    visit.cheif_complaint = this.getCheifComplaint(visit);
+                    this.completedVisits.push(visit);
+                    flag = 1;
+                  }
+                });
+                if (flag == 0) {
+                  visit.encounters.forEach((encounter: any) => {
+                    if (encounter.encounterType.display == 'Remote Prescription') {
+                      visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
+                      visit.cheif_complaint = this.getCheifComplaint(visit);
+                      this.prescriptionSent.push(visit);
+                    }
+                  });
+                }
               }
-
             }
           }
         });

@@ -119,6 +119,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
                   this.processVisit(visit);
                 }
+              }else if (visitSpeciality.value == this.specialization && visitHospitalType === undefined) {
+                this.processVisit(visit);
               }
             }
             // else if(this.specialization == 'General Physician') {
