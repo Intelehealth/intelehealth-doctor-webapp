@@ -1,5 +1,5 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { PageTitleItem } from '../core/models/page-title-model';
 import { PageTitleService } from '../core/page-title/page-title.service';
@@ -9,7 +9,7 @@ import { CoreService } from '../services/core/core.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { ActivatedRoute, ActivatedRouteSnapshot, Event, NavigationEnd, Router, RouterState, RouterStateSnapshot } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
@@ -31,8 +31,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   collapsed = false;
   baseUrl: string = environment.baseURL;
   baseURLLegacy: string = environment.baseURLLegacy;
-  // user: any;
-  // provider: any;
   username: string = '';
   header: PageTitleItem;
   _mode: string = 'side';
@@ -54,7 +52,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   adminUnread: number = 0;
   notificationEnabled: boolean = false;
   interval: any;
-
+  snoozed: any = '';
   subscribed: boolean = false;
   readonly VapidKEY = "BLDLmm1FrOhRJsumFL3lZ8fgnC_c1rFoNp-mz6KWObQpgPkhWzUh66GCGPzioTWBc4u0SB8P4spimU8SH2eWNfg";
   weekDays: any = [
@@ -71,7 +69,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   constructor(
     private cdref: ChangeDetectorRef,
     private authService: AuthService,
-    private dialog: MatDialog,
     private pageTitleService: PageTitleService,
     private breakpointObserver: BreakpointObserver,
     private coreService: CoreService,
@@ -96,9 +93,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    // this.user = JSON.parse(localStorage.getItem('user'));
-    // this.provider = JSON.parse(localStorage.getItem('provider'));
-
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -116,16 +110,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.sidebarClosed = false;
     });
 
-    // this.subscription = this.searchForm.valueChanges.pipe(
-    //   debounceTime(1000),
-    //   distinctUntilChanged()
-    // ).subscribe(val => {
-    //   if (this.searchForm.invalid) {
-    //     return;
-    //   }
-    //   this.search();
-    // });
-
     this.router.events.pipe(
       filter((event: Event) => event instanceof NavigationEnd),
       distinctUntilChanged(),
@@ -142,41 +126,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         }
     });
 
-
     this.socketInitialize();
     this.introJs = introJs();
     this.getSubscription();
     this.getNotificationStatus();
-    setTimeout(() => {
-      if (!this.notificationEnabled) {
-        this.toggleNotification();
-      }
-    }, 5000);
-
-    // this.authService.getFingerPrint();
-    // setTimeout(() => {
-    //   this.subscribeNotification(true);
-    // }, 1000);
-    // this.notificationService.getUserSettings().subscribe((res: { data: any; snooze_till: any }) => {
-    //   if (res && res.data && res.data.snooze_till) {
-    //     const snoozeTill = (() => {
-    //       try {
-    //         return JSON.parse(res.data.snooze_till);
-    //       } catch (error) {
-    //         return res.data.snooze_till;
-    //       }
-    //     })();
-    //     if (Array.isArray(snoozeTill)) {
-    //       this.weekDays = snoozeTill;
-    //     } else {
-    //       this.setSnoozeTimeout(res.snooze_till);
-    //     }
-    //   }
-    // });
-
-    // if (this.swPush.isEnabled) {
-    //   this.notificationService.notificationHandler();
-    // }
   }
 
   socketInitialize() {
@@ -187,9 +140,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
     this.subscription2?.unsubscribe();
     this.subscription3?.unsubscribe();
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
     this.socketService.initSocketSupport(true);
     if (role) {
       this.subscription2 = this.socketService.onEvent("adminUnreadCount").subscribe((data) => {
@@ -207,16 +157,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       setTimeout(() => {
         this.socketService.emitEvent('getAdminUnreadCount', null);
       }, 1500);
-      // this.interval = setInterval(() => {
-      //   this.socketService.emitEvent('getAdminUnreadCount', null);
-      // }, 30000);
     } else {
       setTimeout(() => {
         this.socketService.emitEvent('getDrUnreadCount', this.user?.uuid);
       }, 1500);
-      // this.interval = setInterval(() => {
-      //   this.socketService.emitEvent('getDrUnreadCount', this.user?.uuid);
-      // }, 30000);
     }
 
   }
@@ -249,10 +193,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         if (this.dialogRef) {
           this.dialogRef.close();
         }
-        // this.unsubscribeNotification();
-        // setTimeout(() => {
-          this.authService.logOut();
-        // }, 100);
+        this.authService.logOut();
       }
     });
   }
@@ -415,9 +356,16 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   getNotificationStatus() {
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
+        this.snoozed = res.data?.snooze_till;
+        this.interval = setInterval(()=>{
+          if (this.snoozed) {
+            if (new Date().valueOf() > this.snoozed) {
+              this.snoozed = 0;
+            }
+          }
+        }, 30000);
       }
     });
   }
@@ -443,15 +391,15 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       console.log("Notification is not enabled.");
       return;
     }
-    console.log("Checking subscription....");
+    // console.log("Checking subscription....");
     this._swPush.subscription.subscribe(async (sub) => {
-      console.log("Currently active subscription:", sub);
+      // console.log("Currently active subscription:", sub);
       if (!sub) {
         console.log("Requesting subscription....");
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then(async (_) => {
-          console.log("New subscription: ", JSON.stringify(_));
+          // console.log("New subscription: ", JSON.stringify(_));
           // (async () => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
@@ -493,7 +441,15 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
-        // this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+      }
+    });
+  }
+
+  snoozeNotification(period: string) {
+    this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: any) => {
+      if (res.success) {
+        this.snoozed = res.data?.snooze_till;
       }
     });
   }
@@ -549,45 +505,35 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   //     .subscribe();
   // }
 
-  setSnoozeTimeout(timeout: any) {
-    if (this.notificationService.snoozeTimeout)
-      clearTimeout(this.notificationService.snoozeTimeout);
-    this.notificationService.snoozeTimeout = setTimeout(() => {
-      this.notificationService.setSnoozeFor("off").subscribe((response) => {
-        if (this.notificationService.snoozeTimeout)
-          this.notificationService.snoozeTimeout = clearTimeout(
-            this.notificationService.snoozeTimeout
-          );
-      });
-    }, timeout);
-  }
+  // setSnoozeTimeout(timeout: any) {
+  //   if (this.notificationService.snoozeTimeout)
+  //     clearTimeout(this.notificationService.snoozeTimeout);
+  //   this.notificationService.snoozeTimeout = setTimeout(() => {
+  //     this.notificationService.setSnoozeFor("off").subscribe((response) => {
+  //       if (this.notificationService.snoozeTimeout)
+  //         this.notificationService.snoozeTimeout = clearTimeout(
+  //           this.notificationService.snoozeTimeout
+  //         );
+  //     });
+  //   }, timeout);
+  // }
 
-  setNotification(period: string) {
-    if (period !== "custom") {
-      this.selectedNotification = period;
-      this.notificationService.setSnoozeFor(period).subscribe((response) => {
-        if (!response["snooze_till"]) {
-          this.notificationService.snoozeTimeout = clearTimeout(
-            this.notificationService.snoozeTimeout
-          );
-        } else {
-          this.setSnoozeTimeout(response["snooze_till"]);
-        }
-      });
-    } else {
+  // setNotification(period: string) {
+  //   if (period !== "custom") {
+  //     this.selectedNotification = period;
+  //     this.notificationService.setSnoozeFor(period).subscribe((response) => {
+  //       if (!response["snooze_till"]) {
+  //         this.notificationService.snoozeTimeout = clearTimeout(
+  //           this.notificationService.snoozeTimeout
+  //         );
+  //       } else {
+  //         this.setSnoozeTimeout(response["snooze_till"]);
+  //       }
+  //     });
+  //   } else {
 
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-    this.subscription1?.unsubscribe();
-    this.subscription2?.unsubscribe();
-    this.subscription3?.unsubscribe();
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
+  //   }
+  // }
 
   get user() {
     return JSON.parse(localStorage.getItem('user'));
@@ -600,4 +546,15 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   get snoozeTimeout() {
     return this.notificationService.snoozeTimeout;
   }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  }
+
 }

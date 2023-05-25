@@ -141,17 +141,26 @@
                 <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3">
                   <!-- <mat-icon *ngIf="!snoozeTimeout">notifications_none</mat-icon>
                   <mat-icon *ngIf="snoozeTimeout">notifications_off</mat-icon> -->
-                  <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
+                  <mat-icon *ngIf="notificationEnabled && !snoozed">notifications_none</mat-icon>
+                  <mat-icon *ngIf="notificationEnabled && snoozed">notifications_paused</mat-icon>
                   <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu">
-                  <button mat-menu-item (click)="setNotification('30m')">Do Not Disturb</button>
-                  <button mat-menu-item (click)="setNotification('30m')">30 Minutes</button>
-                  <button mat-menu-item (click)="setNotification('1h')">1 Hour</button>
-                  <button mat-menu-item (click)="setNotification('2h')">2 Hours</button>
-                  <button mat-menu-item (click)="setNotification('custom')">Custom</button>
-                  <button mat-menu-item (click)="setNotification('off')" *ngIf="snoozeTimeout">Turn Off</button>
-                  <button mat-menu-item class="subscribe" (click)="subscribeNotification(false)" *ngIf="!subscribed">Subscribe</button>
+                  <ng-container *ngIf="notificationEnabled && !snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('30m')">Do Not Disturb</button>
+                    <button mat-menu-item (click)="snoozeNotification('30m')">30 Minutes</button>
+                    <button mat-menu-item (click)="snoozeNotification('1h')">1 Hour</button>
+                    <button mat-menu-item (click)="snoozeNotification('2h')">2 Hours</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="notificationEnabled && snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('off')">Awake notification</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="!notificationEnabled">
+                    <button mat-menu-item (click)="toggleNotification()">Turn On</button>
+                  </ng-container>
+                  <button mat-menu-item class="subscribe" *ngIf="!subscribed">Subscribe</button>
                 </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
