@@ -105,6 +105,36 @@ i.fa {
     position: relative;
     bottom: -8%;
   }
+
+  .is-fullscreen.main {
+    display: grid !important;
+  }
+
+  .is-fullscreen .remoteVideo {
+    margin: auto !important;
+
+    height: 46vh !important;
+    width: 65vw !important;
+  }
+
+  .is-fullscreen .local-container {
+    margin: auto !important;
+
+    right: 0;
+    bottom: -3%;
+  }
+
+  .is-fullscreen .local-container .localVideo {
+    height: 46vh !important;
+    width: 65vw !important;
+  }
+}
+
+.is-fullscreen .remoteVideo {
+  margin: auto !important;
+
+  height: 100vh !important;
+  width: 100vw !important;
 }
 
 .loader {
@@ -115,27 +145,4 @@ i.fa {
 
 .loader label {
   color: lightgray;
-}
-
-.is-fullscreen.main {
-  display: grid !important;
-}
-
-.is-fullscreen .remoteVideo {
-  margin: auto !important;
-
-  height: 46vh !important;
-  width: 65vw !important;
-}
-
-.is-fullscreen .local-container {
-  margin: auto !important;
-
-  right: 0;
-  bottom: -3%;
-}
-
-.is-fullscreen .local-container .localVideo {
-  height: 46vh !important;
-  width: 65vw !important;
 }

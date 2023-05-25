@@ -109,11 +109,6 @@ export class VcComponent implements OnInit, OnDestroy {
     this.close();
   }
 
-  @HostListener("fullscreenchange")
-  fullScreenChange() {
-    this.isFullscreen = document.fullscreenEnabled;
-  }
-
   makeCall() {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
