@@ -1229,7 +1229,9 @@
                       <ng-container *ngFor="let item of parameters[20].stage1values;">
                         <td colspan="2">
                           <div class="value-item note" *ngIf="item">
-                            {{item?.value}}
+                            <ng-container *ngFor="let m of item">
+                              {{m?.value}} <br/>
+                            </ng-container>
                           </div>
                         </td>
                       </ng-container>
@@ -1248,7 +1250,9 @@
                       <ng-container *ngFor="let item of parameters[20].stage2values;">
                         <td colspan="4">
                           <div class="value-item note" *ngIf="item">
-                            {{item?.value}}
+                            <ng-container *ngFor="let m of item">
+                              {{m?.value}} <br/>
+                            </ng-container>
                           </div>
                         </td>
                       </ng-container>
@@ -1581,7 +1585,9 @@
                   <ng-container matColumnDef="medicine">
                     <th mat-header-cell *matHeaderCellDef> Medicine </th>
                     <td mat-cell *matCellDef="let element">
-                      {{element.medicine}}
+                      <ul class="notes-list">
+                        <li *ngFor="let m of element?.medicine;">{{m.value}}</li>
+                      </ul>
                     </td>
                   </ng-container>
 

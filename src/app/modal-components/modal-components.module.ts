@@ -38,6 +38,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-id.component';
 import { AddPlanAssessmentComponent } from './add-plan-assessment/add-plan-assessment.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
     declarations: [
@@ -83,6 +84,7 @@ import { AddPlanAssessmentComponent } from './add-plan-assessment/add-plan-asses
         SharedModule,
         NgSelectModule,
         SignaturePadModule,
+        MatDividerModule
     ],
     exports: [ViewVisitPrescriptionComponent]
 })

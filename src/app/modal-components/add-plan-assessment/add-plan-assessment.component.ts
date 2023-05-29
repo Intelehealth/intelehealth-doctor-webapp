@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -17,65 +17,77 @@ export class AddPlanAssessmentComponent implements OnInit {
       assessment: new FormControl(null),
       plan: new FormControl(null),
       medicine: new FormControl('N'),
-      medicineName: new FormControl(null),
-      strength: new FormControl(null),
-      dosage: new FormControl(null),
-      duration: new FormControl(null),
-      typeOfMedicine: new FormControl(null),
-      routeOfMedicine: new FormControl(null),
+      medicines: new FormArray([]),
     });
   }
 
   get f() { return this.addForm.controls; }
+  get fm() { return this.addForm.get('medicines') as FormArray; }
 
   ngOnInit(): void {
+    this.fm.clear();
     if (this.data) {
-      if (this.data.medicine == 'N') {
-        this.addForm.patchValue(this.data);
-      } else {
-        const medicine = this.data.medicine.split('|').map(o => o.trim());
+      if (!this.data.medicines.length) {
         this.addForm.patchValue({
           assessment: this.data.assessment,
           plan: this.data.plan,
-          medicine: 'Y',
-          medicineName: (medicine[0])? medicine[0] : null,
-          strength: (medicine[1])? medicine[1] : null,
-          dosage: (medicine[2])? medicine[2] : null,
-          duration: (medicine[3])? medicine[3] : null,
-          typeOfMedicine: (medicine[4])? medicine[4] : null,
-          routeOfMedicine: (medicine[5])? medicine[5] : null
+          medicine: 'N'
+        });
+      } else {
+        for (let x = 0; x < this.data.medicines.length; x++) {
+          let medicine = this.data.medicines[x].value.split('|').map(o => o.trim());
+          this.fm.push(new FormGroup({
+            id: new FormControl(this.data.medicines[x].uuid),
+            medicineName: new FormControl((medicine[0])? medicine[0] : null, [Validators.required]),
+            strength: new FormControl((medicine[1])? medicine[1] : null),
+            dosage: new FormControl((medicine[2])? medicine[2] : null),
+            duration: new FormControl((medicine[3])? medicine[3] : null),
+            typeOfMedicine: new FormControl((medicine[4])? medicine[4] : null),
+            routeOfMedicine: new FormControl((medicine[5])? medicine[5] : null),
+            isDeleted: new FormControl(false),
+            index: new FormControl(x)
+          }));
+        }
+        this.addForm.patchValue({
+          assessment: this.data.assessment,
+          plan: this.data.plan,
+          medicine: 'Y'
         });
       }
     }
     this.addForm.get('medicine').valueChanges.subscribe(res=> {
       if (res == 'Y') {
-        this.addForm.get('medicineName').addValidators([Validators.required]);
-        this.addForm.get('medicineName').updateValueAndValidity();
-        this.addForm.get('strength').addValidators([Validators.required]);
-        this.addForm.get('strength').updateValueAndValidity();
-        this.addForm.get('dosage').addValidators([Validators.required]);
-        this.addForm.get('dosage').updateValueAndValidity();
-        this.addForm.get('duration').addValidators([Validators.required]);
-        this.addForm.get('duration').updateValueAndValidity();
-        this.addForm.get('typeOfMedicine').addValidators([Validators.required]);
-        this.addForm.get('typeOfMedicine').updateValueAndValidity();
-        this.addForm.get('routeOfMedicine').addValidators([Validators.required]);
-        this.addForm.get('routeOfMedicine').updateValueAndValidity();
+        for (let x = 0; x < this.fm.length; x++) {
+          this.fm.at(x).patchValue({ isDeleted: false });
+        }
       } else {
-        this.addForm.get('medicineName').clearValidators();
-        this.addForm.get('medicineName').updateValueAndValidity();
-        this.addForm.get('strength').clearValidators();
-        this.addForm.get('strength').updateValueAndValidity();
-        this.addForm.get('dosage').clearValidators();
-        this.addForm.get('dosage').updateValueAndValidity();
-        this.addForm.get('duration').clearValidators();
-        this.addForm.get('duration').updateValueAndValidity();
-        this.addForm.get('typeOfMedicine').clearValidators();
-        this.addForm.get('typeOfMedicine').updateValueAndValidity();
-        this.addForm.get('routeOfMedicine').clearValidators();
-        this.addForm.get('routeOfMedicine').updateValueAndValidity();
+        for (let x = 0; x < this.fm.length; x++) {
+          this.fm.at(x).patchValue({ isDeleted: true });
+        }
       }
     });
+  }
+
+  addMedicine() {
+    this.fm.push(new FormGroup({
+      id: new FormControl(null),
+      medicineName: new FormControl(null, [Validators.required]),
+      strength: new FormControl(null),
+      dosage: new FormControl(null),
+      duration: new FormControl(null),
+      typeOfMedicine: new FormControl(null),
+      routeOfMedicine: new FormControl(null),
+      isDeleted: new FormControl(false),
+      index: new FormControl(-1)
+    }));
+  }
+
+  removeMedicine(index: number) {
+    if (this.fm.at(index).get('id')) {
+      this.fm.at(index).patchValue({ isDeleted: true });
+    } else {
+      this.fm.removeAt(index);
+    }
   }
 
   add() {

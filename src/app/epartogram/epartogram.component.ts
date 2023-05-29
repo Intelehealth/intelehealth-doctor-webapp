@@ -291,9 +291,15 @@ export class EpartogramComponent implements OnInit {
 
   readStageData() {
     for (let x = 0; x < this.parameters.length; x++) {
-      this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
-      this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      if (x == 20) {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
+      } else {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      }
     }
+
     const encs = this.visit.encounters;
     for (let x = 0; x < encs.length; x++) {
       if (encs[x].display.includes('Stage')) {
@@ -329,7 +335,11 @@ export class EpartogramComponent implements OnInit {
                   valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
                 }
               }
-              this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
+              if (parameterIndex == 20) {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] ,{ value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
+              } else {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
+              }
             }
           }
         }
@@ -345,11 +355,11 @@ export class EpartogramComponent implements OnInit {
   getAssessments() {
     this.assessments = [];
     for (let d = 0; d < 12; d++) {
-      if (this.parameters[20].stage1values[d]||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
+      if (this.parameters[20].stage1values[d].length||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
         this.assessments.push({
           time: this.timeStage1[d],
           stage: 1,
-          medicine: this.parameters[20].stage1values[d]?.value,
+          medicine: this.parameters[20].stage1values[d],
           assessment: this.parameters[22].stage1values[d]?.value,
           plan: this.parameters[23].stage1values[d]?.value
         });
@@ -357,11 +367,11 @@ export class EpartogramComponent implements OnInit {
     }
 
     for (let d = 0; d < 3; d++) {
-      if (this.parameters[20].stage2values[d]||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
+      if (this.parameters[20].stage2values[d].length||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
         this.assessments.push({
           time: this.timeStage2[d],
           stage: 2,
-          medicine: this.parameters[20].stage2values[d]?.value,
+          medicine: this.parameters[20].stage2values[d],
           assessment: this.parameters[22].stage2values[d]?.value,
           plan: this.parameters[23].stage2values[d]?.value
         });

@@ -345,9 +345,15 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   readStageData() {
     for (let x = 0; x < this.parameters.length; x++) {
-      this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
-      this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      if (x == 20) {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
+      } else {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      }
     }
+
     const encs = this.visit.encounters;
     for (let x = 0; x < encs.length; x++) {
       if (encs[x].display.includes('Stage')) {
@@ -383,7 +389,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
                 }
               }
-              this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
+              if (parameterIndex == 20) {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] ,{ value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
+              } else {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
+              }
             }
           }
         }
@@ -399,11 +409,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
   getAssessments() {
     this.assessments = [];
     for (let d = 0; d < 12; d++) {
-      if (this.parameters[20].stage1values[d]||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
+      if (this.parameters[20].stage1values[d].length||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
         this.assessments.push({
           time: this.timeStage1[d],
           stage: 1,
-          medicine: this.parameters[20].stage1values[d]?.value,
+          medicine: this.parameters[20].stage1values[d],
           assessment: this.parameters[22].stage1values[d]?.value,
           plan: this.parameters[23].stage1values[d]?.value
         });
@@ -411,11 +421,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
 
     for (let d = 0; d < 3; d++) {
-      if (this.parameters[20].stage2values[d]||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
+      if (this.parameters[20].stage2values[d].length||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
         this.assessments.push({
           time: this.timeStage2[d],
           stage: 2,
-          medicine: this.parameters[20].stage2values[d]?.value,
+          medicine: this.parameters[20].stage2values[d],
           assessment: this.parameters[22].stage2values[d]?.value,
           plan: this.parameters[23].stage2values[d]?.value
         });
@@ -502,15 +512,17 @@ export class PartogramComponent implements OnInit, OnDestroy {
           });
         }
 
-        if (res.medicine) {
-          this.encounterService.postObs({
-            concept: this.conceptMedicine,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`,
-            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-          }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[20].stage1values[index] = { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`, uuid: result.uuid } : this.parameters[20].stage2values[index] = { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`, uuid: result.uuid };
+        if (res.medicines.length) {
+          res.medicines.forEach((m: any) => {
+            this.encounterService.postObs({
+              concept: this.conceptMedicine,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+            }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }];
+            });
           });
         }
 
@@ -525,7 +537,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     this.coreService.openAddAssessmentAndPlanModal({
       assessment: (stage == 1) ? this.parameters[22].stage1values[index].value : this.parameters[22].stage2values[index].value,
       plan: (stage == 1) ? this.parameters[23].stage1values[index].value : this.parameters[23].stage2values[index].value,
-      medicine: (stage == 1) ? this.parameters[20].stage1values[index].value : this.parameters[20].stage2values[index].value
+      medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
     }).subscribe(res => {
       if (res) {
         console.log(res);
@@ -541,13 +553,49 @@ export class PartogramComponent implements OnInit, OnDestroy {
           });
         }
 
-        if (res.medicine) {
-          this.encounterService.updateObs((stage == 1) ? this.parameters[20].stage1values[index].uuid : this.parameters[20].stage2values[index].uuid, { value: (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}` }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[20].stage1values[index].value = (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`: this.parameters[20].stage2values[index].value = (res.medicine == 'N') ? 'N' : `${res.medicineName} | ${res.strength} | ${res.dosage} | ${res.duration} | ${res.typeOfMedicine} | ${res.routeOfMedicine}`;
+        if (res.medicines.length) {
+          res.medicines.forEach((m: any) => {
+            if (m.id) {
+              if (m.isDeleted) {
+                this.encounterService.deleteObs(m.id).subscribe((result: any) => {
+                  // console.log(result);
+                });
+              } else {
+                this.encounterService.updateObs(m.id, { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}` }).subscribe((result: any) => {
+                  // console.log(result);
+                });
+              }
+            } else {
+              if (!m.isDeleted) {
+                this.encounterService.postObs({
+                  concept: this.conceptMedicine,
+                  person: this.visit.patient.uuid,
+                  obsDatetime: new Date(),
+                  value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+                }).subscribe((result: any) => {
+                  // console.log(result);
+                  m.id = result.uuid;
+                  // (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }];
+                });
+              }
+            }
           });
         }
 
         setTimeout(() => {
+          let med = [];
+          for (let x = 0; x < res.medicines.length; x++) {
+            if (!res.medicines[x].isDeleted) {
+              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage} | ${res.medicines[x].duration} | ${res.medicines[x].typeOfMedicine} | ${res.medicines[x].routeOfMedicine}` });
+            }
+          }
+          // console.log(med);
+          if (stage == 1) {
+            this.parameters[20].stage1values[index] = [...med];
+          } else {
+            this.parameters[20].stage2values[index] = [...med];
+          }
           this.getAssessments();
         }, 5000);
       }

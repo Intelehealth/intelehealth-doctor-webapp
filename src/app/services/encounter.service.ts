@@ -51,6 +51,11 @@ export class EncounterService {
     return this.http.post(url, payload);
   }
 
+  deleteObs(obsuuid: string): Observable<any> {
+    const url = `${this.baseURL}/obs/${obsuuid}`;
+    return this.http.delete(url);
+  }
+
   signRequest(uuid): Observable<any> {
     const url = `${this.baseURL}/provider/${uuid}/attribute`;
     return this.http.get(url);

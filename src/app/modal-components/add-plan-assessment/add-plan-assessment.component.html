@@ -49,50 +49,73 @@
                 </div>
               </div>
               <ng-container *ngIf="addForm.value.medicine == 'Y'">
+                <ng-container formArrayName="medicines">
+                  <ng-container *ngFor="let m of fm.controls; let i = index; let last = last">
+                    <ng-container [formGroupName]="i">
+                      <ng-container *ngIf="!m.value.isDeleted">
+                        <div class="form-row mt-2">
+                          <div class="form-group col-md-5">
+                            <label for="medicineName">Medicine *</label>
+                            <input type="text" class="form-control" placeholder="Enter medicine name" formControlName="medicineName">
+                            <!-- <div *ngIf="submitted && f.medicineName.errors">
+                              <small class="error-msg" *ngIf="f.medicineName.errors.required">Enter medicine name</small>
+                            </div> -->
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="strength">Strength *</label>
+                            <input type="text" class="form-control" placeholder="Enter strength" formControlName="strength">
+                            <!-- <div *ngIf="submitted && f.strength.errors">
+                              <small class="error-msg" *ngIf="f.strength.errors.required">Enter strength</small>
+                            </div> -->
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="dosage">Dosage *</label>
+                            <input type="text" class="form-control" placeholder="Enter dosage" formControlName="dosage">
+                            <!-- <div *ngIf="submitted && f.dosage.errors">
+                              <small class="error-msg" *ngIf="f.dosage.errors.required">Enter dosage</small>
+                            </div> -->
+                          </div>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-5">
+                            <label for="duration">Duration *</label>
+                            <input type="text" class="form-control" placeholder="Enter duration" formControlName="duration">
+                            <!-- <div *ngIf="submitted && f.duration.errors">
+                              <small class="error-msg" *ngIf="f.duration.errors.required">Enter duration</small>
+                            </div> -->
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="typeOfMedicine">Type of Medicine *</label>
+                            <input type="text" class="form-control" placeholder="Enter type" formControlName="typeOfMedicine">
+                            <!-- <div *ngIf="submitted && f.typeOfMedicine.errors">
+                              <small class="error-msg" *ngIf="f.typeOfMedicine.errors.required">Enter type</small>
+                            </div> -->
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="routeOfMedicine">Route of Medicine *</label>
+                            <input type="text" class="form-control" placeholder="Enter route" formControlName="routeOfMedicine">
+                            <!-- <div *ngIf="submitted && f.routeOfMedicine.errors">
+                              <small class="error-msg" *ngIf="f.routeOfMedicine.errors.required">Enter route</small>
+                            </div> -->
+                          </div>
+                          <div class="form-group col-md-1">
+                            <label for="deleteBtn">.</label>
+                            <button mat-button type="button" class="delete-btn" (click)="removeMedicine(i)">
+                              <img src="assets/svgs/delete-icon.svg" alt="">
+                            </button>
+                          </div>
+                        </div>
+                        <ng-container *ngIf="!last">
+                          <mat-divider></mat-divider>
+                          <mat-divider></mat-divider>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
                 <div class="form-row">
-                  <div class="form-group col-md-5">
-                    <label for="medicineName">Medicine *</label>
-                    <input type="text" class="form-control" placeholder="Enter medicine name" formControlName="medicineName">
-                    <!-- <div *ngIf="submitted && f.medicineName.errors">
-                      <small class="error-msg" *ngIf="f.medicineName.errors.required">Enter medicine name</small>
-                    </div> -->
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="strength">Strength *</label>
-                    <input type="text" class="form-control" placeholder="Enter strength" formControlName="strength">
-                    <!-- <div *ngIf="submitted && f.strength.errors">
-                      <small class="error-msg" *ngIf="f.strength.errors.required">Enter strength</small>
-                    </div> -->
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="dosage">Dosage *</label>
-                    <input type="text" class="form-control" placeholder="Enter dosage" formControlName="dosage">
-                    <!-- <div *ngIf="submitted && f.dosage.errors">
-                      <small class="error-msg" *ngIf="f.dosage.errors.required">Enter dosage</small>
-                    </div> -->
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-5">
-                    <label for="duration">Duration *</label>
-                    <input type="text" class="form-control" placeholder="Enter duration" formControlName="duration">
-                    <!-- <div *ngIf="submitted && f.duration.errors">
-                      <small class="error-msg" *ngIf="f.duration.errors.required">Enter duration</small>
-                    </div> -->
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="typeOfMedicine">Type of Medicine *</label>
-                    <input type="text" class="form-control" placeholder="Enter type" formControlName="typeOfMedicine">
-                    <!-- <div *ngIf="submitted && f.typeOfMedicine.errors">
-                      <small class="error-msg" *ngIf="f.typeOfMedicine.errors.required">Enter type</small>
-                    </div> -->
-                  </div>
-                  <div class="form-group col-md-3">
-                    <label for="routeOfMedicine">Route of Medicine *</label>
-                    <input type="text" class="form-control" placeholder="Enter route" formControlName="routeOfMedicine">
-                    <!-- <div *ngIf="submitted && f.routeOfMedicine.errors">
-                      <small class="error-msg" *ngIf="f.routeOfMedicine.errors.required">Enter route</small>
-                    </div> -->
+                  <div class="col-md-12">
+                    <button class="confirm-btn" type="button" (click)="addMedicine()">Add New Medicine</button>
                   </div>
                 </div>
               </ng-container>
