@@ -83,7 +83,7 @@ export class AddPlanAssessmentComponent implements OnInit {
   }
 
   removeMedicine(index: number) {
-    if (this.fm.at(index).get('id')) {
+    if (this.fm.at(index).get('id').value) {
       this.fm.at(index).patchValue({ isDeleted: true });
     } else {
       this.fm.removeAt(index);

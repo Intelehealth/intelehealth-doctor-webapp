@@ -535,47 +535,71 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   editAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal({
-      assessment: (stage == 1) ? this.parameters[22].stage1values[index].value : this.parameters[22].stage2values[index].value,
-      plan: (stage == 1) ? this.parameters[23].stage1values[index].value : this.parameters[23].stage2values[index].value,
+      assessment: (stage == 1) ? this.parameters[22].stage1values[index] ? this.parameters[22].stage1values[index].value : null : this.parameters[22].stage2values[index] ? this.parameters[22].stage2values[index].value: null,
+      plan: (stage == 1) ? this.parameters[23].stage1values[index] ? this.parameters[23].stage1values[index].value : null : this.parameters[23].stage2values[index] ? this.parameters[23].stage2values[index].value : null,
       medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
     }).subscribe(res => {
       if (res) {
         // console.log(res);
         if (res.assessment) {
-          this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment: this.parameters[22].stage2values[index].value = res.assessment;
-          });
+          if ((stage == 1) ? this.parameters[22].stage1values[index]?.uuid : this.parameters[22].stage2values[index]?.uuid) {
+            this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment: this.parameters[22].stage2values[index].value = res.assessment;
+            });
+          } else {
+            this.encounterService.postObs({
+              concept: this.conceptAssessment,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: res.assessment,
+              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+            }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[22].stage1values[index] = { value: res.assessment, uuid: result.uuid } : this.parameters[22].stage2values[index] = { value: res.assessment, uuid: result.uuid };
+            });
+          }
         } else {
           if (stage == 1) {
-            if (this.parameters[22].stage1values[index].uuid) {
+            if (this.parameters[22].stage1values[index]?.uuid) {
               this.encounterService.deleteObs(this.parameters[22].stage1values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage1values[index].value = null;
+                this.parameters[22].stage1values[index] = null;
               });
             }
           } else {
-            if (this.parameters[22].stage2values[index].uuid) {
+            if (this.parameters[22].stage2values[index]?.uuid) {
               this.encounterService.deleteObs(this.parameters[22].stage2values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage2values[index].value = null;
+                this.parameters[22].stage2values[index] = null;
               });
             }
           }
         }
 
         if (res.plan) {
-          this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan: this.parameters[23].stage2values[index].value = res.plan;
-          });
+          if ((stage == 1) ? this.parameters[23].stage1values[index]?.uuid : this.parameters[23].stage2values[index]?.uuid) {
+            this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan: this.parameters[23].stage2values[index].value = res.plan;
+            });
+          } else {
+            this.encounterService.postObs({
+              concept: this.conceptPlan,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: res.plan,
+              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+            }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[23].stage1values[index] = { value: res.plan, uuid: result.uuid } : this.parameters[23].stage2values[index] = { value: res.plan, uuid: result.uuid };
+            });
+          }
         } else {
           if (stage == 1) {
-            if (this.parameters[22].stage1values[index].uuid) {
-              this.encounterService.deleteObs(this.parameters[22].stage1values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage1values[index].value = null;
+            if (this.parameters[23].stage1values[index]?.uuid) {
+              this.encounterService.deleteObs(this.parameters[23].stage1values[index].uuid).subscribe((result: any) => {
+                this.parameters[23].stage1values[index] = null;
               });
             }
           } else {
-            if (this.parameters[22].stage2values[index].uuid) {
-              this.encounterService.deleteObs(this.parameters[22].stage2values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage2values[index].value = null;
+            if (this.parameters[23].stage2values[index]?.uuid) {
+              this.encounterService.deleteObs(this.parameters[23].stage2values[index].uuid).subscribe((result: any) => {
+                this.parameters[23].stage2values[index] = null;
               });
             }
           }
