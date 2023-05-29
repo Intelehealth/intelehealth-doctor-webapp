@@ -540,17 +540,45 @@ export class PartogramComponent implements OnInit, OnDestroy {
       medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
     }).subscribe(res => {
       if (res) {
-        console.log(res);
+        // console.log(res);
         if (res.assessment) {
           this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
             (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment: this.parameters[22].stage2values[index].value = res.assessment;
           });
+        } else {
+          if (stage == 1) {
+            if (this.parameters[22].stage1values[index].uuid) {
+              this.encounterService.deleteObs(this.parameters[22].stage1values[index].uuid).subscribe((result: any) => {
+                this.parameters[22].stage1values[index].value = null;
+              });
+            }
+          } else {
+            if (this.parameters[22].stage2values[index].uuid) {
+              this.encounterService.deleteObs(this.parameters[22].stage2values[index].uuid).subscribe((result: any) => {
+                this.parameters[22].stage2values[index].value = null;
+              });
+            }
+          }
         }
 
         if (res.plan) {
           this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
             (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan: this.parameters[23].stage2values[index].value = res.plan;
           });
+        } else {
+          if (stage == 1) {
+            if (this.parameters[22].stage1values[index].uuid) {
+              this.encounterService.deleteObs(this.parameters[22].stage1values[index].uuid).subscribe((result: any) => {
+                this.parameters[22].stage1values[index].value = null;
+              });
+            }
+          } else {
+            if (this.parameters[22].stage2values[index].uuid) {
+              this.encounterService.deleteObs(this.parameters[22].stage2values[index].uuid).subscribe((result: any) => {
+                this.parameters[22].stage2values[index].value = null;
+              });
+            }
+          }
         }
 
         if (res.medicines.length) {

@@ -417,6 +417,18 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           // })();
         }).catch((_) => console.log);
       } else {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        console.log(result.visitorId);
+        this.authService.subscribePushNotification(
+          sub,
+          this.user.uuid,
+          result.visitorId,
+          this.provider.person.display,
+          this.getSpecialization()
+        ).subscribe(response => {
+              console.log(response);
+        });
         this._swPush.messages.subscribe(payload => {
           console.log(payload);
         });
