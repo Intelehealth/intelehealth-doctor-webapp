@@ -41,7 +41,7 @@
 }
 .chat-box {
   min-height: 300px;
-  max-height: 400px;
+  max-height: calc(100% - 130px);
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -117,4 +117,8 @@
 
 .spinner {
   margin: 0 auto;
+}
+
+.card-footer{
+  background: white;
 }
