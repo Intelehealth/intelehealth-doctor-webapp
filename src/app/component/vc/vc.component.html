@@ -1,7 +1,7 @@
 <div #mainContainer class="main" [class.is-fullscreen]="isFullscreen">
   <video #remoteVideo class="remoteVideo" autoplay></video>
   <div #localContainer class="local-container">
-    <video #localVideo autoplay class="localVideo mx-2"></video>
+    <video #localVideo autoplay class="localVideo"></video>
   </div>
   <div *ngIf="setSpiner" class="loader">
     <label for="loader">Connecting...</label>

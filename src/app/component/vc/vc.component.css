@@ -12,12 +12,6 @@
   background-color: #343a40 !important;
 }
 
-.local-container {
-  position: absolute;
-  bottom: 15%;
-  right: 3%;
-}
-
 i.fa {
   font-size: 25px;
   padding: 10px;
@@ -44,7 +38,7 @@ i.fa {
 .local-container {
   position: absolute;
   bottom: 15%;
-  right: 3%;
+  right: 0;
 }
 
 i.fa {
@@ -64,7 +58,7 @@ i.fa {
 }
 
 .button-tab {
-  bottom: 5%;
+  bottom: 0;
 }
 
 .container {
@@ -76,6 +70,14 @@ i.fa {
 .room_id {
   display: flex;
   justify-content: center;
+}
+
+
+.is-fullscreen .remoteVideo {
+  margin: auto !important;
+
+  height: 100vh !important;
+  width: 100vw !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -121,20 +123,17 @@ i.fa {
     margin: auto !important;
 
     right: 0;
-    bottom: -3%;
+    bottom: 5%;
   }
 
   .is-fullscreen .local-container .localVideo {
     height: 46vh !important;
     width: 65vw !important;
   }
-}
 
-.is-fullscreen .remoteVideo {
-  margin: auto !important;
-
-  height: 100vh !important;
-  width: 100vw !important;
+  .button-tab {
+    bottom: 5%;
+  }
 }
 
 .loader {
