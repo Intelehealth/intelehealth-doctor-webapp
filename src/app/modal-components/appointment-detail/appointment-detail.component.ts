@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -15,7 +16,8 @@ export class AppointmentDetailComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
-    private visitService: VisitService) { }
+    private visitService: VisitService,
+    private translate:TranslateService) { }
 
   ngOnInit(): void {
     if (this.data?.title == 'Appointment') {
@@ -52,19 +54,19 @@ export class AppointmentDetailComponent implements OnInit {
     let minutes = moment(data).diff(moment(), 'minutes');
     // console.log(hours, minutes);
     if(hours > 24) {
-      return `Starts in ${Math.round(hours/24)} days`;
+      return `${this.translate.instant('Starts in')} ${Math.round(hours/24)} ${this.translate.instant('days')}`;
     };
     if (hours < 1) {
       if (hours < -24) {
-        return `Awaiting since ${Math.round(-hours/24)} days`;
+        return `${this.translate.instant('Awaiting since')} ${Math.round(-hours/24)} ${this.translate.instant('days')}`;
       } else if (hours < 0 && hours > -24) {
-        return `Awaiting since ${-hours} hrs`;
+        return `${this.translate.instant('Awaiting since')} ${-hours} ${this.translate.instant('hrs')}`;
       } else if (hours == 0 && minutes < 0) {
-        return `Awaiting since ${-minutes} minutes`;
+        return `${this.translate.instant('Awaiting since')} ${-minutes} ${this.translate.instant('minutes')}`;
       }
-      return `Starts in ${minutes} minutes`;
+      return `${this.translate.instant('Starts in')} ${minutes} ${this.translate.instant('minutes')}`;
     }
-    return `Starts in ${hours} hrs`;
+    return `${this.translate.instant('Starts in')} ${hours} ${this.translate.instant('hrs')}`;
   }
 
   getCheifComplaint(visit: any) {
@@ -126,12 +128,12 @@ export class AppointmentDetailComponent implements OnInit {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
-      return `Prescription created ${Math.round(hours/24)} days ago`;
+      return `${this.translate.instant('Prescription created')} ${Math.round(hours/24)} ${this.translate.instant('days ago')}`;
     };
     if (hours < 1) {
-      return `Prescription created ${minutes} minutes ago`;
+      return `${this.translate.instant('Prescription created')} ${minutes} ${this.translate.instant('minutes ago')}`;
     }
-    return `Prescription created ${hours} hrs ago`;
+    return `${this.translate.instant('Prescription created')} ${hours} ${this.translate.instant('hrs ago')}`;
   }
 
 }

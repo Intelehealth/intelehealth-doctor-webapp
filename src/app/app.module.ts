@@ -5,7 +5,11 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
+  registerLocaleData,
 } from "@angular/common";
+
+import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 
 // Component Import
 import { AppComponent } from "./app.component";
@@ -74,6 +78,9 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
+
+registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 
 @NgModule({
   declarations: [

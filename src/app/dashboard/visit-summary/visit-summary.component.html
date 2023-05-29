@@ -943,7 +943,7 @@
                         <div class="pretty p-default p-round">
                           <input
                             type="radio"
-                            [value]="'Yes'"
+                            value="{{'Yes' | translate}}"
                             formControlName="spoken"
                           />
                           <div class="state p-success">
@@ -953,7 +953,7 @@
                         <div class="pretty p-default p-round">
                           <input
                             type="radio"
-                            [value]="'No'"
+                            value="{{'No' | translate}}"
                             formControlName="spoken"
                           />
                           <div class="state p-success">
@@ -1318,7 +1318,7 @@
                     <textarea
                       class="form-control"
                       rows="3"
-                      placeholder="Type here"
+                      placeholder="{{'Type here'|translate}}"
                       formControlName="note"
                     ></textarea>
                   </div>
@@ -1444,7 +1444,7 @@
                                 formControlName="drug"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter drug"
+                                placeholder="{{'Enter drug'|translate}}"
                                 [ngbTypeahead]="search3"
                               />
                             </div>
@@ -1455,7 +1455,7 @@
                                 formControlName="strength"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter strength"
+                                placeholder="{{'Enter strength'|translate}}"
                                 [ngbTypeahead]="search4"
                               />
                             </div>
@@ -1466,7 +1466,7 @@
                                 formControlName="days"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter days"
+                                placeholder="{{'Enter days'|translate}}"
                                 [ngbTypeahead]="search5"
                               />
                             </div>
@@ -1482,7 +1482,7 @@
                               [clearable]="false"
                               [searchable]="true"
                               [addTag]="true"
-                              placeholder="Select timing"
+                              placeholder="{{'Select timing'|translate}}"
                             >
                             </ng-select>
                           </td>
@@ -1492,7 +1492,7 @@
                                 formControlName="remark"
                                 type="text"
                                 class="form-control"
-                                placeholder="Enter Remark"
+                                placeholder="{{'Enter Remark'|translate}}"
                               />
                             </div>
                           </td>
@@ -1885,7 +1885,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Follow-up'| translate}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Follow-up'| translate}}{{ollowUpForm?.value}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
@@ -1902,7 +1902,7 @@
                         <div class="pretty p-default p-round">
                           <input
                             type="radio"
-                            [value]="'Yes'"
+                            value="{{'Yes' | translate}}"
                             formControlName="wantFollowUp"
                           />
                           <div class="state p-success">
@@ -1912,7 +1912,7 @@
                         <div class="pretty p-default p-round">
                           <input
                             type="radio"
-                            [value]="'No'"
+                            value="{{'No' | translate}}"
                             formControlName="wantFollowUp"
                           />
                           <div class="state p-success">
@@ -1923,7 +1923,7 @@
                     </div>
                   </li>
                   <ng-container
-                    *ngIf="followUpForm.value.wantFollowUp == 'Yes'"
+                    *ngIf="followUpForm.value.wantFollowUp == 'Yes' || followUpForm.value.wantFollowUp == 'Да'"
                   >
                     <li>
                       <div class="row">
@@ -2005,7 +2005,7 @@
                     isVisitNoteProvider &&
                     !visitEnded &&
                     !followUpForm.value.present &&
-                    followUpForm.value.wantFollowUp == 'Yes'
+                    followUpForm.value.wantFollowUp == 'Yes'|| followUpForm.value.wantFollowUp == 'Да'
                   "
                 >
                   <button

@@ -1,6 +1,7 @@
 import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -16,9 +17,10 @@ export class SentComponent implements OnInit, AfterViewInit {
   @Input() prescriptionsSent: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor() { }
+  constructor(    private translateService: TranslateService) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
     this.dataSource.paginator = this.paginator;
   }

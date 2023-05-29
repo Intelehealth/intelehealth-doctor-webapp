@@ -12,20 +12,22 @@
               <ul>
                 <li>
                   <div class="info-row">
-                    <div class="info-label">Appointments ({{appointmentCount}})</div>
+                    <div class="info-label">{{'Appointments'|translate}} ({{appointmentCount}})</div>
                     <div class="info-con">
                       <ng-container *ngFor="let e of data?.events;">
-                        <div *ngIf="e.title == 'Appointment'">{{e.start|date:'h:mm a'|lowercase}} - {{e.end|date:'h:mm a'|lowercase}}</div>
+                        <div *ngIf="e.title == 'Appointment'">{{e.start|date:'h:mm'}} {{e.start|date:'a'|lowercase|translate}} -
+                           {{e.end|date:'h:mm'}}{{e.end|date:'a'|lowercase|translate}}</div>
                       </ng-container>
                     </div>
                   </div>
                 </li>
                 <li>
                   <div class="info-row">
-                    <div class="info-label">Follow-ups ({{followupCount}})</div>
+                    <div class="info-label">{{'Follow-ups'|translate}} ({{followupCount}})</div>
                     <div class="info-con">
                       <ng-container *ngFor="let e of data?.events;">
-                        <div *ngIf="e.title == 'Follow-up visit'">{{e.start|date:'h:mm a'|lowercase}} - {{e.end|date:'h:mm a'|lowercase}}</div>
+                        <div *ngIf="e.title == 'Follow-up visit'">{{e.start|date:'h:mm'|lowercase}} {{e.start|date:'a'|lowercase|translate}} - 
+                          {{e.end|date:'h:mm'|lowercase}}{{e.end|date:'a'|lowercase|translate}}</div>
                       </ng-container>
                     </div>
                   </div>
@@ -36,34 +38,34 @@
           <div class="col-md-12 p-0 mt-3">
             <div class="day-off-form-con">
               <div class="form-group row">
-                <label for="markAS" class="col-4 col-form-label">Mark as</label>
+                <label for="markAS" class="col-4 col-form-label">{{'Mark as'|translate}}</label>
                 <div class="col-8 py-2">
                   <div class="pretty p-default p-round">
                     <input type="radio" value="dayOff" formControlName="markAs">
                     <div class="state p-success">
-                      <label>Day off</label>
+                      <label>{{'Day off'|translate}}</label>
                     </div>
                   </div>
                   <div class="pretty p-default p-round">
                     <input type="radio" value="hoursOff" formControlName="markAs">
                     <div class="state p-success">
-                      <label>Hours off</label>
+                      <label>{{'Hours off'|translate}}</label>
                     </div>
                   </div>
                 </div>
               </div>
               <ng-container *ngIf="dayOffForm.value.markAs == 'hoursOff'">
                 <div class="form-group row">
-                  <label for="markAS" class="col-4 col-form-label">From</label>
+                  <label for="markAS" class="col-4 col-form-label">{{'From'|translate}}</label>
                   <div class="col-8">
-                    <ng-select class="appointment-select" formControlName="from" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="Select">
+                    <ng-select class="appointment-select" formControlName="from" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="{{'Select'|translate}}">
                     </ng-select>
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="markAS" class="col-4 col-form-label">To</label>
+                  <label for="markAS" class="col-4 col-form-label">{{'To'|translate}}</label>
                   <div class="col-8">
-                    <ng-select class="appointment-select" formControlName="to" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="Select">
+                    <ng-select class="appointment-select" formControlName="to" [items]="timeList" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  placeholder="{{'Select'|translate}}">
                     </ng-select>
                   </div>
                 </div>
@@ -72,8 +74,8 @@
           </div>
           <div class="col-md-12 p-0 mt-3">
             <div class="d-flex align-items-center justify-content-center flex-wrap">
-              <button class="blue-btn" type="button" (click)="close(false)">Cancel</button>
-              <button class="confirm-btn" type="submit">Continue</button>
+              <button class="blue-btn" type="button" (click)="close(false)">{{'Cancel'|translate}}</button>
+              <button class="confirm-btn" type="submit">{{'Continue'|translate}}</button>
             </div>
           </div>
         </div>

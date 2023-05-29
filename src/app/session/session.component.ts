@@ -56,6 +56,7 @@ export class SessionComponent implements OnInit {
   changeLanguage() {
     this.translate.use(this.selectedLanguage);
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
+    window.location.reload();
   }
 
 }

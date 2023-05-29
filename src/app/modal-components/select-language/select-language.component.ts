@@ -27,6 +27,7 @@ export class SelectLanguageComponent implements OnInit {
     this.translate.setDefaultLang(this.languageForm.value.language);
     localStorage.setItem("selectedLanguage", this.languageForm.value.language);
     this.dialogRef.close(this.languageForm.value);
+    window.location.reload();
   }
 
   close(val: any) {

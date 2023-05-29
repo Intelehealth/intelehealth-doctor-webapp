@@ -4,12 +4,12 @@
       <div class="title-con d-flex align-items-center">
         <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
         <div class="d-flex flex-column">
-          <h6 class="mb-0">Your calendar</h6>
+          <h6 class="mb-0">{{'Your calendar'|translate}}</h6>
         </div>
       </div>
     </div>
     <div class="col p-0 pb-2">
-      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">Manage calendar</button>
+      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar">{{'Manage calendar'|translate}}</button>
     </div>
   </div>
   <div class="row">
@@ -19,15 +19,15 @@
           <div class="row">
             <div class="col-md-6 p-0">
               <mat-tab-group [disableRipple]="true" class="calendar-tab-group" mat-align-tabs="start" (selectedIndexChange)="onTabChanged($event)">
-                <mat-tab label="Daily"></mat-tab>
-                <mat-tab label="Weekly"></mat-tab>
-                <mat-tab label="Monthly"></mat-tab>
+                <mat-tab label="{{'Daily'|translate}}"></mat-tab>
+                <mat-tab label="{{'Weekly'|translate}}"></mat-tab>
+                <mat-tab label="{{'Monthly'|translate}}"></mat-tab>
               </mat-tab-group>
             </div>
             <div class="col-md-6 p-0">
               <div class="header-date-con">
                 <img class="mr-2" src="assets/svgs/calendar-white.svg" alt="">
-                <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h6>
+                <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'): locale }}</h6>
                 <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)">
                   <img src="assets/svgs/chevron-left.svg" alt="" width="100%">
                 </button>
@@ -43,6 +43,7 @@
             class="day-view-con"
             *ngSwitchCase="CalendarView.Day"
             [viewDate]="viewDate"
+            [locale]="locale"
             [hourDuration]="30"
             [dayStartHour]="9"
             [dayStartMinute]="0"
@@ -62,6 +63,7 @@
             class="week-view-con"
             *ngSwitchCase="CalendarView.Week"
             [viewDate]="viewDate"
+            [locale]="locale"
             [weekStartsOn]="1"
             [events]="events"
             [hourDuration]="30"
@@ -83,6 +85,7 @@
           <mwl-calendar-month-view
             *ngSwitchCase="CalendarView.Month"
             [viewDate]="viewDate"
+            [locale]="locale"
             [weekStartsOn]="1"
             [events]="events"
             [headerTemplate]="monthHeaderTemplate"
@@ -100,7 +103,7 @@
           let-daysInWeek="daysInWeek">
           <div [attr.aria-hidden]="{}|calendarA11y: (daysInWeek === 1? 'hideDayHourSegment':'hideWeekHourSegment')" class="cal-hour-segment-con" [style.height.px]="segmentHeight" [class.cal-hour-start]="segment.isStart" [class.cal-after-hour-start]="!segment.isStart" [ngClass]="segment.cssClass" [class.dayOff]="checkIfDayOff(segment.date)">
             <div class="cal-time-con" *ngIf="isTimeLabel">
-              <span>{{ segment.displayDate|date:'hh:mm a' }}</span>
+              <span>{{ segment.displayDate|date:'hh:mm' }}{{ segment.displayDate|date:'a' |translate}}</span>
               <div class="marker"></div>
             </div>
           </div>
@@ -159,22 +162,23 @@
               <div class="con-item">
                 <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
-                  <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
+                  <h6 class="mb-0">{{((weekEvent.tempEvent || weekEvent.event).title) |translate}}</h6>
+                  <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm'}}{{(weekEvent.tempEvent || weekEvent.event).start|date:'a'|lowercase|translate}}
+                     - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm'}}{{(weekEvent.tempEvent || weekEvent.event).end|date:'a'|lowercase|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
-                  <p class="mb-0">Patient</p>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <p class="mb-0">{{'Patient'|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
-                  <p class="mb-0">Health Worker</p>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.hwGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
+                  <p class="mb-0">{{'Health Worker'|translate}}</p>
                 </div>
               </div>
             </div>
@@ -205,13 +209,14 @@
             role="application"
             [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
             <div class="event-con">
-              <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
-              <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
+              <h6 class="mb-0">{{((weekEvent.tempEvent || weekEvent.event).title) | translate}}</h6>
+              <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm'}} {{(weekEvent.tempEvent || weekEvent.event).start|date:'a'|lowercase|translate}} -
+                 {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm'}}{{(weekEvent.tempEvent || weekEvent.event).end|date:'a'|lowercase|translate}}</p>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}}</h6>
-                  <h6 class="mb-0">({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}}</h6>
+                  <h6 class="mb-0">({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate |noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                 </div>
               </div>
             </div>
@@ -241,7 +246,7 @@
               (dragEnter)="dragEnter.emit({ date: day.date })"
               tabindex="0"
               role="columnheader">
-              {{day.date|date:'d EEE'|uppercase}}
+              {{day.date|date:'d'}} {{(day.date|date:'EEE'|uppercase|translate)}}
             </div>
           </div>
         </ng-template>
@@ -260,7 +265,7 @@
               [ngClass]="day.cssClass"
               tabindex="0"
               role="columnheader">
-              {{day.date|date:'EEE'|uppercase}}
+              {{day.date|date:'EEE'|uppercase|translate}}
             </div>
           </div>
         </ng-template>
@@ -285,12 +290,12 @@
                 <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
               </span>
               <div class="day-off-con">
-                Day Off
+                {{'Day Off'|translate}}
               </div>
             </div>
             <div class="cal-events-con" *ngIf="day.events.length > 0">
-              <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} Appointment<span *ngIf="getCount('Appointment', day.events) > 1">s</span></div>
-              <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} Follow-up visit<span *ngIf="getCount('Follow-up visit', day.events) > 1">s</span></div>
+              <div class="event-badge" *ngIf="getCount('Appointment', day.events)">{{getCount('Appointment', day.events)}} {{'Appointment'|translate}}<span *ngIf="getCount('Appointment', day.events) > 1">{{'s'|translate}}</span></div>
+              <div class="event-badge" *ngIf="getCount('Follow-up visit', day.events)">{{getCount('Follow-up visit', day.events)}} {{'Follow-up visit'|translate}}<span *ngIf="getCount('Follow-up visit', day.events) > 1">{{'s'|translate}}</span></div>
               <ng-container *ngFor="let event of day.events; trackBy: trackByEventId;let i=index;">
                 <div class="cal-event-con2" *ngIf="i < 2"
                   [ngStyle]="{ backgroundColor: event.color?.primary }"
@@ -312,12 +317,12 @@
                   [touchStartLongPress]="{ delay: 300, delta: 30 }"
                   (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
                   [attr.aria-hidden]="{} | calendarA11y: 'hideMonthCellEvents'">
-                  {{event.start|date:'h:mm a'|lowercase}} - {{event.end|date:'h:mm a'|lowercase}}
+                  {{event.start|date:'h:mm'}}{{event.start|date:'a'|lowercase|translate}} - {{event.end|date:'h:mm'}} {{event.end|date:'a'|lowercase|translate}}
                 </div>
               </ng-container>
 
               <div class="cal-event-con2" *ngIf="day.events.length > 2">
-                {{day.events.length -2}} more...
+                {{day.events.length -2}} {{'more'|translate}}...
               </div>
             </div>
           </div>

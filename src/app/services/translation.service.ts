@@ -21,4 +21,8 @@ export class TranslationService {
   getSelectedLanguage() {
     return this.translateService.use(localStorage.getItem('selectedLanguage'));
   }
+
+  getDropdownTranslation(element:string, elementName:string) {
+    return this.translateService.instant(`${element}.${elementName}`);
+  }
 }

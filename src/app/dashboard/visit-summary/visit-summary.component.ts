@@ -23,6 +23,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
+import { TranslationService } from 'src/app/services/translation.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -297,7 +298,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private encounterService: EncounterService,
     private linkSvc: LinkService,
     private socket: SocketService,
-    private translateService: TranslateService) {
+    private translateService: TranslateService,
+    private translationService: TranslationService) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -364,7 +366,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
-    this.drugNameList = this.drugNameList.concat(medicines);
+    medicines.forEach(med => {
+      this.drugNameList.push({'id':med.id, 'name':this.translateService.instant(med.name)});
+    });
     // this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
@@ -402,7 +406,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     // });
 
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
-      if (val == 'Yes') {
+      if (val == 'Yes' || val == 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
         this.followUpForm.get('followUpTime').setValidators(Validators.required);
@@ -729,16 +733,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     var months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant('years')}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant('months')}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant('days')}`;
     }
   }
 
   getPersonAttributeValue(attrType: string) {
-    let val = 'NA';
+    let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
         if (attrType == attr.attributeType.display) {
@@ -1161,7 +1165,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.concept(adviceUuid).subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.advicesList.push(ans.display);
+        this.advicesList.push(this.translationService.getDropdownTranslation('advice', ans.display));
       });
     });
   }
@@ -1216,7 +1220,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.concept(testUuid).subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.testsList.push(ans.display);
+        this.testsList.push(this.translationService.getDropdownTranslation('tests', ans.display));
       });
     });
   }
