@@ -10,46 +10,56 @@
   padding: 10px;
   cursor: pointer;
 }
+
 .chat-button i {
   color: white;
   font-size: 30px;
 }
+
 .container {
   padding: 0px;
   display: none;
   z-index: 9;
 }
+
 .card-header {
   display: flex;
   justify-content: space-between;
   background-color: #ddd;
 }
+
 .input-group.mb-3 {
   position: relative;
 }
+
 .msg {
   position: absolute;
   bottom: -20px;
   font-size: 11px;
 }
+
 .card-header i {
   cursor: pointer;
 }
+
 .no-history {
   color: grey;
   text-align: center;
 }
+
 .chat-box {
   min-height: 300px;
-  max-height: calc(100% - 130px);
+  max-height: 400px;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
+
 .message-header-container {
   display: flex;
   justify-content: flex-start;
   margin-top: 10px;
 }
+
 .message-header-container span {
   font-size: 11px;
   font-weight: bold;
@@ -61,6 +71,7 @@
   justify-content: flex-end;
   margin-top: 10px;
 }
+
 .user-message {
   background-color: #ececec;
   border-radius: 10px;
@@ -70,9 +81,11 @@
   max-width: 80%;
   min-width: 100px;
 }
+
 .user-message-container {
   display: flex;
 }
+
 .user-message-container.user {
   display: flex;
   justify-content: flex-end;
@@ -88,6 +101,7 @@
   justify-content: flex-end;
   min-width: 100px;
 }
+
 .user-message p {
   margin: 0px;
 }
@@ -102,16 +116,22 @@
   box-shadow: 3px 3px 3px rgba(218, 215, 215, 0.925);
   border-radius: 10px;
 }
+
 @media screen and (max-width: 600px) {
   .chat.card.container {
     height: 100vh;
     bottom: 0;
     right: 0;
   }
+
   .chat .message-form.card-footer {
     bottom: 0;
     position: absolute;
     width: 100%;
+  }
+
+  .chat-box {
+    max-height: calc(100% - 130px);
   }
 }
 
@@ -119,6 +139,6 @@
   margin: 0 auto;
 }
 
-.card-footer{
+.card-footer {
   background: white;
 }
