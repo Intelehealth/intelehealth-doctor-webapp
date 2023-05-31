@@ -25,5 +25,7 @@ export const environment = {
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
   siteKey: "6LdUIXgjAAAAAJyQHOTzABeaNV0_LhKHtWULv63t",
-  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM=='
+  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
+  webrtcSdkServerUrl: `${window.location.protocol}//${window.location.hostname}:9090`,
+  webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`
 };
