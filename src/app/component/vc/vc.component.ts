@@ -39,7 +39,7 @@ export class VcComponent implements OnInit, OnDestroy {
   classFlag = false;
   setSpiner = false;
   patientUuid = "";
-  nurseId: { uuid } = { uuid: null };
+  nurseId: string = "";
   doctorName = "";
 
   constructor(
@@ -87,15 +87,12 @@ export class VcComponent implements OnInit, OnDestroy {
     const doctorName = getFromStorage("doctorName");
     this.doctorName = doctorName ? doctorName : this.user.display;
 
-    this.nurseId =
-      patientVisitProvider && patientVisitProvider.provider
-        ? patientVisitProvider.provider
-        : this.nurseId;
+    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
 
     this.socketService.initSocket(true);
     this.initSocketEvents();
     this.socketService.emitEvent("call", {
-      nurseId: this.nurseId.uuid,
+      nurseId: this.nurseId,
       doctorName: this.doctorName,
       roomId: this.room,
     });
@@ -110,11 +107,6 @@ export class VcComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.socketService.close();
     this.close();
-  }
-
-  @HostListener("fullscreenchange")
-  fullScreenChange() {
-    this.isFullscreen = document.fullscreenEnabled;
   }
 
   makeCall() {
@@ -255,6 +247,16 @@ export class VcComponent implements OnInit, OnDestroy {
       this.pc = new RTCPeerConnection({
         iceServers: [
           {
+            "username": "dc2d2894d5a9023620c467b0e71cfa6a35457e6679785ed6ae9856fe5bdfa269",
+            "credential": "tE2DajzSJwnsSbc123",
+            "urls": "turn:global.turn.twilio.com:3478?transport=udp"
+          },
+          {
+            "username": "dc2d2894d5a9023620c467b0e71cfa6a35457e6679785ed6ae9856fe5bdfa269",
+            "credential": "tE2DajzSJwnsSbc123",
+            "urls": "turn:global.turn.twilio.com:3478?transport=tcp"
+          },
+          {
             urls: ["turn:demo.intelehealth.org:3478"],
             username: "ihuser",
             credential: "keepitsecrect",
@@ -353,7 +355,8 @@ export class VcComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
-    this.socketService.emitEvent("bye", this.room);
+    // this.socketService.emitEvent("bye", this.room);
+    this.socketService.emitEvent("bye", { room: this.room, nurseId: this.nurseId });
     this.setSpiner = false;
     this.close();
   }

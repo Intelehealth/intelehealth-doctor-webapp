@@ -270,9 +270,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
     value.age = active.patient.person.age;
     value.location = active.location.display;
     value.status = active.encounters[0]?.encounterType.display;
-    value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split("- ")[1];
+    let visitCompleteEnc = active.encounters.find(enc => enc.display.includes("Visit Complete"));
+      if(visitCompleteEnc) {
+        value.provider = visitCompleteEnc?.encounterProviders[0]?.provider.display.split("- ")[1];
+      } else {
+        value.provider = active.encounters[0]?.encounterProviders[0]?.provider.display.split("- ")[1];
+      }
     value.lastSeen = active.encounters[0]?.encounterDatetime;
-    value.date = followUpDate;
+    value.date =  moment(followUpDate, "DD-MM-YYYY").format("DD-MMM-YYYY");
     value.isPastDate = moment().toDate() > moment(followUpDate, "DD-MM-YYYY").toDate();
     return value;
   }
@@ -307,7 +312,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.setSpiner1= true;
     this.followUpVisit = [];
     this.followUpVisitNo = 0;
-    this.service.getVisits({}, true).subscribe(
+    let fromStartDate = moment().add(-2, 'months').startOf('month').format();
+    this.service.getVisitWithDateFilter({}, true, fromStartDate).subscribe(
       (response) => {
         let allVisits = [];
         response.results.forEach((item) => {
@@ -317,7 +323,25 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
         });
         allVisits.forEach((visit) => {
-          this.getFollowUpVisits(visit);
+            if (visit.encounters.length > 0) {
+              if (this.systemAccess) {
+                this.getFollowUpVisits(visit);
+              } else if (visit.attributes.length) {
+                const attributes = visit.attributes;
+                const speRequired = attributes.filter(
+                  (attr) =>
+                    attr.attributeType.uuid ===
+                    "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+                );
+                if (speRequired.length) {
+                  speRequired.forEach((spe) => {
+                    if (spe.value === this.specialization) {
+                      this.getFollowUpVisits(visit);
+                    }
+                  });
+                }
+              }
+            }
         });
         this.setSpiner1 = false;
       });
@@ -329,7 +353,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
       let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);  
       let found = this.followUpVisit.find(c => c.id === v.id);
       if (!found) {
-      this.followUpVisit.push(v);
+      this.followUpVisit.push(this.setValues(v, visit));
       this.followUpVisitNo += 1;
     }
   }
