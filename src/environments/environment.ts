@@ -4,13 +4,13 @@
 
 export const environment = {
   production: false,
-  base: "https://uiux.intelehealth.org",
-  baseURL: "https://uiux.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://uiux.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://uiux.intelehealth.org/openmrs",
-  mindmapURL: "https://uiux.intelehealth.org:3004/api",
-  notificationURL: "https://uiux.intelehealth.org:3004/notification",
-  socketURL: "https://uiux.intelehealth.org:3004",
+  base: "https://dev.intelehealth.org",
+  baseURL: "https://dev.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://dev.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://dev.intelehealth.org/openmrs",
+  mindmapURL: "https://dev.intelehealth.org:3004/api",
+  notificationURL: "https://dev.intelehealth.org:3004/notification",
+  socketURL: "https://dev.intelehealth.org:3004",
   captchaSiteKey: "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
@@ -30,7 +30,7 @@ export const environment = {
   },
   siteKey: "6Lde9KIhAAAAALJTYaWvatcZX70x0tgtEKh5Wf8k",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  webrtcSdkServerUrl: "https://uiux.intelehealth.org:9090",
+  webrtcSdkServerUrl: "https://dev.intelehealth.org:9090",
   webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/'
 };
 

@@ -6,6 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
 
 @Component({
   selector: 'app-video-call',
@@ -30,7 +31,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   room = "";
   initiator = "dr";
-  doctorName = "";
   nurseId: { uuid: string } = { uuid: null };
   connectToDrId = "";
   isStreamAvailable: any;
@@ -50,7 +50,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private cs: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private webrtcSvc: WebrtcService
+  ) { }
+
+  get doctorName() {
+    return localStorage.getItem("doctorName") || this.user?.display;
+  }
 
   async ngOnInit() {
     this.room = this.data.patientId;
@@ -61,11 +67,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = localStorage.getItem("doctorName");
-    this.doctorName = doctorName ? doctorName : this.user.display;
-    this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
+    this.nurseId = patientVisitProvider?.provider || this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
-    await this.startUserMedia();
 
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
@@ -83,13 +86,30 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
-
-    await this.connect();
     // await this.changeVoiceCallIcons();
     /**
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
+
+    this.startCall();
+  }
+
+  async startCall() {
+    this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
+    await this.webrtcSvc.getToken(this.room, this.toUser).toPromise();
+    if (!this.webrtcSvc.token) return;
+    this.toastr.show('Received video call token.', null, { timeOut: 1000 });
+    this.webrtcSvc.createRoomAndConnectCall({
+      localElement: this.localVideoRef,
+      remoteElement: this.remoteVideoRef,
+      handleDisconnect: this.endCallInRoom.bind(this),
+      handleConnect: this.onCallConnect.bind(this)
+    });
+  }
+
+  onCallConnect() {
+    this.callStartedAt = moment();
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -374,7 +394,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       webapp: true
     });
 
-    this.stop();
+    this.close();
+    this.webrtcSvc.handleDisconnect();
+    // this.stop();
   }
 
   sendMessage2(data: any) {
@@ -386,16 +408,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   toggleAudio() {
-    this.localStream.getAudioTracks()[0].enabled = this._localAudioMute;
-    this._localAudioMute = !this._localAudioMute;
+    this._localAudioMute = this.webrtcSvc.toggleAudio();
 
     const event = this._localAudioMute ? 'audioOff' : 'audioOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
   toggleVideo() {
-    this.localStream.getVideoTracks()[0].enabled = this._localVideoOff;
-    this._localVideoOff = !this._localVideoOff;
+    this._localVideoOff = this.webrtcSvc.toggleVideo();
 
     const event = this._localVideoOff ? 'videoOff' : 'videoOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });

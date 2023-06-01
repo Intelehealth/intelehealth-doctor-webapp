@@ -21,9 +21,9 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class WebrtcService {
-  private room: any | null = null;
-  private url: string = environment.webrtcTokenServerUrl;
-  private token: any | null = null;
+  public room: any | null = null;
+  public url: string = environment.webrtcSdkServerUrl;
+  public token: any | null = null;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
 
@@ -39,25 +39,30 @@ export class WebrtcService {
      *  silent = 5,
      */
     if (localStorage.webrtcLogLevel) {
-      setLogLevel(localStorage.webrtcLogLevel);
+      try {
+        setLogLevel(JSON.parse(localStorage.webrtcLogLevel));
+      } catch (error) {
+        console.log('error: ', error);
+      }
     }
   }
 
   getToken(name: string, roomId: string) {
     return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}`)
-      .pipe(map(res => {
-        console.log('res: ', res);
+      .pipe(map((res: any) => {
+        this.token = res?.token;
         return res;
-      }))
+      }));
   }
 
   async createRoomAndConnectCall({
-    handleTrackSubscribed = this.handleTrackSubscribed,
+    handleTrackSubscribed = this.handleTrackSubscribed.bind(this),
     handleTrackUnsubscribed = this.handleTrackUnsubscribed,
-    handleActiveSpeakerChange = this.noop,
+    handleActiveSpeakerChange = this.handleActiveSpeakerChange,
     handleDisconnect = this.noop,
     handleConnect = this.noop,
-    handleLocalTrackUnpublished = this.noop,
+    handleLocalTrackUnpublished = this.handleLocalTrackUnpublished,
+    handleLocalTrackPublished = this.attachLocalVideo.bind(this),
     autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */
@@ -85,6 +90,7 @@ export class WebrtcService {
       .on(RoomEvent.Connected, handleConnect)
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
+      .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
 
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
 
@@ -93,8 +99,6 @@ export class WebrtcService {
 
     if (autoEnableCameraOnConnect) {
       await this.room.localParticipant.enableCameraAndMicrophone();
-
-      this.attachLocalVideo();
     }
   }
 
@@ -103,10 +107,13 @@ export class WebrtcService {
    */
   attachLocalVideo() {
     const track = this.room.localParticipant.getTrack(Track.Source.Camera);
+    console.log('track?.isSubscribed: ', track?.isSubscribed);
     if (track?.isSubscribed) {
       const videoElement = track.videoTrack?.attach();
       // videoElement.height = '100';
-      const localContainer: any = this.localElement?.nativeElement || document.getElementById(this.localElement);
+      const localContainer: any = this.localContainer;
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
       localContainer.innerHTML = "";
       localContainer.appendChild(videoElement);
     }
@@ -118,12 +125,16 @@ export class WebrtcService {
     participant: RemoteParticipant,
   ) {
     console.log('track: ', track);
-    if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
-      const videoElement: any = track.attach();
-      // videoElement.height = '100';
+    const videoElement: any = track.attach();
 
-      const remoteContainer: any = this.remoteContainer;
+    if (track.kind === Track.Kind.Audio) {
+      let remoteContainer: any = this.remoteContainer;
+      remoteContainer.appendChild(videoElement);
+    } else if (track.kind === Track.Kind.Video) {
+      let remoteContainer: any = this.remoteContainer;
       remoteContainer.innerHTML = "";
+      videoElement.style.width = '100%';
+      videoElement.style.height = '100%';
       remoteContainer.appendChild(videoElement);
     }
   }
@@ -155,6 +166,7 @@ export class WebrtcService {
    */
   public toggleVideo() {
     this.room.localParticipant.setCameraEnabled(!this.room.localParticipant.isCameraEnabled);
+    return this.room.localParticipant.isCameraEnabled;
   }
 
 
@@ -163,6 +175,7 @@ export class WebrtcService {
    */
   public toggleAudio() {
     this.room.localParticipant.setMicrophoneEnabled(!this.room.localParticipant.isMicrophoneEnabled);
+    return this.room.localParticipant.isMicrophoneEnabled;
   }
 
 
