@@ -24,6 +24,7 @@ export class WebrtcService {
   public room: any | null = null;
   public url: string = environment.webrtcSdkServerUrl;
   public token: any | null = null;
+  public remoteUser: any | null = null;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
 
@@ -124,8 +125,10 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    console.log('track: ', track);
     const videoElement: any = track.attach();
+    if (participant?.identity) {
+      this.remoteUser = participant;
+    }
 
     if (track.kind === Track.Kind.Audio) {
       let remoteContainer: any = this.remoteContainer;

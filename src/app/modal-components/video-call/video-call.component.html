@@ -37,15 +37,7 @@
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _remoteAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="remoteAudioIcon" />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
@@ -136,15 +128,7 @@
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _localAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="localAudioIcon" />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
