@@ -147,7 +147,7 @@
                 </button>
                 <mat-menu #notificationmenu="matMenu" class="notification-menu">
                   <ng-container *ngIf="notificationEnabled && !snoozed">
-                    <button mat-menu-item (click)="snoozeNotification('30m')">Do Not Disturb</button>
+                    <!-- <button mat-menu-item (click)="snoozeNotification('30m')">Do Not Disturb</button> -->
                     <button mat-menu-item (click)="snoozeNotification('30m')">30 Minutes</button>
                     <button mat-menu-item (click)="snoozeNotification('1h')">1 Hour</button>
                     <button mat-menu-item (click)="snoozeNotification('2h')">2 Hours</button>

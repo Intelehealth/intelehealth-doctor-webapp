@@ -270,7 +270,7 @@
                 <label for="otherQualification">Other Qualification *</label>
                 <input type="text" class="form-control" formControlName="otherQualification" placeholder="Enter other qualification" onkeypress="return (!(event.charCode > 31 && (event.charCode < 65 || event.charCode > 90) && (event.charCode < 97 || event.charCode > 122)) || event.charCode == 32 || event.charCode == 44)">
                 <div *ngIf="submitted && f1.otherQualification.errors">
-                  <small class="error-msg" *ngIf="f1.otherQualification.errors.required">Enter other qualification</small>\
+                  <small class="error-msg" *ngIf="f1.otherQualification.errors.required">Enter other qualification</small>
                   <small class="error-msg" *ngIf="f1.otherQualification.errors.pattern">Other qualification should contain alphabates only</small>
                 </div>
               </div>
