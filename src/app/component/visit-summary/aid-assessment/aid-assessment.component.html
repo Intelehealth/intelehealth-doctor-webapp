@@ -1,0 +1,172 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+  <h4><i class="fas fa-first-aid"></i> {{'Aid Assessment'| translate}}</h4>
+  <hr>
+  <div class="modal-body row">
+    <div class="col-md-12">
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>{{'Survey of Acute Homecare Utilizers'|translate}}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="table table-bordered">
+            <tbody>
+              <tr *ngFor="let s of surveyOfAcuteHomecare;let i=index;">
+                <td>{{ i+1 }}. {{s.name|translate|titlecase}}</td>
+                <td class="text-nowrap">{{(s.value) ? s.value[lang] : '-'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>{{'Medical Emergency Need Assessment'|translate}}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th colspan="2" class="bg-light">General Information</th>
+              </tr>
+              <ng-container *ngFor="let m of medicalEmergencyNeed;let i=index;">
+                <tr *ngIf="m.category == 'General Information'">
+                  <td>{{ i+1 }}. {{m.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(m.value) ? m.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Economic Evaluation</th>
+              </tr>
+              <ng-container *ngFor="let m of medicalEmergencyNeed;let i=index;">
+                <tr *ngIf="m.category == 'Economic Evaluation'">
+                  <td>{{ i+1 }}. {{m.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(m.value) ? m.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Income Resources</th>
+              </tr>
+              <ng-container *ngFor="let m of medicalEmergencyNeed;let i=index;">
+                <tr *ngIf="m.category == 'Income Resources'">
+                  <td>{{ i+1 }}. {{m.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(m.value) ? m.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Questions for ambulance medical aid</th>
+              </tr>
+              <ng-container *ngFor="let m of medicalEmergencyNeed;let i=index;">
+                <tr *ngIf="m.category == 'Questions for ambulance medical aid'">
+                  <td>{{ i+1 }}. {{m.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(m.value) ? m.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>{{'General Family Need Assessment'|translate}}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th colspan="2" class="bg-light">General Information</th>
+              </tr>
+              <ng-container *ngFor="let g of generalFamilyNeed;let i=index;">
+                <tr *ngIf="g.category == 'General Information'">
+                  <td>{{ i+1 }}. {{g.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(g.value) ? g.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Economic Evaluation</th>
+              </tr>
+              <ng-container *ngFor="let g of generalFamilyNeed;let i=index;">
+                <tr *ngIf="g.category == 'Economic Evaluation'">
+                  <td>{{ i+1 }}. {{g.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(g.value) ? g.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Income Resources</th>
+              </tr>
+              <ng-container *ngFor="let g of generalFamilyNeed;let i=index;">
+                <tr *ngIf="g.category == 'Income Resources'">
+                  <td>{{ i+1 }}. {{g.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(g.value) ? g.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>{{'Student Need Assessment'|translate}}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th colspan="2" class="bg-light">General Information</th>
+              </tr>
+              <ng-container *ngFor="let s of studentNeed;let i=index;">
+                <tr *ngIf="s.category == 'General Information'">
+                  <td>{{ i+1 }}. {{s.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(s.value) ? s.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Economic Evaluation</th>
+              </tr>
+              <ng-container *ngFor="let s of studentNeed;let i=index;">
+                <tr *ngIf="s.category == 'Economic Evaluation'">
+                  <td>{{ i+1 }}. {{s.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(s.value) ? s.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Income Resources</th>
+              </tr>
+              <ng-container *ngFor="let s of studentNeed;let i=index;">
+                <tr *ngIf="s.category == 'Income Resources'">
+                  <td>{{ i+1 }}. {{s.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(s.value) ? s.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+              <tr>
+                <th colspan="2" class="bg-light">Questions for university education</th>
+              </tr>
+              <ng-container *ngFor="let s of studentNeed;let i=index;">
+                <tr *ngIf="s.category == 'Questions for university education'">
+                  <td>{{ i+1 }}. {{s.name|translate|titlecase}}</td>
+                  <td class="text-nowrap">{{(s.value) ? s.value[lang]:'-'}}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <b>{{'Community General Need Survey'|translate}}</b>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <table class="table table-bordered">
+            <tbody>
+              <tr *ngFor="let c of communityGeneralNeed;let i=index;">
+                <td>{{ i+1 }}. {{c.name|translate|titlecase}}</td>
+                <td class="text-nowrap">{{(c.value) ? c.value[lang]:'-'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</div>

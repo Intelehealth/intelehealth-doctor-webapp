@@ -7,6 +7,10 @@
             <app-patientinfo></app-patientinfo>
       </mat-card>
       <br>
+      <mat-card *ngIf="userSpeciality == 'Admin'">
+        <app-aid-assessment></app-aid-assessment>
+      </mat-card>
+      <br>
       <mat-card>
             <app-past-visits></app-past-visits>
       </mat-card>
@@ -99,7 +103,7 @@
                   <app-follow-up [isManagerRole]="isManagerRole"></app-follow-up>
             </mat-card>
             <br>
-        
+
             <br>
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">

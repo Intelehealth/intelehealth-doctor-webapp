@@ -21,7 +21,7 @@ export class VisitService {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(uuid,display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
       },
       ...params,
     };
@@ -73,13 +73,25 @@ export class VisitService {
 
   patientInfo(id): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(display))))`;
+    const url = `${this.baseURL}/patient/${id}?v=custom:(identifiers,person:(display,gender,birthdate,age,preferredAddress:(cityVillage),attributes:(value,attributeType:(uuid,display))))`;
     return this.http.get(url);
   }
 
   getVisitCounts(speciality) {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
+    );
+  }
+
+  getLocations(startIndex: number) {
+    return this.http.get(
+      `${this.baseURL}/location?v=custom:(uuid,display,name,tags,parentLocation)&startIndex=${startIndex}`
+    );
+  }
+
+  getLocation(uuid: string) {
+    return this.http.get(
+      `${this.baseURL}/location/${uuid}?v=custom:(uuid,display,name,tags,parentLocation)`
     );
   }
 }

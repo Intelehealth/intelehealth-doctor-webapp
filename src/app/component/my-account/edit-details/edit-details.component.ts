@@ -6,6 +6,7 @@ import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
 import { Router } from "@angular/router";
+import { VisitService } from "src/app/services/visit.service";
 declare var getFromStorage: any;
 
 @Component({
@@ -16,7 +17,7 @@ declare var getFromStorage: any;
 export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
- specializations = [
+  specializations = [
     "Physician",
     "Doctor (General Consult)",
     "Cardiology",
@@ -28,6 +29,13 @@ export class EditDetailsComponent implements OnInit {
     "Gyn",
     "Admin"
   ];
+  locations = [];
+  states = [];
+  districts = [];
+  tempDistricts = [];
+  villages = [];
+  tempVillages = [];
+
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
     phoneNumber: new FormControl(
@@ -45,6 +53,9 @@ export class EditDetailsComponent implements OnInit {
     specialization: new FormControl(
       this.data.specialization ? this.data.specialization.value : null
     ),
+    state: new FormControl(null),
+    district: new FormControl(null),
+    village: new FormControl(null),
     registrationNumber: new FormControl(
       this.data.registrationNumber ? this.data.registrationNumber.value : null
     ),
@@ -58,12 +69,64 @@ export class EditDetailsComponent implements OnInit {
     private dialogRef: MatDialogRef<EditDetailsComponent>,
     private http: HttpClient,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private visitService: VisitService
   ) { }
 
   ngOnInit() {
     this.userDetails = getFromStorage("user");
     this.providerDetails = getFromStorage("provider");
+    this.getLocations();
+  }
+
+  getLocations(startIndex: number = 0) {
+    this.visitService.getLocations(startIndex).subscribe((res: any) => {
+      // let locs = res?.results.filter((l: any) => l.tags.filter((t: any) => t.display == 'Login Location' ).length);
+      this.locations = [...this.locations, ...res?.results];
+      if (res.links) {
+        let flag = 0;
+        for (let x = 0; x < res.links.length; x++) {
+          if (res.links[x].rel == 'next') {
+            flag = 1;
+            startIndex += 100;
+            this.getLocations(startIndex);
+          }
+        }
+        if (flag == 0) {
+          this.states = this.locations.filter((l: any) => l.tags.filter((t: any) => t.display == 'State' ).length);
+          this.districts = this.locations.filter((l: any) => l.tags.filter((t: any) => t.display == 'District' ).length);
+          this.villages = this.locations.filter((l: any) => l.tags.filter((t: any) => t.display == 'Village' ).length);
+          this.editForm.get('state').valueChanges.subscribe((s: any) => {
+            if(s) {
+              this.tempDistricts = this.districts.filter((l: any)=> l.parentLocation?.uuid == s || l.uuid == s);
+              this.editForm.patchValue({ district: null, village: null });
+            } else {
+              this.tempDistricts = [];
+            }
+          });
+
+          this.editForm.get('district').valueChanges.subscribe((d: any) => {
+            if(d) {
+              this.tempVillages = this.villages.filter((l: any)=> l.parentLocation?.uuid == d || l.uuid == d);
+              this.editForm.patchValue({ village: null });
+            } else {
+              this.tempVillages = [];
+            }
+          });
+
+          if (this.data.location) {
+            let village = this.villages.find(v => v.uuid == this.data.location?.value);
+            let district = this.districts.find(d => d.uuid == village.parentLocation.uuid || d.uuid == village.uuid);
+            let state = this.states.find(s => s.uuid == district.parentLocation?.uuid || s.uuid == district.uuid);
+            this.editForm.patchValue({
+              state: state.uuid,
+              district: district.uuid,
+              village: village.uuid,
+            });
+          }
+        }
+      }
+    });
   }
 
   get attributes() {
@@ -171,11 +234,22 @@ export class EditDetailsComponent implements OnInit {
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
+
+    if (value.village !== null) {
+      const URL = this.data.location
+        ? `${this.baseURLProvider}/${this.data.location.uuid}`
+        : this.baseURLProvider;
+      const json = {
+        attributeType: "07f56d25-88b4-4e2d-9c42-987023527752",
+        value: value.village,
+      };
+      this.http.post(URL, json).subscribe((response) => { });
+    }
     this.onClose();
     setTimeout(() => window.location.reload(), 2000);
   }
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }

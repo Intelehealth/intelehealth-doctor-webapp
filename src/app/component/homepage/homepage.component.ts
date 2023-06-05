@@ -35,6 +35,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completeVisitNo = 0;
   setSpiner = true;
   specialization;
+  doctorLocation;
   allVisits = [];
   limit = 100;
   allVisitsLoaded = false;
@@ -61,6 +62,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         saveToStorage("provider", provider.results[0]);
         const attributes = provider.results[0].attributes;
         attributes.forEach((element) => {
+          // Doctor Specialization
           if (
             element.attributeType.uuid ===
               "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
@@ -68,9 +70,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
           ) {
             this.specialization = element.value;
           }
+
+          // Doctor Location
+          if (
+            element.attributeType.uuid ===
+              "07f56d25-88b4-4e2d-9c42-987023527752" &&
+            !element.voided
+          ) {
+            this.doctorLocation = element.value;
+          }
         });
         userDetails["roles"].forEach((role) => {
-          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" || 
+          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
               role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
               role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
             this.systemAccess = true;
@@ -128,28 +139,30 @@ export class HomepageComponent implements OnInit, OnDestroy {
           this.allVisits = this.helper.getUpdatedValue(this.allVisits, item);
         });
         this.allVisits.forEach((active) => {
-          if (active.encounters.length > 0) {
-            if(this.systemAccess) {
-              this.visitCategory(active);
-            }else if (active.attributes.length) {
-              const attributes = active.attributes;
-              const speRequired = attributes.filter(
-                (attr) =>
-                  attr.attributeType.uuid ===
-                  "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-              );
-              if (speRequired.length) {
-                speRequired.forEach((spe, index) => {
-                  if (spe.value === this.specialization) {
-                    this.visitCategory(active);
-                  }
-                });
+          if (active?.location?.uuid == this.doctorLocation) {
+            if (active.encounters.length > 0) {
+              if(this.systemAccess) {
+                this.visitCategory(active);
+              } else if (active.attributes.length) {
+                const attributes = active.attributes;
+                const speRequired = attributes.filter(
+                  (attr) =>
+                    attr.attributeType.uuid ===
+                    "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+                );
+                if (speRequired.length) {
+                  speRequired.forEach((spe, index) => {
+                    if (spe.value === this.specialization) {
+                      this.visitCategory(active);
+                    }
+                  });
+                }
+              } else if (this.specialization === "General Physician") {
+                this.visitCategory(active);
               }
-            } else if (this.specialization === "General Physician") {
-              this.visitCategory(active);
             }
+            this.value = {};
           }
-          this.value = {};
         });
         if (response.results.length === 0) {
          // this.setVisitlengthAsPerLoadedData();

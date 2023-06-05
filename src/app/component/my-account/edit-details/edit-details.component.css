@@ -3,7 +3,11 @@
     max-width: 300px;
     width: 100%;
   }
-  
+
   .example-full-width {
     width: 100%;
+  }
+
+  ::ng-deep .mat-dialog-content {
+    max-height: 65vh;
   }

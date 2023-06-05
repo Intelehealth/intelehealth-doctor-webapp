@@ -6,6 +6,7 @@ import { SignatureComponent } from "./signature/signature.component";
 import { EditDetailsComponent } from "./edit-details/edit-details.component";
 import { environment } from "../../../environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
+import { VisitService } from "src/app/services/visit.service";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -22,11 +23,15 @@ export class MyAccountComponent implements OnInit {
   visitState = "NA";
   providerDetails = null;
   userDetails: any;
+  locations = [];
+  doctorLocation: string = '';
+
   constructor(
     private sessionService: SessionService,
     private http: HttpClient,
     private dialog: MatDialog,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private visitService: VisitService
   ) {}
 
   ngOnInit() {
@@ -41,7 +46,7 @@ export class MyAccountComponent implements OnInit {
         attributes.forEach((attribute) => {
           this.providerDetails[attribute.attributeType.display] = {
             value: attribute.value,
-            uuid: attribute.uuid,
+            uuid: attribute.uuid
           };
           if (
             attribute.attributeType.uuid ===
@@ -51,10 +56,20 @@ export class MyAccountComponent implements OnInit {
           }
         });
         this.setSpiner = false;
+        this.getLocation();
       });
       this.translationService.getSelectedLanguage();
       this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
   }
+
+  getLocation() {
+    if (this.providerDetails?.location) {
+      this.visitService.getLocation(this.providerDetails?.location?.value).subscribe((res: any) => {
+        this.doctorLocation = res.display;
+      });
+    }
+  }
+
   /**
    * Open edit details modal
    */
@@ -89,5 +104,5 @@ export class MyAccountComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }
