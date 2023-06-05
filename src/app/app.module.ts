@@ -104,9 +104,9 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://dev.intelehealth.org:3004/api/messages/',
-        'https://dev.intelehealth.org:3004/api/support/',
-        'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://demoai.intelehealth.org:3004/api/messages/',
+        'https://demoai.intelehealth.org:3004/api/support/',
+        'https://demoai.intelehealth.org:3004/api/auth/validateProviderAttribute',
       ]
     }),
     NgxPermissionsModule.forRoot({

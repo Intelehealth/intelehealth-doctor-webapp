@@ -4,14 +4,14 @@
 
 export const environment = {
   production: false,
-  base: "https://dev.intelehealth.org",
-  baseURL: "https://dev.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://dev.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://dev.intelehealth.org/openmrs",
-  mindmapURL: "https://dev.intelehealth.org:3004/api",
-  notificationURL: "https://dev.intelehealth.org:3004/notification",
-  socketURL: "https://dev.intelehealth.org:3004",
-  captchaSiteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
+  base: "https://demoai.intelehealth.org",
+  baseURL: "https://demoai.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://demoai.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://demoai.intelehealth.org/openmrs",
+  mindmapURL: "https://demoai.intelehealth.org:3004/api",
+  notificationURL: "https://demoai.intelehealth.org:3004/notification",
+  socketURL: "https://demoai.intelehealth.org:3004",
+  captchaSiteKey: "6LdowFQmAAAAADsQdI3gtUM88w4u5wV5uQLkvoSo",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",
@@ -28,7 +28,7 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
-  siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
+  siteKey: "6LdowFQmAAAAADsQdI3gtUM88w4u5wV5uQLkvoSo",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
   vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
 };
