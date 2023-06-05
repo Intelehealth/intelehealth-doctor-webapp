@@ -193,8 +193,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       textOfSign: new FormControl(null, [Validators.required]),
       fontOfSign: new FormControl(null, [Validators.required]),
       signature: new FormControl(null),
-      visitState: new FormControl(null),
+      visitState: new FormControl(null, [Validators.pattern(/^[A-za-z ]*$/)]),
       qualification: new FormControl(null, [Validators.required]),
+      otherQualification:  new FormControl(null),
       specialization: new FormControl(null, [Validators.required]),
       registrationNumber: new FormControl(null, [Validators.required]),
     });
@@ -257,6 +258,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
       if (val) {
         this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
+      }
+    });
+
+    this.personalInfoForm.get('qualification').valueChanges.subscribe(val => {
+      if (val == 'Other') {
+        this.personalInfoForm.get('otherQualification').setValidators([Validators.required, Validators.pattern(/^[A-Za-z, ]*$/)]);
+        this.personalInfoForm.get('otherQualification').updateValueAndValidity();
+      } else {
+        this.personalInfoForm.patchValue({ otherQualification: null });
+        this.personalInfoForm.get('otherQualification').clearValidators();
+        this.personalInfoForm.get('otherQualification').updateValueAndValidity();
       }
     });
 
@@ -337,7 +349,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'qualification':
-            personalFormValues.qualification = this.getAttributeValue(attrType.uuid, attrType.display);
+            let q = this.getAttributeValue(attrType.uuid, attrType.display);
+            let quaObj = this.professions.find((o: any)=> o.name == q );
+            personalFormValues.qualification = quaObj ? this.getAttributeValue(attrType.uuid, attrType.display) : 'Other';
+            personalFormValues.otherQualification = quaObj ? null : this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'registrationNumber':
             personalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -666,6 +681,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         case 'qualification':
+          if (this.getAttributeValueFromForm(attrType.display) == 'Other') {
+            requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm('otherQualification')));
+          } else {
+            requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
+          }
           break;
         case 'registrationNumber':
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
