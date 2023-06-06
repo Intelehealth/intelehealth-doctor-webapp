@@ -116,7 +116,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   onCallConnect() {
     this.callStartedAt = moment();
-    this.toggleAudio();
   }
 
   get localAudioIcon() {
