@@ -41,11 +41,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);
     this.subscription1 = this.socketSvc.onEvent("supportMessage").subscribe((data) => {
-      this.socketSvc.showNotification({
-        title: "New chat message for support",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
+      // this.socketSvc.showNotification({
+      //   title: "New chat message for support",
+      //   body: data.message,
+      //   timestamp: new Date(data.createdAt).getTime(),
+      // });
 
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);

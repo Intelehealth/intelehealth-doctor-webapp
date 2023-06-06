@@ -108,13 +108,18 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         this.authService.updateVerificationStatus();
         this.toastr.success("You have sucessfully logged in.", "Login Successful");
         let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+        let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
         if (this.authService.rememberMe) {
           this.authService.setRememberMe().subscribe();
         }
         if (role) {
           this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/dashboard']);
+          if (isNurse) {
+            this.router.navigate(['/dashboard/hw-profile']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
         }
       } else {
         this.toastr.error(res.message, "Error");

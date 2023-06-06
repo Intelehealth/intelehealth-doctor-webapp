@@ -7,6 +7,7 @@ import { LinkService } from 'src/app/services/link.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
 import { Meta } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-prescription-download',
@@ -29,6 +30,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   visit: any;
   prescriptionVerified: boolean = false;
   patient: any;
+  eventsSubject: Subject<any> = new Subject<any>();
 
   constructor(
     private route: ActivatedRoute,
@@ -58,6 +60,10 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
       this.prescriptionVerified = true;
       this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
     }
+  }
+
+  emitEventToChild(val: boolean) {
+    this.eventsSubject.next(val);
   }
 
   getVisitFromHash() {
@@ -182,18 +188,19 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   // }
 
   async download() {
-    this.opt.filename = `e-prescription-${Date.now()}.pdf`;
-    await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
-      .then(function (pdf) {
-        pdf.deletePage(1);
-        var totalPages = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          pdf.setPage(i);
-          pdf.setFontSize(10);
-          pdf.setTextColor(150);
-          pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
-        }
-      }).save();
+    this.emitEventToChild(true);
+    // this.opt.filename = `e-prescription-${Date.now()}.pdf`;
+    // await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
+    //   .then(function (pdf) {
+    //     pdf.deletePage(1);
+    //     var totalPages = pdf.internal.getNumberOfPages();
+    //     for (let i = 1; i <= totalPages; i++) {
+    //       pdf.setPage(i);
+    //       pdf.setFontSize(10);
+    //       pdf.setTextColor(150);
+    //       pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
+    //     }
+    //   }).save();
   }
 
   ngOnDestroy(): void {

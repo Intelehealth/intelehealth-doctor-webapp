@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment">
+    <div class="col-md-12 p-0 mb-5" *ngIf="visitAppointment && checkIfDateOldThanOneDay(visitAppointment).includes('Due')">
       <div class="appointment-banner">
         <div>
           <h6>Appointment starts in</h6>
@@ -671,7 +671,7 @@
           </mat-tab>
 
           <mat-tab label="Past visit history">
-            <div class="mat-elevation-z8">
+            <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
               <table mat-table [dataSource]="dataSource">
                 <!-- Action Column -->
                 <ng-container matColumnDef="action">
@@ -779,14 +779,14 @@
                   </td>
                 </ng-container>
 
-                <tr class="mat-row" *matNoDataRow>
+                <!-- <tr class="mat-row" *matNoDataRow>
                   <td
                     class="mat-cell text-center"
                     [attr.colspan]="displayedColumns.length"
                   >
                     No past visit history
                   </td>
-                </tr>
+                </tr> -->
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr
@@ -795,8 +795,54 @@
                 ></tr>
               </table>
             </div>
+            <div *ngIf="pastVisits.length <= 0"  class="mat-elevation-z8">
+              <span style="text-align: center;font-size: 16px;">
+                No past visit history
+              </span>
+            </div>
           </mat-tab>
         </mat-tab-group>
+      </div>
+    </div>
+
+    <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
+      <div class="intel-card">
+        <div class="card-body">
+          <mat-accordion class="intel-accordion-con ddx" multi>
+            <mat-expansion-panel [expanded]="true" #panelDDx hideToggle [disabled]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="intel-accordion-title">
+                    <img
+                      src="assets/svgs/ic_ayu.png"
+                      alt=""
+                      width="44px"
+                      style="border-radius: 50%; background-color: #FFFFFF;"
+                    />
+                    <h6 class="mb-0 ml-2">Differential Diagnosis (DDx)</h6>
+                  </div>
+                </mat-panel-title>
+                <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->
+              </mat-expansion-panel-header>
+              <table *ngIf="ddx" class="ddx-table mt-3">
+                <thead>
+                  <tr>
+                    <th *ngFor="let h of ddx.data[0]" [attr.colspan]="ddx.data[0].length == 1 && ddx.maxCols > ddx.data[0].length ? ddx.maxCols : 1">{{h}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let d of ddx.data; let i=index;">
+                    <tr *ngIf="i!=0">
+                      <ng-container *ngFor="let dd of d">
+                        <td [attr.colspan]="d.length == 1 && ddx.maxCols > d.length ? ddx.maxCols : 1">{{dd}}</td>
+                      </ng-container>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
       </div>
     </div>
 
@@ -922,7 +968,7 @@
                   </li>
                 </ul>
                 <div
-                  class="form-group mb-0"
+                  class="form-group mb-0 mt-3"
                   *ngIf="
                     isVisitNoteProvider &&
                     !visitEnded &&
@@ -1014,7 +1060,7 @@
                     </ng-container>
                     <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                       <tr *ngIf="addMoreDiagnosis">
-                        <td colspan="4">
+                        <td colspan="4" class="px-0">
                           <div class="form-group mb-0">
                             <button
                               type="button"
@@ -1123,7 +1169,7 @@
                   <div class="form-group mb-0">
                     <button
                       type="button"
-                      class="white-btn mr-2"
+                      class="white-btn mr-2 mt-3"
                       (click)="toggleDiagnosis()"
                     >
                       Cancel
@@ -1358,7 +1404,7 @@
                       </ng-template>
                       <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreMedicine">
-                          <td colspan="6">
+                          <td colspan="6" class="px-0">
                             <div class="form-group mb-0">
                               <button
                                 type="button"
@@ -1765,7 +1811,7 @@
                       </ng-template>
                       <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
                         <tr *ngIf="addMoreReferral">
-                          <td colspan="3">
+                          <td colspan="3" class="px-0">
                             <div class="form-group mb-0">
                               <button
                                 type="button"
@@ -1957,7 +2003,7 @@
                   </ng-container>
                 </ul>
                 <div
-                  class="form-group mb-0"
+                  class="form-group mb-0 mt-3"
                   *ngIf="
                     isVisitNoteProvider &&
                     !visitEnded &&
@@ -2016,7 +2062,7 @@
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="selectedTabIndex == 0">
       <button
         type="button"
-        class="blue-btn mr-2"
+        class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
       >
@@ -2024,7 +2070,7 @@
       </button>
       <button
         type="button"
-        class="blue-btn"
+        class="blue-btn mb-2"
         (click)="openVisitPrescriptionModal(visit?.uuid)"
         *ngIf="visitNotePresent && visitCompleted"
         >
