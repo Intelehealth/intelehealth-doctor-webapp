@@ -148,9 +148,9 @@
                 <mat-menu #notificationmenu="matMenu" class="notification-menu">
                   <ng-container *ngIf="notificationEnabled && !snoozed">
                     <!-- <button mat-menu-item (click)="snoozeNotification('30m')">Do Not Disturb</button> -->
-                    <button mat-menu-item (click)="snoozeNotification('30m')">30 Minutes</button>
-                    <button mat-menu-item (click)="snoozeNotification('1h')">1 Hour</button>
-                    <button mat-menu-item (click)="snoozeNotification('2h')">2 Hours</button>
+                    <button mat-menu-item (click)="snoozeNotification('30m')">Snooze for 30 Minutes</button>
+                    <button mat-menu-item (click)="snoozeNotification('1h')">Snooze for 1 Hour</button>
+                    <button mat-menu-item (click)="snoozeNotification('2h')">Snooze for 2 Hours</button>
                     <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
                   </ng-container>
                   <ng-container *ngIf="notificationEnabled && snoozed">
@@ -160,7 +160,7 @@
                   <ng-container *ngIf="!notificationEnabled">
                     <button mat-menu-item (click)="toggleNotification()">Turn On</button>
                   </ng-container>
-                  <button mat-menu-item class="subscribe" *ngIf="!subscribed">Subscribe</button>
+                  <!-- <button mat-menu-item class="subscribe" *ngIf="!subscribed">Subscribe</button> -->
                 </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
