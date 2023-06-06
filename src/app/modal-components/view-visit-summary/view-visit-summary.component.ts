@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -36,7 +37,8 @@ export class ViewVisitSummaryComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewVisitSummaryComponent>,
     private visitService: VisitService,
     private diagnosisService: DiagnosisService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -105,11 +107,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     var months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant("years")}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant("months")}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant("days")}`;
     }
   }
 

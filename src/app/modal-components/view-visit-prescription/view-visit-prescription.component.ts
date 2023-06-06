@@ -5,6 +5,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { ProfileService } from 'src/app/services/profile.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-visit-prescription',
@@ -53,7 +54,8 @@ export class ViewVisitPrescriptionComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
     private visitService: VisitService,
     private profileService: ProfileService,
-    private diagnosisService: DiagnosisService) { }
+    private diagnosisService: DiagnosisService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
@@ -267,11 +269,11 @@ export class ViewVisitPrescriptionComponent implements OnInit {
     var months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant("years")}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant("months")}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant("days")}`;
     }
   }
 

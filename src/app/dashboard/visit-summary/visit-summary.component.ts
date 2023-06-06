@@ -378,6 +378,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
+    moment.locale("ru");
   }
 
   formControlValueChanges() {
@@ -704,11 +705,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     var months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant("years")}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant("months")}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant("days")}`;
     }
   }
 
@@ -867,9 +868,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     };
     if (hours < 1) {
       if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes}` + " " + `${this.translateService.instant("minutes ago")}`;
+      return `${minutes} ${this.translateService.instant("minutes ago")}`;
     }
-    return `${hours}` + " " +`${this.translateService.instant("hrs ago")}`;
+    return `${hours} ${this.translateService.instant("hrs ago")}`;
   }
 
   startVisitNote() {
@@ -1022,7 +1023,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.notes.find((o: any) => o.value == this.addNoteForm.value.note)) {
-      this.toastr.warning("Note already added, please add another note.", "Already Added");
+      this.toastr.warning(this.translateService.instant(`messages.${"Note already added, please add another note."}`), this.translateService.instant(`messages.${"Already Added"}`));
       return;
     }
     this.encounterService.postObs({
@@ -1430,7 +1431,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 });
               }
             } else {
-              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: any) => {
+              this.coreService.openSharePrescriptionErrorModal({ msg: this.translateService.instant(`messages.${'Unable to send prescription due to poor network connection. Please try again or come back later'}`), confirmBtnText: this.translateService.instant(`messages.${'Try again'}`) }).subscribe((c: any) => {
                 if (c) {
 
                 }
@@ -1438,14 +1439,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             }
 
           } else {
-            this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since your profile is not complete.', confirmBtnText: 'Go to profile' }).subscribe((c: any) => {
+            this.coreService.openSharePrescriptionErrorModal({ msg: this.translateService.instant(`messages.${'Unable to send prescription since your profile is not complete.'}`), confirmBtnText: this.translateService.instant(`messages.${'Go to profile'}`) }).subscribe((c: any) => {
               if (c) {
                 this.router.navigate(['/dashboard/profile']);
               }
             });
           }
         } else {
-          this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription since this visit already in progress with another doctor.', confirmBtnText: 'Go to dashboard' }).subscribe((c: any) => {
+          this.coreService.openSharePrescriptionErrorModal({ msg: this.translateService.instant(`messages.${'Unable to send prescription since this visit already in progress with another doctor.'}`), confirmBtnText: this.translateService.instant(`messages.${'Go to dashboard'}`) }).subscribe((c: any) => {
             if (c) {
               this.router.navigate(['/dashboard']);
             }

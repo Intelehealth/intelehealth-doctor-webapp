@@ -61,7 +61,7 @@
                   <label for="gender">{{'Gender *'|translate}}</label>
                   <div class="py-2">
                     <div class="pretty p-default p-round">
-                      <input type="radio" value="Male"  formControlName="{{'gender'|translate}}">
+                      <input type="radio" value="Male"  formControlName="gender">
                       <div class="state p-success">
                           <label>{{'Male'|translate}}</label>
                       </div>
@@ -256,7 +256,7 @@
                   </div>
                 </div> -->
                 <div class="form-group col-md-6">
-                  <label for="qualification">{{'Qualification *'|translate}}</label>
+                  <label for="qualification">{{'Qualification'|translate}} *</label>
                   <input type="text" class="form-control" formControlName="qualification" placeholder="{{'Enter qualification'|translate}}">
                   <div *ngIf="submitted && f2.qualification.errors">
                     <small class="error-msg" *ngIf="f2.qualification.errors.required">{{'Enter qualification'|translate}}</small>

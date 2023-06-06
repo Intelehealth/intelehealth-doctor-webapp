@@ -12,7 +12,7 @@
               <img class="mr-2" [src]="baseUrl + '/personimage/' + data?.meta.patientId" alt="" (error)="onImgError($event)">
               <div class="d-flex flex-column">
                 <h6 class="mb-0">{{ data?.meta.patientName|noValue:'NA' }} ({{data?.meta.patientGender|noValue:'NA'}}, {{data?.meta.patientAge|noValue:'0'}})</h6>
-                <p class="mb-0">PID : {{data?.meta.openMrsId}}</p>
+                <p class="mb-0">{{'PID'|translate}} : {{data?.meta.openMrsId}}</p>
                 <div class="anchor-con d-flex align-items-center">
                   <a class="mr-2" href="javascript:void(0)" (click)="close('view')">{{'View details'|translate}}</a>
                   <img src="assets/svgs/right-arrow-blue.svg" alt="">

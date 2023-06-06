@@ -227,9 +227,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     if (hours < 1) {
       if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes}` + `${this.translateService.instant(" minutes")}`;
+      return `${minutes} ${this.translateService.instant("minutes")}`;
     }
-    return `${hours}` + `${this.translateService.instant(" hrs")}`;
+    return `${hours} ${this.translateService.instant("hrs")}`;
 
   }
 
@@ -240,9 +240,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes}` + `${this.translateService.instant(" minutes ago")}`;
+      return `${minutes} ${this.translateService.instant("minutes ago")}`;
     }
-    return `${hours}` + `${this.translateService.instant(" hrs ago")}`;
+    return `${hours} ${this.translateService.instant("hrs ago")}`;
   }
 
   getEncounterCreated(visit: any, encounterName: string) {

@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-prescription-download',
@@ -17,7 +18,7 @@ export class PrescriptionDownloadComponent implements OnInit {
   @ViewChild('prescription') prescription: ElementRef;
   opt = {
     margin: 1,
-    filename: 'eprescription.pdf',
+    filename: localStorage.getItem('selectedLanguage') === 'ru' ? "электронныйрецепт.pdf" : 'eprescription.pdf',
     image: { type: 'jpeg', quality: 1 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
@@ -36,7 +37,8 @@ export class PrescriptionDownloadComponent implements OnInit {
     private linkSvc: LinkService,
     private toastr: ToastrService,
     private visitService: VisitService,
-    private cs: CoreService
+    private cs: CoreService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -83,7 +85,7 @@ export class PrescriptionDownloadComponent implements OnInit {
           if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
             this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
               if (res.success) {
-                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} successfully!`, "OTP Sent");
+                this.toastr.success(`${this.translateService.instant('OTP sent on')} ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} ${this.translateService.instant('successfully!')}`, `${this.translateService.instant('OTP Sent')}`)
                 this.router.navigate(['/session/verify-otp'], {
                   state: {
                     verificationFor: 'presctiption-verification',
@@ -178,7 +180,7 @@ export class PrescriptionDownloadComponent implements OnInit {
   // }
 
   download() {
-    this.opt.filename = `e-prescription-${Date.now()}.pdf`;
+    this.opt.filename = localStorage.getItem('selectedLanguage') === 'ru' ? `электронный-рецепт-${Date.now()}.pdf` : `e-prescription-${Date.now()}.pdf`,
     html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
       .then(function (pdf) {
         pdf.deletePage(1);

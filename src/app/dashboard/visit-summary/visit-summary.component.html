@@ -57,11 +57,11 @@
             <div class="col-md-4 patient-info-section p-3">
               <div class="patient-info-item mb-3">
                 <h6>{{'Citizen ID'|translate}}</h6>
-                <p>{{ getPersonAttributeValue("Citizen Id") }}</p>
+                <p>{{ getPersonAttributeValue("Citizen Id")|translate }}</p>
               </div>
               <div class="patient-info-item mb-3">
                 <h6>{{'Occupation'|translate}}</h6>
-                <p>{{ getPersonAttributeValue("occupation") }}</p>
+                <p>{{ getPersonAttributeValue("occupation")|translate }}</p>
               </div>
               <div class="patient-info-item">
                 <h6>{{'Address'|translate}}</h6>
@@ -72,7 +72,7 @@
               <div class="patient-info-item">
                 <h6>{{'Contact no.'|translate}}</h6>
                 <p>
-                  {{ getPersonAttributeValue("Telephone Number") }}
+                  {{ getPersonAttributeValue("Telephone Number")|translate }}
                   <a
                     href="{{ getWhatsAppLink() }}"
                     target="_blank"
@@ -82,9 +82,9 @@
                   </a>
                 </p>
                 <p>
-                  {{ getPersonAttributeValue("Telephone Number") }}
+                  {{ getPersonAttributeValue("Telephone Number")|translate }}
                   <a
-                    href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
+                    href="tel:{{ getPersonAttributeValue('Telephone Number')|translate }}"
                     target="_blank"
                     class="icon-btn"
                   >
@@ -416,7 +416,7 @@
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
                               >
-                                {{ ckri.value ? ckri.value : "None" }}
+                                {{ ckri.value ? ckri.value : ("None"|translate) }}
                               </div>
                             </div>
                           </li>
@@ -941,7 +941,7 @@
                     <tbody>
                       <tr>
                         <td>{{'Spoken with the patient directly?'|translate}}</td>
-                        <td>{{ patientInteractionForm.value.spoken }}</td>
+                        <td>{{ patientInteractionForm.value.spoken|translate }}</td>
                         <td class="pr-0">
                           <button
                             type="button"
@@ -990,8 +990,8 @@
                     <ng-container *ngIf="existingDiagnosis.length">
                       <tr *ngFor="let d of existingDiagnosis; let i = index">
                         <td>{{ d.diagnosisName }}</td>
-                        <td>{{ d.diagnosisType }}</td>
-                        <td>{{ d.diagnosisStatus }}</td>
+                        <td>{{ d.diagnosisType|translate }}</td>
+                        <td>{{ d.diagnosisStatus|translate }}</td>
                         <td class="pr-0">
                           <button
                             mat-icon-button
@@ -1323,7 +1323,7 @@
                     <tbody>
                       <ng-container *ngIf="medicines.length">
                         <tr *ngFor="let m of medicines; let i = index">
-                          <!-- <td>{{ m.drug }}</td> -->
+                          <td>{{ m.drug }}</td>
                           <td>{{ m.strength }}</td>
                           <td>{{ m.days }}</td>
                           <td>{{ m.timing }}</td>
@@ -1835,7 +1835,7 @@
                     <h6 class="mb-0 ml-2">{{'Follow-up'|translate}}</h6>
                   </div>
                 </mat-panel-title>
-                <mat-icon>{{ panel8.expanded ? ("remove"|translate) : ("add"|translate) }}</mat-icon>
+                <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
               <form [formGroup]="followUpForm" (ngSubmit)="saveFollowUp()" *ngIf="!followUpForm.value.present">
@@ -1978,7 +1978,7 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{{ followUpForm.value.wantFollowUp }}</td>
+                      <td>{{ followUpForm.value.wantFollowUp|translate }}</td>
                       <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
                       <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
                       <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>

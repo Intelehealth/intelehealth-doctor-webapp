@@ -579,7 +579,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       let filename = this.signatureFile.name;
       if (!filename.endsWith('.png') || filename.endsWith('.jgp') || filename.endsWith('.jpeg')) {
         this.reset();
-        alert("Please upload png, jpg or jpeg file only.");
+        alert(this.translateService.instant(`messages.${"Please upload png, jpg or jpeg file only."}`));
         return;
       }
       const fileReader = new FileReader();
