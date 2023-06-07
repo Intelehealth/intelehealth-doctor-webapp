@@ -8,6 +8,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -61,7 +62,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
     private visitService: VisitService,
     private profileService: ProfileService,
-    private diagnosisService: DiagnosisService) { }
+    private diagnosisService: DiagnosisService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
@@ -324,7 +326,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getPersonAttributeValue(attrType: string) {
-    let val = 'NA';
+    let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
         if (attrType == attr.attributeType.display) {

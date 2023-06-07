@@ -266,7 +266,10 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="typeOfProfession">{{'Type of profession' | translate}} *</label>
-                  <ng-select class="profile-select" [items]="professions" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="{{'Select type of profession'|translate}}">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="{{'Select type of profession'|translate}}">
+                    <ng-option *ngFor="let profession of professions" [value]="profession.name">
+                      {{ (profession.name) |translate }}
+                </ng-option>
                   </ng-select>
                   <div *ngIf="submitted && f2.typeOfProfession.errors">
                     <small class="error-msg" *ngIf="f2.typeOfProfession.errors.required">{{'Select type of profession'|translate}}</small>
@@ -283,7 +286,10 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="specialization">{{'Specialization'|translate}} *</label>
-                  <ng-select class="profile-select" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}">
+                    <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
+                          {{ (specialization.name) |translate }}
+                    </ng-option>
                   </ng-select>
                   <div *ngIf="submitted && f2.specialization.errors">
                     <small class="error-msg" *ngIf="f2.specialization.errors.required">{{'Select specialization'|translate}}</small>
@@ -313,7 +319,10 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="workExperience">{{'Work Experience'|translate}}*</label>
-                  <ng-select class="profile-select" [items]="specializations" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="{{'Eg. General Physician'|translate}}">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="{{'Eg. General Physician'|translate}}">
+                    <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
+                      {{ (specialization.name) |translate }}
+                </ng-option>
                   </ng-select>
                   <div *ngIf="submitted && f2.workExperience.errors">
                     <small class="error-msg" *ngIf="f2.workExperience.errors.required">{{'Select work experience as'|translate}}</small>
