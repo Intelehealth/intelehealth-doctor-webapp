@@ -20,11 +20,12 @@
       <div class="col p-0">
         <div class="main-container">
           <div class="remote-con" [class.minimized]="_minimized">
-            <video
+            <div #remoteVideo class="remote-container"></div>
+            <!-- <video
               #remoteVideo
               autoplay
               [ngClass]="{ 'd-none': _remoteVideoOff }"
-            ></video>
+            ></video> -->
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
               class="video-off-container"
@@ -36,15 +37,7 @@
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _remoteAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="remoteAudioIcon" />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
@@ -125,7 +118,8 @@
             </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
-            <video #localVideo autoplay></video>
+            <div #localVideo class="local-container"></div>
+            <!-- <video #localVideo autoplay></video> -->
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
                 src="{{ baseUrl + '/personimage/' + data.connectToDrId }}"
@@ -134,15 +128,7 @@
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _localAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
+              <img class="audio-img" [src]="localAudioIcon" />
               <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->

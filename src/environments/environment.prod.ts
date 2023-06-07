@@ -24,6 +24,8 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
+  webrtcSdkServerUrl: `${window.location.protocol}//${window.location.hostname}:9090`,
+  webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
   siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
   vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
