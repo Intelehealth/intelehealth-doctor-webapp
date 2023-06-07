@@ -97,6 +97,7 @@ import { AppointmentScheduleComponent } from "./component/appointment-schedule/a
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { MatPaginationIntlService } from "./services/mat-pagination.service";
 import { AidAssessmentComponent } from './component/visit-summary/aid-assessment/aid-assessment.component';
+import { AidOrderComponent } from './component/visit-summary/aid-order/aid-order.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -150,7 +151,8 @@ registerLocaleData(localeAr);
     ConfirmDialogComponent,
     AppointmentViewComponent,
     AppointmentScheduleComponent,
-    AidAssessmentComponent
+    AidAssessmentComponent,
+    AidOrderComponent
   ],
 
   imports: [

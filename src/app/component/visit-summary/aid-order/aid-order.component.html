@@ -1,0 +1,69 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+  <h4><i class="fas fa-first-aid"></i> {{'Aid Order'| translate}}</h4>
+  <hr>
+  <div class="modal-body row">
+    <div class="col-md-12 p-0">
+      <form [formGroup]="aidOrderForm" (ngSubmit)="submit()">
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)</mat-label>
+              <mat-select formControlName="type1" multiple>
+                <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me">{{me}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col" *ngIf="aidOrderForm.value.type1?.includes('Others')">
+            <mat-form-field class="w-100">
+              <mat-label>Other medical equipment loan</mat-label>
+              <input matInput type="text" placeholder="Enter other medical equipment loan" formControlName="type1Other">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Type 2. Free Medical equipment (Stents, baloons, others)</mat-label>
+              <mat-select formControlName="type2" multiple>
+                <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme">{{fme}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col" *ngIf="aidOrderForm.value.type2?.includes('Others')">
+            <mat-form-field class="w-100">
+              <mat-label>Other free medical equipment</mat-label>
+              <input matInput type="text" placeholder="Enter other free medical equipment" formControlName="type2Other">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Type 3. Cover medication expenses (amount)</mat-label>
+              <input matInput type="number" placeholder="Enter amount" formControlName="type3">
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Type 4. Cover surgical expenses (amount)</mat-label>
+              <input matInput type="number" placeholder="Enter amount" formControlName="type4">
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="w-100">
+              <mat-label>Type 5. Cash assistance (amount)</mat-label>
+              <input matInput type="number" placeholder="Enter amount" formControlName="type5">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole">
+              {{'Save'|translate}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
