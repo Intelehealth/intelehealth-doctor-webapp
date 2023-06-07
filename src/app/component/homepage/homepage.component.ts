@@ -33,6 +33,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   visitNoteNo = 0;
   completeVisitNo = 0;
   followUpVisitNo = 0;
+  totalCompletedVisits = 0;
   setSpiner = true;
   setSpiner1 = true;
   specialization;
@@ -77,7 +78,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
           }
         });
         this.getVisits();
-        //  this.getVisitCounts(this.specialization);
+        this.getVisitCounts(this.specialization);
       });
     } else {
       this.authService.logout();
@@ -105,10 +106,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
     };
     this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
       if (data.length) {
-        this.flagPatientNo = getTotal(data, "Priority");
-        this.activePatient = getTotal(data, "Awaiting Consult");
-        this.visitNoteNo = getTotal(data, "Visit In Progress");
-        this.completeVisitNo = getTotal(data, "Completed Visit");
+        // this.flagPatientNo = getTotal(data, "Priority");
+        // this.activePatient = getTotal(data, "Awaiting Consult");
+        // this.visitNoteNo = getTotal(data, "Visit In Progress");
+        this.totalCompletedVisits = getTotal(data, "Completed Visit");
       }
     });
   }
