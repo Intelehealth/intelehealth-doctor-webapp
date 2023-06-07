@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
+import { GptInputComponent } from './gpt-input/gpt-input.component';
 
 const routes: Routes = [
   {
@@ -54,6 +55,13 @@ const routes: Routes = [
       breadcrumb: 'Profile'
     },
     component: HwProfileComponent
+  },
+  {
+    path: 'gpt-input',
+    data: {
+      breadcrumb: 'GPT Input'
+    },
+    component: GptInputComponent
   }
 ];
 

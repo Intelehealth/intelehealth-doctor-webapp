@@ -805,7 +805,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
+    <div class="col-md-12 p-0 mb-5" *ngIf="username == 'doctorai'">
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con ddx" multi>
@@ -824,6 +824,41 @@
                 </mat-panel-title>
                 <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->
               </mat-expansion-panel-header>
+              <div class="container" *ngIf="!ddxPresent">
+                <div class="row">
+                  <div class="col-md-12 py-2">
+                    <form [formGroup]="ddxForm" (ngSubmit)="getDDx()">
+                      <div class="form-group row">
+                        <label for="inputtype" class="col-sm-2 col-form-label">GPT Input Type*</label>
+                        <div class="py-2 col-md-10 px-0">
+                          <div class="pretty p-default p-round">
+                            <input type="radio" value="default" formControlName="inputtype">
+                            <div class="state p-success">
+                              <label>Default</label>
+                            </div>
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input type="radio" value="custom" formControlName="inputtype">
+                            <div class="state p-success">
+                              <label>Custom</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group row" *ngIf="ddxForm.value.inputtype == 'custom'">
+                        <label for="customInput" class="col-sm-2 col-form-label">Custom GPT Input*</label>
+                        <div class="col-md-10 px-0">
+                          <input type="text" class="form-control" formControlName="customInput" placeholder="Type here">
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <button type="submit" class="blue-btn" [disabled]="ddxForm.invalid">Get DDx</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
               <table *ngIf="ddx" class="ddx-table mt-3">
                 <thead>
                   <tr>
@@ -831,7 +866,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <ng-container *ngFor="let d of ddx.data; let i=index;">
+                  <ng-container *ngFor="let d of ddx?.data; let i=index;">
                     <tr *ngIf="i!=0">
                       <ng-container *ngFor="let dd of d">
                         <td [attr.colspan]="d.length == 1 && ddx.maxCols > d.length ? ddx.maxCols : 1">{{dd}}</td>

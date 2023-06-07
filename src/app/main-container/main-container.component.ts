@@ -302,6 +302,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  chatGPTInput() {
+    this.router.navigate(['/dashboard/gpt-input']);
+  }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();

@@ -245,6 +245,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   ddx: any;
   ddxPresent: any = false;
+  ddxForm: FormGroup;
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -359,6 +360,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.diagnosisSubject = new BehaviorSubject<any[]>([]);
     this.diagnosis$ = this.diagnosisSubject.asObservable();
+
+    this.ddxForm = new FormGroup({
+      inputtype: new FormControl('default', Validators.required),
+      customInput: new FormControl(null)
+    });
   }
 
   ngOnInit(): void {
@@ -420,6 +426,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.timeList = this.getHours(false, val);
       } else {
         this.timeList = [];
+      }
+    });
+
+    this.ddxForm.get('inputtype').valueChanges.subscribe(val => {
+      if (val == 'custom') {
+        this.ddxForm.get('customInput').setValidators([Validators.required]);
+        this.ddxForm.get('customInput').updateValueAndValidity();
+      } else {
+        this.ddxForm.get('customInput').clearValidators();
+        this.ddxForm.get('customInput').updateValueAndValidity();
       }
     });
   }
@@ -485,15 +501,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                         this.ddx.data.push(cols);
                       });
                       this.ddx.maxCols = maxCol;
-                      console.log(this.ddx);
+                      // console.log(this.ddx);
                     }
                   });
                 });
               }
             } else {
-              setTimeout(() => {
-                this.getDDx();
-              }, 3000);
+              // setTimeout(() => {
+              //   this.getDDx();
+              // }, 3000);
             }
           }
         });
@@ -1583,77 +1599,81 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getDDx() {
     if (this.currentComplaint && this.username == 'doctorai') {
-      let vital = '';
-      let ckr = '';
-      let phyEx = '';
-      let medHy = '';
+      this.coreService.openConfirmationDialog({ confirmationMsg: "Do you want to proceed?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(response => {
+        if (response) {
+          let vital = '';
+          let ckr = '';
+          let phyEx = '';
+          let medHy = '';
 
-      for (let v = 0; v < this.vitalObs.length; v++) {
-        vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
-      }
-
-      for (let c = 0; c < this.checkUpReasonData.length; c++) {
-        ckr += `${this.checkUpReasonData[c].title}\n`;
-        for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
-          ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value: 'None'}\n`
-        }
-      }
-
-      for (let p = 0; p < this.physicalExaminationData.length; p++) {
-        phyEx += `${this.physicalExaminationData[p].title}\n`;
-        if (this.physicalExaminationData[p].title != 'Abdomen') {
-          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
-            phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value: 'None'}\n`
+          for (let v = 0; v < this.vitalObs.length; v++) {
+            vital += `${this.vitalObs[v].concept.display} : ${this.vitalObs[v].value}\n`;
           }
-        }
-        if (this.physicalExaminationData[p].title == 'Abdomen') {
-          for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
-            phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
+
+          for (let c = 0; c < this.checkUpReasonData.length; c++) {
+            ckr += `${this.checkUpReasonData[c].title}\n`;
+            for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
+              ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value: 'None'}\n`
+            }
           }
-        }
-      }
 
-      for (let c = 0; c < this.patientHistoryData.length; c++) {
-        medHy += `${this.patientHistoryData[c].title}\n`;
-        for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
-          medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value: 'None'}\n`
-        }
-      }
+          for (let p = 0; p < this.physicalExaminationData.length; p++) {
+            phyEx += `${this.physicalExaminationData[p].title}\n`;
+            if (this.physicalExaminationData[p].title != 'Abdomen') {
+              for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+                phyEx += `${this.physicalExaminationData[p].data[d].key} : ${this.physicalExaminationData[p].data[d].value ? this.physicalExaminationData[p].data[d].value: 'None'}\n`
+              }
+            }
+            if (this.physicalExaminationData[p].title == 'Abdomen') {
+              for (let d = 0; d < this.physicalExaminationData[p].data.length; d++) {
+                phyEx += `${this.physicalExaminationData[p].data[d].key}\n`
+              }
+            }
+          }
 
-      this.visitService.chatGPTCompletionDDx(`Gender: ${this.patient?.person.gender == 'M'? 'Male':'Female'}\nAge: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nVitals:\n${vital}\nChief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Physical Examination\n${phyEx}Medical History\n\n${medHy}`).subscribe((res: any) => {
-        this.ddx = {
-          maxCols: 1,
-          data: []
-        };
-        let maxCol = 1;
-        const rows = res?.data.choices[0]?.message.content.split('\n');
-        rows.forEach(r => {
-          const cols = r.split('|');
-          if(cols.length > maxCol) maxCol = cols.length;
-          this.ddx.data.push(cols);
-        });
-        this.ddx.maxCols = maxCol;
-        console.log(this.ddx);
-        // this.encounterService.postEncounter({
-        //   patient: this.visit.patient.uuid,
-        //   encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
-        //   encounterProviders: [
-        //     {
-        //       provider: this.provider.uuid,
-        //       encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
-        //     },
-        //   ],
-        //   visit: this.visit.uuid,
-        //   encounterDatetime: new Date(Date.now() - 30000),
-        //   obs: [
-        //     {
-        //       concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
-        //       value: res?.data.choices[0]?.message.content,
-        //     },
-        //   ]
-        // }).subscribe((post) => {
-        //   this.ddxPresent = true;
-        // });
+          for (let c = 0; c < this.patientHistoryData.length; c++) {
+            medHy += `${this.patientHistoryData[c].title}\n`;
+            for (let d = 0; d < this.patientHistoryData[c].data.length; d++) {
+              medHy += `${this.patientHistoryData[c].data[d].key} : ${this.patientHistoryData[c].data[d].value ? this.patientHistoryData[c].data[d].value: 'None'}\n`
+            }
+          }
+
+          this.visitService.chatGPTCompletionDDx(`Gender: ${this.patient?.person.gender == 'M'? 'Male':'Female'}\nAge: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nVitals:\n${vital}\nChief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Physical Examination\n${phyEx}Medical History\n\n${medHy}`, this.ddxForm.value.inputtype, this.ddxForm.value.customInput).subscribe((res: any) => {
+            this.ddx = {
+              maxCols: 1,
+              data: []
+            };
+            let maxCol = 1;
+            const rows = res?.data.choices[0]?.message.content.split('\n');
+            rows.forEach(r => {
+              const cols = r.split('|');
+              if(cols.length > maxCol) maxCol = cols.length;
+              this.ddx.data.push(cols);
+            });
+            this.ddx.maxCols = maxCol;
+            // console.log(this.ddx);
+            this.encounterService.postEncounter({
+              patient: this.visit.patient.uuid,
+              encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
+              encounterProviders: [
+                {
+                  provider: this.provider.uuid,
+                  encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03", // Doctor encounter role
+                },
+              ],
+              visit: this.visit.uuid,
+              encounterDatetime: new Date(Date.now() - 30000),
+              obs: [
+                {
+                  concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
+                  value: res?.data.choices[0]?.message.content,
+                },
+              ]
+            }).subscribe((post) => {
+              this.ddxPresent = true;
+            });
+          });
+        }
       });
     }
   }

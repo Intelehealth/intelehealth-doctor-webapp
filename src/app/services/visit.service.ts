@@ -130,7 +130,23 @@ export class VisitService {
     return whatsappLink;
   }
 
-  chatGPTCompletionDDx(payload: any) {
-    return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload });
+  chatGPTCompletionDDx(payload: any, inputtype: string, customInput: string) {
+    return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload, inputtype, customInput });
+  }
+
+  getGptInputs(): Observable<any> {
+    return this.http.get(`${environment.mindmapURL}/openai/gptInputs`);
+  }
+
+  addGptInputs(gptinput: string): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/addInput`, { gptinput });
+  }
+
+  setAsDefaultGptInput(id: number): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/setAsDefaultInput`, { id });
+  }
+
+  deleteGptInput(id: number): Observable<any> {
+    return this.http.delete(`${environment.mindmapURL}/openai/deleteInput/${id}`);
   }
 }

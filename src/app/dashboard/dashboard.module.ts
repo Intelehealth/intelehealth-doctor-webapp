@@ -25,6 +25,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { GptInputComponent } from './gpt-input/gpt-input.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     GetStartedComponent,
     VisitSummaryComponent,
     ChangePasswordComponent,
-    HwProfileComponent
+    HwProfileComponent,
+    GptInputComponent
   ],
   imports: [
     CommonModule,

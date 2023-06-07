@@ -1,0 +1,43 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12 px-0">
+      <h3 class="font-weight-bold">GPT Inputs</h3>
+      <ul class="list-group" *ngIf="gptInputs.length">
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-nowrap" *ngFor="let input of gptInputs;">
+          {{ input?.gptinput }}
+          <div class="d-flex flex-nowrap">
+            <button type="button" class="blue-btn mr-2" (click)="setAsDefault(input?.id)" *ngIf="!input?.isDefault">Set As Default</button>
+            <span class="badge badge-success mr-2" *ngIf="input?.isDefault">Default</span>
+            <button type="button" class="red-btn" (click)="deleteGTPInput(input?.id)" *ngIf="!input?.isDefault">Delete</button>
+          </div>
+        </li>
+      </ul>
+      <ul class="list-group" *ngIf="!gptInputs.length">
+        <li class="list-group-item d-flex justify-content-center align-items-center">
+          No GPT Inputs found
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-12 px-0">
+      <h3 class="font-weight-bold">Add GPT Input</h3>
+      <form [formGroup]="addGptInputForm" (ngSubmit)="addGPTInput()">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="gptInput">Input*</label>
+            <textarea class="form-control" rows="3" formControlName="input" placeholder="Type here"></textarea>
+            <div *ngIf="submitted && f.input.errors">
+              <small class="error-msg" *ngIf="f.input.errors.required">*Required</small>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <button type="submit" class="blue-btn ml-auto">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
