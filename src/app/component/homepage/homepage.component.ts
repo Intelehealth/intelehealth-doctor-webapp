@@ -34,6 +34,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   completeVisitNo = 0;
   followUpVisitNo = 0;
   totalCompletedVisits = 0;
+  totalFollowUpVisit = 0;
   setSpiner = true;
   setSpiner1 = true;
   specialization;
@@ -100,8 +101,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   getVisitCounts(speciality) {
-    const getTotal = (data, type) => {
-      const item = data.find(({ Status }: any) => Status === type);
+    const getTotal = (data, type, followupStatus) => {
+      const item = data.find(({ Status,followup_status }: any) => Status === type && followup_status === followupStatus);
       return item?.Total || 0;
     };
     this.service.getVisitCounts(speciality).subscribe(({ data }: any) => {
@@ -109,7 +110,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
         // this.flagPatientNo = getTotal(data, "Priority");
         // this.activePatient = getTotal(data, "Awaiting Consult");
         // this.visitNoteNo = getTotal(data, "Visit In Progress");
-        this.totalCompletedVisits = getTotal(data, "Completed Visit");
+        this.totalCompletedVisits = getTotal(data, "Completed Visit","Followup case") + getTotal(data, "Completed Visit","Non Followup case");
+        this.totalFollowUpVisit = getTotal(data, "Completed Visit", "Followup case");
       }
     });
   }
