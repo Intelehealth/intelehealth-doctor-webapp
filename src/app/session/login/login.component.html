@@ -11,7 +11,7 @@
         <div class="form-group">
           <label for="username">
             Username
-            <!-- <span class="link"><a routerLink="/session/forgot-username">Forgot Username ?</a></span> -->
+            <span class="link"><a routerLink="/session/forgot-username">Forgot Username ?</a></span>
           </label>
           <input type="text" class="form-control" formControlName="username" placeholder="Enter username">
           <div *ngIf="submitted && f.username.errors">
@@ -22,7 +22,7 @@
         <div class="form-group">
           <label for="password">
             Password
-            <!-- <span class="link"><a routerLink="/session/forgot-password">Forgot Password ?</a></span> -->
+            <span class="link"><a routerLink="/session/forgot-password">Forgot Password ?</a></span>
           </label>
           <div class="password-field">
             <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password">

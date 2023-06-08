@@ -26,6 +26,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { SharedModule } from '../shared.module';
 import { PartogramComponent } from './partogram/partogram.component';
 import { NgxPanZoomModule } from 'ngx-panzoom';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { NgxPanZoomModule } from 'ngx-panzoom';
       configurationIsolate: false
     }),
     SharedModule,
-    NgxPanZoomModule
+    NgxPanZoomModule,
+    MatProgressSpinnerModule
   ]
 })
 export class DashboardModule { }

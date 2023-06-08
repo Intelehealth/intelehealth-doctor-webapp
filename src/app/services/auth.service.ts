@@ -254,6 +254,10 @@ export class AuthService {
     }
   }
 
+  validateProviderAttribute(attributeType: string, attributeValue: any, providerUuid: string): Observable<any> {
+    return this.http.post(`${this.mindmapUrl}/auth/validateProviderAttribute`, { attributeType, attributeValue, providerUuid });
+  }
+
   subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
     return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
   }
