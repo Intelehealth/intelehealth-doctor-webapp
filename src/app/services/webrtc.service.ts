@@ -24,6 +24,7 @@ export class WebrtcService {
   public room: any | null = null;
   public url: string = environment.webrtcSdkServerUrl;
   public token: any | null = null;
+  public appToken: any | null = null;
   public remoteUser: any | null = null;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
@@ -48,10 +49,11 @@ export class WebrtcService {
     }
   }
 
-  getToken(name: string, roomId: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}`)
+  getToken(name: string, roomId: string, nurseName: string) {
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
       .pipe(map((res: any) => {
         this.token = res?.token;
+        this.appToken = res?.appToken;
         return res;
       }));
   }

@@ -33,7 +33,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   room = "";
   initiator = "dr";
-  nurseId: { uuid: string } = { uuid: null };
+  nurseId: string;
   connectToDrId = "";
   isStreamAvailable: any;
   localStream: MediaStream;
@@ -70,14 +70,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    this.nurseId = patientVisitProvider?.provider || this.nurseId;
+    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
     }
-    // this.socketSvc.initSocket(true);
-    // this.initSocketEvents();
+    this.socketSvc.initSocket(true);
+    this.initSocketEvents();
 
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       // this.socketSvc.showNotification({
@@ -100,7 +100,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   async startCall() {
     this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
-    await this.webrtcSvc.getToken(this.toUser, this.room).toPromise().catch(err => {
+    await this.webrtcSvc.getToken(this.toUser, this.room, this.nurseId).toPromise().catch(err => {
       this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
     });
     if (!this.webrtcSvc.token) return;
@@ -116,6 +116,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   onCallConnect() {
     this.callStartedAt = moment();
+    this.socketSvc.emitEvent("call", {
+      nurseId: this.nurseId,
+      doctorName: this.doctorName,
+      roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      appToken: this.webrtcSvc.appToken
+    });
   }
 
   get localAudioIcon() {
@@ -257,7 +265,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   call() {
     this.socketSvc.emitEvent("call", {
-      nurseId: this.nurseId.uuid,
+      nurseId: this.nurseId,
       doctorName: this.doctorName,
       roomId: this.room,
       visitId: this.data?.visitId,
@@ -419,7 +427,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.close();
     this.webrtcSvc.handleDisconnect();
     this.socketSvc.emitEvent("bye", {
-      nurseId: this.nurseId.uuid,
+      nurseId: this.nurseId,
       webapp: true
     });
     // this.stop();
