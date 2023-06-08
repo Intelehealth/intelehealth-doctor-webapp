@@ -13,7 +13,7 @@ import { GptInputComponent } from './gpt-input/gpt-input.component';
 const routes: Routes = [
   {
     path: '',
-    canActivate: [DashboardGuard],
+    // canActivate: [DashboardGuard],
     component: DashboardComponent
   },
   {
