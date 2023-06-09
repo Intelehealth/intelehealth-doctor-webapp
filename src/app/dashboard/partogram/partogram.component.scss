@@ -23,6 +23,10 @@
 //   margin: 5px;
 // }
 
+.table-bordered {
+    border: 1px solid #000000 !important;
+}
+
 .table-bordered th, .table-bordered td {
   border: 1px solid #000000;
   text-align: center;
@@ -62,8 +66,9 @@
   .value-item.note {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    max-height: 200px;
+    max-height: 250px;
     border-radius: 0px;
+    word-break: break-all;
   }
 }
 
@@ -264,7 +269,8 @@ th.mat-header-cell, td.mat-cell.nowrap {
 th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   border: none;
   min-width: 60px;
-  padding: 12px 24px 12px 0px;
+  padding: 12px 24px 12px 12px;
+  word-break: break-all;
 
   span.alert-danger {
     color: #FF475D;
