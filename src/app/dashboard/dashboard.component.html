@@ -35,7 +35,7 @@
         <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">Hide all</span> <mat-icon>expand_less</mat-icon></button>
       </div>
       <mat-accordion class="intel-accordion-con" multi>
-        <mat-expansion-panel [expanded]="false" id="priority-cases">
+        <mat-expansion-panel [expanded]="true" id="priority-cases">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div class="intel-accordion-title">
@@ -121,7 +121,7 @@
 
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="false" id="normal-cases">
+        <mat-expansion-panel [expanded]="true" id="normal-cases">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div class="intel-accordion-title">

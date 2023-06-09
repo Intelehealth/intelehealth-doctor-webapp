@@ -11,13 +11,13 @@
             <div class="section-item">
               <div class="form-group mb-0">
                 <label for="assessment">Assessment</label>
-                <textarea class="form-control" rows="2" formControlName="assessment" placeholder="Enter assessment"></textarea>
+                <textarea class="form-control" rows="4" formControlName="assessment" placeholder="Enter assessment"></textarea>
               </div>
             </div>
             <div class="section-item">
               <div class="form-group mb-0">
                 <label for="plan">Plan</label>
-                <textarea class="form-control" rows="2" formControlName="plan" placeholder="Enter plan"></textarea>
+                <textarea class="form-control" rows="4" formControlName="plan" placeholder="Enter plan"></textarea>
               </div>
             </div>
             <div class="section-item">
@@ -56,47 +56,53 @@
                         <div class="form-row mt-2">
                           <div class="form-group col-md-5">
                             <label for="medicineName">Medicine *</label>
-                            <input type="text" class="form-control" placeholder="Enter medicine name" formControlName="medicineName">
-                            <!-- <div *ngIf="submitted && f.medicineName.errors">
-                              <small class="error-msg" *ngIf="f.medicineName.errors.required">Enter medicine name</small>
-                            </div> -->
+                            <input type="text" class="form-control" placeholder="Enter medicine name" formControlName="medicineName" [ngbTypeahead]="search3">
+                            <div *ngIf="submitted && fm.controls[i].controls.medicineName.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.medicineName.errors.required">Enter medicine name</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.medicineName.errors.maxlength">Medicine name should be less than 100 characters</small>
+                            </div>
                           </div>
                           <div class="form-group col-md-4">
                             <label for="strength">Strength *</label>
-                            <input type="text" class="form-control" placeholder="Enter strength" formControlName="strength">
-                            <!-- <div *ngIf="submitted && f.strength.errors">
-                              <small class="error-msg" *ngIf="f.strength.errors.required">Enter strength</small>
-                            </div> -->
+                            <input type="text" class="form-control" placeholder="Enter strength" formControlName="strength" [ngbTypeahead]="search4">
+                            <div *ngIf="submitted && fm.controls[i].controls.strength.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.strength.errors.required">Enter strength</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.strength.errors.maxlength">Strength should be less than 10 characters</small>
+                            </div>
                           </div>
                           <div class="form-group col-md-3">
                             <label for="dosage">Dosage *</label>
                             <input type="text" class="form-control" placeholder="Enter dosage" formControlName="dosage">
-                            <!-- <div *ngIf="submitted && f.dosage.errors">
-                              <small class="error-msg" *ngIf="f.dosage.errors.required">Enter dosage</small>
-                            </div> -->
+                            <div *ngIf="submitted && fm.controls[i].controls.dosage.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.required">Enter dosage</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.maxlength">Dosage should be less than 10 characters</small>
+                            </div>
                           </div>
                         </div>
                         <div class="form-row">
                           <div class="form-group col-md-5">
                             <label for="duration">Duration *</label>
                             <input type="text" class="form-control" placeholder="Enter duration" formControlName="duration">
-                            <!-- <div *ngIf="submitted && f.duration.errors">
-                              <small class="error-msg" *ngIf="f.duration.errors.required">Enter duration</small>
-                            </div> -->
+                            <div *ngIf="submitted && fm.controls[i].controls.duration.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.required">Enter duration</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.maxlength">Duration should be less than 10 characters</small>
+                            </div>
                           </div>
                           <div class="form-group col-md-3">
                             <label for="typeOfMedicine">Type of Medicine *</label>
-                            <input type="text" class="form-control" placeholder="Enter type" formControlName="typeOfMedicine">
-                            <!-- <div *ngIf="submitted && f.typeOfMedicine.errors">
-                              <small class="error-msg" *ngIf="f.typeOfMedicine.errors.required">Enter type</small>
-                            </div> -->
+                            <input type="text" class="form-control" placeholder="Enter type" formControlName="typeOfMedicine" [ngbTypeahead]="search6">
+                            <div *ngIf="submitted && fm.controls[i].controls.typeOfMedicine.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.typeOfMedicine.errors.required">Enter type</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.typeOfMedicine.errors.maxlength">Strength should be less than 15 characters</small>
+                            </div>
                           </div>
                           <div class="form-group col-md-3">
                             <label for="routeOfMedicine">Route of Medicine *</label>
-                            <input type="text" class="form-control" placeholder="Enter route" formControlName="routeOfMedicine">
-                            <!-- <div *ngIf="submitted && f.routeOfMedicine.errors">
-                              <small class="error-msg" *ngIf="f.routeOfMedicine.errors.required">Enter route</small>
-                            </div> -->
+                            <input type="text" class="form-control" placeholder="Enter route" formControlName="routeOfMedicine" [ngbTypeahead]="search5">
+                            <div *ngIf="submitted && fm.controls[i].controls.routeOfMedicine.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.routeOfMedicine.errors.required">Enter route</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.routeOfMedicine.errors.maxlength">Route should be less than 15 characters</small>
+                            </div>
                           </div>
                           <div class="form-group col-md-1">
                             <label for="deleteBtn">.</label>

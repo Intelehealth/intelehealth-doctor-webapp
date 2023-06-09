@@ -39,6 +39,7 @@ import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-id.component';
 import { AddPlanAssessmentComponent } from './add-plan-assessment/add-plan-assessment.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -84,7 +85,8 @@ import { MatDividerModule } from '@angular/material/divider';
         SharedModule,
         NgSelectModule,
         SignaturePadModule,
-        MatDividerModule
+        MatDividerModule,
+        NgbTypeaheadModule
     ],
     exports: [ViewVisitPrescriptionComponent]
 })

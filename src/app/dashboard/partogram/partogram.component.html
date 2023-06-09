@@ -5,8 +5,8 @@
         <div class="card-body">
           <!-- <h1>WHO LABOUR CARE GUIDE</h1> -->
           <div class="py-2 d-flex align-items-center justify-content-end">
-            <button class="blue-btn mr-1" type="button" (click)="zoomIn()">ZoomIn [+]</button>
-            <button class="blue-btn mr-1" type="button" (click)="zoomOut()">ZoomOut [-]</button>
+            <button class="blue-btn mr-1" type="button" (click)="zoomIn()">Zoom In [+]</button>
+            <button class="blue-btn mr-1" type="button" (click)="zoomOut()">Zoom Out [-]</button>
             <button class="blue-btn" type="button" (click)="zoomReset()">Reset</button>
           </div>
           <div style="height: 2000px; border: 1px solid black;">
@@ -1573,7 +1573,7 @@
                   <!-- Name Column -->
                   <ng-container matColumnDef="timeAndStage">
                     <th mat-header-cell *matHeaderCellDef> Time and Stage </th>
-                    <td mat-cell *matCellDef="let element">
+                    <td mat-cell *matCellDef="let element" class="nowrap">
                       <div class="d-flex flex-column">
                         <span><b>{{element.time|date:'hh:mm a'}}</b></span>
                         <span>Stage {{element.stage}}</span>
@@ -1584,7 +1584,7 @@
                   <!-- Age Column -->
                   <ng-container matColumnDef="medicine">
                     <th mat-header-cell *matHeaderCellDef> Medicine </th>
-                    <td mat-cell *matCellDef="let element">
+                    <td mat-cell *matCellDef="let element" class="nowrap">
                       <ul class="notes-list">
                         <li *ngFor="let m of element?.medicine;">{{m.value}}</li>
                       </ul>

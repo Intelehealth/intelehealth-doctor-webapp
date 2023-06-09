@@ -257,11 +257,14 @@ th.mat-header-cell {
   height: 21px;
 }
 
+th.mat-header-cell, td.mat-cell.nowrap {
+  white-space: nowrap;
+}
+
 th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   border: none;
   min-width: 60px;
-  white-space: nowrap;
-  padding-right: 24px;
+  padding: 12px 24px 12px 0px;
 
   span.alert-danger {
     color: #FF475D;

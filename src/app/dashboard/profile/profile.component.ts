@@ -398,6 +398,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
+      if (personalFormValues.phoneNumber) this.validateProviderAttribute('phoneNumber');
       this.professionalInfoForm.patchValue(professionalFormValues);
       // let signature = this.personalInfoForm.value.signature;
       // switch (this.signatureType) {
