@@ -264,6 +264,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   ngAfterViewInit() {

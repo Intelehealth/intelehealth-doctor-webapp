@@ -38,7 +38,7 @@
                 </div>
                 <div class="ml-3">
                   <h6>
-                    {{ patient?.person.display }} ({{ patient?.person.gender }})
+                    {{ patient?.person.display }} ({{ patient?.person.gender|translate }})
                   </h6>
                   <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
                 </div>
@@ -157,7 +157,7 @@
                     <div class="list-item">
                       <label>{{'Visit created'|translate}}</label>
                       <div class="list-item-content">
-                        {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
+                        {{ visit?.startDatetime | date : "dd MMM, yyyy":'':locale }}
                       </div>
                     </div>
                   </li>
@@ -167,7 +167,7 @@
                       <div class="list-item-content">
                         <span [class.text-muted]="!visitAppointment">{{
                           visitAppointment
-                            ? (visitAppointment | date : "dd MMM, yyyy")
+                            ? (visitAppointment | date : "dd MMM, yyyy":'':locale)
                             : "No appointment"|translate
                         }}</span>
                       </div>
@@ -411,7 +411,7 @@
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item">
-                              <label>{{ ckri.key }}</label>
+                              <label>{{ ckri.key|translate }}</label>
                               <div
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
@@ -423,16 +423,16 @@
                         </ul>
                       </ng-container>
                       <ng-container *ngIf="ckr.title == 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title }}</h6>
+                        <h6 class="my-3">{{ ckr.title|translate }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item-col">
-                              <label>{{ ckri.key }}</label>
+                              <label>{{ ckri.key|translate }}</label>
                               <div
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
                               >
-                                {{ ckri.value ? ckri.value : "None" }}
+                                {{ ckri.value ? ckri.value : ("None"|translate) }}
                               </div>
                             </div>
                           </li>
@@ -460,7 +460,7 @@
                 <ng-container *ngFor="let pe of physicalExaminationData">
                   <div class="cheif-complaint-wrapper">
                     <ng-container *ngIf="pe.title != 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title }}</h6>
+                      <h6 class="my-3">{{ pe.title|translate }}</h6>
                       <ul class="items-list pt-0">
                         <li *ngFor="let pei of pe.data">
                           <div class="list-item">
@@ -469,7 +469,7 @@
                               class="list-item-content"
                               [class.text-muted]="!pei.value"
                             >
-                              {{ pei.value ? pei.value : "None" }}
+                              {{ pei.value ? pei.value : ("None"|translate) }}
                             </div>
                           </div>
                         </li>
@@ -527,16 +527,16 @@
 
                 <ng-container *ngFor="let ph of patientHistoryData">
                   <div class="cheif-complaint-wrapper">
-                    <h6 class="my-3">{{ ph.title }}</h6>
+                    <h6 class="my-3">{{ ph.title|translate }}</h6>
                     <ul class="items-list pt-0">
                       <li *ngFor="let phi of ph.data">
                         <div class="list-item">
-                          <label>{{ phi.key }}</label>
+                          <label>{{ (phi.key|translate) }}</label>
                           <div
                             class="list-item-content"
                             [class.text-muted]="!phi.value"
                           >
-                            {{ phi.value ? phi.value : "None" }}
+                            {{ phi.value ? phi.value : ("None"|translate) }}
                           </div>
                         </div>
                       </li>
@@ -683,7 +683,7 @@
                 <ng-container matColumnDef="created_on">
                   <th mat-header-cell *matHeaderCellDef>{{'Created on'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.created_on | date : "dd MM, yyyy" }}
+                    {{ element.created_on | date : "dd MM, yyyy":'':locale }}
                   </td>
                 </ng-container>
 
@@ -1979,7 +1979,7 @@
                   <tbody>
                     <tr>
                       <td>{{ followUpForm.value.wantFollowUp|translate }}</td>
-                      <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy') : '-' }}</td>
+                      <td>{{ (followUpForm.value.followUpDate) ? (followUpForm.value.followUpDate|date:'dd MMMM yyyy':'':locale) : '-' }}</td>
                       <td>{{ (followUpForm.value.followUpTime) ? followUpForm.value.followUpTime : '-' }}</td>
                       <td>{{ (followUpForm.value.followUpReason) ? followUpForm.value.followUpReason : '-' }}</td>
                       <td class="pr-0">

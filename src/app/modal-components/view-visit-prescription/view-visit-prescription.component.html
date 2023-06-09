@@ -93,7 +93,7 @@
                     <div class="list-item-content">
                       {{
                         completedEncounter?.encounterDatetime
-                          | date : "dd MMM, yyyy"
+                          |date : "dd MMM, yyyy":'':locale
                       }}
                     </div>
                   </div>
@@ -117,7 +117,7 @@
                   <div class="list-item">
                     <label>{{'Visit created'|translate}}</label>
                     <div class="list-item-content">
-                      {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
+                      {{ visit?.startDatetime|date : "dd MMM, yyyy":'':locale }}
                     </div>
                   </div>
                 </li>
@@ -464,7 +464,7 @@
                     <div class="list-item">
                       <label>{{'Follow-up Date'|translate}}</label>
                       <div class="list-item-content">
-                        {{ followUp.followUpDate | date : "mediumDate" }}
+                        {{ followUp.followUpDate|date : "mediumDate":'':locale }}
                       </div>
                     </div>
                   </li>

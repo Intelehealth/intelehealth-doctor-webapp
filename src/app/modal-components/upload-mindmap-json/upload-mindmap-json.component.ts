@@ -1,6 +1,7 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MindmapService } from 'src/app/services/mindmap.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-upload-mindmap-json',
@@ -16,7 +17,8 @@ export class UploadMindmapJsonComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
   private dialogRef: MatDialogRef<UploadMindmapJsonComponent>,
-  private mindmapService: MindmapService) { }
+  private mindmapService: MindmapService,
+  private translateService: TranslateService) { }
 
   ngOnInit(): void {
   }
@@ -31,7 +33,7 @@ export class UploadMindmapJsonComponent implements OnInit {
       this.filename = this.file.name;
       if (!this.filename.endsWith('.json')) {
         this.reset();
-        alert("Please upload json file only.");
+        alert(this.translateService.instant("Please upload json file only."));
         return;
       }
       const fileReader = new FileReader();

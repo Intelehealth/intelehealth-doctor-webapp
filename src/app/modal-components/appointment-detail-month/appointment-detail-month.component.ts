@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment-detail-month',
@@ -16,11 +17,13 @@ export class AppointmentDetailMonthComponent implements OnInit {
   followupCount: number = 0;
   timeList: any = [];
   dayOffForm: FormGroup;
+  locale: any = localStorage.getItem('selectedLanguage');
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AppointmentDetailMonthComponent>,
     private toastr: ToastrService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private router: Router
   ) {
     this.dayOffForm = new FormGroup({
       markAs: new FormControl('dayOff'),
@@ -47,7 +50,8 @@ export class AppointmentDetailMonthComponent implements OnInit {
         this.dayOffForm.get('to').updateValueAndValidity();
         this.dayOffForm.patchValue({ from: null, to: null });
       }
-    })
+    });
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   markDayOff() {
@@ -116,4 +120,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     return true;
   }
 
+  viewAppointments() {
+    this.router.navigate(['/appointments']);
+  }
 }

@@ -8,14 +8,14 @@
     <p class="mt-2 text-center">{{'Are you sure you want to reschedule muskan kala’s appointment from'|translate}} </p>
     <div class="slot-con d-flex justify-content-center align-items-center py-3">
       <div class="d-flex flex-column align-items-center justify-content-center px-2">
-        <b>{{data?.appointment?.slotJsDate|date:'dd MMMM'}}</b>
+        <b>{{data?.appointment?.slotJsDate|date:'dd MMMM':'':locale}}</b>
         <b>{{data?.appointment?.slotTime}}</b>
       </div>
       <div class="d-flex flex-column align-items-center justify-content-center px-2">
         <span class="text-muted">to</span>
       </div>
       <div class="d-flex flex-column align-items-center justify-content-center px-2">
-        <b>{{data?.newSlot?.date|date:'dd MMMM'}}</b>
+        <b>{{data?.newSlot?.date|date:'dd MMMM':'':locale}}</b>
         <b>{{data?.newSlot?.slot}}</b>
       </div>
     </div>

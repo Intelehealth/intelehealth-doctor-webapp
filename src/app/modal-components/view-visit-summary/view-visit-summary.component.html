@@ -71,7 +71,7 @@
                   <div class="list-item">
                     <label>{{'Visit created'|translate}}</label>
                     <div class="list-item-content">
-                      {{visit?.startDatetime|date: 'dd MMM, yyyy'}}
+                      {{visit?.startDatetime|date: 'dd MMM, yyyy':'':locale}}
                     </div>
                   </div>
                 </li>
@@ -208,11 +208,11 @@
                 <div class="check-up-reason-con">
                   <ng-container *ngFor="let ckr of checkUpReasonData;">
                     <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                      <h6 class="my-3">{{ckr.title}}</h6>
+                      <h6 class="my-3">{{ckr.title|translate}}</h6>
                       <ul class="items-list pt-0">
                         <li *ngFor="let ckri of ckr.data">
                           <div class="list-item">
-                            <label>{{ckri.key}}</label>
+                            <label>{{ckri.key|translate}}</label>
                             <div class="list-item-content" [class.text-muted]="!ckri.value">
                               {{(ckri.value)?ckri.value:('None'|translate)}}
                             </div>
@@ -221,11 +221,11 @@
                       </ul>
                     </ng-container>
                     <ng-container *ngIf="ckr.title == 'Associated symptoms'">
-                      <h6 class="my-3">{{ckr.title}}</h6>
+                      <h6 class="my-3">{{ckr.title|translate}}</h6>
                       <ul class="items-list pt-0">
                         <li *ngFor="let ckri of ckr.data">
                           <div class="list-item-col">
-                            <label>{{ckri.key}}</label>
+                            <label>{{ckri.key|translate}}</label>
                             <div class="list-item-content" [class.text-muted]="!ckri.value">
                               {{(ckri.value)?ckri.value:('None'|translate)}}
                             </div>
@@ -250,11 +250,11 @@
               <ng-container *ngFor="let pe of physicalExaminationData;">
                 <div class="cheif-complaint-wrapper">
                   <ng-container *ngIf="pe.title != 'Abdomen'">
-                    <h6 class="my-3">{{pe.title}}</h6>
+                    <h6 class="my-3">{{pe.title|translate}}</h6>
                     <ul class="items-list pt-0">
                       <li *ngFor="let pei of pe.data">
                         <div class="list-item">
-                          <label>{{pei.key}}</label>
+                          <label>{{pei.key|translate}}</label>
                           <div class="list-item-content" [class.text-muted]="!pei.value">
                             {{(pei.value)?pei.value:('None'|translate)}}
                           </div>
@@ -278,10 +278,10 @@
                     </ul>
                   </ng-container>
                   <ng-container *ngIf="pe.title == 'Abdomen'">
-                    <h6 class="my-3">{{pe.title}}</h6>
+                    <h6 class="my-3">{{pe.title|translate}}</h6>
                     <ul class="items-list pt-0">
                       <li *ngFor="let pei of pe.data">
-                        {{pei.key}}
+                        {{pei.key|translate}}
                       </li>
                     </ul>
                   </ng-container>
@@ -300,11 +300,11 @@
             <div class="data-section-content">
               <ng-container *ngFor="let ph of patientHistoryData;">
                 <div class="cheif-complaint-wrapper">
-                  <h6 class="my-3">{{ph.title}}</h6>
+                  <h6 class="my-3">{{ph.title|translate}}</h6>
                   <ul class="items-list pt-0">
                     <li *ngFor="let phi of ph.data">
                       <div class="list-item">
-                        <label>{{phi.key}}</label>
+                        <label>{{phi.key|translate}}</label>
                         <div class="list-item-content" [class.text-muted]="!phi.value">
                           {{(phi.value)?phi.value:('None'|translate)}}
                         </div>

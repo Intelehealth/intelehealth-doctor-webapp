@@ -23,7 +23,7 @@
 
                   <div class="d-flex align-items-center">
                     <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient.person.display}} ({{element.patient.person.gender}})</span>
+                    <span class="font-bold ml-2">{{element.patient.person.display}} ({{element.patient.person.gender|translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -37,7 +37,7 @@
               <!-- Visit Created Column -->
               <ng-container matColumnDef="visit_created">
                 <th mat-header-cell *matHeaderCellDef> {{'Visit Created'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y':'':locale}} </td>
               </ng-container>
 
               <!-- Location Column -->

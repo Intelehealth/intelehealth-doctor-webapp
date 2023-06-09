@@ -256,7 +256,7 @@
   "Strength":"Strength",
   "No. of days":"No. of days",
   "Date of birth *":"Date of birth *",
-  "AND":"AND",
+  "AND":"and",
   "New password":"New password",
   "Phone Number *":"Phone Number *",
   "Timing":"Timing",
@@ -440,6 +440,18 @@
   "Download e-Prescription":"Download e-Prescription",
   "OTP sent on":"OTP sent on",
   "OTP Sent":"OTP Sent",
+
+  "Patient history":"Patient history",
+  "Neonate":"Neonate",
+  "General exams":"General exams",
+  "View Appointments":"View Appointments",
+  "Family history":"Family history",
+  "Father":"Father",
+  "Sister":"Sister",
+  "Mother":"Mother",
+  "Brother":"Brother",
+  "Please upload json file only.":"Please upload json file only.",
+  
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",
     "Login Successful":"Login Successful",

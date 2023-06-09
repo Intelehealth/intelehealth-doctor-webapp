@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private rolesService: NgxRolesService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
     ) {
 
     this.loginForm = new FormGroup({
@@ -40,6 +40,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
+    if(localStorage.getItem('selectedLanguage')) {
+      this.translateService.setDefaultLang(localStorage.getItem('selectedLanguage'));
+      this.translateService.use(localStorage.getItem('selectedLanguage'));
+    } else {
+      let browserlang = this.translateService.getBrowserLang();
+      this.translateService.setDefaultLang(browserlang);
+      localStorage.setItem("selectedLanguage", browserlang);
+    }
+    this.selectedLanguage = localStorage.getItem('selectedLanguage');
     // this.checkSession();
   }
 

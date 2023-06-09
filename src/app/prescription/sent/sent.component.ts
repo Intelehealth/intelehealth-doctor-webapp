@@ -15,6 +15,7 @@ export class SentComponent implements OnInit, AfterViewInit {
   baseUrl: string = environment.baseURL;
   @Input() prescriptionsSent: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  locale: any = localStorage.getItem('selectedLanguage');
 
   constructor() { }
 

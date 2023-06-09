@@ -14,6 +14,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   selectedReason = "";
   otherReason = "";
   reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
+  locale: any = localStorage.getItem('selectedLanguage');
   
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,

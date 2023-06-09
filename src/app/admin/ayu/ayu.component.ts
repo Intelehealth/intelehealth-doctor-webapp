@@ -26,6 +26,7 @@ export class AyuComponent implements OnInit {
   mindmapDatas = [];
   selectedLicense: string;
   expiryDate: string;
+  locale: any = localStorage.getItem('selectedLanguage');
 
   constructor(
     private mindmapService: MindmapService,

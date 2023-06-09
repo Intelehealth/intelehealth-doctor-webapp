@@ -8,6 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class RescheduleAppointmentConfirmComponent implements OnInit {
 
+  locale: any = localStorage.getItem('selectedLanguage');
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
   private dialogRef: MatDialogRef<RescheduleAppointmentConfirmComponent>) { }
 

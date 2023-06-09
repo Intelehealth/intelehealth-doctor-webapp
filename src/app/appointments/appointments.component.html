@@ -23,7 +23,7 @@
 
                   <div class="d-flex align-items-center">
                     <img src="{{ baseUrl + '/personimage/' + element.visit_info.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.visit_info.patient.person.display}} ({{element.visit_info.patient.person.gender}})</span>
+                    <span class="font-bold ml-2">{{element.visit_info.patient.person.display}} ({{element.visit_info.patient.person.gender|translate}})</span>
                   </div>
                 </td>
               </ng-container>

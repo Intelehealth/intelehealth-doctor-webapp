@@ -53,6 +53,7 @@ export class CalendarComponent implements OnInit {
     // this.getFollowUpVisit();
     this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'));
     this.getSchedule();
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   dateChanged(viewDate: Date) {
@@ -261,6 +262,9 @@ export class CalendarComponent implements OnInit {
     if (view == 'monthView') {
       // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
       let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+      this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
+        // console.log(res);
+      });
       // if (oldDaysOff) {
       //   if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
       //     this.toastr.warning(this.translateService.instant(`messages.${"This day is already marked as Day Off"}`), this.translateService.instant(`messages.${"Already DayOff"}`));

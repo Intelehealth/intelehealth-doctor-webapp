@@ -11,7 +11,7 @@
             <div class="patient-con">
               <img class="mr-2" [src]="baseUrl + '/personimage/' + data?.meta.patientId" alt="" (error)="onImgError($event)">
               <div class="d-flex flex-column">
-                <h6 class="mb-0">{{ data?.meta.patientName|noValue:'NA' }} ({{data?.meta.patientGender|noValue:'NA'}}, {{data?.meta.patientAge|noValue:'0'}})</h6>
+                <h6 class="mb-0">{{ data?.meta.patientName|noValue:('NA'|translate) }} ({{data?.meta.patientGender|noValue:('NA'|translate)}}, {{data?.meta.patientAge|noValue:'0'}})</h6>
                 <p class="mb-0">{{'PID'|translate}} : {{data?.meta.openMrsId}}</p>
                 <div class="anchor-con d-flex align-items-center">
                   <a class="mr-2" href="javascript:void(0)" (click)="close('view')">{{'View details'|translate}}</a>
@@ -30,13 +30,13 @@
           <div class="appointment-info-con">
             <div class="info-row">
               <div class="info-label">{{'Booked on'|translate}}</div>
-              <div class="info-con">{{data?.meta.createdAt|date:'dd MMM, yyyy'}}</div>
+              <div class="info-con">{{data?.meta.createdAt|date:'dd MMM, yyyy':'':locale}}</div>
             </div>
             <div class="info-row">
               <div class="info-label">{{'Appointment on'|translate}}</div>
               <div class="info-con">
                 <div>
-                  {{data?.start|date:'dd MMM, yyyy'}}, {{data?.start|date:'h:mm a'|lowercase}} - {{data?.end|date:'h:mm a'|lowercase}}
+                  {{data?.start|date:'dd MMM, yyyy':'':locale}}, {{data?.start|date:'h:mm a'|lowercase}} - {{data?.end|date:'h:mm a'|lowercase}}
                 </div>
                 <div class="text-important">
                   <ng-container *ngIf="data?.meta.visit_status != 'Completed' && data?.meta.visit_status != 'Ended'">

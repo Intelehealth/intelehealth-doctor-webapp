@@ -159,21 +159,21 @@
               <div class="con-item">
                 <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title}}</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || (weekEvent.event).title|translate)}}</h6>
                   <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Patient'|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:'NA'}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:('NA'|translate)}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Health Worker'|translate}}</p>
                 </div>
               </div>
@@ -210,8 +210,8 @@
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:'NA'}}</h6>
-                  <h6 class="mb-0">({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:'NA'}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}}</h6>
+                  <h6 class="mb-0">({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                 </div>
               </div>
             </div>

@@ -15,6 +15,7 @@ export class CompletedComponent implements OnInit, AfterViewInit {
   baseUrl: string = environment.baseURL;
   @Input() completedVisits: any = [];
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  locale: any = localStorage.getItem('selectedLanguage');
 
   constructor() { }
 

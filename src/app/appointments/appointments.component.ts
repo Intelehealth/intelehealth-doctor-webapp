@@ -46,6 +46,7 @@ export class AppointmentsComponent implements OnInit {
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
     this.getVisits();
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   // getAppointements() {

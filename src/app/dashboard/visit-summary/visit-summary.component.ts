@@ -55,6 +55,7 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class VisitSummaryComponent implements OnInit, OnDestroy {
 
+  locale: any = localStorage.getItem('selectedLanguage');
   visit: any;
   patient: any;
   baseUrl: string = environment.baseURL;
@@ -378,7 +379,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
-    moment.locale("ru");
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   formControlValueChanges() {

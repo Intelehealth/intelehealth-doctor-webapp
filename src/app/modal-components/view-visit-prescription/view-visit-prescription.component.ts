@@ -16,6 +16,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
   @Input() isDownloadPrescription: any = false;
   @Input() visitId: any;
 
+  locale: any = localStorage.getItem('selectedLanguage');
   visit: any;
   patient: any;
   baseUrl: string = environment.baseURL;
@@ -59,6 +60,7 @@ export class ViewVisitPrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   getVisit(uuid: string) {

@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppointmentDetailComponent implements OnInit {
 
+  locale: any = localStorage.getItem('selectedLanguage');
   baseUrl: string = environment.baseURL;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
@@ -39,6 +40,7 @@ export class AppointmentDetailComponent implements OnInit {
       this.data.meta.hwPhoneNo = cdata.hwPhoneNo;
       this.data.meta.prescriptionCreatedAt = cdata.prescriptionCreatedAt;
     }
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   close(val: any) {

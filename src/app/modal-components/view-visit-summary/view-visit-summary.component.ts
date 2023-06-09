@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ViewVisitSummaryComponent implements OnInit {
 
+  locale: any = localStorage.getItem('selectedLanguage');
   visit: any;
   patient: any;
   baseUrl: string = environment.baseURL;
@@ -43,6 +44,7 @@ export class ViewVisitSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.getVisit(this.data.uuid);
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   getVisit(uuid: string) {
