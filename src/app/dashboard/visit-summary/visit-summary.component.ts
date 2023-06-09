@@ -507,9 +507,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 });
               }
             } else {
-              // setTimeout(() => {
-              //   this.getDDx();
-              // }, 3000);
+              setTimeout(() => {
+                this.getDDx();
+              }, 3000);
             }
           }
         });
@@ -1599,8 +1599,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getDDx() {
     if (this.currentComplaint && this.username == 'doctorai') {
-      this.coreService.openConfirmationDialog({ confirmationMsg: "Do you want to proceed?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(response => {
-        if (response) {
+      // this.coreService.openConfirmationDialog({ confirmationMsg: "Do you want to proceed?", cancelBtnText: "No", confirmBtnText: "Yes" }).afterClosed().subscribe(response => {
+      //   if (response) {
           let vital = '';
           let ckr = '';
           let phyEx = '';
@@ -1673,8 +1673,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.ddxPresent = true;
             });
           });
-        }
-      });
+        // }
+      // });
     }
   }
 

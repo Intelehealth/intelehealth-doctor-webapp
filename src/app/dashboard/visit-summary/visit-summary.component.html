@@ -805,7 +805,7 @@
       </div>
     </div>
 
-    <div class="col-md-12 p-0 mb-5" *ngIf="username == 'doctorai'">
+    <div class="col-md-12 p-0 mb-5" *ngIf="ddx">
       <div class="intel-card">
         <div class="card-body">
           <mat-accordion class="intel-accordion-con ddx" multi>
@@ -824,7 +824,7 @@
                 </mat-panel-title>
                 <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->
               </mat-expansion-panel-header>
-              <div class="container" *ngIf="!ddxPresent">
+              <!-- <div class="container" *ngIf="!ddxPresent">
                 <div class="row">
                   <div class="col-md-12 py-2">
                     <form [formGroup]="ddxForm" (ngSubmit)="getDDx()">
@@ -857,7 +857,7 @@
                     </form>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <table *ngIf="ddx" class="ddx-table mt-3">
                 <thead>
