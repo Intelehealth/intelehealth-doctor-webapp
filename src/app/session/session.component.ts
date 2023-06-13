@@ -36,13 +36,13 @@ export class SessionComponent implements OnInit {
   languages: any = [
     {
       id: 1,
-      name: 'English',
-      code: 'en'
+      name: 'Russian',
+      code: 'ru'
     },
     {
       id: 2,
-      name: 'Russian',
-      code: 'ru'
+      name: 'English',
+      code: 'en'
     }
   ];
   constructor(public translate: TranslateService) { }

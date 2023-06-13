@@ -19,10 +19,10 @@ export class DashboardGuard implements CanActivate {
     state: RouterStateSnapshot): boolean {
       const user = JSON.parse(localStorage.getItem('user'));
       const provider = JSON.parse(localStorage.getItem('provider'));
-      if (provider.attributes.length) {
+      if (provider.attributes.length >= 9) {
         return true;
       } else {
-        this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false} });
+        this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length >= 9) ? true : false} });
         return true;
       }
       // return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
