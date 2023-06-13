@@ -464,6 +464,7 @@
   "Mother":"Мать",
   "Brother":"Брат",
   "Please upload json file only.":"Пожалуйста, загружайте только файл json.",
+  "Do you really want to delete this timing slot?":"Вы действительно хотите удалить этот временной интервал?",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
