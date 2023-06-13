@@ -1613,7 +1613,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           for (let c = 0; c < this.checkUpReasonData.length; c++) {
             ckr += `${this.checkUpReasonData[c].title}\n`;
             for (let d = 0; d < this.checkUpReasonData[c].data.length; d++) {
-              ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value: 'None'}\n`
+              ckr += `${this.checkUpReasonData[c].data[d].key} : ${this.checkUpReasonData[c].data[d].value ? this.checkUpReasonData[c].data[d].value: ''}\n`
             }
           }
 
