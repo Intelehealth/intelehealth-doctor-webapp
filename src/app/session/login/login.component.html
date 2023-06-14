@@ -26,8 +26,9 @@
           </label>
           <div class="password-field">
             <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="{{'Enter password'|translate}}">
-            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible">
-              <img src="assets/svgs/icon-eye.svg" alt="">
+            <button class="btn toggle-password-btn" type="button">
+              <img *ngIf="visible" (click)="visible = false" style="height:20px;" src="assets/svgs/icon-eye.svg" alt="">
+              <img  *ngIf="!visible" (click)="visible = true" style="height:21px;" src="assets/svgs/icon-eye-hide.svg" alt="">
             </button>
           </div>
           <div *ngIf="submitted && f.password.errors">
