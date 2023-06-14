@@ -84,7 +84,7 @@
                   <label for="birthdate">{{'Date of birth *'|translate}}</label>
                   <div class="input-group">
                     <input type="text" class="form-control" formControlName="birthdate" [matDatepicker]="dobdp" placeholder="{{'Enter DOB'|translate}}" aria-label="Birthdate"
-                      aria-describedby="basic-addon1" readonly>
+                      aria-describedby="basic-addon1" readonly [max]="maxDate">
                     <mat-datepicker #dobdp></mat-datepicker>
                     <div class="input-group-append">
                       <span class="input-group-text" id="basic-addon1">

@@ -207,6 +207,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   maxTelLegth1: number = 9;
   maxTelLegth2: number = 9;
   oldPhoneNumber: string = '';
+  maxDate: any = moment().format();                      ;
 
   constructor(
     private pageTitleService: PageTitleService,
