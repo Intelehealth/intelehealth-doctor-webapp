@@ -18,7 +18,7 @@ export class ConfirmDialogComponent implements OnInit {
     this.dialogRef.close(val);
     setTimeout(function(){
       window.location.reload();
-    },1000);
+    },500);
   }
 
 }
