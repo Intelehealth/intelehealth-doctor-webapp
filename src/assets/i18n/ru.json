@@ -466,6 +466,7 @@
   "Please upload json file only.":"Пожалуйста, загружайте только файл json.",
   "Do you really want to delete this timing slot?":"Вы действительно хотите удалить этот временной интервал?",
   "Child":"Ребенок",
+  "Age should be greater than or equal to 18":"Возраст должен быть больше или равен 18",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",

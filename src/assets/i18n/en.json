@@ -453,6 +453,7 @@
   "Please upload json file only.":"Please upload json file only.",
   "Do you really want to delete this timing slot?":"Do you really want to delete this timing slot?",
   "Child":"Child",
+  "Age should be greater than or equal to 18":"Age should be greater than or equal to 18",
   
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",

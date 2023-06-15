@@ -336,6 +336,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }, 1000);
       }
     });
+
+    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+      if (val) {
+        this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
+      }
+    });
   }
 
   getProviderAttributeTypes() {

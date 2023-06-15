@@ -5,9 +5,10 @@ import {
   APP_BASE_HREF,
   LocationStrategy,
   HashLocationStrategy,
-  registerLocaleData
+  registerLocaleData,
 } from "@angular/common";
 import localeRu from '@angular/common/locales/ru';
+import localeEn from '@angular/common/locales/en';
 // Component Import
 import { AppComponent } from "./app.component";
 import { TestComponent } from "./test/test.component";
@@ -79,6 +80,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
 }
 
 registerLocaleData(localeRu);
+registerLocaleData(localeEn);
 @NgModule({
   declarations: [
     AppComponent,
@@ -115,8 +117,8 @@ registerLocaleData(localeRu);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://uiux.intelehealth.org:3004/api/messages/',
-        'https://uiux.intelehealth.org:3004/api/support/'
+        'https://telemedui.intelehealth.org:3004/api/messages/',
+        'https://telemedui.intelehealth.org:3004/api/support/',
       ]
     }),
     NgxPermissionsModule.forRoot({
