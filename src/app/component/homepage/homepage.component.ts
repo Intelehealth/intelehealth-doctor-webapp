@@ -78,8 +78,8 @@ export class HomepageComponent implements OnInit, OnDestroy {
             this.systemAccess = true;
           }
         });
-        this.getVisits();
         this.getVisitCounts(this.specialization);
+        this.getVisits();
       });
     } else {
       this.authService.logout();
@@ -110,8 +110,24 @@ export class HomepageComponent implements OnInit, OnDestroy {
         // this.flagPatientNo = getTotal(data, "Priority");
         // this.activePatient = getTotal(data, "Awaiting Consult");
         // this.visitNoteNo = getTotal(data, "Visit In Progress");
-        this.totalCompletedVisits = getTotal(data, "Completed Visit","Followup case") + getTotal(data, "Completed Visit","Non Followup case");
-        this.totalFollowUpVisit = getTotal(data, "Completed Visit", "Followup case");
+        let totalCount =  getTotal(data, "Completed Visit","Followup case") + getTotal(data, "Completed Visit","Non Followup case");
+        if( localStorage.totalCompletedVisits) {
+          if( totalCount >= localStorage.totalCompletedVisits) {
+            this.totalCompletedVisits = totalCount;
+            localStorage.totalCompletedVisits = totalCount;
+            this.totalFollowUpVisit = getTotal(data, "Completed Visit", "Followup case");
+            localStorage.totalFollowUpVisits = this.totalFollowUpVisit;
+          } else {
+            this.totalCompletedVisits = localStorage.totalCompletedVisits;
+            this.totalFollowUpVisit = localStorage.totalFollowUpVisits;
+            this.getVisitCounts(this.specialization);
+          }
+        } else {
+          this.totalCompletedVisits = totalCount;
+          localStorage.totalCompletedVisits = totalCount;
+          this.totalFollowUpVisit = getTotal(data, "Completed Visit", "Followup case");
+          localStorage.totalFollowUpVisits = this.totalFollowUpVisit;
+        }
       }
     });
   }

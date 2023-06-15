@@ -111,7 +111,7 @@ export class PatientInteractionComponent implements OnInit {
       );
       if (result.length !== 0) {
         this.msg = tempMsg;
-        this.interactionType = this.msg[0].value;
+        this.interactionType = this.msg[0]?.value;
       }
     });
   }
