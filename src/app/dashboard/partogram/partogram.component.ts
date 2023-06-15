@@ -202,6 +202,13 @@ export class PartogramComponent implements OnInit, OnDestroy {
       stage2Count: 3,
       alert: false
     },
+    {
+      name: 'Encounter Status',
+      conceptName: 'Encounter status',
+      stage1Count: 12,
+      stage2Count: 3,
+      alert: false
+    }
   ];
   timeStage1: any[] = Array(12).fill(null);
   timeStage2: any[] = Array(3).fill(null);

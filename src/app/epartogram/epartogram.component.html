@@ -29,10 +29,14 @@
                 <tr>
                   <td colspan="3" class="nb"></td>
                   <td>Time</td>
-                  <ng-container *ngFor="let item of timeStage1;">
-                    <td colspan="2">
+                  <ng-container *ngFor="let item of timeStage1; let i=index;">
+                    <td colspan="2" [ngClass]="{ 'sos': parameters[24].stage1values[i] === 'SOS' }">
                       <div class="value-item" *ngIf="item">
                         {{item|date:'hh:mm a'}}
+                        <ng-container *ngIf="parameters[24].stage1values[i] === 'SOS'">
+                          <br>
+                          <h5>SOS</h5>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
@@ -49,10 +53,14 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
                   <td rowspan="50" class="divider"></td>
-                  <ng-container *ngFor="let item of timeStage2;">
-                    <td colspan="4">
+                  <ng-container *ngFor="let item of timeStage2; let i=index;">
+                    <td colspan="4" [ngClass]="{ 'sos': parameters[24].stage2values[i] === 'SOS' }">
                       <div class="value-item" *ngIf="item">
                         {{item|date:'hh:mm a'}}
+                        <ng-container *ngIf="parameters[24].stage2values[i] === 'SOS'">
+                          <br>
+                          <h5>SOS</h5>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
