@@ -94,7 +94,7 @@ export class WebrtcService {
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
-
+      .on(RoomEvent.ParticipantDisconnected, handleDisconnect)
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
 
     console.log('url:- ', this.url);
