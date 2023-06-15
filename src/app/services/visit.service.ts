@@ -133,4 +133,12 @@ export class VisitService {
   chatGPTCompletionDDx(payload: any) {
     return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload });
   }
+
+  getData(data: any) {
+    if (data?.value.toString().startsWith("{")) {
+      let value = JSON.parse(data.value.toString());
+      data.value = value["en"];
+    }
+    return data;
+  }
 }

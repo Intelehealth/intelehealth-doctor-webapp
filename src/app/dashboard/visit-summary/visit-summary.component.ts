@@ -569,7 +569,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
             this.currentComplaint = obs.value;
-            const currentComplaint = obs.value.split('<b>');
+            const currentComplaint =  this.visitService.getData(obs)?.value.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -580,7 +580,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByBr = currentComplaint[i].split('<br/>');
                 if (splitByBr[0].includes('Associated symptoms')) {
                   let obj1: any = {};
-                  obj1.title = 'Associated symptoms';
+                  obj1.title = this.translateService.instant('Associated symptoms');
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
@@ -614,7 +614,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = obs.value.split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value.split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -655,9 +655,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'MEDICAL HISTORY') {
-            const medicalHistory = obs.value.split('<br/>');
+            const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
-            obj1.title = 'Patient history';
+            obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
@@ -669,9 +669,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
 
           if (obs.concept.display == 'FAMILY HISTORY') {
-            const familyHistory = obs.value.split('<br/>');
+            const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
-            obj1.title = 'Family history';
+            obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
@@ -1553,7 +1553,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
+            const currentComplaint = this.visitService.getData(currentObs)?.value.split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {
