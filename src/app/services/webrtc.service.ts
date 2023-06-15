@@ -151,14 +151,14 @@ export class WebrtcService {
   ) {
     console.log('track:handleTrackUnsubscribed ', track);
     // remove tracks from all attached elements
-    track.detach();
+    track?.detach();
   }
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     console.log('track: handleLocalTrackUnpublished', track);
     console.log('participant: ', participant);
     // when local tracks are ended, update UI to remove them from rendering
-    track.detach();
+    track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
