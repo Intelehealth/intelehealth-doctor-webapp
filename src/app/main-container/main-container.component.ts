@@ -224,6 +224,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    };
   }
 
   get user() {
