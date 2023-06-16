@@ -876,7 +876,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientName: this.patient.person.display,
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
-      initiator: 'dr'
+      initiator: 'dr',
+      drPersonUuid: this.provider?.person.uuid
     });
 
     this.dialogRef2.afterClosed().subscribe((res: any) => {

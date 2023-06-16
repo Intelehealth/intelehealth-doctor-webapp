@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
-import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication } from 'livekit-client';
+import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 
 @Component({
   selector: 'app-video-call',
@@ -110,7 +110,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       remoteElement: this.remoteVideoRef,
       handleDisconnect: this.endCallInRoom.bind(this),
       handleConnect: this.onCallConnect.bind(this),
-      handleActiveSpeakerChange: this.handleActiveSpeakerChange.bind(this)
+      handleActiveSpeakerChange: this.handleActiveSpeakerChange.bind(this),
+      handleTrackMuted: this.handleTrackMuted.bind(this),
+      handleTrackUnmuted: this.handleTrackUnmuted.bind(this),
+      handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this)
     });
   }
 
@@ -145,6 +148,33 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   ) {
     // remove tracks from all attached elements
     track.detach();
+  }
+
+  handleTrackMuted(event: any) {
+    if (event  instanceof RemoteTrackPublication) {
+      if (event.kind === Track.Kind.Audio) {
+        this._remoteAudioMute = event.isMuted;
+      }
+      if (event.kind === Track.Kind.Video) {
+        this._remoteVideoOff = event.isMuted;
+      }
+    }
+  }
+
+  handleTrackUnmuted(event: any) {
+    if (event  instanceof RemoteTrackPublication) {
+      if (event.kind === Track.Kind.Audio) {
+        this._remoteAudioMute = event.isMuted;
+      }
+      if (event.kind === Track.Kind.Video) {
+        this._remoteVideoOff = event.isMuted;
+      }
+    }
+  }
+
+  handleParticipantDisconnected() {
+    this.endCallInRoom();
+    this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
