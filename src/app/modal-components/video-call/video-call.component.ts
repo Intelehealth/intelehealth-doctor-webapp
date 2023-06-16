@@ -326,6 +326,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   // }
 
   initSocketEvents() {
+    this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
+      if (data === 'app') {
+        this.endCallInRoom();
+        this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
+      }
+    });
+
     this.socketSvc.onEvent("message").subscribe((data) => {
       if (!['video', 'audio'].includes(data?.id)) {
         this.handleSignalingData(data);
