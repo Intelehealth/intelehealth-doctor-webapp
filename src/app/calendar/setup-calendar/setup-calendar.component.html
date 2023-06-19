@@ -167,7 +167,7 @@
                                 <input type="checkbox" [checked]="item$.selected"/>
                                 <div class="state">
                                     <img class="image" src="assets/svgs/checkbox-tick.png">
-                                    <label>{{item.name}}</label>
+                                    <label>{{(item.name) | translate}}</label>
                                 </div>
                               </div>
                             </ng-template>
@@ -242,7 +242,7 @@
                             [clearable]="false"
                             [searchable]="false">
                             <ng-template ng-label-tmp let-item="item">
-                              {{item.shortName}},
+                              {{(item.shortName) | translate}},
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
                               <div class="pretty p-image p-plain">
