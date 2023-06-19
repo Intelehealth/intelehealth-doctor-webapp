@@ -68,7 +68,10 @@ export class WebrtcService {
     handleLocalTrackPublished = this.attachLocalVideo.bind(this),
     autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
-    remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */
+    remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
+    handleTrackMuted = this.noop,
+    handleTrackUnmuted = this.noop,
+    handleParticipantDisconnected = this.noop
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
@@ -82,8 +85,13 @@ export class WebrtcService {
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: VideoPresets.h90.resolution,
+        resolution: VideoPresets.h720.resolution,
       },
+      audioCaptureDefaults: {
+        echoCancellation: true,
+        autoGainControl: true,
+        noiseSuppression: true,
+      }
     });
 
     this.room
@@ -94,6 +102,9 @@ export class WebrtcService {
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
+      .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
+      .on(RoomEvent.TrackMuted, handleTrackMuted)
+      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
 
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
 
@@ -115,7 +126,7 @@ export class WebrtcService {
       const videoElement = track.videoTrack?.attach();
       // videoElement.height = '100';
       const localContainer: any = this.localContainer;
-      videoElement.style.width = '100%';
+      // videoElement.style.width = '100%';
       videoElement.style.height = '100%';
       localContainer.innerHTML = "";
       localContainer.appendChild(videoElement);
@@ -138,7 +149,7 @@ export class WebrtcService {
     } else if (track.kind === Track.Kind.Video) {
       let remoteContainer: any = this.remoteContainer;
       remoteContainer.innerHTML = "";
-      videoElement.style.width = '100%';
+      // videoElement.style.width = '100%';
       videoElement.style.height = '100%';
       remoteContainer.appendChild(videoElement);
     }
@@ -158,7 +169,7 @@ export class WebrtcService {
     console.log('track: handleLocalTrackUnpublished', track);
     console.log('participant: ', participant);
     // when local tracks are ended, update UI to remove them from rendering
-    track?.detach();
+    // track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
