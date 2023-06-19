@@ -569,7 +569,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
             this.currentComplaint = obs.value;
-            const currentComplaint =  this.visitService.getData(obs)?.value.split('<b>');
+            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -614,7 +614,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = this.visitService.getData(obs)?.value.split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -675,9 +675,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
-                const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                if (familyHistory[i].includes(':')) {
+                  const splitByColon = familyHistory[i].split(':');
+                  const splitByComma = splitByColon[1].split(',');
+                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                } else {
+                  obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
+                }
               }
             }
             this.patientHistoryData.push(obj1);
@@ -1554,7 +1558,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = this.visitService.getData(currentObs)?.value.split('<b>');
+            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {

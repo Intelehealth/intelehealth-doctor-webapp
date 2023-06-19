@@ -170,7 +170,7 @@ export class ViewVisitSummaryComponent implements OnInit {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint = obs.value.split('<b>');
+            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -215,7 +215,7 @@ export class ViewVisitSummaryComponent implements OnInit {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = obs.value.split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -256,7 +256,7 @@ export class ViewVisitSummaryComponent implements OnInit {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'MEDICAL HISTORY') {
-            const medicalHistory = obs.value.split('<br/>');
+            const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
             obj1.title = 'Patient history';
             obj1.data = [];
@@ -270,15 +270,19 @@ export class ViewVisitSummaryComponent implements OnInit {
           }
 
           if (obs.concept.display == 'FAMILY HISTORY') {
-            const familyHistory = obs.value.split('<br/>');
+            const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
             obj1.title = 'Family history';
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
-                const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                if (familyHistory[i].includes(':')) {
+                  const splitByColon = familyHistory[i].split(':');
+                  const splitByComma = splitByColon[1].split(',');
+                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                } else {
+                  obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
+                }
               }
             }
             this.patientHistoryData.push(obj1);
