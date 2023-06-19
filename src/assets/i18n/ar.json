@@ -473,9 +473,9 @@
     "راقب كمية السوائل التي تشربها. شرب الكثيرمن الماء يمكن أن يجعل قصور القلب أسوأ.":  "Watch how much liquids you drink. Drinking too much can make heart failure worse.",
     "FOLLOW DIABETIC FOOD CHART": "اتبع مخطط الغذاء السكري",
     "اتبع مخطط الغذاء السكري": "FOLLOW DIABETIC FOOD CHART",
-    "Limit the amount of alcohol you drink. It may harm your heart. Women should have no more than 1 drink a day and men should have no more than 2.": 
+    "Limit the amount of alcohol you drink. It may harm your heart. Women should have no more than 1 drink a day and men should have no more than 2.":
     "الكحول يضر بصحتك. قلل من كمية الكحول التي تشربها. لا ينبغي أن تتناول النساء أكثر من مشروب واحد في اليوم ولا ينبغي أن يتناول الرجال أكثر من 2.",
-    "الكحول يضر بصحتك. قلل من كمية الكحول التي تشربها. لا ينبغي أن تتناول النساء أكثر من مشروب واحد في اليوم ولا ينبغي أن يتناول الرجال أكثر من 2.": 
+    "الكحول يضر بصحتك. قلل من كمية الكحول التي تشربها. لا ينبغي أن تتناول النساء أكثر من مشروب واحد في اليوم ولا ينبغي أن يتناول الرجال أكثر من 2.":
     "Limit the amount of alcohol you drink. It may harm your heart. Women should have no more than 1 drink a day and men should have no more than 2.",
     "DIET": "حمية",
     "حمية": "DIET",
@@ -489,7 +489,7 @@
     "تناول وجبات ساخنة":"EAT HOT MEALS",
     "EAT FOODS COOKED WITHOUT SALT": "أكل الأطعمة المطبوخة بدون ملح",
     "أكل الأطعمة المطبوخة بدون ملح": "EAT FOODS COOKED WITHOUT SALT",
-    "These are some symptoms of congestive heart failure: shortness of breath, Trouble breathing at night, especially when you lie down, Swelling in the legs and feet or in the belly (abdomen), Becoming easily fatigued, Irregular or rapid heartbeat, Weakness or lightheadedness, and Swelling of the neck veins. Tell your doctor if you noticed some of them.": 
+    "These are some symptoms of congestive heart failure: shortness of breath, Trouble breathing at night, especially when you lie down, Swelling in the legs and feet or in the belly (abdomen), Becoming easily fatigued, Irregular or rapid heartbeat, Weakness or lightheadedness, and Swelling of the neck veins. Tell your doctor if you noticed some of them.":
     "هذه هي بعض أعراض قصور القلب الاحتقاني: ضيق في التنفس ، واضطراب في التنفس في الليل ، خاصة عندما تستلقي ، تورم في الساقين والقدمين أو في البطن (البطن) ، وتصبح مرهقة بسهولة أو غير منتظمة أو سريعة أو ضعف نبضات أو ضعف وتورم عروق الرقبة. أخبر طبيبك إذا لاحظت بعضهم.",
     "هذه هي بعض أعراض قصور القلب الاحتقاني: ضيق في التنفس ، واضطراب في التنفس في الليل ، خاصة عندما تستلقي ، تورم في الساقين والقدمين أو في البطن (البطن) ، وتصبح مرهقة بسهولة أو غير منتظمة أو سريعة أو ضعف نبضات أو ضعف وتورم عروق الرقبة. أخبر طبيبك إذا لاحظت بعضهم.":
     "These are some symptoms of congestive heart failure: shortness of breath, Trouble breathing at night, especially when you lie down, Swelling in the legs and feet or in the belly (abdomen), Becoming easily fatigued, Irregular or rapid heartbeat, Weakness or lightheadedness, and Swelling of the neck veins. Tell your doctor if you noticed some of them.",
@@ -1154,7 +1154,7 @@
     "Diabetes Mellitus": "السكرى",
     "السكرى": "Diabetes Mellitus",
     "Diabetes Mellitus, Type II": "مرض السكري ، النوع الثاني",
-    "مرض السكري ، النوع الثاني": "Diabetes Mellitus, Type II", 
+    "مرض السكري ، النوع الثاني": "Diabetes Mellitus, Type II",
     "Acute malnutrition": "سوء التغذية الحاد",
     "سوء التغذية الحاد": "Acute malnutrition",
     "Disorder of Metabolism": "اضطراب اسْتِقْلابِيٌّ",
@@ -1259,5 +1259,18 @@
     "مرض آخر في الأنسجة الصلبة من الأسنان": "Other disease of hard tissue of teeth",
     "Infection of teeth or gums": "انتانات الأسنان أو اللثة",
     "انتانات الأسنان أو اللثة": "Infection of teeth or gums"
-  }
+  },
+  "Aid Order": "امر صرف مساعدة",
+  "امر صرف مساعدة": "Aid Order",
+  "Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)": "إعارة أجهزة )(جهاز ارذاذ، عبوة اوكسجين،  عكازات، كرسي نقال، سرير مشفى)",
+  "Other medical equipment loan": "قرض معدات طبية أخرى",
+  "Enter other medical equipment loan": "أدخل قرض معدات طبية أخرى",
+  "Type 2. Free Medical equipment (Stents, baloons, others)": "معدات طبية مجانية (قثطرة، بالون توسيع)",
+  "Other free medical equipment": "معدات طبية مجانية أخرى",
+  "Enter other free medical equipment": "أدخل المعدات الطبية المجانية الأخرى",
+  "Type 3. Cover medication expenses (amount)": "تغطية ثمن أدوية (سقف المساعدة)",
+  "Enter amount": "أدخل المبلغ",
+  "أدخل المبلغ": "Enter amount",
+  "Type 4. Cover surgical expenses (amount)": "تغطية تكاليف عمليات جراحية (قيمة)",
+  "Type 5. Cash assistance (amount)": "مساعد مادية مباشرة (قيمة)"
 }

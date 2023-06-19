@@ -7,52 +7,52 @@
         <div class="row">
           <div class="col">
             <mat-form-field class="w-100">
-              <mat-label>Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)</mat-label>
+              <mat-label>{{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}}</mat-label>
               <mat-select formControlName="type1" multiple>
-                <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me">{{me}}</mat-option>
+                <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me">{{me|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
           <div class="col" *ngIf="aidOrderForm.value.type1?.includes('Others')">
             <mat-form-field class="w-100">
-              <mat-label>Other medical equipment loan</mat-label>
-              <input matInput type="text" placeholder="Enter other medical equipment loan" formControlName="type1Other">
+              <mat-label>{{'Other medical equipment loan'|translate}}</mat-label>
+              <input matInput type="text" placeholder="{{'Enter other medical equipment loan'|translate}}" formControlName="type1Other">
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <mat-form-field class="w-100">
-              <mat-label>Type 2. Free Medical equipment (Stents, baloons, others)</mat-label>
+              <mat-label>{{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}}</mat-label>
               <mat-select formControlName="type2" multiple>
-                <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme">{{fme}}</mat-option>
+                <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme">{{fme|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
           <div class="col" *ngIf="aidOrderForm.value.type2?.includes('Others')">
             <mat-form-field class="w-100">
-              <mat-label>Other free medical equipment</mat-label>
-              <input matInput type="text" placeholder="Enter other free medical equipment" formControlName="type2Other">
+              <mat-label>{{'Other free medical equipment'|translate}}</mat-label>
+              <input matInput type="text" placeholder="{{'Enter other free medical equipment'|translate}}" formControlName="type2Other">
             </mat-form-field>
           </div>
         </div>
         <div class="row">
           <div class="col-md-4">
             <mat-form-field class="w-100">
-              <mat-label>Type 3. Cover medication expenses (amount)</mat-label>
-              <input matInput type="number" placeholder="Enter amount" formControlName="type3">
+              <mat-label>{{'Type 3. Cover medication expenses (amount)'|translate}}</mat-label>
+              <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type3">
             </mat-form-field>
           </div>
           <div class="col-md-4">
             <mat-form-field class="w-100">
-              <mat-label>Type 4. Cover surgical expenses (amount)</mat-label>
-              <input matInput type="number" placeholder="Enter amount" formControlName="type4">
+              <mat-label>{{'Type 4. Cover surgical expenses (amount)'|translate}}</mat-label>
+              <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type4">
             </mat-form-field>
           </div>
           <div class="col-md-4">
             <mat-form-field class="w-100">
-              <mat-label>Type 5. Cash assistance (amount)</mat-label>
-              <input matInput type="number" placeholder="Enter amount" formControlName="type5">
+              <mat-label>{{'Type 5. Cash assistance (amount)'|translate}}</mat-label>
+              <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type5">
             </mat-form-field>
           </div>
         </div>

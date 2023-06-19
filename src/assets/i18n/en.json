@@ -728,7 +728,7 @@
       "مرتين يوميا بعد الوجبات": "Twice daily after meals",
       "مرتين يوميا قبل الوجبات": "Twice daily before meals",
       "مرتين يوميا": "Twice daily"
-    },    
+    },
     "route": {
       "Oral": "Oral",
       "Intravenous": "Intravenous",
@@ -1140,7 +1140,7 @@
       "نقص البروتين": "Kwashiorkor",
       "نقص بروتين هزالي": "Marasmic Kwashiorkor",
       "السكرى": "Diabetes Mellitus",
-      "مرض السكري ، النوع الثاني": "Diabetes Mellitus, Type II", 
+      "مرض السكري ، النوع الثاني": "Diabetes Mellitus, Type II",
       "سوء التغذية الحاد": "Acute malnutrition",
       "اضطراب اسْتِقْلابِيٌّ": "Disorder of Metabolism",
       "نقص فيتامين أ مع اعتلال القرنية": "Vitamin A Deficiency with Keratomalacia",
@@ -1193,5 +1193,18 @@
       "مرض اللب والأنسجة المحيطة": "Pulp and periapical tissue disease",
       "مرض آخر في الأنسجة الصلبة من الأسنان": "Other disease of hard tissue of teeth",
       "انتانات الأسنان أو اللثة": "Infection of teeth or gums"
-    }
+    },
+    "Aid Order": "Aid Order",
+    "امر صرف مساعدة": "Aid Order",
+    "Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)": "Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)",
+    "Other medical equipment loan": "Other medical equipment loan",
+    "Enter other medical equipment loan": "Enter other medical equipment loan",
+    "Type 2. Free Medical equipment (Stents, baloons, others)": "Type 2. Free Medical equipment (Stents, baloons, others)",
+    "Other free medical equipment": "Other free medical equipment",
+    "Enter other free medical equipment": "Enter other free medical equipment",
+    "Type 3. Cover medication expenses (amount)": "Type 3. Cover medication expenses (amount)",
+    "Enter amount": "Enter amount",
+    "أدخل المبلغ": "Enter amount",
+    "Type 4. Cover surgical expenses (amount)": "Type 4. Cover surgical expenses (amount)",
+    "Type 5. Cash assistance (amount)": "Type 5. Cash assistance (amount)"
   }
