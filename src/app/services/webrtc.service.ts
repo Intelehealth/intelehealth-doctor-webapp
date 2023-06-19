@@ -80,6 +80,7 @@ export class WebrtcService {
 
     this.localElement = localElement;
     this.remoteElement = remoteElement;
+    this.clearAudioVideo();
 
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
@@ -116,21 +117,34 @@ export class WebrtcService {
     }
   }
 
+  clearAudioVideo() {
+    try {
+      this.localContainer.innerHTML = '';
+      this.remoteContainer.innerHTML = '';
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  }
+
   /**
    * Assign received streaming video to the passed local video container or id
    */
   attachLocalVideo() {
-    const track = this.room.localParticipant.getTrack(Track.Source.Camera);
-    console.log('track?.isSubscribed: ', track?.isSubscribed);
-    if (track?.isSubscribed) {
-      const videoElement = track.videoTrack?.attach();
-      // videoElement.height = '100';
+    const camTrack = this.room.localParticipant.getTrack(Track.Source.Camera);
+    const audTrack = this.room.localParticipant.getTrack(Track.Source.Microphone);
+
+    if (camTrack?.isSubscribed) {
+      const videoElement = camTrack.videoTrack?.attach();
       const localContainer: any = this.localContainer;
-      // videoElement.style.width = '100%';
+
       videoElement.style.height = '100%';
-      localContainer.innerHTML = "";
       localContainer.appendChild(videoElement);
     }
+
+    if (audTrack?.isSubscribed) {
+      this.localContainer.appendChild(audTrack.videoTrack?.attach());
+    }
+
   }
 
   handleTrackSubscribed(
@@ -148,8 +162,6 @@ export class WebrtcService {
       remoteContainer.appendChild(videoElement);
     } else if (track.kind === Track.Kind.Video) {
       let remoteContainer: any = this.remoteContainer;
-      remoteContainer.innerHTML = "";
-      // videoElement.style.width = '100%';
       videoElement.style.height = '100%';
       remoteContainer.appendChild(videoElement);
     }
