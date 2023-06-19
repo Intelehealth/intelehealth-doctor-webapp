@@ -184,11 +184,11 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   getMinMaxDate() {
-    let today = moment();
-    let min = moment(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`, 'YYYY-MMMM-D');
-    let max = moment(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`, 'YYYY-MMMM-D').endOf('month');
-    this.minDate = (min < today) ? today.format('YYYY-MM-DD') : min.format('YYYY-MM-DD');
-    this.maxDate = max.format('YYYY-MM-DD');
+    let today = new Date();
+    let min = new Date(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`);
+    let max = new Date(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`);
+    this.minDate = (min < today) ? moment(today).format('YYYY-MM-DD') : moment(min).format('YYYY-MM-DD');
+    this.maxDate = moment(max).endOf('month').format('YYYY-MM-DD');
   }
 
   getScheduledMonths() {
