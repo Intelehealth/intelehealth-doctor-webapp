@@ -53,7 +53,7 @@ export class CalendarComponent implements OnInit {
     // this.getFollowUpVisit();
     this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'));
     this.getSchedule();
-    moment.locale(localStorage.getItem('selectedLanguage'));
+    // moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   dateChanged(viewDate: Date) {

@@ -154,6 +154,7 @@ export class SetupCalendarComponent implements OnInit {
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: '', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
     this.getScheduledMonths();
+    moment.locale('en');
   }
 
   addMonth() {
