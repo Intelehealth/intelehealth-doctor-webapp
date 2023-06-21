@@ -74,7 +74,10 @@ import '@angular/localize/init';
 import 'zone.js';  // Included with Angular CLI.
 import adapter from 'webrtc-adapter';
 
-(window as any)["global"] = window; 
+(window as any)["global"] = window;
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+(Number.prototype as any).pad = function (n) {
+  return this < 10 ? new Array(n).join('0').slice((n || 2) * -1) + this : this
+}

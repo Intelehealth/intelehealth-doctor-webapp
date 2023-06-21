@@ -175,6 +175,7 @@ body.font-lato td {
     height: 325px !important;
   }
 }
+
 .reschdule-appointment-height {
   .modal-main-container {
     height: 390px !important;
@@ -350,6 +351,7 @@ body.font-lato td {
       padding: 12px 16px;
       outline: none;
       height: 44px;
+
       input[type="text"]:focus-visible {
         outline: none;
       }
@@ -394,12 +396,12 @@ body.font-lato td {
   background-color: #2e1e91 !important;
 }
 
-.pretty.p-switch.p-fill input ~ .state:before {
+.pretty.p-switch.p-fill input~.state:before {
   background-color: #e4d7ff;
   border-color: #e4d7ff;
 }
 
-.pretty.p-switch.p-fill input:checked ~ .state:before {
+.pretty.p-switch.p-fill input:checked~.state:before {
   border-color: #2e1e91;
   background-color: #2e1e91 !important;
 }
@@ -608,8 +610,8 @@ body.font-lato td {
 }
 
 .vc-modal-lg {
-  width: 96%;
-  max-width: 96% !important;
+  width: 70%;
+  max-width: 80% !important;
 
   .mat-dialog-container {
     padding: 0px;
@@ -631,6 +633,13 @@ body.font-lato td {
   .mat-dialog-actions {
     margin: 0px;
     border-top: 2px solid rgba(178, 175, 190, 0.2);
+  }
+}
+
+@media (max-width: 768px) {
+  .vc-modal-lg {
+    width: 96%;
+    max-width: 96% !important;
   }
 }
 
@@ -803,7 +812,7 @@ body.font-lato td {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
-  height:6px;
+  height: 6px;
 }
 
 /* Track */
@@ -922,6 +931,7 @@ body.font-lato td {
 
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
   background: #FFFFFF !important;
+
   .ng-option-label {
     font-weight: normal !important;
   }

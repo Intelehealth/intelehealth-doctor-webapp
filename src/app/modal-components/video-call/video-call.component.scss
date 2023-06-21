@@ -113,6 +113,7 @@
 
     .window-controls.minimized:hover {
       background: rgba(0, 0, 0, 0.2);
+
       .video-ctrl-btn {
         display: block;
       }
@@ -246,6 +247,7 @@
         color: #1B163A;
         font-weight: bold;
       }
+
       span {
         font-size: 12px;
         line-height: 163%;
@@ -367,4 +369,27 @@
   object-fit: contain;
   background-color: white;
   cursor: pointer;
+}
+
+.call-container {
+  .img-cont {
+    min-height: 350px;
+  }
+
+  .calling-img {
+    width: 100%;
+  }
+
+  .video-controls {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+  }
+
+  .calling-txt {
+    position: absolute;
+    top: 30px;
+    font-size: 18px;
+    font-family: lato;
+  }
 }

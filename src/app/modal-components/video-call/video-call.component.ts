@@ -113,12 +113,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       handleActiveSpeakerChange: this.handleActiveSpeakerChange.bind(this),
       handleTrackMuted: this.handleTrackMuted.bind(this),
       handleTrackUnmuted: this.handleTrackUnmuted.bind(this),
-      handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this)
+      handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this),
+      handleParticipantConnect: this.handleParticipantConnect.bind(this),
     });
   }
 
   onCallConnect() {
-    this.callStartedAt = moment();
     this.socketSvc.emitEvent("call", {
       nurseId: this.nurseId,
       doctorName: this.doctorName,
@@ -127,6 +127,30 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       doctorId: this.data?.connectToDrId,
       appToken: this.webrtcSvc.appToken
     });
+
+    /**
+     *  60 seconds ringing timeout after which it will show toastr
+     *  and hang up if HW not picked up
+    */
+    const ringingTimeout = 60 * 1000;
+    setTimeout(() => {
+      if (!this.callConnected) {
+        this.endCallInRoom();
+        this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
+      }
+    }, ringingTimeout);
+  }
+
+  handleParticipantConnect() {
+    this.callConnected = true;
+    this.callStartedAt = moment();
+  }
+
+  get callConnected() {
+    return this.webrtcSvc.callConnected;
+  }
+  set callConnected(flag) {
+    this.webrtcSvc.callConnected = flag;
   }
 
   get localAudioIcon() {
@@ -151,7 +175,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   handleTrackMuted(event: any) {
-    if (event  instanceof RemoteTrackPublication) {
+    if (event instanceof RemoteTrackPublication) {
       if (event.kind === Track.Kind.Audio) {
         this._remoteAudioMute = event.isMuted;
       }
@@ -162,7 +186,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   handleTrackUnmuted(event: any) {
-    if (event  instanceof RemoteTrackPublication) {
+    if (event instanceof RemoteTrackPublication) {
       if (event.kind === Track.Kind.Audio) {
         this._remoteAudioMute = event.isMuted;
       }
@@ -175,6 +199,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   handleParticipantDisconnected() {
     this.endCallInRoom();
     this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
+    this.callConnected = false;
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -517,6 +542,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
+    this.callConnected = false;
   }
 
   get callDuration() {
@@ -524,7 +550,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.callStartedAt) {
       duration = moment.duration(moment().diff(this.callStartedAt))
     }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    return duration ? `${duration.minutes().pad(2)}:${duration.seconds().pad(2)}` : '';
   }
 
   isPdf(url) {

@@ -26,6 +26,7 @@ export class WebrtcService {
   public token: any | null = null;
   public appToken: any | null = null;
   public remoteUser: any | null = null;
+  public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
 
@@ -71,7 +72,8 @@ export class WebrtcService {
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
     handleTrackMuted = this.noop,
     handleTrackUnmuted = this.noop,
-    handleParticipantDisconnected = this.noop
+    handleParticipantDisconnected = this.noop,
+    handleParticipantConnect = this.noop
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
@@ -104,13 +106,15 @@ export class WebrtcService {
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
       .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
+      .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
 
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
 
     console.log('url:- ', this.url);
-    await this.room.connect(this.url, this.token, {});
+    console.clear();
+    await this.room.connect(this.url, this.token);
 
     if (autoEnableCameraOnConnect) {
       await this.room.localParticipant.enableCameraAndMicrophone();
@@ -131,7 +135,6 @@ export class WebrtcService {
    */
   attachLocalVideo() {
     const camTrack = this.room.localParticipant.getTrack(Track.Source.Camera);
-    const audTrack = this.room.localParticipant.getTrack(Track.Source.Microphone);
 
     if (camTrack?.isSubscribed) {
       const videoElement = camTrack.videoTrack?.attach();
@@ -140,11 +143,6 @@ export class WebrtcService {
       videoElement.style.height = '100%';
       localContainer.appendChild(videoElement);
     }
-
-    if (audTrack?.isSubscribed) {
-      this.localContainer.appendChild(audTrack.videoTrack?.attach());
-    }
-
   }
 
   handleTrackSubscribed(
@@ -152,18 +150,16 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    const videoElement: any = track.attach();
+    const element: any = track.attach();
     if (participant?.identity) {
       this.remoteUser = participant;
     }
 
     if (track.kind === Track.Kind.Audio) {
-      let remoteContainer: any = this.remoteContainer;
-      remoteContainer.appendChild(videoElement);
+      this.remoteContainer.appendChild(element);
     } else if (track.kind === Track.Kind.Video) {
-      let remoteContainer: any = this.remoteContainer;
-      videoElement.style.height = '100%';
-      remoteContainer.appendChild(videoElement);
+      element.style.height = '100%';
+      this.remoteContainer.appendChild(element);
     }
   }
 
@@ -172,7 +168,6 @@ export class WebrtcService {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) {
-    console.log('track:handleTrackUnsubscribed ', track);
     // remove tracks from all attached elements
     track?.detach();
   }
