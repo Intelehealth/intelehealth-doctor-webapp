@@ -118,4 +118,8 @@ export class DiagnosisService {
       this.values = values;
     });
   }
+
+  getTranslationValue(key: string, value: string) {
+    return this.values[key][value] ? this.values[key][value] : value;
+  }
 }

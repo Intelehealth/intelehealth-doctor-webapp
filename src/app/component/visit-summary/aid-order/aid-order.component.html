@@ -9,7 +9,7 @@
             <mat-form-field class="w-100">
               <mat-label>{{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}}</mat-label>
               <mat-select formControlName="type1" multiple #type1Select>
-                <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me">{{me|translate}}</mat-option>
+                <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me.en">{{me.en|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -25,7 +25,7 @@
             <mat-form-field class="w-100">
               <mat-label>{{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}}</mat-label>
               <mat-select formControlName="type2" multiple #type2Select>
-                <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme">{{fme|translate}}</mat-option>
+                <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme.en">{{fme.en|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

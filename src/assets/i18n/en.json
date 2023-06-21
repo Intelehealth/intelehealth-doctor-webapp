@@ -1206,5 +1206,13 @@
     "Enter amount": "Enter amount",
     "أدخل المبلغ": "Enter amount",
     "Type 4. Cover surgical expenses (amount)": "Type 4. Cover surgical expenses (amount)",
-    "Type 5. Cash assistance (amount)": "Type 5. Cash assistance (amount)"
+    "Type 5. Cash assistance (amount)": "Type 5. Cash assistance (amount)",
+    "Nebulizer": "Nebulizer",
+    "Oxygen container": "Oxygen container",
+    "Cane": "Cane",
+    "Wheel chair" : "Wheen chair",
+    "Hospital bed": "Hospital bed",
+    "Others": "Others",
+    "Stents": "Stents",
+    "Baloons": "Baloons"
   }

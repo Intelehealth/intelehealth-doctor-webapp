@@ -1272,5 +1272,13 @@
   "Enter amount": "أدخل المبلغ",
   "أدخل المبلغ": "Enter amount",
   "Type 4. Cover surgical expenses (amount)": "تغطية تكاليف عمليات جراحية (قيمة)",
-  "Type 5. Cash assistance (amount)": "مساعد مادية مباشرة (قيمة)"
+  "Type 5. Cash assistance (amount)": "مساعد مادية مباشرة (قيمة)",
+  "Nebulizer": "البخاخات",
+  "Oxygen container": "حاوية الأكسجين",
+  "Cane": "قصب",
+  "Wheel chair" : "كرسي متحرك",
+  "Hospital bed": "سرير المستشفى",
+  "Others": "آحرون",
+  "Stents": "الدعامات",
+  "Baloons": "بالونات"
 }

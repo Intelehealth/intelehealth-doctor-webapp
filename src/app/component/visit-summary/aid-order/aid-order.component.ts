@@ -31,19 +31,46 @@ declare var getEncounterUUID: any;
 export class AidOrderComponent implements OnInit {
 
   @Input() isManagerRole : boolean;
-  medicalEquipmentsList: string[]= [
-    'Nebulizer',
-    'Oxygen container',
-    'Cane',
-    'Wheel chair',
-    'Hospital bed',
-    'Others'
+  medicalEquipmentsList: any[]= [
+    {
+      en: 'Nebulizer',
+      ar: 'البخاخات'
+    },
+    {
+      en: 'Oxygen container',
+      ar: 'حاوية الأكسجين'
+    },
+    {
+      en: 'Cane',
+      ar: 'قصب'
+    },
+    {
+      en: 'Wheel chair',
+      ar: 'كرسي متحرك'
+    },
+    {
+      en: 'Hospital bed',
+      ar: 'سرير المستشفى'
+    },
+    {
+      en: 'Others',
+      ar: 'آحرون'
+    }
   ];
 
-  freeMedicalEquipmentsList: string[]= [
-    'Stents',
-    'Baloons',
-    'Others'
+  freeMedicalEquipmentsList: any[]= [
+    {
+      en: 'Stents',
+      ar: 'الدعامات'
+    },
+    {
+      en: 'Baloons',
+      ar: 'بالونات'
+    },
+    {
+      en: 'Others',
+      ar: 'آحرون'
+    }
   ];
   aidOrderForm: FormGroup;
   conceptAidOrder: string = 'a9f7d0af-7be9-47c2-bde4-fce5eff4503f';
@@ -178,7 +205,8 @@ export class AidOrderComponent implements OnInit {
         if (value.type1Uuid) {
           // this.updateObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, value.type1Uuid);
         } else {
-          this.postObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, this.conceptType1, 'type1Uuid');
+          let arabic = value.type1.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar );
+          this.postObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, (value.type1.indexOf('Others') == -1) ? arabic.toString() : `${arabic.toString()}||${value.type1Other}`, this.conceptType1, 'type1Uuid');
         }
       } else {
         if (value.type1Uuid) {
@@ -190,7 +218,8 @@ export class AidOrderComponent implements OnInit {
         if (value.type2Uuid) {
           // this.updateObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, value.type2Uuid);
         } else {
-          this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, this.conceptType2, 'type2Uuid');
+          let arabic = value.type1.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar );
+          this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, (value.type2.indexOf('Others') == -1) ? arabic.toString() : `${arabic.toString()}||${value.type2Other}`, this.conceptType2, 'type2Uuid');
         }
       } else {
         if (value.type2Uuid) {
@@ -202,7 +231,7 @@ export class AidOrderComponent implements OnInit {
         if (value.type3Uuid) {
           // this.updateObs(value.type3, value.type3Uuid);
         } else {
-          this.postObs(value.type3, this.conceptType3, 'type3Uuid');
+          this.postObs(value.type3, value.type3, this.conceptType3, 'type3Uuid');
         }
       } else {
         if (value.type3Uuid) {
@@ -214,7 +243,7 @@ export class AidOrderComponent implements OnInit {
         if (value.type4Uuid) {
           // this.updateObs(value.type4, value.type4Uuid);
         } else {
-          this.postObs(value.type4, this.conceptType4, 'type4Uuid');
+          this.postObs(value.type4, value.type4, this.conceptType4, 'type4Uuid');
         }
       } else {
         if (value.type4Uuid) {
@@ -226,7 +255,7 @@ export class AidOrderComponent implements OnInit {
         if (value.type5Uuid) {
           // this.updateObs(value.type5, value.type5Uuid);
         } else {
-          this.postObs(value.type5, this.conceptType5, 'type5Uuid');
+          this.postObs(value.type5, value.type5, this.conceptType5, 'type5Uuid');
         }
       } else {
         if (value.type5Uuid) {
@@ -237,12 +266,12 @@ export class AidOrderComponent implements OnInit {
     }
   }
 
-  postObs(value: string, conceptId: string, key: string) {
+  postObs(value: string, valueAr: string, conceptId: string, key: string) {
     const json = {
       concept: conceptId,
       person: this.patientId,
       obsDatetime: new Date(),
-      value: JSON.stringify({ en: value, ar: value }),
+      value: JSON.stringify({ en: value, ar: valueAr }),
       encounter: this.encounterUuid
     };
 

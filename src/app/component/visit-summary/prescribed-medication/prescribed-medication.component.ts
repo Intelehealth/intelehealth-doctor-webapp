@@ -167,61 +167,66 @@ export class PrescribedMedicationComponent implements OnInit {
     const date = new Date();
     const value = this.medForm.value;
     let insertValue;
-    if (localStorage.getItem('selectedLanguage') === 'ar') {
-      insertValue = {
-        "ar": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
-        "en": `${value.med}: ${value.dose} ${this.diagnosisService.values['units'][`${value.unit}`]}, ${value.amount} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['frequency'][`${value.frequency}`]}`,
-      }
-      if (value.route) {
-        insertValue["ar"] = `${insertValue["ar"]} (${value.route})`;
-        insertValue["en"] = `${insertValue["en"]} (${this.diagnosisService.values['route'][`${value.route}`]})`;
-      }
-      if (value.reason) {
-        insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
-        insertValue["en"] =  `${insertValue["en"]} 'NA'`;
-      }
-      insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
-      insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
-      if (value.additional) {
-        insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
-        insertValue["en"] =`${insertValue["en"]} 'NA'`;
-      }
-    } else {
-      insertValue = {
-        "en": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
-        "ar": `${value.med}: ${value.dose} ${this.diagnosisService.values['units'][`${value.unit}`]}, ${value.amount} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['frequency'][`${value.frequency}`]}`,
-      }
-      if (value.route) {
-        insertValue["en"] = `${insertValue["en"]} (${value.route})`;
-        insertValue["ar"] = `${insertValue["ar"]} (${this.diagnosisService.values['route'][`${value.route}`]})`;
-      }
-      if (value.reason) {
-        insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
-        insertValue["ar"] =  `${insertValue["ar"]} 'غير متوفر'`;
-      }
-      insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
-      insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.values['units'][`${value.unitType}`]} ${this.diagnosisService.values['durationUnit'][`${value.durationUnit}`]}`;
+    this.diagnosisService.getTranslationData();
+    setTimeout(() => {
+      console.log(this.diagnosisService.values);
+      if (localStorage.getItem('selectedLanguage') === 'ar') {
+        insertValue = {
+          "ar": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
+          "en": `${value.med}: ${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)}, ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
+        }
+        if (value.route) {
+          insertValue["ar"] = `${insertValue["ar"]} (${value.route})`;
+          insertValue["en"] = `${insertValue["en"]} (${this.diagnosisService.getTranslationValue('route', value.route)})`;
+        }
+        if (value.reason) {
+          insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
+          insertValue["en"] =  `${insertValue["en"]} 'NA'`;
+        }
+        insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
+        insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
+        if (value.additional) {
+          insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
+          insertValue["en"] =`${insertValue["en"]} 'NA'`;
+        }
+      } else {
+        insertValue = {
+          "en": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
+          "ar": `${value.med}: ${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)}, ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
+        }
+        if (value.route) {
+          insertValue["en"] = `${insertValue["en"]} (${value.route})`;
+          insertValue["ar"] = `${insertValue["ar"]} (${this.diagnosisService.getTranslationValue('route', value.route)})`;
+        }
+        if (value.reason) {
+          insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
+          insertValue["ar"] =  `${insertValue["ar"]} 'غير متوفر'`;
+        }
+        insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
+        insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
 
-      if (value.additional) {
-        insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
-        insertValue["ar"] =`${insertValue["ar"]} 'غير متوفر'`;
+        if (value.additional) {
+          insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
+          insertValue["ar"] =`${insertValue["ar"]} 'غير متوفر'`;
+        }
       }
-    }
-    if (this.diagnosisService.isSameDoctor()) {
-      this.encounterUuid = getEncounterUUID();
-      const json = {
-        concept: this.conceptMed,
-        person: this.patientId,
-        obsDatetime: date,
-        value: JSON.stringify(insertValue),
-        encounter: this.encounterUuid
-      };
-      this.service.postObs(json)
-        .subscribe(response => {
-          this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value }));
-          this.add = false;
-        });
-    }
+      if (this.diagnosisService.isSameDoctor()) {
+        this.encounterUuid = getEncounterUUID();
+        const json = {
+          concept: this.conceptMed,
+          person: this.patientId,
+          obsDatetime: date,
+          value: JSON.stringify(insertValue),
+          encounter: this.encounterUuid
+        };
+        this.service.postObs(json)
+          .subscribe(response => {
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value }));
+            this.add = false;
+          });
+      }
+    }, 500);
+
   }
 
   delete(i) {
@@ -236,5 +241,5 @@ export class PrescribedMedicationComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }
