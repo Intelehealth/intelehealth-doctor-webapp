@@ -230,10 +230,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.dataSource1 = new MatTableDataSource(this.normalCases);
     this.dataSource1.paginator = this.normalPaginator;
+    this.dataSource1.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
     this.dataSource2 = new MatTableDataSource(this.priorityCases);
     this.dataSource2.paginator = this.priorityPaginator;
+    this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
     this.dataSource3 = new MatTableDataSource(this.completedCases);
     this.dataSource3.paginator = this.completedPaginator;
+    this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
   }
 
   setScore(encounters: any) {
@@ -304,6 +307,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   playNotify() {
     const audioUrl = "../../../../intelehealth/assets/notification.mp3";
     new Audio(audioUrl).play();
+  }
+
+  applyFilter1(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource2.filter = filterValue.trim().toLowerCase();
+  }
+
+  applyFilter2(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource1.filter = filterValue.trim().toLowerCase();
+  }
+
+  applyFilter3(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource3.filter = filterValue.trim().toLowerCase();
   }
 
   ngOnDestroy() {

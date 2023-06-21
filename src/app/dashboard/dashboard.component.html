@@ -42,6 +42,14 @@
                 <img src="assets/svgs/priority-square.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">Priority cases ({{priorityCases.length ? priorityCases.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress high priority cases" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search priority cases" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon-red.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -128,6 +136,14 @@
                 <img src="assets/svgs/prescription-square.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">In-progress cases ({{normalCases.length ? normalCases.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress normal cases" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search in-progress cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -212,6 +228,14 @@
                 <img src="assets/svgs/prescription-completed-square.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">Completed cases ({{completedCases.length ? completedCases.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Completed cases" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search completed cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
