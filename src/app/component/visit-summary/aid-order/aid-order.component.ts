@@ -1,15 +1,32 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { transition, trigger, style, animate, keyframes } from '@angular/animations';
+import { MatSelect } from '@angular/material/select';
 declare var getEncounterUUID: any;
 
 @Component({
   selector: 'app-aid-order',
   templateUrl: './aid-order.component.html',
-  styleUrls: ['./aid-order.component.css']
+  styleUrls: ['./aid-order.component.css'],
+  animations: [
+    trigger('moveInLeft', [
+      transition('void=> *', [style({ transform: 'translateX(300px)' }),
+      animate(200, keyframes([
+        style({ transform: 'translateX(300px)' }),
+        style({ transform: 'translateX(0)' })
+      ]))]),
+      transition('*=>void', [style({ transform: 'translateX(0px)' }),
+      animate(100, keyframes([
+        style({ transform: 'translateX(0px)' }),
+        style({ transform: 'translateX(300px)' })
+      ]))])
+    ])
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class AidOrderComponent implements OnInit {
 
@@ -39,6 +56,8 @@ export class AidOrderComponent implements OnInit {
   visitUuid: string;
   patientId: string;
   encounterUuid: string;
+  @ViewChild('type1Select') type1Select: MatSelect;
+  @ViewChild('type2Select') type2Select: MatSelect;
 
   constructor(
     private diagnosisService: DiagnosisService,
@@ -74,6 +93,7 @@ export class AidOrderComponent implements OnInit {
         if (val.includes('Others')) {
           this.aidOrderForm.get('type1Other').setValidators([Validators.required]);
           this.aidOrderForm.get('type1Other').updateValueAndValidity();
+          this.type1Select.close();
         } else {
           this.aidOrderForm.get('type1Other').setValue(null);
           this.aidOrderForm.get('type1Other').clearValidators();
@@ -87,6 +107,7 @@ export class AidOrderComponent implements OnInit {
         if (val.includes('Others')) {
           this.aidOrderForm.get('type2Other').setValidators([Validators.required]);
           this.aidOrderForm.get('type2Other').updateValueAndValidity();
+          this.type2Select.close();
         } else {
           this.aidOrderForm.get('type2Other').setValue(null);
           this.aidOrderForm.get('type2Other').clearValidators();
@@ -155,7 +176,7 @@ export class AidOrderComponent implements OnInit {
     if (this.diagnosisService.isSameDoctor()) {
       if (value.type1?.length) {
         if (value.type1Uuid) {
-          this.updateObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, value.type1Uuid);
+          // this.updateObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, value.type1Uuid);
         } else {
           this.postObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, this.conceptType1, 'type1Uuid');
         }
@@ -167,7 +188,7 @@ export class AidOrderComponent implements OnInit {
 
       if (value.type2?.length) {
         if (value.type2Uuid) {
-          this.updateObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, value.type2Uuid);
+          // this.updateObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, value.type2Uuid);
         } else {
           this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, this.conceptType2, 'type2Uuid');
         }
@@ -179,7 +200,7 @@ export class AidOrderComponent implements OnInit {
 
       if (value.type3) {
         if (value.type3Uuid) {
-          this.updateObs(value.type3, value.type3Uuid);
+          // this.updateObs(value.type3, value.type3Uuid);
         } else {
           this.postObs(value.type3, this.conceptType3, 'type3Uuid');
         }
@@ -191,7 +212,7 @@ export class AidOrderComponent implements OnInit {
 
       if (value.type4) {
         if (value.type4Uuid) {
-          this.updateObs(value.type4, value.type4Uuid);
+          // this.updateObs(value.type4, value.type4Uuid);
         } else {
           this.postObs(value.type4, this.conceptType4, 'type4Uuid');
         }
@@ -203,7 +224,7 @@ export class AidOrderComponent implements OnInit {
 
       if (value.type5) {
         if (value.type5Uuid) {
-          this.updateObs(value.type5, value.type5Uuid);
+          // this.updateObs(value.type5, value.type5Uuid);
         } else {
           this.postObs(value.type5, this.conceptType5, 'type5Uuid');
         }
@@ -245,6 +266,25 @@ export class AidOrderComponent implements OnInit {
     this.encounterService.deleteObs(uuid).subscribe(response => {
       // console.log(response);
       this.aidOrderForm.get(key).setValue(null);
+      switch (key) {
+        case 'type1Uuid':
+          this.aidOrderForm.patchValue({ type1: null, type1Other: null });
+          break;
+        case 'type2Uuid':
+          this.aidOrderForm.patchValue({ type2: null, type2Other: null });
+          break;
+        case 'type3Uuid':
+          this.aidOrderForm.patchValue({ type3: null });
+          break;
+        case 'type4Uuid':
+          this.aidOrderForm.patchValue({ type4: null });
+          break;
+        case 'type5Uuid':
+          this.aidOrderForm.patchValue({ type5: null });
+          break;
+        default:
+          break;
+      }
     });
   }
 

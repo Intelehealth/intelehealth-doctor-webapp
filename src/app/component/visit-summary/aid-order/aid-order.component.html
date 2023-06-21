@@ -4,11 +4,11 @@
   <div class="modal-body row">
     <div class="col-md-12 p-0">
       <form [formGroup]="aidOrderForm" (ngSubmit)="submit()">
-        <div class="row">
+        <div class="row" *ngIf="!aidOrderForm?.value.type1Uuid">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>{{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}}</mat-label>
-              <mat-select formControlName="type1" multiple>
+              <mat-select formControlName="type1" multiple #type1Select>
                 <mat-option *ngFor="let me of medicalEquipmentsList" [value]="me">{{me|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -20,11 +20,11 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="!aidOrderForm?.value.type2Uuid">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>{{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}}</mat-label>
-              <mat-select formControlName="type2" multiple>
+              <mat-select formControlName="type2" multiple #type2Select>
                 <mat-option *ngFor="let fme of freeMedicalEquipmentsList" [value]="fme">{{fme|translate}}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -37,26 +37,26 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="!aidOrderForm?.value.type3Uuid">
             <mat-form-field class="w-100">
               <mat-label>{{'Type 3. Cover medication expenses (amount)'|translate}}</mat-label>
               <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type3">
             </mat-form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="!aidOrderForm?.value.type4Uuid">
             <mat-form-field class="w-100">
               <mat-label>{{'Type 4. Cover surgical expenses (amount)'|translate}}</mat-label>
               <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type4">
             </mat-form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="!aidOrderForm?.value.type5Uuid">
             <mat-form-field class="w-100">
               <mat-label>{{'Type 5. Cash assistance (amount)'|translate}}</mat-label>
               <input matInput type="number" placeholder="{{'Enter amount'|translate}}" formControlName="type5">
             </mat-form-field>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="!aidOrderForm?.value.type1Uuid || !aidOrderForm?.value.type2Uuid || !aidOrderForm?.value.type3Uuid || !aidOrderForm?.value.type4Uuid || !aidOrderForm?.value.type5Uuid">
           <div class="col-md-12">
             <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole">
               {{'Save'|translate}}
@@ -64,6 +64,48 @@
           </div>
         </div>
       </form>
+    </div>
+    <div class="col-md-12 px-0 pt-2">
+      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type1Uuid">
+        <div class="doctor-value">
+          {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
+          <b>{{ aidOrderForm?.value.type1.join(', ') }} {{ (aidOrderForm?.value.type1Other)? ' (' + aidOrderForm?.value.type1Other + ')' : ''  }}</b>
+        </div>
+        <i (click)="deleteObs(aidOrderForm?.value.type1Uuid, 'type1Uuid')" class="material-icons float-right" [class.disabled]="isManagerRole"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type2Uuid">
+        <div class="doctor-value">
+          {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
+          <b>{{ aidOrderForm?.value.type2.join(', ') }} {{ (aidOrderForm?.value.type2Other)? ' (' + aidOrderForm?.value.type2Other + ')' : ''  }}</b>
+        </div>
+        <i (click)="deleteObs(aidOrderForm?.value.type2Uuid, 'type2Uuid')" class="material-icons float-right" [class.disabled]="isManagerRole"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type3Uuid">
+        <div class="doctor-value">
+          {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
+          <b>{{ aidOrderForm?.value.type3 }}</b>
+        </div>
+        <i (click)="deleteObs(aidOrderForm?.value.type3Uuid, 'type3Uuid')" class="material-icons float-right" [class.disabled]="isManagerRole"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type4Uuid">
+        <div class="doctor-value">
+          {{'Type 4. Cover surgical expenses (amount)'|translate}} <br>
+          <b>{{ aidOrderForm?.value.type4 }}</b>
+        </div>
+        <i (click)="deleteObs(aidOrderForm?.value.type4Uuid, 'type4Uuid')" class="material-icons float-right" [class.disabled]="isManagerRole"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
+      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type5Uuid">
+        <div class="doctor-value">
+          {{'Type 5. Cash assistance (amount)'|translate}} <br>
+          <b>{{ aidOrderForm?.value.type5 }}</b>
+        </div>
+        <i (click)="deleteObs(aidOrderForm?.value.type5Uuid, 'type5Uuid')" class="material-icons float-right" [class.disabled]="isManagerRole"
+          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+      </div>
     </div>
   </div>
 </div>
