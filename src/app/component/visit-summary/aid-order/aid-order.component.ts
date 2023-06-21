@@ -218,7 +218,7 @@ export class AidOrderComponent implements OnInit {
         if (value.type2Uuid) {
           // this.updateObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, value.type2Uuid);
         } else {
-          let arabic = value.type1.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar );
+          let arabic = value.type2.map((o: any) => this.freeMedicalEquipmentsList.find((e => e.en == o)).ar );
           this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, (value.type2.indexOf('Others') == -1) ? arabic.toString() : `${arabic.toString()}||${value.type2Other}`, this.conceptType2, 'type2Uuid');
         }
       } else {
@@ -319,6 +319,24 @@ export class AidOrderComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
+  }
+
+  getType1Values() {
+    if (this.getLang() === 'ar') {
+      let arabic = this.aidOrderForm?.value.type1.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar );
+      return arabic.join(' ,');
+    } else {
+      return this.aidOrderForm?.value.type1.join(', ');
+    }
+  }
+
+  getType2Values() {
+    if (this.getLang() === 'ar') {
+      let arabic = this.aidOrderForm?.value.type2.map((o: any) => this.freeMedicalEquipmentsList.find((e => e.en == o)).ar );
+      return arabic.join(' ,');
+    } else {
+      return this.aidOrderForm?.value.type2.join(', ');
+    }
   }
 
 }
