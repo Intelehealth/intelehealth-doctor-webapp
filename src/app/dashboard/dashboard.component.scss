@@ -208,6 +208,12 @@ th:last-child {
   color: #019283;
 }
 
+.intel-accordion-con .mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+  .input-group {
+    display: flex;
+  }
+}
+
 .input-group {
   background: #FFFFFF;
   border: 1px solid rgba(127, 123, 146, 0.5);
@@ -216,6 +222,7 @@ th:last-child {
   align-items: center;
   max-width: 60vw;
   width: 300px;
+  display: none;
 
   .input-group-text {
     background: none;
@@ -235,6 +242,8 @@ th:last-child {
     box-shadow: none;
   }
 }
+
+
 
 @media (max-width: 768px) {
   .input-group {
