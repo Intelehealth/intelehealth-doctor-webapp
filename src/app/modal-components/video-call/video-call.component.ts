@@ -154,7 +154,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get localAudioIcon() {
-    return this._localAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.toUser) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
+    return this._localAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.provider?.uuid) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
   }
 
   get remoteAudioIcon() {

@@ -610,7 +610,8 @@ body.font-lato td {
 }
 
 .vc-modal-lg {
-  width: 70%;
+  width: auto;
+  min-width: 450px;
   max-width: 80% !important;
 
   .mat-dialog-container {
@@ -639,6 +640,7 @@ body.font-lato td {
 @media (max-width: 768px) {
   .vc-modal-lg {
     width: 96%;
+    min-width: auto;
     max-width: 96% !important;
   }
 }
