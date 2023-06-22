@@ -645,14 +645,14 @@
                           appendTo=".visit-summary-tab-group"
                           class="visit-select"
                           formControlName="specialization"
-                          [items]="specializations"
                           bindLabel="name"
                           bindValue="name"
                           [clearable]="false"
                           [searchable]="true"
                           placeholder="{{'Select specialization'|translate}}"
                         >
-                        </ng-select>
+                          <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">{{ (specialization.name) | translate }}</ng-option>
+                      </ng-select>
                       </div>
                     </div>
                     <div class="form-group">

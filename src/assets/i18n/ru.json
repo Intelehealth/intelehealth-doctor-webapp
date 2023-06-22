@@ -467,6 +467,7 @@
   "Do you really want to delete this timing slot?":"Вы действительно хотите удалить этот временной интервал?",
   "Child":"Ребенок",
   "Age should be greater than or equal to 18":"Возраст должен быть больше или равен 18",
+  "Are you sure to re-assign this visit to another doctor?":"Вы уверены, что переназначите этот визит к другому врачу?",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
