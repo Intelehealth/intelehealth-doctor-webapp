@@ -69,10 +69,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       };
       this.service.postObs(json)
       .subscribe(resp => {
-      this.comment.push({uuid: resp.uuid, value: value});
-    });
+        this.comment.push({uuid: resp.uuid, value: value});
+      });
+    }
   }
-}
 
   delete(i) {
     if (this.diagnosisService.isSameDoctor()) {
@@ -86,13 +86,15 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
-   
-   getObj(value) {
+  }
+
+  getObj(value) {
     let value1 = {
-      "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  value: "غير متوفر",
-      "en": localStorage.getItem('selectedLanguage') === 'en' ? value : "NA"
+      // "ar": localStorage.getItem('selectedLanguage') === 'ar' ?  value: "غير متوفر",
+      // "en": localStorage.getItem('selectedLanguage') === 'en' ? value : "NA"
+      "ar": value,
+      "en": value
     }
     return JSON.stringify(value1);
-   } 
+  }
 }
