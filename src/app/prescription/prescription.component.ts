@@ -41,11 +41,11 @@ export class PrescriptionComponent implements OnInit {
         res.results.forEach((visit: any) => {
           if (visit.encounters.length > 0) {
             if (visit.attributes.length) {
-              const visitSpeciality   =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d");
-              const visitHospitalType =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "f288fc8f-428a-4665-a1bd-7b08e64d66e1");
-              if (visitSpeciality && visitHospitalType) {
+              // const visitSpeciality   =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d");
+              // const visitHospitalType =  visit.attributes.find((attr: any) => attr.attributeType.uuid == "f288fc8f-428a-4665-a1bd-7b08e64d66e1");
+              // if (visitSpeciality && visitHospitalType) {
                 // If specialization and hospital type matches process visit
-                if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
+                // if (visitSpeciality.value == this.specialization && visitHospitalType.value == this.hospitalType) {
                   let flag = 0;
                   visit.encounters.forEach((encounter: any) => {
                     if (encounter.encounterType.display == 'Patient Exit Survey' || encounter.encounterType.display == 'Visit Complete') {
@@ -64,8 +64,8 @@ export class PrescriptionComponent implements OnInit {
                       }
                     });
                   }
-                }
-              }
+                // }
+              // }
             }
           }
         });
@@ -83,9 +83,9 @@ export class PrescriptionComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      return `${minutes} ${this.translateService.instant(" minutes ago")}`;
+      return `${minutes} ${this.translateService.instant("minutes ago")}`;
     }
-    return `${hours} ${this.translateService.instant(" hrs ago")}`;
+    return `${hours} ${this.translateService.instant("hrs ago")}`;
   }
 
   getCheifComplaint(visit: any) {
