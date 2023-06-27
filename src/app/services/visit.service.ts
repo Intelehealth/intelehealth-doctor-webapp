@@ -95,4 +95,10 @@ export class VisitService {
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
     );
   }
+
+  getFollowupVisits(): Observable<any>  {
+    return this.http.get(
+      `${environment.mindmapURL}/openmrs/getFollowupVisits`
+    );
+  }
 }

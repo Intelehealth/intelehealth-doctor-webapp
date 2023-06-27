@@ -331,76 +331,33 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.setSpiner1= true;
     this.followUpVisit = [];
     this.followUpVisitNo = 0;
-    let fromStartDate = moment().add(-2, 'months').startOf('month').format();
-    this.service.getVisitWithDateFilter({}, true, fromStartDate).subscribe(
+    this.service.getFollowupVisits().subscribe(
       (response) => {
-        let allVisits = [];
-        response.results.forEach((item) => {
-          var i = allVisits.findIndex(x => x.patient.identifiers[0].identifier == item.patient.identifiers[0].identifier);
-          if (i <= -1) {
-            allVisits.push(item);
-          }
-        });
-        allVisits.forEach((visit) => {
-            if (visit.encounters.length > 0) {
-              if (this.systemAccess) {
-                this.getFollowUpVisits(visit);
-              } else if (visit.attributes.length) {
-                const attributes = visit.attributes;
-                const speRequired = attributes.filter(
-                  (attr) =>
-                    attr.attributeType.uuid ===
-                    "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
-                );
-                if (speRequired.length) {
-                  speRequired.forEach((spe) => {
-                    if (spe.value === this.specialization) {
-                      this.getFollowUpVisits(visit);
-                    }
-                  });
-                }
-              }
-            }
+        console.log("response.results",response.data)
+        response.data.forEach((visit) => {
+        let v = this.assignValueToVisit(visit);  
+        this.followUpVisit.push(v);
+        this.followUpVisitNo += 1;
         });
         this.setSpiner1 = false;
       });
   }
 
-  private getFollowUpVisits(visit: any) {
-    this.getFollowUpDateAndExamination(visit);
-    if (visit.followUp && /\d/.test(visit.followUp)) {
-      let v = this.assignValueToProperty(visit, visit.encounters[0], visit.followUp);  
-      let found = this.followUpVisit.find(c => c.id === v.id);
-      if (!found) {
-      this.followUpVisit.push(this.setValues(v, visit));
-      this.followUpVisitNo += 1;
-    }
-  }
-  }
-
-  getFollowUpDateAndExamination(visit) {
-    let visit1 = visit;
-    visit?.encounters?.forEach((encounter) => {
-      const display = encounter.display;
-      if (display.match("Visit Note") !== null) {
-        const observations = encounter.obs;
-        observations?.forEach((obs) => {
-          if (obs.display.match("Follow up visit") !== null) {
-            visit1.followUp = obs.value?.split(',')[0]?.trim();
-          }
-        });
-        return visit1;
-      } else {
-        return visit1;
-      }
-    });
-  }
-
- updateFollowUpVisits(v: any) {
-    let found = this.followUpVisit.find(c => c.id === v.id);
-    if (!found) {
-      this.followUpVisit.push(v);
-      this.followUpVisitNo += 1;
-    }
+  assignValueToVisit(visit) {
+    let value:any= {}
+    value.visitId = visit.visitId;
+    value.patientId = visit.patientId;
+    value.id = visit.patientID;
+    value.name = visit.patientName;
+    value.telephone = visit.phoneNo;
+    value.gender = visit.gender;
+    value.age = visit.age;
+    value.location = visit.visitLocation;
+    value.provider = visit.provider;
+    value.lastSeen = visit.lastSeen;
+    value.date =  moment(visit.followUpDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ').format("DD-MMM-YYYY");
+    value.isPastDate = moment().toDate() > moment(visit.followUpDate, 'YYYY-MM-DDTHH:mm:ss.SSSZ').toDate();
+    value.diagnosis = visit.diagnosis ? visit.diagnosis : "Not Provided";
+    return value;
   }
 }
