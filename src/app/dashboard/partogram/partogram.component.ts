@@ -646,7 +646,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
           let med = [];
           for (let x = 0; x < res.medicines.length; x++) {
             if (!res.medicines[x].isDeleted) {
-              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage} | ${res.medicines[x].duration} | ${res.medicines[x].typeOfMedicine} | ${res.medicines[x].routeOfMedicine}` });
+              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage} ${res.medicines[x].dosageUnit}  | ${res.medicines[x].duration} | ${res.medicines[x].typeOfMedicine} | ${res.medicines[x].routeOfMedicine}` });
             }
           }
           // console.log(med);
