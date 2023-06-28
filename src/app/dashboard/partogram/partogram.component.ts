@@ -494,7 +494,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   addAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal(null).subscribe(res => {
       if (res) {
-        console.log(res);
+        // console.log(res);
         if (res.assessment) {
           this.encounterService.postObs({
             concept: this.conceptAssessment,
@@ -525,7 +525,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
               concept: this.conceptMedicine,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+              value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
               (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }];
@@ -620,7 +620,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   // console.log(result);
                 });
               } else {
-                this.encounterService.updateObs(m.id, { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}` }).subscribe((result: any) => {
+                this.encounterService.updateObs(m.id, { value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}` }).subscribe((result: any) => {
                   // console.log(result);
                 });
               }
@@ -630,7 +630,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   concept: this.conceptMedicine,
                   person: this.visit.patient.uuid,
                   obsDatetime: new Date(),
-                  value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+                  value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
                   encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
                 }).subscribe((result: any) => {
                   // console.log(result);

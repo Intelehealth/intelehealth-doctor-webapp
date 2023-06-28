@@ -150,9 +150,63 @@ export class AddPlanAssessmentComponent implements OnInit {
     },
     {
       id: 10,
-      name: 'patche'
+      name: 'Patche'
+    }
+  ];
+  durationList: any = [
+    {
+      id: 1,
+      name: 'Every 30 mins'
+    },
+    {
+      id: 2,
+      name: 'Every hour'
+    },
+    {
+      id: 3,
+      name: 'Every 4 hours'
+    },
+    {
+      id: 4,
+      name: 'Every 6 hours'
+    },
+    {
+      id: 5,
+      name: 'Every 8 hour'
+    },
+    {
+      id: 6,
+      name: 'Every 12 hour'
+    }
+  ];
+  dosageUnitList: any = [
+    {
+      id: 1,
+      name: 'mg/ml'
+    },
+    {
+      id: 2,
+      name: 'mg/kg'
+    },
+    {
+      id: 3,
+      name: 'gram/kg'
     }
   ]
+
+  search1 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.dosageUnitList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  );
+
+  search2 = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? [] : this.durationList.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).map((val) => val.name))
+  );
 
   search3 = (text$: Observable<string>) =>
     text$.pipe(
@@ -213,8 +267,9 @@ export class AddPlanAssessmentComponent implements OnInit {
             id: new FormControl(this.data.medicines[x].uuid),
             medicineName: new FormControl((medicine[0])? medicine[0] : null, [Validators.required, Validators.maxLength(100)]),
             strength: new FormControl((medicine[1])? medicine[1] : null, [Validators.required, Validators.maxLength(10)]),
-            dosage: new FormControl((medicine[2])? medicine[2] : null, [Validators.required, Validators.maxLength(10)]),
-            duration: new FormControl((medicine[3])? medicine[3] : null, [Validators.required, Validators.maxLength(10)]),
+            dosage: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[0] : null : null, [Validators.required, Validators.maxLength(10)]),
+            dosageUnit: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[1] : medicine[2].split('::')[0] : null, [Validators.required, Validators.maxLength(10)]),
+            duration: new FormControl((medicine[3])? medicine[3] : null, [Validators.required, Validators.maxLength(15)]),
             typeOfMedicine: new FormControl((medicine[4])? medicine[4] : null, [Validators.required, Validators.maxLength(15)]),
             routeOfMedicine: new FormControl((medicine[5])? medicine[5] : null, [Validators.required, Validators.maxLength(15)]),
             isDeleted: new FormControl(false),
@@ -247,7 +302,8 @@ export class AddPlanAssessmentComponent implements OnInit {
       medicineName: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
       strength: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
       dosage: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
-      duration: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
+      dosageUnit: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
+      duration: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
       typeOfMedicine: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
       routeOfMedicine: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
       isDeleted: new FormControl(false),
