@@ -3,14 +3,14 @@
     <img src="assets/svgs/chw.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.hwName | titlecase }}</h6>
-      <span>CHW</span>
+      <span>{{ "CHW" }}</span>
     </div>
   </div>
   <div class="chw-item">
     <img src="assets/svgs/patient.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
-      <span>Patient</span>
+      <span>{{ "Patient" }}</span>
     </div>
   </div>
 </div>
@@ -18,13 +18,9 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col p-0">
-        <div class="main-container">
+        <div [class.d-none]="!callConnected" class="main-container">
           <div class="remote-con" [class.minimized]="_minimized">
-            <video
-              #remoteVideo
-              autoplay
-              [ngClass]="{ 'd-none': _remoteVideoOff }"
-            ></video>
+            <div #remoteVideo class="remote-container"></div>
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
               class="video-off-container"
@@ -36,21 +32,9 @@
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _remoteAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
-              <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
+              <img class="audio-img" [src]="remoteAudioIcon" />
             </div>
             <div class="call-duration" [class.d-none]="_minimized">
-              <!-- <span>Call ends in</span> -->
               <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
             </div>
             <div class="video-controls" [class.d-none]="_minimized">
@@ -91,21 +75,6 @@
                   alt=""
                 />
               </button>
-              <!-- <button
-                type="button"
-                class="video-ctrl-btn"
-                [class.blue]="_chatOpened"
-                (click)="_chatOpened = !_chatOpened"
-              >
-                <img
-                  src="{{
-                    _chatOpened
-                      ? 'assets/svgs/message-white.svg'
-                      : 'assets/svgs/message-blue.svg'
-                  }}"
-                  alt=""
-                />
-              </button> -->
             </div>
             <div class="window-controls" [class.minimized]="_minimized">
               <button
@@ -125,28 +94,39 @@
             </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
-            <video #localVideo autoplay></video>
+            <div #localVideo class="local-container"></div>
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
-                src="{{ baseUrl + '/personimage/' + data.connectToDrId }}"
+                src="{{ baseUrl + '/personimage/' + data.drPersonUuid }}"
                 (error)="$event.target.src = 'assets/svgs/dr-user.svg'"
                 alt=""
               />
             </div>
             <div class="audio-status">
-              <img
-                class="audio-img"
-                src="{{
-                  _localAudioMute
-                    ? 'assets/svgs/audio-wave-mute.svg'
-                    : 'assets/svgs/audio-wave.svg'
-                }}"
-                alt=""
-              />
-              <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
+              <img class="audio-img" [src]="localAudioIcon" />
             </div>
+          </div>
+        </div>
+        <div [class.d-none]="callConnected" class="call-container">
+          <div class="calling-txt text-center w-100">Calling...</div>
+          <div class="img-cont">
+            <img
+              class="calling-img mt-5"
+              src="assets/images/calling-ih.gif"
+              alt="calling"
+            />
+          </div>
+          <div
+            class="video-controls d-flex justify-content-center mb-1"
+            [class.d-none]="_minimized"
+          >
+            <button
+              type="button"
+              class="video-ctrl-btn red"
+              (click)="endCallInRoom()"
+            >
+              <img src="assets/svgs/call-end.svg" alt="" />
+            </button>
           </div>
         </div>
       </div>
@@ -182,11 +162,11 @@
                   >
                     <ng-container *ngIf="item.isRead">
                       <img src="assets/svgs/read-status.svg" alt="" />
-                      <span class="ml-1">Read</span>
+                      <span class="ml-1">{{ "Read" }}</span>
                     </ng-container>
                     <ng-container *ngIf="!item.isRead">
                       <img src="assets/svgs/sent-status.svg" alt="" />
-                      <span class="ml-1">Sent</span>
+                      <span class="ml-1">{{ "Sent" }}</span>
                     </ng-container>
                   </ng-container>
                 </li>

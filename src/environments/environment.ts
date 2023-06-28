@@ -14,7 +14,9 @@ export const environment = {
   captchaSiteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   siteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   externalPrescriptionCred: 'c3lzbnVyc2U6SUhOdXJzZSMx',
-  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA"
+  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
+  webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",
+  webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/'
 };
 
 /*

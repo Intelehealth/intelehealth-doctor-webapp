@@ -5,6 +5,7 @@ import { take } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PwaPromptComponent } from '../modal-components/pwa-prompt/pwa-prompt.component';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -32,12 +33,14 @@ export class PwaService {
   }
 
   private openPromptComponent(mobileType: 'ios' | 'android') {
-    timer(3000)
-      .pipe(take(1))
-      .subscribe(() => {
-        if (!(this.router.url.includes('/epartogram/') || this.router.url.includes('/verify-otp'))) {
-          this.bottomSheet.open(PwaPromptComponent, { data: { mobileType, promptEvent: this.promptEvent } })
-        }
-      });
+    if (environment.production) {
+      timer(3000)
+        .pipe(take(1))
+        .subscribe(() => {
+          if (!(this.router.url.includes('/epartogram/') || this.router.url.includes('/verify-otp'))) {
+            this.bottomSheet.open(PwaPromptComponent, { data: { mobileType, promptEvent: this.promptEvent } })
+          }
+        });
+    }
   }
 }
