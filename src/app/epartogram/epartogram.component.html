@@ -1231,7 +1231,7 @@
                     <td colspan="2">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value}} <br/>
+                          {{m?.value?.replace('::',' ')}} <br/>
                         </ng-container>
                       </div>
                     </td>
@@ -1252,7 +1252,7 @@
                     <td colspan="4">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value}} <br/>
+                          {{m?.value?.replace('::',' ')}} <br/>
                         </ng-container>
                       </div>
                     </td>
