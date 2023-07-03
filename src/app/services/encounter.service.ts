@@ -60,4 +60,14 @@ export class EncounterService {
     const url = `${this.baseURL}/provider/${uuid}/attribute`;
     return this.http.get(url);
   }
+
+  postEncounterProvider(encounterUuid, json): Observable<any> {
+    const url = `${this.baseURL}/encounter/${encounterUuid}/encounterprovider`;
+    return this.http.post(url, json);
+  }
+
+  getEncounter(encounterUuid): Observable<any> {
+    const url = `${this.baseURL}/encounter/${encounterUuid}?v=custom:(uuid,display,obs:(uuid,value,display,creator:(uuid)),encounterProviders:(display,provider:(uuid,attributes)))`;
+    return this.http.get(url);
+  }
 }

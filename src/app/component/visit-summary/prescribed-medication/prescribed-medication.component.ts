@@ -8,7 +8,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import medicines from './medicines';
 import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterUUID: any;
+import * as moment from 'moment';
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-prescribed-medication',
@@ -169,7 +170,6 @@ export class PrescribedMedicationComponent implements OnInit {
     let insertValue;
     this.diagnosisService.getTranslationData();
     setTimeout(() => {
-      console.log(this.diagnosisService.values);
       if (localStorage.getItem('selectedLanguage') === 'ar') {
         insertValue = {
           "ar": `${value.med}: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
@@ -181,13 +181,13 @@ export class PrescribedMedicationComponent implements OnInit {
         }
         if (value.reason) {
           insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
-          insertValue["en"] =  `${insertValue["en"]} 'NA'`;
+          insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
         }
         insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
         insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
         if (value.additional) {
           insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
-          insertValue["en"] =`${insertValue["en"]} 'NA'`;
+          insertValue["en"] =`${insertValue["en"]} ${value.additional}`;
         }
       } else {
         insertValue = {
@@ -200,17 +200,17 @@ export class PrescribedMedicationComponent implements OnInit {
         }
         if (value.reason) {
           insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
-          insertValue["ar"] =  `${insertValue["ar"]} 'غير متوفر'`;
+          insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
         }
         insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
         insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
 
         if (value.additional) {
           insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
-          insertValue["ar"] =`${insertValue["ar"]} 'غير متوفر'`;
+          insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
         }
       }
-      if (this.diagnosisService.isSameDoctor()) {
+      if (this.diagnosisService.isEncounterProvider()) {
         this.encounterUuid = getEncounterUUID();
         const json = {
           concept: this.conceptMed,
@@ -221,7 +221,7 @@ export class PrescribedMedicationComponent implements OnInit {
         };
         this.service.postObs(json)
           .subscribe(response => {
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value }));
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, creator: { uuid: getFromStorage("user").uuid } }));
             this.add = false;
           });
       }
@@ -230,13 +230,34 @@ export class PrescribedMedicationComponent implements OnInit {
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.meds[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-        .subscribe(() => {
-          this.meds.splice(i, 1);
-        });
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.meds[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted")
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.meds.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.meds[i] = {...this.meds[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
     }
+    // if (this.diagnosisService.isSameDoctor()) {
+    //   const uuid = this.meds[i].uuid;
+    //   this.diagnosisService.deleteObs(uuid)
+    //     .subscribe(() => {
+    //       this.meds.splice(i, 1);
+    //     });
+    // }
   }
 
   getLang() {

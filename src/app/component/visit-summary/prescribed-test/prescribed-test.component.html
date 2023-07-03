@@ -15,9 +15,12 @@
   <ng-container *ngIf="tests.length > 0">
       <div *ngFor='let test of tests, index as i' >
         <div  [@moveInLeft] class="alert alert-primary">
-          <div class="doctor-value">{{test.value}}</div>
-        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="test.comment">{{test.value}}</span>
+            <span *ngIf="test.comment" class="comment">{{test.comment|comment}}</span>
+          </div>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!test.comment"
+              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
       </div>
   </ng-container>

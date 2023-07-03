@@ -15,9 +15,12 @@
   <ng-container *ngIf="advice.length > 0">
     <div *ngFor='let advice of advice, index as i'>
         <div [@moveInLeft] class="alert alert-primary">
-          <div class="doctor-value" [innerHtml]="advice?.value"></div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
-            style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="advice.comment">{{advice.value}}</span>
+            <span *ngIf="advice.comment" class="comment">{{advice.comment|comment}}</span>
+          </div>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!advice.comment"
+              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
     </div>
   </ng-container>

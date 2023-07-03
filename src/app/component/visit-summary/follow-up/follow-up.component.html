@@ -16,15 +16,19 @@
           <textarea matInput placeholder="{{'Follow up remark'|translate}}" formControlName='advice'></textarea>
         </mat-form-field>
         <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]="!followForm.valid || isManagerRole"
-          [hidden]='followUp.length > 0'>{{'Schedule a follow up'|translate}}</button>
+          [hidden]='allowFollowUp > 0'>{{'Schedule a follow up'|translate}}</button>
       </div>
       {{errorText}}
     </form>
+    <br>
     <ng-container *ngIf="followUp.length > 0">
       <div *ngFor='let followUp of followUp, index as i'>
         <div [@moveInLeft]  class="alert alert-primary">
-          <div class="doctor-value">{{followUp.value}}</div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="followUp.comment">{{followUp.value}}</span>
+            <span *ngIf="followUp.comment" class="comment">{{followUp.comment|comment}}</span>
+          </div>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!followUp.comment"
             style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
         </div>
       </div>

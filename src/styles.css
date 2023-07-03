@@ -50,7 +50,8 @@ body {
 }
 
 .doctor-value {
-  width: 92%;
+  /* width: 92%; */
+  width: 100%;
 }
 
 body.font-lato div,

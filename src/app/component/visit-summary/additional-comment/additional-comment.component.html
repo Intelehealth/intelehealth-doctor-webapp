@@ -4,7 +4,7 @@
     <form [formGroup]='commentForm'>
         <div id="doctor-notes">
             <mat-form-field class="example-full-width">
-                <textarea matInput placeholder="{{ 'Notes (not shared with the patient)' | translate }}"
+                <textarea matInput placeholder="{{ 'Notes' | translate }}"
                     formControlName='comment'></textarea>
             </mat-form-field>
             <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || isManagerRole'>{{
@@ -13,11 +13,14 @@
     </form>
     <br>
     <ng-container *ngIf="comment.length > 0">
-        <div  *ngFor="let comment of comment, index as i" >
+        <div  *ngFor="let c of comment, index as i" >
             <div [@moveInLeft] class="alert alert-primary">
-                <div class="doctor-value">{{comment.value}} </div>
-                <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
-                    style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+              <div class="doctor-value d-flex flex-column">
+                <span [class.strike]="c.comment">{{c.value}}</span>
+                <span *ngIf="c.comment" class="comment">{{c.comment|comment}}</span>
+              </div>
+              <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.comment"
+                  style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
             </div>
         </div>
     </ng-container>

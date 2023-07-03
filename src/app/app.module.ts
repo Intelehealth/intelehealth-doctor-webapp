@@ -99,6 +99,7 @@ import { MatPaginationIntlService } from "./services/mat-pagination.service";
 import { AidAssessmentComponent } from './component/visit-summary/aid-assessment/aid-assessment.component';
 import { AidOrderComponent } from './component/visit-summary/aid-order/aid-order.component';
 import { DischargeOrderComponent } from './component/visit-summary/discharge-order/discharge-order.component';
+import { CommentPipe } from "./comment.pipe";
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -154,7 +155,8 @@ registerLocaleData(localeAr);
     AppointmentScheduleComponent,
     AidAssessmentComponent,
     AidOrderComponent,
-    DischargeOrderComponent
+    DischargeOrderComponent,
+    CommentPipe
   ],
 
   imports: [

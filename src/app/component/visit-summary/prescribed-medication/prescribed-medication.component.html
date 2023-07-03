@@ -47,7 +47,7 @@
           <div class="col">
             <div class="input-group-prepend">
               <input type="text" class="form-control" [ngbTypeahead]="durationUnit"
-                placeholder="{{'Units(eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">
+                placeholder="{{'Units (eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">
               <span class="input-group-text" id="basic-addon1">{{'total'|translate}}</span>
             </div>
           </div>
@@ -69,9 +69,12 @@
   <ng-container *ngIf="meds.length > 0">
       <div *ngFor='let meds of meds, index as i' >
         <div [@moveInLeft] class="alert alert-primary">
-        <div class="doctor-value">{{meds.value}}</div>
-        <i (click)="delete(i)" class="material-icons" [class.disabled]="isManagerRole" 
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          <div class="doctor-value d-flex flex-column">
+            <span [class.strike]="meds.comment">{{meds.value}}</span>
+            <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
+          </div>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment"
+              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>
   </ng-container>

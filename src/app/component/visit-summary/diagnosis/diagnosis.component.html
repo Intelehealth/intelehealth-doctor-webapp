@@ -36,9 +36,12 @@
     <br>
     <div *ngFor='let diagnosis of diagnosis, index as i'>
       <div [@moveInLeft] class="alert alert-primary">
-        <div class="doctor-value">{{ diagnosis.value }}</div>
-        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" 
-        style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+        <div class="doctor-value d-flex flex-column">
+          <span [class.strike]="diagnosis.comment">{{diagnosis.value}}</span>
+          <span *ngIf="diagnosis.comment" class="comment">{{diagnosis.comment|comment}}</span>
+        </div>
+        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment"
+            style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>
   </ng-container>

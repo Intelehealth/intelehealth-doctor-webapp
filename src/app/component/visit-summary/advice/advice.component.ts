@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
-declare var getEncounterUUID: any;
+import * as moment from 'moment';
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-advice',
@@ -83,7 +84,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptAdvice,
@@ -92,12 +93,13 @@ export class AdviceComponent implements OnInit {
         value: JSON.stringify(this.diagnosisService.getBody('advice', value)),
         encounter: this.encounterUuid
       };
-      
+
       this.service.postObs(json)
         .subscribe(response => {
           let obj = {
             uuid : response.uuid,
-            value: json.value
+            value: json.value,
+            creator: { uuid: getFromStorage("user").uuid }
           }
           this.advice.push(this.diagnosisService.getData(obj));
         });
@@ -105,16 +107,37 @@ export class AdviceComponent implements OnInit {
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.advice[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-        .subscribe(() => {
-          this.advice.splice(i, 1);
-        });
-    }    
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.advice[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted")
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.advice.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.advice[i] = {...this.advice[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
+    }
+    // if (this.diagnosisService.isSameDoctor()) {
+    //   const uuid = this.advice[i].uuid;
+    //   this.diagnosisService.deleteObs(uuid)
+    //     .subscribe(() => {
+    //       this.advice.splice(i, 1);
+    //     });
+    // }
   }
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }

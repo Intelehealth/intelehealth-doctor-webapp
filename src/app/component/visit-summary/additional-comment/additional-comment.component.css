@@ -2,7 +2,19 @@
     width: 100%;
 }
 
-/* @media only screen and (max-width: 768px) { 
+.doctor-value .strike  {
+  text-decoration: line-through;
+}
+
+.comment  {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+
+/* @media only screen and (max-width: 768px) {
     .example-full-width {
       width: 60%;
     }

@@ -6,7 +6,8 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { MatSelect } from '@angular/material/select';
-declare var getEncounterUUID: any;
+import * as moment from 'moment';
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-aid-order',
@@ -86,6 +87,12 @@ export class AidOrderComponent implements OnInit {
   @ViewChild('type1Select') type1Select: MatSelect;
   @ViewChild('type2Select') type2Select: MatSelect;
 
+  type1: any = [];
+  type2: any = [];
+  type3: any = [];
+  type4: any = [];
+  type5: any = [];
+
   constructor(
     private diagnosisService: DiagnosisService,
     private encounterService: EncounterService,
@@ -94,16 +101,21 @@ export class AidOrderComponent implements OnInit {
     this.aidOrderForm = new FormGroup({
       type1: new FormControl(null),
       type1Uuid: new FormControl(null),
+      type1CreatorUuid: new FormControl(null),
       type1Other: new FormControl(null),
       type2: new FormControl(null),
       type2Uuid: new FormControl(null),
+      type2CreatorUuid: new FormControl(null),
       type2Other: new FormControl(null),
       type3: new FormControl(null),
       type3Uuid: new FormControl(null),
+      type3CreatorUuid: new FormControl(null),
       type4: new FormControl(null),
       type4Uuid: new FormControl(null),
+      type4CreatorUuid: new FormControl(null),
       type5: new FormControl(null),
-      type5Uuid: new FormControl(null)
+      type5Uuid: new FormControl(null),
+      type5CreatorUuid: new FormControl(null)
     });
   }
 
@@ -148,11 +160,19 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType1).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          const value =  JSON.parse(obs?.value);
-          const splitVal = value.en.split('||');
-          const type1Val = splitVal[0]?.split(',');
-          const type1OtherVal = splitVal[1] ? splitVal[1] : null;
-          this.aidOrderForm.patchValue({ type1: type1Val, type1Uuid: obs.uuid, type1Other: type1OtherVal });
+          if (!obs.comment) {
+            const value =  JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type1Val = splitVal[0]?.split(',');
+            const type1OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.aidOrderForm.patchValue({ type1: type1Val, type1Uuid: obs.uuid, type1Other: type1OtherVal, type1CreatorUuid: obs.creator.uuid });
+          } else {
+            const value =  JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type1Val = splitVal[0]?.split(',');
+            const type1OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.type1.push({...obs, type1Val, type1OtherVal});
+          }
         }
       });
     });
@@ -160,11 +180,19 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType2).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          const value =  JSON.parse(obs?.value);
-          const splitVal = value.en.split('||');
-          const type2Val = splitVal[0]?.split(',');
-          const type2OtherVal = splitVal[1] ? splitVal[1] : null;
-          this.aidOrderForm.patchValue({ type2: type2Val, type2Uuid: obs.uuid, type2Other: type2OtherVal });
+          if (!obs.comment) {
+            const value =  JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type2Val = splitVal[0]?.split(',');
+            const type2OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.aidOrderForm.patchValue({ type2: type2Val, type2Uuid: obs.uuid, type2Other: type2OtherVal, type2CreatorUuid: obs.creator.uuid });
+          } else {
+            const value =  JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type2Val = splitVal[0]?.split(',');
+            const type2OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.type2.push({...obs, type2Val, type2OtherVal});
+          }
         }
       });
     });
@@ -172,8 +200,14 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType3).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          const value =  JSON.parse(obs?.value);
-          this.aidOrderForm.patchValue({ type3: value.en, type3Uuid: obs.uuid });
+          if (!obs.comment) {
+            const value =  JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type3: value.en, type3Uuid: obs.uuid, type3CreatorUuid: obs.creator.uuid });
+          } else {
+            const value =  JSON.parse(obs?.value);
+            const type3Val = value.en;
+            this.type3.push({...obs, type3Val});
+          }
         }
       });
     });
@@ -181,8 +215,14 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType4).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          const value =  JSON.parse(obs?.value);
-          this.aidOrderForm.patchValue({ type4: value.en, type4Uuid: obs.uuid });
+          if (!obs.comment) {
+            const value =  JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type4: value.en, type4Uuid: obs.uuid, type4CreatorUuid: obs.creator.uuid });
+          } else {
+            const value =  JSON.parse(obs?.value);
+            const type4Val = value.en;
+            this.type4.push({...obs, type4Val});
+          }
         }
       });
     });
@@ -190,8 +230,14 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType5).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          const value =  JSON.parse(obs?.value);
-          this.aidOrderForm.patchValue({ type5: value.en, type5Uuid: obs.uuid });
+          if (!obs.comment) {
+            const value =  JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type5: value.en, type5Uuid: obs.uuid, type5CreatorUuid: obs.creator.uuid });
+          } else {
+            const value =  JSON.parse(obs?.value);
+            const type5Val = value.en;
+            this.type5.push({...obs, type5Val});
+          }
         }
       });
     });
@@ -200,7 +246,7 @@ export class AidOrderComponent implements OnInit {
   submit() {
     this.encounterUuid = getEncounterUUID();
     const value = { ...this.aidOrderForm.value };
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       if (value.type1?.length) {
         if (value.type1Uuid) {
           // this.updateObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, value.type1Uuid);
@@ -210,7 +256,7 @@ export class AidOrderComponent implements OnInit {
         }
       } else {
         if (value.type1Uuid) {
-          this.deleteObs(value.type1Uuid, 'type1Uuid');
+          this.deleteObs(value.type1Uuid, 'type1Uuid', value.type1CreatorUuid);
         }
       }
 
@@ -223,7 +269,7 @@ export class AidOrderComponent implements OnInit {
         }
       } else {
         if (value.type2Uuid) {
-          this.deleteObs(value.type2Uuid, 'type2Uuid');
+          this.deleteObs(value.type2Uuid, 'type2Uuid', value.type2CreatorUuid);
         }
       }
 
@@ -235,7 +281,7 @@ export class AidOrderComponent implements OnInit {
         }
       } else {
         if (value.type3Uuid) {
-          this.deleteObs(value.type3Uuid, 'type3Uuid');
+          this.deleteObs(value.type3Uuid, 'type3Uuid', value.type3CreatorUuid);
         }
       }
 
@@ -247,7 +293,7 @@ export class AidOrderComponent implements OnInit {
         }
       } else {
         if (value.type4Uuid) {
-          this.deleteObs(value.type4Uuid, 'type4Uuid');
+          this.deleteObs(value.type4Uuid, 'type4Uuid', value.type4CreatorUuid);
         }
       }
 
@@ -259,7 +305,7 @@ export class AidOrderComponent implements OnInit {
         }
       } else {
         if (value.type5Uuid) {
-          this.deleteObs(value.type5Uuid, 'type5Uuid');
+          this.deleteObs(value.type5Uuid, 'type5Uuid', value.type5CreatorUuid);
         }
       }
       this.snackbar.open(`Aid order saved successfully`,null, {duration: 2000});
@@ -278,6 +324,7 @@ export class AidOrderComponent implements OnInit {
     this.encounterService.postObs(json).subscribe(response => {
       // console.log(response);
       this.aidOrderForm.get(key).setValue(response.uuid);
+      this.aidOrderForm.get(key.replace('Uuid','CreatorUuid')).setValue(getFromStorage('user').uuid);
     });
   }
 
@@ -291,30 +338,62 @@ export class AidOrderComponent implements OnInit {
     });
   }
 
-  deleteObs(uuid: string, key: string) {
-    this.encounterService.deleteObs(uuid).subscribe(response => {
-      // console.log(response);
-      this.aidOrderForm.get(key).setValue(null);
-      switch (key) {
-        case 'type1Uuid':
-          this.aidOrderForm.patchValue({ type1: null, type1Other: null });
-          break;
-        case 'type2Uuid':
-          this.aidOrderForm.patchValue({ type2: null, type2Other: null });
-          break;
-        case 'type3Uuid':
-          this.aidOrderForm.patchValue({ type3: null });
-          break;
-        case 'type4Uuid':
-          this.aidOrderForm.patchValue({ type4: null });
-          break;
-        case 'type5Uuid':
-          this.aidOrderForm.patchValue({ type5: null });
-          break;
-        default:
-          break;
-      }
-    });
+  deleteObs(uuid: string, key: string, creatorUuid: string) {
+    if (creatorUuid == getFromStorage('user').uuid) {
+      this.encounterService.deleteObs(uuid).subscribe(response => {
+        // console.log(response);
+        this.aidOrderForm.get(key).setValue(null);
+        switch (key) {
+          case 'type1Uuid':
+            this.aidOrderForm.patchValue({ type1: null, type1Other: null });
+            break;
+          case 'type2Uuid':
+            this.aidOrderForm.patchValue({ type2: null, type2Other: null });
+            break;
+          case 'type3Uuid':
+            this.aidOrderForm.patchValue({ type3: null });
+            break;
+          case 'type4Uuid':
+            this.aidOrderForm.patchValue({ type4: null });
+            break;
+          case 'type5Uuid':
+            this.aidOrderForm.patchValue({ type5: null });
+            break;
+          default:
+            break;
+        }
+      });
+    } else {
+      const provider = getFromStorage("provider");
+      const deletedTimestamp = moment.utc().toISOString();
+      this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` }, uuid).subscribe(response => {
+        this.aidOrderForm.get(key).setValue(null);
+        switch (key) {
+          case 'type1Uuid':
+            this.type1.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+            this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null });
+            break;
+          case 'type2Uuid':
+            this.type2.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+            this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null });
+            break;
+          case 'type3Uuid':
+            this.type3.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type3Val: this.aidOrderForm.value.type3 });
+            this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null });
+            break;
+          case 'type4Uuid':
+            this.type4.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type4Val: this.aidOrderForm.value.type4 });
+            this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null });
+            break;
+          case 'type5Uuid':
+            this.type5.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type5Val: this.aidOrderForm.value.type5 });
+            this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null });
+            break;
+          default:
+            break;
+        }
+      });
+    }
   }
 
   getLang() {
@@ -330,12 +409,30 @@ export class AidOrderComponent implements OnInit {
     }
   }
 
+  getType1Values2(data: any) {
+    if (this.getLang() === 'ar') {
+      let arabic = data.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar );
+      return arabic.join(' ,');
+    } else {
+      return data.join(', ');
+    }
+  }
+
   getType2Values() {
     if (this.getLang() === 'ar') {
       let arabic = this.aidOrderForm?.value.type2.map((o: any) => this.freeMedicalEquipmentsList.find((e => e.en == o)).ar );
       return arabic.join(' ,');
     } else {
       return this.aidOrderForm?.value.type2.join(', ');
+    }
+  }
+
+  getType2Values2(data: any) {
+    if (this.getLang() === 'ar') {
+      let arabic = data.map((o: any) => this.freeMedicalEquipmentsList.find((e => e.en == o)).ar );
+      return arabic.join(' ,');
+    } else {
+      return data.join(', ');
     }
   }
 

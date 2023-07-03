@@ -5,7 +5,8 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
-declare var getEncounterUUID: any;
+import * as moment from 'moment';
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-diagnosis',
@@ -68,7 +69,8 @@ diagnosisForm = new FormGroup({
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    if (this.diagnosisService.isSameDoctor()) {
+    console.log(value);
+    if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptDiagnosis,
@@ -82,7 +84,8 @@ diagnosisForm = new FormGroup({
         this.diagnosisList = [];
         let obj = {
           uuid : resp.uuid,
-          value: json.value
+          value: json.value,
+          creator: { uuid: getFromStorage("user").uuid }
         }
         this.diagnosis.push(this.diagnosisService.getData(obj));
       });
@@ -107,16 +110,37 @@ diagnosisForm = new FormGroup({
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.diagnosis[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-      .subscribe(res => {
-        this.diagnosis.splice(i, 1);
-      });
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.diagnosis[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted")
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.diagnosis.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.diagnosis[i] = {...this.diagnosis[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
     }
+    // if (this.diagnosisService.isSameDoctor()) {
+    //   const uuid = this.diagnosis[i].uuid;
+    //   this.diagnosisService.deleteObs(uuid)
+    //   .subscribe(res => {
+    //     this.diagnosis.splice(i, 1);
+    //   });
+    // }
   }
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }

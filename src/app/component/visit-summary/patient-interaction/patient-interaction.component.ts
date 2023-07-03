@@ -13,8 +13,8 @@ import {
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { TranslationService } from "src/app/services/translation.service";
 import { TranslateService } from "@ngx-translate/core";
-declare var getFromStorage: any,
-  getEncounterUUID: any;
+import * as moment from "moment";
+declare var getFromStorage: any, getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: "app-patient-interaction",
@@ -77,6 +77,7 @@ export class PatientInteractionComponent implements OnInit {
     this.getAttributes();
     this.getAdviceObs();
   }
+
   fetchVisitDetails() {
     this.visitService
       .fetchVisitDetails(this.visitId)
@@ -123,7 +124,11 @@ export class PatientInteractionComponent implements OnInit {
     this.diagnosisService
       .getObs(this.patientId, this.conceptAdvice)
       .subscribe(({ results }) => {
-        this.adviceObs = results;
+        results.forEach(obs => {
+          if (obs.value.includes('Start') && obs.encounter.visit.uuid === this.visitId) {
+            this.adviceObs.push(this.diagnosisService.getData(obs));
+          }
+        });
       });
   }
 
@@ -133,26 +138,21 @@ export class PatientInteractionComponent implements OnInit {
     const value = formValue.interaction;
     const providerDetails = getFromStorage("provider");
     this.diagnosisService.getTranslationData();
-    if (this.diagnosisService.isSameDoctor()) {
-      this.visitService.getAttribute(visitId).subscribe((response) => {
-        const result = response.results;
-        if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
-        } else {
-          const json = {
-            attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
-            value: this.getBody(value),
-          };
-          this.visitService
-            .postAttribute(visitId, json)
-            .subscribe((response1) => {
-              let obj = {
-                uuid : response1.uuid,
-                value: json.value
-              }
-             this.msg.push(this.diagnosisService.getData(obj));
-            });
-        }
+    if (this.diagnosisService.isEncounterProvider()) {
+      const json = {
+        attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
+        value: this.getBody(value),
+      };
+      this.visitService
+        .postAttribute(visitId, json)
+        .subscribe((response1) => {
+          let obj = {
+            uuid : response1.uuid,
+            value: json.value
+          }
+         this.msg.push(this.diagnosisService.getData(obj));
       });
+
       this.encounterUuid = getEncounterUUID();
       const attributes = providerDetails.attributes;
       this.doctorDetails.name = providerDetails.person.display;
@@ -194,7 +194,7 @@ export class PatientInteractionComponent implements OnInit {
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       this.visitService.deleteAttribute(this.visitId, i).subscribe(() => {
         this.msg = [];
       });
@@ -203,7 +203,7 @@ export class PatientInteractionComponent implements OnInit {
           this.diagnosisService.deleteObs(uuid).subscribe();
         });
       }
-    }  
+    }
   }
 
 
@@ -225,5 +225,5 @@ export class PatientInteractionComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 }

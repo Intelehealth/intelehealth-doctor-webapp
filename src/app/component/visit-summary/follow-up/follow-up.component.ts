@@ -7,7 +7,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import * as moment from 'moment';
 import { DateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
-declare var getEncounterUUID: any;
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-follow-up',
@@ -64,12 +64,16 @@ export class FollowUpComponent implements OnInit {
     this.dateAdapter.setLocale(this.getLang());
   }
 
+  get allowFollowUp() {
+    return this.followUp.filter((o: any) => o.comment == null).length;
+  }
+
   Submit() {
     const date = new Date();
     const form = this.followForm.value;
     const obsdate = this.datepipe.transform(form.date, 'dd-MMMM-yyyy');
     const advice = form.advice;
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptFollow,
@@ -82,7 +86,8 @@ export class FollowUpComponent implements OnInit {
         .subscribe(resp => {
           let obj = {
             uuid: resp.uuid,
-            value: json.value
+            value: json.value,
+            creator: { uuid: getFromStorage("user").uuid }
           }
           this.followUp.push(this.diagnosisService.getData(obj));
         });
@@ -90,13 +95,36 @@ export class FollowUpComponent implements OnInit {
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.followUp[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-        .subscribe(() => {
-          this.followUp.splice(i, 1);
-        });
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.followUp[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted")
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.followUp.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.followUp[i] = {...this.followUp[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
+
     }
+
+    // if (this.diagnosisService.isSameDoctor()) {
+    //   const uuid = this.followUp[i].uuid;
+    //   this.diagnosisService.deleteObs(uuid)
+    //     .subscribe(() => {
+    //       this.followUp.splice(i, 1);
+    //     });
+    // }
   }
 
   getLang() {

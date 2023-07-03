@@ -2,7 +2,7 @@
   width: 30%;
 }
 
-.mat-radio-button~.mat-radio-button {
+.mat-radio-button ~ .mat-radio-button {
   margin-left: 16px;
 }
 
@@ -15,3 +15,15 @@
     width: 60%;
   }
 }
+
+.doctor-value .strike  {
+  text-decoration: line-through;
+}
+
+.comment  {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  white-space: nowrap;
+}
+

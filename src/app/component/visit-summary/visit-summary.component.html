@@ -47,9 +47,9 @@
             <app-additional-documents></app-additional-documents>
       </mat-card>
       <br>
-      <mat-card *ngIf="!visitNotePresent">
+      <!-- <mat-card *ngIf="!visitNotePresent">
         <app-reassign-speciality [isManagerRole]="isManagerRole"></app-reassign-speciality>
-      </mat-card>
+      </mat-card> -->
       <br>
       <mat-card [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
             <small style="color: red">
@@ -67,9 +67,9 @@
       <br>
 
 
-      <div class="text-center" *ngIf="!show">
+      <div class="text-center" *ngIf="!show && !isSameSpecialityDoctorViewingVisit">
             <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"
-            [disabled]="visitSpeciality != userSpeciality || isManagerRole">{{'Start Visit Note' | translate}}</button>
+            [disabled]="(visitSpeciality != userSpeciality && visitSpecialitySecondary != userSpeciality ) || isManagerRole">{{'Start Visit Note' | translate}}</button>
       </div>
 
       <br>
@@ -111,7 +111,9 @@
               <app-discharge-order [isManagerRole]="isManagerRole"></app-discharge-order>
             </mat-card>
             <br>
-
+            <mat-card *ngIf="!(userSpeciality == 'Admin' && visitSpecialitySecondary == 'Admin')">
+              <app-reassign-speciality [isManagerRole]="isManagerRole" [providerSpeciality]="userSpeciality" [visitSpeciality]="visitSpeciality" [visitSpecialitySecondary]="visitSpecialitySecondary"></app-reassign-speciality>
+            </mat-card>
             <br>
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">
@@ -124,7 +126,7 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                  [disabled]="visitSpeciality != userSpeciality || visitCompletePresent || isManagerRole">{{ 'Sign and Submit' | translate }}</button>
+                  [disabled]="!isVisitNoteEncProvider || visitCompletePresent || isManagerRole">{{ 'Sign and Submit' | translate }}</button>
             </div>
       </div>
 </div>

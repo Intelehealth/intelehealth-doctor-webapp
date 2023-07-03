@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-declare var getEncounterUUID: any;
+import * as moment from 'moment';
+declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
   selector: 'app-additional-comment',
@@ -58,7 +59,7 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     const date = new Date();
     const form = this.commentForm.value;
     const value = form.comment;
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptComment,
@@ -69,19 +70,41 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.comment.push({uuid: resp.uuid, value: value});
+        this.comment.push({uuid: resp.uuid, value: value, creator: { uuid: getFromStorage("user").uuid }});
       });
     }
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.comment[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-      .subscribe(() => {
-        this.comment.splice(i, 1);
-      });
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.comment[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted");
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.comment.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.comment[i] = {...this.comment[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
     }
+
+    // if (this.diagnosisService.isSameDoctor()) {
+    //   const uuid = this.comment[i].uuid;
+    //   this.diagnosisService.deleteObs(uuid)
+    //   .subscribe(() => {
+    //     this.comment.splice(i, 1);
+    //   });
+    // }
   }
 
   getLang() {

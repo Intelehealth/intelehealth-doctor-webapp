@@ -40,6 +40,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   limit = 100;
   allVisitsLoaded = false;
   systemAccess:boolean = false;
+  provider: any;
 
   constructor(
     private sessionService: SessionService,
@@ -60,6 +61,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     if (userDetails) {
       this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
         saveToStorage("provider", provider.results[0]);
+        this.provider = provider.results[0];
         const attributes = provider.results[0].attributes;
         attributes.forEach((element) => {
           // Doctor Specialization
@@ -141,14 +143,27 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.allVisits.forEach((active) => {
           if (active?.location?.uuid == this.doctorLocation) {
             if (active.encounters.length > 0) {
+              let isVnEncProvider = false;
+              for (let i = 0; i < active.encounters.length; i++) {
+                if (active.encounters[i].encounterType.display == "Visit Note") {
+                  for (let j = 0; j < active.encounters[i].encounterProviders.length; j++) {
+                    if (active.encounters[i].encounterProviders[j].provider.uuid == this.provider.uuid) {
+                      isVnEncProvider = true;
+                      break;
+                    }
+                  }
+                  break;
+                }
+              }
               if(this.systemAccess) {
+                this.visitCategory(active);
+              } else if (isVnEncProvider) {
                 this.visitCategory(active);
               } else if (active.attributes.length) {
                 const attributes = active.attributes;
                 const speRequired = attributes.filter(
                   (attr) =>
-                    attr.attributeType.uuid ===
-                    "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d"
+                    attr.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d" || attr.attributeType.uuid === "8100ec1a-063b-47d5-9781-224d835fc688"
                 );
                 if (speRequired.length) {
                   speRequired.forEach((spe, index) => {

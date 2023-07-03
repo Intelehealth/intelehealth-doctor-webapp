@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-declare var getEncounterUUID: any;
+declare var getEncounterUUID: any, getFromStorage: any;
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-discharge-order',
@@ -59,7 +60,7 @@ export class DischargeOrderComponent implements OnInit {
     const date = new Date();
     const form = this.dischargeOrderForm.value;
     const value = form.dischargeOrder;
-    if (this.diagnosisService.isSameDoctor()) {
+    if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
         concept: this.conceptDischargeOrder,
@@ -70,18 +71,32 @@ export class DischargeOrderComponent implements OnInit {
       };
       this.service.postObs(json)
         .subscribe(resp => {
-          this.dischargeOrders.push({ uuid: resp.uuid, value: value });
+          this.dischargeOrders.push({ uuid: resp.uuid, value: value, creator: { uuid: getFromStorage("user").uuid } });
         });
     }
   }
 
   delete(i) {
-    if (this.diagnosisService.isSameDoctor()) {
-      const uuid = this.dischargeOrders[i].uuid;
-      this.diagnosisService.deleteObs(uuid)
-        .subscribe(() => {
-          this.dischargeOrders.splice(i, 1);
-        });
+    if (this.diagnosisService.isEncounterProvider()) {
+      const observation = this.dischargeOrders[i];
+      const uuid = observation.uuid;
+      if (observation.comment) {
+        console.log("Can't delete, already deleted")
+      } else {
+        if (observation.creator.uuid == getFromStorage("user").uuid) {
+          this.diagnosisService.deleteObs(uuid)
+          .subscribe(() => {
+            this.dischargeOrders.splice(i, 1);
+          });
+        } else {
+          const provider = getFromStorage("provider");
+          const deletedTimestamp = moment.utc().toISOString();
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          .subscribe(() => {
+            this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+          });
+        }
+      }
     }
   }
 

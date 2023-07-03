@@ -1,6 +1,6 @@
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -10,16 +10,14 @@ import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
-declare var getFromStorage: any,
-  saveToStorage: any,
-  getEncounterProviderUUID: any;
+declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
   selector: "app-visit-summary",
   templateUrl: "./visit-summary.component.html",
   styleUrls: ["./visit-summary.component.css"],
 })
-export class VisitSummaryComponent implements OnInit {
+export class VisitSummaryComponent implements OnInit, OnDestroy {
   show = false;
   text: string;
   font: string;
@@ -35,7 +33,10 @@ export class VisitSummaryComponent implements OnInit {
     : "../../../assets/svgs/video-w.svg";
   isManagerRole = false;
   visitSpeciality: any;
+  visitSpecialitySecondary : any;
   userSpeciality: any;
+  isVisitNoteEncProvider = false;
+  isSameSpecialityDoctorViewingVisit = false;
 
   constructor(
     private service: EncounterService,
@@ -64,13 +65,27 @@ export class VisitSummaryComponent implements OnInit {
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
         this.visitSpeciality = visitDetails.attributes.find(a => a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
+        this.visitSpecialitySecondary = visitDetails.attributes.find(a => a.attributeType.uuid == "8100ec1a-063b-47d5-9781-224d835fc688")?.value;
         const providerDetails = getFromStorage("provider");
         this.userSpeciality = providerDetails.attributes.find(a => a.attributeType.display == "specialization").value;
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;
-            this.show = true;
+            for (let j = 0; j < visit.encounterProviders.length; j++) {
+              if (visit.encounterProviders[j].provider.uuid == providerDetails.uuid) {
+                this.isVisitNoteEncProvider = true;
+              }
+              for (let x = 0; x < visit.encounterProviders[j].provider.attributes.length; x++) {
+                if (visit.encounterProviders[j].provider.attributes[x].value == this.userSpeciality) {
+                  this.isSameSpecialityDoctorViewingVisit = true;
+                  break;
+                }
+              }
+            }
+            if (this.isVisitNoteEncProvider) {
+              this.show = true;
+            }
           }
           if (visit.display.match("Visit Complete") !== null) {
             this.visitCompletePresent = true;
@@ -101,7 +116,7 @@ export class VisitSummaryComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   } 
+   }
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
@@ -132,6 +147,7 @@ export class VisitSummaryComponent implements OnInit {
                 saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
               });
             this.show = true;
+            this.isVisitNoteEncProvider = true;
             this.translationService.getTranslation(`Visit Note Created`);
             attributes.forEach((element) => {
               if (
@@ -161,6 +177,23 @@ export class VisitSummaryComponent implements OnInit {
       } else {
         this.authService.logout();
       }
+    } else {
+      const encounterDetails = getFromStorage("visitNoteProvider");
+      const providerDetails = getFromStorage("provider");
+      if (encounterDetails && providerDetails) {
+        const providerUuid = providerDetails.uuid;
+        const encounterUuid = encounterDetails.uuid;
+
+        const json = {
+          provider: providerUuid,
+          encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03"
+        };
+        this.service.postEncounterProvider(encounterUuid, json).subscribe((res: any) => {
+          window.location.reload();
+          this.isVisitNoteEncProvider = true;
+          this.show = true;
+        });
+      }
     }
   }
 
@@ -172,7 +205,7 @@ export class VisitSummaryComponent implements OnInit {
       this.doctorDetails = providerDetails;
       this.getDoctorValue();
       const providerUuid = providerDetails.uuid;
-      if (providerUuid === getEncounterProviderUUID()) {
+      if (this.isVisitNoteEncProvider) {
         this.service.signRequest(providerUuid).subscribe((res) => {
           if (res.results.length) {
             res.results.forEach((element) => {
@@ -277,5 +310,9 @@ export class VisitSummaryComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    deleteFromStorage("visitNoteProvider");
   }
 }

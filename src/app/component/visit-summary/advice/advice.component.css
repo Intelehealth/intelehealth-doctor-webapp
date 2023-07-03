@@ -3,5 +3,16 @@
 } */
 
 .dropdown-item {
-    white-space: pre-wrap;
-  }
+  white-space: pre-wrap;
+}
+
+.doctor-value .strike  {
+  text-decoration: line-through;
+}
+
+.comment  {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  white-space: nowrap;
+}

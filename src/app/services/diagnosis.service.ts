@@ -6,8 +6,7 @@ import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from './translation.service';
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any;
+declare var getEncounterProviderUUID: any,  getFromStorage: any, getVisitNoteEncounter: any;
 
 
 @Injectable({
@@ -34,9 +33,14 @@ export class DiagnosisService {
     return this.http.delete(url);
   }
 
+  updateObs(uuid, data): Observable<any> {
+    const url = `${this.baseURL}/obs/${uuid}`;
+    return this.http.post(url, data);
+  }
+
   getObs(patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,encounter:(visit:(uuid)))&concept=${conceptId}`;
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,comment,creator:(uuid),encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 
@@ -70,6 +74,23 @@ export class DiagnosisService {
     } else {
       this.translationService.getTranslation("Another doctor is viewing this case");
     }
+  }
+
+  isEncounterProvider() {
+    let flag = false;
+    const providerDetails = getFromStorage("provider");
+    const providerUuid = providerDetails.uuid;
+    const vnEnc = getVisitNoteEncounter();
+    for (let i = 0; i < vnEnc.encounterProviders.length; i++) {
+      if (providerDetails && providerUuid === vnEnc.encounterProviders[i].provider.uuid) {
+        flag = true;
+        break;
+      }
+    }
+    if (!flag) {
+      this.translationService.getTranslation("Another doctor is viewing this case");
+    }
+    return flag;
   }
 
 

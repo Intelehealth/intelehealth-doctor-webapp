@@ -18,6 +18,10 @@ const getEncounterUUID = () => {
     return getFromStorage('visitNoteProvider').uuid;
 }
 
+const getVisitNoteEncounter = () => {
+  return getFromStorage('visitNoteProvider');
+}
+
 const CheckNewVisit = (newData, oldData) => {
     const newVisit = [];
     newData.forEach((data,index) => {
@@ -29,5 +33,5 @@ const CheckNewVisit = (newData, oldData) => {
 }
 
 const CheckVisitNote = (visit, visitNoteList) => {
-    return visitNoteList.filter(vN => vN.uuid === visit.data.uuid)   
+    return visitNoteList.filter(vN => vN.uuid === visit.data.uuid)
 }

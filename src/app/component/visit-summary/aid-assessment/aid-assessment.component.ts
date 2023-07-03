@@ -157,7 +157,7 @@ export class AidAssessmentComponent implements OnInit {
     },
     {
       uuid: 'ae9e689e-8e23-4edb-a2fc-a9b9a3760922',
-      name: '	Financial aid',
+      name: 'Financial aid',
       category: 'Income Resources'
     },
     {
@@ -443,7 +443,7 @@ export class AidAssessmentComponent implements OnInit {
     },
     {
       uuid: 'ae9e689e-8e23-4edb-a2fc-a9b9a3760922',
-      name: '	Financial aid',
+      name: 'Financial aid',
       category: 'Income Resources'
     },
     {
@@ -516,7 +516,7 @@ export class AidAssessmentComponent implements OnInit {
     },
     {
       uuid: '7dc958cc-e99c-4eeb-b716-eefeae229eff',
-      name: '	The number of elderly people who miss the breadwinner',
+      name: 'The number of elderly people who miss the breadwinner',
       value: ''
     },
     {
@@ -531,7 +531,7 @@ export class AidAssessmentComponent implements OnInit {
     },
     {
       uuid: '3a06f29b-5971-4c11-b48f-5d6a47f1cd7c',
-      name: 'The area of ​​the land that is currently cultivated (dunum)',
+      name: 'The area of the land that is currently cultivated (dunum)',
       value: ''
     },
     {
