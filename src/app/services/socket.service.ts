@@ -12,6 +12,8 @@ import { environment } from "../../environments/environment";
 // import { VcComponent } from "../component/vc/vc.component";
 // import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
+import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
+import { WebrtcService } from "./webrtc.service";
 
 @Injectable({
   providedIn: "root"
@@ -32,7 +34,8 @@ export class SocketService {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    private visitSvc: VisitService
+    private visitSvc: VisitService,
+    private webrtcSvc: WebrtcService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -103,15 +106,18 @@ export class SocketService {
 
   callRing = new Audio("assets/phone.mp3");
   public openVcOverlay() {
-    // this.dialog.open(VcallOverlayComponent, {
-    //   disableClose: false,
-    //   hasBackdrop: true,
-    //   id: "vcOverlay",
-    // });
-    // this.callRing.play();
-    // setTimeout(() => {
-    //   this.closeVcOverlay();
-    // }, 10000);
+    this.dialog.open(VcallOverlayComponent, {
+      disableClose: false,
+      hasBackdrop: true,
+      id: "vcOverlay",
+    });
+    this.callRing.play();
+    setTimeout(() => {
+      console.log('this.webrtcSvc.callConnected: ', this.webrtcSvc.callConnected);
+      if (!this.webrtcSvc.callConnected) {
+        this.closeVcOverlay();
+      }
+    }, 10000);
   }
 
   public closeVcOverlay() {
