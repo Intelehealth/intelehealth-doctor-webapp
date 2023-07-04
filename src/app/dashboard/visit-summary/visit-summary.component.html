@@ -536,7 +536,7 @@
                             class="list-item-content"
                             [class.text-muted]="!phi.value"
                           >
-                            {{ phi.value ? phi.value : ("None"|translate) }}
+                            {{ phi.value ? (phi.value|translate) : ("None"|translate) }}
                           </div>
                         </div>
                       </li>

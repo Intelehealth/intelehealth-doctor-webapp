@@ -468,6 +468,8 @@
   "Child":"Ребенок",
   "Age should be greater than or equal to 18":"Возраст должен быть больше или равен 18",
   "Are you sure to re-assign this visit to another doctor?":"Вы уверены, что переназначите этот визит к другому врачу?",
+  "Priority":"приоритетный",
+  "Question not answered.":"Вопрос без ответа.",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
