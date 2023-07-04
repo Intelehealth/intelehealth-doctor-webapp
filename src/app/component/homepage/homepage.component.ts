@@ -40,7 +40,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
   setSpiner = true;
   specialization;
   hostpitalType;
-  systemAccess:boolean = false;
+  systemAccess: boolean = false;
 
   constructor(
     private sessionService: SessionService,
@@ -48,7 +48,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     private service: VisitService,
     private socket: SocketService,
     private translationService: TranslationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (getFromStorage("visitNoteProvider")) {
@@ -62,27 +62,28 @@ export class HomepageComponent implements OnInit, OnDestroy {
         attributes.forEach((element) => {
           if (
             element.attributeType.uuid ===
-              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
             !element.voided
           ) {
             this.specialization = element.value;
           }
           if (
             element.attributeType.uuid ===
-              "bdb290d6-97e8-45df-83e6-cadcaf5dcd0f" &&
+            "bdb290d6-97e8-45df-83e6-cadcaf5dcd0f" &&
             !element.voided
           ) {
             this.hostpitalType = element.value;
           }
         });
         userDetails["roles"].forEach((role) => {
-          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" || 
-              role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
-              role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
+          if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||
+            role.uuid === "f99470e3-82a9-43cc-b3ee-e66c249f320a" ||
+            role.uuid === "04902b9c-4acd-4fbf-ab37-6d9a81fd98fe") {
             this.systemAccess = true;
           }
         });
         this.getVisits();
+        this.getCompletedVisits();
       });
     } else {
       this.authService.logout();
@@ -105,14 +106,14 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   getVisits() {
-    this.service.getVisits().subscribe(
+    this.service.getVisits(false).subscribe(
       (response) => {
         const visits = response.results;
         visits.forEach((active) => {
           if (active.encounters.length > 0) {
-            if(this.systemAccess) {
+            if (this.systemAccess) {
               this.visitCategory(active);
-            }else if (active.attributes.length) {
+            } else if (active.attributes.length) {
               const attributes = active.attributes;
               const hospitalType = attributes.filter(
                 (attr) =>
@@ -128,9 +129,9 @@ export class HomepageComponent implements OnInit, OnDestroy {
                 speRequired.forEach((spe, index) => {
                   if (spe.value === this.specialization && hospitalType.length === 0) {
                     if ((index === 0) || (index === 1 && spe[0] !== spe[1])) {
-                        this.visitCategory(active);
+                      this.visitCategory(active);
                     }
-                  } else if(spe.value === this.specialization &&  hospitalType.length && this.hostpitalType === hospitalType[0]?.value) {
+                  } else if (spe.value === this.specialization && hospitalType.length && this.hostpitalType === hospitalType[0]?.value) {
                     this.visitCategory(active);
                   }
                 });
@@ -138,6 +139,44 @@ export class HomepageComponent implements OnInit, OnDestroy {
             }
           }
           this.value = {};
+        });
+        this.setSpiner = false;
+      },
+      (err) => {
+        if (err.error instanceof Error) {
+          this.translationService.getTranslation("Client-side error");
+        } else {
+          this.translationService.getTranslation("Server-side error");
+        }
+      }
+    );
+  }
+
+  getCompletedVisits() {
+    this.service.getVisits(true).subscribe(
+      (response) => {
+        const visits = response.results;
+        visits.forEach((active) => {
+          if (active.encounters.length > 0) {
+            const { encounters = [] } = active;
+            let encounter;
+            if ((encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
+              (encounter = this.checkVisit(encounters, "Visit Complete"))) {
+              let values = this.assignValueToProperty(active, encounter);
+              let found = this.completedVisit.find(c => c.id === values.id);
+              if (!found) {
+                this.completedVisit.push(values);
+                this.completeVisitNo += 1;
+              }
+            } else if (this.checkVisit(encounters, "Remote Prescription")) {
+            const values = this.assignValueToProperty(active, encounter);
+            let found = this.remoteVisits.find(c => c.id === values.id);
+            if (!found) {
+              this.remoteVisits.push(values);
+              this.remotePatientNo += 1;
+            }
+          }
+        }
         });
         this.setSpiner = false;
       },
@@ -159,34 +198,28 @@ export class HomepageComponent implements OnInit, OnDestroy {
     const { encounters = [] } = active;
     let encounter;
     if ((encounter = this.checkVisit(encounters, "Patient Exit Survey")) ||
-        (encounter =this.checkVisit(encounters, "Visit Complete")) ||
-        active.stopDatetime != null) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.completedVisit.push(values);
-      this.completeVisitNo += 1;
-    }  else if (this.checkVisit(encounters, "Remote Prescription") && 
+      (encounter = this.checkVisit(encounters, "Visit Complete"))) {
+    } else if (this.checkVisit(encounters, "Remote Prescription") &&
       active.stopDatetime == null) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.remoteVisits.push(values);
-      this.remotePatientNo += 1;
-    } else if (this.checkVisit(encounters, "Visit Note")  && 
+    } else if (this.checkVisit(encounters, "Visit Note") &&
       active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
       this.progressVisit.push(values);
       this.visitNoteNo += 1;
-    } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+    } else if ((encounter = this.checkVisit(encounters, "Flagged")) &&
+      active.stopDatetime == null) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active,encounter);
+        const values = this.assignValueToProperty(active, encounter);
         this.flagVisit.push(values);
         this.flagPatientNo += 1;
         GlobalConstants.visits.push(active);
       }
     } else if (
       (encounter = this.checkVisit(encounters, "ADULTINITIAL")) ||
-      (encounter = this.checkVisit(encounters, "Vitals"))&&
+      (encounter = this.checkVisit(encounters, "Vitals")) &&
       active.stopDatetime == null
     ) {
-      const values = this.assignValueToProperty(active,encounter);
+      const values = this.assignValueToProperty(active, encounter);
       this.waitingVisit.push(values);
       this.activePatient += 1;
       GlobalConstants.visits.push(active);
@@ -194,24 +227,25 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   assignValueToProperty(active, encounter) {
+    let value: any = {};
     if (!encounter) encounter = active.encounters[0];
-    this.value.visitId = active.uuid;
-    this.value.patientId = active.patient.uuid;
-    this.value.id = active.patient.identifiers[0].identifier;
-    this.value.name = active.patient.person.display;
-    this.value.gender = active.patient.person.gender;
-    this.value.age = active.patient.person.birthdate;
-    this.value.location = active.location.display;
-    this.value.status =
-    active.stopDatetime != null
-      ? "Visit Complete"
-      : encounter?.encounterType.display;
-    this.value.provider =
+    value.visitId = active.uuid;
+    value.patientId = active.patient.uuid;
+    value.id = active.patient.identifiers[0].identifier;
+    value.name = active.patient.person.display;
+    value.gender = active.patient.person.gender;
+    value.age = active.patient.person.birthdate;
+    value.location = active.location.display;
+    value.status =
+      active.stopDatetime != null
+        ? "Visit Complete"
+        : encounter?.encounterType.display;
+    value.provider =
       active.encounters[0].encounterProviders[0].provider.display.split(
         "- "
       )[1];
-    this.value.lastSeen = active.encounters[0].encounterDatetime;
-    return this.value;
+    value.lastSeen = active.encounters[0].encounterDatetime;
+    return value;
   }
 
   playNotify() {

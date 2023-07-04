@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, MatSortable} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { VisitService } from 'src/app/services/visit.service';
 
@@ -20,6 +20,7 @@ export class TablesComponent implements OnInit {
   ngOnInit() {
     this.dataSource = new MatTableDataSource(this.data);
     this.dataSource.paginator = this.paginator;
+    this.sort.sort(({ id: 'lastSeen', start: 'desc'}) as MatSortable);
     this.dataSource.sort = this.sort;
   }
 

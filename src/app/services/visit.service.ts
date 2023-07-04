@@ -17,9 +17,9 @@ export class VisitService {
     private datePipe: DatePipe,
     private translate: TranslateService) {}
 
-  getVisits(): Observable<any> {
+  getVisits(flag:boolean): Observable<any> {
     // tslint:disable-next-line:max-line-length
-    const url = `${this.baseURL}/visit?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)`;
+    const url = `${this.baseURL}/visit?includeInactive=${flag}&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),stopDatetime,attributes)`;
     return this.http.get(url);
   }
 
