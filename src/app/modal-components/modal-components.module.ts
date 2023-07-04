@@ -12,28 +12,16 @@ import { PasswordResetSuccessComponent } from './password-reset-success/password
 import { HelpMenuComponent } from './help-menu/help-menu.component';
 import { SelectLanguageComponent } from './select-language/select-language.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { SharePrescriptionComponent } from './share-prescription/share-prescription.component';
-import { SharePrescriptionSuccessComponent } from './share-prescription-success/share-prescription-success.component';
-import { SharePrescriptionErrorComponent } from './share-prescription-error/share-prescription-error.component';
-import { ViewVisitSummaryComponent } from './view-visit-summary/view-visit-summary.component';
-import { ViewVisitPrescriptionComponent } from './view-visit-prescription/view-visit-prescription.component';
 import { ChatBoxComponent } from './chat-box/chat-box.component';
 import { MomentModule } from 'ngx-moment';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { SearchedPatientsComponent } from './searched-patients/searched-patients.component';
 import { MatListModule } from '@angular/material/list';
-import { AppointmentDetailComponent } from './appointment-detail/appointment-detail.component';
-import { RescheduleAppointmentComponent } from './reschedule-appointment/reschedule-appointment.component';
-import { RescheduleAppointmentConfirmComponent } from './reschedule-appointment-confirm/reschedule-appointment-confirm.component';
-import { CancelAppointmentConfirmComponent } from './cancel-appointment-confirm/cancel-appointment-confirm.component';
-import { AppointmentDetailMonthComponent } from './appointment-detail-month/appointment-detail-month.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ImagesPreviewComponent } from './images-preview/images-preview.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SharedModule } from '../shared.module';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { ConfirmDayOffComponent } from './confirm-day-off/confirm-day-off.component';
-import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.component';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-id.component';
@@ -50,22 +38,10 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
         HelpMenuComponent,
         SelectLanguageComponent,
         ConfirmDialogComponent,
-        SharePrescriptionComponent,
-        SharePrescriptionSuccessComponent,
-        SharePrescriptionErrorComponent,
-        ViewVisitSummaryComponent,
-        ViewVisitPrescriptionComponent,
         ChatBoxComponent,
         VideoCallComponent,
         SearchedPatientsComponent,
-        AppointmentDetailComponent,
-        RescheduleAppointmentComponent,
-        RescheduleAppointmentConfirmComponent,
-        CancelAppointmentConfirmComponent,
-        AppointmentDetailMonthComponent,
         ImagesPreviewComponent,
-        ConfirmDayOffComponent,
-        ConfirmHoursOffComponent,
         PwaPromptComponent,
         ConfirmOpenmrsIdComponent,
         AddPlanAssessmentComponent
@@ -88,6 +64,6 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
         MatDividerModule,
         NgbTypeaheadModule
     ],
-    exports: [ViewVisitPrescriptionComponent]
+    exports: []
 })
 export class ModalComponentsModule { }

@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainContainerComponent } from './main-container/main-container.component';
 import { RouteAuthGuard } from './core/guards/route-auth.guard';
 import { NgxPermissionsGuard } from 'ngx-permissions';
-// import { TestChatComponent } from './component/test-chat/test-chat.component';
 
 const routes: Routes = [
   {
@@ -16,14 +15,6 @@ const routes: Routes = [
     path: 'session',
     loadChildren: () => import('./session/session.module').then(m => m.SessionModule)
   },
-  // {
-  //   path: 'test/chat',
-  //   component: TestChatComponent
-  // },
-  // {
-  //   path: 'i/:hash',
-  //   loadChildren: () => import('./prescription-download/prescription-download.module').then(m => m.PrescriptionDownloadModule),
-  // },
   {
     path: '',
     component: MainContainerComponent,
@@ -43,41 +34,6 @@ const routes: Routes = [
         //   }
         // }
       },
-      // {
-      //   path: 'messages',
-      //   data: {
-      //     breadcrumb: 'Messages'
-      //   },
-      //   loadChildren: () => import('./messages/messages.module').then(m => m.MessagesModule)
-      // },
-      // {
-      //   path: 'calendar',
-      //   data: {
-      //     breadcrumb: 'Calendar'
-      //   },
-      //   loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
-      // },
-      // {
-      //   path: 'appointments',
-      //   data: {
-      //     breadcrumb: 'Appointments'
-      //   },
-      //   loadChildren: () => import('./appointments/appointments.module').then(m => m.AppointmentsModule)
-      // },
-      // {
-      //   path: 'prescription',
-      //   data: {
-      //     breadcrumb: 'Prescription'
-      //   },
-      //   loadChildren: () => import('./prescription/prescription.module').then(m => m.PrescriptionModule)
-      // },
-      // {
-      //   path: 'help',
-      //   data: {
-      //     breadcrumb: 'Help & Support'
-      //   },
-      //   loadChildren: () => import('./help-and-support/help-and-support.module').then(m => m.HelpAndSupportModule)
-      // },
       {
         path: 'admin',
         loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
