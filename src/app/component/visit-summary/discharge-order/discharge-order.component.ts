@@ -83,19 +83,19 @@ export class DischargeOrderComponent implements OnInit {
       if (observation.comment) {
         console.log("Can't delete, already deleted")
       } else {
-        if (observation.creator.uuid == getFromStorage("user").uuid) {
-          this.diagnosisService.deleteObs(uuid)
-          .subscribe(() => {
-            this.dischargeOrders.splice(i, 1);
-          });
-        } else {
+        // if (observation.creator.uuid == getFromStorage("user").uuid) {
+        //   this.diagnosisService.deleteObs(uuid)
+        //   .subscribe(() => {
+        //     this.dischargeOrders.splice(i, 1);
+        //   });
+        // } else {
           const provider = getFromStorage("provider");
           const deletedTimestamp = moment.utc().toISOString();
           this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
           .subscribe(() => {
             this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
           });
-        }
+        // }
       }
     }
   }

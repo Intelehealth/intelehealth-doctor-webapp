@@ -339,31 +339,31 @@ export class AidOrderComponent implements OnInit {
   }
 
   deleteObs(uuid: string, key: string, creatorUuid: string) {
-    if (creatorUuid == getFromStorage('user').uuid) {
-      this.encounterService.deleteObs(uuid).subscribe(response => {
-        // console.log(response);
-        this.aidOrderForm.get(key).setValue(null);
-        switch (key) {
-          case 'type1Uuid':
-            this.aidOrderForm.patchValue({ type1: null, type1Other: null });
-            break;
-          case 'type2Uuid':
-            this.aidOrderForm.patchValue({ type2: null, type2Other: null });
-            break;
-          case 'type3Uuid':
-            this.aidOrderForm.patchValue({ type3: null });
-            break;
-          case 'type4Uuid':
-            this.aidOrderForm.patchValue({ type4: null });
-            break;
-          case 'type5Uuid':
-            this.aidOrderForm.patchValue({ type5: null });
-            break;
-          default:
-            break;
-        }
-      });
-    } else {
+    // if (creatorUuid == getFromStorage('user').uuid) {
+    //   this.encounterService.deleteObs(uuid).subscribe(response => {
+    //     // console.log(response);
+    //     this.aidOrderForm.get(key).setValue(null);
+    //     switch (key) {
+    //       case 'type1Uuid':
+    //         this.aidOrderForm.patchValue({ type1: null, type1Other: null });
+    //         break;
+    //       case 'type2Uuid':
+    //         this.aidOrderForm.patchValue({ type2: null, type2Other: null });
+    //         break;
+    //       case 'type3Uuid':
+    //         this.aidOrderForm.patchValue({ type3: null });
+    //         break;
+    //       case 'type4Uuid':
+    //         this.aidOrderForm.patchValue({ type4: null });
+    //         break;
+    //       case 'type5Uuid':
+    //         this.aidOrderForm.patchValue({ type5: null });
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   });
+    // } else {
       const provider = getFromStorage("provider");
       const deletedTimestamp = moment.utc().toISOString();
       this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` }, uuid).subscribe(response => {
@@ -393,7 +393,7 @@ export class AidOrderComponent implements OnInit {
             break;
         }
       });
-    }
+    // }
   }
 
   getLang() {

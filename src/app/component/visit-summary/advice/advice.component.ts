@@ -113,19 +113,19 @@ export class AdviceComponent implements OnInit {
       if (observation.comment) {
         console.log("Can't delete, already deleted")
       } else {
-        if (observation.creator.uuid == getFromStorage("user").uuid) {
-          this.diagnosisService.deleteObs(uuid)
-          .subscribe(() => {
-            this.advice.splice(i, 1);
-          });
-        } else {
+        // if (observation.creator.uuid == getFromStorage("user").uuid) {
+        //   this.diagnosisService.deleteObs(uuid)
+        //   .subscribe(() => {
+        //     this.advice.splice(i, 1);
+        //   });
+        // } else {
           const provider = getFromStorage("provider");
           const deletedTimestamp = moment.utc().toISOString();
           this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
           .subscribe(() => {
             this.advice[i] = {...this.advice[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
           });
-        }
+        // }
       }
     }
     // if (this.diagnosisService.isSameDoctor()) {
