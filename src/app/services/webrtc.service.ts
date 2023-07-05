@@ -206,6 +206,7 @@ export class WebrtcService {
     this.room.disconnect(true);
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
+    this.callConnected = false;
   }
 
   get remoteContainer() {

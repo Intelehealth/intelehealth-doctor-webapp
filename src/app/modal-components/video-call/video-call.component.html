@@ -26,7 +26,10 @@
           <div class="text-center text">Call is connecting...</div>
         </div>
         <div
-          [class.d-none]="!callConnected && connecting"
+          [class.d-none]="
+            (!callConnected && initiator === 'dr') ||
+            (!callConnected && initiator === 'hw' && connecting)
+          "
           class="main-container"
         >
           <div class="remote-con" [class.minimized]="_minimized">

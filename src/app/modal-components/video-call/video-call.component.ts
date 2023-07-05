@@ -88,7 +88,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
-
     if (this.initiator === 'hw') {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;
@@ -169,7 +168,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   set callConnected(flag) {
     console.log('flag: ', flag);
     this.webrtcSvc.callConnected = flag;
-    // this.connecting = false;
+    this.connecting = false;
   }
 
   get localAudioIcon() {
@@ -479,7 +478,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   sendAnswer() {
-
     this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
       console.log(error);
     });
@@ -492,13 +490,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
+    this.close();
     this.webrtcSvc.token = '';
+    this.webrtcSvc.handleDisconnect();
     this.socketSvc.emitEvent("bye", {
       nurseId: this.nurseId,
       webapp: true
     });
-
-    this.stop();
   }
 
   sendMessage2(data: any) {
