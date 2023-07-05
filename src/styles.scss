@@ -1,11 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 $breadcrumb-divider: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSIxNCIgdmlld0JveD0iMCAwIDggMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEzTDcgN0wwLjk5OTk5OSAxIiBzdHJva2U9IiM3RjdCOTIiIHN0cm9rZS13aWR0aD0iMS4zIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==');
-@import "~@ng-select/ng-select/themes/default.theme.css";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~angular-calendar/css/angular-calendar.css";
-@import "~pretty-checkbox/src/pretty-checkbox.scss";
+@import "@ng-select/ng-select/themes/default.theme.css";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import "angular-calendar/css/angular-calendar.css";
+@import "pretty-checkbox/src/pretty-checkbox.scss";
 /* Importing Bootstrap SCSS file. */
-@import '~bootstrap/scss/bootstrap.scss';
+@import 'bootstrap/scss/bootstrap.scss';
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 @font-face {

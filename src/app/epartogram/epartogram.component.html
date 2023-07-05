@@ -813,7 +813,7 @@
                   <td class="bg-secondary"></td>
                   <ng-container *ngFor="let item of parameters[17].stage1values;">
                     <td colspan="2">
-                      <div class="value-item" *ngIf="item == '10'">
+                      <div class="value-item" *ngIf="item?.value == '10'">
                         X
                       </div>
                     </td>

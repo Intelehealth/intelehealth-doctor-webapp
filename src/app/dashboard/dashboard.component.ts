@@ -160,6 +160,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         new Date(b.encounterDatetime).getTime()
       );
     });
+
     visit.score = this.setScore(encounters);
     visit.in_labour_duration = this.getCreatedAt(visit.startDatetime);
     visit.stage = encounters.filter((e: any) => e.display.includes('Stage2')).length ? 2 : 1;
@@ -261,7 +262,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    score = Object.values(statusData).filter(a => a).pop();
+    score = Object.values(stageData).pop();
+    // score = Object.values(statusData).filter(a => a).pop();
     if (!score) score = 0;
     return score;
   }

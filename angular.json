@@ -20,7 +20,11 @@
             "allowedCommonJsDependencies": [
               "socket.io-client",
               "debug",
-              "socket.io-parser"
+              "socket.io-parser",
+              "pdfjs-dist/build/pdf",
+              "pdfjs-dist/web/pdf_viewer",
+              "intro.js/intro.js",
+              "moment"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",
@@ -55,7 +59,12 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./node_modules"
+              ]
+            }
           },
           "configurations": {
             "production": {
