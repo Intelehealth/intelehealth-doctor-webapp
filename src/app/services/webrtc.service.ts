@@ -88,7 +88,7 @@ export class WebrtcService {
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: VideoPresets.h720.resolution,
+        resolution: VideoPresets.h180.resolution,
       },
       audioCaptureDefaults: {
         echoCancellation: true,
@@ -122,8 +122,8 @@ export class WebrtcService {
 
   clearAudioVideo() {
     try {
-      this.localContainer.innerHTML = '';
-      this.remoteContainer.innerHTML = '';
+      if (this.localContainer) this.localContainer.innerHTML = '';
+      if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
       console.log('error: ', error);
     }

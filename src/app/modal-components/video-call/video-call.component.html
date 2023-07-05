@@ -18,7 +18,17 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col p-0">
-        <div [class.d-none]="!callConnected" class="main-container">
+        <div
+          *ngIf="initiator === 'hw'"
+          [class.d-none]="!connecting"
+          class="main-container connecting"
+        >
+          <div class="text-center text">Call is connecting...</div>
+        </div>
+        <div
+          [class.d-none]="!callConnected && connecting"
+          class="main-container"
+        >
           <div class="remote-con" [class.minimized]="_minimized">
             <div #remoteVideo class="remote-container"></div>
             <div
@@ -107,7 +117,11 @@
             </div>
           </div>
         </div>
-        <div [class.d-none]="callConnected" class="call-container">
+        <div
+          *ngIf="initiator !== 'hw'"
+          [class.d-none]="callConnected"
+          class="call-container"
+        >
           <div class="calling-txt text-center w-100">Calling...</div>
           <div class="img-cont">
             <img

@@ -91,7 +91,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private pageTitleService: PageTitleService,
     private visitService: VisitService,
-    // private socket: SocketService,
     private router: Router,
     private authService: AuthService) { }
 
@@ -113,17 +112,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
     }
-
-
-    // this.socket.initSocket(true);
-    // this.socket.onEvent("updateMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
   }
 
   getVisits() {

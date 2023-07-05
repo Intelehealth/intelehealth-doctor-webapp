@@ -8,12 +8,9 @@ import {
 import { BehaviorSubject, Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
-// import { CallStateComponent } from "../component/call-state/call-state.component";
-// import { VcComponent } from "../component/vc/vc.component";
-// import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
-import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { WebrtcService } from "./webrtc.service";
+import { CoreService } from "./core/core.service";
 
 @Injectable({
   providedIn: "root"
@@ -22,10 +19,7 @@ export class SocketService {
   public socket: any;
   public incoming;
   public activeUsers = [];
-  appIcon =
-    false && environment.production
-      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
-      : "/assets/images/intelehealth-logo-reverse.png";
+  appIcon = "assets/images/intelehealth-logo-reverse.png";
 
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
@@ -35,7 +29,8 @@ export class SocketService {
     private http: HttpClient,
     private dialog: MatDialog,
     private visitSvc: VisitService,
-    private webrtcSvc: WebrtcService
+    private webrtcSvc: WebrtcService,
+    private cs: CoreService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -62,22 +57,25 @@ export class SocketService {
       this.socket = io(environment.socketURL, {
         query: localStorage.socketQuery,
       });
-      this.onEvent("allUsers").subscribe((data) => {
-        this.activeUsers = data;
-      });
-      this.onEvent("incoming_call").subscribe((data = {}) => {
-        if (!location.hash.includes("test/chat")) {
-          localStorage.patientUuid = data.patientUuid;
-          console.log("patientUuid: ", localStorage.patientUuid);
-          if (localStorage.patientUuid) {
-            this.openVcOverlay();
-          }
-        }
-      });
       this.onEvent("log").subscribe((array) => {
         if (localStorage.log === "1") console.log.apply(console, array);
       });
+      this.initEvents();
     }
+  }
+
+  initEvents() {
+    this.onEvent("allUsers").subscribe((data) => {
+      this.activeUsers = data;
+    });
+    this.onEvent("incoming_call").subscribe((data = {}) => {
+      if (!location.hash.includes("test/chat")) {
+        localStorage.patientId = data.patientId;
+        if (localStorage.patientId) {
+          this.openVcOverlay(data);
+        }
+      }
+    });
   }
 
   public emitEvent(action, data) {
@@ -105,19 +103,15 @@ export class SocketService {
   }
 
   callRing = new Audio("assets/phone.mp3");
-  public openVcOverlay() {
-    this.dialog.open(VcallOverlayComponent, {
-      disableClose: false,
-      hasBackdrop: true,
-      id: "vcOverlay",
-    });
-    this.callRing.play();
+  public openVcOverlay(data: any) {
+    this.cs.openVideoCallOverlayModal(data);
+    // this.callRing.play();
     setTimeout(() => {
       console.log('this.webrtcSvc.callConnected: ', this.webrtcSvc.callConnected);
       if (!this.webrtcSvc.callConnected) {
         this.closeVcOverlay();
       }
-    }, 10000);
+    }, 60000);
   }
 
   public closeVcOverlay() {
@@ -126,17 +120,6 @@ export class SocketService {
       dailog.close();
     }
     this.callRing.pause();
-  }
-
-  public openVcModal(initiator = "dr") {
-    // this.dialog.open(VcComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: localStorage.patientUuid,
-    //     initiator,
-    //     connectToDrId: localStorage.connectToDrId,
-    //   },
-    // });
   }
 
   public openNewVCModal(
@@ -205,5 +188,6 @@ export class SocketService {
         query: `userId=${this.userUuid}&name=${this.userName}`
       });
     }
+    this.initEvents();
   }
 }

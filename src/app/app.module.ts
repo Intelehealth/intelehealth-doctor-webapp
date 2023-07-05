@@ -52,6 +52,7 @@ import { ModalComponentsModule } from "./modal-components/modal-components.modul
 import { SharedModule } from "./shared.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { PwaService } from "./services/pwa.service";
+import { TestChatComponent } from "./component/test-chat/test-chat.component";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -71,6 +72,7 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
   declarations: [
     AppComponent,
     TestComponent,
+    TestChatComponent,
     MainContainerComponent
   ],
 

@@ -46,6 +46,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   activeSpeakerIds: any = [];
+  connecting = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -60,8 +61,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
-    if (this.data.initiator) this.initiator = this.data.initiator;
-
     const patientVisitProvider: any = this.patientVisitProvider;
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
@@ -69,12 +68,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
-    if (this.data.patientId && this.data.visitId) {
-      this.getMessages();
-    }
-    this.socketSvc.initSocket(true);
+    if (this.data.initiator) this.initiator = this.data.initiator;
+    this.socketSvc.initSocket();
     this.initSocketEvents();
-
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       this.socketSvc.showNotification({
         title: "New chat message",
@@ -85,12 +81,19 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
-
+    if (this.data.patientId && this.data.visitId) {
+      this.getMessages();
+    }
     /**
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
 
+    if (this.initiator === 'hw') {
+      this.connecting = true;
+      this.webrtcSvc.token = this.data.token;
+      console.log('this.data: ', this.data);
+    }
     this.startCall();
   }
 
@@ -112,9 +115,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   async startCall() {
     this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
-    await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
-      this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
-    });
+    if (!this.webrtcSvc.token) {
+      await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
+        this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
+      });
+    }
     if (!this.webrtcSvc.token) return;
     this.toastr.show('Received video call token.', null, { timeOut: 1000 });
     this.webrtcSvc.createRoomAndConnectCall({
@@ -162,7 +167,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     return this.webrtcSvc.callConnected;
   }
   set callConnected(flag) {
+    console.log('flag: ', flag);
     this.webrtcSvc.callConnected = flag;
+    // this.connecting = false;
   }
 
   get localAudioIcon() {
@@ -485,6 +492,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
+    this.webrtcSvc.token = '';
     this.socketSvc.emitEvent("bye", {
       nurseId: this.nurseId,
       webapp: true
