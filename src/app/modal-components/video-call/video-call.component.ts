@@ -508,16 +508,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   toggleAudio() {
-    this.localStream.getAudioTracks()[0].enabled = this._localAudioMute;
-    this._localAudioMute = !this._localAudioMute;
+    this._localAudioMute = this.webrtcSvc.toggleAudio();
 
     const event = this._localAudioMute ? 'audioOff' : 'audioOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
   toggleVideo() {
-    this.localStream.getVideoTracks()[0].enabled = this._localVideoOff;
-    this._localVideoOff = !this._localVideoOff;
+    this._localVideoOff = this.webrtcSvc.toggleVideo();
 
     const event = this._localVideoOff ? 'videoOff' : 'videoOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
