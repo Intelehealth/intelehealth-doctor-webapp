@@ -90,10 +90,11 @@ export class DischargeOrderComponent implements OnInit {
         //   });
         // } else {
           const provider = getFromStorage("provider");
+          const registrationNumber = getFromStorage("registrationNumber");
           const deletedTimestamp = moment.utc().toISOString();
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` })
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}` })
           .subscribe(() => {
-            this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` };
+            this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}` };
           });
         // }
       }

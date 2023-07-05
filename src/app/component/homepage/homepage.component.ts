@@ -81,6 +81,16 @@ export class HomepageComponent implements OnInit, OnDestroy {
           ) {
             this.doctorLocation = element.value;
           }
+
+          // Doctor Registration number
+          if (
+            element.attributeType.uuid ===
+              "992ccbdd-201a-44ef-8abb-c2eee079886d" &&
+            !element.voided
+          ) {
+            saveToStorage("registrationNumber", element.value);
+          }
+
         });
         userDetails["roles"].forEach((role) => {
           if (role.uuid === "f6de773b-277e-4ce2-9ee6-8622b8a293e8" ||

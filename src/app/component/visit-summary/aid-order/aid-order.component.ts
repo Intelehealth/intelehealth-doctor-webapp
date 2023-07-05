@@ -365,28 +365,29 @@ export class AidOrderComponent implements OnInit {
     //   });
     // } else {
       const provider = getFromStorage("provider");
+      const registrationNumber = getFromStorage("registrationNumber");
       const deletedTimestamp = moment.utc().toISOString();
-      this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}` }, uuid).subscribe(response => {
+      this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}` }, uuid).subscribe(response => {
         this.aidOrderForm.get(key).setValue(null);
         switch (key) {
           case 'type1Uuid':
-            this.type1.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+            this.type1.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
             this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null });
             break;
           case 'type2Uuid':
-            this.type2.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+            this.type2.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
             this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null });
             break;
           case 'type3Uuid':
-            this.type3.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type3Val: this.aidOrderForm.value.type3 });
+            this.type3.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}`, type3Val: this.aidOrderForm.value.type3 });
             this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null });
             break;
           case 'type4Uuid':
-            this.type4.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type4Val: this.aidOrderForm.value.type4 });
+            this.type4.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}`, type4Val: this.aidOrderForm.value.type4 });
             this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null });
             break;
           case 'type5Uuid':
-            this.type5.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}`, type5Val: this.aidOrderForm.value.type5 });
+            this.type5.push({ comment:`DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:''}`, type5Val: this.aidOrderForm.value.type5 });
             this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null });
             break;
           default:
