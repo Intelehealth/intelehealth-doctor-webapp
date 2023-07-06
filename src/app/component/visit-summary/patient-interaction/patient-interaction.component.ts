@@ -44,9 +44,10 @@ declare var getFromStorage: any,
   ],
 })
 export class PatientInteractionComponent implements OnInit {
-  @Input() isManagerRole : boolean;
+  @Input() isManagerRole: boolean;
   msg: any = [];
   interactionType = '';
+  interactionForm: FormGroup;
   whatsappLink: string;
   phoneNo;
   patientDetails: any;
@@ -56,16 +57,20 @@ export class PatientInteractionComponent implements OnInit {
   patientId: string;
   visitId: string;
   adviceObs: any = [];
+  isCommentAdded: boolean = false;
 
-  interaction = new FormGroup({
-    interaction: new FormControl("", [Validators.required]),
-  });
   constructor(
     private diagnosisService: DiagnosisService,
     private visitService: VisitService,
     private route: ActivatedRoute,
     private encounterService: EncounterService
-  ) {}
+  ) {
+    this.interactionForm = new FormGroup({
+      interaction: new FormControl("", [Validators.required]),
+      comment: new FormControl("")
+    });
+
+  }
 
   ngOnInit() {
     this.visitId = this.route.snapshot.params["visit_id"];
@@ -103,15 +108,29 @@ export class PatientInteractionComponent implements OnInit {
       });
   }
 
+  setCommentAddedFlag() {
+    if (this.interactionForm.value.comment.trim().length > 0) {
+      this.isCommentAdded = false;
+    } else {
+      this.isCommentAdded = true;
+    }
+  }
+
   getAttributes() {
     this.visitService.getAttribute(this.visitId).subscribe((response) => {
       const result = response.results;
       var tempMsg = result.filter((pType) =>
-        ["Yes", "No"].includes(pType.value)
+        pType.display.includes("Patient Interaction")
       );
-      if (result.length !== 0) {
+      if (tempMsg.length !== 0) {
         this.msg = tempMsg;
-        this.interactionType = this.msg[0]?.value;
+        if (this.msg[0]?.value === 'Yes') {
+          this.interactionType = 'Spoke with the patient directly';
+        } else if (this.msg[0]?.value === 'No') {
+          this.interactionType = 'None';
+        } else {
+          this.interactionType = this.msg[0]?.value.includes(",") ? this.msg[0].value.split(",")[0] : this.msg[0].value;
+        }
       }
     });
   }
@@ -124,27 +143,24 @@ export class PatientInteractionComponent implements OnInit {
       });
   }
 
+  clearComment() {
+    this.interactionForm.controls.comment.reset();
+  }
+
   submit() {
     const visitId = this.route.snapshot.params["visit_id"];
-    const formValue = this.interaction.value;
-    const value = formValue.interaction;
+    const formValue = this.interactionForm.value;
     const providerDetails = getFromStorage("provider");
     if (this.diagnosisService.isSameDoctor()) {
-      this.visitService.getAttribute(visitId).subscribe((response) => {
-        const result = response.results;
-        if (result.length !== 0 && ["Yes", "No"].includes(response.value)) {
-        } else {
-          const json = {
-            attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
-            value: value,
-          };
-          this.visitService
-            .postAttribute(visitId, json)
-            .subscribe((response1) => {
-              this.msg.push({ uuid: response1.uuid, value: response1.value });
-            });
-        }
-      });
+      const json = {
+        attributeType: "6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc",
+        value: formValue.comment?.trim().length > 0 ? `${formValue.interaction}, Comment: ${formValue.comment}` : formValue.interaction,
+      };
+      this.visitService
+        .postAttribute(visitId, json)
+        .subscribe((response1) => {
+          this.msg.push({ uuid: response1.uuid, value: response1.value });
+        });
       this.encounterUuid = getEncounterUUID();
       const attributes = providerDetails.attributes;
       this.doctorDetails.name = providerDetails.person.display;
@@ -194,6 +210,6 @@ export class PatientInteractionComponent implements OnInit {
           this.diagnosisService.deleteObs(uuid).subscribe();
         });
       }
-    }  
+    }
   }
 }

@@ -37,3 +37,11 @@
 .material-icons{
   vertical-align: text-bottom;
 }
+
+.red-star {
+  color: red;
+}
+
+.example-full-width {
+  width: 100%;
+}

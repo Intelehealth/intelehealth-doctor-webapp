@@ -1,14 +1,22 @@
 <h4><i class="material-icons">contact_phone</i> Patient Interaction</h4>
 <hr />
-<div>Have you spoken with the patient directly?</div>
-<form [formGroup]="interaction" (ngSubmit)="submit()">
+<div>Details of doctor-patient/doctor-health worker interactions</div>
+<form [formGroup]="interactionForm" (ngSubmit)="submit()">
   <div id="patient-interaction">
     <br />
     <mat-radio-group aria-label="Select an option" formControlName="interaction"  [(ngModel)]="interactionType">
-      <mat-radio-button  (change)="interactionType = 'Yes'" value="Yes">Yes </mat-radio-button>
-      <mat-radio-button  (change)="interactionType = 'No'" value="No">No</mat-radio-button>
+      <mat-radio-button  (change)="interactionType = 'Spoke with the patient directly';isCommentAdded=false;clearComment()" value="Spoke with the patient directly">
+        Spoke with the patient directly</mat-radio-button>
+      <mat-radio-button  (change)="interactionType = 'Spoke with the health worker';isCommentAdded=true;clearComment()" value="Spoke with the health worker">
+        Spoke with the health worker<span class="red-star">*</span></mat-radio-button>
+      <mat-radio-button  (change)="interactionType = 'None';isCommentAdded=true;clearComment()" value="None">
+        None<span class="red-star">*</span></mat-radio-button>
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    <button type="submit" mat-raised-button color="primary" [disabled]="!interaction.valid || isManagerRole" [hidden]="msg.length > 0">
+    <br/>
+    <mat-form-field class="example-full-width" [hidden]="msg.length > 0"> 
+      <textarea matInput placeholder="Comment" formControlName='comment' (change)="setCommentAddedFlag($event)"></textarea>
+    </mat-form-field>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!interactionForm.valid || isCommentAdded || isManagerRole" [hidden]="msg.length > 0">
       Submit
     </button>
   </div>
