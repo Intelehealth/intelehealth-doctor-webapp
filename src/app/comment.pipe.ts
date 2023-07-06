@@ -7,10 +7,11 @@ import * as moment from 'moment';
 export class CommentPipe implements PipeTransform {
   transform(value: any, ...args: any[]) {
     let comment = value.split('|');
+    const name = comment[2].split(' ');
     if (localStorage.getItem('selectedLanguage') === 'en') {
-      return `DELETED BY ${comment[2].split(' ').map((o) => o[0]).join('')} ${comment[3] ? '('+comment[3] + ')' : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
+      return `DELETED BY ${name.length > 2 ? name[0][0] + ' ' + name[1][0] +  ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? '('+comment[3] + ')' : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
     } else {
-      return `حذف بواسطة ${comment[2].split(' ').map((o) => o[0]).join('')} ${comment[3] ? '('+comment[3] + ')' : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
+      return `حذف بواسطة ${name.length > 2 ? name[0][0] + ' ' + name[1][0] +  ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? '('+comment[3] + ')' : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
     }
   }
 }
