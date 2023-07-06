@@ -5613,5 +5613,7 @@
   "You can not modify past schedule":"Вы не можете изменить прошлое расписание",
   "Start Appointment": "Начать встречу",
   "Release Case": "Дело о выпуске",
-  "No Data Found !":"Данные не найдены!"
+  "No Data Found !":"Данные не найдены!",
+  "Reason":"Причина",
+  "Specify reason":"Укажите причину"
 }

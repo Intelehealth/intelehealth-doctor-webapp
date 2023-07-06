@@ -5609,5 +5609,7 @@
   "Add New Schedule":"Add New Schedule",
   "You can not modify past schedule":"You can not modify past schedule",
   "Start Appointment": "Start Appointment",
-  "Release Case": "Release Case"
+  "Release Case": "Release Case",
+  "Reason":"Reason",
+  "Specify reason":"Specify reason"
 }

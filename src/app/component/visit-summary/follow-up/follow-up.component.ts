@@ -3,6 +3,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
+import { DateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any;
@@ -44,7 +45,8 @@ followForm = new FormGroup({
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute,
-              private datepipe: DatePipe) { }
+              private datepipe: DatePipe,
+              private dateAdapter: DateAdapter<any>) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -57,6 +59,7 @@ followForm = new FormGroup({
         }
       });
     });
+    this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 
   Submit() {

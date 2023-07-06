@@ -343,5 +343,6 @@ export class NavbarComponent implements OnInit {
     this.selectedLanguage = lang;
     localStorage.setItem("selectedLanguage", this.selectedLanguage);
     this.subscribeNotification(true);
+    window.location.reload();
   }
 }

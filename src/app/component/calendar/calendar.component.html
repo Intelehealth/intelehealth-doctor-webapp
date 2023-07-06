@@ -202,13 +202,18 @@
             />
           </div>
           <div class="col-7">
-            <input
-              min="{{ minDate }}"
-              class="form-control"
-              (change)="changeCalender($event)"
-              type="date"
-              [value]="todaysDate"
-            />
+            <div class="input-group">
+              <input class="form-control" [min]="minDate" [matDatepicker]="dp1" class="form-control" aria-label="Date"
+                aria-describedby="basic-addon1" readonly [(ngModel)]="todaysDate" (dateChange)="changeCalender($event)">
+              <mat-datepicker #dp1></mat-datepicker>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon1">
+                  <mat-datepicker-toggle matSuffix [for]="dp1">
+                    <img matDatepickerToggleIcon src="../../../assets/svgs/calendar.svg" alt="" style="width: 16px;">
+                  </mat-datepicker-toggle>
+                </span>
+              </div>
+            </div>
           </div>
           <div class="col-12" *ngIf="slots?.length">
             <mat-form-field class="example-full-width w-100">

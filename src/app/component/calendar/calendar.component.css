@@ -82,3 +82,31 @@ th, td {
   top: 10%;
   left: 45%;
 }
+
+.input-group {
+  border: 1px solid #ced4da;
+  background: #fff;
+  border-radius: 4px;
+  height: 39px;
+
+  .form-control {
+    padding: 14px 16px;
+    height: 39px;
+    font-size: 16px;
+    color: #1B163A;
+    border: none;
+    background: transparent;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+  }
+
+  .input-group-append {
+    .input-group-text {
+      background: transparent;
+      border: none;
+      padding: 0px;
+    }
+  }
+}

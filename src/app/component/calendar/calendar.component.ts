@@ -20,6 +20,7 @@ import { AppointmentService } from "src/app/services/appointment.service";
 import { TranslationService } from "src/app/services/translation.service";
 import { VisitService } from "src/app/services/visit.service";
 import { ConfirmDialogService } from "../visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.service";
+import { DateAdapter } from '@angular/material/core';
 
 const colors: any = {
   red: {
@@ -72,7 +73,8 @@ export class CalendarComponent implements OnInit {
     private vService: VisitService,
     private translationService: TranslationService,
     private dialogService: ConfirmDialogService,
-    private router: Router
+    private router: Router,
+    private dateAdapter: DateAdapter<any>
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +82,7 @@ export class CalendarComponent implements OnInit {
     this.getSlots();
 
     setInterval(this.tick.bind(this), 30000);
+    this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 
   tick() {
