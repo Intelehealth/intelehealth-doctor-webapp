@@ -47,6 +47,7 @@ export class PatientInteractionComponent implements OnInit {
   @Input() isManagerRole: boolean;
   msg: any = [];
   interactionType = '';
+  comment = null;
   interactionForm: FormGroup;
   whatsappLink: string;
   phoneNo;
@@ -144,7 +145,7 @@ export class PatientInteractionComponent implements OnInit {
   }
 
   clearComment() {
-    this.interactionForm.controls.comment.reset();
+    this.comment = null;
   }
 
   submit() {
@@ -160,6 +161,7 @@ export class PatientInteractionComponent implements OnInit {
         .postAttribute(visitId, json)
         .subscribe((response1) => {
           this.msg.push({ uuid: response1.uuid, value: response1.value });
+          this.clearComment();
         });
       this.encounterUuid = getEncounterUUID();
       const attributes = providerDetails.attributes;
