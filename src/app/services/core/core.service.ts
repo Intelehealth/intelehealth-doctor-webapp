@@ -69,7 +69,7 @@ export class CoreService {
   }
 
   openVideoCallOverlayModal(data: any): MatDialogRef<VcallOverlayComponent> {
-    const dialogRef = this.dialog.open(VcallOverlayComponent, { panelClass: "modal-sm", data, id: "vcOverlayModal", disableClose: false });
+    const dialogRef = this.dialog.open(VcallOverlayComponent, { panelClass: "modal-sm", data, id: "vcOverlayModal", disableClose: true, hasBackdrop: true });
     return dialogRef;
   }
 

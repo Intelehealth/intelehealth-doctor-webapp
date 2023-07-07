@@ -125,13 +125,17 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
       handleDisconnect: this.endCallInRoom.bind(this),
-      handleConnect: this.onCallConnect.bind(this),
+      handleConnect: this.initiator === 'hw' ? this.onHWIncomingCallConnect.bind(this) : this.onCallConnect.bind(this),
       handleActiveSpeakerChange: this.handleActiveSpeakerChange.bind(this),
       handleTrackMuted: this.handleTrackMuted.bind(this),
       handleTrackUnmuted: this.handleTrackUnmuted.bind(this),
       handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this),
       handleParticipantConnect: this.handleParticipantConnect.bind(this),
     });
+  }
+
+  onHWIncomingCallConnect() {
+    this.connecting = false;
   }
 
   onCallConnect() {
@@ -166,9 +170,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     return this.webrtcSvc.callConnected;
   }
   set callConnected(flag) {
-    console.log('flag: ', flag);
     this.webrtcSvc.callConnected = flag;
-    this.connecting = false;
   }
 
   get localAudioIcon() {
