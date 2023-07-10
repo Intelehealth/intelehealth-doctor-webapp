@@ -15,8 +15,8 @@ import { WebrtcService } from 'src/app/services/webrtc.service';
   styleUrls: ['./video-call.component.scss'],
 })
 export class VideoCallComponent implements OnInit, OnDestroy {
-  @ViewChild("localVideo") localVideoRef: any;
-  @ViewChild("remoteVideo") remoteVideoRef: any;
+  @ViewChild("localVideo", { static: false }) localVideoRef: any;
+  @ViewChild("remoteVideo", { static: false }) remoteVideoRef: any;
 
   message: string;
   messageList: any = [];
@@ -92,8 +92,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;
       console.log('this.data: ', this.data);
+      setTimeout(() => {
+        this.startCall();
+      }, 0);
+    } else {
+      this.startCall();
     }
-    this.startCall();
   }
 
   get patientVisitProvider() {
@@ -121,6 +125,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
     if (!this.webrtcSvc.token) return;
     this.toastr.show('Received video call token.', null, { timeOut: 1000 });
+    console.log('this.localVideoRef: ', this.localVideoRef);
+    console.log('this.remoteVideoRef: ', this.remoteVideoRef);
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
