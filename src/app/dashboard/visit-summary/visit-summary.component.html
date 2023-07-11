@@ -163,7 +163,15 @@
                     <div class="list-item">
                       <label>{{'Visit Created'|translate}}</label>
                       <div class="list-item-content">
-                        {{ visit?.startDatetime | date : "dd MMM, yyyy" }}
+                        {{ visit?.startDatetime | date : "medium" }}
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="list-item">
+                      <label>{{'Visit Uploaded'|translate}}</label>
+                      <div class="list-item-content">
+                        {{ visit?.visitUploadTime | date : "medium" }}
                       </div>
                     </div>
                   </li>
