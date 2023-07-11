@@ -34,9 +34,9 @@
                 <td mat-cell *matCellDef="let element"> {{element.patient.person.age}} {{'y'|translate}} </td>
               </ng-container>
 
-              <!-- Visit Uploaded Column -->
+              <!-- Visit Created Column -->
               <ng-container matColumnDef="visit_created">
-                <th mat-header-cell *matHeaderCellDef> {{'Visit Uploaded'|translate}} </th>
+                <th mat-header-cell *matHeaderCellDef> {{'Visit Created'|translate}} </th>
                 <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
               </ng-container>
 
