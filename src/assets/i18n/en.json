@@ -135,6 +135,8 @@
   "gender":"gender",
   "Male":"Male",
   "Female":"Female",
+  "M":"Male",
+  "F":"Female",
   "Enter DOB":"Enter DOB",
   "Age *":"Age *",
   "Enter age":"Enter age",
@@ -545,7 +547,8 @@
     "Unable to send prescription due to poor network connection. Please try again or come back later":"Unable to send prescription due to poor network connection. Please try again or come back later",
     "Unable to send prescription since this visit already in progress with another doctor.":"Unable to send prescription since this visit already in progress with another doctor.",
     "Go to dashboard":"Go to dashboard",
-    "Please upload png, jpg or jpeg file only.":"Please upload png, jpg or jpeg file only."
+    "Please upload png, jpg or jpeg file only.":"Please upload png, jpg or jpeg file only.",
+    "Ended":"Ended"
   },
   "I18N": {
     "MAT_PAGINATOR": {

@@ -56,19 +56,19 @@ export class AppointmentDetailComponent implements OnInit {
     let minutes = moment(data).diff(moment(), 'minutes');
     // console.log(hours, minutes);
     if(hours > 24) {
-      return `${this.translateService.instant('Starts in')} ${hours/24} ${this.translateService.instant('days')}`;
+      return `Starts in ${Math.round(hours/24)} days`;
     };
     if (hours < 1) {
       if (hours < -24) {
-        return `${this.translateService.instant('Awaiting since')} ${-hours/24} ${this.translateService.instant('days')}`;
+        return `Awaiting since ${Math.round(-hours/24)} days`;
       } else if (hours < 0 && hours > -24) {
-        return `${this.translateService.instant('Awaiting since')} ${-hours} ${this.translateService.instant('hrs')}`;
+        return `Awaiting since ${-hours} hrs`;
       } else if (hours == 0 && minutes < 0) {
-        return `${this.translateService.instant('Awaiting since')} ${-minutes} ${this.translateService.instant('minutes')}`;
+        return `Awaiting since ${-minutes} minutes`;
       }
-      return `${this.translateService.instant('Starts in')} ${minutes} ${this.translateService.instant('minutes')}`;
+      return `Starts in ${minutes} minutes`;
     }
-    return `${this.translateService.instant('Starts in')} ${hours} ${this.translateService.instant('hrs')}`;
+    return `Starts in ${hours} hrs`;
   }
 
   getCheifComplaint(visit: any) {
@@ -109,7 +109,7 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    if (this.checkIfEncounterExists(encounters, 'Remote Prescription')) {
       return 'Ended';
     } else if (this.checkIfEncounterExists(encounters, 'Visit Complete')) {
       return 'Completed';
@@ -130,12 +130,12 @@ export class AppointmentDetailComponent implements OnInit {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
-      return `${this.translateService.instant("Prescription created")} ${Math.round(hours/24)} ${this.translateService.instant('days ago')}`;
+      return `Prescription created ${Math.round(hours/24)} days ago`;
     };
     if (hours < 1) {
-      return `${this.translateService.instant("Prescription created")} ${minutes} ${this.translateService.instant('minutes ago')}`;
+      return `Prescription created ${minutes} minutes ago`;
     }
-    return `${this.translateService.instant("Prescription created")} ${hours} ${this.translateService.instant('hrs ago')}`;
+    return `Prescription created ${hours} hrs ago`;
   }
 
 }
