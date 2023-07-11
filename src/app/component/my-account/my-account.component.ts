@@ -44,10 +44,12 @@ export class MyAccountComponent implements OnInit {
         saveToStorage("provider", this.providerDetails);
         const attributes = provider.results[0].attributes;
         attributes.forEach((attribute) => {
-          this.providerDetails[attribute.attributeType.display] = {
-            value: attribute.value,
-            uuid: attribute.uuid
-          };
+          if (attribute.voided == false) {
+            this.providerDetails[attribute.attributeType.display] = {
+              value: attribute.value,
+              uuid: attribute.uuid
+            };
+          }
           if (
             attribute.attributeType.uuid ===
             this.sessionService.visitStateProviderType
