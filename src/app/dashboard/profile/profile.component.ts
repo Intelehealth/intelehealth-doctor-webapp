@@ -230,7 +230,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
     ) {
 
     this.personalInfoForm = new FormGroup({
@@ -278,6 +279,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
     moment.locale(localStorage.getItem('selectedLanguage'));
+    this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 
   ngAfterViewInit() {

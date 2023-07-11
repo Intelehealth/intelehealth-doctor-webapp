@@ -126,7 +126,8 @@ export class SetupCalendarComponent implements OnInit {
     private pageTitleService: PageTitleService,
     private toastr: ToastrService,
     private coreService: CoreService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
     ) {
 
     this.addSlotsForm = new FormGroup({
@@ -155,6 +156,7 @@ export class SetupCalendarComponent implements OnInit {
     this.pageTitleService.setTitle({ title: '', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
     this.getScheduledMonths();
     moment.locale('en');
+    this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 
   addMonth() {

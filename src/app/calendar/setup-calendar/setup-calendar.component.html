@@ -122,7 +122,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="{{clockTimeAmPM[0].name|translate}}"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false">
                               <ng-template ng-label-tmp let-item="item">
@@ -148,7 +148,7 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="{{clockTimeAmPM[0].name|translate}}"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false">
                               <ng-template ng-label-tmp let-item="item">
@@ -166,7 +166,7 @@
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            placeholder="{{filteredDays[0]?.shortName|translate}}"
+                            [placeholder]="(filteredDays[0]?.shortName)|translate"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
@@ -201,7 +201,7 @@
                           </a>
                         </td>
                       </tr>
-                      <tr *ngIf="_addMoreTiming && last">
+                      <tr *ngIf="_addMoreTiming && last  && filteredDays.length !== 0">
                         <td>
                           <div class="d-flex">
                             <ng-select [class.invalid-input]="submitted && t.controls.startTime.errors" formControlName="startTime" class="customSelect2 mr-2" [items]="timeList"
@@ -216,11 +216,11 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="{{clockTimeAmPM[0].name|translate}}"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false">
                               <ng-template ng-label-tmp let-item="item">
-                                {{(item.name) | translate}},
+                                {{(item.name) | translate}}
                               </ng-template>
                               <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
                                 <label>{{(item.name)|translate}}</label>
@@ -242,11 +242,11 @@
                               appendTo=".intel-card"
                               bindLabel="name"
                               bindValue="name"
-                              placeholder="{{clockTimeAmPM[0].name|translate}}"
+                              [placeholder]="(clockTimeAmPM[0].name)|translate"                              
                               [clearable]="false"
                               [searchable]="false">
                               <ng-template ng-label-tmp let-item="item">
-                                {{(item.name) | translate}},
+                                {{(item.name) | translate}}
                               </ng-template>
                               <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
                                 <label>{{(item.name)|translate}}</label>
@@ -260,7 +260,7 @@
                             appendTo=".intel-card"
                             bindLabel="shortName"
                             bindValue="shortName"
-                            placeholder="{{filteredDays[0]?.shortName|translate}}"
+                            [placeholder]="(filteredDays[0]?.shortName)|translate"
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
