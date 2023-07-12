@@ -8,7 +8,7 @@ export const environment = {
   baseURL: "https://dev.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://dev.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://dev.intelehealth.org/openmrs",
-  mindmapURL: "https://dev.intelehealth.org:3030/v2/node/api",
+  mindmapURL: "https://dev.intelehealth.org:3004/api",
   notificationURL: "https://dev.intelehealth.org:3004/notification",
   socketURL: "https://dev.intelehealth.org:3004",
   captchaSiteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
