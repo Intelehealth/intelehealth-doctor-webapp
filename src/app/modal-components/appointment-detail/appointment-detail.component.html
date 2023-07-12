@@ -40,7 +40,7 @@
                 </div>
                 <div class="text-important">
                   <ng-container *ngIf="data?.meta.visit_status != 'Completed' && data?.meta.visit_status != 'Ended'">
-                    {{data?.meta.starts_in}}
+                    {{(startsIn[0] + " " + startsIn[1]|translate)}} {{startsIn[2]}} {{(startsIn[3]|translate)}}
                   </ng-container>
                   <ng-container *ngIf="data?.meta.visit_status == 'Completed' || data?.meta.visit_status == 'Ended'">
                     {{data?.meta.prescriptionCreatedAt}}

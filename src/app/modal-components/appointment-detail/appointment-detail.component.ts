@@ -14,6 +14,7 @@ export class AppointmentDetailComponent implements OnInit {
 
   locale: any = localStorage.getItem('selectedLanguage');
   baseUrl: string = environment.baseURL;
+  startsIn: any = []
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
@@ -41,6 +42,7 @@ export class AppointmentDetailComponent implements OnInit {
       this.data.meta.prescriptionCreatedAt = cdata.prescriptionCreatedAt;
     }
     moment.locale(localStorage.getItem('selectedLanguage'));
+    this.startsIn = this.checkIfDateOldThanOneDay(this.data?.meta.slotJsDate).split(" ");    
   }
 
   close(val: any) {
