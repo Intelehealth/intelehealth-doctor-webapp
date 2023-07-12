@@ -64,25 +64,26 @@ export class LoginComponent implements OnInit {
     const base64cred = btoa(cred);
     this.authService.login(base64cred).subscribe((res: any) => {
       if (res.authenticated && !res.verified) {
-        this.authService.getAuthToken(val.username, val.password).subscribe();
-        this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
-          if (provider.results.length) {
-            localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-            localStorage.setItem("doctorName", provider.results[0].person.display);
-            this.loginSuccess();
-            // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
-            //   this.loginSuccess();
-            // }
-            // else if (this.rememberMe) {
-            //   this.loginSuccess();
-            // } else if (provider.results[0].attributes.length) {
-            //   this.router.navigate(['/session/verification']);
-            // } else {
-            //   this.loginSuccess();
-            // }
-          } else {
-            this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
-          }
+        this.authService.getAuthToken(val.username, val.password).subscribe(token => {
+          this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
+            if (provider.results.length) {
+              localStorage.setItem('provider', JSON.stringify(provider.results[0]));
+              localStorage.setItem("doctorName", provider.results[0].person.display);
+              this.loginSuccess();
+              // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
+              //   this.loginSuccess();
+              // }
+              // else if (this.rememberMe) {
+              //   this.loginSuccess();
+              // } else if (provider.results[0].attributes.length) {
+              //   this.router.navigate(['/session/verification']);
+              // } else {
+              //   this.loginSuccess();
+              // }
+            } else {
+              this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
+            }
+          });
         });
       }
       else {
