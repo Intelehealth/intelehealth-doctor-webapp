@@ -147,3 +147,8 @@ body.font-lato td {
   cursor: default;
   color: #212529;
 }
+
+.cdk-overlay-pane  {
+  transform:none !important;
+  margin-top:30px !important;
+}
