@@ -103,7 +103,7 @@ export class AppointmentDetailComponent implements OnInit {
           });
         }
       }
-      if (display.match('Visit Complete') !== null) {
+      if (display.match('Patient Exit Survey') !== null) {
         prescriptionCreatedAt = this.checkPrescriptionCreatedAt(encounter.encounterDatetime);
       }
     });
@@ -111,10 +111,10 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, 'Remote Prescription')) {
-      return 'Ended';
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Complete')) {
+    if (this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
       return 'Completed';
+    } else if (this.checkIfEncounterExists(encounters, 'Remote Prescription')) {
+      return 'Ended';
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
       return 'In-progress';
     } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {

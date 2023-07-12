@@ -68,10 +68,10 @@
               <button class="red-btn" type="button" (click)="close('cancel')">{{'Cancel'|translate}}</button>
               <button class="blue-btn" type="button" (click)="close('reschedule')">{{'Reschedule'|translate}}</button>
             </ng-container>
-            <ng-container *ngIf="data?.meta.visit_status == 'Completed'">
+            <ng-container *ngIf="data?.title == 'Appointment' && data?.meta.visit_status == 'Completed'">
               <button class="confirm-btn" type="button" (click)="close('view')">{{'View Prescription'|translate}}</button>
             </ng-container>
-            <ng-container *ngIf="data?.meta.visit_status == 'Ended'">
+            <ng-container *ngIf="data?.title == 'Appointment' && data?.meta.visit_status == 'Ended'">
               <button class="confirm-btn" type="button" (click)="close('view')">{{'Edit Prescription'|translate}}</button>
             </ng-container>
             <ng-container *ngIf="data?.title == 'Follow-up visit' && (data?.meta.visit_status == 'Awaiting'||data?.meta.visit_status == 'Priority'||data?.meta.visit_status == 'In-progress')">

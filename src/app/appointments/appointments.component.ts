@@ -75,7 +75,7 @@ export class AppointmentsComponent implements OnInit {
                 appointment.visit_info = matchedVisit;
                 appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
                 const len = appointment.visit_info.encounters.filter((e: any) => {
-                  return (e.display.includes("Remote Prescription") || e.display.includes("Visit Complete"));
+                  return (e.display.includes("Remote Prescription") || e.display.includes("Patient Exit Survey"));
                 }).length;
                 if(!Boolean(len)){
                   this.appointments.push(appointment);
