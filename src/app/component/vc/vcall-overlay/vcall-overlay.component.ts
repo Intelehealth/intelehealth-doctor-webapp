@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { Subscription } from "rxjs";
 import { CoreService } from "src/app/services/core/core.service";
 import { SocketService } from "src/app/services/socket.service";
 
@@ -9,6 +10,7 @@ import { SocketService } from "src/app/services/socket.service";
   styleUrls: ["./vcall-overlay.component.css"],
 })
 export class VcallOverlayComponent implements OnInit {
+  connectedSubs: Subscription
   constructor(
     private socketService: SocketService,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -16,7 +18,17 @@ export class VcallOverlayComponent implements OnInit {
     private cs: CoreService
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.socketService.incomingCallData = this.data;
+    this.connectedSubs = this.socketService.onEvent("call-connected").subscribe(() => {
+      this.dialogRef.close(true);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.connectedSubs)
+      this.connectedSubs.unsubscribe();
+  }
 
   accept() {
     this.socketService.incoming = true;
@@ -30,6 +42,7 @@ export class VcallOverlayComponent implements OnInit {
   }
 
   close() {
+    this.socketService.emitEvent('dr_call_reject', this.data?.nurseId);
     this.dialogRef.close(true);
   }
 }

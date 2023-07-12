@@ -18,6 +18,7 @@ import { CoreService } from "./core/core.service";
 export class SocketService {
   public socket: any;
   public incoming;
+  public incomingCallData = null;
   public activeUsers = [];
   appIcon = "assets/images/intelehealth-logo-reverse.png";
 

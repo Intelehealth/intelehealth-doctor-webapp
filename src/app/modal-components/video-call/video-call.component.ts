@@ -142,6 +142,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   onHWIncomingCallConnect() {
     this.connecting = false;
+    this.socketSvc.emitEvent('call-connected', { ...this.socketSvc.incomingCallData, socketId: this.socketSvc?.socket?.id });
   }
 
   onCallConnect() {
@@ -226,6 +227,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.endCallInRoom();
     this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
     this.callConnected = false;
+    this.socketSvc.incomingCallData = null;
+    this.socketSvc.emitEvent('bye', {
+      nurseId: this.nurseId,
+      webapp: true
+    });
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {

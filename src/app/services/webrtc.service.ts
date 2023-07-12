@@ -204,9 +204,9 @@ export class WebrtcService {
   handleDisconnect() {
     console.log('disconnected from room');
     this.room.disconnect(true);
+    this.callConnected = false;
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
-    this.callConnected = false;
   }
 
   get remoteContainer() {
