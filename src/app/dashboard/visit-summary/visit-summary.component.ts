@@ -431,6 +431,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
+        if (this.checkIfEncounterExists(visit.encounters, 'Flagged')) {
+          this.visit["visitUploadTime"]= this.checkIfEncounterExists(visit.encounters, 'Flagged')['encounterDatetime'];
+        } else if (this.checkIfEncounterExists(visit.encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(visit.encounters, 'Vitals')) {
+          this.visit["visitUploadTime"]= this.checkIfEncounterExists(visit.encounters, 'ADULTINITIAL')['encounterDatetime'];
+        }
         this.checkVisitStatus(visit.encounters);
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: any) => {
           if (patient) {
@@ -778,8 +783,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
       this.visitStatus = 'In-progress Visit';
     } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+      this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'Flagged')['encounterDatetime'];
+      console.log(this.checkIfEncounterExists(encounters, 'Flagged'))
       this.visitStatus = 'Priority Visit';
     } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+      this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'ADULTINITIAL')['encounterDatetime'];
+      console.log(this.checkIfEncounterExists(encounters, 'ADULTINITIAL'))
       this.visitStatus = 'Awaiting Visit';
     }
   }

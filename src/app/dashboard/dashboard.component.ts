@@ -269,7 +269,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   processVisit(visit: any) {
     const { encounters } = visit;
     visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = this.getEncounterCreated(visit, 'ADULTINITIAL');
+    visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
     if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
 
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
