@@ -8,7 +8,7 @@ export const environment = {
   baseURL: "https://dev.intelehealth.org/openmrs/ws/rest/v1",
   baseURLCoreApp: "https://dev.intelehealth.org/openmrs/coreapps/diagnoses",
   baseURLLegacy: "https://dev.intelehealth.org/openmrs",
-  mindmapURL: "https://dev.intelehealth.org:3004/api",
+  mindmapURL: "https://dev.intelehealth.org:3030/v2/node/api",
   notificationURL: "https://dev.intelehealth.org:3004/notification",
   socketURL: "https://dev.intelehealth.org:3004",
   captchaSiteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
@@ -32,7 +32,8 @@ export const environment = {
   webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/',
   siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
+  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
+  authGatwayURL: 'https://dev.intelehealth.org:3030/v2/'
 };
 
 /*

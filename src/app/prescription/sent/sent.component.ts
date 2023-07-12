@@ -9,20 +9,24 @@ import { environment } from 'src/environments/environment';
   templateUrl: './sent.component.html',
   styleUrls: ['./sent.component.scss']
 })
-export class SentComponent implements OnInit, AfterViewInit {
+export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   @Input() prescriptionsSent: any = [];
+  @Input() prescriptionsSentCount: number = 0;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(    private translateService: TranslateService) { }
+  constructor(private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
     this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngAfterViewInit() {

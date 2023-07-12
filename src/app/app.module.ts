@@ -59,6 +59,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { PwaService } from "./services/pwa.service";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -150,6 +151,11 @@ registerLocaleData(localeEn);
     {
       provide: HTTP_INTERCEPTORS,
       useClass: NetworkInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
       multi: true,
     },
     {

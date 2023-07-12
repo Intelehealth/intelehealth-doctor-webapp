@@ -4,7 +4,7 @@ export const environment = {
   baseURL: `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,
   baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
-  mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
+  mindmapURL: `${window.location.protocol}//${window.location.hostname}:3030/v2/node/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   captchaSiteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
@@ -28,5 +28,6 @@ export const environment = {
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
   siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
+  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
+  authGatwayURL: `${window.location.protocol}//${window.location.hostname}:3030/v2/`
 };

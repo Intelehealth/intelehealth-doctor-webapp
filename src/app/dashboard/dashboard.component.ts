@@ -69,9 +69,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      // this.getAppointments();
-      this.getVisits();
+      this.getAppointments();
+      // this.getVisits();
       // this.getVisitCounts(this.specialization);
+      this.getAwaitingVisits();
+      this.getPriorityVisits();
+      this.getInProgressVisits();
     }
 
 
@@ -92,6 +95,118 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //   });
     //   this.playNotify();
     // });
+  }
+
+  getAwaitingVisits() {
+    this.awaitingVisits = [];
+    this.visitService.getAwaitingVisits(this.specialization).subscribe((av: any) => {
+      if (av.success) {
+        this.awaitingVisitsCount = av.totalCount;
+        for (let i = 0; i < av.data.length; i++) {
+          let visit = av.data[i];
+          visit.cheif_complaint = this.getCheifComplaint2(visit);
+          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.awaitingVisits.push(visit);
+        }
+        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.paginator = this.awaitingPaginator;
+      }
+    });
+  }
+
+  getPriorityVisits() {
+    this.priorityVisits = [];
+    this.visitService.getPriorityVisits(this.specialization).subscribe((pv: any) => {
+      if (pv.success) {
+        this.priorityVisitsCount = pv.totalCount;
+        for (let i = 0; i < pv.data.length; i++) {
+          let visit = pv.data[i];
+          visit.cheif_complaint = this.getCheifComplaint2(visit);
+          visit.visit_created = this.getEncounterCreated2(visit, 'Flagged');
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.priorityVisits.push(visit);
+        }
+        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.paginator = this.priorityPaginator;
+      }
+    });
+  }
+
+  getInProgressVisits() {
+    this.inProgressVisits = [];
+    this.visitService.getInProgressVisits(this.specialization).subscribe((iv: any) => {
+      if (iv.success) {
+        this.inprogressVisitsCount = iv.totalCount;
+        for (let i = 0; i < iv.data.length; i++) {
+          let visit = iv.data[i];
+          visit.cheif_complaint = this.getCheifComplaint2(visit);
+          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.prescription_started = this.getEncounterCreated2(visit, 'Visit Note');
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.inProgressVisits.push(visit);
+        }
+        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.paginator = this.inprogressPaginator;
+      }
+    });
+  }
+
+  getAppointments() {
+    this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+      .subscribe((res: any) => {
+        let appointmentsdata = res.data;
+        appointmentsdata.forEach(appointment => {
+          if (appointment.status == 'booked') {
+            if (appointment.visit) {
+              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              this.appointments.push(appointment);
+            }
+          }
+        });
+        this.dataSource1 = new MatTableDataSource(this.appointments);
+        this.dataSource1.paginator = this.appointmentPaginator;
+      });
+  }
+
+  getEncounterCreated2(visit: any, encounterName: string) {
+    let created_at = '';
+    const encounters = visit.encounters;
+    encounters.forEach((encounter: any) => {
+      const display = encounter.type?.name;
+      if (display.match(encounterName) !== null) {
+        created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
+      }
+    });
+    return created_at;
+  }
+
+  getCheifComplaint2(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.type?.name;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.concept_id == 163212) {
+            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
+  }
+
+  calculateAge(birthdate: any) {
+    return moment().diff(birthdate, 'years');
   }
 
   getVisits() {
@@ -119,30 +234,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
                   }
                 }
               });
-            } else if(this.specialization == 'General Physician') {
+            } else if (this.specialization == 'General Physician') {
               this.processVisit(visit);
             }
           }
         });
 
         // Check appointments
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
-        .subscribe((res: any) => {
-          let appointmentsdata = res.data;
-          appointmentsdata.forEach(appointment => {
-            if (appointment.status == 'booked') {
-              let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-              if (matchedVisit) {
-                matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                appointment.visit_info = matchedVisit;
-                appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                this.appointments.push(appointment);
+        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+          .subscribe((res: any) => {
+            let appointmentsdata = res.data;
+            appointmentsdata.forEach(appointment => {
+              if (appointment.status == 'booked') {
+                let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
+                if (matchedVisit) {
+                  matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
+                  appointment.visit_info = matchedVisit;
+                  appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+                  this.appointments.push(appointment);
+                }
               }
-            }
+            });
+            this.dataSource1 = new MatTableDataSource(this.appointments);
+            this.dataSource1.paginator = this.appointmentPaginator;
           });
-          this.dataSource1 = new MatTableDataSource(this.appointments);
-          this.dataSource1.paginator = this.appointmentPaginator;
-        });
       }
     );
   }
@@ -216,11 +331,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
-    if(hours > 24) {
+    if (hours > 24) {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };
     if (hours < 1) {
-      if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
       return `${minutes} minutes`;
     }
     return `${hours} hrs`;
@@ -229,7 +344,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getCreatedAt(data: any) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
-    if(hours > 24) {
+    if (hours > 24) {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
@@ -259,7 +374,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
+            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {
@@ -284,8 +399,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   reschedule(appointment: any) {
-    const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // const len = appointment.visit_info.encounters.filter((e: any) => {
+    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // }).length;
+    const len = appointment.visit.encounters.filter((e: any) => {
+      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
