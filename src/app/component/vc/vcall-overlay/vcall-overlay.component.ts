@@ -38,10 +38,10 @@ export class VcallOverlayComponent implements OnInit {
         initiator: 'hw',
       }
     );
-    this.close();
+    this.dialogRef.close(true);
   }
 
-  close() {
+  reject() {
     this.socketService.emitEvent('dr_call_reject', this.data?.nurseId);
     this.dialogRef.close(true);
   }

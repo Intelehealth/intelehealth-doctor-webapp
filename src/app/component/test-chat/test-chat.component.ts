@@ -37,7 +37,7 @@ export class TestChatComponent implements OnInit {
   }
 
   get activeUsers() {
-    return Object.keys(this.socket.activeUsers);
+    return this.socket.activeUsers;
   }
 
   reInitSocket() {

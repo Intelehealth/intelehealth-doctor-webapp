@@ -140,9 +140,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  get incomingData() {
+    return { ...this.socketSvc.incomingCallData, socketId: this.socketSvc?.socket?.id };
+  }
+
   onHWIncomingCallConnect() {
     this.connecting = false;
-    this.socketSvc.emitEvent('call-connected', { ...this.socketSvc.incomingCallData, socketId: this.socketSvc?.socket?.id });
+    this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
 
   onCallConnect() {
@@ -224,14 +228,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   handleParticipantDisconnected() {
-    this.endCallInRoom();
     this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
     this.callConnected = false;
     this.socketSvc.incomingCallData = null;
-    this.socketSvc.emitEvent('bye', {
-      nurseId: this.nurseId,
-      webapp: true
-    });
+    this.endCallInRoom();
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -499,13 +499,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
-    this.close();
     this.webrtcSvc.token = '';
     this.webrtcSvc.handleDisconnect();
     this.socketSvc.emitEvent("bye", {
+      ...this.incomingData,
       nurseId: this.nurseId,
-      webapp: true
+      webapp: true,
+      initiator: this.initiator,
     });
+    this.close();
   }
 
   sendMessage2(data: any) {

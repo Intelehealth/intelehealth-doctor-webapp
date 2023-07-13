@@ -1,10 +1,17 @@
 <div class="card container col-md-6 d-block">
-  {{ data | json }}
+  <div class="total-users">
+    Total Connected Users : {{ activeUsers?.length }}
+  </div>
   <div class="input-group input-group-sm mb-3 mt-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">Patient Id</span>
     </div>
-    <input id="form-control-patientId" [(ngModel)]="data.patientId" type="text" class="form-control" />
+    <input
+      id="form-control-patientId"
+      [(ngModel)]="data.patientId"
+      type="text"
+      class="form-control"
+    />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
@@ -12,19 +19,36 @@
         >From User Id</span
       >
     </div>
-    <input id="form-control-patientId" [(ngModel)]="data.from" type="text" class="form-control" />
+    <input
+      id="form-control-patientId"
+      [(ngModel)]="data.from"
+      type="text"
+      class="form-control"
+    />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
       <span class="input-group-text" id="inputGroup-sizing-sm">To User Id</span>
     </div>
-    <input id="form-control-patientId" [(ngModel)]="data.to" type="text" class="form-control" />
+    <input
+      id="form-control-patientId"
+      [(ngModel)]="data.to"
+      type="text"
+      class="form-control"
+    />
   </div>
   <div class="input-group input-group-sm mb-3">
     <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-sm">Connect to Dr id</span>
+      <span class="input-group-text" id="inputGroup-sizing-sm"
+        >Connect to Dr id</span
+      >
     </div>
-    <input id="form-control-patientId" [(ngModel)]="data.connectToDrId" type="text" class="form-control" />
+    <input
+      id="form-control-patientId"
+      [(ngModel)]="data.connectToDrId"
+      type="text"
+      class="form-control"
+    />
   </div>
   <button
     id="update-messages"
@@ -39,24 +63,6 @@
   </button>
 </div>
 
-<!-- <ul class="card mt-5">
-  <li
-    class="mt-2"
-    [class.green]="user == socket?.socket?.id"
-    *ngFor="let user of activeUsers"
-  >
-    {{ user }}&nbsp;&nbsp;&nbsp;
-    <span>({{ socket.activeUsers[user]?.uuid }})</span>
-    <span>-({{ socket.activeUsers[user]?.name }})</span>
-    <span *ngIf="user == socket?.socket?.id">(me)</span>
-    <span *ngIf="socket.activeUsers[user]?.callStatus"
-      >-({{ socket.activeUsers[user]?.callStatus }})</span
-    >
-    <span *ngIf="socket.activeUsers[user]?.room"
-      >-({{ socket.activeUsers[user]?.room }})</span
-    >
-  </li>
-</ul> -->
 <div class="table-responsive card mt-5">
   <table class="table">
     <thead>
@@ -74,15 +80,15 @@
         [class.green]="user == socket?.socket?.id"
         *ngFor="let user of activeUsers; index as i"
       >
-        <th scope="row">{{ i }}</th>
-        <td>{{ socket.activeUsers[user]?.uuid }}</td>
-        <td>{{user}}</td>
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ user?.uuid }}</td>
+        <td>{{ user?.socketId }}</td>
         <td>
-          {{ socket.activeUsers[user]?.name }}
-          <span *ngIf="user == socket?.socket?.id">(me)</span>
+          {{ user?.name }}
+          <span *ngIf="user?.socketId == socket?.socket?.id">(me)</span>
         </td>
-        <td>{{ socket.activeUsers[user]?.callStatus || "-" }}</td>
-        <td>{{ socket.activeUsers[user]?.room || "-" }}</td>
+        <td>{{ user?.callStatus || "-" }}</td>
+        <td>{{ user?.room || "-" }}</td>
       </tr>
     </tbody>
   </table>
@@ -94,7 +100,12 @@
 <div [class.active]="classFlag" class="card container col-md-6">
   <div id="chat-close-patientId" class="card-header" (click)="chatClose()">
     <h6>Chat</h6>
-    <i id="chat-close-patientId" class="fa fa-times" aria-hidden="true" (click)="chatClose()"></i>
+    <i
+      id="chat-close-patientId"
+      class="fa fa-times"
+      aria-hidden="true"
+      (click)="chatClose()"
+    ></i>
   </div>
   <div #chatBox class="chat-box card-body">
     <div
@@ -113,7 +124,7 @@
         >
           <span class="user-name"></span>
           <span class="user-time">{{
-            chat?.createdAt | date: "dd-MM-yy, h:mm a"
+            chat?.createdAt | date : "dd-MM-yy, h:mm a"
           }}</span>
         </div>
       </div>

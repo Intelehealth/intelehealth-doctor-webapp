@@ -1,9 +1,15 @@
 const saveToStorage = (name, value) => {
+  try {
     localStorage.setItem(name, JSON.stringify(value));
+  } catch (error) { }
 }
 
 const getFromStorage = (name) => {
+  try {
     return JSON.parse(localStorage.getItem(name));
+  } catch (error) {
+    return null;
+  }
 }
 
 const deleteFromStorage = (name) => {
@@ -29,5 +35,5 @@ const CheckNewVisit = (newData, oldData) => {
 }
 
 const CheckVisitNote = (visit, visitNoteList) => {
-    return visitNoteList.filter(vN => vN.uuid === visit.data.uuid)   
+    return visitNoteList.filter(vN => vN.uuid === visit.data.uuid)
 }

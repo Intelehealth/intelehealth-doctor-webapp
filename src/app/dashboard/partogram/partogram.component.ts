@@ -5,13 +5,16 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { PanZoomAPI, PanZoomConfig } from 'ngx-panzoom';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { VisitService } from 'src/app/services/visit.service';
+declare const saveToStorage, getFromStorage;
 
 @Component({
   selector: 'app-partogram',
@@ -242,7 +245,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
     private router: Router,
     private visitService: VisitService,
     private coreService: CoreService,
-    private encounterService: EncounterService
+    private encounterService: EncounterService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnDestroy(): void {
@@ -271,11 +276,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.apiSubscription = this.panZoomConfig.api.subscribe( (api: PanZoomAPI) => this.panZoomAPI = api );
+    this.apiSubscription = this.panZoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
-    this.provider = JSON.parse(localStorage.getItem("provider"));
-    setTimeout(()=> {
+    this.provider = getFromStorage('provider');
+    setTimeout(() => {
       this.ele = document.getElementsByClassName('table-responsive')[0];
       if (this.ele) {
         this.ele.scrollTop = 0;
@@ -302,13 +307,13 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   readPatientAttributes() {
     for (let x = 0; x < this.patient?.attributes.length; x++) {
-      this.pinfo[this.patient?.attributes[x]?.attributeType.display.replace(/ /g,'')] = this.patient?.attributes[x]?.value;
+      this.pinfo[this.patient?.attributes[x]?.attributeType.display.replace(/ /g, '')] = this.patient?.attributes[x]?.value;
     }
     if (this.pinfo['ActiveLaborDiagnosed']) {
       this.pinfo['ActiveLaborDiagnosed'] = moment(this.pinfo['ActiveLaborDiagnosed'], 'DD/MM/YYYY hh:mm A').toISOString();
     }
     if (this.pinfo['MembraneRupturedTimestamp']) {
-      (this.pinfo['MembraneRupturedTimestamp'] == 'U')? this.pinfo['MembraneRupturedTimestamp'] = 'U' : this.pinfo['MembraneRupturedTimestamp'] = moment(this.pinfo['MembraneRupturedTimestamp'], 'DD/MM/YYYY hh:mm A').toISOString();
+      (this.pinfo['MembraneRupturedTimestamp'] == 'U') ? this.pinfo['MembraneRupturedTimestamp'] = 'U' : this.pinfo['MembraneRupturedTimestamp'] = moment(this.pinfo['MembraneRupturedTimestamp'], 'DD/MM/YYYY hh:mm A').toISOString();
     }
     this.pinfo['age'] = this.patient?.person.age;
     this.pinfo['birthdate'] = this.patient?.person.birthdate;
@@ -364,17 +369,17 @@ export class PartogramComponent implements OnInit, OnDestroy {
     const encs = this.visit.encounters;
     for (let x = 0; x < encs.length; x++) {
       if (encs[x].display.includes('Stage')) {
-        if (!localStorage.patientVisitProvider) localStorage.setItem('patientVisitProvider', JSON.stringify(encs[x].encounterProviders[0]));
-        let indices = encs[x].encounterType.display.replace('Stage','').replace('Hour','').split('_').map((val)=> +val);
+        saveToStorage('patientVisitProvider', encs[x].encounterProviders[0])
+        let indices = encs[x].encounterType.display.replace('Stage', '').replace('Hour', '').split('_').map((val) => +val);
         // Get timing and initials
         if (indices[0] == 1 && indices[1] <= 12) {
-          this.timeStage1[indices[1]-1] = encs[x].encounterDatetime;
-          this.initialsStage1[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid1[indices[1]-1] = encs[x].uuid;
+          this.timeStage1[indices[1] - 1] = encs[x].encounterDatetime;
+          this.initialsStage1[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
+          this.encuuid1[indices[1] - 1] = encs[x].uuid;
         } else if (indices[0] == 2 && indices[1] <= 3) {
-          this.timeStage2[indices[1]-1] = encs[x].encounterDatetime;
-          this.initialsStage2[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid2[indices[1]-1] = encs[x].uuid;
+          this.timeStage2[indices[1] - 1] = encs[x].encounterDatetime;
+          this.initialsStage2[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
+          this.encuuid2[indices[1] - 1] = encs[x].uuid;
         } else {
           continue;
         }
@@ -386,18 +391,18 @@ export class PartogramComponent implements OnInit, OnDestroy {
               let parameterValue = this.parameters.find((o: any) => o.conceptName == encs[x].obs[y].concept.display);
               let valueIndex = -1;
               if (indices[0] == 1) {
-                (parameterValue.stage1Count == 12)? valueIndex = indices[1]-1 : valueIndex = ((2*(indices[1]-1))+(indices[2]-1));
+                (parameterValue.stage1Count == 12) ? valueIndex = indices[1] - 1 : valueIndex = ((2 * (indices[1] - 1)) + (indices[2] - 1));
               } else {
                 if (parameterValue.stage2Count == 3) {
-                  valueIndex = valueIndex = indices[1]-1;
-                } else if(parameterValue.stage2Count == 6) {
-                  valueIndex = (indices[2] == 1) ? ((2*(indices[1]-1))+(indices[2]-1)) : ((2*(indices[1]-1))+(indices[2]-2));
+                  valueIndex = valueIndex = indices[1] - 1;
+                } else if (parameterValue.stage2Count == 6) {
+                  valueIndex = (indices[2] == 1) ? ((2 * (indices[1] - 1)) + (indices[2] - 1)) : ((2 * (indices[1] - 1)) + (indices[2] - 2));
                 } else {
-                  valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
+                  valueIndex = ((4 * (indices[1] - 1)) + (indices[2] - 1));
                 }
               }
               if (parameterIndex == 20) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] ,{ value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex], { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
               } else {
                 this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
               }
@@ -416,7 +421,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   getAssessments() {
     this.assessments = [];
     for (let d = 0; d < 12; d++) {
-      if (this.parameters[20].stage1values[d].length||this.parameters[22].stage1values[d]||this.parameters[23].stage1values[d]) {
+      if (this.parameters[20].stage1values[d].length || this.parameters[22].stage1values[d] || this.parameters[23].stage1values[d]) {
         this.assessments.push({
           time: this.timeStage1[d],
           stage: 1,
@@ -428,7 +433,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     }
 
     for (let d = 0; d < 3; d++) {
-      if (this.parameters[20].stage2values[d].length||this.parameters[22].stage2values[d]||this.parameters[23].stage2values[d]) {
+      if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d] || this.parameters[23].stage2values[d]) {
         this.assessments.push({
           time: this.timeStage2[d],
           stage: 2,
@@ -448,19 +453,19 @@ export class PartogramComponent implements OnInit, OnDestroy {
     this.ele.style.cursor = 'grabbing';
     this.ele.style.userSelect = 'none';
     this.pos = {
-        // The current scroll
-        left: this.ele.scrollLeft,
-        top: this.ele.scrollTop,
-        // Get the current mouse position
-        x: e.clientX,
-        y: e.clientY,
+      // The current scroll
+      left: this.ele.scrollLeft,
+      top: this.ele.scrollTop,
+      // Get the current mouse position
+      x: e.clientX,
+      y: e.clientY,
     };
 
     if (!this.mm) {
       this.mm = this.mouseMoveHandler.bind(this);
     }
     if (!this.mu) {
-        this.mu = this.mouseUpHandler.bind(this);
+      this.mu = this.mouseUpHandler.bind(this);
     }
 
     document.addEventListener('mousemove', this.mm, false);
@@ -542,7 +547,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   editAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal({
-      assessment: (stage == 1) ? this.parameters[22].stage1values[index] ? this.parameters[22].stage1values[index].value : null : this.parameters[22].stage2values[index] ? this.parameters[22].stage2values[index].value: null,
+      assessment: (stage == 1) ? this.parameters[22].stage1values[index] ? this.parameters[22].stage1values[index].value : null : this.parameters[22].stage2values[index] ? this.parameters[22].stage2values[index].value : null,
       plan: (stage == 1) ? this.parameters[23].stage1values[index] ? this.parameters[23].stage1values[index].value : null : this.parameters[23].stage2values[index] ? this.parameters[23].stage2values[index].value : null,
       medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
     }).subscribe(res => {
@@ -551,7 +556,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         if (res.assessment) {
           if ((stage == 1) ? this.parameters[22].stage1values[index]?.uuid : this.parameters[22].stage2values[index]?.uuid) {
             this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment: this.parameters[22].stage2values[index].value = res.assessment;
+              (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment : this.parameters[22].stage2values[index].value = res.assessment;
             });
           } else {
             this.encounterService.postObs({
@@ -583,7 +588,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         if (res.plan) {
           if ((stage == 1) ? this.parameters[23].stage1values[index]?.uuid : this.parameters[23].stage2values[index]?.uuid) {
             this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan: this.parameters[23].stage2values[index].value = res.plan;
+              (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan : this.parameters[23].stage2values[index].value = res.plan;
             });
           } else {
             this.encounterService.postObs({
@@ -662,6 +667,19 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   startCall() {
+    console.log('this.socketSvc: ', this.socketSvc.activeUsers);
+    const nurse = getFromStorage('patientVisitProvider');
+    const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === nurse?.provider?.uuid);
+    if (!nursePresent) {
+      this.toastr.error("Please try again later.", "Health Worker is not Online.");
+      return;
+    }
+
+    if (nursePresent?.callStatus !== 'available') {
+      this.toastr.error("Please try again later.", "Health Worker is busy on another call");
+      return;
+    }
+
     if (this.dialogRef2) {
       this.dialogRef2.close();
       return;
@@ -712,7 +730,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return JSON.parse(localStorage.user).uuid;
+    return getFromStorage('user')?.uuid
   }
 
   getPatientIdentifier(identifierType: string) {
