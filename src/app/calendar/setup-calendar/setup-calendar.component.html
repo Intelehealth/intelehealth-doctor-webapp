@@ -193,7 +193,7 @@
                         </td>
                       </tr>
 
-                      <tr *ngIf="!_addMoreTiming && last">
+                      <tr *ngIf="!_addMoreTiming && last && filteredDays.length !== 0">
                         <td colspan="4">
                           <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()">
                             <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
