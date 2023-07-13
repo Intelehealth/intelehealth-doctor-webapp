@@ -150,14 +150,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   onCallConnect() {
-    this.socketSvc.emitEvent("call", {
+    this.socketSvc.incomingCallData = {
       nurseId: this.nurseId,
       doctorName: this.doctorName,
       roomId: this.room,
       visitId: this.data?.visitId,
       doctorId: this.data?.connectToDrId,
-      appToken: this.webrtcSvc.appToken
-    });
+      appToken: this.webrtcSvc.appToken,
+      socketId: this.socketSvc?.socket?.id,
+      initiator: this.initiator
+    };
+
+    this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
@@ -175,6 +179,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   handleParticipantConnect() {
     this.callConnected = true;
     this.callStartedAt = moment();
+    this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
 
   get callConnected() {
