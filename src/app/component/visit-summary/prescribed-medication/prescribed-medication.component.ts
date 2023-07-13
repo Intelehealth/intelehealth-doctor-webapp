@@ -32,6 +32,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class PrescribedMedicationComponent implements OnInit {
   @Input() isManagerRole : boolean;
+  @Input() visitCompleted: boolean;
   meds: any = [];
   add = false;
   encounterUuid: string;
@@ -158,7 +159,10 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.meds.push(this.diagnosisService.getData(obs));
+            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+              obs.creator.person = { ...user.person };
+              this.meds.push(this.diagnosisService.getData(obs));
+            });
           }
         });
       });
@@ -221,7 +225,8 @@ export class PrescribedMedicationComponent implements OnInit {
         };
         this.service.postObs(json)
           .subscribe(response => {
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, creator: { uuid: getFromStorage("user").uuid } }));
+            const user = getFromStorage("user");
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, dateCreated: response.obsDatetime, creator: { uuid: user.uuid, person: user.person } }));
             this.add = false;
           });
       }

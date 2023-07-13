@@ -29,6 +29,7 @@ import * as moment from 'moment';
 export class DischargeOrderComponent implements OnInit {
 
   @Input() isManagerRole: boolean;
+  @Input() visitCompleted: boolean;
   dischargeOrders: any = [];
   encounterUuid: string;
   patientId: string;
@@ -50,7 +51,10 @@ export class DischargeOrderComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.dischargeOrders.push(this.diagnosisService.getData(obs));
+            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+              obs.creator.person = { ...user.person };
+              this.dischargeOrders.push(this.diagnosisService.getData(obs));
+            });
           }
         });
       });
@@ -71,7 +75,8 @@ export class DischargeOrderComponent implements OnInit {
       };
       this.service.postObs(json)
         .subscribe(resp => {
-          this.dischargeOrders.push({ uuid: resp.uuid, value: value, creator: { uuid: getFromStorage("user").uuid } });
+          const user = getFromStorage("user");
+          this.dischargeOrders.push({ uuid: resp.uuid, value: value, dateCreated: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person  } });
         });
     }
   }

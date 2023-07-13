@@ -58,7 +58,7 @@
         </div>
         <div class="row" *ngIf="!aidOrderForm?.value.type1Uuid || !aidOrderForm?.value.type2Uuid || !aidOrderForm?.value.type3Uuid || !aidOrderForm?.value.type4Uuid || !aidOrderForm?.value.type5Uuid">
           <div class="col-md-12">
-            <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole">
+            <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole" *ngIf="!visitCompleted">
               {{'Save'|translate}}
             </button>
           </div>
@@ -70,95 +70,130 @@
         <div class="doctor-value">
           {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
           <b>{{ getType1Values() }} {{ (aidOrderForm?.value.type1Other)? ' (' + aidOrderForm?.value.type1Other + ')' : ''  }}</b>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{aidOrderForm?.value.type1Obs.creator.person.display|comment}} | {{aidOrderForm?.value.type1Obs.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="aidOrderForm?.value.type1Obs.comment" class="comment">{{aidOrderForm?.value.type1Obs.comment|comment}}</span>
+          </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type1Uuid, 'type1Uuid', aidOrderForm?.value.type1CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
       </div>
       <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type2Uuid">
         <div class="doctor-value">
           {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
           <b>{{ getType2Values() }} {{ (aidOrderForm?.value.type2Other)? ' (' + aidOrderForm?.value.type2Other + ')' : ''  }}</b>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{aidOrderForm?.value.type2Obs.creator.person.display|comment}} | {{aidOrderForm?.value.type2Obs.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="aidOrderForm?.value.type2Obs.comment" class="comment">{{aidOrderForm?.value.type2Obs.comment|comment}}</span>
+          </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type2Uuid, 'type2Uuid', aidOrderForm?.value.type2CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
       </div>
       <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type3Uuid">
         <div class="doctor-value">
           {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type3 }}</b>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{aidOrderForm?.value.type3Obs.creator.person.display|comment}} | {{aidOrderForm?.value.type3Obs.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="aidOrderForm?.value.type3Obs.comment" class="comment">{{aidOrderForm?.value.type3Obs.comment|comment}}</span>
+          </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type3Uuid, 'type3Uuid', aidOrderForm?.value.type3CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
       </div>
       <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type4Uuid">
         <div class="doctor-value">
           {{'Type 4. Cover surgical expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type4 }}</b>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{aidOrderForm?.value.type4Obs.creator.person.display|comment}} | {{aidOrderForm?.value.type4Obs.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="aidOrderForm?.value.type4Obs.comment" class="comment">{{aidOrderForm?.value.type4Obs.comment|comment}}</span>
+          </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type4Uuid, 'type4Uuid', aidOrderForm?.value.type4CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
       </div>
       <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type5Uuid">
         <div class="doctor-value">
           {{'Type 5. Cash assistance (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type5 }}</b>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{aidOrderForm?.value.type5Obs.creator.person.display|comment}} | {{aidOrderForm?.value.type5Obs.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="aidOrderForm?.value.type5Obs.comment" class="comment">{{aidOrderForm?.value.type5Obs.comment|comment}}</span>
+          </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type5Uuid, 'type5Uuid', aidOrderForm?.value.type5CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
       </div>
 
 
       <ng-container *ngIf="type1.length > 0">
         <div  *ngFor="let t1 of type1; let i = index;" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert alert-danger">
                 <div class="doctor-value d-flex flex-column">
                   <span>{{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}}</span>
                   <span class="strike">{{ getType1Values2(t1.type1Val) }} {{ (t1.type1OtherVal)? ' (' + t1.type1OtherVal + ')' : '' }}</span>
-                  <span class="comment">{{t1.comment|comment}}</span>
+                  <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                    <span class="comment-blue">{{t1.creator.person.display|comment}} | {{t1.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                    <span *ngIf="t1.comment" class="comment">{{t1.comment|comment}}</span>
+                  </div>
                 </div>
             </div>
         </div>
       </ng-container>
       <ng-container *ngIf="type2.length > 0">
         <div  *ngFor="let t2 of type2; let i = index;" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert alert-danger">
                 <div class="doctor-value d-flex flex-column">
                   <span>{{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}}</span>
                   <span class="strike">{{ getType2Values2(t2.type2Val) }} {{ (t2.type2OtherVal)? ' (' + t2.type2OtherVal + ')' : '' }}</span>
-                  <span class="comment">{{t2.comment|comment}}</span>
+                  <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                    <span class="comment-blue">{{t2.creator.person.display|comment}} | {{t2.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                    <span *ngIf="t2.comment" class="comment">{{t2.comment|comment}}</span>
+                  </div>
                 </div>
             </div>
         </div>
       </ng-container>
       <ng-container *ngIf="type3.length > 0">
         <div  *ngFor="let t3 of type3; let i = index;" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert alert-danger">
                 <div class="doctor-value d-flex flex-column">
                   <span>{{'Type 3. Cover medication expenses (amount)'|translate}}</span>
                   <span class="strike">{{ t3.type3Val }}</span>
-                  <span class="comment">{{t3.comment|comment}}</span>
+                  <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                    <span class="comment-blue">{{t3.creator.person.display|comment}} | {{t3.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                    <span *ngIf="t3.comment" class="comment">{{t3.comment|comment}}</span>
+                  </div>
                 </div>
             </div>
         </div>
       </ng-container>
       <ng-container *ngIf="type4.length > 0">
         <div  *ngFor="let t4 of type4; let i = index;" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert alert-danger">
                 <div class="doctor-value d-flex flex-column">
                   <span>{{'Type 4. Cover surgical expenses (amount)'|translate}}</span>
                   <span class="strike">{{ t4.type4Val }}</span>
-                  <span class="comment">{{t4.comment|comment}}</span>
+                  <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                    <span class="comment-blue">{{t4.creator.person.display|comment}} | {{t4.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                    <span *ngIf="t4.comment" class="comment">{{t4.comment|comment}}</span>
+                  </div>
                 </div>
             </div>
         </div>
       </ng-container>
       <ng-container *ngIf="type5.length > 0">
         <div  *ngFor="let t5 of type5; let i = index;" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert alert-danger">
                 <div class="doctor-value d-flex flex-column">
                   <span>{{'Type 5. Cash assistance (amount)'|translate}}</span>
                   <span class="strike">{{ t5.type5Val }}</span>
-                  <span class="comment">{{t5.comment|comment}}</span>
+                  <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                    <span class="comment-blue">{{t5.creator.person.display|comment}} | {{t5.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                    <span *ngIf="t5.comment" class="comment">{{t5.comment|comment}}</span>
+                  </div>
                 </div>
             </div>
         </div>

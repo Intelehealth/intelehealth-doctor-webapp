@@ -6,19 +6,22 @@
           <mat-form-field class="w-100">
             <input matInput placeholder="{{'Discharge Order'| translate}}" formControlName='dischargeOrder'>
           </mat-form-field>
-          <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!dischargeOrderForm.valid || isManagerRole'>{{
+          <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!dischargeOrderForm.valid || isManagerRole' *ngIf="!visitCompleted">{{
               'Add Discharge Order' | translate}}</button>
       </div>
   </form>
   <br>
   <ng-container *ngIf="dischargeOrders.length > 0">
       <div  *ngFor="let dior of dischargeOrders; let i = index;" >
-          <div [@moveInLeft] class="alert alert-primary">
+          <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !dior.comment, 'alert-danger': dior.comment }">
               <div class="doctor-value d-flex flex-column">
                 <span [class.strike]="dior.comment">{{dior.value}}</span>
-                <span *ngIf="dior.comment" class="comment">{{dior.comment|comment}}</span>
+                <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                  <span class="comment-blue">{{dior.creator.person.display|comment}} | {{dior.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                  <span *ngIf="dior.comment" class="comment">{{dior.comment|comment}}</span>
+                </div>
               </div>
-              <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!dior.comment"
+              <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!dior.comment && !visitCompleted"
                   style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
           </div>
       </div>

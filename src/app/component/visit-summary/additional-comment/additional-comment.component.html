@@ -7,19 +7,22 @@
                 <textarea matInput placeholder="{{ 'Notes' | translate }}"
                     formControlName='comment'></textarea>
             </mat-form-field>
-            <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || isManagerRole'>{{
+            <button type="reset" (click)="Submit()" mat-raised-button color="primary" [disabled]='!commentForm.valid || isManagerRole' *ngIf="!visitCompleted">{{
                 'Add Note' | translate}}</button>
         </div>
     </form>
     <br>
     <ng-container *ngIf="comment.length > 0">
         <div  *ngFor="let c of comment, index as i" >
-            <div [@moveInLeft] class="alert alert-primary">
+            <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !c.comment, 'alert-danger': c.comment }">
               <div class="doctor-value d-flex flex-column">
                 <span [class.strike]="c.comment">{{c.value}}</span>
-                <span *ngIf="c.comment" class="comment">{{c.comment|comment}}</span>
+                <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                  <span class="comment-blue">{{c.creator.person.display|comment}} | {{c.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+                  <span *ngIf="c.comment" class="comment">{{c.comment|comment}}</span>
+                </div>
               </div>
-              <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.comment"
+              <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!c.comment && !visitCompleted"
                   style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
             </div>
         </div>

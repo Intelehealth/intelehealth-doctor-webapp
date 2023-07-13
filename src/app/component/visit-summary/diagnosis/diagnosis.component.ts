@@ -29,6 +29,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class DiagnosisComponent implements OnInit {
 @Input() isManagerRole : boolean;
+@Input() visitCompleted: boolean;
 diagnosis: any = [];
 diagnosisList = [];
 conceptDiagnosis = '537bb20d-d09d-4f88-930b-cc45c7d662df';
@@ -53,7 +54,10 @@ diagnosisForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosis.push(this.diagnosisService.getData(obs));
+          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+            obs.creator.person = { ...user.person };
+            this.diagnosis.push(this.diagnosisService.getData(obs));
+          });
         }
       });
     });
@@ -82,10 +86,12 @@ diagnosisForm = new FormGroup({
       this.service.postObs(json)
       .subscribe(resp => {
         this.diagnosisList = [];
+        const user = getFromStorage("user");
         let obj = {
           uuid : resp.uuid,
           value: json.value,
-          creator: { uuid: getFromStorage("user").uuid }
+          dateCreated: resp.obsDatetime,
+          creator: { uuid: user.uuid, person: user.person }
         }
         this.diagnosis.push(this.diagnosisService.getData(obj));
       });

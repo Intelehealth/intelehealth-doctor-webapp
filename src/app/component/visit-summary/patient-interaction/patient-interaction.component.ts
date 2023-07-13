@@ -47,6 +47,7 @@ declare var getFromStorage: any, getEncounterUUID: any, getFromStorage: any;
 })
 export class PatientInteractionComponent implements OnInit {
   @Input() isManagerRole : boolean;
+  @Input() visitCompleted: boolean;
   msg: any = [];
   whatsappLink: string;
   phoneNo;

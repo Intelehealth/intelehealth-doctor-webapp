@@ -30,6 +30,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class FollowUpComponent implements OnInit {
   @Input() isManagerRole: boolean;
+  @Input() visitCompleted: boolean;
   minDate = new Date();
   followUp: any = [];
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
@@ -56,8 +57,11 @@ export class FollowUpComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            let obs1 = this.diagnosisService.getData(obs);
-            this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+              obs.creator.person = { ...user.person };
+              let obs1 = this.diagnosisService.getData(obs);
+              this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+            });
           }
         });
       });
@@ -84,10 +88,12 @@ export class FollowUpComponent implements OnInit {
       };
       this.service.postObs(json)
         .subscribe(resp => {
+          const user = getFromStorage("user");
           let obj = {
             uuid: resp.uuid,
             value: json.value,
-            creator: { uuid: getFromStorage("user").uuid }
+            dateCreated: resp.obsDatetime,
+            creator: { uuid: user.uuid, person: user.person }
           }
           this.followUp.push(this.diagnosisService.getData(obj));
         });

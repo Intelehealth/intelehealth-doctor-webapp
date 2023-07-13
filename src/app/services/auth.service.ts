@@ -38,6 +38,10 @@ export class AuthService {
         deleteFromStorage("session");
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
+        localStorage.clear();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       });
     });
   }
@@ -49,4 +53,5 @@ export class AuthService {
       this.fingerPrint = result.visitorId;
     })();
   }
+
 }

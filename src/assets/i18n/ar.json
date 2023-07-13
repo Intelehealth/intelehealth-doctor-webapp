@@ -1395,5 +1395,8 @@
   "Community General Need Survey": "استبيان الحاجات المحلية",
   "Survey of Acute Homecare Utilizers": "استبيان مستخدمي الخدمات الطبية المنزلية",
   "Student Need Assessment": "نقييم حاجات طالب",
-  "Questions for university education": "الأسئلة الخاصة بالتعليم الجامعي"
+  "Questions for university education": "الأسئلة الخاصة بالتعليم الجامعي",
+  "Information": "إرْشادات",
+  "Complete Prescription": "الوصفة الكاملة",
+  "Are you sure to complete this visit? Once completed prescription can not be edited.": "هل انت متأكد من اكمال الزيارة الصحية ؟ لا يمكن تغيير الوصفة الدوائية/أمر الصرف بعد اكمال الزيارة"
 }

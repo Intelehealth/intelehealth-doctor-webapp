@@ -29,18 +29,21 @@
       </div>
       <br>
       <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" id="diagnosis-submit"
-        [disabled]='!diagnosisForm.valid || isManagerRole'>{{'Add Diagnosis'|translate}}</button>
+        [disabled]='!diagnosisForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Diagnosis'|translate}}</button>
     </form>
   </div>
   <ng-container *ngIf="diagnosis.length > 0">
     <br>
     <div *ngFor='let diagnosis of diagnosis, index as i'>
-      <div [@moveInLeft] class="alert alert-primary">
+      <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !diagnosis.comment, 'alert-danger': diagnosis.comment }">
         <div class="doctor-value d-flex flex-column">
           <span [class.strike]="diagnosis.comment">{{diagnosis.value}}</span>
-          <span *ngIf="diagnosis.comment" class="comment">{{diagnosis.comment|comment}}</span>
+          <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+            <span class="comment-blue">{{diagnosis.creator.person.display|comment}} | {{diagnosis.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+            <span *ngIf="diagnosis.comment" class="comment">{{diagnosis.comment|comment}}</span>
+          </div>
         </div>
-        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment"
+        <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!diagnosis.comment && !visitCompleted"
             style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>

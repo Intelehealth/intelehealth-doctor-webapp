@@ -27,4 +27,13 @@ mat-spinner {
     height: 30px;
     width: 30px;
   }
-  
+
+  .btn-action {
+    min-width: 200px;
+  }
+
+  @media (max-width: 768px) {
+    .btn-action {
+      width: 100%;
+    }
+  }

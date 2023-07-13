@@ -76,42 +76,42 @@
 
       <div *ngIf="show">
             <mat-card>
-                  <app-patient-interaction [isManagerRole]="isManagerRole"></app-patient-interaction>
+                  <app-patient-interaction [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-patient-interaction>
             </mat-card>
             <br>
             <mat-card>
-                  <app-diagnosis [isManagerRole]="isManagerRole"></app-diagnosis>
+                  <app-diagnosis [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-diagnosis>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-medication [isManagerRole]="isManagerRole"></app-prescribed-medication>
+                  <app-prescribed-medication [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-medication>
             </mat-card>
             <br>
             <mat-card>
-                  <app-prescribed-test [isManagerRole]="isManagerRole"></app-prescribed-test>
+                  <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
             <br>
             <mat-card>
-                  <app-advice [isManagerRole]="isManagerRole"></app-advice>
+                  <app-advice [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-advice>
             </mat-card>
             <br>
             <mat-card>
-              <app-aid-order [isManagerRole]="isManagerRole"></app-aid-order>
+              <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-aid-order>
             </mat-card>
             <br>
             <mat-card>
-                  <app-additional-comment [isManagerRole]="isManagerRole"></app-additional-comment>
+                  <app-additional-comment [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-additional-comment>
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up [isManagerRole]="isManagerRole"></app-follow-up>
+                  <app-follow-up [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-follow-up>
             </mat-card>
             <br>
             <mat-card>
-              <app-discharge-order [isManagerRole]="isManagerRole"></app-discharge-order>
+              <app-discharge-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-discharge-order>
             </mat-card>
             <br>
-            <mat-card *ngIf="!(userSpeciality == 'Admin' && visitSpecialitySecondary == 'Admin')">
+            <mat-card *ngIf="(!(userSpeciality == 'Admin' && visitSpecialitySecondary == 'Admin')) && !visitCompletePresent">
               <app-reassign-speciality [isManagerRole]="isManagerRole" [providerSpeciality]="userSpeciality" [visitSpeciality]="visitSpeciality" [visitSpecialitySecondary]="visitSpecialitySecondary"></app-reassign-speciality>
             </mat-card>
             <br>
@@ -124,9 +124,11 @@
                   <br>
             </ng-container>
 
-            <div class="text-center">
-                  <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                  [disabled]="!isVisitNoteEncProvider || visitCompletePresent || isManagerRole">{{ 'Sign and Submit' | translate }}</button>
+            <div class="d-flex justify-content-between flex-wrap">
+              <button [disabled]="visitCompletePresent" class="btn-action m-1" (click)="saveData()" id="save-button" mat-raised-button color="primary">{{ 'Save' | translate }}</button>
+
+                  <button (click)="sign()" id="sign-button" class="btn-action m-1" mat-raised-button color="primary"
+                  [disabled]="!isVisitNoteEncProvider || visitCompletePresent || isManagerRole">{{ 'Complete Prescription' | translate }}</button>
             </div>
       </div>
 </div>

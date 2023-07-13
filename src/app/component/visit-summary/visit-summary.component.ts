@@ -10,6 +10,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
+import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -33,7 +34,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     : "../../../assets/svgs/video-w.svg";
   isManagerRole = false;
   visitSpeciality: any;
-  visitSpecialitySecondary : any;
+  visitSpecialitySecondary: any;
   userSpeciality: any;
   isVisitNoteEncProvider = false;
   isSameSpecialityDoctorViewingVisit = false;
@@ -48,6 +49,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
     private translationService: TranslationService,
+    private dialogService: ConfirmDialogService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -108,15 +110,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
         });
       });
-       this.translationService.getSelectedLanguage();
-       if(browserRefresh) {
-        this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
-      }
+    this.translationService.getSelectedLanguage();
+    if (browserRefresh) {
+      this.translationService.changeCssFile(localStorage.getItem("selectedLanguage"));
+    }
   }
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
 
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
@@ -152,7 +154,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             attributes.forEach((element) => {
               if (
                 element.attributeType.uuid ===
-                  "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
                 !element.voided
               ) {
                 const payload = {
@@ -198,63 +200,68 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   sign() {
-    const myDate = new Date(Date.now() - 30000);
-    const userDetails = getFromStorage("user");
-    const providerDetails = getFromStorage("provider");
-    if (userDetails && providerDetails) {
-      this.doctorDetails = providerDetails;
-      this.getDoctorValue();
-      const providerUuid = providerDetails.uuid;
-      if (this.isVisitNoteEncProvider) {
-        this.service.signRequest(providerUuid).subscribe((res) => {
-          if (res.results.length) {
-            res.results.forEach((element) => {
-              if (element.attributeType.display === "textOfSign") {
-                this.text = element.value;
-              }
-              if (element.attributeType.display === "fontOfSign") {
-                this.font = element.value;
-              }
-            });
-            const json = {
-              patient: this.patientUuid,
-              encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
-              encounterProviders: [
-                {
-                  provider: providerUuid,
-                  encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
-                },
-              ],
-              visit: this.visitUuid,
-              encounterDatetime: myDate,
-              obs: [
-                {
-                  concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e",
-                  value: JSON.stringify(this.doctorValue),
-                },
-              ],
-            };
-            this.service.postEncounter(json).subscribe((post) => {
-              this.visitCompletePresent = true;
-              this.router.navigateByUrl("/home");
-              this.translationService.getTranslation("Visit Complete");
-            });
-          } else {
-            if (
-              window.confirm(
-                'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
-              )
-            ) {
-              this.router.navigateByUrl("/myAccount");
+    this.dialogService.openConfirmDialog("Are you sure to complete this visit? Once completed prescription can not be edited.")
+      .afterClosed().subscribe(res => {
+        if (res) {
+          const myDate = new Date(Date.now() - 30000);
+          const userDetails = getFromStorage("user");
+          const providerDetails = getFromStorage("provider");
+          if (userDetails && providerDetails) {
+            this.doctorDetails = providerDetails;
+            this.getDoctorValue();
+            const providerUuid = providerDetails.uuid;
+            if (this.isVisitNoteEncProvider) {
+              this.service.signRequest(providerUuid).subscribe((res) => {
+                if (res.results.length) {
+                  res.results.forEach((element) => {
+                    if (element.attributeType.display === "textOfSign") {
+                      this.text = element.value;
+                    }
+                    if (element.attributeType.display === "fontOfSign") {
+                      this.font = element.value;
+                    }
+                  });
+                  const json = {
+                    patient: this.patientUuid,
+                    encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
+                    encounterProviders: [
+                      {
+                        provider: providerUuid,
+                        encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
+                      },
+                    ],
+                    visit: this.visitUuid,
+                    encounterDatetime: myDate,
+                    obs: [
+                      {
+                        concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e",
+                        value: JSON.stringify(this.doctorValue),
+                      },
+                    ],
+                  };
+                  this.service.postEncounter(json).subscribe((post) => {
+                    this.visitCompletePresent = true;
+                    this.router.navigateByUrl("/home");
+                    this.translationService.getTranslation("Visit Complete");
+                  });
+                } else {
+                  if (
+                    window.confirm(
+                      'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
+                    )
+                  ) {
+                    this.router.navigateByUrl("/myAccount");
+                  }
+                }
+              });
+            } else {
+              this.translationService.getTranslation("Another doctor is viewing this case");
             }
+          } else {
+            this.authService.logout();
           }
-        });
-      } else {
-        this.translationService.getTranslation("Another doctor is viewing this case");
-      }
-    } else {
-      this.authService.logout();
-    }
+        }
+      });
   }
 
   getDoctorValue = () => {
@@ -310,6 +317,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  saveData() {
+    this.snackbar.open('Data saved successfully', null, { duration: 4000 });
   }
 
   ngOnDestroy(): void {

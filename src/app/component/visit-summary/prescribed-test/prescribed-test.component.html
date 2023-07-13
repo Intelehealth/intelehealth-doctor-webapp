@@ -7,19 +7,22 @@
         <input matInput placeholder="{{'Test'|translate}}" [ngbTypeahead]="search" formControlName='test'>
       </mat-form-field>
       <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole'>{{'Add
+      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
         Test'|translate}}</button>
     </form>
     <br>
   </div>
   <ng-container *ngIf="tests.length > 0">
       <div *ngFor='let test of tests, index as i' >
-        <div  [@moveInLeft] class="alert alert-primary">
+        <div  [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !test.comment, 'alert-danger': test.comment }">
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="test.comment">{{test.value}}</span>
-            <span *ngIf="test.comment" class="comment">{{test.comment|comment}}</span>
+            <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+              <span class="comment-blue">{{test.creator.person.display|comment}} | {{test.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+              <span *ngIf="test.comment" class="comment">{{test.comment|comment}}</span>
+            </div>
           </div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!test.comment"
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!test.comment && !visitCompleted"
               style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
       </div>

@@ -60,7 +60,7 @@
         <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
           formControlName="additional"></textarea>
         <br>
-        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole'>{{'Add
+        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
           Meds'|translate}}</button>
       </div>
     </form>
@@ -68,12 +68,15 @@
   </div>
   <ng-container *ngIf="meds.length > 0">
       <div *ngFor='let meds of meds, index as i' >
-        <div [@moveInLeft] class="alert alert-primary">
+        <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="meds.comment">{{meds.value}}</span>
-            <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
+            <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+              <span class="comment-blue">{{meds.creator.person.display|comment}} | {{meds.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+              <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
+            </div>
           </div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment"
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted"
               style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>

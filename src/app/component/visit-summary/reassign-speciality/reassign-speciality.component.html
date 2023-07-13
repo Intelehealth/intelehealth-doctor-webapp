@@ -1,20 +1,20 @@
 <div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
   <h4><i class="fa fa-sync-alt"></i> {{'Refer to Specialist'| translate}}</h4>
   <hr>
-  <div>
+  <!-- <div>
     {{ 'Do you want to refer this visit to another specialty?'|translate}}
-  </div>
+  </div> -->
   <div>
-    <div id="patient-interaction">
+    <!-- <div id="patient-interaction">
       <br>
       <mat-radio-group name="type" aria-label="Select an option" [(ngModel)]="type">
         <mat-radio-button name="type" (change)="type = 'N'" [value]="'Y'">{{'Yes'|translate}}
         </mat-radio-button>
         <mat-radio-button name="type" (change)="type = 'Y'" [value]="'N'">{{'No'|translate}}</mat-radio-button>
       </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
-    </div>
+    </div> -->
     <form [formGroup]='updateSpeciality' (ngSubmit)="Submit()">
-      <div id="followup-button" *ngIf="type == 'Y'">
+      <div id="followup-button">
         <mat-form-field class="example-full-width">
           <mat-select placeholder="{{'Specialization'|translate}}" formControlName="specialization">
             <ng-container *ngFor="let specialization of specializations">

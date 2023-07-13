@@ -31,6 +31,8 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class PrescribedTestComponent implements OnInit {
 @Input() isManagerRole : boolean;
+@Input() visitCompleted: boolean;
+
 tests: any = [];
 test =  [];
 conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
@@ -72,7 +74,10 @@ testForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.tests.push(this.diagnosisService.getData(obs));
+          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+            obs.creator.person = { ...user.person };
+            this.tests.push(this.diagnosisService.getData(obs));
+          });
         }
       });
     });
@@ -93,10 +98,12 @@ testForm = new FormGroup({
       };
       this.service.postObs(json)
       .subscribe(resp => {
+        const user = getFromStorage("user");
         let obj = {
           uuid : resp.uuid,
           value: json.value,
-          creator: { uuid: getFromStorage("user").uuid }
+          dateCreated: resp.obsDatetime,
+          creator: { uuid: user.uuid, person: user.person }
         }
         this.tests.push(this.diagnosisService.getData(obj));
       });

@@ -32,6 +32,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class AdviceComponent implements OnInit {
   @Input() isManagerRole : boolean;
+  @Input() visitCompleted: boolean;
   advice: any = [];
   advices: any = [];
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
@@ -72,9 +73,12 @@ export class AdviceComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
-            if (!obs.value.includes('Start')) {
-              this.advice.push(this.diagnosisService.getData(obs));
-            }
+            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+              obs.creator.person = { ...user.person };
+              if (!obs.value.includes('Start')) {
+                this.advice.push(this.diagnosisService.getData(obs));
+              }
+            });
           }
         });
       });
@@ -96,10 +100,12 @@ export class AdviceComponent implements OnInit {
 
       this.service.postObs(json)
         .subscribe(response => {
+          const user = getFromStorage("user");
           let obj = {
             uuid : response.uuid,
             value: json.value,
-            creator: { uuid: getFromStorage("user").uuid }
+            dateCreated: response.obsDatetime,
+            creator: { uuid: user.uuid, person: user.person }
           }
           this.advice.push(this.diagnosisService.getData(obj));
         });

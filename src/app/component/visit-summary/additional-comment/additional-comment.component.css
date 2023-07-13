@@ -13,6 +13,13 @@
   white-space: nowrap;
 }
 
+.comment-blue  {
+  font-size: 10px;
+  color: darkblue;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 
 /* @media only screen and (max-width: 768px) {
     .example-full-width {

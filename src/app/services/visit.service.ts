@@ -21,7 +21,7 @@ export class VisitService {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(uuid,display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)",
+        v: "custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(uuid,display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders:(uuid,encounterRole,provider:(uuid,display,attributes))),attributes)",
       },
       ...params,
     };

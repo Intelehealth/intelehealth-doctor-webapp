@@ -152,11 +152,19 @@ export class HomepageComponent implements OnInit, OnDestroy {
         });
         this.allVisits.forEach((active) => {
           if (active?.location?.uuid == this.doctorLocation) {
+            // Check if doctor is visit note encounter provider
             if (active.encounters.length > 0) {
               let isVnEncProvider = false;
+              let isSameSpecialityDoctorViewingVisit = false;
               for (let i = 0; i < active.encounters.length; i++) {
                 if (active.encounters[i].encounterType.display == "Visit Note") {
                   for (let j = 0; j < active.encounters[i].encounterProviders.length; j++) {
+                    for (let x = 0; x < active.encounters[i].encounterProviders[j].provider.attributes.length; x++) {
+                      if (active.encounters[i].encounterProviders[j].provider.attributes[x].value == this.specialization) {
+                        isSameSpecialityDoctorViewingVisit = true;
+                        break;
+                      }
+                    }
                     if (active.encounters[i].encounterProviders[j].provider.uuid == this.provider.uuid) {
                       isVnEncProvider = true;
                       break;
@@ -165,10 +173,23 @@ export class HomepageComponent implements OnInit, OnDestroy {
                   break;
                 }
               }
+
+              // Check if visit is referred to this doctor or not
+              let isReferred = false;
+              const referralHistory = active.attributes.find(attr => attr.attributeType.uuid == 'eb2ea3f4-006f-470e-8f1f-0966ab00cd2d')?.value;
+              let ref = [];
+              if(referralHistory) {
+                ref = referralHistory.split('-->');
+                let index = ref.indexOf(this.specialization);
+                if (index != 0 && index != -1) {
+                  isReferred = true;
+                }
+              }
+
               if(this.systemAccess) {
-                this.visitCategory(active);
+                this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
               } else if (isVnEncProvider) {
-                this.visitCategory(active);
+                this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
               } else if (active.attributes.length) {
                 const attributes = active.attributes;
                 const speRequired = attributes.filter(
@@ -176,14 +197,15 @@ export class HomepageComponent implements OnInit, OnDestroy {
                     attr.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d" || attr.attributeType.uuid === "8100ec1a-063b-47d5-9781-224d835fc688"
                 );
                 if (speRequired.length) {
-                  speRequired.forEach((spe, index) => {
-                    if (spe.value === this.specialization) {
-                      this.visitCategory(active);
+                  for (let x = 0; x < speRequired.length; x++) {
+                    if (speRequired[x].value === this.specialization) {
+                      this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+                      break;
                     }
-                  });
+                  }
                 }
               } else if (this.specialization === "General Physician") {
-                this.visitCategory(active);
+                this.visitCategory(active, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
               }
             }
             this.value = {};
@@ -240,7 +262,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  visitCategory(active) {
+  visitCategory(active, isVnEncProvider = false, isReferred = false, isSameSpecialityDoctorViewingVisit = false) {
     const { encounters = [] } = active;
     let encounter;
     if (
@@ -248,16 +270,45 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.checkVisit(encounters, "Visit Complete") ||
         this.checkVisit(encounters, "Patient Exit Survey"))
     ) {
-      const values = this.assignValueToProperty(active, encounter);
+      const values = this.assignValueToProperty(active, encounter, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
       this.completeVisitNo += 1;
       this.service.completedVisit.push(values);
     } else if ((encounter = this.checkVisit(encounters, "Visit Note"))) {
-      const values = this.assignValueToProperty(active, encounter);
-      this.visitNoteNo += 1;
-      this.service.progressVisit.push(values);
+      const values = this.assignValueToProperty(active, encounter, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
+      if (isReferred) {
+        if (!isVnEncProvider && !isSameSpecialityDoctorViewingVisit) {
+          if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+            this.flagPatientNo += 1;
+            this.service.flagVisit.push(values);
+          } else if ((encounter =
+            this.checkVisit(encounters, "ADULTINITIAL") ||
+            this.checkVisit(encounters, "Vitals"))) {
+            this.activePatient += 1;
+            this.service.waitingVisit.push(values);
+          }
+        } else if (isVnEncProvider) {
+          this.visitNoteNo += 1;
+          this.service.progressVisit.push(values);
+        }
+      } else {
+        if (isVnEncProvider) {
+          this.visitNoteNo += 1;
+          this.service.progressVisit.push(values);
+        } else {
+          if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+            this.flagPatientNo += 1;
+            this.service.flagVisit.push(values);
+          } else if ((encounter =
+            this.checkVisit(encounters, "ADULTINITIAL") ||
+            this.checkVisit(encounters, "Vitals"))) {
+            this.activePatient += 1;
+            this.service.waitingVisit.push(values);
+          }
+        }
+      }
     } else if ((encounter = this.checkVisit(encounters, "Flagged"))) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
-        const values = this.assignValueToProperty(active, encounter);
+        const values = this.assignValueToProperty(active, encounter, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
         this.flagPatientNo += 1;
         this.service.flagVisit.push(values);
       }
@@ -266,7 +317,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
         this.checkVisit(encounters, "ADULTINITIAL") ||
         this.checkVisit(encounters, "Vitals"))
     ) {
-      const values = this.assignValueToProperty(active, encounter);
+      const values = this.assignValueToProperty(active, encounter, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit);
       this.activePatient += 1;
       this.service.waitingVisit.push(values);
     }
@@ -300,7 +351,7 @@ export class HomepageComponent implements OnInit, OnDestroy {
     );
     return phoneObj ? phoneObj.value : "NA";
   }
-  assignValueToProperty(active, encounter) {
+  assignValueToProperty(active, encounter, isVnEncProvider, isReferred, isSameSpecialityDoctorViewingVisit) {
     this.value.visitId = active.uuid;
     this.value.patientId = active.patient.uuid;
     this.value.id = active.patient.identifiers[0].identifier;
@@ -310,9 +361,30 @@ export class HomepageComponent implements OnInit, OnDestroy {
     this.value.age = active.patient.person.age;
     this.value.location = active.location.display;
     this.value.status = encounter.encounterType.display;
-    this.value.provider =
-      encounter.encounterProviders[0].provider.display.split("- ")[1];
+    this.value.provider = '';
+    for (let x = 0; x < encounter.encounterProviders.length; x++) {
+      this.value.provider += encounter.encounterProviders[x].provider.display.split("- ")[1] + '<br/>';
+    }
+    // this.value.provider =
+    //   encounter.encounterProviders[0].provider.display.split("- ")[1];
     this.value.lastSeen = encounter.encounterDatetime;
+    this.value.isVnEncProvider = isVnEncProvider;
+    this.value.isReferred = isReferred;
+    this.value.isSameSpecialityDoctorViewingVisit = isSameSpecialityDoctorViewingVisit;
+    this.value.assignedToAdmin = false;
+    const attributes = active.attributes;
+    const speRequired = attributes.filter(
+      (attr) =>
+        attr.attributeType.uuid === "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d" || attr.attributeType.uuid === "8100ec1a-063b-47d5-9781-224d835fc688" || 'eb2ea3f4-006f-470e-8f1f-0966ab00cd2d'
+    );
+    if (speRequired.length) {
+      for (let x = 0; x < speRequired.length; x++) {
+        if (speRequired[x].value.match('Admin') != null) {
+          this.value.assignedToAdmin = true;
+          break;
+        }
+      }
+    }
     return this.value;
   }
 

@@ -28,6 +28,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 })
 export class AdditionalCommentComponent implements OnInit {
 @Input() isManagerRole : boolean;
+@Input() visitCompleted: boolean;
 comment: any = [];
 encounterUuid: string;
 patientId: string;
@@ -49,7 +50,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.comment.push(this.diagnosisService.getData(obs));
+          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
+            obs.creator.person = { ...user.person };
+            this.comment.push(this.diagnosisService.getData(obs));
+          });
         }
       });
     });
@@ -70,7 +74,8 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
       };
       this.service.postObs(json)
       .subscribe(resp => {
-        this.comment.push({uuid: resp.uuid, value: value, creator: { uuid: getFromStorage("user").uuid }});
+        const user = getFromStorage("user");
+        this.comment.push({ uuid: resp.uuid, value: value, dateCreated: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person  } });
       });
     }
   }

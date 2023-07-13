@@ -7,3 +7,17 @@
 .dropdown-item {
   white-space: pre-wrap;
 }
+
+.comment  {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.comment-blue  {
+  font-size: 10px;
+  color: darkblue;
+  font-weight: bold;
+  white-space: nowrap;
+}

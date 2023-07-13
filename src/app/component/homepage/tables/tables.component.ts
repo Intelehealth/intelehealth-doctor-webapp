@@ -20,6 +20,7 @@ import { VisitService } from "src/app/services/visit.service";
 })
 export class TablesComponent implements OnInit {
   displayColumns: string[] = [
+    "tag",
     "id",
     "name",
     "telephone",

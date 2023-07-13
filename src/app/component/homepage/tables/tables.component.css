@@ -56,3 +56,12 @@ mat-cell, .mat-cell {
 .badge.badge-pill {
   padding: 5px 10px;
 }
+
+.badge.badge-pink {
+  background-color: pink !important;
+  margin: 2px !important;
+}
+
+.bg-lightyellow {
+  background-color: rgb(255, 255, 203)
+}

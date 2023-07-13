@@ -7,6 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
 import { Router } from "@angular/router";
 import { VisitService } from "src/app/services/visit.service";
+import { AuthService } from "src/app/services/auth.service";
 declare var getFromStorage: any;
 
 @Component({
@@ -70,7 +71,8 @@ export class EditDetailsComponent implements OnInit {
     private http: HttpClient,
     private dialog: MatDialog,
     private router: Router,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -246,7 +248,8 @@ export class EditDetailsComponent implements OnInit {
       this.http.post(URL, json).subscribe((response) => { });
     }
     this.onClose();
-    setTimeout(() => window.location.reload(), 2000);
+    // setTimeout(() => window.location.reload(), 2000);
+    this.authService.logout();
   }
 
   getLang() {
