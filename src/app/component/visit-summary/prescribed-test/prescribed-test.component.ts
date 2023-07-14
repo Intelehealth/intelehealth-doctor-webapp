@@ -8,6 +8,7 @@ import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -48,7 +49,8 @@ testForm = new FormGroup({
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
               private translationService: TranslationService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private snackbar: MatSnackBar) { }
 
 
       search = (text$: Observable<string>) =>
@@ -87,6 +89,10 @@ testForm = new FormGroup({
     const date = new Date();
     const form = this.testForm.value;
     const value = form.test;
+    if (this.tests.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      return;
+    }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {

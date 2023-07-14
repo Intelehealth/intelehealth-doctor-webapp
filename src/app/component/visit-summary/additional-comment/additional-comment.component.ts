@@ -5,6 +5,7 @@ import { EncounterService } from 'src/app/services/encounter.service';
 import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -41,7 +42,8 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private snackbar: MatSnackBar) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -63,6 +65,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     const date = new Date();
     const form = this.commentForm.value;
     const value = form.comment;
+    if (this.comment.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      return;
+    }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {

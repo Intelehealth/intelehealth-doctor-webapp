@@ -6,6 +6,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 declare var getEncounterUUID: any, getFromStorage: any;
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-discharge-order',
@@ -42,7 +43,8 @@ export class DischargeOrderComponent implements OnInit {
 
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -64,6 +66,10 @@ export class DischargeOrderComponent implements OnInit {
     const date = new Date();
     const form = this.dischargeOrderForm.value;
     const value = form.dischargeOrder;
+    if (this.dischargeOrders.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      return;
+    }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {

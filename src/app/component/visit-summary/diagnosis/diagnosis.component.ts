@@ -6,6 +6,7 @@ import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -45,7 +46,9 @@ diagnosisForm = new FormGroup({
 
   constructor(private service: EncounterService,
               private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute,private translationService: TranslateService) { }
+              private route: ActivatedRoute,
+              private translationService: TranslateService,
+              private snackbar: MatSnackBar) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -73,7 +76,10 @@ diagnosisForm = new FormGroup({
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    console.log(value);
+    if (this.diagnosis.filter(o => o.value.toLowerCase() == `${value.text.toLowerCase()}:${value.type.toLowerCase()} & ${value.confirm.toLowerCase()}`).length > 0) {
+      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      return;
+    }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
       const json = {
