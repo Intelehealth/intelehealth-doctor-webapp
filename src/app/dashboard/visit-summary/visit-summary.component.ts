@@ -503,7 +503,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                       });
                       this.ddx.maxCols = maxCol;
                       this.ddx.model = obs?.value.comment
-                      // console.log(this.ddx);
+                      console.log(this.ddx);
                     }
                   });
                 });
@@ -1655,7 +1655,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             });
             this.ddx.maxCols = maxCol;
             this.ddx.model = res?.data.model;
-            // console.log(this.ddx);
+            console.log(this.ddx);
             this.encounterService.postEncounter({
               patient: this.visit.patient.uuid,
               encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid
@@ -1675,6 +1675,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 },
               ]
             }).subscribe((post) => {
+              console.log('DDx pushed to the observation....');
               this.ddxPresent = true;
             });
           });
