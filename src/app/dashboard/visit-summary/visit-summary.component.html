@@ -1787,6 +1787,8 @@
                     <thead>
                       <tr>
                         <th scope="col">{{'Referral facility' | translate}}</th>
+                        <th scope="col">{{'Referral specialist'|translate}}</th>
+                        <th scope="col">{{'Referral reason'|translate}}</th>
                         <th scope="col">{{'Remarks'|translate}}</th>
                         <th scope="col"></th>
                       </tr>
@@ -1794,7 +1796,9 @@
                     <tbody>
                       <ng-container *ngIf="referrals.length">
                         <tr *ngFor="let r of referrals; let i = index">
+                          <td>{{ (r.facility) | translate }}</td>
                           <td>{{ (r.speciality) | translate }}</td>
+                          <td>{{ r.reason }}</td>
                           <td>{{ r.remark }}</td>
                           <td class="pr-0">
                             <button
@@ -1836,6 +1840,23 @@
                             <ng-select
                               class="visit-select"
                               appendTo=".scrollable-box"
+                              formControlName="facility"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              [addTag]="true"
+                              placeholder="{{'Select facility'|translate}}"
+                            >
+                            <ng-option *ngFor="let facility of facilities" [value]="facility.name">
+                              {{ (facility.name) |translate }}
+                            </ng-option>
+                            </ng-select>
+                          </td>
+                          <td>
+                            <ng-select
+                              class="visit-select"
+                              appendTo=".scrollable-box"
                               formControlName="speciality"
                               bindLabel="name"
                               bindValue="name"
@@ -1849,7 +1870,17 @@
                             </ng-option>
                             </ng-select>
                           </td>
-                          <td colspan="2">
+                          <td>
+                            <div class="form-group mb-0">
+                              <input
+                                formControlName="reason"
+                                type="text"
+                                class="form-control"
+                                placeholder="{{'Type here'|translate}}"
+                              />
+                            </div>
+                          </td>
+                          <td>
                             <div class="form-group mb-0">
                               <input
                                 formControlName="remark"
@@ -1861,8 +1892,8 @@
                           </td>
                         </tr>
                         <tr *ngIf="!addMoreReferral">
-                          <td colspan="3" class="border-top-0">
-                            <div class="form-group mb-0 float-right">
+                          <td class="border-top-0">
+                            <div class="form-group mb-0">
                               <button
                                 type="button"
                                 class="white-btn mr-2"

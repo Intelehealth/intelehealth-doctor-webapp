@@ -93,6 +93,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   pastVisits: any = [];
   minDate = new Date();
   selectedTabIndex: number = 0;
+  facilities: any[] = 
+  [
+    {
+      id: 1,
+      name: 'Rural Hospital'
+    },
+    {
+      id: 2,
+      name: 'Community Health Centre'
+    },
+    {
+      id: 3,
+      name: 'Multi-speciality charity hospital'
+    }
+  ];
   specializations: any[] = [
     {
       id: 1,
@@ -344,7 +359,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.addReferralForm = new FormGroup({
+      facility:new FormControl(null, [Validators.required]),
       speciality: new FormControl(null, [Validators.required]),
+      reason: new FormControl(null, [Validators.required]),
       remark: new FormControl(null, [Validators.required]),
     });
 
@@ -1293,7 +1310,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       .subscribe((response: any) => {
         response.results.forEach((obs: any) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark: obs.value.split(':')[1].trim() });
+            this.referrals.push({ uuid: obs.uuid, facility: obs.value.split(':')[0].trim(), speciality: obs.value.split(':')[1].trim(), reason: obs.value.split(':')[2].trim(), remark: obs.value.split(':')[3].trim() });
           }
         });
       });
@@ -1311,10 +1328,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: this.conceptReferral,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.remark}`,
+      value: `${this.addReferralForm.value.facility}:${this.addReferralForm.value.speciality}:${this.addReferralForm.value.reason}:${this.addReferralForm.value.remark}`,
       encounter: this.visitNotePresent.uuid,
     }).subscribe(response => {
-      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, remark: this.addReferralForm.value.remark });
+      this.referrals.push({ uuid: response.uuid, facility:this.addReferralForm.value.facility, speciality: this.addReferralForm.value.speciality, reason:this.addReferralForm.value.reason, remark: this.addReferralForm.value.remark });
       this.addReferralForm.reset();
     });
   }
