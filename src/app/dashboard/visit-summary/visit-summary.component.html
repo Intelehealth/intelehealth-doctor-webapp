@@ -819,7 +819,10 @@
                       width="44px"
                       style="border-radius: 50%; background-color: #FFFFFF;"
                     />
-                    <h6 class="mb-0 ml-2">Differential Diagnosis (DDx) with LLM (Likelihood-Likelihood-Matrix)</h6>
+                    <h6 class="mb-0 ml-2">
+                      Differential Diagnosis (DDx) with LLM (Likelihood-Likelihood-Matrix)
+                      <span class="badge badge-danger mx-1" *ngIf="ddx.model">{{ddx.model|uppercase}}</span>
+                    </h6>
                   </div>
                 </mat-panel-title>
                 <!-- <mat-icon>{{ panelDDx.expanded ? "remove" : "add" }}</mat-icon> -->

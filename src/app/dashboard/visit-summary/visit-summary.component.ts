@@ -491,7 +491,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     if (obs.encounter.visit.uuid === this.visit.uuid) {
                       this.ddx = {
                         maxCols: 1,
-                        data: []
+                        data: [],
+                        model: null
                       };
                       let maxCol = 1;
                       const rows = obs?.value.split('\n');
@@ -501,6 +502,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                         this.ddx.data.push(cols);
                       });
                       this.ddx.maxCols = maxCol;
+                      this.ddx.model = obs?.value.comment
                       // console.log(this.ddx);
                     }
                   });
@@ -1641,16 +1643,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           this.visitService.chatGPTCompletionDDx(`Gender: ${this.patient?.person.gender == 'M'? 'Male':'Female'}\nAge: ${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}\n\nVitals:\n${vital}\nChief Complaint\n${this.cheifComplaints.toString()}\n\n${ckr}Physical Examination\n${phyEx}Medical History\n\n${medHy}`, this.ddxForm.value.inputtype, this.ddxForm.value.customInput).subscribe((res: any) => {
             this.ddx = {
               maxCols: 1,
-              data: []
+              data: [],
+              model: null
             };
             let maxCol = 1;
-            const rows = res?.data.choices[0]?.message.content.split('\n');
+            const rows = res?.data.output.choices[0]?.message.content.split('\n');
             rows.forEach(r => {
               const cols = r.split('|');
               if(cols.length > maxCol) maxCol = cols.length;
               this.ddx.data.push(cols);
             });
             this.ddx.maxCols = maxCol;
+            this.ddx.model = res?.data.model;
             // console.log(this.ddx);
             this.encounterService.postEncounter({
               patient: this.visit.patient.uuid,
@@ -1666,7 +1670,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               obs: [
                 {
                   concept: "bc48889e-b461-4e5e-98d1-31eb9dd6160e", // ChatGPT DDx concept uuid
-                  value: res?.data.choices[0]?.message.content,
+                  value: res?.data.output.choices[0]?.message.content,
+                  comment: res?.data.model
                 },
               ]
             }).subscribe((post) => {
