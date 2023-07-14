@@ -152,3 +152,7 @@ body.font-lato td {
   transform:none !important;
   margin-top:30px !important;
 }
+
+.mat-select-panel {
+  min-width: 100% !important;
+}
