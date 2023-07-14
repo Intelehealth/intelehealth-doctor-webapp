@@ -12,7 +12,9 @@ import { VisitService } from 'src/app/services/visit.service';
 export class GptInputComponent implements OnInit {
 
   gptInputs: any = [];
+  gptModels: any = [];
   addGptInputForm: FormGroup;
+  modelForm: FormGroup;
   submitted: boolean = false;
 
   constructor(
@@ -22,14 +24,29 @@ export class GptInputComponent implements OnInit {
     this.addGptInputForm = new FormGroup({
       input: new FormControl(null, Validators.required)
     });
+    this.modelForm = new FormGroup({
+      model: new FormControl(null, Validators.required)
+    });
   }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle(null);
     this.getGPTInputs();
+    this.getModels();
   }
 
   get f() { return this.addGptInputForm.controls; }
+
+  get f1() { return this.modelForm.controls; }
+
+  getModels() {
+    this.visitService.getGptModels().subscribe(res => {
+      if (res.success) {
+        this.gptModels = res.data;
+        this.modelForm.get('model').setValue(this.gptModels.find(m => m.isDefault)?.id);
+      }
+    });
+  }
 
   getGPTInputs() {
     this.visitService.getGptInputs().subscribe(res => {
@@ -70,6 +87,18 @@ export class GptInputComponent implements OnInit {
         this.getGPTInputs();
       } else {
         this.toastr.success(res.message);
+      }
+    });
+  }
+
+  saveModel() {
+    if (this.modelForm.invalid) {
+      return;
+    }
+    this.visitService.setAsDefaultGptModel(this.modelForm.value.model).subscribe(res => {
+      if (res.success) {
+        this.toastr.success("GPT model set as default successfully!", "Success");
+        this.getModels();
       }
     });
   }

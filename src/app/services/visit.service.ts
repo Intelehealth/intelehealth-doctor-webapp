@@ -149,4 +149,20 @@ export class VisitService {
   deleteGptInput(id: number): Observable<any> {
     return this.http.delete(`${environment.mindmapURL}/openai/deleteInput/${id}`);
   }
+
+  getGptModels(): Observable<any> {
+    return this.http.get(`${environment.mindmapURL}/openai/gptModels`);
+  }
+
+  addGptModel(model: string): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/addModels`, { model });
+  }
+
+  setAsDefaultGptModel(id: number): Observable<any> {
+    return this.http.post(`${environment.mindmapURL}/openai/setAsDefaultModel`, { id });
+  }
+
+  deleteGptModel(id: number): Observable<any> {
+    return this.http.delete(`${environment.mindmapURL}/openai/deleteModel/${id}`);
+  }
 }

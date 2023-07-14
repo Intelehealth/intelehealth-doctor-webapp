@@ -1,14 +1,35 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12 px-0">
+    <div class="col-md-12 px-0 mb-5 border border-danger p-3">
+      <h3 class="font-weight-bold">Choose Model</h3>
+      <form [formGroup]="modelForm" (ngSubmit)="saveModel()">
+        <div class="d-flex flex-column">
+          <ng-container *ngFor="let m of gptModels">
+            <div class="pretty p-default p-round my-3">
+              <input type="radio" [value]="m.id" formControlName="model">
+              <div class="state p-success">
+                <label>{{m.model|uppercase}}</label>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="mt-2">
+          <button type="submit" class="blue-btn">Save</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12 px-0 border border-danger p-3">
       <h3 class="font-weight-bold">GPT Inputs</h3>
       <ul class="list-group" *ngIf="gptInputs.length">
-        <li class="list-group-item d-flex justify-content-between align-items-center flex-nowrap" *ngFor="let input of gptInputs;">
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-nowrap"
+          *ngFor="let input of gptInputs;">
           {{ input?.gptinput }}
           <div class="d-flex flex-nowrap">
-            <button type="button" class="blue-btn mr-2" (click)="setAsDefault(input?.id)" *ngIf="!input?.isDefault">Set As Default</button>
+            <button type="button" class="blue-btn mr-2" (click)="setAsDefault(input?.id)" *ngIf="!input?.isDefault">Set
+              As Default</button>
             <span class="badge badge-success mr-2" *ngIf="input?.isDefault">Default</span>
-            <button type="button" class="red-btn" (click)="deleteGTPInput(input?.id)" *ngIf="!input?.isDefault">Delete</button>
+            <button type="button" class="red-btn" (click)="deleteGTPInput(input?.id)"
+              *ngIf="!input?.isDefault">Delete</button>
           </div>
         </li>
       </ul>
@@ -21,7 +42,7 @@
   </div>
 
   <div class="row mt-5">
-    <div class="col-md-12 px-0">
+    <div class="col-md-12 px-0 border border-danger p-3">
       <h3 class="font-weight-bold">Add GPT Input</h3>
       <form [formGroup]="addGptInputForm" (ngSubmit)="addGPTInput()">
         <div class="form-row">
@@ -40,4 +61,3 @@
     </div>
   </div>
 </div>
-
