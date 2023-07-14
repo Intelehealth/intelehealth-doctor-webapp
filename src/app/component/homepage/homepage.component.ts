@@ -295,14 +295,19 @@ export class HomepageComponent implements OnInit, OnDestroy {
           this.visitNoteNo += 1;
           this.service.progressVisit.push(values);
         } else {
-          if ((encounter = this.checkVisit(encounters, "Flagged"))) {
-            this.flagPatientNo += 1;
-            this.service.flagVisit.push(values);
-          } else if ((encounter =
-            this.checkVisit(encounters, "ADULTINITIAL") ||
-            this.checkVisit(encounters, "Vitals"))) {
-            this.activePatient += 1;
-            this.service.waitingVisit.push(values);
+          if (isSameSpecialityDoctorViewingVisit) {
+            this.visitNoteNo += 1;
+            this.service.progressVisit.push(values);
+          } else {
+            if ((encounter = this.checkVisit(encounters, "Flagged"))) {
+              this.flagPatientNo += 1;
+              this.service.flagVisit.push(values);
+            } else if ((encounter =
+              this.checkVisit(encounters, "ADULTINITIAL") ||
+              this.checkVisit(encounters, "Vitals"))) {
+              this.activePatient += 1;
+              this.service.waitingVisit.push(values);
+            }
           }
         }
       }
