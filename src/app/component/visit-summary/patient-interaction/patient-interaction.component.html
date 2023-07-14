@@ -14,7 +14,7 @@
     </mat-radio-group>&nbsp;&nbsp;&nbsp;&nbsp;
     <br/>
     <mat-form-field class="example-full-width" [hidden]="msg.length > 0"> 
-      <textarea matInput placeholder="Comment" formControlName='comment' [(ngModel)]="comment"></textarea>
+      <textarea matInput maxlength="50" placeholder="Comment" formControlName='comment' [(ngModel)]="comment"></textarea>
     </mat-form-field>
     <button type="submit" mat-raised-button color="primary" [disabled]="!interactionForm.valid || (!comment?.trim() && isCommentAdded === true) || isManagerRole" [hidden]="msg.length > 0">
       Submit
