@@ -94,7 +94,12 @@ export class LoginComponent implements OnInit {
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.toastr.success("You have sucessfully logged in.", "Login Successful");
-    this.router.navigate(['/dashboard']);
+    let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
+    if (isNurse) {
+      this.router.navigate(['/dashboard/hw-profile']);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
     // let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     // if (role) {
     //   this.router.navigate(['/admin']);

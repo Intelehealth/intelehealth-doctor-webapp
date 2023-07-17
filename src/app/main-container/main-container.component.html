@@ -14,15 +14,22 @@
         <img src="assets/ezazi/ezazi-sm-logo.svg" alt="" width="80%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
-        <li class="nav-item" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()" *ngxPermissionsExcept="['ORGANIZATIONAL: NURSE']">
           <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img class="i1" src="assets/svgs/home-blue.svg" alt="">
             <img class="i2" src="assets/svgs/home-white.svg" alt="">
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()" *ngxPermissionsExcept="['ORGANIZATIONAL: NURSE']">
           <a class="nav-item-link" routerLink="/dashboard/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <img class="i1" src="assets/svgs/user-blue.svg" alt="">
+            <img class="i2" src="assets/svgs/user-white.svg" alt="">
+            <span>My Profile</span>
+          </a>
+        </li>
+        <li class="nav-item" (click)="toggleSidebar()" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']">
+          <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img class="i1" src="assets/svgs/user-blue.svg" alt="">
             <img class="i2" src="assets/svgs/user-white.svg" alt="">
             <span>My Profile</span>
@@ -35,13 +42,15 @@
             <span>Change Password</span>
           </a>
         </li>
-        <li class="nav-item" (click)="toggleSidebar()" *ngIf="routeUrl == '/dashboard'">
-          <a class="nav-item-link" (click)="startTour()">
-            <img class="i1" src="assets/svgs/info-blue.svg" alt="">
-            <img class="i2" src="assets/svgs/info-white.svg" alt="">
-            <span>Help</span>
-          </a>
-        </li>
+        <ng-container *ngxPermissionsExcept="['ORGANIZATIONAL: NURSE']">
+          <li class="nav-item" (click)="toggleSidebar()" *ngIf="routeUrl == '/dashboard'">
+            <a class="nav-item-link" (click)="startTour()">
+              <img class="i1" src="assets/svgs/info-blue.svg" alt="">
+              <img class="i2" src="assets/svgs/info-white.svg" alt="">
+              <span>Help</span>
+            </a>
+          </li>
+        </ng-container>
         <!-- <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
           <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             <img src="assets/svgs/warning.svg" alt="">
