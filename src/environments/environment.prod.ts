@@ -4,7 +4,7 @@ export const environment = {
   baseURL: `${window.location.protocol}//${window.location.host}/openmrs/ws/rest/v1`,
   baseURLCoreApp: `${window.location.protocol}//${window.location.host}/openmrs/coreapps/diagnoses`,
   baseURLLegacy: `${window.location.protocol}//${window.location.host}/openmrs`,
-  mindmapURL: `${window.location.protocol}//${window.location.hostname}:3020/v2/node/api`,
+  mindmapURL: `${window.location.protocol}//${window.location.hostname}:3030/v2/node/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   captchaSiteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
