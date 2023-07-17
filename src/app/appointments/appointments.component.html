@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12 p-0">
       <mat-accordion class="intel-accordion-con" multi>
-        <mat-expansion-panel [expanded]="true">
+        <!-- <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <div class="intel-accordion-title">
@@ -16,7 +16,6 @@
           <div class="mat-elevation-z8">
             <table mat-table [dataSource]="dataSource">
 
-              <!-- Name Column -->
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> {{'Patient'|translate}} </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]">
@@ -28,31 +27,26 @@
                 </td>
               </ng-container>
 
-              <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> {{'Age'|translate}} </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.patient.person.age}} {{'y'|translate}} </td>
               </ng-container>
 
-              <!-- Starts In Column -->
               <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> {{'Starts in' | translate}} </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
               </ng-container>
 
-              <!-- Location Column -->
               <ng-container matColumnDef="location">
                 <th mat-header-cell *matHeaderCellDef> {{'Location'|translate}} </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.location.display}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Cheif Complaint'|translate}} </th>
                 <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.visit_info.cheif_complaint}} </td>
               </ng-container>
 
-              <!-- Prescription Sent Column -->
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </th>
                 <td mat-cell *matCellDef="let element">
@@ -78,6 +72,81 @@
             </mat-paginator>
           </div>
 
+        </mat-expansion-panel> -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="intel-accordion-title">
+                <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
+                <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+              </div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource">
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> {{'Patient' | translate}} </th>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]">
+
+                  <div class="d-flex align-items-center">
+                    <img src="{{ baseUrl + '/personimage/' + element.patientId }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <span class="font-bold ml-2">{{element.patientName}} ({{(element.patientGender)| translate}})</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Age Column -->
+              <ng-container matColumnDef="age">
+                <th mat-header-cell *matHeaderCellDef> {{'Age' | translate}} </th>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element.patientAge}}{{'y'| translate}} </td>
+              </ng-container>
+
+              <!-- Starts In Column -->
+              <ng-container matColumnDef="starts_in">
+                <th mat-header-cell *matHeaderCellDef> {{'Starts in' | translate}} </th>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+              </ng-container>
+
+              <!-- Location Column -->
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef> {{'Location' | translate}} </th>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.visit?.location.name}} </td>
+              </ng-container>
+
+              <!-- Cheif Complaint Column -->
+              <ng-container matColumnDef="cheif_complaint">
+                <th mat-header-cell *matHeaderCellDef> {{'Cheif Complaint' | translate}} </th>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.cheif_complaint}} </td>
+              </ng-container>
+
+              <!-- Prescription Sent Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> {{'Actions'| translate}} </th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="actions-btn-wrap d-flex align-items-center">
+                    <button class="action-btn blue-btn mr-2" type="button" (click)="reschedule(element)">{{'Reschedule' | translate}}</button>
+                    <button class="action-btn pink-btn " type="button" (click)="cancel(element)">{{'Cancel' |translate}}</button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+                  {{'No any appointments scheduled.' | translate}}
+                </td>
+              </tr>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.upcoming]="row.starts_in.includes('hours')||row.starts_in.includes('minutes')"></tr>
+            </table>
+
+            <mat-paginator #appointmentPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+              aria-label="Select page of periodic elements">
+            </mat-paginator>
+          </div>
         </mat-expansion-panel>
       </mat-accordion>
     </div>

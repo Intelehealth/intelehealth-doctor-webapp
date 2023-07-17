@@ -42,7 +42,49 @@ export class AppointmentsComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
-    this.getVisits();
+    // this.getVisits();
+    this.getAppointments();
+  }
+
+  getAppointments() {
+    this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+      .subscribe((res: any) => {
+        let appointmentsdata = res.data;
+        appointmentsdata.forEach(appointment => {
+          if (appointment.status == 'booked') {
+            if (appointment.visit) {
+              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              this.appointments.push(appointment);
+            }
+          }
+        });
+        this.dataSource = new MatTableDataSource(this.appointments);
+        this.dataSource.paginator = this.paginator;
+      });
+  }
+
+  getCheifComplaint2(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.type?.name;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.concept_id == 163212) {
+            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
   }
 
   // getAppointements() {
@@ -120,8 +162,11 @@ export class AppointmentsComponent implements OnInit {
   }
 
   reschedule(appointment: any) {
-    const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // const len = appointment.visit_info.encounters.filter((e: any) => {
+    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // }).length;
+    const len = appointment.visit.encounters.filter((e: any) => {
+      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
