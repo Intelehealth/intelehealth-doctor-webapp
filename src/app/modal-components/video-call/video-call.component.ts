@@ -91,10 +91,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.initiator === 'hw') {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;
-      console.log('this.data: ', this.data);
+      /**
+       * Changing the execution cycle
+       */
       setTimeout(() => {
         this.startCall();
       }, 0);
+      this.socketSvc.callRing.pause();
     } else {
       this.startCall();
     }
@@ -342,8 +345,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   async connect() {
-
-
     if (this.initiator === "dr") {
       this.toastr.info("Calling....", null, { timeOut: 2000 });
       this.call();

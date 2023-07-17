@@ -374,10 +374,13 @@
 .call-container {
   .img-cont {
     min-height: 350px;
+
+    justify-content: center;
+    display: grid;
   }
 
   .calling-img {
-    width: 100%;
+    width: auto;
   }
 
   .video-controls {
@@ -387,7 +390,7 @@
   }
 
   .calling-txt {
-    position: absolute;
+    // position: absolute;
     top: 30px;
     font-size: 18px;
     font-family: lato;
@@ -399,7 +402,7 @@
 
   div.text {
     height: 100%;
-    margin-top: 25%;
+    line-height: 65vh;
     font-size: 30px;
   }
 }

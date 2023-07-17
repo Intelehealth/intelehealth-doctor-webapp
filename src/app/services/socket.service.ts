@@ -21,6 +21,7 @@ export class SocketService {
   public incomingCallData = {};
   public activeUsers = [];
   appIcon = "assets/images/intelehealth-logo-reverse.png";
+  public callRing = new Audio("assets/phone.mp3");
 
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
@@ -31,7 +32,7 @@ export class SocketService {
     private dialog: MatDialog,
     private visitSvc: VisitService,
     private webrtcSvc: WebrtcService,
-    private cs: CoreService
+    private cs: CoreService,
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -103,20 +104,18 @@ export class SocketService {
     }
   }
 
-  callRing = new Audio("assets/phone.mp3");
   public openVcOverlay(data: any) {
     this.cs.openVideoCallOverlayModal(data);
-    // this.callRing.play();
+    this.callRing.play();
     setTimeout(() => {
-      console.log('this.webrtcSvc.callConnected: ', this.webrtcSvc.callConnected);
       if (!this.webrtcSvc.callConnected) {
         this.closeVcOverlay();
       }
-    }, 60000);
+    }, 59000);
   }
 
   public closeVcOverlay() {
-    const dailog = this.dialog.getDialogById("vcOverlay");
+    const dailog = this.dialog.getDialogById("vcOverlayModal");
     if (dailog) {
       dailog.close();
     }
