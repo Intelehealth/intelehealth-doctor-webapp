@@ -173,7 +173,7 @@ export class WebrtcService {
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
-    track?.detach();
+    if (track?.detach) track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {

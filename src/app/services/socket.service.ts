@@ -11,6 +11,7 @@ import { environment } from "../../environments/environment";
 import { VisitService } from "./visit.service";
 import { WebrtcService } from "./webrtc.service";
 import { CoreService } from "./core/core.service";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable({
   providedIn: "root"
@@ -33,6 +34,7 @@ export class SocketService {
     private visitSvc: VisitService,
     private webrtcSvc: WebrtcService,
     private cs: CoreService,
+    private toastr: ToastrService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -70,6 +72,12 @@ export class SocketService {
     this.onEvent("allUsers").subscribe((data) => {
       this.activeUsers = data;
     });
+
+    this.onEvent("cancel_hw").subscribe((data) => {
+      this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
+      this.closeVcOverlay();
+    });
+
     this.onEvent("incoming_call").subscribe((data = {}) => {
       if (!location.hash.includes("test/chat")) {
         localStorage.patientId = data.patientId;

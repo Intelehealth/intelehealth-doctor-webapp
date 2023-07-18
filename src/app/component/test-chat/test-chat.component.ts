@@ -135,4 +135,16 @@ export class TestChatComponent implements OnInit {
       token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IjkyYTZkNTkwLWMyNGItNDUwZi05ODhjLThlZjliOWQyMzIxNyIsImNhblB1Ymxpc2giOnRydWUsImNhblN1YnNjcmliZSI6dHJ1ZSwiZXhwIjoiMTAgZGF5cyJ9LCJpYXQiOjE2ODg1NTM2MTEsIm5iZiI6MTY4ODU1MzYxMSwiZXhwIjoxNjg4NTc1MjExLCJpc3MiOiJkZXZrZXkiLCJzdWIiOiI1YTcwMGYwMC1lY2E4LTRmZTItYmJiZC1hMmQ0ZTVjMzYyMmEiLCJqdGkiOiI1YTcwMGYwMC1lY2E4LTRmZTItYmJiZC1hMmQ0ZTVjMzYyMmEifQ.o_xm9r7-f3sOcC3RZSyIo_Y2UiCFY4yo8budIetUPJo"
     });
   }
+
+  cancelHw() {
+    this.socket.emitEvent("cancel_hw", {
+      patientId: this.data.patientId,
+      connectToDrId: this.data.connectToDrId,
+      visitId: "test-visit-uuid",
+      nurseName: 'Zee Test Nurse',
+      patientName: "Test Chat Patient",
+      patientPersonUuid: 'testuuid',
+      patientOpenMrsId: 'TESTID-12',
+    });
+  }
 }

@@ -505,6 +505,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
+    setTimeout(() => {
+      this.webrtcSvc.room.disconnect(true);
+    }, 0);
     this.webrtcSvc.token = '';
     this.webrtcSvc.handleDisconnect();
     this.socketSvc.emitEvent("bye", {
@@ -513,6 +516,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       webapp: true,
       initiator: this.initiator,
     });
+
+    this.socketSvc.emitEvent("cancel_dr", {
+      ...this.incomingData,
+      nurseId: this.nurseId,
+      webapp: true,
+      initiator: this.initiator,
+    });
+
     this.close();
   }
 
