@@ -30,6 +30,7 @@ export class AppointmentDetailComponent implements OnInit {
         this.data.meta.visit_status = this.checkVisitStatus(visit.encounters);
         this.data.meta.starts_in = this.checkIfDateOldThanOneDay(this.data?.meta.slotJsDate);
         this.data.meta.hwPhoneNo = cdata.hwPhoneNo;
+        this.data.meta.hwName = cdata.hwName;
         this.data.meta.prescriptionCreatedAt = cdata.prescriptionCreatedAt;
 
       });
@@ -39,6 +40,7 @@ export class AppointmentDetailComponent implements OnInit {
       this.data.meta.visit_status = this.checkVisitStatus(this.data?.meta.visit_info.encounters);
       this.data.meta.starts_in = this.checkIfDateOldThanOneDay(this.data?.meta.slotJsDate);
       this.data.meta.hwPhoneNo = cdata.hwPhoneNo;
+      this.data.meta.hwName = cdata.hwName;
       this.data.meta.prescriptionCreatedAt = cdata.prescriptionCreatedAt;
     }
     moment.locale(localStorage.getItem('selectedLanguage'));
@@ -76,6 +78,7 @@ export class AppointmentDetailComponent implements OnInit {
   getCheifComplaint(visit: any) {
     let recent: any = [];
     let hwPhoneNo: any = '';
+    let hwName: any = '';
     let prescriptionCreatedAt: any = '';
 
     const encounters = visit.encounters;
@@ -102,12 +105,13 @@ export class AppointmentDetailComponent implements OnInit {
             }
           });
         }
+        hwName = encounter.encounterProviders[0].provider.person.display;  
       }
       if (display.match('Patient Exit Survey') !== null) {
         prescriptionCreatedAt = this.checkPrescriptionCreatedAt(encounter.encounterDatetime);
       }
     });
-    return { complaint: recent, hwPhoneNo, prescriptionCreatedAt };
+    return { complaint: recent, hwPhoneNo, hwName, prescriptionCreatedAt };
   }
 
   checkVisitStatus(encounters: any) {
