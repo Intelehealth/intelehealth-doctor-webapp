@@ -52,14 +52,16 @@ export class RescheduleAppointmentComponent implements OnInit {
     private dialogRef: MatDialogRef<RescheduleAppointmentComponent>,
     private appointmentService: AppointmentService,
     private toastr: ToastrService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
     ) {
     this.minDate = new Date();
   }
 
   ngOnInit(): void {
     this.getAppointmentSlots();
-    moment.locale(localStorage.getItem('selectedLanguage'));
+    moment.locale(this.getLang());
+    this.dateAdapter.setLocale(this.getLang());
   }
 
   dateChanged(event: any) {
@@ -100,4 +102,7 @@ export class RescheduleAppointmentComponent implements OnInit {
     this.dialogRef.close(val);
   }
 
+  getLang() {
+    return localStorage.getItem("selectedLanguage");
+  }
 }
