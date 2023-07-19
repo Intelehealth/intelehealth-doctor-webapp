@@ -29,6 +29,7 @@ export class WebrtcService {
   public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
+  public visitHolderId: null;
 
   constructor(
     private http: HttpClient

@@ -14,6 +14,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
 declare const saveToStorage, getFromStorage;
 
 @Component({
@@ -248,6 +249,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     private encounterService: EncounterService,
     private socketSvc: SocketService,
     private toastr: ToastrService,
+    private webrtcSvc: WebrtcService
   ) { }
 
   ngOnDestroy(): void {
@@ -299,10 +301,19 @@ export class PartogramComponent implements OnInit, OnDestroy {
         // console.log(visit);
         this.readPatientAttributes();
         this.readStageData();
+        this.readVisitHolder();
       }
     }, (error: any) => {
       this.router.navigate(['/dashboard']);
     });
+  }
+
+  readVisitHolder() {
+    if (Array.isArray(this.visit?.attributes)) {
+      const visitHolder = this.visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder');
+      console.log('visitHolder: ', visitHolder);
+      this.webrtcSvc.visitHolderId = visitHolder?.value;
+    }
   }
 
   readPatientAttributes() {

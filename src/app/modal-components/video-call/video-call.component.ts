@@ -122,7 +122,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async startCall() {
     this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
     if (!this.webrtcSvc.token) {
-      await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
+      const hwVisitHolderId = this.webrtcSvc.visitHolderId || this.nurseId;
+      console.log('this.webrtcSvc.visitHolderId: ', this.webrtcSvc.visitHolderId);
+      await this.webrtcSvc.getToken(this.provider?.uuid, this.room, hwVisitHolderId).toPromise().catch(err => {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
