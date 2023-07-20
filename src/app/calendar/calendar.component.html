@@ -43,6 +43,7 @@
             class="day-view-con"
             *ngSwitchCase="CalendarView.Day"
             [viewDate]="viewDate"
+            [locale]="locale"
             [hourDuration]="30"
             [dayStartHour]="9"
             [dayStartMinute]="0"
@@ -62,6 +63,7 @@
             class="week-view-con"
             *ngSwitchCase="CalendarView.Week"
             [viewDate]="viewDate"
+            [locale]="locale"
             [weekStartsOn]="1"
             [events]="events"
             [hourDuration]="30"
@@ -83,6 +85,7 @@
           <mwl-calendar-month-view
             *ngSwitchCase="CalendarView.Month"
             [viewDate]="viewDate"
+            [locale]="locale"
             [weekStartsOn]="1"
             [events]="events"
             [headerTemplate]="monthHeaderTemplate"
@@ -144,7 +147,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
+            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"
@@ -159,21 +162,21 @@
               <div class="con-item">
                 <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || (weekEvent.event).title|translate)}}</h6>
+                  <h6 class="mb-0">{{((weekEvent.tempEvent || weekEvent.event).title)|translate}}</h6>
                   <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Patient'|translate}}</p>
                 </div>
               </div>
               <div class="con-item">
                 <img class="mr-1" [src]="base + '/di/' + (weekEvent.tempEvent || weekEvent.event).meta.hwUUID + '_image.png'" alt="" (error)="onImgError($event)">
                 <div class="con-info">
-                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:('NA'|translate)}} ({{(weekEvent.tempEvent || weekEvent.event).meta?.hwGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.hwName|noValue:('NA'|translate)}} ({{((weekEvent.tempEvent || weekEvent.event).meta?.hwGender)|translate|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.hwAge|noValue:'0'}})</h6>
                   <p class="mb-0">{{'Health Worker'|translate}}</p>
                 </div>
               </div>
@@ -193,7 +196,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con-2"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
+            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"
@@ -205,13 +208,13 @@
             role="application"
             [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
             <div class="event-con">
-              <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).title|translate}}</h6>
+              <h6 class="mb-0">{{((weekEvent.tempEvent || weekEvent.event).title)|translate}}</h6>
               <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm a'}} - {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm a'}}</p>
               <div class="con-item">
                 <img class="mr-1" [src]="baseUrl + '/personimage/' + (weekEvent.tempEvent || weekEvent.event).meta.patientId" alt="" (error)="onImgError($event)">
                 <div class="con-info">
                   <h6 class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).meta?.patientName|noValue:('NA'|translate)}}</h6>
-                  <h6 class="mb-0">({{(weekEvent.tempEvent || weekEvent.event).meta?.patientGender|noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
+                  <h6 class="mb-0">({{((weekEvent.tempEvent || weekEvent.event).meta?.patientGender)|translate |noValue:('NA'|translate)}}, {{(weekEvent.tempEvent || weekEvent.event).meta?.patientAge|noValue:'0'}})</h6>
                 </div>
               </div>
             </div>
@@ -316,7 +319,7 @@
               </ng-container>
 
               <div class="cal-event-con2" *ngIf="day.events.length > 2">
-                {{day.events.length -2}} {{'more...'|translate}}
+                {{day.events.length -2}} {{'more'|translate}}...
               </div>
             </div>
           </div>
