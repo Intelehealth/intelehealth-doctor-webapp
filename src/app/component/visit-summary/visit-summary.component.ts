@@ -320,7 +320,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   saveData() {
-    this.snackbar.open('Data saved successfully', null, { duration: 4000 });
+    this.translationService.getTranslation('Data saved successfully');
   }
 
   ngOnDestroy(): void {
