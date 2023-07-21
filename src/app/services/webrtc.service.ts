@@ -21,7 +21,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class WebrtcService {
-  public room: any | null = null;
+  public room: any | null | Room = null;
   public url: string = environment.webrtcSdkServerUrl;
   public token: any | null = null;
   public appToken: any | null = null;
@@ -110,15 +110,11 @@ export class WebrtcService {
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-
+      .on(RoomEvent.SignalConnected, async () => {
+        await this.room.localParticipant.enableCameraAndMicrophone();
+      });
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
-
-    console.log('url:- ', this.url);
     await this.room.connect(this.url, this.token);
-
-    if (autoEnableCameraOnConnect) {
-      await this.room.localParticipant.enableCameraAndMicrophone();
-    }
   }
 
   clearAudioVideo() {
@@ -206,6 +202,12 @@ export class WebrtcService {
     this.callConnected = false;
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
+  }
+
+  async disconnect(stopTracks = true) {
+    const cam = this.room.localParticipant.getTrack(Track.Source.Camera);
+    const mic = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    this.room.disconnect(stopTracks);
   }
 
   get remoteContainer() {

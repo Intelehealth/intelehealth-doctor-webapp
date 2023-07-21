@@ -28,6 +28,7 @@ export class VcallOverlayComponent implements OnInit {
   ngOnDestroy() {
     if (this.connectedSubs)
       this.connectedSubs.unsubscribe();
+    this.socketService.closeVcOverlay();
   }
 
   accept() {

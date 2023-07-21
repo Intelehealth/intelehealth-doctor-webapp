@@ -47,6 +47,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   activeSpeakerIds: any = [];
   connecting = false;
+  callEndTimeout = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -173,7 +174,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      *  and hang up if HW not picked up
     */
     const ringingTimeout = 60 * 1000;
-    setTimeout(() => {
+    this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
         this.endCallInRoom();
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
@@ -242,6 +243,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.callConnected = false;
     this.socketSvc.incomingCallData = null;
     this.endCallInRoom();
+    clearTimeout(this.callEndTimeout);
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -534,6 +536,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   close() {
+    clearTimeout(this.callEndTimeout);
     this.dialogRef.close(true);
   }
 
@@ -568,6 +571,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
+    this.webrtcSvc.disconnect();
   }
 
   get callDuration() {

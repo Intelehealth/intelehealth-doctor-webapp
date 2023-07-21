@@ -23,6 +23,7 @@ export class SocketService {
   public activeUsers = [];
   appIcon = "assets/images/intelehealth-logo-reverse.png";
   public callRing = new Audio("assets/phone.mp3");
+  ringTimeout = null;
 
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
@@ -115,6 +116,9 @@ export class SocketService {
   public openVcOverlay(data: any) {
     this.cs.openVideoCallOverlayModal(data);
     this.callRing.play();
+    this.ringTimeout = setInterval(() => {
+      this.callRing.play();
+    }, 10000);
     setTimeout(() => {
       if (!this.webrtcSvc.callConnected) {
         this.closeVcOverlay();
@@ -124,6 +128,7 @@ export class SocketService {
 
   public closeVcOverlay() {
     const dailog = this.dialog.getDialogById("vcOverlayModal");
+    clearInterval(this.ringTimeout);
     if (dailog) {
       dailog.close();
     }
