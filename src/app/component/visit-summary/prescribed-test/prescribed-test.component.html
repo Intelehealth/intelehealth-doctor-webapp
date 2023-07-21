@@ -18,7 +18,7 @@
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="test.comment">{{test.value}}</span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-              <span class="comment-blue">{{test.creator.person.display|comment}} | {{test.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+              <span class="comment-blue">{{test.creator.person.display|comment}} | {{test.obsDatetime|date:'dd-MM-y hh:mm a'}}</span>
               <span *ngIf="test.comment" class="comment">{{test.comment|comment}}</span>
             </div>
           </div>

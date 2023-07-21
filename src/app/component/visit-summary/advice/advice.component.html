@@ -18,7 +18,7 @@
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="advice.comment">{{advice.value}}</span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-              <span class="comment-blue">{{advice.creator.person.display|comment}} | {{advice.dateCreated|date:'dd-MM-y hh:mm a'}}</span>
+              <span class="comment-blue">{{advice.creator.person.display|comment}} | {{advice.obsDatetime|date:'dd-MM-y hh:mm a'}}</span>
               <span *ngIf="advice.comment" class="comment">{{advice.comment|comment}}</span>
             </div>
           </div>
