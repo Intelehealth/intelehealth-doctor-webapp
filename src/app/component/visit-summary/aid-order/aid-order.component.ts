@@ -333,7 +333,6 @@ export class AidOrderComponent implements OnInit {
         }
       }
       this.translationSvc.getTranslation('Aid order saved successfully', 2000);
-      this.snackbar.open(``, null, { duration: 2000 });
     }
   }
 
@@ -354,8 +353,8 @@ export class AidOrderComponent implements OnInit {
       let obj = {
         uuid: response.uuid,
         value: json.value,
-        dateCreated: response.obsDatetime,
-        creator: { uuid: user.uuid, person: user.person }
+        obsDatetime: response.obsDatetime,
+        creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` }
       }
       this.aidOrderForm.get(key.replace('Uuid', 'Obs')).setValue(obj);
     });

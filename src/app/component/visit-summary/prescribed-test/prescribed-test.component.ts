@@ -9,6 +9,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -50,7 +51,8 @@ testForm = new FormGroup({
               private diagnosisService: DiagnosisService,
               private translationService: TranslationService,
               private route: ActivatedRoute,
-              private snackbar: MatSnackBar) { }
+              private snackbar: MatSnackBar,
+              private sessionSvc:SessionService) { }
 
 
       search = (text$: Observable<string>) =>
@@ -76,8 +78,13 @@ testForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-            obs.creator.person = { ...user.person };
+          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+            obs.creator.regNo = '(-)';
+            const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+            if (exist) {
+              obs.creator.regNo = `(${exist?.value})`;
+            }
             this.tests.push(this.diagnosisService.getData(obs));
           });
         }
@@ -108,8 +115,8 @@ testForm = new FormGroup({
         let obj = {
           uuid : resp.uuid,
           value: json.value,
-          dateCreated: resp.obsDatetime,
-          creator: { uuid: user.uuid, person: user.person }
+          obsDatetime: resp.obsDatetime,
+          creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` }
         }
         this.tests.push(this.diagnosisService.getData(obj));
       });

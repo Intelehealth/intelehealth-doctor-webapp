@@ -6,6 +6,7 @@ import { DiagnosisService } from '../../../services/diagnosis.service';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -14,51 +15,58 @@ declare var getEncounterUUID: any, getFromStorage: any;
   styleUrls: ['./additional-comment.component.css'],
   animations: [
     trigger('moveInLeft', [
-       transition('void=> *', [style({transform: 'translateX(300px)'}),
-         animate(200, keyframes ([
-          style({transform: 'translateX(300px)'}),
-          style({transform: 'translateX(0)'})
-           ]))]),
-    transition('*=>void', [style({transform: 'translateX(0px)'}),
-         animate(100, keyframes([
-          style({transform: 'translateX(0px)'}),
-          style({transform: 'translateX(300px)'})
-        ]))])
-     ])
- ]
+      transition('void=> *', [style({ transform: 'translateX(300px)' }),
+      animate(200, keyframes([
+        style({ transform: 'translateX(300px)' }),
+        style({ transform: 'translateX(0)' })
+      ]))]),
+      transition('*=>void', [style({ transform: 'translateX(0px)' }),
+      animate(100, keyframes([
+        style({ transform: 'translateX(0px)' }),
+        style({ transform: 'translateX(300px)' })
+      ]))])
+    ])
+  ]
 })
 export class AdditionalCommentComponent implements OnInit {
-@Input() isManagerRole : boolean;
-@Input() visitCompleted: boolean;
-comment: any = [];
-encounterUuid: string;
-patientId: string;
-visitUuid: string;
-conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+  @Input() isManagerRole: boolean;
+  @Input() visitCompleted: boolean;
+  comment: any = [];
+  encounterUuid: string;
+  patientId: string;
+  visitUuid: string;
+  conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
-  commentForm = new FormGroup ({
+  commentForm = new FormGroup({
     comment: new FormControl('', [Validators.required])
   });
 
   constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private route: ActivatedRoute,
-              private snackbar: MatSnackBar) { }
+    private diagnosisService: DiagnosisService,
+    private route: ActivatedRoute,
+    private snackbar: MatSnackBar,
+    private sessionSvc: SessionService
+  ) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptComment)
-    .subscribe(response => {
-      response.results.forEach(obs => {
-        if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-            obs.creator.person = { ...user.person };
-            this.comment.push(this.diagnosisService.getData(obs));
-          });
-        }
+      .subscribe(response => {
+        response.results.forEach(obs => {
+          if (obs.encounter.visit.uuid === this.visitUuid) {
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`
+              }
+              this.comment.push(this.diagnosisService.getData(obs));
+            });
+          }
+        });
       });
-    });
   }
 
   Submit() {
@@ -79,10 +87,10 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
         encounter: this.encounterUuid
       };
       this.service.postObs(json)
-      .subscribe(resp => {
-        const user = getFromStorage("user");
-        this.comment.push({ uuid: resp.uuid, value: value, dateCreated: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person  } });
-      });
+        .subscribe(resp => {
+          const user = getFromStorage("user");
+          this.comment.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` } });
+        });
     }
   }
 
@@ -99,12 +107,12 @@ conceptComment = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
         //     this.comment.splice(i, 1);
         //   });
         // } else {
-          const provider = getFromStorage("provider");
-          const registrationNumber = getFromStorage("registrationNumber");
-          const deletedTimestamp = moment.utc().toISOString();
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` })
+        const provider = getFromStorage("provider");
+        const registrationNumber = getFromStorage("registrationNumber");
+        const deletedTimestamp = moment.utc().toISOString();
+        this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}` })
           .subscribe(() => {
-            this.comment[i] = {...this.comment[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` };
+            this.comment[i] = { ...this.comment[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}` };
           });
         // }
       }

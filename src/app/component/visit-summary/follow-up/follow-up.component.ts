@@ -7,6 +7,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import * as moment from 'moment';
 import { DateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -48,7 +49,8 @@ export class FollowUpComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
     private datepipe: DatePipe,
-    private dateAdapter: DateAdapter<any>) { }
+    private dateAdapter: DateAdapter<any>,
+    private sessionSvc: SessionService) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -57,8 +59,13 @@ export class FollowUpComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-              obs.creator.person = { ...user.person };
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`
+              }
               let obs1 = this.diagnosisService.getData(obs);
               this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
             });
@@ -92,8 +99,8 @@ export class FollowUpComponent implements OnInit {
           let obj = {
             uuid: resp.uuid,
             value: json.value,
-            dateCreated: resp.obsDatetime,
-            creator: { uuid: user.uuid, person: user.person }
+            obsDatetime: resp.obsDatetime,
+            creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` }
           }
           this.followUp.push(this.diagnosisService.getData(obj));
         });

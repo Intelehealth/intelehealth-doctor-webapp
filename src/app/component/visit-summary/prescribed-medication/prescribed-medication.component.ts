@@ -9,6 +9,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import medicines from './medicines';
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -63,7 +64,8 @@ export class PrescribedMedicationComponent implements OnInit {
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private sessionSvc: SessionService
 ) { }
 
   searchPrescription = (text$: Observable<string>) =>
@@ -159,8 +161,13 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-              obs.creator.person = { ...user.person };
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`;
+              }
               this.meds.push(this.diagnosisService.getData(obs));
             });
           }
@@ -226,7 +233,7 @@ export class PrescribedMedicationComponent implements OnInit {
         this.service.postObs(json)
           .subscribe(response => {
             const user = getFromStorage("user");
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, dateCreated: response.obsDatetime, creator: { uuid: user.uuid, person: user.person } }));
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` } }));
             this.add = false;
           });
       }

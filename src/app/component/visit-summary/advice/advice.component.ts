@@ -9,6 +9,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -50,7 +51,8 @@ export class AdviceComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private translationService: TranslationService,
     private route: ActivatedRoute,
-    private snackbar: MatSnackBar) { }
+    private snackbar: MatSnackBar,
+    private sessionSvc:SessionService) { }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -75,8 +77,13 @@ export class AdviceComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-              obs.creator.person = { ...user.person };
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`
+              }
               if (!obs.value.includes('Start')) {
                 this.advice.push(this.diagnosisService.getData(obs));
               }
@@ -110,8 +117,8 @@ export class AdviceComponent implements OnInit {
           let obj = {
             uuid : response.uuid,
             value: json.value,
-            dateCreated: response.obsDatetime,
-            creator: { uuid: user.uuid, person: user.person }
+            obsDatetime: response.obsDatetime,
+            creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` }
           }
           this.advice.push(this.diagnosisService.getData(obj));
         });

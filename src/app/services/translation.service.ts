@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 declare var getFromStorage: any;
 
@@ -26,8 +26,16 @@ export class TranslationService {
 
   getTranslation(msg: string, duration = 4000) {
     this.translateService.get(`messages.${msg}`).subscribe((res: string) => {
-      this.snackbar.open(res, null, { duration });
+      this.snackbar.open(res, null, { duration, direction: this.txtDirection });
     });
+  }
+
+  get txtDirection(): MatSnackBarConfig['direction'] {
+    return this.selectedLang === 'ar' ? "rtl" : "ltr";
+  }
+
+  get selectedLang() {
+    return localStorage.getItem("selectedLanguage")
   }
 
   getSelectedLanguage() {

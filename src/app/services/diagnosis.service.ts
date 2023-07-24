@@ -40,7 +40,8 @@ export class DiagnosisService {
 
   getObs(patientId, conceptId): Observable<any> {
     // tslint:disable-next-line: max-line-length
-    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,comment,dateCreated,obsDatetime,creator:(uuid),encounter:(visit:(uuid)))&concept=${conceptId}`;
+    // const url = `${this.baseURL}/obs?patient=${patientId}&v=full&concept=${conceptId}`;
+    const url = `${this.baseURL}/obs?patient=${patientId}&v=custom:(uuid,value,comment,dateCreated,obsDatetime,creator:(uuid,person:(display)),encounter:(visit:(uuid)))&concept=${conceptId}`;
     return this.http.get(url);
   }
 

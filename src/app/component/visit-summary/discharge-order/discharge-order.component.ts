@@ -7,6 +7,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 declare var getEncounterUUID: any, getFromStorage: any;
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-discharge-order',
@@ -44,7 +45,8 @@ export class DischargeOrderComponent implements OnInit {
   constructor(private service: EncounterService,
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
-    private snackbar: MatSnackBar) { }
+    private snackbar: MatSnackBar,
+    private sessionSvc:SessionService) { }
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -53,8 +55,13 @@ export class DischargeOrderComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-              obs.creator.person = { ...user.person };
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`
+              }
               this.dischargeOrders.push(this.diagnosisService.getData(obs));
             });
           }
@@ -82,7 +89,7 @@ export class DischargeOrderComponent implements OnInit {
       this.service.postObs(json)
         .subscribe(resp => {
           const user = getFromStorage("user");
-          this.dischargeOrders.push({ uuid: resp.uuid, value: value, dateCreated: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person  } });
+          this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` } });
         });
     }
   }

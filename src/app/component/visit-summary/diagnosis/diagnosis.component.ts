@@ -7,6 +7,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -48,7 +49,8 @@ diagnosisForm = new FormGroup({
               private diagnosisService: DiagnosisService,
               private route: ActivatedRoute,
               private translationService: TranslateService,
-              private snackbar: MatSnackBar) { }
+              private snackbar: MatSnackBar,
+              private sessionSvc:SessionService) { }
 
   ngOnInit() {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -58,8 +60,15 @@ diagnosisForm = new FormGroup({
       response.results.forEach(obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
           this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-            obs.creator.person = { ...user.person };
-            this.diagnosis.push(this.diagnosisService.getData(obs));
+            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
+              obs.creator.regNo = '(-)';
+              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+              if (exist) {
+                obs.creator.regNo = `(${exist?.value})`
+              }
+              this.diagnosis.push(this.diagnosisService.getData(obs));
+            });
           });
         }
       });
@@ -96,8 +105,8 @@ diagnosisForm = new FormGroup({
         let obj = {
           uuid : resp.uuid,
           value: json.value,
-          dateCreated: resp.obsDatetime,
-          creator: { uuid: user.uuid, person: user.person }
+          obsDatetime: resp.obsDatetime,
+          creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` }
         }
         this.diagnosis.push(this.diagnosisService.getData(obj));
       });
