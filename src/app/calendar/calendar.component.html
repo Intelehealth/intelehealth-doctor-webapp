@@ -56,7 +56,8 @@
             [events]="events"
             [eventTemplate]="eventTemplate"
             (eventClicked)="handleEvent('dayView', $event.event)"
-            (hourSegmentClicked)="hourSegmentClicked($event)">
+            (hourSegmentClicked)="hourSegmentClicked($event)"
+            [refresh]="refresh">
           </mwl-calendar-day-view>
 
           <mwl-calendar-week-view

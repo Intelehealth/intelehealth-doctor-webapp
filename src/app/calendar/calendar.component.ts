@@ -10,6 +10,7 @@ import { CoreService } from '../services/core/core.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-calendar',
@@ -34,6 +35,7 @@ export class CalendarComponent implements OnInit {
   otherReason = "";
   reasons = ["Doctor Not Available", "Patient Not Available", "Other"];
   lang = localStorage.getItem('selectedLanguage');
+  refresh= new Subject<void>();
   constructor(
     private pageTitleService: PageTitleService,
     private appointmentService: AppointmentService,
@@ -84,11 +86,12 @@ export class CalendarComponent implements OnInit {
           }
         });
         setTimeout(() => {
-          window.dispatchEvent(new Event('resize'))
-          this.setView(CalendarView.Month);
-          setTimeout(() => {
-            this.setView(CalendarView.Day);
-          })
+          // window.dispatchEvent(new Event('resize'))
+          // this.setView(CalendarView.Month);
+          // setTimeout(() => {
+          //   this.setView(CalendarView.Day);
+          // })
+          this.refresh.next();
         }, 500);
     });
   }
