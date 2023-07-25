@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarEvent, CalendarView } from 'angular-calendar';
+import { CalendarEvent, CalendarView, } from 'angular-calendar';
 import { setHours, setMinutes } from 'date-fns';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { AppointmentService } from '../services/appointment.service';
@@ -83,6 +83,13 @@ export class CalendarComponent implements OnInit {
             });
           }
         });
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'))
+          this.setView(CalendarView.Month);
+          setTimeout(() => {
+            this.setView(CalendarView.Day);
+          })
+        }, 500);
     });
   }
 
