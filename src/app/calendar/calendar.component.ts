@@ -86,11 +86,6 @@ export class CalendarComponent implements OnInit {
           }
         });
         setTimeout(() => {
-          // window.dispatchEvent(new Event('resize'))
-          // this.setView(CalendarView.Month);
-          // setTimeout(() => {
-          //   this.setView(CalendarView.Day);
-          // })
           this.refresh.next();
         }, 500);
     });
@@ -269,7 +264,7 @@ export class CalendarComponent implements OnInit {
 
   dayClicked(view: any, day: any) {
     // console.log(day);
-    if (view == 'monthView') {
+    if (view == 'monthView' && day.badgeTotal) {
       // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
       let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
       this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: any) => {
