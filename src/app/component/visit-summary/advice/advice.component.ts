@@ -33,7 +33,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
   encapsulation: ViewEncapsulation.None
 })
 export class AdviceComponent implements OnInit {
-  @Input() isManagerRole : boolean;
+  @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   advice: any = [];
   advices: any = [];
@@ -52,14 +52,14 @@ export class AdviceComponent implements OnInit {
     private translationService: TranslationService,
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private sessionSvc:SessionService) { }
+    private sessionSvc: SessionService) { }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.advices.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
+        : this.advices.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   ngOnInit() {
@@ -79,11 +79,12 @@ export class AdviceComponent implements OnInit {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
             this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
               obs.creator.regNo = '(-)';
-              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
+              const result = user?.results?.[0];
+              const attributes = Array.isArray(result.attributes) ? result.attributes : [];
               const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-              if (exist) {
-                obs.creator.regNo = `(${exist?.value})`
-              }
+              if (exist) obs.creator.regNo = `(${exist?.value})`
+              obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+
               if (!obs.value.includes('Start')) {
                 this.advice.push(this.diagnosisService.getData(obs));
               }
@@ -115,10 +116,10 @@ export class AdviceComponent implements OnInit {
         .subscribe(response => {
           const user = getFromStorage("user");
           let obj = {
-            uuid : response.uuid,
+            uuid: response.uuid,
             value: json.value,
             obsDatetime: response.obsDatetime,
-            creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` }
+            creator: { uuid: user.uuid, person: user.person, regNo: `(${getFromStorage("registrationNumber")})` }
           }
           this.advice.push(this.diagnosisService.getData(obj));
         });
@@ -138,12 +139,13 @@ export class AdviceComponent implements OnInit {
         //     this.advice.splice(i, 1);
         //   });
         // } else {
-          const provider = getFromStorage("provider");
-          const registrationNumber = getFromStorage("registrationNumber");
-          const deletedTimestamp = moment.utc().toISOString();
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` })
+        const provider = getFromStorage("provider");
+        const registrationNumber = getFromStorage("registrationNumber");
+        const deletedTimestamp = moment.utc().toISOString();
+        const prevCreator = observation?.creator?.person?.display;
+        this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}` })
           .subscribe(() => {
-            this.advice[i] = {...this.advice[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` };
+            this.advice[i] = { ...this.advice[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}` };
           });
         // }
       }
@@ -159,5 +161,5 @@ export class AdviceComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
 }

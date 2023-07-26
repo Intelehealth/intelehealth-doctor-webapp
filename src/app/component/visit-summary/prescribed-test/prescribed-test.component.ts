@@ -140,9 +140,10 @@ testForm = new FormGroup({
           const provider = getFromStorage("provider");
           const registrationNumber = getFromStorage("registrationNumber");
           const deletedTimestamp = moment.utc().toISOString();
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` })
+          const prevCreator = observation?.creator?.person?.display;
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
           .subscribe(() => {
-            this.tests[i] = {...this.tests[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}` };
+            this.tests[i] = {...this.tests[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` };
           });
         // }
       }
