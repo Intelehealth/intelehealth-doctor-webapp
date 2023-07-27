@@ -7,9 +7,12 @@ import * as moment from 'moment';
 export class CommentPipe implements PipeTransform {
   transform(value: any, ...args: any[]) {
     const [type] = args;
+    let regNo = null;
     if (typeof value === 'object') {
-
-      if (!value?.comment) {
+      if (type === 'Deleted by') {
+        regNo = value.regNo;
+        value = value.comment;
+      } else if (!value?.comment) {
         value = value?.creator?.person?.display;
       } else if (type === 'addedBy-creator') {
         const comments = value?.comment.split('|');
@@ -20,16 +23,20 @@ export class CommentPipe implements PipeTransform {
 
     let comment = value.split('|');
 
-    return comment.includes('DELETED') ?
-      this.getDeletedBy(comment) :
-      this.getAddedBy(comment, type);
+    if (type === 'addedBy-regNo') {
+      return comment[3] ? `(${comment[3]})` : '(-)';
+    } else {
+      return comment.includes('DELETED') ?
+        this.getDeletedBy(comment, regNo) :
+        this.getAddedBy(comment);
+    }
   }
 
   get selectedLang() {
     return localStorage.getItem('selectedLanguage');
   }
 
-  getAddedBy(comment, type = "") {
+  getAddedBy(comment) {
     const prefixTitle = this.selectedLang === 'en' ? "Added by : " : "أضيفت من قبل ";
 
     let name = comment[0].split(' ');
@@ -37,10 +44,10 @@ export class CommentPipe implements PipeTransform {
     return `${prefixTitle} ${name.length > 2 ? name[0][0] + ' ' + name[1][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]}`;
   }
 
-  getDeletedBy(comment) {
+  getDeletedBy(comment, regNo) {
     const prefixTitle = this.selectedLang === 'en' ? "Deleted by : " : "حذف بواسطة ";
 
     const name = comment[2].split(' ');
-    return `${prefixTitle}${name.length > 2 ? name[0][0] + ' ' + name[1][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? '(' + comment[3] + ')' : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
+    return `${prefixTitle}${name.length > 2 ? name[0][0] + ' ' + name[1][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? regNo : ''} | ${moment(comment[1]).format('DD-MM-YYYY hh:mm A')}`;
   }
 }

@@ -137,7 +137,7 @@ export class AidOrderComponent implements OnInit {
     this.getAidOrders();
   }
 
-  get val(){
+  get val() {
     return this.aidOrderForm.value;
   }
 
@@ -173,134 +173,113 @@ export class AidOrderComponent implements OnInit {
 
   getAidOrders() {
     this.diagnosisService.getObs(this.patientId, this.conceptType1).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+      response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.regNo = '(-)';
-            const result = user?.results?.[0];
-            const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) obs.regNo = `(${exist?.value})`
-            obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
-            if (!obs.comment) {
-              const value = JSON.parse(obs?.value);
-              const splitVal = value.en.split('||');
-              const type1Val = splitVal[0]?.split(',');
-              const type1OtherVal = splitVal[1] ? splitVal[1] : null;
-              this.aidOrderForm.patchValue({ type1: type1Val, type1Uuid: obs.uuid, type1Other: type1OtherVal, type1CreatorUuid: obs.creator.uuid, type1Obs: obs });
-            } else {
-              const value = JSON.parse(obs?.value);
-              const splitVal = value.en.split('||');
-              const type1Val = splitVal[0]?.split(',');
-              const type1OtherVal = splitVal[1] ? splitVal[1] : null;
-              this.type1.push({ ...obs, type1Val, type1OtherVal });
-            }
-          });
+          if (!obs.comment) {
+            const value = JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type1Val = splitVal[0]?.split(',');
+            const type1OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.aidOrderForm.patchValue({ type1: type1Val, type1Uuid: obs.uuid, type1Other: type1OtherVal, type1CreatorUuid: obs.creator.uuid, type1Obs: obs });
+          } else {
+            const value = JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type1Val = splitVal[0]?.split(',');
+            const type1OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.type1.push({ ...obs, type1Val, type1OtherVal });
+          }
         }
       });
     });
 
     this.diagnosisService.getObs(this.patientId, this.conceptType2).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+      response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.regNo = '(-)';
-            const result = user?.results?.[0];
-            const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) obs.regNo = `(${exist?.value})`
-            obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
-            if (!obs.comment) {
-              const value = JSON.parse(obs?.value);
-              const splitVal = value.en.split('||');
-              const type2Val = splitVal[0]?.split(',');
-              const type2OtherVal = splitVal[1] ? splitVal[1] : null;
-              this.aidOrderForm.patchValue({ type2: type2Val, type2Uuid: obs.uuid, type2Other: type2OtherVal, type2CreatorUuid: obs.creator.uuid, type2Obs: obs });
-            } else {
-              const value = JSON.parse(obs?.value);
-              const splitVal = value.en.split('||');
-              const type2Val = splitVal[0]?.split(',');
-              const type2OtherVal = splitVal[1] ? splitVal[1] : null;
-              this.type2.push({ ...obs, type2Val, type2OtherVal });
-            }
-          });
+          if (!obs.comment) {
+            const value = JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type2Val = splitVal[0]?.split(',');
+            const type2OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.aidOrderForm.patchValue({ type2: type2Val, type2Uuid: obs.uuid, type2Other: type2OtherVal, type2CreatorUuid: obs.creator.uuid, type2Obs: obs });
+          } else {
+            const value = JSON.parse(obs?.value);
+            const splitVal = value.en.split('||');
+            const type2Val = splitVal[0]?.split(',');
+            const type2OtherVal = splitVal[1] ? splitVal[1] : null;
+            this.type2.push({ ...obs, type2Val, type2OtherVal });
+          }
         }
       });
     });
 
     this.diagnosisService.getObs(this.patientId, this.conceptType3).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+      response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.regNo = '(-)';
-            const result = user?.results?.[0];
-            const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) obs.regNo = `(${exist?.value})`
-            obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
-            if (!obs.comment) {
-              const value = JSON.parse(obs?.value);
-              this.aidOrderForm.patchValue({ type3: value.en, type3Uuid: obs.uuid, type3CreatorUuid: obs.creator.uuid, type3Obs: obs });
-            } else {
-              const value = JSON.parse(obs?.value);
-              const type3Val = value.en;
-              this.type3.push({ ...obs, type3Val });
-            }
-          });
+          if (!obs.comment) {
+            const value = JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type3: value.en, type3Uuid: obs.uuid, type3CreatorUuid: obs.creator.uuid, type3Obs: obs });
+          } else {
+            const value = JSON.parse(obs?.value);
+            const type3Val = value.en;
+            this.type3.push({ ...obs, type3Val });
+          }
         }
       });
     });
 
     this.diagnosisService.getObs(this.patientId, this.conceptType4).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+      response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.regNo = '(-)';
-            const result = user?.results?.[0];
-            const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) obs.regNo = `(${exist?.value})`
-            obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
-            if (!obs.comment) {
-              const value = JSON.parse(obs?.value);
-              this.aidOrderForm.patchValue({ type4: value.en, type4Uuid: obs.uuid, type4CreatorUuid: obs.creator.uuid, type4Obs: obs });
-            } else {
-              const value = JSON.parse(obs?.value);
-              const type4Val = value.en;
-              this.type4.push({ ...obs, type4Val });
-            }
-          });
+          if (!obs.comment) {
+            const value = JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type4: value.en, type4Uuid: obs.uuid, type4CreatorUuid: obs.creator.uuid, type4Obs: obs });
+          } else {
+            const value = JSON.parse(obs?.value);
+            const type4Val = value.en;
+            this.type4.push({ ...obs, type4Val });
+          }
+
         }
       });
     });
 
     this.diagnosisService.getObs(this.patientId, this.conceptType5).subscribe((response: any) => {
-      response.results.forEach((obs: any) => {
+      response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.regNo = '(-)';
-            const result = user?.results?.[0];
-            const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) obs.regNo = `(${exist?.value})`
-            obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
+          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
-            if (!obs.comment) {
-              const value = JSON.parse(obs?.value);
-              this.aidOrderForm.patchValue({ type5: value.en, type5Uuid: obs.uuid, type5CreatorUuid: obs.creator.uuid, type5Obs: obs });
-            } else {
-              const value = JSON.parse(obs?.value);
-              const type5Val = value.en;
-              this.type5.push({ ...obs, type5Val });
-            }
-          });
+          if (!obs.comment) {
+            const value = JSON.parse(obs?.value);
+            this.aidOrderForm.patchValue({ type5: value.en, type5Uuid: obs.uuid, type5CreatorUuid: obs.creator.uuid, type5Obs: obs });
+          } else {
+            const value = JSON.parse(obs?.value);
+            const type5Val = value.en;
+            this.type5.push({ ...obs, type5Val });
+          }
         }
       });
     });
+  }
+
+  async getRegNo(uuid) {
+    const data = await this.sessionSvc.provider(uuid).toPromise();
+    const result = data?.results?.[0];
+    const attributes = Array.isArray(result.attributes) ? result.attributes : [];
+    const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+    return exist ? `(${exist?.value})` : '(-)'
   }
 
   submit() {
@@ -434,7 +413,6 @@ export class AidOrderComponent implements OnInit {
     //   });
     // } else {
     const provider = getFromStorage("provider");
-    const registrationNumber = getFromStorage("registrationNumber");
     const deletedTimestamp = moment.utc().toISOString();
     let observation: any = {};
     switch (key) {
@@ -455,27 +433,28 @@ export class AidOrderComponent implements OnInit {
         break;
     }
     const prevCreator = observation?.creator?.person?.display;
+    const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
     this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}` }, uuid).subscribe(response => {
       this.aidOrderForm.get(key).setValue(null);
       switch (key) {
         case 'type1Uuid':
-          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`,regNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
           this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null, type1Obs: null });
           break;
         case 'type2Uuid':
-          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`,regNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
           this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null, type2Obs: null });
           break;
         case 'type3Uuid':
-          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`,regNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
+          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
           this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null, type3Obs: null });
           break;
         case 'type4Uuid':
-          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`,regNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
+          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
           this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null, type4Obs: null });
           break;
         case 'type5Uuid':
-          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`,regNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
+          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
           this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null, type5Obs: null });
           break;
         default:
