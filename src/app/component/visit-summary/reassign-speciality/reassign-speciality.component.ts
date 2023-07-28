@@ -74,6 +74,10 @@ export class ReassignSpecialityComponent implements OnInit {
     });
   }
 
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
+  }
+
   Submit() {
     if (this.updateSpeciality.invalid) {
       return;
@@ -85,7 +89,7 @@ export class ReassignSpecialityComponent implements OnInit {
           if (value.specialization !== null) {
             if (this.visitSpecialitySecondary == 'Admin' && this.providerSpeciality == 'Admin') {
               this.translationService.get('messages.cantReassign').subscribe((res: string) => {
-                this.snackbar.open(res,null, {duration: 4000});
+                this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
               });
               return;
             }
@@ -103,7 +107,7 @@ export class ReassignSpecialityComponent implements OnInit {
               }
               this.http.post(URL2, json2).subscribe((response2) => {
                 this.translationService.get('messages.reassignedSuccessfully', {value: value.specialization}).subscribe((res: string) => {
-                  this.snackbar.open(res,null, {duration: 4000});
+                  this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
                 });
               });
               // this.router.navigate(["/home"]);
