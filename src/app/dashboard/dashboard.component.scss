@@ -18,6 +18,8 @@
     font-style: normal;
     color: black;
     padding: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .chip-info h6 {
