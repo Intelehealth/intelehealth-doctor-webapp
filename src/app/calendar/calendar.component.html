@@ -148,7 +148,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"
@@ -197,7 +197,7 @@
           let-daysInWeek="daysInWeek">
           <div class="cal-event-con-2"
             [ngStyle]="{backgroundColor: weekEvent.event.color?.secondary, borderColor: weekEvent.event.color?.primary}"
-            [mwlCalendarTooltip]="!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): ''"
+            [mwlCalendarTooltip]="(!tooltipDisabled? (weekEvent.event.title| calendarEventTitle: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip'): weekEvent.tempEvent || weekEvent.event): '')|translate"
             [tooltipPlacement]="tooltipPlacement"
             [tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
             [tooltipTemplate]="tooltipTemplate"

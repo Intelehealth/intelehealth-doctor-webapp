@@ -31,7 +31,7 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> {{'Age'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}{{'y'|translate}} </td>
               </ng-container>
 
               <!-- Visit Created Column -->

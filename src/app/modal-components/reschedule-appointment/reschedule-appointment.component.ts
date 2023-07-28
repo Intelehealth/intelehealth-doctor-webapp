@@ -60,7 +60,7 @@ export class RescheduleAppointmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAppointmentSlots();
-    moment.locale(this.getLang());
+    // moment.locale(this.getLang());
     this.dateAdapter.setLocale(this.getLang());
   }
 
@@ -76,16 +76,22 @@ export class RescheduleAppointmentComponent implements OnInit {
       afternoon: [],
       evening: []
     };
-    this.appointmentService.getAppointmentSlots(moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: any) => {
-      this.slots = res.dates;
-      this.slots.forEach((slot: any) => {
-        if (moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))) {
-          this.scheduleData.morning.push(slot.slotTime);
-        } else if (moment(slot.slotTime, "LT").isBetween(moment("11:30 AM", "LT"), moment("5:00 PM", "LT"))) {
-          this.scheduleData.afternoon.push(slot.slotTime);
-        } else {
-          this.scheduleData.evening.push(slot.slotTime);
-        }
+    this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY')).subscribe((res: any) =>{
+      let userSlots = res.data
+      this.appointmentService.getAppointmentSlots(moment(fromDate).format("DD/MM/YYYY"), moment(toDate).format("DD/MM/YYYY"), speciality).subscribe((res: any) => {
+        this.slots = res.dates;
+        this.slots.forEach((slot: any) => {
+          let matchedSlot = userSlots.find((s: any) => s.slotDate == slot.slotDate && s.slotTime == slot.slotTime);
+          if(!matchedSlot){
+            if (moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))) {
+              this.scheduleData.morning.push(slot.slotTime);
+            } else if (moment(slot.slotTime, "LT").isBetween(moment("11:30 AM", "LT"), moment("5:00 PM", "LT"))) {
+              this.scheduleData.afternoon.push(slot.slotTime);
+            } else {
+              this.scheduleData.evening.push(slot.slotTime);
+            }
+          }
+        });
       });
     });
   }

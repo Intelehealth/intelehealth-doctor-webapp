@@ -19,7 +19,7 @@
               <img src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}" (error) ="onImgError($event)" alt="" width="100%" height="100%">
             </div>
             <div class="ml-3">
-              <h6>{{patient?.person.display}} ({{patient?.person.gender}})</h6>
+              <h6>{{patient?.person.display}} ({{patient?.person.gender|translate}})</h6>
               <p>{{getPatientIdentifier('OpenMRS ID')}}</p>
             </div>
           </div>

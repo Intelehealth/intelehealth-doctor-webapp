@@ -298,7 +298,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private encounterService: EncounterService,
     private linkSvc: LinkService,
     private socket: SocketService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private dateAdapter: DateAdapter<any>
     ) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
@@ -379,7 +380,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
-    moment.locale(localStorage.getItem('selectedLanguage'));
+    // moment.locale(localStorage.getItem('selectedLanguage'));
+    this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 
   formControlValueChanges() {

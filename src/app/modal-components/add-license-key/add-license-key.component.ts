@@ -31,7 +31,7 @@ export class AddLicenseKeyComponent implements OnInit {
       key: this.data?.keyName,
       expiryDate: moment(this.data?.expiry).format("YYYY-MM-DD")
     });
-    moment.locale(localStorage.getItem('selectedLanguage'));
+    // moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   get f() { return this.licenseForm.controls; }

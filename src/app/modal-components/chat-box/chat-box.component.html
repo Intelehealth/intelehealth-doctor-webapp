@@ -28,11 +28,11 @@
           <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
             <ng-container *ngIf="item.isRead">
               <img src="assets/svgs/read-status.svg" alt="" />
-              <span class="ml-1">Read</span>
+              <span class="ml-1">{{'Read'|translate}}</span>
             </ng-container>
             <ng-container *ngIf="!item.isRead">
               <img src="assets/svgs/sent-status.svg" alt="" />
-              <span class="ml-1">Sent</span>
+              <span class="ml-1">{{'Sent'|translate}}</span>
             </ng-container>
           </ng-container>
         </li>
