@@ -34,4 +34,12 @@ export class SessionService {
     const url = `${this.baseURL}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender),attributes)`;
     return this.http.get(url);
   }
+
+  async getRegNo(uuid) {
+    const data = await this.provider(uuid).toPromise();
+    const result = data?.results?.[0];
+    const attributes = Array.isArray(result.attributes) ? result.attributes : [];
+    const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
+    return exist ? `(${exist?.value})` : '(-)'
+  }
 }

@@ -76,17 +76,10 @@ testForm = new FormGroup({
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptTest)
     .subscribe(response => {
-      response.results.forEach(obs => {
+      response.results.forEach(async obs => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-            obs.creator.regNo = '(-)';
-            const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
-            const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-            if (exist) {
-              obs.creator.regNo = `(${exist?.value})`;
-            }
-            this.tests.push(this.diagnosisService.getData(obs));
-          });
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          this.tests.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -116,7 +109,8 @@ testForm = new FormGroup({
           uuid : resp.uuid,
           value: json.value,
           obsDatetime: resp.obsDatetime,
-          creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` }
+          regNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
         }
         this.tests.push(this.diagnosisService.getData(obj));
       });
@@ -138,7 +132,7 @@ testForm = new FormGroup({
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = getFromStorage("registrationNumber");
+          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
           this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
@@ -151,7 +145,7 @@ testForm = new FormGroup({
 
     // if (this.diagnosisService.isSameDoctor()) {
     //   const uuid = this.tests[i].uuid;
-    //   this.diagnosisService.deleteObs(uuid)
+    //                                                                                                                                                                    this.diagnosisService.deleteObs(uuid)
     //   .subscribe(() => {
     //     this.tests.splice(i, 1);
     //   });

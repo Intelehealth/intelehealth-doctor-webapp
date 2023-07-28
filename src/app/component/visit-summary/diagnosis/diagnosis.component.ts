@@ -57,19 +57,10 @@ diagnosisForm = new FormGroup({
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptDiagnosis)
     .subscribe(response => {
-      response.results.forEach(obs => {
+      response.results.forEach(async (obs) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          this.diagnosisService.getUserByUuid(obs.creator.uuid).subscribe(user => {
-            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-              obs.creator.regNo = '(-)';
-              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
-              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-              if (exist) {
-                obs.creator.regNo = `(${exist?.value})`
-              }
-              this.diagnosis.push(this.diagnosisService.getData(obs));
-            });
-          });
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          this.diagnosis.push(this.diagnosisService.getData(obs));
         }
       });
     });
@@ -106,7 +97,8 @@ diagnosisForm = new FormGroup({
           uuid : resp.uuid,
           value: json.value,
           obsDatetime: resp.obsDatetime,
-          creator: { uuid: user.uuid, person: user.person,regNo:`(${getFromStorage("registrationNumber")})` }
+          regNo:`(${getFromStorage("registrationNumber")})`,
+          creator: { uuid: user.uuid, person: user.person }
         }
         this.diagnosis.push(this.diagnosisService.getData(obj));
       });
@@ -144,7 +136,7 @@ diagnosisForm = new FormGroup({
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = getFromStorage("registrationNumber");
+          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
           this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })

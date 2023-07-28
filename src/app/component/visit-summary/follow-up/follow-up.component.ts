@@ -57,18 +57,12 @@ export class FollowUpComponent implements OnInit {
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptFollow)
       .subscribe(response => {
-        response.results.forEach(obs => {
+        response.results.forEach(async obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-              obs.creator.regNo = '(-)';
-              const attributes = Array.isArray(user?.results?.[0]?.attributes) ? user?.results?.[0]?.attributes : [];
-              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-              if (exist) {
-                obs.creator.regNo = `(${exist?.value})`
-              }
+              obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+
               let obs1 = this.diagnosisService.getData(obs);
               this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
-            });
           }
         });
       });
@@ -100,7 +94,8 @@ export class FollowUpComponent implements OnInit {
             uuid: resp.uuid,
             value: json.value,
             obsDatetime: resp.obsDatetime,
-            creator: { uuid: user.uuid, person: user.person, regNo:`(${getFromStorage("registrationNumber")})` }
+            regNo:`(${getFromStorage("registrationNumber")})`,
+            creator: { uuid: user.uuid, person: user.person }
           }
           this.followUp.push(this.diagnosisService.getData(obj));
         });
@@ -121,7 +116,7 @@ export class FollowUpComponent implements OnInit {
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = getFromStorage("registrationNumber");
+          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
           this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })

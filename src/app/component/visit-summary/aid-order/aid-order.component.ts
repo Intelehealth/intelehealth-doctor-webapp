@@ -175,7 +175,7 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType1).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
           obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
           if (!obs.comment) {
@@ -198,7 +198,7 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType2).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
           obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
           if (!obs.comment) {
@@ -221,7 +221,7 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType3).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
           obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
           if (!obs.comment) {
@@ -239,7 +239,7 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType4).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
           obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
           if (!obs.comment) {
@@ -258,7 +258,7 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType5).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.getRegNo(obs.creator.uuid);
+          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
           obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
 
           if (!obs.comment) {
@@ -272,14 +272,6 @@ export class AidOrderComponent implements OnInit {
         }
       });
     });
-  }
-
-  async getRegNo(uuid) {
-    const data = await this.sessionSvc.provider(uuid).toPromise();
-    const result = data?.results?.[0];
-    const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-    const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-    return exist ? `(${exist?.value})` : '(-)'
   }
 
   submit() {

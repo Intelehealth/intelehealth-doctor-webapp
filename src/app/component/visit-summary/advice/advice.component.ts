@@ -75,20 +75,14 @@ export class AdviceComponent implements OnInit {
     this.patientId = this.route.snapshot.params['patient_id'];
     this.diagnosisService.getObs(this.patientId, this.conceptAdvice)
       .subscribe(response => {
-        response.results.forEach(obs => {
+        response.results.forEach(async obs => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visitUuid) {
-            this.sessionSvc.provider(obs.creator.uuid).subscribe(user => {
-              obs.creator.regNo = '(-)';
-              const result = user?.results?.[0];
-              const attributes = Array.isArray(result.attributes) ? result.attributes : [];
-              const exist = attributes.find(atr => atr?.attributeType?.display === "registrationNumber");
-              if (exist) obs.creator.regNo = `(${exist?.value})`
+              obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
               obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display;
 
               if (!obs.value.includes('Start')) {
                 this.advice.push(this.diagnosisService.getData(obs));
               }
-            });
           }
         });
       });
@@ -119,7 +113,8 @@ export class AdviceComponent implements OnInit {
             uuid: response.uuid,
             value: json.value,
             obsDatetime: response.obsDatetime,
-            creator: { uuid: user.uuid, person: user.person, regNo: `(${getFromStorage("registrationNumber")})` }
+            regNo: `(${getFromStorage("registrationNumber")})`,
+            creator: { uuid: user.uuid, person: user.person }
           }
           this.advice.push(this.diagnosisService.getData(obj));
         });
@@ -140,7 +135,7 @@ export class AdviceComponent implements OnInit {
         //   });
         // } else {
         const provider = getFromStorage("provider");
-        const registrationNumber = getFromStorage("registrationNumber");
+        const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
         const deletedTimestamp = moment.utc().toISOString();
         const prevCreator = observation?.creator?.person?.display;
         this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}` })

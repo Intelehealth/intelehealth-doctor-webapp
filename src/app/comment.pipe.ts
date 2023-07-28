@@ -45,6 +45,7 @@ export class CommentPipe implements PipeTransform {
   }
 
   getDeletedBy(comment, regNo) {
+    if(!regNo)regNo = `(${comment[3]})`;
     const prefixTitle = this.selectedLang === 'en' ? "Deleted by : " : "حذف بواسطة ";
 
     const name = comment[2].split(' ');
