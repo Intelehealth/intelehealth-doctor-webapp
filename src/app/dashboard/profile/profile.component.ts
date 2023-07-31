@@ -601,7 +601,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.editMode = false;
       return;
     }
-    if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid) {
+    if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
       return;
     }
 
