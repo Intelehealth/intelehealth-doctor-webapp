@@ -17,7 +17,7 @@
               <div class="doctor-value d-flex flex-column">
                 <span [class.strike]="dior.comment">{{dior.value}}</span>
                 <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                  <span class="comment-blue">{{dior|comment:'addedBy-creator'}} {{dior.creatorRegNo}} | {{dior.obsDatetime|date:'dd-MM-y hh:mm a'}}</span>
+                  <span class="comment-blue">{{dior|comment:'addedBy-creator'}} {{dior.creatorRegNo}} | {{dior.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
                   <span *ngIf="dior.comment" class="comment">{{dior.comment|comment}}</span>
                 </div>
               </div>
