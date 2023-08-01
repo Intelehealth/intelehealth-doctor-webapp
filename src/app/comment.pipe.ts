@@ -41,7 +41,7 @@ export class CommentPipe implements PipeTransform {
 
     let name = comment[0].split(' ');
 
-    return `${prefixTitle} ${name.length > 2 ? name[0][0] + ' ' + name[1][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]}`;
+    return `${prefixTitle} ${name.length > 2 ? name[0][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]}`;
   }
 
   getDeletedBy(comment, regNo) {
@@ -49,6 +49,6 @@ export class CommentPipe implements PipeTransform {
     const prefixTitle = this.selectedLang === 'en' ? "Deleted by : " : "حذف بواسطة ";
 
     const name = comment[2].split(' ');
-    return `${prefixTitle}${name.length > 2 ? name[0][0] + ' ' + name[1][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? regNo : ''} | ${moment(comment[1]).format('DD-MM-YYYY , hh:mm A')}`;
+    return `${prefixTitle}${name.length > 2 ? name[0][0] + ' ' + name[2] : name[0][0] + ' ' + name[1]} ${comment[3] ? regNo : ''} | ${moment(comment[1]).format('DD-MM-YYYY , hh:mm A')}`;
   }
 }
