@@ -10,7 +10,7 @@ export class CommentPipe implements PipeTransform {
     let regNo = null;
     if (typeof value === 'object') {
       if (type === 'Deleted by') {
-        regNo = value.regNo;
+        regNo = value.deletorRegNo;
         value = value.comment;
       } else if (!value?.comment) {
         value = value?.creator?.person?.display;
@@ -24,7 +24,7 @@ export class CommentPipe implements PipeTransform {
     let comment = value.split('|');
 
     if (type === 'addedBy-regNo') {
-      return comment[3] ? `(${comment[3]})` : '(-)';
+      return comment[5] ? `(${comment[5]})` : '(-)';
     } else {
       return comment.includes('DELETED') ?
         this.getDeletedBy(comment, regNo) :

@@ -175,8 +175,13 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType1).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          }
 
           if (!obs.comment) {
             const value = JSON.parse(obs?.value);
@@ -198,8 +203,13 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType2).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          }
 
           if (!obs.comment) {
             const value = JSON.parse(obs?.value);
@@ -221,8 +231,13 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType3).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          }
 
           if (!obs.comment) {
             const value = JSON.parse(obs?.value);
@@ -239,8 +254,13 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType4).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          }
 
           if (!obs.comment) {
             const value = JSON.parse(obs?.value);
@@ -258,8 +278,13 @@ export class AidOrderComponent implements OnInit {
     this.diagnosisService.getObs(this.patientId, this.conceptType5).subscribe((response: any) => {
       response.results.forEach(async (obs: any) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          obs.creator.person.display = obs.encounter?.encounterProviders?.[0]?.display.split(':')[0];
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+          }
 
           if (!obs.comment) {
             const value = JSON.parse(obs?.value);
@@ -361,7 +386,7 @@ export class AidOrderComponent implements OnInit {
         uuid: response.uuid,
         value: json.value,
         obsDatetime: response.obsDatetime,
-        regNo: `(${getFromStorage("registrationNumber")})`,
+        creatorRegNo: `(${getFromStorage("registrationNumber")})`,
         creator: { uuid: user.uuid, person: user.person }
       }
       this.aidOrderForm.get(key.replace('Uuid', 'Obs')).setValue(obj);
@@ -425,28 +450,29 @@ export class AidOrderComponent implements OnInit {
         break;
     }
     const prevCreator = observation?.creator?.person?.display;
-    const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
-    this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}` }, uuid).subscribe(response => {
+    const deletorRegistrationNumber = getFromStorage("registrationNumber");
+    const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
+    this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` }, uuid).subscribe(response => {
       this.aidOrderForm.get(key).setValue(null);
       switch (key) {
         case 'type1Uuid':
-          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
           this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null, type1Obs: null });
           break;
         case 'type2Uuid':
-          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
           this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null, type2Obs: null });
           break;
         case 'type3Uuid':
-          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
+          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
           this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null, type3Obs: null });
           break;
         case 'type4Uuid':
-          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
+          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
           this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null, type4Obs: null });
           break;
         case 'type5Uuid':
-          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber ? '|' + registrationNumber : '|NA'}|${prevCreator}`, regNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
+          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
           this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null, type5Obs: null });
           break;
         default:

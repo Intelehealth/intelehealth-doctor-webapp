@@ -161,8 +161,15 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(async obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-            obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-            this.meds.push(this.diagnosisService.getData(obs));
+            if (obs.comment) {
+              const comment = obs.comment.split('|');
+              obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+              obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+              this.meds.push(this.diagnosisService.getData(obs));
+            } else {
+              obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+              this.meds.push(this.diagnosisService.getData(obs));
+            }
           }
         });
       });
@@ -226,7 +233,7 @@ export class PrescribedMedicationComponent implements OnInit {
         this.service.postObs(json)
           .subscribe(response => {
             const user = getFromStorage("user");
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime,regNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
             this.add = false;
           });
       }
@@ -248,12 +255,13 @@ export class PrescribedMedicationComponent implements OnInit {
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
+          const deletorRegistrationNumber = getFromStorage("registrationNumber");
+          const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` })
           .subscribe(() => {
-            this.meds[i] = {...this.meds[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` };
+            this.meds[i] = {...this.meds[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` };
           });
         // }
       }

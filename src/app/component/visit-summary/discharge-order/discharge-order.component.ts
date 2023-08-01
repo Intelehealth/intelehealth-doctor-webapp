@@ -55,9 +55,15 @@ export class DischargeOrderComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(async obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-              obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-
+            if (obs.comment) {
+              const comment = obs.comment.split('|');
+              obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+              obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
               this.dischargeOrders.push(this.diagnosisService.getData(obs));
+            } else {
+              obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+              this.dischargeOrders.push(this.diagnosisService.getData(obs));
+            }
           }
         });
       });
@@ -83,7 +89,7 @@ export class DischargeOrderComponent implements OnInit {
       this.service.postObs(json)
         .subscribe(resp => {
           const user = getFromStorage("user");
-          this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, regNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
+          this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
         });
     }
   }
@@ -102,12 +108,13 @@ export class DischargeOrderComponent implements OnInit {
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
+          const deletorRegistrationNumber = getFromStorage("registrationNumber");
+          const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` })
           .subscribe(() => {
-            this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` };
+            this.dischargeOrders[i] = {...this.dischargeOrders[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` };
           });
         // }
       }

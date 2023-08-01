@@ -59,10 +59,15 @@ export class FollowUpComponent implements OnInit {
       .subscribe(response => {
         response.results.forEach(async obs => {
           if (obs.encounter.visit.uuid === this.visitUuid) {
-              obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-
-              let obs1 = this.diagnosisService.getData(obs);
-              this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+            if (obs.comment) {
+              const comment = obs.comment.split('|');
+              obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+              obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+            } else {
+              obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+            }
+            let obs1 = this.diagnosisService.getData(obs);
+            this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
           }
         });
       });
@@ -94,7 +99,7 @@ export class FollowUpComponent implements OnInit {
             uuid: resp.uuid,
             value: json.value,
             obsDatetime: resp.obsDatetime,
-            regNo:`(${getFromStorage("registrationNumber")})`,
+            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
             creator: { uuid: user.uuid, person: user.person }
           }
           this.followUp.push(this.diagnosisService.getData(obj));
@@ -116,12 +121,13 @@ export class FollowUpComponent implements OnInit {
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
+          const deletorRegistrationNumber = getFromStorage("registrationNumber");
+          const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` })
           .subscribe(() => {
-            this.followUp[i] = {...this.followUp[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` };
+            this.followUp[i] = {...this.followUp[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` };
           });
         // }
       }

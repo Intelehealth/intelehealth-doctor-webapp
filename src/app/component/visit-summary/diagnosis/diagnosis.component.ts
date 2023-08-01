@@ -59,8 +59,15 @@ diagnosisForm = new FormGroup({
     .subscribe(response => {
       response.results.forEach(async (obs) => {
         if (obs.encounter.visit.uuid === this.visitUuid) {
-          obs.regNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-          this.diagnosis.push(this.diagnosisService.getData(obs));
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+            this.diagnosis.push(this.diagnosisService.getData(obs));
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+            this.diagnosis.push(this.diagnosisService.getData(obs));
+          }
         }
       });
     });
@@ -97,7 +104,7 @@ diagnosisForm = new FormGroup({
           uuid : resp.uuid,
           value: json.value,
           obsDatetime: resp.obsDatetime,
-          regNo:`(${getFromStorage("registrationNumber")})`,
+          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
           creator: { uuid: user.uuid, person: user.person }
         }
         this.diagnosis.push(this.diagnosisService.getData(obj));
@@ -136,12 +143,13 @@ diagnosisForm = new FormGroup({
         //   });
         // } else {
           const provider = getFromStorage("provider");
-          const registrationNumber = observation.regNo.replace('(', "").replace(')', "");
+          const deletorRegistrationNumber = getFromStorage("registrationNumber");
+          const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
           const deletedTimestamp = moment.utc().toISOString();
           const prevCreator = observation?.creator?.person?.display;
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` })
+          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` })
           .subscribe(() => {
-            this.diagnosis[i] = {...this.diagnosis[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}${registrationNumber?'|'+registrationNumber:'|NA'}|${prevCreator}` };
+            this.diagnosis[i] = {...this.diagnosis[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` };
           });
         // }
       }
