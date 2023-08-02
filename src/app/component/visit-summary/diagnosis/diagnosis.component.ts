@@ -89,41 +89,44 @@ diagnosisForm = new FormGroup({
     }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
-      const json = {
-        concept: this.conceptDiagnosis,
-        person: this.patientId,
-        obsDatetime: date,
-        value:  this.getBody('diagnosis',value.text, value.type, value.confirm),
-        encounter: this.encounterUuid
-      };
-      this.service.postObs(json)
-      .subscribe(resp => {
-        this.diagnosisList = [];
-        const user = getFromStorage("user");
-        let obj = {
-          uuid : resp.uuid,
-          value: json.value,
-          obsDatetime: resp.obsDatetime,
-          creatorRegNo:`(${getFromStorage("registrationNumber")})`,
-          creator: { uuid: user.uuid, person: user.person }
-        }
-        this.diagnosis.push(this.diagnosisService.getData(obj));
-      });
+      this.diagnosisService.getTranslationData();
+      setTimeout(() => {
+        const json = {
+          concept: this.conceptDiagnosis,
+          person: this.patientId,
+          obsDatetime: date,
+          value:  this.getBody('diagnosis',value.text, value.type, value.confirm),
+          encounter: this.encounterUuid
+        };
+        this.service.postObs(json)
+        .subscribe(resp => {
+          this.diagnosisList = [];
+          const user = getFromStorage("user");
+          let obj = {
+            uuid : resp.uuid,
+            value: json.value,
+            obsDatetime: resp.obsDatetime,
+            creatorRegNo:`(${getFromStorage("registrationNumber")})`,
+            creator: { uuid: user.uuid, person: user.person }
+          }
+          this.diagnosis.push(this.diagnosisService.getData(obj));
+        });
+      }, 1000);
     }
   }
 
-  getBody(element: string, elementName: string,type, confirm) {
+  getBody(element: string, elementName: string, type, confirm) {
     let vl = this.diagnosisService.getBody(element,elementName);
     let value;
     if (localStorage.getItem('selectedLanguage') === 'ar') {
       value = {
-        "ar": `${vl.ar}:${type} & ${confirm}`,
-        "en": `${vl.en}:${this.diagnosisService.values[type]} & ${this.diagnosisService.values[confirm]}`,
+        "ar": `${elementName}:${(type == 'Primary')? 'أولي' : 'ثانوي'} & ${(confirm == 'Provisional')?'مؤقت':'مؤكد'}`,
+        "en": `${vl.en}:${type} & ${confirm}`
       }
     } else {
       value = {
-        "ar": `${vl.ar}:${this.diagnosisService.values[type]} & ${this.diagnosisService.values[confirm]}`,
-        "en": `${vl.en}:${type} & ${confirm}`,
+        "ar": `${vl.ar}:${(type == 'Primary')? 'أولي' : 'ثانوي'} & ${(confirm == 'Provisional')?'مؤقت':'مؤكد'}`,
+        "en": `${elementName}:${type} & ${confirm}`,
       }
     }
     return JSON.stringify(value);

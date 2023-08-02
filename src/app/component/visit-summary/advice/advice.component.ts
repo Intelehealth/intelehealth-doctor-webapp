@@ -102,26 +102,29 @@ export class AdviceComponent implements OnInit {
     }
     if (this.diagnosisService.isEncounterProvider()) {
       this.encounterUuid = getEncounterUUID();
-      const json = {
-        concept: this.conceptAdvice,
-        person: this.patientId,
-        obsDatetime: date,
-        value: JSON.stringify(this.diagnosisService.getBody('advice', value)),
-        encounter: this.encounterUuid
-      };
+      this.diagnosisService.getTranslationData();
+      setTimeout(() => {
+        const json = {
+          concept: this.conceptAdvice,
+          person: this.patientId,
+          obsDatetime: date,
+          value: JSON.stringify(this.diagnosisService.getBody('advice', value)),
+          encounter: this.encounterUuid
+        };
 
-      this.service.postObs(json)
-        .subscribe(response => {
-          const user = getFromStorage("user");
-          let obj = {
-            uuid: response.uuid,
-            value: json.value,
-            obsDatetime: response.obsDatetime,
-            creatorRegNo: `(${getFromStorage("registrationNumber")})`,
-            creator: { uuid: user.uuid, person: user.person }
-          }
-          this.advice.push(this.diagnosisService.getData(obj));
-        });
+        this.service.postObs(json)
+          .subscribe(response => {
+            const user = getFromStorage("user");
+            let obj = {
+              uuid: response.uuid,
+              value: json.value,
+              obsDatetime: response.obsDatetime,
+              creatorRegNo: `(${getFromStorage("registrationNumber")})`,
+              creator: { uuid: user.uuid, person: user.person }
+            }
+            this.advice.push(this.diagnosisService.getData(obj));
+          });
+      }, 1000);
     }
   }
 

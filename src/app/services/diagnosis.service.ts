@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from './translation.service';
-declare var getEncounterProviderUUID: any,  getFromStorage: any, getVisitNoteEncounter: any;
+declare var getEncounterProviderUUID: any, getFromStorage: any, getVisitNoteEncounter: any;
 
 
 @Injectable({
@@ -21,7 +21,7 @@ export class DiagnosisService {
   constructor(private http: HttpClient, private snackbar: MatSnackBar,
     private translateService: TranslateService,
     private translationService: TranslationService) {
-     }
+  }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -108,31 +108,31 @@ export class DiagnosisService {
     return data;
   }
 
-   getBody(element: string, elementName: string) {
+  getBody(element: string, elementName: string) {
     this.getTranslationData();
-      let value, ar1, en1;
-      if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
-        localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,
-          en1 = elementName) : (en1 = elementName, ar1 = elementName)
-          value = {
-            "ar": ar1,
-            "en": en1
-          }
-          return value;
-      } else {
-        if (localStorage.getItem('selectedLanguage') === 'ar') {
-          ar1 = elementName;
-          en1 = this.translateService.instant(`${element}.${elementName}`);
-        } else {
-          en1 = this.translateService.instant(`${element}.${elementName}`);
-          ar1 = this.values?.[`${element}`]?.[`${elementName}`];
-        }
-        value = {
-          "ar": ar1,
-          "en": en1
-        }
-        return value;
+    let value, ar1, en1;
+    if (this.translateService.instant(`${element}.${elementName}`).includes(element)) {
+      localStorage.getItem('selectedLanguage') === 'ar' ? (ar1 = elementName,
+        en1 = elementName) : (en1 = elementName, ar1 = elementName)
+      value = {
+        "ar": ar1,
+        "en": en1
       }
+      return value;
+    } else {
+      if (localStorage.getItem('selectedLanguage') === 'ar') {
+        ar1 = elementName;
+        en1 = this.translateService.instant(`${element}.${elementName}`);
+      } else {
+        en1 = this.translateService.instant(`${element}.${elementName}`);
+        ar1 = this.values?.[`${element}`]?.[`${elementName}`];
+      }
+      value = {
+        "ar": ar1,
+        "en": en1
+      }
+      return value;
+    }
   }
 
   getTranslationData() {
