@@ -452,27 +452,27 @@ export class AidOrderComponent implements OnInit {
     const prevCreator = observation?.creator?.person?.display;
     const deletorRegistrationNumber = getFromStorage("registrationNumber");
     const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
-    this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}` }, uuid).subscribe(response => {
+    this.encounterService.updateObs({ comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}` }, uuid).subscribe(response => {
       this.aidOrderForm.get(key).setValue(null);
       switch (key) {
         case 'type1Uuid':
-          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
+          this.type1.push({ ...this.aidOrderForm.value.type1Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type1Val: this.aidOrderForm.value.type1, type1OtherVal: this.aidOrderForm.value.type1Other });
           this.aidOrderForm.patchValue({ type1: null, type1Other: null, type1CreatorUuid: null, type1Obs: null });
           break;
         case 'type2Uuid':
-          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
+          this.type2.push({ ...this.aidOrderForm.value.type2Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type2Val: this.aidOrderForm.value.type2, type2OtherVal: this.aidOrderForm.value.type2Other });
           this.aidOrderForm.patchValue({ type2: null, type2Other: null, type2CreatorUuid: null, type2Obs: null });
           break;
         case 'type3Uuid':
-          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
+          this.type3.push({ ...this.aidOrderForm.value.type3Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type3Val: this.aidOrderForm.value.type3 });
           this.aidOrderForm.patchValue({ type3: null, type3CreatorUuid: null, type3Obs: null });
           break;
         case 'type4Uuid':
-          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
+          this.type4.push({ ...this.aidOrderForm.value.type4Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type4Val: this.aidOrderForm.value.type4 });
           this.aidOrderForm.patchValue({ type4: null, type4CreatorUuid: null, type4Obs: null });
           break;
         case 'type5Uuid':
-          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
+          this.type5.push({ ...this.aidOrderForm.value.type5Obs, comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}`, deletorRegNo: `(${getFromStorage("registrationNumber")})`, type5Val: this.aidOrderForm.value.type5 });
           this.aidOrderForm.patchValue({ type5: null, type5CreatorUuid: null, type5Obs: null });
           break;
         default:
