@@ -308,7 +308,7 @@ export class AidOrderComponent implements OnInit {
           // this.updateObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, value.type1Uuid);
         } else {
           let arabic = value.type1.map((o: any) => this.medicalEquipmentsList.find((e => e.en == o)).ar);
-          this.postObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, (value.type1.indexOf('Others') == -1) ? arabic.toString() : `${value.type1Other}||${arabic.toString()}`, this.conceptType1, 'type1Uuid');
+          this.postObs((value.type1.indexOf('Others') == -1) ? value.type1.toString() : `${value.type1.toString()}||${value.type1Other}`, (value.type1.indexOf('Others') == -1) ? arabic.toString() : `${arabic.toString()}||${value.type1Other}`, this.conceptType1, 'type1Uuid');
         }
       } else {
         if (value.type1Uuid) {
@@ -321,7 +321,7 @@ export class AidOrderComponent implements OnInit {
           // this.updateObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, value.type2Uuid);
         } else {
           let arabic = value.type2.map((o: any) => this.freeMedicalEquipmentsList.find((e => e.en == o)).ar);
-          this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, (value.type2.indexOf('Others') == -1) ? arabic.toString() : `${value.type2Other}||${arabic.toString()}`, this.conceptType2, 'type2Uuid');
+          this.postObs((value.type2.indexOf('Others') == -1) ? value.type2.toString() : `${value.type2.toString()}||${value.type2Other}`, (value.type2.indexOf('Others') == -1) ? arabic.toString() : `${arabic.toString()}||${value.type2Other}`, this.conceptType2, 'type2Uuid');
         }
       } else {
         if (value.type2Uuid) {
