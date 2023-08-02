@@ -38,19 +38,16 @@ export class ChatBoxComponent implements OnInit {
     }
     // this.socketSvc.initSocket(true);
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
       this.readMessages(data.id);
-      this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? 1 : -1);
     });
 
     this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
+  }
+
+  ngOnDestroy() {
+    this.dialogRef.close();
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {

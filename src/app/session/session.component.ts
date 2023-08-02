@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-session',
@@ -42,9 +43,12 @@ export class SessionComponent implements OnInit {
       name: 'Hindi'
     }
   ];
-  constructor() { }
+  constructor(
+    private socketSvc: SocketService
+  ) { }
 
   ngOnInit(): void {
+    this.socketSvc.close();
   }
 
 }

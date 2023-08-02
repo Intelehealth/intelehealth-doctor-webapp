@@ -89,6 +89,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
+    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
     if (this.initiator === 'hw') {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;
@@ -152,6 +153,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   onHWIncomingCallConnect() {
     this.connecting = false;
+    this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
 

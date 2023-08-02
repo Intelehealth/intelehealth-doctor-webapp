@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     public authService: AuthService,
     private toastr: ToastrService,
     private router: Router,
+    private socketSvc: SocketService,
     private rolesService: NgxRolesService) {
 
     this.loginForm = new FormGroup({
@@ -38,6 +40,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // this.checkSession();
+    this.socketSvc.close();
   }
 
   login() {
