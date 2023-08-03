@@ -189,7 +189,7 @@ export class SocketService {
   }
 
   close() {
-    this.socket.close();
+    this.socket?.close();
   }
 
   public initSocketSupport(forceInit = false) {
