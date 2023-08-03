@@ -255,7 +255,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.apiSubscription.unsubscribe();
     try {
-      this.dialogRef1.close();
+      if (this.dialogRef1) {
+        this.dialogRef1.close();
+      };
     } catch (error) { }
   }
 
