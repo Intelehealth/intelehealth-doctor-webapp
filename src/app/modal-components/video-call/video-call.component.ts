@@ -99,7 +99,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.startCall();
       }, 0);
-      this.socketSvc.callRing.pause();
     } else {
       this.startCall();
     }

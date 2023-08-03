@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SwPush } from '@angular/service-worker';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { PushNotificationsService } from 'src/app/services/push-notification.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
@@ -26,6 +28,8 @@ export class LoginComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private socketSvc: SocketService,
+    private pushNotSvc: PushNotificationsService,
+    public _swPush: SwPush,
     private rolesService: NgxRolesService) {
 
     this.loginForm = new FormGroup({
@@ -40,7 +44,18 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // this.checkSession();
-    this.socketSvc.close();
+    try {
+      this.socketSvc.close();
+      this._swPush.unsubscribe();
+      this.pushNotSvc.unsubscribeNotification({
+        user_uuid: this.user.uuid,
+        finger_print: this.authService.fingerPrint,
+      }).subscribe();
+    } catch (error) { }
+  }
+
+  get user() {
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   login() {
@@ -81,7 +96,7 @@ export class LoginComponent implements OnInit {
         this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
       }
     }, err => {
-      if(this.loginAttempt < 3) this.login();
+      if (this.loginAttempt < 3) this.login();
     });
   }
 

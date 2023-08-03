@@ -276,6 +276,7 @@ export class WebrtcService {
            * Temporary hack just to test, will be removing later
            */
           const visitHolders = visit.attributes.filter(va => va?.attributeType?.display === 'Visit Holder');
+          console.log('visitHolders: ', visitHolders);
           if (visitHolders.length > 1) {
             this.visitHolderId = visitHolders[visitHolders.length - 1];
           }
