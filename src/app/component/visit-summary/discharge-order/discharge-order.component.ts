@@ -76,7 +76,7 @@ export class DischargeOrderComponent implements OnInit {
     const date = new Date();
     const form = this.dischargeOrderForm.value;
     const value = form.dischargeOrder;
-    if (this.dischargeOrders.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+    if (this.dischargeOrders.filter(o => o.value.toLowerCase() == value.toLowerCase() && o.comment == null).length > 0) {
       this.translationService.get('messages.cantAdd').subscribe((res: string) => {
         this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
       });

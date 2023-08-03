@@ -75,7 +75,7 @@ export class AdditionalCommentComponent implements OnInit {
     const date = new Date();
     const form = this.commentForm.value;
     const value = form.comment;
-    if (this.comment.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+    if (this.comment.filter(o => o.value.toLowerCase() == value.toLowerCase() && o.comment == null).length > 0) {
       this.translationService.get('messages.cantAdd').subscribe((res: string) => {
         this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
       });

@@ -83,7 +83,7 @@ diagnosisForm = new FormGroup({
   onSubmit() {
     const date = new Date();
     const value = this.diagnosisForm.value;
-    if (this.diagnosis.filter(o => o.value.toLowerCase() == `${value.text.toLowerCase()}:${value.type.toLowerCase()} & ${value.confirm.toLowerCase()}`).length > 0) {
+    if (this.diagnosis.filter(o => o.value.toLowerCase() == `${value.text.toLowerCase()}:${value.type.toLowerCase()} & ${value.confirm.toLowerCase()}` && o.comment == null).length > 0) {
       this.translationService.get('messages.cantAdd').subscribe((res: string) => {
         this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
       });

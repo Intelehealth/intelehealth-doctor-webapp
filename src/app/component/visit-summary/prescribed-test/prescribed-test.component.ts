@@ -98,7 +98,7 @@ testForm = new FormGroup({
     const date = new Date();
     const form = this.testForm.value;
     const value = form.test;
-    if (this.tests.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+    if (this.tests.filter(o => o.value.toLowerCase() == value.toLowerCase() && o.comment == null).length > 0) {
       this.ngxTranslationService.get('messages.cantAdd').subscribe((res: string) => {
         this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
       });

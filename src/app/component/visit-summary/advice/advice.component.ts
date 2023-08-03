@@ -99,7 +99,7 @@ export class AdviceComponent implements OnInit {
     const date = new Date();
     const form = this.adviceForm.value;
     const value = form.advice;
-    if (this.advice.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
+    if (this.advice.filter(o => o.value.toLowerCase() == value.toLowerCase() && o.comment == null).length > 0) {
       this.ngxTranslationService.get('messages.cantAdd').subscribe((res: string) => {
         this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
       });
