@@ -413,6 +413,7 @@
   "minutes ago":"minutes ago",
   "hrs ago":"hrs ago",
   "minutes":"minutes",
+  "hours":"hours",
   "hrs":"hrs",
   "Support":"Support",
   "Help":"Help",
@@ -447,7 +448,6 @@
   "Download e-Prescription":"Download e-Prescription",
   "OTP sent on":"OTP sent on",
   "OTP Sent":"OTP Sent",
-
   "Patient history":"Patient history",
   "Neonate":"Neonate",
   "General exams":"General exams",
@@ -464,6 +464,7 @@
   "Are you sure to re-assign this visit to another doctor?":"Are you sure to re-assign this visit to another doctor?",
   "Priority":"Priority",
   "Question not answered.":"Question not answered.",
+  "Due":"Due",
   
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",

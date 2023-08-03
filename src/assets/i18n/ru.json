@@ -427,6 +427,7 @@
   "minutes ago":"минут назад",
   "hrs ago":"часов назад",
   "minutes":"минуты",
+  "hours":"часы",
   "hrs":"часы",
   "Support":"Поддержка",
   "Help":"Помощь",
@@ -461,7 +462,6 @@
   "Download e-Prescription":"Скачать электронный рецепт",
   "OTP sent on":"Одноразовые пароль отправлен",
   "OTP Sent":"Одноразовые пароль отправлен",
-
   "Patient history":"История пациентов",
   "Neonate":"Новорожденный",
   "General exams":"Общие экзамены",
@@ -479,6 +479,8 @@
   "Priority":"приоритетный",
   "Question not answered.":"Вопрос без ответа.",
   "Ended":"Завершенный",
+  "Due":"должный",
+
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
     "Login Successful":"Вход успешный",

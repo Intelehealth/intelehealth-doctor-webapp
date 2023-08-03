@@ -99,10 +99,10 @@ export class AppointmentsComponent implements OnInit {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };
     if (hours < 1) {
-      if(minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+      if(minutes < 0) return `${this.translateService.instant("Due")} : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      return `${minutes} ${this.translateService.instant("minutes")}`;
     }
-    return `${hours} hrs`;
+    return `${hours} ${this.translateService.instant("hours")}`;
   }
 
   getCheifComplaint(visit: any) {

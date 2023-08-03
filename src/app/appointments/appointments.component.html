@@ -37,7 +37,7 @@
               <!-- Starts In Column -->
               <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> {{'Starts in'|translate}} </th>
-                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+                <td mat-cell *matCellDef="let element" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due')||element.starts_in.includes('должный'), 'alert-success': (element.starts_in.includes('hours')||element.starts_in.includes('часы'))||(element.starts_in.includes('minutes')||element.starts_in.includes('минуты')) }">{{element.starts_in}}</span></td>
               </ng-container>
 
               <!-- Location Column -->
@@ -70,7 +70,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.upcoming]="row.starts_in.includes('hours')||row.starts_in.includes('minutes')"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.upcoming]="(row.starts_in.includes('hours')||row.starts_in.includes('часы'))||(row.starts_in.includes('minutes')||row.starts_in.includes('минуты'))"></tr>
             </table>
 
             <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons

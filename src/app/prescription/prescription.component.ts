@@ -32,7 +32,7 @@ export class PrescriptionComponent implements OnInit {
         this.getVisits();
       }
     }
-    // moment.locale(localStorage.getItem('selectedLanguage'));
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   getVisits() {
