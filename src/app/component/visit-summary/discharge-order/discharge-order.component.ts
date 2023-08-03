@@ -8,6 +8,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-discharge-order',
@@ -46,7 +47,9 @@ export class DischargeOrderComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private sessionSvc:SessionService) { }
+    private sessionSvc:SessionService,
+    private translationService: TranslateService
+    ) { }
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -74,7 +77,9 @@ export class DischargeOrderComponent implements OnInit {
     const form = this.dischargeOrderForm.value;
     const value = form.dischargeOrder;
     if (this.dischargeOrders.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
-      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      this.translationService.get('messages.cantAdd').subscribe((res: string) => {
+        this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+      });
       return;
     }
     if (this.diagnosisService.isEncounterProvider()) {
@@ -92,6 +97,10 @@ export class DischargeOrderComponent implements OnInit {
           this.dischargeOrders.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
         });
     }
+  }
+
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
   }
 
   delete(i) {

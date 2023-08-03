@@ -7,6 +7,7 @@ import { transition, trigger, style, animate, keyframes } from '@angular/animati
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
+import { TranslateService } from '@ngx-translate/core';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -45,7 +46,8 @@ export class AdditionalCommentComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private sessionSvc: SessionService
+    private sessionSvc: SessionService,
+    private translationService: TranslateService
   ) { }
 
   ngOnInit() {
@@ -74,7 +76,9 @@ export class AdditionalCommentComponent implements OnInit {
     const form = this.commentForm.value;
     const value = form.comment;
     if (this.comment.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
-      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      this.translationService.get('messages.cantAdd').subscribe((res: string) => {
+        this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+      });
       return;
     }
     if (this.diagnosisService.isEncounterProvider()) {
@@ -92,6 +96,10 @@ export class AdditionalCommentComponent implements OnInit {
           this.comment.push({ uuid: resp.uuid, value: value, obsDatetime: resp.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } });
         });
     }
+  }
+
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
   }
 
   delete(i) {

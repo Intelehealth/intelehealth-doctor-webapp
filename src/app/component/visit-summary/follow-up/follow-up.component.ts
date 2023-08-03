@@ -102,7 +102,9 @@ export class FollowUpComponent implements OnInit {
             creatorRegNo:`(${getFromStorage("registrationNumber")})`,
             creator: { uuid: user.uuid, person: user.person }
           }
-          this.followUp.push(this.diagnosisService.getData(obj));
+          let obs1 = this.diagnosisService.getData(obj);
+          this.followUp.push(localStorage.getItem('selectedLanguage') === 'ar' ? this.getArabicDate(obs1) : obs1);
+          // this.followUp.push(this.diagnosisService.getData(obj));
         });
     }
   }

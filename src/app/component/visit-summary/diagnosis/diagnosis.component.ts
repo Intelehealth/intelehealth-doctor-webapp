@@ -84,7 +84,9 @@ diagnosisForm = new FormGroup({
     const date = new Date();
     const value = this.diagnosisForm.value;
     if (this.diagnosis.filter(o => o.value.toLowerCase() == `${value.text.toLowerCase()}:${value.type.toLowerCase()} & ${value.confirm.toLowerCase()}`).length > 0) {
-      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      this.translationService.get('messages.cantAdd').subscribe((res: string) => {
+        this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+      });
       return;
     }
     if (this.diagnosisService.isEncounterProvider()) {
@@ -113,6 +115,10 @@ diagnosisForm = new FormGroup({
         });
       }, 1000);
     }
+  }
+
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
   }
 
   getBody(element: string, elementName: string, type, confirm) {

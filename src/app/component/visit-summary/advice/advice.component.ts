@@ -10,6 +10,7 @@ import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
+import { TranslateService } from '@ngx-translate/core';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -52,7 +53,9 @@ export class AdviceComponent implements OnInit {
     private translationService: TranslationService,
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private sessionSvc: SessionService) { }
+    private sessionSvc: SessionService,
+    private ngxTranslationService: TranslateService
+    ) { }
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -97,7 +100,9 @@ export class AdviceComponent implements OnInit {
     const form = this.adviceForm.value;
     const value = form.advice;
     if (this.advice.filter(o => o.value.toLowerCase() == value.toLowerCase()).length > 0) {
-      this.snackbar.open("Can't add, this entry already exists!", null, { duration: 4000 });
+      this.ngxTranslationService.get('messages.cantAdd').subscribe((res: string) => {
+        this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+      });
       return;
     }
     if (this.diagnosisService.isEncounterProvider()) {
@@ -126,6 +131,10 @@ export class AdviceComponent implements OnInit {
           });
       }, 1000);
     }
+  }
+
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
   }
 
   delete(i) {
