@@ -40,7 +40,7 @@
           line-height: 150%;
         }
 
-        input {
+        .first-input {
           padding: 14px 16px;
           width: 100%;
           height: 48px;
@@ -81,6 +81,34 @@
         line-height: 150%;
         color: #FFFFFF;
         font-weight: bold;
+      }
+    }
+  }
+  .input-group {
+    height: 48px;
+    background: #FAF9FF;
+    border: 1px solid rgba(178, 175, 190, 0.2);
+    border-radius: 8px;
+    outline: none;
+  
+    .form-control {
+      padding: 14px 16px;
+      height: 48px;
+      font-size: 16px;
+      color: #1B163A;
+      border: none;
+      background: transparent;
+    }
+  
+    .form-control:focus {
+      box-shadow: none;
+    }
+  
+    .input-group-append {
+      .input-group-text {
+        background: transparent;
+        border: none;
+        padding: 0px;
       }
     }
   }

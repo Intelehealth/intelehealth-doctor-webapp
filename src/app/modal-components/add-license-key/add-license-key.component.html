@@ -7,12 +7,23 @@
     <form class="license-form" [formGroup]="licenseForm" (ngSubmit)="addLicenseKey()">
       <div class="input-field-group">
         <label>{{'License Key Name'|translate}}</label>
-        <input type="text" formControlName="key" [readOnly]="data">
+        <input class="first-input" type="text" formControlName="key" [readOnly]="data">
         <small class="text-danger" *ngIf="submitted && f.key.errors">{{'*Required'|translate}}</small>
       </div>
       <div class="input-field-group">
         <label>{{'Expiry Date'|translate}}</label>
-        <input type="date" [min]="today" formControlName="expiryDate">
+        <div class="input-group">
+          <input type="text" class="form-control" formControlName="expiryDate" [min]="today" [matDatepicker]="picker" readonly/>
+          <mat-datepicker #picker></mat-datepicker>
+          <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon2">
+              <mat-datepicker-toggle matSuffix [for]="picker">
+                <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
+              </mat-datepicker-toggle>
+            </span>
+          </div>
+        </div>
+
         <small class="text-danger" *ngIf="submitted && f.expiryDate.errors">{{'*Required'|translate}}</small>
       </div>
       <div class="d-flex justify-content-center">

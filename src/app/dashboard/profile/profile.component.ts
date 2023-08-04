@@ -82,29 +82,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  fontsRu: any[] = [
-    {
-      id: 1,
-      name: 'RobotoItalic',
-      text: 'robotoitalic'
-    },
-    {
-      id: 2,
-      name: 'Caveat',
-      text: 'caveat'
-    },
-    {
-      id: 3,
-      name: 'Cormorant',
-      text: 'cormorant'
-    },
-    {
-      id: 4,
-      name: 'Pacifico',
-      text: 'pacifico'
-    }
-  ];
-
   languages: any[] = [
     {
       id: 1,
@@ -304,20 +281,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
-      if(localStorage.getItem("selectedLanguage") === "ru") {
-        if (val) {
-          this.fontsRu.map((f: any) => f.text = val);
-        } else {
-          this.fontsRu.map((f: any) => f.text = f.name);
-        }
-      }else{
-        if (val) {
-          this.fontsEn.map((f: any) => f.text = val);
-        } else {
-          this.fontsEn.map((f: any) => f.text = f.name);
-        }
+      if (val) {
+        this.fontsEn.map((f: any) => f.text = val);
+      } else {
+        this.fontsEn.map((f: any) => f.text = f.name);
       }
-
     });
 
     this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
