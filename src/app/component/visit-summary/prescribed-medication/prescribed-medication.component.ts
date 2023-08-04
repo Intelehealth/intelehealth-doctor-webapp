@@ -10,6 +10,8 @@ import medicines from './medicines';
 import { TranslationService } from 'src/app/services/translation.service';
 import * as moment from 'moment';
 import { SessionService } from 'src/app/services/session.service';
+import { TranslateService } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -65,7 +67,9 @@ export class PrescribedMedicationComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private route: ActivatedRoute,
     private translationService: TranslationService,
-    private sessionSvc: SessionService
+    private sessionSvc: SessionService,
+    private ngxTranslationService: TranslateService,
+    private snackbar: MatSnackBar
 ) { }
 
   searchPrescription = (text$: Observable<string>) =>
@@ -230,6 +234,28 @@ export class PrescribedMedicationComponent implements OnInit {
           value: JSON.stringify(insertValue),
           encounter: this.encounterUuid
         };
+        let flag = 0;
+        if (localStorage.getItem('selectedLanguage') === 'ar') {
+          for (let m = 0; m < this.meds.length; m++) {
+            if (this.meds[m].value == insertValue['ar'] && this.meds[m].comment == null) {
+              flag = 1;
+              break;
+            }
+          }
+        } else {
+          for (let m = 0; m < this.meds.length; m++) {
+            if (this.meds[m].value == insertValue['en'] && this.meds[m].comment == null) {
+              flag = 1;
+              break;
+            }
+          }
+        }
+        if (flag == 1) {
+          this.ngxTranslationService.get('messages.cantAdd').subscribe((res: string) => {
+            this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+          });
+          return;
+        }
         this.service.postObs(json)
           .subscribe(response => {
             const user = getFromStorage("user");
@@ -239,6 +265,10 @@ export class PrescribedMedicationComponent implements OnInit {
       }
     }, 500);
 
+  }
+
+  get txtDirection() {
+    return localStorage.getItem("selectedLanguage") === 'ar' ? "rtl" : "ltr";
   }
 
   delete(i) {
