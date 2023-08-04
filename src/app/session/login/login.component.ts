@@ -45,12 +45,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // this.checkSession();
     try {
-      this.socketSvc.close();
       this._swPush.unsubscribe();
       this.pushNotSvc.unsubscribeNotification({
         user_uuid: this.user.uuid,
         finger_print: this.authService.fingerPrint,
       }).subscribe();
+      this.socketSvc.close();
     } catch (error) { }
   }
 

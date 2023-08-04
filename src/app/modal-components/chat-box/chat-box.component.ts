@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
+import { WebrtcService } from 'src/app/services/webrtc.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -26,19 +27,25 @@ export class ChatBoxComponent implements OnInit {
     private dialogRef: MatDialogRef<ChatBoxComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private webrtcSvc: WebrtcService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
+    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
+    // this.toUser = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
-      this.getMessages();
+      this.getMessagesAndCheckRead();
     }
     // this.socketSvc.initSocket(true);
+    this.socketSvc.updateMessage = true;
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
-      this.readMessages(data.id);
+      if (this.socketSvc.updateMessage) {
+        this.readMessages(data.id);
+      }
     });
 
     this.socketSvc.onEvent("isread").subscribe((data) => {
@@ -47,10 +54,26 @@ export class ChatBoxComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    console.log('chat destroyed');
     this.dialogRef.close();
+    this.socketSvc.updateMessage = false;
   }
 
-  getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
+  getMessagesAndCheckRead(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
+    this.chatSvc
+      .getPatientMessages(toUser, patientId, fromUser, visitId)
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+          const msg = this.messageList[0];
+          if (msg && !msg?.isRead && msg?.fromUser !== this.fromUser) {
+            this.readMessages(this.messageList[0].id);
+          }
+        },
+      });
+  }
+
+  getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({

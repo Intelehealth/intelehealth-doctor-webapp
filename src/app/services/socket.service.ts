@@ -24,7 +24,8 @@ export class SocketService {
   appIcon = "assets/images/intelehealth-logo-reverse.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;
-  closeOverlayTimeout = null
+  closeOverlayTimeout = null;
+  updateMessage = false;
 
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
@@ -87,6 +88,14 @@ export class SocketService {
           this.openVcOverlay(data);
         }
       }
+    });
+
+    this.onEvent("updateMessage").subscribe((data) => {
+      this.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
     });
   }
 
