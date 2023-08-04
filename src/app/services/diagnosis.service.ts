@@ -122,7 +122,7 @@ export class DiagnosisService {
     } else {
       if (localStorage.getItem('selectedLanguage') === 'ar') {
         ar1 = elementName;
-        en1 = this.translateService.instant(`${element}.${elementName}`);
+        en1 = this.values?.[`${element}`]?.[`${elementName}`];
       } else {
         en1 = this.translateService.instant(`${element}.${elementName}`);
         ar1 = this.values?.[`${element}`]?.[`${elementName}`];
