@@ -62,11 +62,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
+    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
     const patientVisitProvider: any = this.patientVisitProvider;
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.doctorName = localStorage.getItem("doctorName") || this.user.display;
-    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
+    this.nurseId = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid || this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.initiator) this.initiator = this.data.initiator;
@@ -79,7 +80,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
-    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
     if (this.initiator === 'hw') {
       this.connecting = true;
       this.webrtcSvc.token = this.data.token;

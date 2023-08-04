@@ -34,8 +34,8 @@ export class ChatBoxComponent implements OnInit {
   async ngOnInit() {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
-    // this.toUser = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
-    this.toUser = patientVisitProvider?.provider?.uuid;
+    this.toUser = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
+    // this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
       this.getMessagesAndCheckRead();
