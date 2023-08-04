@@ -60,7 +60,7 @@ export class RescheduleAppointmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAppointmentSlots();
-    // moment.locale(this.getLang());
+    moment.locale('en');
     this.dateAdapter.setLocale(this.getLang());
   }
 
