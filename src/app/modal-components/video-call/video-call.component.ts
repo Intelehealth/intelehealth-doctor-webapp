@@ -62,7 +62,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
-    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
     const patientVisitProvider: any = this.patientVisitProvider;
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];

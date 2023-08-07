@@ -682,10 +682,10 @@ export class PartogramComponent implements OnInit, OnDestroy {
     });
   }
 
-  startCall() {
-    console.log('this.socketSvc: ', this.socketSvc.activeUsers);
-    const nurse = getFromStorage('patientVisitProvider');
-    const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === nurse?.provider?.uuid);
+  async startCall() {
+    await this.webrtcSvc.updateVisitHolderId(this.visit.uuid);
+
+    const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
     if (!nursePresent) {
       this.toastr.error("Please try again later.", "Health Worker is not Online.");
       return;

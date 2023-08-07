@@ -266,22 +266,10 @@ export class WebrtcService {
   }
 
   updateVisitHolderId(uuid: string) {
-    new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       this.visitSvc.fetchVisitDetails(uuid).subscribe((visit: any) => {
-        if (Array.isArray(visit?.attributes)) {
-          const visitHolder = visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder');
-          this.visitHolderId = visitHolder?.value;
-
-          /**
-           * Temporary hack just to test, will be removing later
-           */
-          const visitHolders = visit.attributes.filter(va => va?.attributeType?.display === 'Visit Holder');
-          console.log('visitHolders: ', visitHolders);
-          if (visitHolders.length > 1) {
-            this.visitHolderId = visitHolders[visitHolders.length - 1];
-          }
-        }
-        res(true);
+        this.visitHolderId = visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder')?.value;
+        res(this.visitHolderId);
       }, (error: any) => {
         res(false);
       });
