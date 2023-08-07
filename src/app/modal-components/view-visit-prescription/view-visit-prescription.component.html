@@ -412,27 +412,32 @@
             </div>
           </div>
         </div>
-
+        <button (click)="downloadPrescription()">Test</button>
         <div *ngIf="referrals?.length" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/referral.svg" alt="" />
-              <h6>{{'Referral'|translate}}</h6>
+              <h6>{{'Referral-Out'|translate}}</h6>
             </div>
             <div class="data-section-content">
               <div class="table-responsive">
+                
                 <table class="table">
                   <thead>
                     <tr>
+                      <th scope="col">{{'Referral to'|translate}}</th>
                       <th scope="col">{{'Referral facility'|translate}}</th>
-                      <th scope="col">{{'Remarks'|translate}}</th>
+                      <th scope="col">{{'Priority of Referral'|translate}}</th>
+                      <th scope="col">{{'Referral for (Reason)'|translate}}</th>
                     </tr>
                   </thead>
                   <tbody>
                     <ng-container *ngIf="referrals.length; else noReferrals">
                       <tr *ngFor="let r of referrals; let i = index">
                         <td>{{ r.speciality }}</td>
-                        <td>{{ r.remark }}</td>
+                        <td>{{ r.facility }}</td>
+                        <td>{{ r.priority }}</td>
+                        <td>{{ r.reason }}</td>
                       </tr>
                     </ng-container>
                     <ng-template #noReferrals>
