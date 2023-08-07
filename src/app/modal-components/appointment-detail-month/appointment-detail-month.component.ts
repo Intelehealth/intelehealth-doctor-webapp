@@ -51,7 +51,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
         this.dayOffForm.patchValue({ from: null, to: null });
       }
     });
-    // moment.locale(localStorage.getItem('selectedLanguage'));
+    moment.locale(localStorage.getItem('selectedLanguage'));
   }
 
   markDayOff() {

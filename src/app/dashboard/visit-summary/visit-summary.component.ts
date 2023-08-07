@@ -380,7 +380,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
-    // moment.locale(localStorage.getItem('selectedLanguage'));
+    moment.locale(localStorage.getItem('selectedLanguage'));
     this.dateAdapter.setLocale(localStorage.getItem("selectedLanguage"));
   }
 

@@ -43,7 +43,7 @@ export class AppointmentDetailComponent implements OnInit {
       this.data.meta.hwName = cdata.hwName;
       this.data.meta.prescriptionCreatedAt = cdata.prescriptionCreatedAt;
     }
-    // moment.locale(localStorage.getItem('selectedLanguage'));
+    moment.locale(localStorage.getItem('selectedLanguage'));
     this.startsIn = this.checkIfDateOldThanOneDay(this.data?.meta.slotJsDate).split(" ");    
   }
 
