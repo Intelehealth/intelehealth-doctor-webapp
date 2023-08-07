@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3 p-1">
-      <div class="chip-item chip-item-blue">
+      <div class="chip-item chip-item-blue" title="{{'Appointments' | translate}}">
         <img class="chip-img" src="assets/svgs/video-frame.svg" alt="" />
         <div class="chip-info">
           <h6>{{appointments.length ? appointments.length : 0}}</h6>
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="col-md-3 p-1">
-      <div class="chip-item chip-item-red">
+      <div class="chip-item chip-item-red" title="{{'Priority visits' | translate}}">
         <img class="chip-img" src="assets/svgs/red-profile.svg" alt="" />
         <div class="chip-info">
           <h6>{{priorityVisitsCount}}</h6>
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="col-md-3 p-1">
-      <div class="chip-item chip-item-green">
+      <div class="chip-item chip-item-green" title="{{'Awaiting visits' | translate}}">
         <img class="chip-img" src="assets/svgs/green-profile.svg" alt="" />
         <div class="chip-info">
           <h6>{{awaitingVisitsCount}}</h6>
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="col-md-3 p-1">
-      <div class="chip-item chip-item-green">
+      <div class="chip-item chip-item-green" title="{{'In-progress visits' | translate}}">
         <img class="chip-img" src="assets/svgs/pen-board.svg" alt="" />
         <div class="chip-info">
           <h6>{{inprogressVisitsCount}}</h6>

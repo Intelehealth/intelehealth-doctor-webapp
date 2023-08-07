@@ -17,9 +17,10 @@
     font-family: 'DM Sans';
     font-style: normal;
     color: black;
-    padding: 16px;
+    padding: 3%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .chip-info h6 {
@@ -156,4 +157,5 @@ th:last-child {
     color: #FF475D;
   }
 }
+
 
