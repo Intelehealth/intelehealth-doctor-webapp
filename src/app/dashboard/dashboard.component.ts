@@ -420,7 +420,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  this.getVisits();
+                  this.getAppointments();
+                  this.getAwaitingVisits();
+                  this.getPriorityVisits();
+                  this.getInProgressVisits();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {
                   this.toastr.success(message, 'Rescheduling failed!');
@@ -437,7 +440,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
         this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
-        this.getVisits();
+        this.getAppointments();
+        this.getAwaitingVisits();
+        this.getPriorityVisits();
+        this.getInProgressVisits();
       }
     });
   }
