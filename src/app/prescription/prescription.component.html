@@ -14,7 +14,7 @@
           </a>
           <ng-template ngbNavContent>
             <ng-container *ngIf="loaded2">
-              <app-sent [prescriptionsSent]="prescriptionSent" [prescriptionsSentCount]="prescriptionsSentCount"></app-sent>
+              <app-sent [prescriptionsSent]="prescriptionSent" [prescriptionsSentCount]="prescriptionSentCount" (fetchPageEvent)="getPrescriptionSentVisitsData($event)"></app-sent>
             </ng-container>
           </ng-template>
         </li>
@@ -30,7 +30,7 @@
           </a>
           <ng-template ngbNavContent>
             <ng-container *ngIf="loaded1">
-              <app-completed [completedVisits]="completedVisits" [completedVisitsCount]="completedVisitsCount"></app-completed>
+              <app-completed [completedVisits]="completedVisits" [completedVisitsCount]="completedVisitsCount" (fetchPageEvent)="getCompletedVisitsData($event)"></app-completed>
             </ng-container>
           </ng-template>
         </li>

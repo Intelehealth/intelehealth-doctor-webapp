@@ -30,14 +30,16 @@ export class PrescriptionComponent implements OnInit {
       }
     }
     // this.getVisits();
-    this.getCompletedVisits();
     this.getPrescriptionSentVisits();
+    this.getCompletedVisits();
   }
 
-  getCompletedVisits() {
-    this.visitService.getEndedVisits(this.specialization).subscribe((cv: any) => {
+  getCompletedVisits(page: number = 1) {
+    if(page == 1) this.completedVisits = [];
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: any) => {
       if (cv.success) {
         this.completedVisitsCount = cv.totalCount;
+        let records = [];
         for (let i = 0; i < cv.data.length; i++) {
           let visit = cv.data[i];
           let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
@@ -51,17 +53,24 @@ export class PrescriptionComponent implements OnInit {
             visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped.replace('Z','+0530'));
           }
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          this.completedVisits.push(visit);
+          records.push(visit);
         }
+        this.completedVisits = this.completedVisits.concat(records);
         this.loaded1 = true;
       }
     });
   }
 
-  getPrescriptionSentVisits() {
-    this.visitService.getCompletedVisits(this.specialization).subscribe((ps: any) => {
+  getCompletedVisitsData(page: number) {
+    this.getCompletedVisits(page);
+  }
+
+  getPrescriptionSentVisits(page: number = 1) {
+    if(page == 1) this.prescriptionSent = [];
+    this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: any) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
+        let records = [];
         for (let i = 0; i < ps.data.length; i++) {
           let visit = ps.data[i];
           let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
@@ -69,11 +78,16 @@ export class PrescriptionComponent implements OnInit {
           visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
           visit.person.age = this.calculateAge(visit.person.birthdate);
-          this.prescriptionSent.push(visit);
+          records.push(visit);
         }
+        this.prescriptionSent = this.prescriptionSent.concat(records);
         this.loaded2 = true;
       }
     });
+  }
+
+  getPrescriptionSentVisitsData(page: number) {
+    this.getPrescriptionSentVisits(page);
   }
 
   getEncounterCreated2(visit: any, encounterName: string) {

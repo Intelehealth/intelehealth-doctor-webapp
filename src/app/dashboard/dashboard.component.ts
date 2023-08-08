@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
@@ -48,6 +48,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
   @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
 
+  offset: number = 100;
+  awatingRecordsFetched: number = 0;
+  pageEvent1: PageEvent;
+  pageIndex1:number = 0;
+  pageSize1:number = 5;
+
+  priorityRecordsFetched: number = 0;
+  pageEvent2: PageEvent;
+  pageIndex2:number = 0;
+  pageSize2:number = 5;
+
+  inprogressRecordsFetched: number = 0;
+  pageEvent3: PageEvent;
+  pageIndex3:number = 0;
+  pageSize3:number = 5;
+
+  appointmentRecordsFetched: number = 0;
+  pageEvent4: PageEvent;
+  pageIndex4:number = 0;
+  pageSize4:number = 5;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -72,9 +92,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.getAppointments();
       // this.getVisits();
       // this.getVisitCounts(this.specialization);
-      this.getAwaitingVisits();
-      this.getPriorityVisits();
-      this.getInProgressVisits();
+      this.getAwaitingVisits(1);
+      this.getPriorityVisits(1);
+      this.getInProgressVisits(1);
     }
 
 
@@ -97,11 +117,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // });
   }
 
-  getAwaitingVisits() {
-    this.awaitingVisits = [];
-    this.visitService.getAwaitingVisits(this.specialization).subscribe((av: any) => {
+  getAwaitingVisits(page: number = 1) {
+    if(page == 1) this.awaitingVisits = [];
+    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: any) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
+        this.awatingRecordsFetched += this.offset;
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
@@ -109,17 +130,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
-        this.dataSource3.paginator = this.awaitingPaginator;
+        this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(this.pageIndex1*this.pageSize1, (this.pageIndex1+1)*this.pageSize1));
+        // this.dataSource3.paginator = this.awaitingPaginator;
       }
     });
   }
 
-  getPriorityVisits() {
-    this.priorityVisits = [];
-    this.visitService.getPriorityVisits(this.specialization).subscribe((pv: any) => {
+  public getAwaitingData(event?:PageEvent){
+    this.pageIndex1 = event.pageIndex;
+    this.pageSize1 = event.pageSize;
+    if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
+      this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
+    } else {
+      this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
+    }
+    return event;
+  }
+
+  getPriorityVisits(page: number = 1) {
+    if(page == 1) this.priorityVisits = [];
+    this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: any) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
+        this.priorityRecordsFetched += this.offset;
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
@@ -127,17 +160,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
-        this.dataSource2.paginator = this.priorityPaginator;
+        this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(this.pageIndex2*this.pageSize2, (this.pageIndex2+1)*this.pageSize2));
+        // this.dataSource2.paginator = this.priorityPaginator;
       }
     });
   }
 
-  getInProgressVisits() {
-    this.inProgressVisits = [];
-    this.visitService.getInProgressVisits(this.specialization).subscribe((iv: any) => {
+  public getPriorityData(event?:PageEvent){
+    this.pageIndex2 = event.pageIndex;
+    this.pageSize2 = event.pageSize;
+    if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
+      this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
+    } else {
+      this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
+    }
+    return event;
+  }
+
+  getInProgressVisits(page: number = 1) {
+    if(page == 1) this.inProgressVisits = [];
+    this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: any) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
+        this.inprogressRecordsFetched += this.offset;
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
@@ -146,10 +191,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
-        this.dataSource4.paginator = this.inprogressPaginator;
+        this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(this.pageIndex3*this.pageSize3, (this.pageIndex3+1)*this.pageSize3));
+        // this.dataSource4.paginator = this.inprogressPaginator;
       }
     });
+  }
+
+  public getInprogressData(event?:PageEvent){
+    this.pageIndex3 = event.pageIndex;
+    this.pageSize3 = event.pageSize;
+    if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
+      this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
+    } else {
+      this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
+    }
+    return event;
   }
 
   getAppointments() {
