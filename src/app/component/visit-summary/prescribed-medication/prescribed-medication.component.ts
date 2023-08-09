@@ -187,8 +187,8 @@ export class PrescribedMedicationComponent implements OnInit {
     setTimeout(() => {
       if (localStorage.getItem('selectedLanguage') === 'ar') {
         insertValue = {
-          "ar": `${value.med}\n: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
-          "en": `${value.med}\n: ${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)}, ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
+          "ar": `${value.med} (${value.dose} ${value.unit})\n ${value.amount} ${value.unitType} ${value.frequency}`,
+          "en": `${value.med} (${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)})\n ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
         }
         if (value.route) {
           insertValue["ar"] = `${insertValue["ar"]} (${value.route})`;
@@ -206,8 +206,8 @@ export class PrescribedMedicationComponent implements OnInit {
         }
       } else {
         insertValue = {
-          "en": `${value.med}\n: ${value.dose} ${value.unit}, ${value.amount} ${value.unitType} ${value.frequency}`,
-          "ar": `${value.med}\n: ${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)}, ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
+          "en": `${value.med} (${value.dose} ${value.unit})\n ${value.amount} ${value.unitType} ${value.frequency}`,
+          "ar": `${value.med} (${value.dose} ${this.diagnosisService.getTranslationValue('units', value.unit)})\n ${value.amount} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('frequency', value.frequency)}`,
         }
         if (value.route) {
           insertValue["en"] = `${insertValue["en"]} (${value.route})`;
