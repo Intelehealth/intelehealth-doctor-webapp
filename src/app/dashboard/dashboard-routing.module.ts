@@ -45,7 +45,7 @@ const routes: Routes = [
   {
     path: 'visit-summary/:id',
     data: {
-      breadcrumb: 'Patient Partogram'
+      breadcrumb: 'WHO LCG View'
     },
     component: PartogramComponent
   },
