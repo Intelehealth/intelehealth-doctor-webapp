@@ -70,7 +70,7 @@
       <div *ngFor='let meds of meds, index as i' >
         <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
           <div class="doctor-value d-flex flex-column">
-            <span [class.strike]="meds.comment">{{meds.value}}</span>
+            <span [class.strike]="meds.comment" [innerHTML]="meds.value.replace('\n','<br>').replace(':','')"></span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
               <span class="comment-blue">{{meds|comment:'addedBy-creator'}} {{meds.creatorRegNo}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
               <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
