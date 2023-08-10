@@ -31,7 +31,7 @@
               <span class="ml-1">Read</span>
             </ng-container>
             <ng-template #delivered>
-              <ng-container *ngIf="foo === 2; else third">
+              <ng-container *ngIf="item.isDelivered; else third">
                 <img src="assets/svgs/sent-status.svg" alt="" />
                 <span class="ml-1">Delivered</span>
               </ng-container>
