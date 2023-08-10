@@ -254,8 +254,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
       .subscribe((response: any) => {
         response.results.forEach((obs: any) => {
+          let obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark: obs.value.split(':')[1].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
         });
       });
@@ -424,7 +425,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['*','*','*','*'],
+            widths: ['20%','*','30%','30%'],
             body: [
               // ['', '', '', { image: 'logo', width: 90, height: 30, alignment: 'right' }],
               [
@@ -718,15 +719,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Out', style: 'sectionheader', border: [false, false, false, true] }],
                       [
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','*'],
+                            widths: ['30%','30%','10%','30%'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Referral', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+                              [{text: 'Referral to', style: 'tableHeader'}, {text: 'Referral facility', style: 'tableHeader'}, {text: 'Priority', style: 'tableHeader'}, {text: 'Referral for (Reason)', style: 'tableHeader'}],
                               ...this.getRecords('referral')
                             ]
                           },
@@ -755,7 +756,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','*', '*', '*'],
+                            widths: ['30%','30%', '10%', '30%'],
                             headerRows: 1,
                             body: [
                               [{text: 'Follow-up Requested', style: 'tableHeader'}, {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
@@ -889,10 +890,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'referral':
         if (this.referrals.length) {
           this.referrals.forEach(r => {
-            records.push([r.speciality, r.remark]);
+            records.push([r.speciality, r.facility, r.priority, r.reason]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 2, alignment: 'center' }]);
+          records.push([{ text: 'NIL', colSpan: 4, alignment: 'center' }]);
         }
         break;
       case 'followUp':
@@ -927,6 +928,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         })
         .then(blob=> {
           return new Promise((resolve, _) => {
+              if(!blob) resolve("");
               const reader = new FileReader();
               reader.onloadend = () => resolve(reader.result);
               reader.readAsDataURL(blob);

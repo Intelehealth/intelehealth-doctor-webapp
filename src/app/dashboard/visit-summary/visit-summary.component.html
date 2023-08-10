@@ -1775,31 +1775,31 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/referral.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Referral'|translate}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Referral-Out'|translate}}</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel7.expanded ? "remove" : "add" }}</mat-icon>
               </mat-expansion-panel-header>
 
               <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
-                <div class="table-responsive scrollable-box">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">{{'Referral facility' | translate}}</th>
-                        <th scope="col">{{'Referral specialist'|translate}}</th>
-                        <th scope="col">{{'Referral reason'|translate}}</th>
-                        <th scope="col">{{'Remarks'|translate}}</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <ng-container *ngIf="referrals.length">
+                <ng-container *ngIf="referrals.length">
+                  <div class="table-responsive scrollable-box">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">{{'Referral to' | translate}}</th>
+                          <th scope="col">{{'Referral facility'|translate}}</th>
+                          <th scope="col">{{'Priority of Referral'|translate}}</th>
+                          <th scope="col">{{'Referral for (Reason)'|translate}}</th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
                         <tr *ngFor="let r of referrals; let i = index">
-                          <td>{{ (r.facility) | translate }}</td>
                           <td>{{ (r.speciality) | translate }}</td>
+                          <td>{{ (r.facility) | translate }}</td>
+                          <td>{{ r.priority }}</td>
                           <td>{{ r.reason }}</td>
-                          <td>{{ r.remark }}</td>
                           <td class="pr-0">
                             <button
                               type="button"
@@ -1812,109 +1812,169 @@
                             </button>
                           </td>
                         </tr>
-                      </ng-container>
-                      <ng-template #noReferrals>
-                        <tr>
-                          <td colspan="3" class="text-center font-weight-bold">
-                            {{'No referrals added!'|translate}}
-                          </td>
-                        </tr>
-                      </ng-template>
-                      <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                        <tr *ngIf="addMoreReferral">
-                          <td colspan="3" class="px-0">
-                            <div class="form-group mb-0">
-                              <button
-                                type="button"
-                                class="add-more-btn"
-                                (click)="toggleReferral()"
-                              >
-                                <img src="assets/svgs/plus-circle.svg" alt="" />
-                                <span class="ml-2">{{'Add more referral'|translate}}</span>
-                              </button>
+                      </tbody>
+                    </table>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!referrals.length && isVisitNoteProvider && !visitEnded">
+                  <ul class="items-list">
+                    <li>
+                      <div class="row">
+                        <label for="refer" class="col-sm-3 col-form-label"
+                          >{{'Referral-Out'|translate}}</label
+                        >
+                        <div class="col-sm-9 d-flex align-items-center">
+                          <div class="pretty p-default p-round">
+                            <input
+                              type="radio"
+                              [value]="true"
+                              formControlName="refer"
+                            />
+                            <div class="state p-success">
+                              <label>{{'Yes'|translate}}</label>
                             </div>
-                          </td>
-                        </tr>
-                        <tr *ngIf="!addMoreReferral">
-                          <td>
-                            <ng-select
-                              class="visit-select"
-                              appendTo=".scrollable-box"
-                              formControlName="facility"
-                              bindLabel="name"
-                              bindValue="name"
-                              [clearable]="false"
-                              [searchable]="true"
-                              [addTag]="true"
-                              placeholder="{{'Select facility'|translate}}"
+                          </div>
+                          <div class="pretty p-default p-round">
+                            <input
+                              type="radio"
+                              [value]="false"
+                              formControlName="refer"
+                            />
+                            <div class="state p-success">
+                              <label>{{'No'|translate}}</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                      <ng-container *ngIf="addReferralForm.value.refer">
+                        <li>
+                          <div class="row">
+                            <label for="speciality" class="col-sm-3 col-form-label"
+                              >{{'Refer to'|translate}}</label
                             >
-                            <ng-option *ngFor="let facility of facilities" [value]="facility.name">
-                              {{ (facility.name) |translate }}
-                            </ng-option>
-                            </ng-select>
-                          </td>
-                          <td>
-                            <ng-select
-                              class="visit-select"
-                              appendTo=".scrollable-box"
-                              formControlName="speciality"
-                              bindLabel="name"
-                              bindValue="name"
-                              [clearable]="false"
-                              [searchable]="true"
-                              [addTag]="true"
-                              placeholder="{{'Select specialization'|translate}}"
-                            >
-                            <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
-                              {{ (specialization.name) |translate }}
-                            </ng-option>
-                            </ng-select>
-                          </td>
-                          <td>
-                            <div class="form-group mb-0">
+                            <div class="col-sm-3 col-6">
+                              <ng-select
+                                appendTo=".visit-summary-tab-group"
+                                class="visit-select"
+                                formControlName="speciality"
+                                bindLabel="name"
+                                bindValue="name"
+                                [clearable]="false"
+                                [searchable]="true"
+                                placeholder="{{'Select specialization'|translate}}"
+                                (change)="addReferralForm.controls.other_speciality.setValue(null)"
+                              >
+                              <ng-option *ngFor="let specialization of refer_specializations" [value]="specialization.name">
+                                {{ (specialization.name) |translate }}
+                              </ng-option>
+                              </ng-select>
+                            </div>
+                            <div class="col-sm-5 col-6">
                               <input
-                                formControlName="reason"
+                                formControlName="other_speciality"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Type here'|translate}}"
+                                placeholder="{{'Other speciality'}}"
+                                *ngIf="addReferralForm.value.speciality === 'Other Specialist*'"
+                                [required]="addReferralForm.value.speciality === 'Other Specialist*'"
                               />
                             </div>
-                          </td>
-                          <td>
-                            <div class="form-group mb-0">
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row">
+                            <label for="facility" class="col-sm-3 col-form-label"
+                              >{{'Referral facility'|translate}}</label
+                            >
+                            <div class="col-sm-3 col-6">
+                              <ng-select
+                                class="visit-select"
+                                appendTo=".visit-summary-tab-group"
+                                formControlName="facility"
+                                bindLabel="name"
+                                bindValue="name"
+                                [clearable]="false"
+                                [searchable]="true"
+                                [addTag]="true"
+                                placeholder="{{'Select facility'|translate}}"
+                                (change)="addReferralForm.controls.other_facility.setValue(null)"
+                              >
+                              <ng-option *ngFor="let facility of facilities" [value]="facility.name">
+                                {{ (facility.name) |translate }}
+                              </ng-option>
+                              </ng-select>
+                            </div>
+                            <div class="col-sm-5 col-6">
                               <input
-                                formControlName="remark"
+                                formControlName="other_facility"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Type here'|translate}}"
+                                placeholder="{{'Other Facility'}}"
+                                *ngIf="addReferralForm.value.facility === 'Other Facility*'"
+                                [required]="addReferralForm.value.facility === 'Other Facility*'"
                               />
                             </div>
-                          </td>
-                        </tr>
-                        <tr *ngIf="!addMoreReferral">
-                          <td class="border-top-0">
-                            <div class="form-group mb-0">
-                              <button
-                                type="button"
-                                class="white-btn mr-2"
-                                (click)="toggleReferral()"
-                              >
-                                {{'Cancel'|translate}}
-                              </button>
-                              <button
-                                type="submit"
-                                class="gray-btn"
-                                [disabled]="addReferralForm.invalid"
-                              >
-                                {{'Add'|translate}}
-                              </button>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row">
+                            <label for="priority_refer" class="col-sm-3 col-form-label"
+                              >{{'Priority of Referral'|translate}}</label
+                            >
+                            <div class="col-sm-9 d-flex align-items-center">
+                              <div class="pretty p-default p-round">
+                                <input
+                                  type="radio"
+                                  [value]="'Elective'"
+                                  formControlName="priority_refer"
+                                />
+                                <div class="state p-success">
+                                  <label>{{'Elective'|translate}}</label>
+                                </div>
+                              </div>
+                              <div class="pretty p-default p-round">
+                                <input
+                                  type="radio"
+                                  [value]="'Urgent'"
+                                  formControlName="priority_refer"
+                                />
+                                <div class="state p-success">
+                                  <label>{{'Urgent'|translate}}</label>
+                                </div>
+                              </div>
                             </div>
-                          </td>
-                        </tr>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="row">
+                            <label for="priority_refer" class="col-sm-3 col-form-label"
+                              >{{'Referral reason'|translate}}</label
+                            >
+                            <div class="col-sm-9 d-flex align-items-center">
+                              <div class="pretty p-default p-round w-100">
+                                <textarea
+                                    formControlName="reason"
+                                    class="form-control"
+                                    rows="3"
+                                    placeholder="{{'Type here'|translate}}"
+                                  ></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
                       </ng-container>
-                    </tbody>
-                  </table>
-                </div>
+                  </ul>
+                  <div class="form-group mb-0 mt-3" *ngIf="addReferralForm.value.refer">
+                    <button
+                      type="submit"
+                      class="gray-btn"
+                      [disabled]="addReferralForm.invalid"
+                    >
+                      {{'Save'|translate}}
+                    </button>
+                  </div>  
+                </ng-container>
               </form>
             </mat-expansion-panel>
 
