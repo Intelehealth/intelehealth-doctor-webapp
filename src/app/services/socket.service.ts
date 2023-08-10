@@ -96,6 +96,11 @@ export class SocketService {
         body: data.message,
         timestamp: new Date(data.createdAt).getTime(),
       });
+
+      this.emitEvent('ack_msg_received', { messageId: data.id });
+      this.onEvent("msg_delivered").subscribe(data => {
+        console.log('data:msg_delivered -- ', data?.[0]);
+      });
     });
   }
 
