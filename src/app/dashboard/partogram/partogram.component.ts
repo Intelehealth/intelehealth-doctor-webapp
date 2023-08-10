@@ -137,7 +137,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
-      name: 'Urine',
+      name: 'Urine protein',
       conceptName: 'Urine protein',
       stage1Count: 12,
       stage2Count: 6,
@@ -212,6 +212,13 @@ export class PartogramComponent implements OnInit, OnDestroy {
       stage1Count: 12,
       stage2Count: 3,
       alert: false
+    },
+    {
+      name: 'Urine Acetone',
+      conceptName: 'Urine acetone',
+      stage1Count: 12,
+      stage2Count: 6,
+      alert: true
     }
   ];
   timeStage1: any[] = Array(12).fill(null);

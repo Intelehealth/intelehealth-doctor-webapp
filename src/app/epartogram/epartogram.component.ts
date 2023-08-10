@@ -202,6 +202,13 @@ export class EpartogramComponent implements OnInit {
       stage1Count: 12,
       stage2Count: 3,
       alert: false
+    },
+    {
+      name: 'Urine Acetone',
+      conceptName: 'Urine acetone',
+      stage1Count: 12,
+      stage2Count: 6,
+      alert: true
     }
   ];
   timeStage1: any[] = Array(12).fill(null);

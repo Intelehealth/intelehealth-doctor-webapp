@@ -657,7 +657,7 @@
                   <td colspan="2"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="2">Urine</td>
+                  <td colspan="2">Urine Protein</td>
                   <td>P++, A++</td>
                   <ng-container *ngFor="let item of parameters[14].stage1values;">
                     <td colspan="2">
@@ -667,6 +667,42 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[14].stage2values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                        {{item?.value}}
+                      </div>
+                    </td>
+                  </ng-container>
+                  <!-- <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td>
+                  <td colspan="2"></td> -->
+                </tr>
+                <tr>
+                  <td colspan="2">Urine Acetone</td>
+                  <td>++, +++</td>
+                  <ng-container *ngFor="let item of parameters[25].stage1values;">
+                    <td colspan="2">
+                      <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
+                        {{item?.value}}
+                      </div>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngFor="let item of parameters[25].stage2values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
                         {{item?.value}}
