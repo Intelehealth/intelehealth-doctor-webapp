@@ -1324,7 +1324,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         response.results.forEach((obs: any) => {
           let obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[1].trim(), facility: obs_values[0].trim(), reason: obs_values[2].trim(), remark: obs_values[3].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[1].trim(), facility: obs_values[0].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
         });
       });
