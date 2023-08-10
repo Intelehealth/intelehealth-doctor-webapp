@@ -47,6 +47,9 @@ export class ChatBoxComponent implements OnInit {
         this.readMessages(data.id);
       }
     });
+    this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
+      this.getMessages();
+    });
 
     this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
