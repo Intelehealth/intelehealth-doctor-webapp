@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('awaitingPaginator') awaitingPaginator: MatPaginator;
   @ViewChild('inprogressPaginator') inprogressPaginator: MatPaginator;
 
-  offset: number = 100;
+  offset: number = 1000;
   awatingRecordsFetched: number = 0;
   pageEvent1: PageEvent;
   pageIndex1:number = 0;

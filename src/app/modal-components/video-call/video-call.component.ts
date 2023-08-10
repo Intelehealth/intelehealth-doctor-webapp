@@ -6,8 +6,6 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
-import { WebrtcService } from 'src/app/services/webrtc.service';
-import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 
 @Component({
   selector: 'app-video-call',
@@ -21,7 +19,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   message: string;
   messageList: any = [];
   toUser: any;
-  remoteUser: string = null;
   hwName: any;
   baseUrl: string = environment.baseURL;
   _chatOpened: boolean = false;
@@ -33,7 +30,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   room = "";
   initiator = "dr";
-  nurseId: string;
+  doctorName = "";
+  nurseId: { uuid: string } = { uuid: null };
   connectToDrId = "";
   isStreamAvailable: any;
   localStream: MediaStream;
@@ -45,7 +43,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   changeDetForDuration: any = null;
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
-  activeSpeakerIds: any = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -53,13 +50,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private cs: CoreService,
-    private toastr: ToastrService,
-    private webrtcSvc: WebrtcService
-  ) { }
-
-  get doctorName() {
-    return localStorage.getItem("doctorName") || this.user?.display;
-  }
+    private toastr: ToastrService) { }
 
   async ngOnInit() {
     this.room = this.data.patientId;
@@ -70,8 +61,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    this.nurseId = patientVisitProvider?.provider?.uuid || this.nurseId;
+    const doctorName = localStorage.getItem("doctorName");
+    this.doctorName = doctorName ? doctorName : this.user.display;
+    this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
+    await this.startUserMedia();
 
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
@@ -89,117 +83,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
+
+    await this.connect();
     // await this.changeVoiceCallIcons();
     /**
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
-
-    this.startCall();
-  }
-
-  async startCall() {
-    this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
-    await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
-      this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
-    });
-    if (!this.webrtcSvc.token) return;
-    this.toastr.show('Received video call token.', null, { timeOut: 1000 });
-    this.webrtcSvc.createRoomAndConnectCall({
-      localElement: this.localVideoRef,
-      remoteElement: this.remoteVideoRef,
-      handleDisconnect: this.endCallInRoom.bind(this),
-      handleConnect: this.onCallConnect.bind(this),
-      handleActiveSpeakerChange: this.handleActiveSpeakerChange.bind(this),
-      handleTrackMuted: this.handleTrackMuted.bind(this),
-      handleTrackUnmuted: this.handleTrackUnmuted.bind(this),
-      handleParticipantDisconnected: this.handleParticipantDisconnected.bind(this),
-      handleParticipantConnect: this.handleParticipantConnect.bind(this),
-    });
-  }
-
-  onCallConnect() {
-    this.socketSvc.emitEvent("call", {
-      nurseId: this.nurseId,
-      doctorName: this.doctorName,
-      roomId: this.room,
-      visitId: this.data?.visitId,
-      doctorId: this.data?.connectToDrId,
-      appToken: this.webrtcSvc.appToken
-    });
-
-    /**
-     *  60 seconds ringing timeout after which it will show toastr
-     *  and hang up if HW not picked up
-    */
-    const ringingTimeout = 60 * 1000;
-    setTimeout(() => {
-      if (!this.callConnected) {
-        this.endCallInRoom();
-        this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
-      }
-    }, ringingTimeout);
-  }
-
-  handleParticipantConnect() {
-    this.callConnected = true;
-    this.callStartedAt = moment();
-  }
-
-  get callConnected() {
-    return this.webrtcSvc.callConnected;
-  }
-  set callConnected(flag) {
-    this.webrtcSvc.callConnected = flag;
-  }
-
-  get localAudioIcon() {
-    return this._localAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.provider?.uuid) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
-  }
-
-  get remoteAudioIcon() {
-    return this._remoteAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.webrtcSvc.remoteUser?.identity) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
-  }
-
-  handleActiveSpeakerChange(speakers: Participant[]) {
-    this.activeSpeakerIds = speakers.map(s => s?.identity);
-  }
-
-  handleTrackUnsubscribed(
-    track: RemoteTrack,
-    publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
-  ) {
-    // remove tracks from all attached elements
-    track.detach();
-  }
-
-  handleTrackMuted(event: any) {
-    if (event instanceof RemoteTrackPublication) {
-      if (event.kind === Track.Kind.Audio) {
-        this._remoteAudioMute = event.isMuted;
-      }
-      if (event.kind === Track.Kind.Video) {
-        this._remoteVideoOff = event.isMuted;
-      }
-    }
-  }
-
-  handleTrackUnmuted(event: any) {
-    if (event instanceof RemoteTrackPublication) {
-      if (event.kind === Track.Kind.Audio) {
-        this._remoteAudioMute = event.isMuted;
-      }
-      if (event.kind === Track.Kind.Video) {
-        this._remoteVideoOff = event.isMuted;
-      }
-    }
-  }
-
-  handleParticipantDisconnected() {
-    this.endCallInRoom();
-    this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
-    this.callConnected = false;
   }
 
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
@@ -257,14 +147,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   get user() {
     try {
       return JSON.parse(localStorage.user);
-    } catch (error) {
-      return {};
-    }
-  }
-
-  get provider() {
-    try {
-      return JSON.parse(localStorage.provider);
     } catch (error) {
       return {};
     }
@@ -328,7 +210,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   call() {
     this.socketSvc.emitEvent("call", {
-      nurseId: this.nurseId,
+      nurseId: this.nurseId.uuid,
       doctorName: this.doctorName,
       roomId: this.room,
       visitId: this.data?.visitId,
@@ -351,13 +233,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   // }
 
   initSocketEvents() {
-    this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
-      if (data === 'app') {
-        this.endCallInRoom();
-        this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
-      }
-    });
-
     this.socketSvc.onEvent("message").subscribe((data) => {
       if (!['video', 'audio'].includes(data?.id)) {
         this.handleSignalingData(data);
@@ -494,13 +369,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   endCallInRoom() {
-    this.close();
-    this.webrtcSvc.handleDisconnect();
     this.socketSvc.emitEvent("bye", {
-      nurseId: this.nurseId,
+      nurseId: this.nurseId.uuid,
       webapp: true
     });
-    // this.stop();
+
+    this.stop();
   }
 
   sendMessage2(data: any) {
@@ -512,14 +386,16 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   toggleAudio() {
-    this._localAudioMute = this.webrtcSvc.toggleAudio();
+    this.localStream.getAudioTracks()[0].enabled = this._localAudioMute;
+    this._localAudioMute = !this._localAudioMute;
 
     const event = this._localAudioMute ? 'audioOff' : 'audioOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
   toggleVideo() {
-    this._localVideoOff = this.webrtcSvc.toggleVideo();
+    this.localStream.getVideoTracks()[0].enabled = this._localVideoOff;
+    this._localVideoOff = !this._localVideoOff;
 
     const event = this._localVideoOff ? 'videoOff' : 'videoOn';
     this.socketSvc.emitEvent(event, { fromWebapp: true });
@@ -542,7 +418,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
-    this.callConnected = false;
   }
 
   get callDuration() {
@@ -550,7 +425,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.callStartedAt) {
       duration = moment.duration(moment().diff(this.callStartedAt))
     }
-    return duration ? `${duration.minutes().pad(2)}:${duration.seconds().pad(2)}` : '';
+    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
   }
 
   isPdf(url) {
