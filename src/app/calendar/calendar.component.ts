@@ -69,7 +69,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  getAppointments(from: any, to: any) {
+  getAppointments(from: any, to: any, data=true) {
     this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, from, to)
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
@@ -85,9 +85,14 @@ export class CalendarComponent implements OnInit {
             });
           }
         });
+        if(!data){
+          if(this.events[0].id === this.events[1].id){
+            this.events.shift();
+          }
+        };
         setTimeout(() => {
           this.refresh.next();
-        }, 500);
+        });
     });
   }
 
@@ -446,6 +451,7 @@ export class CalendarComponent implements OnInit {
                     end: moment(res.data.slotJsDate).add(res.data.slotDuration, res.data.slotDurationUnit).toDate(),
                     meta: res.data
                   });
+                  this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), false);
                   this.toastr.success(this.translateService.instant(`messages.${"The appointment has been rescheduled successfully!"}`), this.translateService.instant(`messages.${"Rescheduling successful!"}`));
                 } else {
                   this.toastr.success(this.translateService.instant(message), this.translateService.instant(`messages.${"Rescheduling failed!"}`));

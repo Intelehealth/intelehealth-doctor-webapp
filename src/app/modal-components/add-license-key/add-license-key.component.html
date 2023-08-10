@@ -1,7 +1,7 @@
 <div class="add-licnese-key-modal">
   <div class="modal-title">
     <h6 class="mb-0">{{ data ? ('Edit'|translate) : ('Add'|translate) }} {{'License Key'|translate}}</h6>
-    <button class="modal-close-btn" (click)="close()"><img src="assets/svgs/Close.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="close()">{{'Close'|translate}}<img src="assets/svgs/x.svg" alt="" style="margin-bottom: 2px;"></button>
   </div>
   <div class="modal-body">
     <form class="license-form" [formGroup]="licenseForm" (ngSubmit)="addLicenseKey()">

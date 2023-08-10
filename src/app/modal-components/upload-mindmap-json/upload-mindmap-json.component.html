@@ -3,7 +3,7 @@
 </div>
 <div class="upload-json-input d-flex flex-column justify-content-center align-items-center" *ngIf="!file">
   <div class="close-btn-wrapper">
-    <button class="modal-close-btn" (click)="close()"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="close(false)">{{'Close'|translate}}<img src="assets/svgs/xx.svg" alt="" style="margin-bottom: 2px;"></button>
   </div>
   <div class="mt-4">
     <ngx-dropzone (change)="onFilesDropped($event)" [expandable]="true" [disableClick]="false" [multiple]="false" accept="application/JSON">
@@ -25,7 +25,7 @@
 <div class="upload-json-modal" *ngIf="file">
   <div class="modal-title">
     <h6 class="mb-0">{{'Add Mindmap'|translate}}</h6>
-    <button class="modal-close-btn" (click)="close()"><img src="assets/svgs/Close.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="close(false)">{{'Close'|translate}}<img src="assets/svgs/x.svg" alt="" style="margin-bottom: 2px;"></button>
   </div>
   <div class="modal-body">
     <div class="upload-item d-flex flex-row align-items-center">

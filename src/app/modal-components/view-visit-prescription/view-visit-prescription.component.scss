@@ -24,6 +24,13 @@
       border: none;
       background: transparent;
       outline: none;
+      color: var(--text-light, #7F7B92);
+      text-align: center;
+      font-family: DM Sans;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 150%; /* 27px */
     }
   }
 
