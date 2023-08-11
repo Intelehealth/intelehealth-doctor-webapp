@@ -39,7 +39,7 @@
         <div class="form-row">
           <div class="col">
             <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon1">{{'For'|translate}}</span>
+              <span class="input-group-text" id="basic-addon1">{{'Duration'|translate}}</span>
               <input type="number" min="1" class="form-control" placeholder="{{'Duration' | translate}}"
                 formControlName="duration">
             </div>
@@ -48,12 +48,15 @@
             <div class="input-group-prepend">
               <input type="text" class="form-control" [ngbTypeahead]="durationUnit"
                 placeholder="{{'Units (eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">
-              <span class="input-group-text" id="basic-addon1">{{'total'|translate}}</span>
+              <!-- <span class="input-group-text" id="basic-addon1">{{'total'|translate}}</span> -->
             </div>
           </div>
           <div class="col">
-            <input type="text" class="form-control" placeholder="{{'reason(optional)'|translate}}"
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon3">{{'Reason'|translate}}</span>
+              <input type="text" class="form-control" placeholder="{{'reason(optional)'|translate}}"
               formControlName="reason">
+            </div>
           </div>
         </div>
         <br>
