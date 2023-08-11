@@ -1458,6 +1458,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
+                  this.appointmentService.completeAppointment({visitUuid:this.visit.uuid}).subscribe((res)=>{console.log(res)});
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (res: any) => {
                       const link = res.data.hash;
