@@ -69,7 +69,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  getAppointments(from: any, to: any, data=true) {
+  getAppointments(from: any, to: any) {
     this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, from, to)
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
@@ -85,14 +85,9 @@ export class CalendarComponent implements OnInit {
             });
           }
         });
-        if(!data){
-          if(this.events[0].id === this.events[1].id){
-            this.events.shift();
-          }
-        };
         setTimeout(() => {
           this.refresh.next();
-        });
+        }, 500);
     });
   }
 
@@ -393,8 +388,11 @@ export class CalendarComponent implements OnInit {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
           // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-          this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+          this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success(this.translateService.instant(`messages.${"The Appointment has been successfully canceled."}`), this.translateService.instant(`messages.${"Canceling successful"}`));
+          setTimeout(() => {
+            this.refresh.next();
+          }, 500);
         }
       });
     } else {
@@ -407,7 +405,10 @@ export class CalendarComponent implements OnInit {
           if(res) {
             if (res.status) {
               // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-              this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+              this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+              setTimeout(() => {
+                this.refresh.next();
+              }, 500);
             }
           }
       });
@@ -443,7 +444,7 @@ export class CalendarComponent implements OnInit {
                 const message = res.message;
                 if (res.status) {
                   // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-                  this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+                  this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
                   this.events.push({
                     id: appointment.visitUuid,
                     title: 'Appointment',
@@ -451,7 +452,9 @@ export class CalendarComponent implements OnInit {
                     end: moment(res.data.slotJsDate).add(res.data.slotDuration, res.data.slotDurationUnit).toDate(),
                     meta: res.data
                   });
-                  this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), false);
+                  setTimeout(() => {
+                    this.refresh.next();
+                  }, 500);
                   this.toastr.success(this.translateService.instant(`messages.${"The appointment has been rescheduled successfully!"}`), this.translateService.instant(`messages.${"Rescheduling successful!"}`));
                 } else {
                   this.toastr.success(this.translateService.instant(message), this.translateService.instant(`messages.${"Rescheduling failed!"}`));

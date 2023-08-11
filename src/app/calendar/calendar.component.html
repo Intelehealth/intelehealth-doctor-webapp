@@ -80,7 +80,8 @@
             [eventTemplate]="eventTemplate2"
             (eventClicked)="handleEvent('weekView', $event.event)"
             (hourSegmentClicked)="hourSegmentClicked($event)"
-            (dayHeaderClicked)="dayClicked('weekView', $event.day)">
+            (dayHeaderClicked)="dayClicked('weekView', $event.day)"
+            [refresh]="refresh">
           </mwl-calendar-week-view>
 
           <mwl-calendar-month-view
@@ -92,7 +93,8 @@
             [headerTemplate]="monthHeaderTemplate"
             [cellTemplate]="cellTemplate"
             (dayClicked)="dayClicked('monthView', $event.day)"
-            (eventClicked)="handleEvent('monthView', $event.event)">
+            (eventClicked)="handleEvent('monthView', $event.event)"
+            [refresh]="refresh">
           </mwl-calendar-month-view>
         </div>
 

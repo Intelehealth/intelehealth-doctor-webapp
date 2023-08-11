@@ -650,6 +650,7 @@
                           [clearable]="false"
                           [searchable]="true"
                           placeholder="{{'Select specialization'|translate}}"
+                          notFoundText="{{'No items found'|translate}}"
                         >
                           <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">{{ (specialization.name) | translate }}</ng-option>
                       </ng-select>
@@ -1050,6 +1051,7 @@
                             [searchable]="true"
                             placeholder="{{'Select diagnosis'|translate}}"
                             [addTag]="true"
+                            notFoundText="{{'No items found'|translate}}"
                           >
                           </ng-select>
                         </div>
@@ -1432,6 +1434,7 @@
                               [searchable]="true"
                               [addTag]="true"
                               placeholder="{{'Select timing'|translate}}"
+                              notFoundText="{{'No items found'|translate}}"
                             >
                             </ng-select>
                           </td>
@@ -1921,6 +1924,7 @@
                             [clearable]="false"
                             [searchable]="true"
                             placeholder="{{'Select time'|translate}}"
+                            notFoundText="{{'No items found'|translate}}"
                           >
                           </ng-select>
                         </div>
