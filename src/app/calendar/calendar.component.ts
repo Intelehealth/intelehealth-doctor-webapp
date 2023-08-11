@@ -10,6 +10,7 @@ import { CoreService } from '../services/core/core.service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-calendar',
@@ -30,6 +31,8 @@ export class CalendarComponent implements OnInit {
   fetchedMonths: string[] = [];
   daysOff: any[] = [];
   monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  refresh = new Subject<void>();
+
   constructor(
     private pageTitleService: PageTitleService,
     private appointmentService: AppointmentService,
@@ -79,6 +82,9 @@ export class CalendarComponent implements OnInit {
             });
           }
         });
+        setTimeout(() => {
+          this.refresh.next();
+        }, 500);
     });
   }
 
@@ -376,8 +382,11 @@ export class CalendarComponent implements OnInit {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
           // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-          this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+          this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success(this.translateService.instant("The Appointment has been successfully canceled."), this.translateService.instant('Canceling successful'));
+          setTimeout(() => {
+            this.refresh.next();
+          }, 500);
         }
       });
     } else {
@@ -390,7 +399,10 @@ export class CalendarComponent implements OnInit {
           if(res) {
             if (res.status) {
               // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-              this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+              this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+              setTimeout(() => {
+                this.refresh.next();
+              }, 500);
             }
           }
       });
@@ -418,7 +430,7 @@ export class CalendarComponent implements OnInit {
                 const message = res.message;
                 if (res.status) {
                   // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
-                  this.events = this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
+                  this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
                   this.events.push({
                     id: appointment.visitUuid,
                     title: 'Appointment',
