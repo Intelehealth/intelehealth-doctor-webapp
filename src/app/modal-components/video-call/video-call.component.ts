@@ -120,8 +120,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
     if (!this.webrtcSvc.token) return;
     this.toastr.show('Received video call token.', null, { timeOut: 1000 });
-    console.log('this.localVideoRef: ', this.localVideoRef);
-    console.log('this.remoteVideoRef: ', this.remoteVideoRef);
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
@@ -163,9 +161,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      *  60 seconds ringing timeout after which it will show toastr
      *  and hang up if HW not picked up
     */
-    const ringingTimeout = 60 * 1000;
+    const ringingTimeout = 10 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
+        console.log('call_time_up: ', this.nurseId);
+        this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
       }

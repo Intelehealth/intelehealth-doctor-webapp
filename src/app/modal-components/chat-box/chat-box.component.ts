@@ -21,6 +21,7 @@ export class ChatBoxComponent implements OnInit {
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
+  sending = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -94,12 +95,14 @@ export class ChatBoxComponent implements OnInit {
         hwName: this.hwName,
         type: this.isAttachment ? 'attachment' : 'text'
       };
+      this.sending = true;
       this.chatSvc
         .sendMessage(this.toUser, this.data.patientId, this.message, payload)
         .subscribe({
           next: (res) => {
             this.isAttachment = false;
             this.getMessages();
+            setTimeout(() => { this.sending = false; }, 500);
           },
           error: () => {
             this.isAttachment = false;
