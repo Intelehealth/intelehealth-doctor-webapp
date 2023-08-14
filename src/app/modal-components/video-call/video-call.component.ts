@@ -161,7 +161,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      *  60 seconds ringing timeout after which it will show toastr
      *  and hang up if HW not picked up
     */
-    const ringingTimeout = 10 * 1000;
+    const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
         console.log('call_time_up: ', this.nurseId);
