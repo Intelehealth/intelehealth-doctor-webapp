@@ -18,6 +18,8 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { Ng2TelInputModule } from 'ng2-tel-input';
 import { NgOtpInputModule } from  'ng-otp-input';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { TranslateComponent } from './translate/translate.component';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     ForgotPasswordComponent,
     SetupNewPasswordComponent,
     ForgotUsernameComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    TranslateComponent
   ],
   imports: [
     CommonModule,
@@ -42,7 +45,8 @@ import { NgxPermissionsModule } from 'ngx-permissions';
     NgbNavModule,
     Ng2TelInputModule,
     NgOtpInputModule,
-    NgxPermissionsModule.forChild()
+    NgxPermissionsModule.forChild(),
+    NgxDropzoneModule
   ]
 })
 export class SessionModule { }

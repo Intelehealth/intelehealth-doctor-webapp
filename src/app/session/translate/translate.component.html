@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 p-0 section-title">
+      <h6>Translate File</h6>
+      <p>
+        Choose langauge and upload the input file.
+      </p>
+    </div>
+    <div class="col-md-12 px-0 py-4 translate-container">
+      <form [formGroup]="translateForm" (ngSubmit)="translate()">
+        <div class="form-group">
+          <label for="language">
+            Language*
+            <span class="link"><a href="https://demoai.intelehealth.org/intelehealth/assets/template.xlsx" download>Input Template</a></span>
+          </label>
+          <!-- <input type="text" class="form-control" formControlName="language" placeholder="Enter username"> -->
+          <ng-select class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="name" [addTag]="true" [searchable]="true" [clearable]="false" [multiple]="false" formControlName="language">
+          </ng-select>
+          <div *ngIf="submitted && f.language.errors">
+            <small *ngIf="f.language.errors.required" class="error-msg">Please select language</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="file">
+            Select or drop file*
+          </label>
+          <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" [maxFileSize]="50000" (change)="onFilesDropped($event)">
+            <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+            <ngx-dropzone-preview [removable]="true" (removed)="file = null" *ngIf="file">
+              <ngx-dropzone-label>{{ file?.name }}</ngx-dropzone-label>
+            </ngx-dropzone-preview>
+          </ngx-dropzone>
+        </div>
+        <div class="form-group mt-5">
+          <button type="submit" class="btn btn-block next-btn">
+            TRANSLATE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

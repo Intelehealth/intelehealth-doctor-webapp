@@ -8,6 +8,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { SessionComponent } from './session.component';
 import { SetupNewPasswordComponent } from './setup-new-password/setup-new-password.component';
 import { VerificationMethodComponent } from './verification-method/verification-method.component';
+import { TranslateComponent } from './translate/translate.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,10 @@ const routes: Routes = [
       {
         path: 'setup-password',
         component: SetupNewPasswordComponent
+      },
+      {
+        path: 'translate',
+        component: TranslateComponent
       }
     ]
   },
