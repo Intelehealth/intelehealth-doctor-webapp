@@ -121,6 +121,14 @@
                 <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -264,6 +272,14 @@
                 <img src="assets/svgs/red-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon-red.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -322,7 +338,8 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns2;" [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="priorityVisitsCount" [pageIndex]="pageIndex2" [pageSize]="pageSize2" (page)="pageEvent2 = getPriorityData($event)" aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
@@ -403,6 +420,14 @@
                 <img src="assets/svgs/green-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -461,7 +486,8 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns3;"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #awaitingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #awaitingPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="awaitingVisitsCount" [pageIndex]="pageIndex1" [pageSize]="pageSize1" (page)="pageEvent1 = getAwaitingData($event)" aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
@@ -542,6 +568,14 @@
                 <img src="assets/svgs/pen-board.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -600,7 +634,8 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns4;"  [routerLink]="['/dashboard/visit-summary', row.uuid]"></tr>
             </table>
 
-            <mat-paginator #inprogressPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #inprogressPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="inprogressVisitsCount" [pageIndex]="pageIndex3" [pageSize]="pageSize3" (page)="pageEvent3 = getInprogressData($event)" aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>

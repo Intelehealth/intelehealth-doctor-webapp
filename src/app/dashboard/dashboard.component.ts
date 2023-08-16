@@ -69,6 +69,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   pageIndex4:number = 0;
   pageSize4:number = 5;
 
+  @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
+  @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
+  @ViewChild('tempPaginator3') tempPaginator3: MatPaginator;
+
   constructor(
     private pageTitleService: PageTitleService,
     private appointmentService: AppointmentService,
@@ -130,8 +134,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(this.pageIndex1*this.pageSize1, (this.pageIndex1+1)*this.pageSize1));
-        // this.dataSource3.paginator = this.awaitingPaginator;
+        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        if (page == 1) {
+          this.dataSource3.paginator = this.tempPaginator2;
+          this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator2.nextPage();
+        }
       }
     });
   }
@@ -139,10 +148,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public getAwaitingData(event?:PageEvent){
     this.pageIndex1 = event.pageIndex;
     this.pageSize1 = event.pageSize;
+    if (this.dataSource3.filter) {
+      this.awaitingPaginator.firstPage();
+    }
     if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
       this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
     } else {
-      this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
+      // this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
+      if (event.previousPageIndex < event.pageIndex) {
+        this.tempPaginator2.nextPage();
+      } else {
+        this.tempPaginator2.previousPage();
+      }
     }
     return event;
   }
@@ -160,8 +177,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(this.pageIndex2*this.pageSize2, (this.pageIndex2+1)*this.pageSize2));
-        // this.dataSource2.paginator = this.priorityPaginator;
+        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        if (page == 1) {
+          this.dataSource2.paginator = this.tempPaginator1;
+          this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator1.nextPage();
+        }
       }
     });
   }
@@ -169,10 +191,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public getPriorityData(event?:PageEvent){
     this.pageIndex2 = event.pageIndex;
     this.pageSize2 = event.pageSize;
+    if (this.dataSource2.filter) {
+      this.priorityPaginator.firstPage();
+    }
     if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
       this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
     } else {
-      this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
+      // this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
+      if (event.previousPageIndex < event.pageIndex) {
+        this.tempPaginator1.nextPage();
+      } else {
+        this.tempPaginator1.previousPage();
+      }
     }
     return event;
   }
@@ -191,8 +221,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(this.pageIndex3*this.pageSize3, (this.pageIndex3+1)*this.pageSize3));
-        // this.dataSource4.paginator = this.inprogressPaginator;
+        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        if (page == 1) {
+          this.dataSource4.paginator = this.tempPaginator3;
+          this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator3.nextPage();
+        }
       }
     });
   }
@@ -200,10 +235,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public getInprogressData(event?:PageEvent){
     this.pageIndex3 = event.pageIndex;
     this.pageSize3 = event.pageSize;
+    if (this.dataSource4.filter) {
+      this.inprogressPaginator.firstPage();
+    }
     if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
       this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
     } else {
-      this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
+      // this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
+      if (event.previousPageIndex < event.pageIndex) {
+        this.tempPaginator3.nextPage();
+      } else {
+        this.tempPaginator3.previousPage();
+      }
     }
     return event;
   }
@@ -223,6 +266,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
         this.dataSource1 = new MatTableDataSource(this.appointments);
         this.dataSource1.paginator = this.appointmentPaginator;
+        this.dataSource1.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
   }
 
@@ -511,6 +555,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
   playNotify() {
     const audioUrl = "assets/notification.mp3";
     new Audio(audioUrl).play();
+  }
+
+  applyFilter1(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource1.filter = filterValue.trim().toLowerCase();
+  }
+
+  applyFilter2(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource2.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator1.firstPage();
+    this.priorityPaginator.firstPage();
+  }
+
+  applyFilter3(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource3.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator2.firstPage();
+    this.awaitingPaginator.firstPage();
+  }
+
+  applyFilter4(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource4.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator3.firstPage();
+    this.inprogressPaginator.firstPage();
   }
 
   ngOnDestroy() {

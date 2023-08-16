@@ -82,6 +82,14 @@
                 <img src="assets/svgs/pad-2.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Prescription Sent'|translate}} ({{prescriptionsSentCount ? prescriptionsSentCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits that shared prescription with patients'|translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -147,7 +155,8 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"   [routerLink]="['/dashboard/visit-summary', row?.uuid]" ></tr>
             </table>
 
-            <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #sentPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
             [length]="prescriptionsSentCount" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEvent = getData($event)" aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
