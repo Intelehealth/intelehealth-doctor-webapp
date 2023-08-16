@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -29,7 +30,8 @@ export class ChatBoxComponent implements OnInit {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private coreService: CoreService,
-    private webrtcSvc: WebrtcService
+    private webrtcSvc: WebrtcService,
+    private toastr: ToastrService
   ) { }
 
   async ngOnInit() {
@@ -89,6 +91,12 @@ export class ChatBoxComponent implements OnInit {
 
   sendMessage() {
     if (this.message) {
+      const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
+      if (!nursePresent) {
+        this.toastr.error("Please try again later.", "Health Worker is not Online.");
+        return;
+      }
+
       const payload = {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
