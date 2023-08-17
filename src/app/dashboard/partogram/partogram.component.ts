@@ -323,7 +323,6 @@ export class PartogramComponent implements OnInit, OnDestroy {
   readVisitHolder() {
     if (Array.isArray(this.visit?.attributes)) {
       const visitHolder = this.visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder');
-      console.log('visitHolder: ', visitHolder);
       this.webrtcSvc.visitHolderId = visitHolder?.value;
     }
   }

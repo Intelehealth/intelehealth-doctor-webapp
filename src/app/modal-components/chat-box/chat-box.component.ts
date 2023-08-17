@@ -16,7 +16,6 @@ export class ChatBoxComponent implements OnInit {
 
   message: string;
   messageList: any = [];
-  toUser: any;
   hwName: any;
   isAttachment = false;
   baseUrl: string = environment.baseURL;
@@ -37,8 +36,6 @@ export class ChatBoxComponent implements OnInit {
   async ngOnInit() {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
-    this.toUser = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
-    // this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
       this.getMessagesAndCheckRead();
@@ -57,6 +54,11 @@ export class ChatBoxComponent implements OnInit {
     this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
+  }
+
+  get toUser() {
+    const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
+    return this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
   }
 
   ngOnDestroy() {
@@ -89,7 +91,9 @@ export class ChatBoxComponent implements OnInit {
       });
   }
 
-  sendMessage() {
+  async sendMessage() {
+    await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
+
     if (this.message) {
       const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
       if (!nursePresent) {
