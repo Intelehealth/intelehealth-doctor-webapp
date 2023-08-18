@@ -17,7 +17,7 @@
             <div class="card-body p-0">
               <h6 class="card-title">{{'Set up your profile'|translate}}</h6>
               <p class="card-text">{{'You need to set-up your profile by adding few details of yours & start receiving the patient prescription requests.' |translate}}</p>
-              <button type="button" class="intel-blue-btn" (click)="setupProfile()" [disabled]="!pc">
+              <button type="button" class="intel-blue-btn" (click)="setupProfile()" [disabled]="!pc" data-test-id="btnSetupProfileGetStarted">
                 {{'Setup profile'| translate}}
               </button>
             </div>
@@ -35,7 +35,7 @@
             <div class="card-body p-0">
               <h6 class="card-title">{{'Set up your calendar' | translate}}</h6>
               <p class="card-text">{{'You need to set-up your calendar so you can start taking appointments of the patients.' | translate}}</p>
-              <button type="button" class="intel-blue-btn" (click)="setupCalendar()" [disabled]="!sc">
+              <button type="button" class="intel-blue-btn" (click)="setupCalendar()" [disabled]="!sc" data-test-id="btnSetupCalendarGetStarted">
                 {{'Setup calendar' | translate}}
               </button>
             </div>

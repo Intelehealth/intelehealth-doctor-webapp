@@ -40,10 +40,10 @@
   <div class="row mt-3">
     <div class="col-md-12 p-0">
       <div class="text-right my-2">
-        <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll"><span class="text-muted">{{'Show all' | translate}}</span> <mat-icon>expand_more</mat-icon> </button>
-        <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll"><span class="text-muted">{{'Hide all' | translate}}</span> <mat-icon>expand_less</mat-icon></button>
+        <button *ngIf="!showAll" mat-button (click)="accordion.openAll(); showAll=!showAll" data-test-id="btnShowAllDashboard"><span class="text-muted">{{'Show all' | translate}}</span> <mat-icon>expand_more</mat-icon> </button>
+        <button *ngIf="showAll" mat-button (click)="accordion.closeAll(); showAll=!showAll" data-test-id="btnHideAllDashboard"><span class="text-muted">{{'Hide all' | translate}}</span> <mat-icon>expand_less</mat-icon></button>
       </div>
-      <mat-accordion class="intel-accordion-con" multi>
+      <mat-accordion class="intel-accordion-con" multi data-test-id="matAccDashboard">
         <!-- <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -122,7 +122,7 @@
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
                   <div class="input-group-append">
                     <span class="input-group-text click" id="basic-addon1">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
@@ -273,7 +273,7 @@
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
                   <div class="input-group-append">
                     <span class="input-group-text click" id="basic-addon1">
                       <img src="assets/svgs/search-icon-red.svg" alt="" width="20px" height="20px">
@@ -421,7 +421,7 @@
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchAwaitingDashboard">
                   <div class="input-group-append">
                     <span class="input-group-text click" id="basic-addon1">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
@@ -569,7 +569,7 @@
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchInprogressDashboard">
                   <div class="input-group-append">
                     <span class="input-group-text click" id="basic-addon1">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
