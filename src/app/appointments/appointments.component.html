@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12 p-0">
-      <mat-accordion class="intel-accordion-con" multi>
+      <mat-accordion class="intel-accordion-con" multi data-test-id="matAccAppointment">
         <!-- <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -127,8 +127,8 @@
                 <th mat-header-cell *matHeaderCellDef> {{'Actions'| translate}} </th>
                 <td mat-cell *matCellDef="let element">
                   <div class="actions-btn-wrap d-flex align-items-center">
-                    <button class="action-btn blue-btn mr-2" type="button" (click)="reschedule(element)">{{'Reschedule' | translate}}</button>
-                    <button class="action-btn pink-btn " type="button" (click)="cancel(element)">{{'Cancel' |translate}}</button>
+                    <button class="action-btn blue-btn mr-2" type="button" (click)="reschedule(element)" data-test-id="btnRescheduleAppointment">{{'Reschedule' | translate}}</button>
+                    <button class="action-btn pink-btn " type="button" (click)="cancel(element)" data-test-id="btnCancelAppointment">{{'Cancel' |translate}}</button>
                   </div>
                 </td>
               </ng-container>

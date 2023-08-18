@@ -31,6 +31,7 @@
                         placeholder="{{'Search by patient name or ID'|translate}}"
                         aria-label="Username"
                         aria-describedby="basic-addon1"
+                        data-test-id="etSearchPatientName"
                       />
                     </div>
                   </div>
@@ -99,6 +100,7 @@
                       [clearable]="false"
                       [searchable]="false"
                       placeholder="Select visit"
+                      data-test-id="selectVisit"
                     >
                       <ng-template ng-label-tmp let-item="item">
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
@@ -187,6 +189,7 @@
                         placeholder="Type here"
                         [(ngModel)]="message"
                         (keyup.enter)="sendMessage()"
+                        data-test-id="etSendMessage1"
                       />
                       <!-- <div class="input-group-append">
                         <button type="button" (click)="fileInput.click()">
@@ -204,6 +207,7 @@
                       type="button"
                       class="send-btn"
                       (click)="sendMessage()"
+                      data-test-id="etSendMessage2"
                     >
                       <img src="assets/svgs/send-icon-white.svg" alt="" />
                     </button>

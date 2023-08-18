@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="col-md-4 p-0 pb-2">
-      <button mat-button class="view-btn" routerLink="/calendar/view-calendar">{{'View calendar'|translate}}</button>
+      <button mat-button class="view-btn" routerLink="/calendar/view-calendar" data-test-id="btnViewCalendar">{{'View calendar'|translate}}</button>
     </div>
   </div>
   <div class="row mt-3">
@@ -22,12 +22,12 @@
         <ul class="month-list">
           <ng-container *ngFor="let m of scheduledMonths; let i=index;">
             <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
-              <span>{{(m.name)| translate}}</span>
+              <span data-test-id="spanSelectedMonth">{{(m.name)| translate}}</span>
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
           <li class="add-more-list-item">
-            <a href="javascript:void(0)" (click)="addMonth()">
+            <a href="javascript:void(0)" (click)="addMonth()" data-test-id="linkAddMoreMonths">
               <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
               {{'Add more months'|translate}}
             </a>
@@ -50,9 +50,9 @@
                 <label>{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
                   <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon1" readonly>
+                    aria-describedby="basic-addon1" readonly data-test-id="etSelectStartDate">
                   <mat-datepicker #picker1></mat-datepicker>
-                  <div class="input-group-append">
+                  <div class="input-group-append" data-test-id="datepickerSelectStartDate">
                     <span class="input-group-text" id="basic-addon1">
                       <mat-datepicker-toggle matSuffix [for]="picker1">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -65,9 +65,9 @@
                 <label>{{'End date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.endDate.errors">
                   <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
-                    aria-describedby="basic-addon2" readonly>
+                    aria-describedby="basic-addon2" readonly data-test-id="etSelectEndDate">
                   <mat-datepicker #picker2></mat-datepicker>
-                  <div class="input-group-append">
+                  <div class="input-group-append" data-test-id="datepickerSelectEndDate">
                     <span class="input-group-text" id="basic-addon2">
                       <mat-datepicker-toggle matSuffix [for]="picker2">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -174,7 +174,7 @@
                           </ng-select>
                         </td>
                         <td>
-                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)">
+                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)" data-test-id="btnDeleteSlot">
                             <img src="assets/svgs/delete-icon.svg" alt="">
                             {{'Delete'|translate}}
                           </button>
@@ -183,7 +183,7 @@
 
                       <tr *ngIf="!_addMoreTiming && last">
                         <td colspan="4">
-                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()">
+                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddMoreTimings">
                             <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
                            {{'Add more timings'|translate}}
                           </a>
@@ -198,7 +198,8 @@
                               bindValue="name"
                               [placeholder]="timeList[0].name"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              data-test-id="selectStartTime">
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -206,7 +207,8 @@
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              data-test-id="selectStartTimeAm&Pm">
                             </ng-select>
                           </div>
                         </td>
@@ -218,7 +220,8 @@
                               bindValue="name"
                               [placeholder]="timeList[0].name"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              data-test-id="selectEndTime">
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -226,7 +229,8 @@
                               bindValue="name"
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
-                              [searchable]="false">
+                              [searchable]="false"
+                              data-test-id="selectEndTimeAm&Pm">
                             </ng-select>
                           </div>
                         </td>
@@ -240,7 +244,8 @@
                             multiple="true"
                             [closeOnSelect]="false"
                             [clearable]="false"
-                            [searchable]="false">
+                            [searchable]="false"
+                            data-test-id="selectDays">
                             <ng-template ng-label-tmp let-item="item">
                               {{(item.shortName) | translate}},
                             </ng-template>
@@ -256,10 +261,10 @@
                           </ng-select>
                         </td>
                         <td>
-                          <button mat-button type="button" class="save-btn mr-2" (click)="save()">
+                          <button mat-button type="button" class="save-btn mr-2" (click)="save()" data-test-id="btnSaveSlot">
                             {{'Save'|translate}}
                           </button>
-                          <button mat-button type="button" class="cancel-btn" (click)="toggleAddMoreTiming()">
+                          <button mat-button type="button" class="cancel-btn" (click)="toggleAddMoreTiming()" data-test-id="btnCanelSlot">
                             {{'Cancel'|translate}}
                           </button>
                         </td>
@@ -279,11 +284,11 @@
                 <label>{{'Dates'|translate}}</label>
                 <div class="input-group">
                   <input type="text" [value]="daysOffDates" class="form-control" placeholder="{{'Select dates'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon3" readonly>
+                    aria-describedby="basic-addon3" readonly data-test-id="etDaysOff">
                   <input type="text" class="form-control hidden-input" [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)" [matDatepicker]="picker3" placeholder="{{'Select dates'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon3" readonly>
+                    aria-describedby="basic-addon3" readonly data-test-id="etDaysOffSelection">
                   <mat-datepicker #picker3 [panelClass]="'daysOffCalendar'" [dateClass]="isDayOff"></mat-datepicker>
-                  <div class="input-group-append">
+                  <div class="input-group-append" data-test-id="datepickerSelectDaysOff">
                     <span class="input-group-text" id="basic-addon3">
                       <mat-datepicker-toggle matSuffix [for]="picker3">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -294,10 +299,10 @@
               </div>
               <div class="col-md-6 pb-3">
                 <div class="h-100 d-flex align-items-end">
-                  <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()">
+                  <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()" data-test-id="btnSaveDaysOff">
                     {{'Save'|translate}}
                   </button>
-                  <button mat-button type="button" class="cancel-btn" (click)="resetSelectedDaysOff()">
+                  <button mat-button type="button" class="cancel-btn" (click)="resetSelectedDaysOff()" data-test-id="btnCanelDaysOff">
                     {{'Cancel'|translate}}
                   </button>
                 </div>
@@ -309,7 +314,7 @@
                 <ng-container *ngFor="let doff of fd.controls; let j=index;">
                   <div class="chip-item">
                     <span>{{doff.value|date:'dd MMM YYYY'}}</span>
-                    <button mat-icon-button type="button" (click)="removeDaysOff(j)">
+                    <button mat-icon-button type="button" (click)="removeDaysOff(j)" data-test-id="btnRemoveDaysOff">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
