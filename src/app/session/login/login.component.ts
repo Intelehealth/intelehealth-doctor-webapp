@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
   rememberMe: boolean = false;
   loginAttempt: number = 0;
   selectedLanguage:string ='en'
+  showCaptcha: boolean = environment.showCaptcha;
 
   constructor(
     public authService: AuthService,
@@ -33,9 +34,12 @@ export class LoginComponent implements OnInit {
     this.loginForm = new FormGroup({
       username: new FormControl("", Validators.required),
       password: new FormControl("", Validators.required),
-      recaptcha: new FormControl("", Validators.required)
+      recaptcha: new FormControl("")
     });
-
+    if (this.showCaptcha) {
+      this.loginForm.get('recaptcha').setValidators([Validators.required]);
+      this.loginForm.get('recaptcha').updateValueAndValidity();
+    }
   }
 
   get f() { return this.loginForm.controls; }

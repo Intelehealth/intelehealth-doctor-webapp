@@ -61,6 +61,7 @@ export class AppointmentsComponent implements OnInit {
         });
         this.dataSource = new MatTableDataSource(this.appointments);
         this.dataSource.paginator = this.paginator;
+        this.dataSource.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
   }
 
@@ -211,6 +212,11 @@ export class AppointmentsComponent implements OnInit {
 
   get userId() {
     return JSON.parse(localStorage.user).uuid;
+  }
+
+  applyFilter1(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 }

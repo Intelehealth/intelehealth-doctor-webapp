@@ -7,11 +7,11 @@
     <h6 class="mt-3">{{'OpenMRS ID'|translate}}</h6>
     <p class="mt-2 text-center">{{'Please enter the OpenMRS ID to view prescription.'|translate}}</p>
     <div class="form-group">
-      <input type="text" class="form-control" [(ngModel)]="openMrsId" placeholder="{{'Enter OpenMRS ID'|translate}}">
+      <input type="text" class="form-control" [(ngModel)]="openMrsId" placeholder="{{'Enter OpenMRS ID'|translate}}" data-test-id="etConfirmOpenMRSId">
     </div>
   </div>
   <div class="modal-action-btn-con">
     <!-- <button class="modal-btn white-btn mr-3" type="button" (click)="close(false)">Cancel</button> -->
-    <button class="modal-btn blue-btn" type="button" (click)="submit()">{{'Submit'|translate}}</button>
+    <button class="modal-btn blue-btn" type="button" (click)="submit()" data-test-id="btnSubmitConfirmOpenMRSId">{{'Submit'|translate}}</button>
   </div>
 </div>

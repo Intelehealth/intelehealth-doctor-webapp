@@ -80,6 +80,14 @@
                 <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
+                  <input type="text" class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchAppointment">
+                  <div class="input-group-append">
+                    <span class="input-group-text click" id="basic-addon1">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
+                    </span>
+                  </div>
+                </div>
               </div>
             </mat-panel-title>
           </mat-expansion-panel-header>

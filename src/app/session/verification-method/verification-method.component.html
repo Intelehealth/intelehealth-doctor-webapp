@@ -10,7 +10,7 @@
 
       <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
         <li [ngbNavItem]="'phone'">
-          <a ngbNavLink>{{'Mobile number'|translate}}</a>
+          <a ngbNavLink data-test-id="navMobileVerficationMethod">{{'Mobile number'|translate}}</a>
           <ng-template ngbNavContent>
             <form [formGroup]="verificationForm" (ngSubmit)="verify()">
               <div class="form-group">
@@ -19,6 +19,7 @@
                 </label>
                 <div class="phone-field">
                   <input type="text"
+                    data-test-id="etMobileVerficationMethod"
                     ng2TelInput
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true}"
                     (hasError)="hasError($event)"
@@ -41,7 +42,7 @@
                 </div>
               </div>
               <div class="form-group mt-5">
-                <button type="submit" class="btn btn-block next-btn">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitMobileVerficationMethod">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
                 </button>
@@ -50,7 +51,7 @@
           </ng-template>
         </li>
         <li [ngbNavItem]="'email'">
-          <a ngbNavLink>{{'EMAIL'|translate}}</a>
+          <a ngbNavLink data-test-id="navEmailVerficationMethod">{{'EMAIL'|translate}}</a>
           <ng-template ngbNavContent>
             <form [formGroup]="verificationForm" (ngSubmit)="verify()">
               <div class="form-group">
@@ -58,7 +59,7 @@
                   {{'EMAIL'|translate}}
                 </label>
                 <div class="email-id-field">
-                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}">
+                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}" data-test-id="etEmailVerficationMethod">
                   <button class="btn toggle-password-btn" type="button">
                     <img src="assets/svgs/email.svg" alt="">
                   </button>
@@ -69,7 +70,7 @@
                 </div>
               </div>
               <div class="form-group mt-5">
-                <button type="submit" class="btn btn-block next-btn">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitEmailVerficationMethod">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
                 </button>

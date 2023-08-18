@@ -14,6 +14,7 @@
             class="start-call-btn"
             href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
             target="_blank"
+            data-test-id="linkStartCallVisitSummary"
           >
             {{'Start call'|translate}}
           </a>
@@ -83,6 +84,7 @@
                     href="{{ getWhatsAppLink() }}"
                     target="_blank"
                     class="icon-btn"
+                    data-test-id="linkWhatsAppVisitSummary"
                   >
                     <img src="assets/svgs/whatsapp-icon.svg" alt="" />
                   </a>
@@ -93,6 +95,7 @@
                     href="tel:{{ getPersonAttributeValue('Telephone Number') }}"
                     target="_blank"
                     class="icon-btn"
+                    data-test-id="linkPhoneNumberVisitSummary"
                   >
                     <img src="assets/svgs/phone-circle.svg" alt="" />
                   </a>
@@ -111,13 +114,15 @@
           mat-align-tabs="start"
           [disableRipple]="true"
           (selectedIndexChange)="onTabChange($event)"
+          data-test-id="mtgVisitSummary"
         >
-          <mat-tab label="{{'Current visit summary'|translate}}">
+          <mat-tab label="{{'Current visit summary'|translate}}" data-test-id="mtCurrentVisitSummary">
             <div class="text-right">
               <button
                 *ngIf="!showAll"
                 mat-button
                 (click)="accordion.openAll(); showAll = !showAll"
+                data-test-id="btnExpandMoreVisitSummary"
               >
                 <span class="text-muted">{{'Show all'|translate}}</span>
                 <mat-icon>expand_more</mat-icon>
@@ -126,6 +131,7 @@
                 *ngIf="showAll"
                 mat-button
                 (click)="accordion.closeAll(); showAll = !showAll"
+                data-test-id="btnExpandLessVisitSummary"
               >
                 <span class="text-muted">{{'Hide all'|translate}}</span>
                 <mat-icon>expand_less</mat-icon>
@@ -412,7 +418,7 @@
                 </mat-expansion-panel-header>
 
                 <div class="cheif-complaint-wrapper">
-                  <h6>{{'Cheif Complaint'|translate}}</h6>
+                  <h6>{{'Chief Complaint'|translate}}</h6>
                   <div class="complaint-chips">
                     <div class="chip-item" *ngFor="let c of cheifComplaints">
                       {{ c }}
@@ -582,7 +588,7 @@
                       *ngFor="let d of additionalDocs; let x = index"
                     >
                       <img [src]="d.src" alt="" />
-                      <div class="cover" (click)="previewDocImages(x)">
+                      <div class="cover" (click)="previewDocImages(x)" data-test-id="divPreviewDocVisitSummary">
                         <img src="assets/svgs/maximize.svg" alt="" />
                       </div>
                     </div>
@@ -632,6 +638,7 @@
                           type="radio"
                           [value]="true"
                           formControlName="refer"
+                          data-test-id="radioReferYesVisitSummary"
                         />
                         <div class="state p-success">
                           <label>{{'Yes'|translate}}</label>
@@ -642,6 +649,7 @@
                           type="radio"
                           [value]="false"
                           formControlName="refer"
+                          data-test-id="radioReferNoVisitSummary"
                         />
                         <div class="state p-success">
                           <label>{{'No'|translate}}</label>
@@ -664,6 +672,7 @@
                           [clearable]="false"
                           [searchable]="true"
                           placeholder="{{'Select specialization'|translate}}"
+                          data-test-id="selectReferVisitSummary"
                         >
                         <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
                           {{ (specialization.name) |translate }}
@@ -672,7 +681,7 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <button type="submit" class="next-btn">{{'Re-assign'|translate}}</button>
+                      <button type="submit" class="next-btn" data-test-id="btnSubmitReferVisitSummary">{{'Re-assign'|translate}}</button>
                     </div>
                   </ng-container>
                 </form>
@@ -680,7 +689,7 @@
             </mat-accordion>
           </mat-tab>
 
-          <mat-tab label="{{'Past visit history'|translate}}">
+          <mat-tab label="{{'Past visit history'|translate}}" data-test-id="mtPastVisitSummary">
             <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
               <table mat-table [dataSource]="dataSource">
                 <!-- Action Column -->
@@ -734,7 +743,7 @@
 
                 <!-- Cheif Complaint Column -->
                 <ng-container matColumnDef="cheif_complaint">
-                  <th mat-header-cell *matHeaderCellDef>{{'Cheif Complaint'|translate}}</th>
+                  <th mat-header-cell *matHeaderCellDef>{{'Chief Complaint'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
                     {{ element.cheif_complaint }}
                   </td>
@@ -860,7 +869,7 @@
       <div class="intel-card">
         <div class="card-body">
           <p class="note-con">
-            <span class="important-text">{{'Note'|translate}}:</span>    
+            <span class="important-text">{{'Note'|translate}}:</span>
             {{ 'This history note and physical exam note was generated by a community health worker with the'| translate }}
             {{ 'support of the Intelehealth mobile application and Ayu, a digital assistant. It collects only'| translate }}
             {{ 'preliminary findings and may not gather all of the patient clinical information, especially' | translate }}
@@ -872,7 +881,7 @@
     </div>
 
     <div class="col-md-12 p-0 py-2 mb-5 text-center" *ngIf="!visitNotePresent && !visitCompleted && !visitEnded && selectedTabIndex == 0">
-      <button type="button" class="blue-btn" (click)="startVisitNote()">
+      <button type="button" class="blue-btn" (click)="startVisitNote()" data-test-id="btnStartVisitNoteVisitSummary">
         {{'Start visit note'|translate}}
       </button>
     </div>
@@ -920,6 +929,7 @@
                             }}"
                             target="_blank"
                             class="icon-btn m-0 mr-2"
+                            data-test-id="linkPatientPhoneVisitSummary"
                           >
                             <img src="assets/svgs/phone-green.svg" alt="" />
                           </a>
@@ -927,6 +937,7 @@
                             href="{{ getWhatsAppLink() }}"
                             target="_blank"
                             class="icon-btn m-0 mr-2"
+                            data-test-id="linkPatientWhatsAppVisitSummary"
                           >
                             <img src="assets/svgs/whatsapp-green.svg" alt="" />
                           </a>
@@ -955,6 +966,7 @@
                             type="radio"
                             value="{{'Yes' | translate}}"
                             formControlName="spoken"
+                            data-test-id="radioSpokenYesVisitSummary"
                           />
                           <div class="state p-success">
                             <label>{{'Yes'|translate}}</label>
@@ -965,6 +977,7 @@
                             type="radio"
                             value="{{'No' | translate}}"
                             formControlName="spoken"
+                            data-test-id="radioSpokenNoVisitSummary"
                           />
                           <div class="state p-success">
                             <label>{{'No'|translate}}</label>
@@ -986,6 +999,7 @@
                     type="submit"
                     class="gray-btn"
                     [disabled]="patientInteractionForm.invalid"
+                    data-test-id="btnSubmitPatientInteractionVisitSummary"
                   >
                     {{'Save'|translate}}
                   </button>
@@ -1010,6 +1024,7 @@
                             class="float-right"
                             *ngIf="isVisitNoteProvider && !visitEnded"
                             (click)="deletePatientInteraction()"
+                            data-test-id="btnDeletePatientInteractionVisitSummary"
                           >
                             <img src="assets/svgs/delete-icon.svg" alt="" />
                           </button>
@@ -1059,6 +1074,7 @@
                             class="float-right"
                             *ngIf="isVisitNoteProvider && !visitEnded"
                             (click)="deleteDiagnosis(i, d.uuid)"
+                            data-test-id="{{'btnDeleteDiagnosisVisitSummary' + i}}"
                           >
                             <img src="assets/svgs/delete-icon.svg" alt="" />
                           </button>
@@ -1073,6 +1089,7 @@
                               type="button"
                               class="add-more-btn"
                               (click)="toggleDiagnosis()"
+                              data-test-id="btnAddMoreDiagnosisVisitSummary"
                             >
                               <img src="assets/svgs/plus-circle.svg" alt="" />
                               <span class="ml-2">{{'Add more diagnosis'|translate}}</span>
@@ -1111,6 +1128,7 @@
                             [searchable]="true"
                             placeholder="{{'Select diagnosis'|translate}}"
                             [addTag]="true"
+                            data-test-id="selectDiagnosisNameVisitSummary"
                           >
                           </ng-select>
                         </div>
@@ -1127,6 +1145,7 @@
                               type="radio"
                               [value]="'Primary'"
                               formControlName="diagnosisType"
+                              data-test-id="radioDiagnosisTypePrimaryVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'Primary'|translate}}</label>
@@ -1137,6 +1156,7 @@
                               type="radio"
                               [value]="'Secondary'"
                               formControlName="diagnosisType"
+                              data-test-id="radioDiagnosisTypeSecondaryVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'Secondary'|translate}}</label>
@@ -1154,6 +1174,7 @@
                               type="radio"
                               [value]="'Provisional'"
                               formControlName="diagnosisStatus"
+                              data-test-id="radioDiagnosisStatusProvisionalVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'Provisional'|translate}}</label>
@@ -1164,6 +1185,7 @@
                               type="radio"
                               [value]="'Confirmed'"
                               formControlName="diagnosisStatus"
+                              data-test-id="radioDiagnosisStatusConfirmedVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'Confirmed'|translate}}</label>
@@ -1178,6 +1200,7 @@
                       type="button"
                       class="white-btn mr-2 mt-3"
                       (click)="toggleDiagnosis()"
+                      data-test-id="btnCancelDiagnosisVisitSummary"
                     >
                       {{'Cancel'|translate}}
                     </button>
@@ -1185,6 +1208,7 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="diagnosisForm.invalid"
+                      data-test-id="btnSubmitDiagnosisVisitSummary"
                     >
                       {{'Add'|translate}}
                     </button>
@@ -1290,6 +1314,7 @@
                       mat-icon-button
                       (click)="deleteNote(i, n.uuid)"
                       *ngIf="isVisitNoteProvider && !visitEnded"
+                      data-test-id="{{'btnDeleteNoteVisitSummary'+i}}"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
                     </button>
@@ -1312,6 +1337,7 @@
                     type="button"
                     class="add-more-btn"
                     (click)="toggleNote()"
+                    data-test-id="btnAddMoreNoteVisitSummary"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
                     <span class="ml-2">{{'Add more notes'|translate}}</span>
@@ -1330,6 +1356,7 @@
                       rows="3"
                       placeholder="{{'Type here'|translate}}"
                       formControlName="note"
+                      data-test-id="etNoteVisitSummary"
                     ></textarea>
                   </div>
                   <div class="form-group">
@@ -1337,6 +1364,7 @@
                       type="button"
                       class="white-btn mr-2"
                       (click)="toggleNote()"
+                      data-test-id="btnCancelNoteVisitSummary"
                     >
                       {{'Cancel'|translate}}
                     </button>
@@ -1344,6 +1372,7 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="addNoteForm.invalid"
+                      data-test-id="btnSubmitNoteVisitSummary"
                     >
                       {{'Add note'|translate}}
                     </button>
@@ -1396,6 +1425,7 @@
                               class="float-right"
                               *ngIf="isVisitNoteProvider && !visitEnded"
                               (click)="deleteMedicine(i, m.uuid)"
+                              data-test-id="{{'btnDeleteMedVisitSummary'+i}}"
                             >
                               <img src="assets/svgs/delete-icon.svg" alt="" />
                             </button>
@@ -1417,6 +1447,7 @@
                                 type="button"
                                 class="add-more-btn"
                                 (click)="toggleMedicine()"
+                                data-test-id="btnAddMoreMedVisitSummary"
                               >
                                 <img src="assets/svgs/plus-circle.svg" alt="" />
                                 <span class="ml-2">{{'Add more medicine'|translate}}</span>
@@ -1456,6 +1487,7 @@
                                 class="form-control"
                                 placeholder="{{'Enter drug'|translate}}"
                                 [ngbTypeahead]="search3"
+                                data-test-id="etDrugNameVisitSummary"
                               />
                             </div>
                           </td>
@@ -1467,6 +1499,7 @@
                                 class="form-control"
                                 placeholder="{{'Enter strength'|translate}}"
                                 [ngbTypeahead]="search4"
+                                data-test-id="etDrugStrengthVisitSummary"
                               />
                             </div>
                           </td>
@@ -1478,6 +1511,7 @@
                                 class="form-control"
                                 placeholder="{{'Enter days'|translate}}"
                                 [ngbTypeahead]="search5"
+                                data-test-id="etDaysVisitSummary"
                               />
                             </div>
                           </td>
@@ -1493,6 +1527,7 @@
                               [searchable]="true"
                               [addTag]="true"
                               placeholder="{{'Select timing'|translate}}"
+                              data-test-id="selectTimingVisitSummary"
                             >
                             </ng-select>
                           </td>
@@ -1503,6 +1538,7 @@
                                 type="text"
                                 class="form-control"
                                 placeholder="{{'Enter Remark'|translate}}"
+                                data-test-id="etRemarkMedVisitSummary"
                               />
                             </div>
                           </td>
@@ -1514,6 +1550,7 @@
                                 type="button"
                                 class="white-btn mr-2"
                                 (click)="toggleMedicine()"
+                                data-test-id="btnCancelMedVisitSummary"
                               >
                                 {{'Cancel'|translate}}
                               </button>
@@ -1521,6 +1558,7 @@
                                 type="submit"
                                 class="gray-btn"
                                 [disabled]="addMedicineForm.invalid"
+                                data-test-id="btnSubmitMedVisitSummary"
                               >
                                 {{'Add'|translate}}
                               </button>
@@ -1543,6 +1581,7 @@
                         mat-icon-button
                         *ngIf="isVisitNoteProvider && !visitEnded"
                         (click)="deleteAdditionalInstruction(i, ai.uuid)"
+                        data-test-id="{{'btnDeleteAIVisitSummary'+i}}"
                       >
                         <img src="assets/svgs/delete-icon.svg" alt="" />
                       </button>
@@ -1562,6 +1601,7 @@
                     type="button"
                     class="add-more-btn"
                     (click)="toggleAdditionalInstruction()"
+                    data-test-id="btnAddMoreAIVisitSummary"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
                     <span class="ml-2">{{'Add more instructions'|translate}}</span>
@@ -1579,6 +1619,7 @@
                       class="form-control"
                       rows="3"
                       placeholder="{{'Type here'|translate}}"
+                      data-test-id="etAIVisitSummary"
                     ></textarea>
                   </div>
                   <div class="form-group">
@@ -1586,6 +1627,7 @@
                       type="button"
                       class="white-btn mr-2"
                       (click)="toggleAdditionalInstruction()"
+                      data-test-id="btnCancelAIVisitSummary"
                     >
                       {{'Cancel'|translate}}
                     </button>
@@ -1593,6 +1635,7 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="addAdditionalInstructionForm.invalid"
+                      data-test-id="btnSubmitAIVisitSummary"
                     >
                       {{'Save'|translate}}
                     </button>
@@ -1624,6 +1667,7 @@
                     <button
                       mat-icon-button
                       (click)="deleteAdvice(i, ad.uuid)"
+                      data-test-id="{{'btnDeleteAdviceVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
@@ -1642,6 +1686,7 @@
                     type="button"
                     class="add-more-btn"
                     (click)="toggleAdvice()"
+                    data-test-id="btnAddMoreAdviceVisitSummary"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
                     <span class="ml-2">{{'Add more advice'|translate}}</span>
@@ -1661,6 +1706,7 @@
                       formControlName="advice"
                       placeholder="{{'Type here'|translate}}"
                       [ngbTypeahead]="search"
+                      data-test-id="etAdviceVisitSummary"
                     />
                   </div>
                   <div class="form-group">
@@ -1668,6 +1714,7 @@
                       type="button"
                       class="white-btn mr-2"
                       (click)="toggleAdvice()"
+                      data-test-id="btnCancelAdviceVisitSummary"
                     >
                       {{'Cancel'|translate}}
                     </button>
@@ -1675,6 +1722,7 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="addAdviceForm.invalid"
+                      data-test-id="btnSubmitAdviceVisitSummary"
                     >
                       {{'Add advice'|translate}}
                     </button>
@@ -1706,6 +1754,7 @@
                     <button
                       mat-icon-button
                       (click)="deleteTest(i, t.uuid)"
+                      data-test-id="{{'btnDeleteTestVisitSummary'+i}}"
                       *ngIf="isVisitNoteProvider && !visitEnded"
                     >
                       <img src="assets/svgs/delete-icon.svg" alt="" />
@@ -1724,6 +1773,7 @@
                     type="button"
                     class="add-more-btn"
                     (click)="toggleTest()"
+                    data-test-id="btnAddMoreTestVisitSummary"
                   >
                     <img src="assets/svgs/plus-circle.svg" alt="" />
                     <span class="ml-2">{{'Add more test'|translate}}</span>
@@ -1743,6 +1793,7 @@
                       formControlName="test"
                       placeholder="{{'Type here'|translate}}"
                       [ngbTypeahead]="search2"
+                      data-test-id="etTestVisitSummary"
                     />
                   </div>
                   <div class="form-group">
@@ -1750,6 +1801,7 @@
                       type="button"
                       class="white-btn mr-2"
                       (click)="toggleTest()"
+                      data-test-id="btnCancelTestVisitSummary"
                     >
                       {{'Cancel'|translate}}
                     </button>
@@ -1757,6 +1809,7 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="addTestForm.invalid"
+                      data-test-id="btnSubmitTestVisitSummary"
                     >
                       {{'Add test'|translate}}
                     </button>
@@ -1806,6 +1859,7 @@
                               class="float-right"
                               mat-icon-button
                               (click)="deleteReferral(i, r.uuid)"
+                              data-test-id="{{'btnDeleteReferralVisitSummary'+i}}"
                               *ngIf="isVisitNoteProvider && !visitEnded"
                             >
                               <img src="assets/svgs/delete-icon.svg" alt="" />
@@ -1829,6 +1883,7 @@
                               type="radio"
                               [value]="true"
                               formControlName="refer"
+                              data-test-id="radioReferralYesVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'Yes'|translate}}</label>
@@ -1839,6 +1894,7 @@
                               type="radio"
                               [value]="false"
                               formControlName="refer"
+                              data-test-id="radioReferralNoVisitSummary"
                             />
                             <div class="state p-success">
                               <label>{{'No'|translate}}</label>
@@ -1864,6 +1920,7 @@
                                 [searchable]="true"
                                 placeholder="{{'Select specialization'|translate}}"
                                 (change)="addReferralForm.controls.other_speciality.setValue(null)"
+                                data-test-id="selectReferralSpecialityVisitSummary"
                               >
                               <ng-option *ngFor="let specialization of refer_specializations" [value]="specialization.name">
                                 {{ (specialization.name) |translate }}
@@ -1878,6 +1935,7 @@
                                 placeholder="{{'Other speciality'}}"
                                 *ngIf="addReferralForm.value.speciality === 'Other Specialist*'"
                                 [required]="addReferralForm.value.speciality === 'Other Specialist*'"
+                                data-test-id="etReferralOtherSpecialityVisitSummary"
                               />
                             </div>
                           </div>
@@ -1899,6 +1957,7 @@
                                 [addTag]="true"
                                 placeholder="{{'Select facility'|translate}}"
                                 (change)="addReferralForm.controls.other_facility.setValue(null)"
+                                data-test-id="selectReferralFacilityVisitSummary"
                               >
                               <ng-option *ngFor="let facility of facilities" [value]="facility.name">
                                 {{ (facility.name) |translate }}
@@ -1913,6 +1972,7 @@
                                 placeholder="{{'Other Facility'}}"
                                 *ngIf="addReferralForm.value.facility === 'Other Facility*'"
                                 [required]="addReferralForm.value.facility === 'Other Facility*'"
+                                data-test-id="etReferralOtherFacilityVisitSummary"
                               />
                             </div>
                           </div>
@@ -1928,6 +1988,7 @@
                                   type="radio"
                                   [value]="'Elective'"
                                   formControlName="priority_refer"
+                                  data-test-id="radioReferralElectiveVisitSummary"
                                 />
                                 <div class="state p-success">
                                   <label>{{'Elective'|translate}}</label>
@@ -1938,6 +1999,7 @@
                                   type="radio"
                                   [value]="'Urgent'"
                                   formControlName="priority_refer"
+                                  data-test-id="radioReferralUrgentVisitSummary"
                                 />
                                 <div class="state p-success">
                                   <label>{{'Urgent'|translate}}</label>
@@ -1958,6 +2020,7 @@
                                     class="form-control"
                                     rows="3"
                                     placeholder="{{'Type here'|translate}}"
+                                    data-test-id="radioReferralReasonVisitSummary"
                                   ></textarea>
                               </div>
                             </div>
@@ -1970,10 +2033,11 @@
                       type="submit"
                       class="gray-btn"
                       [disabled]="addReferralForm.invalid"
+                      data-test-id="btnSubmitReferralVisitSummary"
                     >
                       {{'Save'|translate}}
                     </button>
-                  </div>  
+                  </div>
                 </ng-container>
               </form>
             </mat-expansion-panel>
@@ -2007,6 +2071,7 @@
                             type="radio"
                             value="{{'Yes' | translate}}"
                             formControlName="wantFollowUp"
+                            data-test-id="radioFollowUpYesVisitSummary"
                           />
                           <div class="state p-success">
                             <label>{{'Yes'|translate}}</label>
@@ -2017,6 +2082,7 @@
                             type="radio"
                             value="{{'No' | translate}}"
                             formControlName="wantFollowUp"
+                            data-test-id="radioFollowUpNoVisitSummary"
                           />
                           <div class="state p-success">
                             <label>{{'No'|translate}}</label>
@@ -2043,14 +2109,15 @@
                               [min]="minDate"
                               [matDatepicker]="fdp"
                               placeholder="{{'Enter date'|translate}}"
-                              aria-label="Birthdate"
+                              aria-label="Followupdate"
                               aria-describedby="basic-addon1"
                               readonly
+                              data-test-id="etFollowUpDateVisitSummary"
                             />
                             <mat-datepicker #fdp></mat-datepicker>
                             <div class="input-group-append">
                               <span class="input-group-text" id="basic-addon1">
-                                <mat-datepicker-toggle matSuffix [for]="fdp">
+                                <mat-datepicker-toggle matSuffix [for]="fdp" data-test-id="dpFollowUpDateVisitSummary">
                                   <img
                                     matDatepickerToggleIcon
                                     src="assets/svgs/calendar-date.svg"
@@ -2078,6 +2145,7 @@
                             [clearable]="false"
                             [searchable]="true"
                             placeholder="{{'Select time'|translate}}"
+                            data-test-id="selectFollowUpTimeVisitSummary"
                           >
                           </ng-select>
                         </div>
@@ -2096,6 +2164,7 @@
                             class="form-control"
                             placeholder="{{'Type here'|translate}}"
                             formControlName="followUpReason"
+                            data-test-id="etFollowUpReasonVisitSummary"
                           />
                         </div>
                       </div>
@@ -2115,6 +2184,7 @@
                     type="submit"
                     class="gray-btn"
                     [disabled]="followUpForm.invalid"
+                    data-test-id="btnSubmitFollowUpVisitSummary"
                   >
                     {{'Save'|translate}}
                   </button>
@@ -2144,6 +2214,7 @@
                           class="float-right"
                           mat-icon-button
                           (click)="deleteFollowUp()"
+                          data-test-id="btnDeleteFollowUpVisitSummary"
                           *ngIf="isVisitNoteProvider && !visitEnded"
                         >
                           <img src="assets/svgs/delete-icon.svg" alt="" />
@@ -2165,6 +2236,7 @@
         class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
+        data-test-id="btnSharePrescriptionVisitSummary"
       >
         {{ visitCompleted ? ('Update'|translate): ('Share'|translate) }} {{'prescription'|translate}}
       </button>
@@ -2173,6 +2245,7 @@
         class="blue-btn mb-2"
         (click)="openVisitPrescriptionModal(visit?.uuid)"
         *ngIf="visitNotePresent && visitCompleted"
+        data-test-id="btnViewPrescriptionVisitSummary"
         >
         {{'View prescription'|translate}}
       </button>
@@ -2181,6 +2254,6 @@
 </div>
 
 <div class="webrtc-controls">
-  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()"/>
-  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()"/>
+  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCallVisitSummary"/>
+  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChatVisitSummary"/>
 </div>

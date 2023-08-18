@@ -3,7 +3,7 @@
     <div class="menu-items-wrapper" [ngClass]="{ 'collapsed' : collapsed }">
       <div class="sidenav-logo">
         <div class="sidenav-toggle">
-          <button type="button" (click)="collapsed = !collapsed">
+          <button type="button" (click)="collapsed = !collapsed" data-test-id="btnToggleSidenavMain">
             <img [src]="getUrl()" alt="">
           </button>
         </div>
@@ -11,81 +11,81 @@
         <img src="assets/images/Intelehealth-logo-white2.png" alt="" width="100%" *ngIf="collapsed">
       </div>
       <ul class="admin-nav">
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemDashboardMain">
+          <a class="nav-item-link" routerLink="/dashboard" routerLinkActive="active" data-test-id="linkDashboardMain">
             <img src="assets/svgs/menu-home.svg" alt="">
             <span>{{'Dashboard' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemMessagesMain">
+          <a class="nav-item-link" routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkMessagesMain">
             <img src="assets/svgs/menu-message.svg" alt="">
             <span>{{'Messages' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemAppointmentsMain">
+          <a class="nav-item-link" routerLink="/appointments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAppointmentsMain">
             <img src="assets/svgs/menu-video.svg" alt="">
             <span>{{'Appointment' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemCalendarMain">
+          <a class="nav-item-link" routerLink="/calendar" routerLinkActive="active" data-test-id="linkCalendarMain">
             <img src="assets/svgs/menu-calendar.svg" alt="">
             <span>{{'Calendar' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR', 'ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemPrescriptionMain">
+          <a class="nav-item-link" routerLink="/prescription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkPrescriptionMain">
             <img src="assets/svgs/menu-treatment.svg" alt="">
             <span>{{'Prescription' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: NURSE']" (click)="toggleSidebar()" data-test-id="listItemProfileMain">
+          <a class="nav-item-link" routerLink="/dashboard/hw-profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkProfileMain">
             <img src="assets/svgs/menu-home.svg" alt="">
             <span>{{'My Profile'| translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemHelpMain">
+          <a class="nav-item-link" routerLink="/help" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkHelpMain">
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>{{'Help & Support' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemAyuMain">
+          <a class="nav-item-link" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkAyuMain">
             <img src="assets/svgs/warning.svg" alt="">
             <span>{{'Ayu'| translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSupportMain">
+          <a class="nav-item-link" routerLink="/admin/support" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" data-test-id="linkSupportMain">
             <img src="assets/svgs/menu-info.svg" alt="">
             <span>{{'Support' | translate}} <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div> </span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemSystemMain">
+          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/index.htm" target="_blank" data-test-id="linkSystemMain">
             <img src="assets/svgs/user-settings.svg" alt="">
             <span>{{'System Admin' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemUserMain">
+          <a class="nav-item-link" href="{{ baseURLLegacy }}/admin/users/users.list" target="_blank" data-test-id="linkUserMain">
             <img src="assets/svgs/add-user.svg" alt="">
             <span>{{'User Creation' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()">
-          <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank">
+        <li class="nav-item" *ngxPermissionsOnly="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" (click)="toggleSidebar()" data-test-id="listItemReportMain">
+          <a class="nav-item-link"  href="{{ baseURLLegacy }}/reportingui/reportsapp/home.page" target="_blank" data-test-id="linkReportMain">
             <img src="assets/svgs/report.svg" alt="">
             <span>{{'Report' | translate}}</span>
           </a>
         </li>
-        <li class="nav-item" (click)="toggleSidebar()">
+        <li class="nav-item" (click)="toggleSidebar()" data-test-id="listItemLogoutMain">
           <mat-divider class="mb-2"></mat-divider>
-          <a class="nav-item-link" href="javascript:void(0)" (click)="logout()">
+          <a class="nav-item-link" href="javascript:void(0)" (click)="logout()" data-test-id="linkLogoutMain">
             <img src="assets/svgs/power.svg" alt="">
             <span>{{'Log-out' | translate}}</span>
           </a>
@@ -98,7 +98,7 @@
     <div class="header-main">
       <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="javascript:void(0)">
-          <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile">
+          <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile" data-test-id="btnToggleDrawerMain">
             <mat-icon>menu</mat-icon>
           </button>
           <div class="header-title d-flex justify-content-between align-items-center" *ngIf="header?.title">
@@ -110,9 +110,9 @@
             <ng-container *ngIf="header.title == 'Dashboard'">
               <form [formGroup]="searchForm">
                 <div class="input-group">
-                    <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()">
+                    <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()" data-test-id="etSearchPatientMain">
                     <div class="input-group-append">
-                      <span class="input-group-text click" id="basic-addon1" (click)="search()">
+                      <span class="input-group-text click" id="basic-addon1" (click)="search()" data-test-id="spanSearchPatientMain">
                         <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                       </span>
                     </div>
@@ -133,7 +133,7 @@
             </ol>
           </nav>
         </a>
-        <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" mat-icon-button data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" data-test-id="btnToggleNavbarMain">
           <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
 
@@ -141,24 +141,24 @@
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
               <div class="d-flex align-items-center justify-content-end">
-                <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
+                <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpMenuMain">
                   <mat-icon>help_outline</mat-icon>
                 </button>
-                <button mat-button class="notification-button mr-3" (click)="toggleNotification()">
+                <button mat-button class="notification-button mr-3" (click)="toggleNotification()" data-test-id="btnNotificationMain">
                   <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
                   <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
                 </button>
-                <div class="user-info-wrap mr-3" routerLink="/dashboard/profile">
+                <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfileMain">
                   <img class="user-img mr-3" src="{{ baseUrl + '/personimage/' + provider?.person.uuid }}" (error) ="onImgError($event)" alt="">
                   <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon">
+                <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon" data-test-id="btnProfileDropdownMain">
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #beforeMenu="matMenu" xPosition="before" class="profile-dropdown">
-                  <button mat-menu-item (click)="changePassword()">{{'Change Password' | translate}}</button>
-                  <button mat-menu-item (click)="selectLanguage()">{{'Change Language' | translate}}</button>
-                  <button mat-menu-item routerLink="/dashboard/profile">{{'Profile' | translate}}</button>
+                  <button mat-menu-item (click)="changePassword()" data-test-id="btnChangePasswordMain">{{'Change Password' | translate}}</button>
+                  <button mat-menu-item (click)="selectLanguage()" data-test-id="btnSelectLanguageMain">{{'Change Language' | translate}}</button>
+                  <button mat-menu-item routerLink="/dashboard/profile" data-test-id="btnProfileMain">{{'Profile' | translate}}</button>
                 </mat-menu>
               </div>
             </li>
@@ -169,7 +169,7 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container" *ngIf="routeUrl.includes('/help') && !dialogRef">
-        <button class="help-btn" type="button" (click)="openHelpMenu()">{{'Help'| translate}}</button>
+        <button class="help-btn" type="button" (click)="openHelpMenu()" data-test-id="btnToggleHelpMenuMain">{{'Help'| translate}}</button>
       </div>
     </div>
   </div>
