@@ -422,7 +422,7 @@
                           </li>
                         </ul>
                       </ng-container>
-                      <ng-container *ngIf="ckr.title == 'Associated symptoms'">
+                      <ng-container *ngIf="ckr.title == 'Associated symptoms' && ckr.data.length != 0">
                         <h6 class="my-3">{{ ckr.title|translate }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">

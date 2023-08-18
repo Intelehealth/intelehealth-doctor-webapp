@@ -481,6 +481,7 @@
   "Ended":"Завершенный",
   "Due":"должный",
   "No items found":"Элементы не найдены",
+  "Associated symptoms":"Сопутствующие симптомы",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
