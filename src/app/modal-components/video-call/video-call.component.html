@@ -58,6 +58,7 @@
                 type="button"
                 class="video-ctrl-btn red"
                 (click)="endCallInRoom()"
+                data-test-id="btnEndVideoCall"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
@@ -65,6 +66,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleAudio()"
+                data-test-id="btnToggleAudioVideoCall"
                 [class.gray]="_localAudioMute"
               >
                 <img
@@ -80,6 +82,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleVideo()"
+                data-test-id="btnToggleVideoVideoCall"
                 [class.gray]="_localVideoOff"
               >
                 <img
@@ -112,6 +115,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleWindow()"
+                data-test-id="btnToggleWindowVideoCall"
               >
                 <img
                   src="{{
@@ -219,6 +223,7 @@
                   placeholder="Type here"
                   [(ngModel)]="message"
                   (keyup.enter)="sendMessage()"
+                  data-test-id="etChatMessageVideoCall"
                 />
                 <div class="input-group-append">
                   <button type="button" (click)="fileInput.click()">
@@ -232,7 +237,7 @@
                   </button>
                 </div>
               </div>
-              <button type="button" class="send-btn" (click)="sendMessage()">
+              <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageVideoCall">
                 <img src="assets/svgs/send-icon-white.svg" alt="" />
               </button>
             </div>

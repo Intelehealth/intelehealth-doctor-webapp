@@ -1,4 +1,4 @@
-<button type="button" class="modal-close-btn" mat-dialog-close>
+<button type="button" class="modal-close-btn" mat-dialog-close data-test-id="btnCloseHelpMenu">
   <img src="assets/svgs/modal-close-icon.svg" alt="" width="100%">
 </button>
 <div mat-dialog-title>
@@ -35,8 +35,8 @@
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()">
-  <button class="send-btn" (click)="sendMessage()">
+  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessageHelpMenu">
+  <button class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageHelpMenu">
     <mat-icon aria-hidden="false" aria-label="send icon">{{'send'|translate}}</mat-icon>
   </button>
 </mat-dialog-actions>
