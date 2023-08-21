@@ -482,6 +482,9 @@
   "Due":"должный",
   "No items found":"Элементы не найдены",
   "Associated symptoms":"Сопутствующие симптомы",
+  "Patient reports":"Отчеты пациентов",
+  "Patient denies":"Пациент отрицает",
+  "Neonatal jaundice":"неонатальная желтуха",
 
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",

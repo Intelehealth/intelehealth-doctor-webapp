@@ -401,13 +401,13 @@
                   <h6>{{'Cheif Complaint'|translate}}</h6>
                   <div class="complaint-chips">
                     <div class="chip-item" *ngFor="let c of cheifComplaints">
-                      {{ c }}
+                      {{ c|translate }}
                     </div>
                   </div>
                   <div class="check-up-reason-con">
                     <ng-container *ngFor="let ckr of checkUpReasonData">
                       <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                        <h6 class="my-3">{{ ckr.title|translate }}</h6>
+                        <h6 class="my-3">{{ ckr.title.trim()|translate }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item">
@@ -423,7 +423,7 @@
                         </ul>
                       </ng-container>
                       <ng-container *ngIf="ckr.title == 'Associated symptoms' && ckr.data.length != 0">
-                        <h6 class="my-3">{{ ckr.title|translate }}</h6>
+                        <h6 class="my-3">{{ ckr.title.trim()|translate }}</h6>
                         <ul class="items-list pt-0">
                           <li *ngFor="let ckri of ckr.data">
                             <div class="list-item-col">

@@ -467,6 +467,9 @@
   "Due":"Due",
   "No items found":"No items found",
   "Associated symptoms":"Associated symptoms",
+  "Patient reports":"Patient reports",
+  "Patient denies":"Patient denies",
+  "Neonatal jaundice":"Neonatal jaundice",
   
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",
