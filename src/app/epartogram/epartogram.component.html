@@ -14,7 +14,7 @@
                   <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
                   <td colspan="4"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
                   <td colspan="10"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
-                  <td colspan="22"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
+                  <td colspan="21"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
                 </tr>
                 <tr class="page-title-row">
                   <td colspan="10"><span>
@@ -26,6 +26,38 @@
                   </td>
                   <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
                 </tr>
+                <ng-container *ngIf="visitCompleted">
+                  <tr>
+                    <td colspan="41" class="divider"></td>
+                  </tr>
+                  <tr class="page-title-row-2" *ngIf="visitCompleteReason == 'Out Of Time'">
+                    <td colspan="10"><span>Visit Complete Reason:</span> Out Of Time</td>
+                    <td colspan="32"><span>Out of Time Reason:</span> {{outOfTimeReason}}</td>
+                  </tr>
+                  <tr class="page-title-row-2" *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
+                    <td colspan="41"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
+                  </tr>
+                  <tr class="page-title-row-2" *ngIf="visitCompleteReason == 'Other'">
+                    <td colspan="10"><span>Visit Complete Reason:</span> Other</td>
+                    <td colspan="32"><span>Other Reason:</span> {{referTypeOtherReason}}</td>
+                  </tr>
+                  <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
+                    <tr class="page-title-row-2">
+                      <td colspan="41"><span>Visit Complete Reason:</span> Labor Complete</td>
+                    </tr>
+                    <tr class="page-title-row-2">
+                      <td [attr.colspan]="birthOutcome == 'Other' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                      <td colspan="21" *ngIf="birthOutcome == 'Other'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
+                    </tr>
+                    <tr class="page-title-row-2">
+                      <td [attr.colspan]="motherDeceased == 'YES' ? 20 : 41"><span>Mother Deceased :</span> {{motherDeceased}}</td>
+                      <td colspan="21" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                    <td colspan="41" class="divider"></td>
+                  </tr>
+                </ng-container>
                 <tr>
                   <td colspan="3" class="nb"></td>
                   <td>Time</td>
@@ -182,7 +214,38 @@
                   <td colspan="27" class="divider2"></td>
                   <td colspan="12" class="divider2">
                     <div class="birth-outcome-con">
-                      {{birthOutcome|uppercase}}
+                      <ng-container *ngIf="visitCompleteReason == 'Out Of Time'">
+                        <div>
+                          {{'OUT OF TIME'|uppercase}}
+                        </div>
+                        <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="outOfTimeReason" matTooltipPosition="right">info_outline</mat-icon>
+                      </ng-container>
+                      <ng-container *ngIf="visitCompleteReason == 'Other'">
+                        <div>
+                          {{'Other'|uppercase}}
+                        </div>
+                        <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="referTypeOtherReason" matTooltipPosition="right">info_outline</mat-icon>
+                      </ng-container>
+                      <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
+                        <div class="d-flex flex-column">
+                          <div class="d-flex align-items-center justify-content-center">
+                            <div>
+                              {{birthOutcome|uppercase}}
+                            </div>
+                            <ng-container *ngIf="birthOutcome == 'Other'">
+                              <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="birthOutcomeOther" matTooltipPosition="right">info_outline</mat-icon>
+                            </ng-container>
+                          </div>
+                          <div class="d-flex align-items-center justify-content-center">
+                            <div>
+                              {{motherDeceased == 'YES' ? 'MOTHER DESEASED' : 'MOTHER ALIVE'}}
+                            </div>
+                            <ng-container *ngIf="motherDeceased == 'YES'">
+                              <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="motherDeceasedOther" matTooltipPosition="right">info_outline</mat-icon>
+                            </ng-container>
+                          </div>
+                        </div>
+                      </ng-container>
                     </div>
                   </td>
                 </tr>

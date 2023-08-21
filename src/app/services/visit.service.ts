@@ -29,7 +29,7 @@ export class VisitService {
     const query = {
       ...{
         includeInactive: false,
-        v: "custom:(uuid,startDatetime,stopDatetime,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value,comment),encounterDatetime,voided,encounterType:(display),encounterProviders:(display,provider:(uuid,attributes,name))),attributes)",
+        v: "custom:(uuid,startDatetime,stopDatetime,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate),attributes),location:(display),encounters:(display,obs:(display,uuid,value,comment,concept:(uuid,display)),encounterDatetime,voided,encounterType:(display),encounterProviders:(display,provider:(uuid,attributes,name))),attributes)",
       },
       ...params,
     };

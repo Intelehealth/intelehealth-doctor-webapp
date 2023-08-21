@@ -221,6 +221,13 @@ export class EpartogramComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
 
+  visitCompleteReason: string;
+  outOfTimeReason: string;
+  referTypeOtherReason: string;
+  birthOutcomeOther: string;
+  motherDeceased: string;
+  motherDeceasedReason: string;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -283,18 +290,40 @@ export class EpartogramComponent implements OnInit {
     const visitCompleteEnc = this.visit.encounters.find((o: any) => o.encounterType.display == 'Visit Complete');
     if (visitCompleteEnc) {
       this.visitCompleted = true;
-      visitCompleteEnc.obs.forEach((obs: any) => {
-        if (obs.display.includes('Birth Outcome')) {
-          this.birthOutcome = obs.value;
+      let outOfTimeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
+      let referTypeIndex = visitCompleteEnc.obs.findIndex((o: any) => o.concept.display == 'Refer Type');
+      if (outOfTimeIndex != -1) {
+        this.visitCompleteReason = "Out Of Time";
+        this.outOfTimeReason = visitCompleteEnc.obs[outOfTimeIndex].value;
+      } else if (referTypeIndex != -1) {
+        this.visitCompleteReason = visitCompleteEnc.obs[referTypeIndex].value;
+        if (visitCompleteEnc.obs[referTypeIndex].value == 'Other') {
+          this.referTypeOtherReason = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Refer Type Other')?.value;
         }
-        if (obs.display.includes('Refer to other Hospital')) {
-          this.birthOutcome = 'RTOH';
+      } else {
+        this.visitCompleteReason = "Labor Complete";
+        this.birthOutcome = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
+        if (this.birthOutcome == 'Other') {
+          this.birthOutcomeOther = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
         }
-        if (obs.display.includes('Self discharge against Medical Advice')) {
-          this.birthOutcome = 'DAMA';
+        this.motherDeceased = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
+        if (this.motherDeceased == 'YES') {
+          this.motherDeceasedReason = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
         }
-        this.birthtime = moment(visitCompleteEnc.encounterDatetime).format("HH:mm A");
-      });
+      }
+
+      // visitCompleteEnc.obs.forEach((obs: any) => {
+      //   if (obs.display.includes('Birth Outcome')) {
+      //     this.birthOutcome = obs.value;
+      //   }
+      //   if (obs.display.includes('Refer to other Hospital')) {
+      //     this.birthOutcome = 'RTOH';
+      //   }
+      //   if (obs.display.includes('Self discharge against Medical Advice')) {
+      //     this.birthOutcome = 'DAMA';
+      //   }
+      //   this.birthtime = moment(visitCompleteEnc.encounterDatetime).format("HH:mm A");
+      // });
     }
 
     // console.log(this.pinfo);

@@ -122,6 +122,13 @@
   justify-content: center;
   white-space: nowrap;
   padding: 10px 5px;
+
+  .mat-icon {
+    color: red;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
 }
 
 .page-title-row {
@@ -132,6 +139,21 @@
     font-size: 16px;
     border: none;
     color: #007bff;
+    span {
+      color: #000000;
+    }
+  }
+}
+
+.page-title-row-2 {
+  border: none !important;
+
+  td {
+    background-color: #FFE9EF;
+    text-align: left;
+    font-size: 16px;
+    border-radius: 0px;
+    color: red;
     span {
       color: #000000;
     }

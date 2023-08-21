@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   showAll: boolean = false;
   displayedColumns1: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
   displayedColumns2: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
-  displayedColumns3: string[] = ['name', 'age', 'date_of_birth', 'no_of_alerts', 'stage', 'alarming_readings', 'birth_outcome', 'provider'];
+  displayedColumns3: string[] = ['name', 'age', 'date_of_birth', 'no_of_alerts', 'stage', 'alarming_readings', 'birth_outcome', 'reason', 'provider'];
 
   dataSource1 = new MatTableDataSource<any>();
   dataSource2 = new MatTableDataSource<any>();
@@ -179,18 +179,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
 
           if (encounters[x].display.includes('Visit Complete')) {
-            for (let y = 0; y < encounters[x].obs.length; y++) {
-              if (encounters[x].obs[y].display.includes('Birth Outcome')) {
-                visit.birthOutcome = encounters[x].obs[y].value;
+            let outOfTimeIndex = encounters[x].obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
+            let referTypeIndex = encounters[x].obs.findIndex((o: any) => o.concept.display == 'Refer Type');
+            if (outOfTimeIndex != -1) {
+              visit.completeReason = "Out Of Time";
+              visit.outOfTimeReason = encounters[x].obs[outOfTimeIndex].value;
+            } else if (referTypeIndex != -1) {
+              visit.completeReason = encounters[x].obs[referTypeIndex].value;
+              if (encounters[x].obs[referTypeIndex].value == 'Other') {
+                visit.referTypeOtherReason = encounters[x].obs.find((o: any) => o.concept.display == 'Refer Type Other')?.value;
               }
-              if (encounters[x].obs[y].display.includes('Refer to other Hospital')) {
-                visit.birthOutcome = 'RTOH';
+            } else {
+              visit.completeReason = "Labor Complete";
+              visit.birthOutcome = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
+              if (visit.birthOutcome == 'Other') {
+                visit.birthOutcomeOther = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
               }
-              if (encounters[x].obs[y].display.includes('Self discharge against Medical Advice')) {
-                visit.birthOutcome = 'DAMA';
+              visit.motherDeceased = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
+              if (visit.motherDeceased == 'YES') {
+                visit.motherDeceasedReason = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
               }
               visit.dateTimeOfBirth = encounters[x].encounterDatetime;
             }
+            // for (let y = 0; y < encounters[x].obs.length; y++) {
+            //   if (encounters[x].obs[y].display.includes('Birth Outcome')) {
+            //     visit.birthOutcome = encounters[x].obs[y].value;
+            //   }
+            //   if (encounters[x].obs[y].display.includes('Refer to other Hospital')) {
+            //     visit.birthOutcome = 'RTOH';
+            //   }
+            //   if (encounters[x].obs[y].display.includes('Self discharge against Medical Advice')) {
+            //     visit.birthOutcome = 'DAMA';
+            //   }
+            //   visit.dateTimeOfBirth = encounters[x].encounterDatetime;
+            // }
           }
         }
       }
