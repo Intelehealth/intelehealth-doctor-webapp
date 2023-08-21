@@ -34,7 +34,8 @@ export const environment = {
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
   vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
   authGatwayURL: 'https://dev.intelehealth.org:3030/v2/',
-  showCaptcha: true
+  showCaptcha: true,
+  recordsPerPage: 1000
 };
 
 /*

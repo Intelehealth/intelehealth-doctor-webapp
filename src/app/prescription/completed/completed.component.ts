@@ -16,8 +16,8 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() completedVisits: any = [];
   @Input() completedVisitsCount: number = 0;
   @ViewChild('completedPaginator') paginator: MatPaginator;
-  offset: number = 1000;
-  recordsFetched: number = 1000;
+  offset: number = environment.recordsPerPage;
+  recordsFetched: number = environment.recordsPerPage;
   pageEvent: PageEvent;
   pageIndex:number = 0;
   pageSize:number = 5;

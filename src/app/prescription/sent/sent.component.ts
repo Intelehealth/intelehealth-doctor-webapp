@@ -17,8 +17,8 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() prescriptionsSent: any = [];
   @Input() prescriptionsSentCount: number = 0;
   @ViewChild('sentPaginator') paginator: MatPaginator;
-  offset: number = 1000;
-  recordsFetched: number = 1000;
+  offset: number = environment.recordsPerPage;
+  recordsFetched: number = environment.recordsPerPage;
   pageEvent: PageEvent;
   pageIndex:number = 0;
   pageSize:number = 5;
