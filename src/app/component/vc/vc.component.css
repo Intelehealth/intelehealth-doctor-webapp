@@ -31,6 +31,10 @@ i.fa {
   padding-left: 7px !important;
 }
 
+.icon {
+  border: 1px solid lightgrey;
+}
+
 .icon img {
   height: 25px;
   width: 50px;
@@ -64,7 +68,8 @@ i.fa {
 }
 
 .button-tab {
-  bottom: 5%;
+  bottom: 0;
+  display: contents;
 }
 
 .container {
@@ -124,7 +129,7 @@ i.fa {
 .is-fullscreen .remoteVideo {
   margin: auto !important;
 
-  height: 46vh !important;
+  height: 42vh !important;
   width: 65vw !important;
 }
 
@@ -132,7 +137,7 @@ i.fa {
   margin: auto !important;
 
   right: 0;
-  bottom: -3%;
+  bottom: -1%;
 }
 
 .is-fullscreen .local-container .localVideo {
