@@ -990,7 +990,7 @@
                   <tbody>
                     <ng-container *ngIf="existingDiagnosis.length">
                       <tr *ngFor="let d of existingDiagnosis; let i = index">
-                        <td>{{ d.diagnosisName }}</td>
+                        <td>{{ d.diagnosisName|translate }}</td>
                         <td>{{ d.diagnosisType|translate }}</td>
                         <td>{{ d.diagnosisStatus|translate }}</td>
                         <td class="pr-0">
@@ -1054,6 +1054,9 @@
                             notFoundText="{{'No items found'|translate}}"
                           >
                           <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                            {{item.name|translate}}
+                          </ng-template>
+                          <ng-template ng-label-tmp let-item="item">
                             {{item.name|translate}}
                           </ng-template>
                           </ng-select>
