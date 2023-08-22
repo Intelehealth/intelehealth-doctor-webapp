@@ -51,7 +51,7 @@ export class DiagnosisService {
               //   name: element.concept.preferredName,
               //   code: name.conceptReferenceTerm.code
               // };
-              this.diagnosisArray.push(this.translateService.instant(element.concept.preferredName));
+              this.diagnosisArray.push(element.concept.preferredName);
             }
           });
         });
