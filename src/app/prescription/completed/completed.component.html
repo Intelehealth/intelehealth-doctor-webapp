@@ -2,99 +2,18 @@
   <div class="row">
     <div class="col-md-12 p-0">
       <mat-accordion class="intel-accordion-con" multi>
-        <!-- <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <div class="intel-accordion-title">
-                <img src="assets/svgs/pad-2.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">{{'Completed Visits'|translate}} ({{completedVisits.length ? completedVisits.length : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Ended visits after prescription'|translate}}" matTooltipPosition="right">help_outline</mat-icon>
-              </div>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
 
-          <div class="mat-elevation-z8">
-            <table mat-table [dataSource]="dataSource">
-
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> {{'Patient'|translate}} </th>
-                <td mat-cell *matCellDef="let element">
-
-                  <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient.person.display}} ({{(element.patient.person.gender)|translate}})</span>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="age">
-                <th mat-header-cell *matHeaderCellDef> {{'Age'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}} {{'y'|translate}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="visit_created">
-                <th mat-header-cell *matHeaderCellDef> {{'Visit Created'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.startDatetime|date:'d MMM, y'}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="location">
-                <th mat-header-cell *matHeaderCellDef> {{'Location'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.location.display}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="cheif_complaint">
-                <th mat-header-cell *matHeaderCellDef> {{'Cheif Complaint'|translate}} </th>
-                <td mat-cell *matCellDef="let element"> {{element.cheif_complaint}} </td>
-              </ng-container>
-
-              <ng-container matColumnDef="prescription_sent">
-                <th mat-header-cell *matHeaderCellDef> {{'Prescription Sent'|translate}} </th>
-                <td mat-cell *matCellDef="let element">
-                  <div class="green-pill">
-                    <img src="assets/svgs/green-pad.svg" alt="">
-                    <span class="ml-2">{{element?.prescription_sent}}</span>
-                  </div>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="visit_ended">
-                <th mat-header-cell *matHeaderCellDef> {{'Visit Ended'|translate}} </th>
-                <td mat-cell *matCellDef="let element">
-                  <div class="green-pill">
-                    <img src="assets/svgs/green-pad.svg" alt="">
-                    <span class="ml-2">{{element?.visit_ended}}</span>
-                  </div>
-                </td>
-              </ng-container>
-
-              <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-                  {{'No data to display.'|translate}}
-                </td>
-              </tr>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"   [routerLink]="['/dashboard/visit-summary', row?.uuid]" ></tr>
-            </table>
-
-            <mat-paginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-              aria-label="Select page of periodic elements">
-            </mat-paginator>
-          </div>
-
-        </mat-expansion-panel> -->
-
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
+        <mat-expansion-panel [expanded]="true" data-test-id="matExpCompleted">
+          <mat-expansion-panel-header data-test-id="matExpHeaderCompleted">
             <mat-panel-title>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/pad-2.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Completed Visits'|translate}} ({{completedVisitsCount}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Ended visits after prescription'|translate}}" matTooltipPosition="right">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Ended visits after prescription'|translate}}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" data-test-id="etSearchCompleted">
+                  <input type="text" class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchCompleted">
                   <div class="input-group-append">
-                    <span class="input-group-text click" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
                   </div>
@@ -176,7 +95,7 @@
 
             <mat-paginator #tempPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
             <mat-paginator #completedPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
-            [length]="completedVisitsCount" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEvent = getData($event)" aria-label="Select page of periodic elements">
+            [length]="completedVisitsCount" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEvent = getData($event)" aria-label="Select page of periodic elements" data-test-id="matPaginatorCompleted">
             </mat-paginator>
           </div>
 

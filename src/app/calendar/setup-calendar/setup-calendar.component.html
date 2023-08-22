@@ -52,8 +52,8 @@
                   <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
                     aria-describedby="basic-addon1" readonly data-test-id="etSelectStartDate">
                   <mat-datepicker #picker1></mat-datepicker>
-                  <div class="input-group-append" data-test-id="datepickerSelectStartDate">
-                    <span class="input-group-text" id="basic-addon1">
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon1" data-test-id="datepickerSelectStartDate">
                       <mat-datepicker-toggle matSuffix [for]="picker1">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                       </mat-datepicker-toggle>
@@ -67,8 +67,8 @@
                   <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
                     aria-describedby="basic-addon2" readonly data-test-id="etSelectEndDate">
                   <mat-datepicker #picker2></mat-datepicker>
-                  <div class="input-group-append" data-test-id="datepickerSelectEndDate">
-                    <span class="input-group-text" id="basic-addon2">
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon2" data-test-id="datepickerSelectEndDate">
                       <mat-datepicker-toggle matSuffix [for]="picker2">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                       </mat-datepicker-toggle>
@@ -314,7 +314,7 @@
                 <ng-container *ngFor="let doff of fd.controls; let j=index;">
                   <div class="chip-item">
                     <span>{{doff.value|date:'dd MMM YYYY'}}</span>
-                    <button mat-icon-button type="button" (click)="removeDaysOff(j)" data-test-id="btnRemoveDaysOff">
+                    <button mat-icon-button type="button" (click)="removeDaysOff(j)" data-test-id="{{'btnRemoveDaysOff' + j}}">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
