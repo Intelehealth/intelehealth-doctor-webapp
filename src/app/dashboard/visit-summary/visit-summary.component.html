@@ -1053,6 +1053,9 @@
                             [addTag]="true"
                             notFoundText="{{'No items found'|translate}}"
                           >
+                          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                            {{item.name|translate}}
+                          </ng-template>
                           </ng-select>
                         </div>
                       </div>
