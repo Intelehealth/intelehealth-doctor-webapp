@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-verification-method',
@@ -21,7 +22,8 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   maxTelLegth: number = 10;
   subscription: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, private toastr: ToastrService) {
+  constructor(private authService: AuthService, private router: Router, 
+    private toastr: ToastrService, private translate: TranslateService) {
     this.verificationForm = new FormGroup({
       phone: new FormControl('', [Validators.required]),
       email: new FormControl('', Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
@@ -83,10 +85,11 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
 
     this.authService.requestOtp(payload).subscribe((res: any) => {
       if (res.success) {
-        this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.verificationForm.value.email) } successfully!`, "OTP Sent");
+        this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)
+         : this.replaceWithStar(this.verificationForm.value.email) } ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
         this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'login', via: this.active, val: (this.active == 'phone') ? `${this.verificationForm.value.countryCode}||${this.verificationForm.value.phone}` : this.verificationForm.value.email } });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.toastr.error(this.translate.instant(res.message), "Error");
       }
     });
   }

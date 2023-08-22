@@ -2,6 +2,7 @@ import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { AppointmentService } from 'src/app/services/appointment.service';
@@ -50,7 +51,8 @@ export class RescheduleAppointmentComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<RescheduleAppointmentComponent>,
     private appointmentService: AppointmentService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private translate: TranslateService) {
     this.minDate = new Date();
   }
 
@@ -88,7 +90,7 @@ export class RescheduleAppointmentComponent implements OnInit {
     if (this.selectedDate && this.selectedSlot) {
       this.close({ date: this.selectedDate, slot: this.selectedSlot });
     } else {
-      this.toastr.warning("Please select slot to reschedule.", "Select Slot");
+      this.toastr.warning(this.translate.instant("Please select slot to reschedule."), this.translate.instant("Select Slot"));
     }
   }
 

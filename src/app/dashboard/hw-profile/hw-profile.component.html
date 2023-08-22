@@ -9,13 +9,13 @@
               <label for="profile-pic">
                 <img src="assets/svgs/camera.svg" alt="">
               </label>
-              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)">
+              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)" data-test-id="fileInputHWProfile">
             </div>
           </div>
         </div>
         <div class="profile-content">
           <h6>{{hwName|titlecase}}</h6>
-          <p>Username: {{user?.display}}</p>
+          <p>{{'Username' | translate }}: {{user?.display}}</p>
         </div>
       </div>
     </div>
@@ -26,93 +26,94 @@
             <ng-template matStepLabel>
               <div class="custom-step-label">
                 <span class="label-index">1</span>
-                Personal Information
+                {{'Personal Information' | translate}}
               </div>
             </ng-template>
             <form [formGroup]="personalInfoForm" (ngSubmit)="updateProfile()">
               <div class="form-row">
                 <div class="form-group col-md-4">
-                  <label for="givenName">First name *</label>
-                  <input type="text" class="form-control" formControlName="givenName" placeholder="Enter first name">
+                  <label for="givenName">{{'First name' | translate}} *</label>
+                  <input type="text" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenNameHWProfile">
                   <div *ngIf="submitted && f1.givenName.errors">
-                    <small class="error-msg" *ngIf="f1.givenName.errors.required">Enter first name</small>
-                    <small class="error-msg" *ngIf="f1.givenName.errors.pattern">Enter alphabates only</small>
+                    <small class="error-msg" *ngIf="f1.givenName.errors.required">{{'Enter first name' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.givenName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
                   </div>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="middleName">Middle name *</label>
-                  <input type="text" class="form-control" formControlName="middleName" placeholder="Enter middle name">
+                  <label for="middleName">{{'Middle name' | translate}} *</label>
+                  <input type="text" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name'| translate}}" data-test-id="etMiddleNameHWProfile">
                   <div *ngIf="submitted && f1.middleName.errors">
-                    <small class="error-msg" *ngIf="f1.middleName.errors.required">Enter middle name</small>
-                    <small class="error-msg" *ngIf="f1.middleName.errors.pattern">Enter alphabates only</small>
+                    <small class="error-msg" *ngIf="f1.middleName.errors.required">{{'Enter middle name' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.middleName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
                   </div>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="familyName">Last name *</label>
-                  <input type="text" class="form-control" formControlName="familyName" placeholder="Enter last name">
+                  <label for="familyName">{{'Last name' | translate}} *</label>
+                  <input type="text" class="form-control" formControlName="familyName" placeholder="{{'Enter last name' | translate}}" data-test-id="etFamilyNameHWProfile">
                   <div *ngIf="submitted && f1.familyName.errors">
-                    <small class="error-msg" *ngIf="f1.familyName.errors.required">Enter last name</small>
-                    <small class="error-msg" *ngIf="f1.familyName.errors.pattern">Enter alphabates only</small>
+                    <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter last name' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only' |translate}}</small>
                   </div>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="gender">Gender *</label>
+                  <label for="gender">{{'Gender'|translate}} *</label>
                   <div class="py-2">
                     <div class="pretty p-default p-round">
-                      <input type="radio" value="M"  formControlName="gender">
+                      <input type="radio" value="M"  formControlName="gender" data-test-id="radioGenderMaleHWProfile">
                       <div class="state p-success">
-                          <label>Male</label>
+                          <label>{{'Male' | translate}}</label>
                       </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="F"  formControlName="gender">
+                          <input type="radio" value="F"  formControlName="gender" data-test-id="radioGenderFemaleHWProfile">
                           <div class="state p-success">
-                              <label>Female</label>
+                              <label>{{'Female'| translate}}</label>
                           </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="U"  formControlName="gender">
+                          <input type="radio" value="U"  formControlName="gender" data-test-id="radioGenderOtherHWProfile">
                           <div class="state p-success">
-                              <label>Other</label>
+                              <label>{{'Other' | translate}}</label>
                           </div>
                       </div>
                   </div>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="birthdate">Date of birth *</label>
+                  <label for="birthdate">{{'Date of birth' | translate}} *</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" formControlName="birthdate" [max]="today" [matDatepicker]="dobdp" placeholder="Enter DOB" aria-label="Birthdate"
-                      aria-describedby="basic-addon1" readonly>
+                    <input type="text" class="form-control" formControlName="birthdate" [max]="today" [matDatepicker]="dobdp" placeholder="{{'Enter DOB' | translate}}" aria-label="Birthdate"
+                      aria-describedby="basic-addon1" readonly data-test-id="etBirthdateHWProfile">
                     <mat-datepicker #dobdp></mat-datepicker>
                     <div class="input-group-append">
                       <span class="input-group-text" id="basic-addon1">
-                        <mat-datepicker-toggle matSuffix [for]="dobdp">
+                        <mat-datepicker-toggle matSuffix [for]="dobdp" data-test-id="dpBirthdateHWProfile">
                           <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                         </mat-datepicker-toggle>
                       </span>
                     </div>
                   </div>
                   <div *ngIf="submitted && f1.birthdate.errors">
-                    <small class="error-msg" *ngIf="f1.birthdate.errors.required">Enter DOB</small>
+                    <small class="error-msg" *ngIf="f1.birthdate.errors.required">{{'Enter DOB'|translate}}</small>
                   </div>
                 </div>
                 <div class="form-group col-md-2">
-                  <label for="age">Age *</label>
-                  <input type="number" class="form-control" formControlName="age" placeholder="Enter age" readonly>
+                  <label for="age">{{'Age'| translate}} *</label>
+                  <input type="number" class="form-control" formControlName="age" placeholder="{{'Enter age'|translate}}" readonly data-test-id="etAgeHWProfile">
                   <div *ngIf="submitted && f1.age.errors">
-                    <small class="error-msg" *ngIf="f1.age.errors.required">Enter age</small>
-                    <small class="error-msg" *ngIf="f1.age.errors.pattern">Enter numeric value only</small>
-                    <small class="error-msg" *ngIf="f1.age.errors.min">Age should be greater than or equal to 18</small>
+                    <small class="error-msg" *ngIf="f1.age.errors.required">{{'Enter age' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.age.errors.pattern">{{'Enter numeric value only' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.age.errors.min">{{'Age should be greater than or equal to 18' | translate}}</small>
                   </div>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 email-field">
-                  <label for="phoneNumber">Phone Number *</label>
+                  <label for="phoneNumber">{{'Phone Number' | translate}} *</label>
                   <input type="text"
                     ng2TelInput
+                    data-test-id="etPhoneNumberHWProfile"
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'phoneNumber')"
                     (ng2TelOutput)="getNumber($event, 'phoneNumber')"
@@ -128,19 +129,20 @@
                     <mat-icon class="error" *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid && !checkingPhoneValidity">error_outline</mat-icon>
                   </div>
                   <div *ngIf="submitted && f1.phoneNumber.errors">
-                    <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">Enter phone number</small>
+                    <small class="error-msg" *ngIf="f1.phoneNumber.errors.required">{{'Enter phone number' | translate}}</small>
                   </div>
                   <div *ngIf="submitted && !f1?.phoneNumber?.errors && !phoneNumberValid">
-                    <small class="error-msg">Enter valid phone number</small>
+                    <small class="error-msg">{{'Enter valid phone number' | translate}}</small>
                   </div>
                   <div *ngIf="!f1?.phoneNumber?.errors && phoneNumberValid && !phoneValid">
-                    <small class="error-msg">Phone number already exists. Please enter another phone number.</small>
+                    <small class="error-msg">{{'Phone number already exists. Please enter another phone number.' | translate}}</small>
                   </div>
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="whatsapp">WhatsApp Number *</label>
+                  <label for="whatsapp">{{'WhatsApp Number' | translate}} *</label>
                   <input type="text"
                     ng2TelInput
+                    data-test-id="etWhatsAppNumberHWProfile"
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'whatsAppNumber')"
                     (ng2TelOutput)="getNumber($event, 'whatsAppNumber')"
@@ -151,35 +153,35 @@
                     formControlName="whatsapp"
                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"/>
                   <div *ngIf="submitted && f1.whatsapp.errors">
-                    <small class="error-msg" *ngIf="f1.whatsapp.errors.required">Enter whatsApp number</small>
+                    <small class="error-msg" *ngIf="f1.whatsapp.errors.required">{{'Enter whatsApp number' | translate}}</small>
                   </div>
                   <div *ngIf="submitted && !f1.whatsapp?.errors && !whatsAppNumberValid">
-                    <small class="error-msg">Enter valid whatsApp number</small>
+                    <small class="error-msg">{{'Enter valid whatsApp number' | translate}}</small>
                   </div>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6 email-field">
-                  <label for="emailId">Email ID *</label>
-                  <input type="email" class="form-control" formControlName="emailId" placeholder="Enter email">
+                  <label for="emailId">{{'Email ID' | translate}} *</label>
+                  <input type="email" class="form-control" formControlName="emailId" placeholder="{{'Enter email'|translate}}" data-test-id="etEmailHWProfile">
                   <div class="check">
                     <mat-spinner diameter="20" *ngIf="f1.emailId?.pending"></mat-spinner>
                     <mat-icon class="success" *ngIf="!f1?.emailId?.errors && !f1.emailId?.pending">done_all</mat-icon>
                     <mat-icon class="error" *ngIf="f1?.emailId?.errors?.alreadyExists && !f1.emailId?.pending">error_outline</mat-icon>
                   </div>
                   <div *ngIf="submitted && f1.emailId.errors">
-                    <small class="error-msg" *ngIf="f1.emailId.errors?.required">Enter email</small>
-                    <small class="error-msg" *ngIf="f1.emailId.errors?.pattern">Enter valid email</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.required">{{'Enter email' | translate}}</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.pattern">{{'Enter valid email' | translate}}</small>
                   </div>
                   <div *ngIf="f1.emailId.errors">
-                    <small class="error-msg" *ngIf="f1.emailId.errors?.alreadyExists">Email already exists. Please enter another email.</small>
+                    <small class="error-msg" *ngIf="f1.emailId.errors?.alreadyExists">{{'Email already exists. Please enter another email.'| translate}}</small>
                   </div>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-12 text-right">
-                  <button type="submit" class="btn next-btn">
-                    Save
+                  <button type="submit" class="btn next-btn" data-test-id="btnNextHWProfile">
+                    {{'Save' | translate}}
                     <!-- <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt=""> -->
                   </button>
                 </div>

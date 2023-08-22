@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -81,7 +82,8 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private cookieService: CookieService,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService) {
 
       this.personalInfoForm = new FormGroup({
         givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -101,6 +103,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   get f1() { return this.personalInfoForm.controls; }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.today = moment().format('YYYY-MM-DD');
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));

@@ -1,4 +1,4 @@
-<button type="button" class="modal-close-btn" mat-dialog-close>
+<button type="button" class="modal-close-btn" mat-dialog-close data-test-id="btnCloseChatBox">
   <img src="assets/svgs/modal-close-icon.svg" alt="" width="100%" />
 </button>
 <div class="chat-main-con">
@@ -28,11 +28,11 @@
           <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
             <ng-container *ngIf="item.isRead">
               <img src="assets/svgs/read-status.svg" alt="" />
-              <span class="ml-1">Read</span>
+              <span class="ml-1">{{'Read'|translate}}</span>
             </ng-container>
             <ng-container *ngIf="!item.isRead">
               <img src="assets/svgs/sent-status.svg" alt="" />
-              <span class="ml-1">Sent</span>
+              <span class="ml-1">{{'Sent'|translate}}</span>
             </ng-container>
           </ng-container>
         </li>
@@ -61,6 +61,7 @@
           placeholder="Type here"
           [(ngModel)]="message"
           (keyup.enter)="sendMessage()"
+          data-test-id="etChatMessageChatBox"
         />
         <!-- <div class="input-group-append">
           <button type="button" (click)="fileInput.click()">
@@ -74,7 +75,7 @@
           </button>
         </div> -->
       </div>
-      <button type="button" class="send-btn" (click)="sendMessage()">
+      <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageChatBox">
         <img src="assets/svgs/send-icon-white.svg" alt="" />
       </button>
     </div>

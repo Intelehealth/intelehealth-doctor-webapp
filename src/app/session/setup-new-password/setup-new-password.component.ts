@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
-import { MindmapService } from 'src/app/services/mindmap.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -28,7 +28,7 @@ export class SetupNewPasswordComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private authService: AuthService,
-    private mindmapService: MindmapService
+    private translate: TranslateService,
   ) {
     this.resetPasswordForm = new FormGroup({
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
@@ -57,12 +57,14 @@ export class SetupNewPasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning("Password and Confirm Password doesn't match.", "Password doesn't match!");
+      this.toastr.warning(this.translate.instant("Password and Confirm Password doesn't match."), 
+      this.translate.instant("Password doesn't match!"));
       return;
     }
     let passwd = this.resetPasswordForm.value.password;
     if (!this.hasLowerCase(passwd) || !this.hasUpperCase(passwd) || !this.hasSpecialCharacter(passwd) || !this.hasNumber(passwd)) {
-      this.toastr.warning("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols.", "Password invalid!");
+      this.toastr.warning( this.translate.instant("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols."),
+      this.translate.instant("Password invalid!"));
       return;
     }
 
@@ -72,7 +74,7 @@ export class SetupNewPasswordComponent implements OnInit {
           this.router.navigate(['/session/login']);
         });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.toastr.error(this.translate.instant(res.message), "Error");
       }
     });
 

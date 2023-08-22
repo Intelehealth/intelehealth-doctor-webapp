@@ -60,15 +60,15 @@ export class SocketService {
       this.onEvent("allUsers").subscribe((data) => {
         this.activeUsers = data;
       });
-      this.onEvent("incoming_call").subscribe((data = {}) => {
-        if (!location.hash.includes("test/chat")) {
-          localStorage.patientUuid = data.patientUuid;
-          console.log("patientUuid: ", localStorage.patientUuid);
-          if (localStorage.patientUuid) {
-            this.openVcOverlay();
-          }
-        }
-      });
+      // this.onEvent("incoming_call").subscribe((data = {}) => {
+      //   if (!location.hash.includes("test/chat")) {
+      //     localStorage.patientUuid = data.patientUuid;
+      //     console.log("patientUuid: ", localStorage.patientUuid);
+      //     if (localStorage.patientUuid) {
+      //       this.openVcOverlay();
+      //     }
+      //   }
+      // });
       this.onEvent("log").subscribe((array) => {
         if (localStorage.log === "1") console.log.apply(console, array);
       });

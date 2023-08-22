@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-session',
@@ -31,20 +32,31 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  selectedLanguage: any = 1;
+  selectedLanguage: any = 'en';
   languages: any = [
     {
       id: 1,
-      name: 'English'
+      name: 'English',
+      code: 'en'
     },
     {
       id: 2,
-      name: 'Hindi'
+      name: 'Russian',
+      code: 'ru'
     }
   ];
-  constructor() { }
+  constructor(public translate: TranslateService) { }
 
   ngOnInit(): void {
+    if(localStorage.getItem('selectedLanguage')) {
+      this.selectedLanguage = localStorage.getItem('selectedLanguage');
+    }
+  }
+
+  changeLanguage() {
+    this.translate.use(this.selectedLanguage);
+    localStorage.setItem("selectedLanguage", this.selectedLanguage);
+    window.location.reload();
   }
 
 }

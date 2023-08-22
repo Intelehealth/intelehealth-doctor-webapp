@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -27,7 +28,8 @@ export class ChangePasswordComponent implements OnInit {
     private coreService: CoreService,
     private toastr: ToastrService,
     private authService: AuthService,
-    private pageTitleService: PageTitleService
+    private pageTitleService: PageTitleService,
+    private translateService: TranslateService
   ) {
     this.resetPasswordForm = new FormGroup({
       oldPassword: new FormControl('', [Validators.required]),
@@ -37,6 +39,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);
@@ -51,16 +54,19 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning("New Password and Confirm Password doesn't match.", "Password doesn't match!");
+      this.toastr.warning(this.translateService.instant("Password and Confirm Password doesn't match."), 
+      this.translateService.instant("Password doesn't match!"));
       return;
     }
     let passwd = this.resetPasswordForm.value.password;
     if (!this.hasLowerCase(passwd) || !this.hasUpperCase(passwd) || !this.hasSpecialCharacter(passwd) || !this.hasNumber(passwd)) {
-      this.toastr.warning("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols.", "Password invalid!");
+      this.toastr.warning( this.translateService.instant("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols."),
+      this.translateService.instant("Password invalid!"));
       return;
     }
     this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res: any) => {
-      this.toastr.success("Password has been changed successfully!", "Password Changed!");
+      this.toastr.success(this.translateService.instant("Password has been changed successfully!"),
+      this.translateService.instant("Password Changed!"));
     });
   }
 

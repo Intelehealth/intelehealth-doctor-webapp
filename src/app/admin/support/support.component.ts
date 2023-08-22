@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -33,10 +34,12 @@ export class SupportComponent implements OnInit, OnDestroy {
   constructor(
     private pageTitleService: PageTitleService,
     private supportService: SupportService,
-    private socketSvc: SocketService
+    private socketSvc: SocketService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);

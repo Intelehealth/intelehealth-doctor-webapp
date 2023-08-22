@@ -4,10 +4,19 @@ import { MatExpansionModule } from '@angular/material/expansion';
 
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 import { AppointmentsComponent } from './appointments.component';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import { HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatPaginationIntlService } from '../services/mat-pagination.service';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -20,7 +29,17 @@ import { MatIconModule } from '@angular/material/icon';
     MatPaginatorModule,
     MatTableModule,
     MatTooltipModule,
-    MatIconModule
+    MatIconModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
+  ],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
   ]
 })
 export class AppointmentsModule { }
