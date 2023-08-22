@@ -1044,7 +1044,7 @@
                             class="visit-select custom"
                             formControlName="diagnosisName"
                             (search)="onKeyUp($event)"
-                            [items]="(diagnosis$ | async)|translate"
+                            [items]="diagnosis$ | async"
                             bindLabel="name"
                             bindValue="name"
                             [clearable]="true"

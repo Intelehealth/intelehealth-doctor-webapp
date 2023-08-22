@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { TranslateService } from '@ngx-translate/core';
 declare var getEncounterProviderUUID: any,
   getFromStorage: any;
 
@@ -16,7 +17,10 @@ export class DiagnosisService {
   public isVisitSummaryChanged = false
   private baseURL = environment.baseURL;
 
-  constructor(private http: HttpClient,  private snackbar: MatSnackBar) { }
+  constructor(private http: HttpClient,  
+    private snackbar: MatSnackBar,
+    private translateService: TranslateService
+    ) { }
 
   concept(uuid): Observable<any> {
     const url = `${this.baseURL}/concept/${uuid}`;
@@ -47,7 +51,7 @@ export class DiagnosisService {
               //   name: element.concept.preferredName,
               //   code: name.conceptReferenceTerm.code
               // };
-              this.diagnosisArray.push(element.concept.preferredName);
+              this.diagnosisArray.push(this.translateService.instant(element.concept.preferredName));
             }
           });
         });
