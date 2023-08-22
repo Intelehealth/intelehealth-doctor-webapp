@@ -137,7 +137,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
-          this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator2.nextPage();
         }
@@ -180,7 +180,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.dataSource2 = new MatTableDataSource(this.priorityVisits);
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
-          this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator1.nextPage();
         }
@@ -224,7 +224,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
-          this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+          this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator3.nextPage();
         }

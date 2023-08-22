@@ -29,12 +29,12 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.completedVisits);
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

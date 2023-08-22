@@ -30,7 +30,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
     this.dataSource.paginator = this.tempPaginator;
   }
 
@@ -44,7 +44,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   onImgError(event: any) {
