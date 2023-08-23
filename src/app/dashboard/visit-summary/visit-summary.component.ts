@@ -564,8 +564,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
-                      const splitByDash = splitByBr[k].split('-');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
+                      const splitByDash = splitByBr[k].split(' -');
+                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join(' -') });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
