@@ -646,8 +646,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
                 const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });
+                const splitByComma = splitByColon[1].split('.');
+                for(let x = 0; x < splitByComma.length; x++){
+                  if (splitByComma[x]) {
+                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1].trim() + "." });
+                  }
+                };
+                // obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });
                 // for (let x = 0; x < splitByComma.length; x++) {
                 //   if (splitByComma[x]) {
                 //     obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma[x] });
