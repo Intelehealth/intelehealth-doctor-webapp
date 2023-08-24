@@ -119,9 +119,9 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://demo.intelehealth.org:3004/api/messages/',
-        'https://demo.intelehealth.org:3004/api/support/',
-        'https://demo.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://tf.intelehealth.org:3004/api/messages/',
+        'https://tf.intelehealth.org:3004/api/support/',
+        'https://tf.intelehealth.org:3004/api/auth/validateProviderAttribute',
       ]
     }),
     NgxPermissionsModule.forRoot({

@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
     const base64cred = btoa(cred);
     this.authService.login(base64cred).subscribe((res: any) => {
       if (res.authenticated && !res.verified) {
-        this.authService.getAuthToken(val.username, val.password).subscribe(token => {
+        // this.authService.getAuthToken(val.username, val.password).subscribe(token => {
           this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
             if (provider.results.length) {
               localStorage.setItem('provider', JSON.stringify(provider.results[0]));
@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
               this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
             }
           });
-        });
+        // });
       }
       else {
         this.translationService.getTranslation("Couldn't find you, credentials provided are wrong.", "Login Failed!",false);

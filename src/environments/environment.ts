@@ -30,11 +30,11 @@ export const environment = {
   },
   webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",
   webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/',
-  siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
+  siteKey: "6LdlqHUnAAAAACqzNZV6ucCuLkrRo-cKF1jCkeoc",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
   vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
   authGatwayURL: 'https://dev.intelehealth.org:3030/v2/',
-  showCaptcha: true,
+  showCaptcha: false,
   recordsPerPage: 1000
 };
 
