@@ -245,10 +245,10 @@
                               </div>
                               <div class="d-flex align-items-center justify-content-center">
                                 <div>
-                                  {{motherDeceased == 'YES' ? 'MOTHER DESEASED' : 'MOTHER ALIVE'}}
+                                  {{motherDeceased == 'YES' ? 'MOTHER DECEASED' : 'MOTHER ALIVE'}}
                                 </div>
                                 <ng-container *ngIf="motherDeceased == 'YES'">
-                                  <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="motherDeceasedOther" matTooltipPosition="right">info_outline</mat-icon>
+                                  <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="motherDeceasedReason" matTooltipPosition="right">info_outline</mat-icon>
                                 </ng-container>
                               </div>
                             </div>
