@@ -8,6 +8,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -61,7 +62,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<ViewVisitPrescriptionComponent>,
     private visitService: VisitService,
     private profileService: ProfileService,
-    private diagnosisService: DiagnosisService) { }
+    private diagnosisService: DiagnosisService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
@@ -134,7 +136,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint = obs.value.split('<b>');
+            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -252,8 +254,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
       .subscribe((response: any) => {
         response.results.forEach((obs: any) => {
+          let obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark: obs.value.split(':')[1].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
         });
       });
@@ -324,7 +327,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getPersonAttributeValue(attrType: string) {
-    let val = 'NA';
+    let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
         if (attrType == attr.attributeType.display) {
@@ -422,7 +425,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['*','*','*','*'],
+            widths: ['20%','*','30%','30%'],
             body: [
               // ['', '', '', { image: 'logo', width: 90, height: 30, alignment: 'right' }],
               [
@@ -716,15 +719,15 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Out', style: 'sectionheader', border: [false, false, false, true] }],
                       [
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','*'],
+                            widths: ['30%','30%','10%','30%'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Referral', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
+                              [{text: 'Referral to', style: 'tableHeader'}, {text: 'Referral facility', style: 'tableHeader'}, {text: 'Priority', style: 'tableHeader'}, {text: 'Referral for (Reason)', style: 'tableHeader'}],
                               ...this.getRecords('referral')
                             ]
                           },
@@ -753,7 +756,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','*', '*', '*'],
+                            widths: ['30%','30%', '10%', '30%'],
                             headerRows: 1,
                             body: [
                               [{text: 'Follow-up Requested', style: 'tableHeader'}, {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
@@ -887,10 +890,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'referral':
         if (this.referrals.length) {
           this.referrals.forEach(r => {
-            records.push([r.speciality, r.remark]);
+            records.push([r.speciality, r.facility, r.priority, r.reason]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 2, alignment: 'center' }]);
+          records.push([{ text: 'NIL', colSpan: 4, alignment: 'center' }]);
         }
         break;
       case 'followUp':
@@ -925,6 +928,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         })
         .then(blob=> {
           return new Promise((resolve, _) => {
+              if(!blob) resolve("");
               const reader = new FileReader();
               reader.onloadend = () => resolve(reader.result);
               reader.readAsDataURL(blob);

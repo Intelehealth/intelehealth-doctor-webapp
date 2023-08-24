@@ -17,6 +17,7 @@ import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 })
 export class AuthService {
 
+  private gatewayURL = environment.authGatwayURL;
   private baseUrl = environment.baseURL;
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
@@ -126,6 +127,20 @@ export class AuthService {
     );
   }
 
+  getAuthToken(username: string, password: string) {
+    const url = this.gatewayURL.replace('/v2', '');
+    return this.http.post(`${url}auth/login`, { username, password }).pipe(
+      map((res: any) => {
+        localStorage.setItem('token', res.token);
+        return res;
+      })
+    );
+  }
+
+  get authToken() {
+    return localStorage.getItem('token') || '';
+  }
+
   getProvider(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,preferredName),attributes)`);
   }
@@ -141,6 +156,7 @@ export class AuthService {
       localStorage.removeItem('provider');
       localStorage.removeItem('doctorName');
       localStorage.removeItem('xsddsdass');
+      localStorage.removeItem('token');
       // console.log(this.cookieService.getAll());
       // this.cookieService.delete('JSESSIONID');
       // this.cookieService.delete('JSESSIONID', '/');

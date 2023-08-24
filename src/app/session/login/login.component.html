@@ -1,44 +1,45 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12 p-0 section-title">
-      <h6>Login</h6>
+      <h6>{{'LOGIN'|translate}}</h6>
       <p>
-        Login with your provided username and password then you can choose the verification method.
+        {{'Login with your provided username and password then you can choose the verification method.'|translate}}
       </p>
     </div>
     <div class="col-md-12 px-0 py-4">
-      <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="formLogin">
         <div class="form-group">
           <label for="username">
-            Username
-            <span class="link"><a routerLink="/session/forgot-username">Forgot Username ?</a></span>
+            {{'Username'|translate}}
+            <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsernameLogin">{{'Forgot Username'|translate}} ?</a></span>
           </label>
-          <input type="text" class="form-control" formControlName="username" placeholder="Enter username">
+          <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsernameLogin">
           <div *ngIf="submitted && f.username.errors">
-            <small *ngIf="f.username.errors.required" class="error-msg">Please enter username</small>
+            <small *ngIf="f.username.errors.required" class="error-msg">{{'Please enter username'|translate}}</small>
             <small *ngIf="f.username.errors.usernameExists" class="error-msg">Couldn’t find you, please enter valid username</small>
           </div>
         </div>
         <div class="form-group">
           <label for="password">
-            Password
-            <span class="link"><a routerLink="/session/forgot-password">Forgot Password ?</a></span>
+            {{'Password'|translate}}
+            <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPasswordLogin">{{'Forgot Password'|translate}} ?</a></span>
           </label>
           <div class="password-field">
-            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password">
-            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPasswordLogin">
+            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePasswordLogin">
               <img src="assets/svgs/icon-eye.svg" alt="">
             </button>
           </div>
           <div *ngIf="submitted && f.password.errors">
-            <small *ngIf="f.password.errors.required" class="error-msg">Please enter valid password</small>
+            <small *ngIf="f.password.errors.required" class="error-msg">{{'Please enter password'|translate}}</small>
             <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
           </div>
         </div>
-        <div class="form-group">
-          <label for="capcha">Before logging in, please confirm you are not a robot</label>
+        <div class="form-group" *ngIf="showCaptcha">
+          <label for="capcha">{{'Before logging in, please confirm you are not a robot'|translate}}</label>
           <ngx-recaptcha2 #captchaElem
             [siteKey]="siteKey"
+            [hl]="selectedLanguage"
             (reset)="handleReset()"
             (expire)="handleExpire()"
             (load)="handleLoad()"
@@ -61,8 +62,8 @@
           </div>
         </div> -->
         <div class="form-group mt-3">
-          <button type="submit" class="btn btn-block next-btn">
-            Next
+          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitLogin">
+            {{'Next'|translate}}
             <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
           </button>
         </div>
@@ -70,7 +71,7 @@
     </div>
     <div class="col-md-12">
       <p class="section-terms-conditions">
-        Intelehealth <a href="https://intelehealth.org/terms-of-use" target="_blank">Terms & Conditions</a>  and <a href="https://intelehealth.org/privacy-policy" target="_blank">Privacy Policy</a>
+        Intelehealth <a data-test-id="linkTermsAndConditionsLogin" href="https://intelehealth.org/terms-of-use" target="_blank">{{'Terms & Conditions'|translate}}</a>  {{'AND'|translate}} <a data-test-id="linkPrivacyPolicyLogin" href="https://intelehealth.org/privacy-policy" target="_blank">{{'Privacy Policy'|translate}}</a>
       </p>
     </div>
   </div>

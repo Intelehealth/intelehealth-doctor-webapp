@@ -7,7 +7,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,15 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatPaginationIntlService } from '../services/mat-pagination.service';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -59,7 +68,17 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
       rolesIsolate: false,
       configurationIsolate: false
     }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
     MatProgressSpinnerModule
+  ],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
   ]
 })
 export class DashboardModule { }

@@ -22,6 +22,8 @@ import { LinkService } from 'src/app/services/link.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslationService } from 'src/app/services/translation.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -91,6 +93,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   pastVisits: any = [];
   minDate = new Date();
   selectedTabIndex: number = 0;
+  facilities = [
+      { id : 1 , name : "HSC"},
+      { id : 2 , name : "PHC"},
+      { id : 3 , name : "CHC"},
+      { id : 4 , name : "SDH"},
+      { id : 5 , name : "DH"},
+      { id : 6 , name : "TH"},
+      { id : 7 , name : "GH"},
+      { id : 8 , name : "Private Hospital"},
+      { id : 9 , name : "Other Facility*"}
+  ];
   specializations: any[] = [
     {
       id: 1,
@@ -109,6 +122,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       name: 'Pediatrician'
     }
   ];
+  refer_specializations = [
+      { id: 1, name : "CHO"},
+      { id: 2, name : "MO"},
+      { id: 3, name : "General Physician"},
+      { id: 4, name : "Obstetrician & Gynecologist"},
+      { id: 5, name : "Pediatrician"},
+      { id: 6, name : "General Surgeon"},
+      { id: 7, name : "Dermatologist"},
+      { id: 8, name : "ENT Specialist"},
+      { id: 9, name : "Eye Specialist"},
+      { id: 10, name : "Dental Surgeon"},
+      { id: 11, name : "Other Specialist*"},
+  ];
+  
   diagnosis: any[] = [
     // {
     //   id: 1,
@@ -295,7 +322,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private coreService: CoreService,
     private encounterService: EncounterService,
     private linkSvc: LinkService,
-    private socket: SocketService) {
+    private socket: SocketService,
+    private translateService: TranslateService,
+    private translationService: TranslationService) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -340,8 +369,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.addReferralForm = new FormGroup({
+      refer:new FormControl(false, [Validators.required]),
+      facility:new FormControl(null, [Validators.required]),
+      other_facility:new FormControl(),
       speciality: new FormControl(null, [Validators.required]),
-      remark: new FormControl(null, [Validators.required]),
+      other_speciality: new FormControl(),
+      priority_refer: new FormControl("Elective", [Validators.required]),
+      reason: new FormControl(null, [Validators.required])
     });
 
     this.followUpForm = new FormGroup({
@@ -358,10 +392,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
-    this.drugNameList = this.drugNameList.concat(medicines);
+    medicines.forEach(med => {
+      this.drugNameList.push({'id':med.id, 'name':this.translateService.instant(med.name)});
+    });
     // this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
@@ -399,7 +436,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     // });
 
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
-      if (val == 'Yes') {
+      if (val == 'Yes' || val == 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
         this.followUpForm.get('followUpTime').setValidators(Validators.required);
@@ -424,6 +461,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
+        if (this.checkIfEncounterExists(visit.encounters, 'Flagged')) {
+          this.visit["visitUploadTime"]= this.checkIfEncounterExists(visit.encounters, 'Flagged')['encounterDatetime'];
+        } else if (this.checkIfEncounterExists(visit.encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(visit.encounters, 'Vitals')) {
+          this.visit["visitUploadTime"]= this.checkIfEncounterExists(visit.encounters, 'ADULTINITIAL')['encounterDatetime'];
+        }
         this.checkVisitStatus(visit.encounters);
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: any) => {
           if (patient) {
@@ -562,7 +604,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
             this.currentComplaint = obs.value;
-            const currentComplaint = obs.value.split('<b>');
+            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -573,7 +615,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByBr = currentComplaint[i].split('<br/>');
                 if (splitByBr[0].includes('Associated symptoms')) {
                   let obj1: any = {};
-                  obj1.title = 'Associated symptoms';
+                  obj1.title = this.translateService.instant('Associated symptoms');
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
@@ -607,7 +649,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = obs.value.split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
@@ -648,9 +690,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'MEDICAL HISTORY') {
-            const medicalHistory = obs.value.split('<br/>');
+            const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
-            obj1.title = 'Patient history';
+            obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
@@ -662,15 +704,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
 
           if (obs.concept.display == 'FAMILY HISTORY') {
-            const familyHistory = obs.value.split('<br/>');
+            const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
-            obj1.title = 'Family history';
+            obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
-                const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                if (familyHistory[i].includes(':')) {
+                  const splitByColon = familyHistory[i].split(':');
+                  const splitByComma = splitByColon[1].split(',');
+                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                } else {
+                  obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
+                }
               }
             }
             this.patientHistoryData.push(obj1);
@@ -726,16 +772,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     var months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
-      return `${years} years`;
+      return `${years} ${this.translateService.instant('years')}`;
     } else if (months > 1) {
-      return `${months} months`;
+      return `${months} ${this.translateService.instant('months')}`;
     } else {
-      return `${days} days`;
+      return `${days} ${this.translateService.instant('days')}`;
     }
   }
 
   getPersonAttributeValue(attrType: string) {
-    let val = 'NA';
+    let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
         if (attrType == attr.attributeType.display) {
@@ -767,20 +813,24 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
       this.visitStatus = 'In-progress Visit';
     } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+      this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'Flagged')['encounterDatetime'];
+      console.log(this.checkIfEncounterExists(encounters, 'Flagged'))
       this.visitStatus = 'Priority Visit';
     } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+      this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'ADULTINITIAL')['encounterDatetime'];
+      console.log(this.checkIfEncounterExists(encounters, 'ADULTINITIAL'))
       this.visitStatus = 'Awaiting Visit';
     }
   }
 
   referSpecialist() {
     if (this.referSpecialityForm.invalid) {
-      this.toastr.warning("Please select specialization", "Invalid!");
+      this.toastr.warning(this.translateService.instant("Please select specialization"), this.translateService.instant("Invalid!"));
       return;
     }
 
     if (this.visitNotePresent) {
-      this.toastr.warning("Can't refer, visit note already exists for this visit!", "Can't refer");
+      this.toastr.warning(this.translateService.instant("Can't refer, visit note already exists for this visit!"), this.translateService.instant("Can't refer"));
       return;
     }
 
@@ -824,7 +874,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
         this.router.navigate(["/dashboard"]);
-        this.toastr.success("Visit has been re-assigned to the another speciality doctor successfully.", "Visit Re-assigned!")
+        this.toastr.success(this.translateService.instant("Visit has been re-assigned to the another speciality doctor successfully."), this.translateService.instant("Visit Re-assigned!"))
       }
     });
   }
@@ -869,7 +919,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientName: this.patient.person.display,
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
-      initiator: 'dr'
+      initiator: 'dr',
+      drPersonUuid: this.provider?.person.uuid
     });
 
     this.dialogRef2.afterClosed().subscribe((res: any) => {
@@ -1044,11 +1095,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   addNote() {
     if (this.addNoteForm.invalid) {
-      this.toastr.warning("Please enter note text to add", "Invalid note");
+      this.toastr.warning(this.translateService.instant("Please enter note text to add"), this.translateService.instant("Invalid note"));
       return;
     }
     if (this.notes.find((o: any) => o.value == this.addNoteForm.value.note)) {
-      this.toastr.warning("Note already added, please add another note.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Note already added, please add another note."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1106,7 +1157,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.medicines.find((o: any) => o.drug == this.addMedicineForm.value.drug)) {
-      this.toastr.warning("Drug already added, please add another drug.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Drug already added, please add another drug."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1126,7 +1177,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.additionalInstructions.find((o: any) => o.value == this.addAdditionalInstructionForm.value.note)) {
-      this.toastr.warning("Additional instruction already added, please add another instruction.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Additional instruction already added, please add another instruction."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1158,7 +1209,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.concept(adviceUuid).subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.advicesList.push(ans.display);
+        this.advicesList.push(this.translationService.getDropdownTranslation('advice', ans.display));
       });
     });
   }
@@ -1187,7 +1238,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.advices.find((o: any) => o.value == this.addAdviceForm.value.advice)) {
-      this.toastr.warning("Advice already added, please add another advice.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Advice already added, please add another advice."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1213,7 +1264,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.concept(testUuid).subscribe(res => {
       const result = res.answers;
       result.forEach(ans => {
-        this.testsList.push(ans.display);
+        this.testsList.push(this.translationService.getDropdownTranslation('tests', ans.display));
       });
     });
   }
@@ -1240,7 +1291,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.tests.find((o: any) => o.value == this.addTestForm.value.test)) {
-      this.toastr.warning("Test already added, please add another test.", "Already Added");
+      this.toastr.warning(this.translateService.instant("Test already added, please add another test."), this.translateService.instant("Already Added"));
       return;
     }
     this.encounterService.postObs({
@@ -1271,8 +1322,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
       .subscribe((response: any) => {
         response.results.forEach((obs: any) => {
+          let obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs.value.split(':')[0].trim(), remark: obs.value.split(':')[1].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[1].trim(), facility: obs_values[0].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
         });
       });
@@ -1282,19 +1334,23 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addReferralForm.invalid) {
       return;
     }
-    if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
-      this.toastr.warning("Referral already added, please add another referral.", "Already Added");
-      return;
-    }
+    let refer_facility = this.addReferralForm.value.other_facility ?  this.addReferralForm.value.other_facility : this.addReferralForm.value.facility;
+    let refer_speciality = this.addReferralForm.value.other_speciality ?  this.addReferralForm.value.other_speciality : this.addReferralForm.value.speciality;
+    // if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
+    //   this.toastr.warning(this.translateService.instant("Referral already added, please add another referral."), this.translateService.instant("Already Added"));
+    //   return;
+    // }
     this.encounterService.postObs({
       concept: this.conceptReferral,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.remark}`,
+      value: `${refer_speciality}:${refer_facility}:${this.addReferralForm.value.priority_refer}:${this.addReferralForm.value.reason}`,
       encounter: this.visitNotePresent.uuid,
     }).subscribe(response => {
-      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, remark: this.addReferralForm.value.remark });
+      this.referrals.push({ uuid: response.uuid, speciality: refer_speciality, facility:refer_facility, priority: this.addReferralForm.value.priority_refer, reason:this.addReferralForm.value.reason });
       this.addReferralForm.reset();
+      this.addReferralForm.controls.refer.setValue(false);
+      this.addReferralForm.controls.priority_refer.setValue("Elective");
     });
   }
 
@@ -1402,6 +1458,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
+                  this.appointmentService.completeAppointment({visitUuid:this.visit.uuid}).subscribe((res)=>{console.log(res)});
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (res: any) => {
                       const link = res.data.hash;
@@ -1546,7 +1603,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
+            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {

@@ -28,9 +28,14 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
-  siteKey: "6LdlqHUnAAAAACqzNZV6ucCuLkrRo-cKF1jCkeoc",
+  webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",
+  webrtcTokenServerUrl: 'https://dev.intelehealth.org:3000/',
+  siteKey: "6LdsBpUlAAAAAAqx9zrWBhSj6UqOkDIOw8aQorWx",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A"
+  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
+  authGatwayURL: 'https://dev.intelehealth.org:3030/v2/',
+  showCaptcha: true,
+  recordsPerPage: 1000
 };
 
 /*

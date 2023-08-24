@@ -72,4 +72,11 @@ export class AppointmentService {
       payload
     );
   }
+
+  completeAppointment(payload) {
+    return this.http.post(
+      `${this.baseURL}/appointment/completeAppointment`,
+      payload
+    );
+  }
 }

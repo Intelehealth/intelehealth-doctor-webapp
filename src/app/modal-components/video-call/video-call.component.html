@@ -3,14 +3,14 @@
     <img src="assets/svgs/chw.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.hwName | titlecase }}</h6>
-      <span>CHW</span>
+      <span>{{'CHW'|translate}}</span>
     </div>
   </div>
   <div class="chw-item">
     <img src="assets/svgs/patient.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
       <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
-      <span>Patient</span>
+      <span>{{'Patient'|translate}}</span>
     </div>
   </div>
 </div>
@@ -58,6 +58,7 @@
                 type="button"
                 class="video-ctrl-btn red"
                 (click)="endCallInRoom()"
+                data-test-id="btnEndVideoCall"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
@@ -65,6 +66,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleAudio()"
+                data-test-id="btnToggleAudioVideoCall"
                 [class.gray]="_localAudioMute"
               >
                 <img
@@ -80,6 +82,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleVideo()"
+                data-test-id="btnToggleVideoVideoCall"
                 [class.gray]="_localVideoOff"
               >
                 <img
@@ -112,6 +115,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleWindow()"
+                data-test-id="btnToggleWindowVideoCall"
               >
                 <img
                   src="{{
@@ -182,11 +186,11 @@
                   >
                     <ng-container *ngIf="item.isRead">
                       <img src="assets/svgs/read-status.svg" alt="" />
-                      <span class="ml-1">Read</span>
+                      <span class="ml-1">{{'Read'|translate}}</span>
                     </ng-container>
                     <ng-container *ngIf="!item.isRead">
                       <img src="assets/svgs/sent-status.svg" alt="" />
-                      <span class="ml-1">Sent</span>
+                      <span class="ml-1">{{'Sent'|translate}}</span>
                     </ng-container>
                   </ng-container>
                 </li>
@@ -219,6 +223,7 @@
                   placeholder="Type here"
                   [(ngModel)]="message"
                   (keyup.enter)="sendMessage()"
+                  data-test-id="etChatMessageVideoCall"
                 />
                 <div class="input-group-append">
                   <button type="button" (click)="fileInput.click()">
@@ -232,7 +237,7 @@
                   </button>
                 </div>
               </div>
-              <button type="button" class="send-btn" (click)="sendMessage()">
+              <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageVideoCall">
                 <img src="assets/svgs/send-icon-white.svg" alt="" />
               </button>
             </div>

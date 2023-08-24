@@ -1,9 +1,9 @@
-<button type="button" class="modal-close-btn" mat-dialog-close>
+<button type="button" class="modal-close-btn" mat-dialog-close data-test-id="btnCloseHelpMenu">
   <img src="assets/svgs/modal-close-icon.svg" alt="" width="100%">
 </button>
 <div mat-dialog-title>
   <div class="d-flex flex-row justify-content-between align-items-center">
-    <h6 class="mb-0 font-weight-bold">Help</h6>
+    <h6 class="mb-0 font-weight-bold">{{'Help' | translate}}</h6>
     <!-- <div class="d-flex">
       <img src="assets/svgs/whatsapp-help-icon.svg" class="mr-2" alt="" width="24px">
       <img src="assets/svgs/phone-help-icon.svg" alt="" width="24px">
@@ -22,10 +22,10 @@
         <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
         <ng-container *ngIf="first && m?.from === user?.uuid">
           <ng-container *ngIf="m.isRead">
-            <img src="assets/svgs/read-status.svg" alt="" width="12px"> Read
+            <img src="assets/svgs/read-status.svg" alt="" width="12px"> {{'Read' | translate}}
           </ng-container>
           <ng-container *ngIf="!m.isRead">
-            <img src="assets/svgs/sent-status.svg" alt="" width="12px"> Sent
+            <img src="assets/svgs/sent-status.svg" alt="" width="12px"> {{'Sent' | translate}}
           </ng-container>
         </ng-container>
       </li>
@@ -35,8 +35,8 @@
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="Type Here" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()">
-  <button class="send-btn" (click)="sendMessage()">
-    <mat-icon aria-hidden="false" aria-label="send icon">send</mat-icon>
+  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessageHelpMenu">
+  <button class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageHelpMenu">
+    <mat-icon aria-hidden="false" aria-label="send icon">{{'send'|translate}}</mat-icon>
   </button>
 </mat-dialog-actions>

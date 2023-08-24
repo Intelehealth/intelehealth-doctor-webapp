@@ -17,6 +17,7 @@ import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.compo
 import { SocketService } from '../services/socket.service';
 import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-main-container',
@@ -59,7 +60,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private socketService: SocketService,
-    private _swPush: SwPush
+    private _swPush: SwPush,
+    private translateService: TranslateService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -71,7 +73,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnInit(): void {
     // this.user = JSON.parse(localStorage.getItem('user'));
     // this.provider = JSON.parse(localStorage.getItem('provider'));
-
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -203,7 +205,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   search() {
     if (this.searchForm.value.keyword === null || this.searchForm.value.keyword.length < 3) {
-      this.toastr.warning("Please enter minimum 3 characters to search patient....", "Warning");
+      this.toastr.warning(this.translateService.instant("Please enter minimum 3 characters to search patient...."), this.translateService.instant("Warning"));
     } else {
       const url = `${this.baseUrl}/patient?q=${this.searchForm.value.keyword}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe((response: any) => {
@@ -297,7 +299,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
-        this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);
+        this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
+         `${this.translateService.instant('Notifications')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off') }`);
       }
     });
   }
@@ -305,6 +308,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 
   get user() {

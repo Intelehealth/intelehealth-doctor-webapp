@@ -812,3 +812,9 @@ th.mat-header-cell:last-child {
     margin-bottom: 10px;
   }
 }
+
+::ng-deep ngb-typeahead-window {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

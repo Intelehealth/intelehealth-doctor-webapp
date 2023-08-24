@@ -6,6 +6,7 @@ import { SocketService } from '../services/socket.service';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-messages',
@@ -40,9 +41,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private coreService: CoreService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);

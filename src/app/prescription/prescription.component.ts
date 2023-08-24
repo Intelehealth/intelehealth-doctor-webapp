@@ -13,13 +13,132 @@ export class PrescriptionComponent implements OnInit {
   active: number = 1;
   completedVisits: any = [];
   prescriptionSent: any = [];
-  loaded: boolean = false;
+  loaded1: boolean = false;
+  loaded2: boolean = false;
+  specialization: string = '';
+  prescriptionSentCount: number = 0;
+  completedVisitsCount: number = 0;
 
   constructor(private pageTitleService: PageTitleService, private visitService: VisitService) { }
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
-    this.getVisits();
+    let provider = JSON.parse(localStorage.getItem('provider'));
+    if (provider) {
+      if (provider.attributes.length) {
+        this.specialization = this.getSpecialization(provider.attributes);
+      }
+    }
+    // this.getVisits();
+    this.getPrescriptionSentVisits();
+    this.getCompletedVisits();
+  }
+
+  getCompletedVisits(page: number = 1) {
+    if(page == 1) this.completedVisits = [];
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: any) => {
+      if (cv.success) {
+        this.completedVisitsCount = cv.totalCount;
+        let records = [];
+        for (let i = 0; i < cv.data.length; i++) {
+          let visit = cv.data[i];
+          let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
+          let pesenc = this.checkIfEncounterExists2(visit.encounters, 'Patient Exit Survey');
+          visit.cheif_complaint = this.getCheifComplaint2(visit);
+          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
+          if (pesenc) {
+            visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime.replace('Z','+0530'));
+          } else {
+            visit.visit_ended = this.checkIfDateOldThanOneDay(visit.date_stopped.replace('Z','+0530'));
+          }
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          records.push(visit);
+        }
+        this.completedVisits = this.completedVisits.concat(records);
+        this.loaded1 = true;
+      }
+    });
+  }
+
+  getCompletedVisitsData(page: number) {
+    this.getCompletedVisits(page);
+  }
+
+  getPrescriptionSentVisits(page: number = 1) {
+    if(page == 1) this.prescriptionSent = [];
+    this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: any) => {
+      if (ps.success) {
+        this.prescriptionSentCount = ps.totalCount;
+        let records = [];
+        for (let i = 0; i < ps.data.length; i++) {
+          let visit = ps.data[i];
+          let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
+          visit.cheif_complaint = this.getCheifComplaint2(visit);
+          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          records.push(visit);
+        }
+        this.prescriptionSent = this.prescriptionSent.concat(records);
+        this.loaded2 = true;
+      }
+    });
+  }
+
+  getPrescriptionSentVisitsData(page: number) {
+    this.getPrescriptionSentVisits(page);
+  }
+
+  getEncounterCreated2(visit: any, encounterName: string) {
+    let created_at = '';
+    const encounters = visit.encounters;
+    encounters.forEach((encounter: any) => {
+      const display = encounter.type?.name;
+      if (display.match(encounterName) !== null) {
+        created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
+      }
+    });
+    return created_at;
+  }
+
+  getCreatedAt(data: any) {
+    let hours = moment().diff(moment(data), 'hours');
+    let minutes = moment().diff(moment(data), 'minutes');
+    if(hours > 24) {
+      return moment(data).format('DD MMM, YYYY');
+    };
+    if (hours < 1) {
+      return `${minutes} minutes ago`;
+    }
+    return `${hours} hrs ago`;
+  }
+
+  getCheifComplaint2(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.type?.name;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.concept_id == 163212) {
+            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'),'').split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
+  }
+
+  calculateAge(birthdate: any) {
+    return moment().diff(birthdate,'years');
   }
 
   getVisits() {
@@ -68,10 +187,10 @@ export class PrescriptionComponent implements OnInit {
           //   });
           // }
         });
-        this.loaded = true;
+        this.loaded1 = true;
       }
     }, (error: any) =>{
-      this.loaded = true;
+      this.loaded1= true;
     });
   }
 
@@ -96,7 +215,7 @@ export class PrescriptionComponent implements OnInit {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
+            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {
@@ -112,6 +231,20 @@ export class PrescriptionComponent implements OnInit {
 
   checkIfEncounterExists(encounters: any, visitType: string) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
+  }
+
+  checkIfEncounterExists2(encounters: any, visitType: string) {
+    return encounters.find((enc: any) => enc.type.name == visitType);
+  }
+
+  getSpecialization(attr: any) {
+    let specialization = '';
+    attr.forEach((a: any) => {
+      if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
+        specialization = a.value;
+      }
+    });
+    return specialization;
   }
 
 }

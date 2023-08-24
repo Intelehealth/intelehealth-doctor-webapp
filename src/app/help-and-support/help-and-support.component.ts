@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 
 @Component({
@@ -10,9 +11,11 @@ export class HelpAndSupportComponent implements OnInit {
 
   panelOpenState = false;
 
-  constructor(private pageTitleService: PageTitleService) { }
+  constructor(private pageTitleService: PageTitleService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Help & Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
   }
 

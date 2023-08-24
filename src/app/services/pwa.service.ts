@@ -5,6 +5,7 @@ import { take } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { PwaPromptComponent } from '../modal-components/pwa-prompt/pwa-prompt.component';
 import { Router } from '@angular/router';
+declare var $: any;
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,18 @@ export class PwaService {
       .pipe(take(1))
       .subscribe(() => {
         if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp'))) {
-          this.bottomSheet.open(PwaPromptComponent, { data: { mobileType, promptEvent: this.promptEvent } })
+          const activeElement = document.activeElement;
+          if (!activeElement.id) {
+            activeElement.setAttribute('id', 'XXX');
+          }
+          const matBottomSheet = this.bottomSheet.open(PwaPromptComponent, { hasBackdrop: false, restoreFocus: true, data: { mobileType, promptEvent: this.promptEvent } })
+          matBottomSheet.afterOpened().subscribe(res => {
+            document.getElementById(activeElement.id).focus();
+            if (activeElement.id == 'XXX') {
+              activeElement.removeAttribute('id');
+            }
+            activeElement.removeAttribute
+          });
         }
       });
   }

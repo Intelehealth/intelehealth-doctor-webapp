@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
+import { TranslateService } from '@ngx-translate/core';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -182,7 +183,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private cookieService: CookieService,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    private translateService: TranslateService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -218,6 +220,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.today = moment().format('YYYY-MM-DD');
     this.user = JSON.parse(localStorage.getItem('user'));
     this.provider = JSON.parse(localStorage.getItem('provider'));
@@ -428,7 +431,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.file = event.target.files[0];
       console.log(this.file.name);
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
-        this.toastr.warning("Upload JPG/JPEG format image only.", "Upload error!");
+        this.toastr.warning(this.translateService.instant("Upload JPG/JPEG format image only."), this.translateService.instant("Upload error!"));
         return;
       }
       const reader = new FileReader();
@@ -440,7 +443,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           base64EncodedImage: imageBolb[1]
         }
         this.profileService.updateProfileImage(payload).subscribe((res: any) => {
-          this.toastr.success("Profile picture uploaded successfully!", "Profile Pic Uploaded");
+          this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
         });
       }
       reader.readAsDataURL(this.file);
@@ -549,10 +552,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (event.rejectedFiles.length) {
       if (event.rejectedFiles[0].reason == 'size') {
-        this.toastr.error('Upload a scanned image of your signature. having size (5kb to 50kb)', 'Invalid File!');
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
       }
       if (event.rejectedFiles[0].reason == 'type') {
-        this.toastr.error('Upload a scanned image of your signature. having type png, jpg, jpeg only.', 'Invalid File!');
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having type png, jpg, jpeg only.'), this.translateService.instant('Invalid File!'));
       }
     }
   }
@@ -568,11 +571,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
-      this.toastr.warning("Please draw your signature.", "Draw Signature");
+      this.toastr.warning(this.translateService.instant("Please draw your signature."), this.translateService.instant("Draw Signature"));
       return;
     }
     if (this.selectedSignatureTabIndex == 2 && !this.signatureFile) {
-      this.toastr.warning("Please upload signature.", "Upload Signature");
+      this.toastr.warning(this.translateService.instant("Please upload signature."), this.translateService.instant("Upload Signature"));
       return;
     }
     this.stepper.next();
@@ -705,8 +708,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
       if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
-        this.toastr.success("Profile has been updated successfully", "Profile Updated");
-        this.toastr.warning("Kindly re-login to see updated details", "Re-login");
+        this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
+        this.toastr.warning(this.translateService.instant("Kindly re-login to see updated details"), this.translateService.instant("Re-login"));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
@@ -717,7 +720,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             let u = JSON.parse(localStorage.user);
             u.person.display = provider.results[0].person.display;
             localStorage.setItem("user", JSON.stringify(u));
-            this.toastr.success("Profile has been updated successfully", "Profile Updated");
+            this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
             let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
               this.router.navigate(['/admin']);

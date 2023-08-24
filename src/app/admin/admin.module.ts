@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AyuComponent } from './ayu/ayu.component';
 import { NgSelectModule } from "@ng-select/ng-select";
 import { FormsModule } from '@angular/forms';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -20,6 +20,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SupportComponent } from './support/support.component';
 import { MomentModule } from 'ngx-moment';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatPaginationIntlService } from '../services/mat-pagination.service';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
+}
 
 const routes: Routes = [
   {
@@ -66,7 +75,17 @@ const routes: Routes = [
       rolesIsolate: false,
       configurationIsolate: false
     }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
     MomentModule
+  ],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },
   ]
 })
 export class AdminModule { }

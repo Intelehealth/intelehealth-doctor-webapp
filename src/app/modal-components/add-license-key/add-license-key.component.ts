@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-license-key',
@@ -18,7 +19,8 @@ export class AddLicenseKeyComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AddLicenseKeyComponent>,
-    private mindmapService: MindmapService) {
+    private mindmapService: MindmapService,
+    private translateService: TranslateService) {
     this.licenseForm = new FormGroup({
       key: new FormControl('', [Validators.required]),
       expiryDate: new FormControl('', [Validators.required])
@@ -26,6 +28,7 @@ export class AddLicenseKeyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.today = new Date().toISOString().slice(0, 10);
     this.licenseForm.patchValue({
       key: this.data?.keyName,

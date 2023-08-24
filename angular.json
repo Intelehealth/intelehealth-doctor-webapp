@@ -9,7 +9,7 @@
       "projectType": "application",
       "prefix": "app",
       "schematics": {
-         "@schematics/angular:component": {
+        "@schematics/angular:component": {
           "style": "scss"
         }
       },
@@ -17,10 +17,18 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["./node_modules"]
+            },
             "allowedCommonJsDependencies": [
               "socket.io-client",
               "debug",
-              "socket.io-parser"
+              "socket.io-parser",
+              "moment",
+              "pdfjs-dist/build/pdf",
+              "pdfjs-dist/web/pdf_viewer",
+              "pdfmake/build/pdfmake",
+              "pdfmake/build/vfs_fonts"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",
@@ -116,7 +124,7 @@
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/intro.js/introjs.css"
-             ],
+            ],
             "scripts": ["node_modules/intro.js/intro.js", "src/app/js/util.js"],
             "assets": [
               "src/favicon.ico",

@@ -8,6 +8,7 @@ import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-appointments',
@@ -35,11 +36,56 @@ export class AppointmentsComponent implements OnInit {
     private visitService: VisitService,
     private pageTitleService: PageTitleService,
     private coreService: CoreService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private translateService: TranslateService) { }
 
   ngOnInit(): void {
+    this.translateService.use(localStorage.getItem('selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
-    this.getVisits();
+    // this.getVisits();
+    this.getAppointments();
+  }
+
+  getAppointments() {
+    this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+      .subscribe((res: any) => {
+        let appointmentsdata = res.data;
+        appointmentsdata.forEach(appointment => {
+          if (appointment.status == 'booked') {
+            if (appointment.visit) {
+              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
+              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              this.appointments.push(appointment);
+            }
+          }
+        });
+        this.dataSource = new MatTableDataSource(this.appointments);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
+      });
+  }
+
+  getCheifComplaint2(visit: any) {
+    let recent: any = [];
+    const encounters = visit.encounters;
+    encounters.forEach(encounter => {
+      const display = encounter.type?.name;
+      if (display.match('ADULTINITIAL') !== null) {
+        const obs = encounter.obs;
+        obs.forEach(currentObs => {
+          if (currentObs.concept_id == 163212) {
+            const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
+            for (let i = 1; i < currentComplaint.length; i++) {
+              const obs1 = currentComplaint[i].split('<');
+              if (!obs1[0].match('Associated symptoms')) {
+                recent.push(obs1[0]);
+              }
+            }
+          }
+        });
+      }
+    });
+    return recent;
   }
 
   // getAppointements() {
@@ -102,7 +148,7 @@ export class AppointmentsComponent implements OnInit {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
-            const currentComplaint = currentObs.display.split('<b>');
+            const currentComplaint = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
               if (!obs1[0].match('Associated symptoms')) {
@@ -117,12 +163,15 @@ export class AppointmentsComponent implements OnInit {
   }
 
   reschedule(appointment: any) {
-    const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // const len = appointment.visit_info.encounters.filter((e: any) => {
+    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+    // }).length;
+    const len = appointment.visit.encounters.filter((e: any) => {
+      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
-      this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+      this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
@@ -136,9 +185,9 @@ export class AppointmentsComponent implements OnInit {
                 const message = res.message;
                 if (res.status) {
                   this.getVisits();
-                  this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
+                  this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
-                  this.toastr.success(message, 'Rescheduling failed!');
+                  this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
                 }
               });
             }
@@ -151,7 +200,7 @@ export class AppointmentsComponent implements OnInit {
   cancel(appointment: any) {
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
-        this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
+        this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
         this.getVisits();
       }
     });
@@ -163,6 +212,11 @@ export class AppointmentsComponent implements OnInit {
 
   get userId() {
     return JSON.parse(localStorage.user).uuid;
+  }
+
+  applyFilter1(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
 }

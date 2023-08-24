@@ -10,6 +10,8 @@ import { HelperService } from "./helper.service";
 })
 export class VisitService {
   private baseURL = environment.baseURL;
+  private baseURLMindmap = environment.mindmapURL;
+
   // public flagVisit: VisitData[] = [];
   // public waitingVisit: VisitData[] = [];
   // public progressVisit: VisitData[] = [];
@@ -118,7 +120,7 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  getVisitCounts(speciality) {
+  getVisitCounts(speciality): Observable<any> {
     return this.http.get(
       `${environment.mindmapURL}/openmrs/getVisitCounts?speciality=${speciality}`
     );
@@ -130,7 +132,43 @@ export class VisitService {
     return whatsappLink;
   }
 
-  chatGPTCompletionDDx(payload: any) {
+  chatGPTCompletionDDx(payload: any): Observable<any> {
     return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload });
+  }
+
+  getData(data: any) {
+    if (data?.value.toString().startsWith("{")) {
+      let value = JSON.parse(data.value.toString());
+      data.value = value["en"];
+    }
+    return data;
+  }
+
+  getData2(data: any) {
+    if (data?.value_text.toString().startsWith("{")) {
+      let value = JSON.parse(data.value_text.toString());
+      data.value_text = value["en"];
+    }
+    return data;
+  }
+
+  getAwaitingVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getAwaitingVisits?speciality=${speciality}&page=${page}`);
+  }
+
+  getPriorityVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?speciality=${speciality}&page=${page}`);
+  }
+
+  getInProgressVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?speciality=${speciality}&page=${page}`);
+  }
+
+  getCompletedVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?speciality=${speciality}&page=${page}`);
+  }
+
+  getEndedVisits(speciality: string, page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getEndedVisits?speciality=${speciality}&page=${page}`);
   }
 }

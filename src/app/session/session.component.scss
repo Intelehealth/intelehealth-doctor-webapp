@@ -147,6 +147,11 @@
 }
 
 @media (max-width: 768px) {
+  .row {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
   .main-container {
     padding: 20px 30px 80px;
   }

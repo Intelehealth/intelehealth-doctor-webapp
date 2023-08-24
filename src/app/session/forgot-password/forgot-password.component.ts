@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
-import { MindmapService } from 'src/app/services/mindmap.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,13 +20,14 @@ export class ForgotPasswordComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private authService: AuthService,
-    private mindmapService: MindmapService) {
+    private translationService: TranslationService) {
     this.forgotPasswordForm = new FormGroup({
       username: new FormControl('', Validators.required)
     });
   }
 
   ngOnInit(): void {
+    this.translationService.getSelectedLanguage();
   }
 
   get f() { return this.forgotPasswordForm.controls; }
@@ -44,10 +45,10 @@ export class ForgotPasswordComponent implements OnInit {
 
     this.authService.requestOtp(payload).subscribe((res: any) => {
       if (res.success) {
-        this.toastr.success(`OTP sent on your mobile number/email successfully!`, "OTP Sent");
+        this.translationService.getTranslation(`OTP sent on your mobile number/email successfully!`, "OTP Sent",true);
         this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-password', via: 'username', val: this.forgotPasswordForm.value.username, id: res?.data?.userUuid } });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.translationService.getTranslation(`${res.message}`, "Error",false);
       }
     });
 

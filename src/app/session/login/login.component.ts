@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
+import { TranslationService } from 'src/app/services/translation.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -19,24 +21,39 @@ export class LoginComponent implements OnInit {
   visible: boolean = false;
   rememberMe: boolean = false;
   loginAttempt: number = 0;
+  selectedLanguage:string ='en'
+  showCaptcha: boolean = environment.showCaptcha;
 
   constructor(
     public authService: AuthService,
-    private toastr: ToastrService,
     private router: Router,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    public translate: TranslateService,
+    public translationService: TranslationService) {
 
     this.loginForm = new FormGroup({
       username: new FormControl("", Validators.required),
       password: new FormControl("", Validators.required),
-      recaptcha: new FormControl("", Validators.required)
+      recaptcha: new FormControl("")
     });
-
+    if (this.showCaptcha) {
+      this.loginForm.get('recaptcha').setValidators([Validators.required]);
+      this.loginForm.get('recaptcha').updateValueAndValidity();
+    }
   }
 
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
+    if(localStorage.getItem('selectedLanguage')) {
+      this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
+      this.translate.use(localStorage.getItem('selectedLanguage'));
+    } else {
+      let browserlang = this.translate.getBrowserLang();
+      this.translate.setDefaultLang(browserlang);
+      localStorage.setItem("selectedLanguage", browserlang);
+    }
+    this.selectedLanguage = localStorage.getItem('selectedLanguage');
     // this.checkSession();
   }
 
@@ -51,32 +68,30 @@ export class LoginComponent implements OnInit {
     const base64cred = btoa(cred);
     this.authService.login(base64cred).subscribe((res: any) => {
       if (res.authenticated && !res.verified) {
-        this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
-          if (provider.results.length) {
-            localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-            localStorage.setItem("doctorName", provider.results[0].person.display);
-            this.loginSuccess();
-            if (res.user.username != 'Doctor23') {
+        this.authService.getAuthToken(val.username, val.password).subscribe(token => {
+          this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
+            if (provider.results.length) {
+              localStorage.setItem('provider', JSON.stringify(provider.results[0]));
+              localStorage.setItem("doctorName", provider.results[0].person.display);
               this.loginSuccess();
-            } else if (provider.results[0].attributes.length) {
-              this.router.navigate(['/session/verification']);
+              // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
+              //   this.loginSuccess();
+              // }
+              // else if (this.rememberMe) {
+              //   this.loginSuccess();
+              // } else if (provider.results[0].attributes.length) {
+              //   this.router.navigate(['/session/verification']);
+              // } else {
+              //   this.loginSuccess();
+              // }
             } else {
-              this.loginSuccess();
+              this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
             }
-            // else if (this.rememberMe) {
-            //   this.loginSuccess();
-            // } else if (provider.results[0].attributes.length) {
-            //   this.router.navigate(['/session/verification']);
-            // } else {
-            //   this.loginSuccess();
-            // }
-          } else {
-            this.toastr.error("Couldn't find provider.", "Login Failed!");
-          }
+          });
         });
       }
       else {
-        this.toastr.error("Couldn't find you, credentials provided are wrong.", "Login Failed!");
+        this.translationService.getTranslation("Couldn't find you, credentials provided are wrong.", "Login Failed!",false);
       }
     }, err => {
       console.log(err);
@@ -95,7 +110,7 @@ export class LoginComponent implements OnInit {
 
   loginSuccess() {
     this.authService.updateVerificationStatus();
-    this.toastr.success("You have sucessfully logged in.", "Login Successful");
+    this.translationService.getTranslation("You have sucessfully logged in.", "Login Successful",true);
     let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
     let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
     if (role) {

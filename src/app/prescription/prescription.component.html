@@ -3,34 +3,34 @@
     <div class="col-md-12 p-0">
       <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-pills">
         <li [ngbNavItem]="1">
-          <a ngbNavLink>
+          <a ngbNavLink data-test-id="navSentPrescription">
             <div class="chip-item chip-item-blue">
               <img class="chip-img" src="assets/svgs/pad.svg" alt="" />
               <div class="chip-info">
-                <h6>{{prescriptionSent.length?prescriptionSent.length:0 }}</h6>
-                <span>Prescription Sent</span>
+                <h6>{{prescriptionSentCount}}</h6>
+                <span>{{'Prescription Sent'|translate}}</span>
               </div>
             </div>
           </a>
           <ng-template ngbNavContent>
-            <ng-container *ngIf="loaded">
-              <app-sent [prescriptionsSent]="prescriptionSent"></app-sent>
+            <ng-container *ngIf="loaded2">
+              <app-sent [prescriptionsSent]="prescriptionSent" [prescriptionsSentCount]="prescriptionSentCount" (fetchPageEvent)="getPrescriptionSentVisitsData($event)"></app-sent>
             </ng-container>
           </ng-template>
         </li>
         <li [ngbNavItem]="2">
-          <a ngbNavLink>
+          <a ngbNavLink data-test-id="navCompletedPrescription">
             <div class="chip-item chip-item-green">
               <img class="chip-img" src="assets/svgs/completed-2.svg" alt="" />
               <div class="chip-info">
-                <h6>{{completedVisits.length?completedVisits.length:0}}</h6>
-                <span>Completed Visits</span>
+                <h6>{{completedVisitsCount}}</h6>
+                <span>{{'Completed Visits'|translate}}</span>
               </div>
             </div>
           </a>
           <ng-template ngbNavContent>
-            <ng-container *ngIf="loaded">
-              <app-completed [completedVisits]="completedVisits"></app-completed>
+            <ng-container *ngIf="loaded1">
+              <app-completed [completedVisits]="completedVisits" [completedVisitsCount]="completedVisitsCount" (fetchPageEvent)="getCompletedVisitsData($event)"></app-completed>
             </ng-container>
           </ng-template>
         </li>

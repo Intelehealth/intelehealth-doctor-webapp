@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -21,7 +22,9 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   maxTelLegth: number = 10;
   subscription: Subscription;
 
-  constructor(private toastr: ToastrService, private router: Router, private authService: AuthService) {
+  constructor(private toastr: ToastrService, private router: Router, 
+    private authService: AuthService,
+    private translate: TranslateService) {
     this.forgotUsernameForm = new FormGroup({
       phone: new FormControl('', [Validators.required]),
       email: new FormControl('',Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")),
@@ -30,6 +33,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.translate.use(localStorage.getItem('selectedLanguage'));
     this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
@@ -82,10 +86,11 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
 
     this.authService.requestOtp(payload).subscribe((res: any) => {
       if (res.success) {
-        this.toastr.success(`OTP sent on ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber) : this.replaceWithStar(this.forgotUsernameForm.value.email) } successfully!`, "OTP Sent");
+        this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)
+         : this.replaceWithStar(this.forgotUsernameForm.value.email) } ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
         this.router.navigate(['/session/verify-otp'], { state: { verificationFor: 'forgot-username', via: this.active, val: (this.active == 'phone') ? `${this.forgotUsernameForm.value.countryCode}||${this.forgotUsernameForm.value.phone}` : this.forgotUsernameForm.value.email } });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.toastr.error(`${this.translate.instant(res.message)}`, `${this.translate.instant("Error")}`);
       }
     });
   }

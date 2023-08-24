@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, timer } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
+import { TranslationService } from 'src/app/services/translation.service';
 
 @Component({
   selector: 'app-otp-verification',
@@ -33,7 +35,9 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthService,
     private linkSvc: LinkService,
-    private rolesService: NgxRolesService) {
+    private rolesService: NgxRolesService,
+    public translationService: TranslationService,
+    private translate: TranslateService) {
     this.otpVerificationForm = new FormGroup({
       otp: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(6)])
     });
@@ -106,7 +110,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     this.authService.verifyOtp(payload).subscribe((res: any) => {
       if (res.success) {
         this.authService.updateVerificationStatus();
-        this.toastr.success("You have sucessfully logged in.", "Login Successful");
+        this.translationService.getTranslation("You have sucessfully logged in.", "Login Successful",true);
         let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
         let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
         if (this.authService.rememberMe) {
@@ -122,7 +126,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
           }
         }
       } else {
-        this.toastr.error(res.message, "Error");
+        this.translationService.getTranslation(res.message, "Error",false);
       }
     });
   }
@@ -138,10 +142,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     payload.otp = this.otpVerificationForm.value.otp;
     this.authService.verifyOtp(payload).subscribe((res: any) => {
       if (res.success) {
-        this.toastr.success("Username has been successfully sent on your email and mobile number", "Username Sent");
+        this.translationService.getTranslation("Username has been successfully sent on your email and mobile number", "Username Sent",true);
         this.router.navigate(['/session/login']);
       } else {
-        this.toastr.error(res.message, "Error");
+        this.translationService.getTranslation(res.message, "Error",false);
       }
     });
   }
@@ -155,7 +159,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
       if (res.success) {
         this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.translationService.getTranslation(res.message, "Error",false);
       }
     });
   }
@@ -165,7 +169,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
       if (res.success) {
         this.router.navigate(['/i', this.hash], { state: { visitId: this.visitId, accessToken: btoa(this.otpVerificationForm.value.otp) } });
       } else {
-        this.toastr.error(res.message, "Error");
+        this.translationService.getTranslation(res.message, "Error",false);
       }
     });
   }
@@ -186,9 +190,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         }
         this.authService.requestOtp(payload).subscribe((res: any) => {
           if (res.success) {
-            this.toastr.success(`OTP sent on ${this.via == 'phone' ? this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : this.replaceWithStar(this.cred)} successfully!`, "OTP Sent");
+            this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
+             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : 
+             this.replaceWithStar(this.cred)} ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
           } else {
-            this.toastr.error(res.message, "Error");
+            this.translationService.getTranslation(res.message, "Error",false);
           }
         });
         break;
@@ -203,9 +209,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         }
         this.authService.requestOtp(payload).subscribe((res: any) => {
           if (res.success) {
-            this.toastr.success(`OTP sent on ${this.via == 'phone' ? this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : this.replaceWithStar(this.cred)} successfully!`, "OTP Sent");
+            this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
+             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : 
+             this.replaceWithStar(this.cred)} ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
           } else {
-            this.toastr.error(res.message, "Error");
+            this.translationService.getTranslation(res.message, "Error",false);
           }
         });
         break;
@@ -217,9 +225,9 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         };
         this.authService.requestOtp(payload).subscribe((res: any) => {
           if (res.success) {
-            this.toastr.success(`OTP sent on your mobile number/email successfully!`, "OTP Sent");
+            this.translationService.getTranslation(`OTP sent on your mobile number/email successfully!`, "OTP Sent",true);
           } else {
-            this.toastr.error(res.message, "Error");
+            this.translationService.getTranslation(res.message, "Error", false);
           }
         });
         break;
