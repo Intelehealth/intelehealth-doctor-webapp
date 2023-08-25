@@ -82,32 +82,32 @@ export class PrescriptionDownloadComponent implements OnInit {
           this.patient = visit.patient;
           const attrs = Array.isArray(this.patient?.attributes) ? this.patient?.attributes : []
           const patientPhoneNumber = attrs.find((attr: any) => attr?.attributeType?.display === 'Telephone Number');
-          if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
-            this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
-              if (res.success) {
-                this.toastr.success(`${this.translateService.instant('OTP sent on')} ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} ${this.translateService.instant('successfully!')}`, `${this.translateService.instant('OTP Sent')}`)
-                this.router.navigate(['/session/verify-otp'], {
-                  state: {
-                    verificationFor: 'presctiption-verification',
-                    via: 'phone',
-                    val: patientPhoneNumber?.value,
-                    visitId: this.visitId
-                  },
-                  queryParams: {
-                    hash: this.hash
-                  }
-                });
-              } else {
-                this.toastr.error(res.message, "Error");
-              }
-            });
-          } else {
+          // if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
+          //   this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
+          //     if (res.success) {
+          //       this.toastr.success(`${this.translateService.instant('OTP sent on')} ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} ${this.translateService.instant('successfully!')}`, `${this.translateService.instant('OTP Sent')}`)
+          //       this.router.navigate(['/session/verify-otp'], {
+          //         state: {
+          //           verificationFor: 'presctiption-verification',
+          //           via: 'phone',
+          //           val: patientPhoneNumber?.value,
+          //           visitId: this.visitId
+          //         },
+          //         queryParams: {
+          //           hash: this.hash
+          //         }
+          //       });
+          //     } else {
+          //       this.toastr.error(res.message, "Error");
+          //     }
+          //   });
+          // } else {
             this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
               if(res) {
                 this.prescriptionVerified = true;
               }
             });
-          }
+          // }
         }
       }
     });
