@@ -202,7 +202,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
     if (this.initiator === "dr") {
       this.toastr.info(this.translateService.instant(`messages.${"Calling...."}`), null, { timeOut: 2000 });
-      this.call();
+      setTimeout(() => {
+        this.call();
+      }, 5000);
     } else {
       this.socketSvc.emitEvent("create_or_join_hw", {
         room: this.room,
