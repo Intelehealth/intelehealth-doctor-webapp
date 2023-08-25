@@ -36,7 +36,18 @@ export class PwaService {
       .pipe(take(1))
       .subscribe(() => {
         if (!(this.router.url.includes('/i/') || this.router.url.includes('/verify-otp'))) {
-          this.bottomSheet.open(PwaPromptComponent, { data: { mobileType, promptEvent: this.promptEvent } })
+          const activeElement = document.activeElement;
+          if (!activeElement.id) {
+            activeElement.setAttribute('id', 'XXX');
+          }
+          const matBottomSheet = this.bottomSheet.open(PwaPromptComponent, { hasBackdrop: false, restoreFocus: true, data: { mobileType, promptEvent: this.promptEvent } })
+          matBottomSheet.afterOpened().subscribe(res => {
+            document.getElementById(activeElement.id).focus();
+            if (activeElement.id == 'XXX') {
+              activeElement.removeAttribute('id');
+            }
+            activeElement.removeAttribute
+          });
         }
       });
   }
