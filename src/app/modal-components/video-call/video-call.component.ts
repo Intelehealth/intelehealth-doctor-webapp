@@ -501,6 +501,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   endCallInRoom() {
     setTimeout(() => {
+      this.close();
       this.webrtcSvc.room.disconnect(true);
     }, 0);
     this.webrtcSvc.token = '';
