@@ -1389,45 +1389,45 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
-                  this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                    if (result == 'view') {
-                      // Open visit summary modal here....
-                      this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                    } else if (result == 'dashboard') {
-                      this.router.navigate(['/dashboard']);
+                  // this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                  //   if (result == 'view') {
+                  //     // Open visit summary modal here....
+                  //     this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                  //   } else if (result == 'dashboard') {
+                  //     this.router.navigate(['/dashboard']);
+                  //   }
+                  // });
+                  // this.appointmentService.completeAppointment({visitUuid:this.visit.uuid}).subscribe((res)=>{console.log(res)});
+                  this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
+                    next: (res: any) => {
+                      const link = res.data.hash;
+                      this.visitService.postAttribute(
+                        this.visit.uuid,
+                        {
+                          attributeType: "1e02db7e-e117-4b16-9a1e-6e583c3994da",/** Visit Attribute Type for Prescription Link */
+                          value: `/i/${link}`,
+                        }).subscribe();
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                        if (result == 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result == 'dashboard') {
+                          this.router.navigate(['/dashboard']);
+                        }
+                      });
+                    },
+                    error: (err) => {
+                      this.toastr.error(err.message);
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
+                        if (result == 'view') {
+                          // Open visit summary modal here....
+                          this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
+                        } else if (result == 'dashboard') {
+                          this.router.navigate(['/dashboard']);
+                        }
+                      });
                     }
                   });
-                  // this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
-                  //   next: (res: any) => {
-                  //     const link = res.data.hash;
-                  //     this.visitService.postAttribute(
-                  //       this.visit.uuid,
-                  //       {
-                  //         attributeType: "1e02db7e-e117-4b16-9a1e-6e583c3994da",/** Visit Attribute Type for Prescription Link */
-                  //         value: `/i/${link}`,
-                  //       }).subscribe();
-
-                  //     this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                  //       if (result == 'view') {
-                  //         // Open visit summary modal here....
-                  //         this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                  //       } else if (result == 'dashboard') {
-                  //         this.router.navigate(['/dashboard']);
-                  //       }
-                  //     });
-                  //   },
-                  //   error: (err) => {
-                  //     this.toastr.error(err.message);
-                  //     this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
-                  //       if (result == 'view') {
-                  //         // Open visit summary modal here....
-                  //         this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
-                  //       } else if (result == 'dashboard') {
-                  //         this.router.navigate(['/dashboard']);
-                  //       }
-                  //     });
-                  //   }
-                  // })
                 });
               } else {
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: any) => {
@@ -1442,11 +1442,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             } else {
               this.coreService.openSharePrescriptionErrorModal({ msg: this.translateService.instant(`messages.${'Unable to send prescription due to poor network connection. Please try again or come back later'}`), confirmBtnText: this.translateService.instant(`messages.${'Try again'}`) }).subscribe((c: any) => {
                 if (c) {
-
                 }
               });
             }
-
           } else {
             this.coreService.openSharePrescriptionErrorModal({ msg: this.translateService.instant(`messages.${'Unable to send prescription since your profile is not complete.'}`), confirmBtnText: this.translateService.instant(`messages.${'Go to profile'}`) }).subscribe((c: any) => {
               if (c) {
