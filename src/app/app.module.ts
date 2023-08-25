@@ -49,7 +49,6 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
-import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -176,7 +175,6 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
     HttpClientModule,
     NgxSpinnerModule,
     NgMultiSelectDropDownModule,
-    UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     MatTabsModule,
     MatChipsModule,
     NgxMaterialTimepickerModule,

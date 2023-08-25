@@ -29,7 +29,6 @@
     "@ngx-translate/http-loader": "^6.0.0",
     "@types/intro.js": "^2.4.7",
     "angular-calendar": "^0.28.28",
-    "angular-user-idle": "^2.2.2",
     "core-js": "^2.5.4",
     "date-fns": "^2.27.0",
     "export-to-csv": "^0.2.1",
