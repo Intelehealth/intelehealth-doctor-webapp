@@ -16,7 +16,8 @@
             "allowedCommonJsDependencies": [
               "socket.io-client",
               "debug",
-              "socket.io-parser"
+              "socket.io-parser",
+              "moment"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",

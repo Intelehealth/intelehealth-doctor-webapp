@@ -67,9 +67,10 @@ export class DiagnosisComponent implements OnInit {
     this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
     this.patientId = this.route.snapshot.params["patient_id"];
     let visitNoteProvider = getFromStorage('visitNoteProvider');
-    const obsData = visitNoteProvider.obs.filter(a=> a.display.match("TELEMEDICINE DIAGNOSIS"));
-    obsData.forEach(obs=> {
-      this.diagnosis.push({uuid: obs.uuid, value :obs.value});
+    const obs = Array.isArray(visitNoteProvider.obs) ? visitNoteProvider.obs : [];
+    const obsData = obs.filter(a => a.display.match("TELEMEDICINE DIAGNOSIS"));
+    obsData.forEach(obs => {
+      this.diagnosis.push({ uuid: obs.uuid, value: obs.value });
     });
     this.checkDiagnosis();
   }

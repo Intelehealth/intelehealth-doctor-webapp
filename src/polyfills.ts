@@ -76,3 +76,4 @@ import "zone.js"; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+type NodeJSGlobal = typeof global;

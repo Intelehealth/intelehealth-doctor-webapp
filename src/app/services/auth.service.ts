@@ -1,8 +1,8 @@
 import { SessionService } from "./session.service";
 import { Injectable } from "@angular/core";
-import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { CookieService } from 'ngx-cookie';
 declare var deleteFromStorage: any;
 
 @Injectable({
@@ -13,7 +13,7 @@ export class AuthService {
     private myRoute: Router,
     private sessionService: SessionService,
     private cookieService: CookieService
-  ) {}
+  ) { }
   public fingerPrint;
 
   /**
@@ -21,7 +21,7 @@ export class AuthService {
    * @param token String
    */
   sendToken(token) {
-    this.cookieService.set("JSESSIONID", token);
+    this.cookieService.put("JSESSIONID", token);
   }
 
   /**
@@ -29,7 +29,7 @@ export class AuthService {
    * @returns String
    */
   getToken() {
-    return this.cookieService.check("JSESSIONID");
+    return this.cookieService.get("JSESSIONID");
   }
 
   /**
@@ -37,7 +37,7 @@ export class AuthService {
    * @returns Boolean
    */
   isLoggedIn() {
-    return this.getToken() !== false;
+    return !!this.getToken();
   }
 
   /**
@@ -51,7 +51,7 @@ export class AuthService {
         deleteFromStorage("provider");
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
-        this.cookieService.deleteAll();
+        this.cookieService.removeAll();
         this.myRoute.navigate(["/login"]);
       });
     });

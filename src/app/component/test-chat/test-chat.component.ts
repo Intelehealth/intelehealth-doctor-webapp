@@ -69,7 +69,7 @@ export class TestChatComponent implements OnInit {
   }
 
   get toUser() {
-    return this.patientVisitProvider.provider.uuid;
+    return this.patientVisitProvider?.provider?.uuid;
   }
 
   sendMessage(event) {

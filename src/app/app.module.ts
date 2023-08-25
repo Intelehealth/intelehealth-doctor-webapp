@@ -46,7 +46,6 @@ import { HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -96,6 +95,8 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { SendSmsComponent } from './component/send-sms/send-sms.component';
+import { CookieModule } from "ngx-cookie";
+import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [
@@ -178,6 +179,7 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
     MatTabsModule,
     MatChipsModule,
     NgxMaterialTimepickerModule,
+    CookieModule.withOptions(),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
@@ -262,16 +264,18 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
         },
         { path: "**", component: Page404Component },
       ],
-      { scrollPositionRestoration: "enabled", relativeLinkResolution: 'legacy' }
+      { scrollPositionRestoration: "enabled" }
     ),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right'
+    })
   ],
   providers: [
-    CookieService,
     AuthGuard,
     DatePipe,
     MatDatepickerModule,
@@ -283,4 +287,4 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
