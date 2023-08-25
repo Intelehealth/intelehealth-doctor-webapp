@@ -75,10 +75,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         bolditalics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
       },
       ArialUnicodeMS: {
-        normal: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/arial_unicode_ms.ttf`,
-        bold: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/arial_unicode_ms.ttf`,
-        italics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/arial_unicode_ms.ttf`,
-        bolditalics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/arial_unicode_ms.ttf`,
+        normal: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/Arial-Unicode-Regular.ttf`,
+        bold: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/Arial-Unicode-Bold.ttf`,
+        italics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/Arial-Unicode-Italic.ttf`,
+        bolditalics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/Arial_Unicode_MS/Arial-Unicode-Bold-Italic.ttf`,
       }
     };
     this.eventsSubscription = this.download?.subscribe((val) => { if(val) this.downloadPrescription(); });
