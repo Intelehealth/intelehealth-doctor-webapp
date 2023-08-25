@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
@@ -14,12 +14,12 @@ declare var saveToStorage: any,  getFromStorage: any
 })
 export class LoginPageComponent implements OnInit {
   submitted = false;
-  loginForm = new FormGroup({
-    username: new FormControl("", [
+  loginForm = new UntypedFormGroup({
+    username: new UntypedFormControl("", [
       Validators.required,
       Validators.maxLength(12),
     ]),
-    password: new FormControl("", [
+    password: new UntypedFormControl("", [
       Validators.required,
       Validators.minLength(8),
       Validators.maxLength(12),

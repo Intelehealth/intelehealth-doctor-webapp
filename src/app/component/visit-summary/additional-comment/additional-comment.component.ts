@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
 import { DiagnosisService } from "../../../services/diagnosis.service";
@@ -50,8 +50,8 @@ export class AdditionalCommentComponent implements OnInit {
   visitUuid: string;
   conceptComment = "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-  commentForm = new FormGroup({
-    comment: new FormControl("", [Validators.required]),
+  commentForm = new UntypedFormGroup({
+    comment: new UntypedFormControl("", [Validators.required]),
   });
 
   constructor(

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { EncounterService } from "src/app/services/encounter.service";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
@@ -55,8 +55,8 @@ export class PrescribedTestComponent implements OnInit {
   visitUuid: string;
   errorText: string;
 
-  testForm = new FormGroup({
-    test: new FormControl("", [Validators.required]),
+  testForm = new UntypedFormGroup({
+    test: new UntypedFormControl("", [Validators.required]),
   });
 
   constructor(

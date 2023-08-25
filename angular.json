@@ -133,7 +133,6 @@
       }
     }
   },
-  "defaultProject": "intelehealth-ui",
   "cli": {
     "analytics": false
   }

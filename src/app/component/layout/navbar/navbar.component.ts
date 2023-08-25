@@ -3,7 +3,7 @@ import { AuthService } from "src/app/services/auth.service";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ChangePasswordComponent } from "../../change-password/change-password.component";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { FindPatientComponent } from "../../find-patient/find-patient.component";
 import { environment } from "../../../../environments/environment";
@@ -45,8 +45,8 @@ export class NavbarComponent implements OnInit {
     "BHkKl1nW4sC_os9IRMGhrSZ4JJp0RHl2_PxTdV_rElOjnHe-dq1hx2zw_bTgrkc4ulFD-VD4x6P63qN1Giroe7U"; // afi ekal training
   // "BO4jQA2_cu-WSdDY0HCbB9OKplPYpCRvjDwmjEPQd7K7m1bIrtjeW7FXCntUUkm2V0eAKh9AGKqmpR4-_gYSYX8" // afi ekal Production
 
-  searchForm = new FormGroup({
-    findInput: new FormControl("", [Validators.required]),
+  searchForm = new UntypedFormGroup({
+    findInput: new UntypedFormControl("", [Validators.required]),
   });
 
   @Output() messageEvent = new EventEmitter<string>();
