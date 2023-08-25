@@ -32,7 +32,14 @@
               "src/js/util.js"
             ],
             "styles": ["src/styles.css", "node_modules/intro.js/introjs.css"],
-            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"]
+            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -60,7 +67,8 @@
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
