@@ -262,7 +262,7 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
         },
         { path: "**", component: Page404Component },
       ],
-      { scrollPositionRestoration: "enabled" }
+      { scrollPositionRestoration: "enabled", relativeLinkResolution: 'legacy' }
     ),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
