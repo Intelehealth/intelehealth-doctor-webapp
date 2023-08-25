@@ -15,6 +15,8 @@ export class VisitService {
   public waitingVisit: VisitData[] = [];
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
+  public isVisitSummaryShow: boolean = false;
+  public chatVisitId: any;
 
   constructor(private http: HttpClient, private helper: HelperService) { }
   checkVisit(encounters, visitType) {
