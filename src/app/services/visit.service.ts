@@ -129,4 +129,12 @@ export class VisitService {
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
   }
+
+  getData(data: any) {
+    if (data?.value.toString().startsWith("{")) {
+      let value = JSON.parse(data.value.toString());
+      data.value = value["en"];
+    }
+    return data;
+  }
 }

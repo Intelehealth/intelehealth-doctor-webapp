@@ -539,7 +539,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint = obs.value.split('<b>');
+            const updatedDate =  this.dateFinder(obs.value);
+            const currentComplaint = updatedDate.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -576,6 +577,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  dateFinder(data: string){
+    const regex = /(\d{2}\/[A-Za-z]{3}\/\d{4})/g; // Regular expression for the format DD/MMM/YYYY
+    const matches = data.match(regex);
+    moment.locale(localStorage.getItem('selectedLanguage'));
+    const replacement = moment(matches[0]).format('DD/MMMM/YYYY'); // Replace with the desired replacement value
+    const modifiedString = data.replace(regex, replacement);
+    return modifiedString
   }
 
   getPhysicalExamination(encounters: any) {
@@ -632,7 +642,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
                 const splitByDash = medicalHistory[i].split('-');
-                obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-').trim() });
+                obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-') });
               }
             }
             this.patientHistoryData.push(obj1);
@@ -649,7 +659,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByComma = splitByColon[1].split('.');
                 for(let x = 0; x < splitByComma.length; x++){
                   if (splitByComma[x]) {
-                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1].trim() + "." });
+                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
                   }
                 };
                 // obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });

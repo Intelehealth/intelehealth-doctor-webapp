@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
 import * as html2pdf from 'html2pdf.js';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,8 @@ import { LinkService } from 'src/app/services/link.service';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Meta } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-prescription-download',
@@ -14,11 +16,11 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./prescription-download.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class PrescriptionDownloadComponent implements OnInit {
+export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   @ViewChild('prescription') prescription: ElementRef;
   opt = {
     margin: 1,
-    filename: localStorage.getItem('selectedLanguage') === 'ru' ? "электронныйрецепт.pdf" : 'eprescription.pdf',
+    filename: 'eprescription.pdf',
     image: { type: 'jpeg', quality: 1 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
@@ -29,6 +31,7 @@ export class PrescriptionDownloadComponent implements OnInit {
   visit: any;
   prescriptionVerified: boolean = false;
   patient: any;
+  eventsSubject: Subject<any> = new Subject<any>();
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +41,8 @@ export class PrescriptionDownloadComponent implements OnInit {
     private toastr: ToastrService,
     private visitService: VisitService,
     private cs: CoreService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private meta: Meta
   ) { }
 
   ngOnInit(): void {
@@ -56,7 +60,12 @@ export class PrescriptionDownloadComponent implements OnInit {
     } else {
       // this.verifyToken();
       this.prescriptionVerified = true;
+      this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
     }
+  }
+
+  emitEventToChild(val: boolean) {
+    this.eventsSubject.next(val);
   }
 
   getVisitFromHash() {
@@ -105,6 +114,7 @@ export class PrescriptionDownloadComponent implements OnInit {
             this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
               if(res) {
                 this.prescriptionVerified = true;
+                this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
               }
             });
           // }
@@ -179,18 +189,23 @@ export class PrescriptionDownloadComponent implements OnInit {
   //   this.getVisit(this.visitId, true);
   // }
 
-  download() {
-    this.opt.filename = localStorage.getItem('selectedLanguage') === 'ru' ? `электронный-рецепт-${Date.now()}.pdf` : `e-prescription-${Date.now()}.pdf`,
-    html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
-      .then(function (pdf) {
-        pdf.deletePage(1);
-        var totalPages = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          pdf.setPage(i);
-          pdf.setFontSize(10);
-          pdf.setTextColor(150);
-          pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
-        }
-      }).save();
+  async download() {
+    this.emitEventToChild(true);
+    // this.opt.filename = `e-prescription-${Date.now()}.pdf`;
+    // await html2pdf(this.prescription.nativeElement, this.opt).toPdf().get('pdf')
+    //   .then(function (pdf) {
+    //     pdf.deletePage(1);
+    //     var totalPages = pdf.internal.getNumberOfPages();
+    //     for (let i = 1; i <= totalPages; i++) {
+    //       pdf.setPage(i);
+    //       pdf.setFontSize(10);
+    //       pdf.setTextColor(150);
+    //       pdf.text(`Page ${i}/${totalPages}`, pdf.internal.pageSize.getWidth() - 100, pdf.internal.pageSize.getHeight() - 10);
+    //     }
+    //   }).save();
+  }
+
+  ngOnDestroy(): void {
+    this.meta.updateTag({ name: 'viewport', content: 'width=device-width, initial-scale=1' });
   }
 }
