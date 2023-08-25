@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { VcComponent } from '../component/vc/vc.component';
+import { VideoCallComponent } from '../modal-components/video-call/video-call.component';
 
 @Injectable({
   providedIn: 'root'
@@ -49,8 +49,8 @@ export class CoreService {
   //   return dialogRef;
   // }
 
-  openVideoCallModal(data: any): MatDialogRef<VcComponent> {
-    const dialogRef = this.dialog.open(VcComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false });
+  openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
+    const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false });
     return dialogRef;
   }
 

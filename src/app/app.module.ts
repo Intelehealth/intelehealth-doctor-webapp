@@ -97,6 +97,7 @@ import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { SendSmsComponent } from './component/send-sms/send-sms.component';
 import { CookieModule } from "ngx-cookie";
 import { ToastrModule } from "ngx-toastr";
+import { VideoCallComponent } from './modal-components/video-call/video-call.component';
 
 @NgModule({
   declarations: [
@@ -144,7 +145,8 @@ import { ToastrModule } from "ngx-toastr";
     HoverClassDirective,
     ChatComponent,
     TestChatComponent,
-    SendSmsComponent
+    SendSmsComponent,
+    VideoCallComponent
   ],
 
   imports: [

@@ -7,7 +7,7 @@ import { environment } from "src/environments/environment";
 })
 export class ChatService {
   private baseURL = environment.mindmapURL;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   sendMessage(toUser, patientId, message, additionalPayload = {}) {
     const payload = {
@@ -20,7 +20,7 @@ export class ChatService {
     return this.http.post(`${this.baseURL}/messages/sendMessage`, payload);
   }
 
-  getPatientMessages(toUser, patientId, fromUser = this.user.uuid) {
+  getPatientMessages(toUser, patientId, fromUser = this.user.uuid, visitId?) {
     return this.http.get(
       `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}`
     );
