@@ -1331,8 +1331,8 @@
                     <tbody>
                       <ng-container *ngIf="medicines.length">
                         <tr *ngFor="let m of medicines; let i = index">
-                          <td>{{ m.drug }}</td>
-                          <td>{{ m.strength }}</td>
+                          <td>{{ m.drug|translate }}</td>
+                          <td>{{ m.strength|translate }}</td>
                           <td>{{ m.days }}</td>
                           <td>{{ m.timing }}</td>
                           <td>{{ m.remark }}</td>
@@ -1568,7 +1568,7 @@
               <ul class="items-list" *ngIf="advices.length">
                 <li *ngFor="let ad of advices; let i = index">
                   <div class="d-flex justify-content-between">
-                    <span>{{ ad.value }}</span>
+                    <span>{{ ad.value|translate }}</span>
                     <button
                       mat-icon-button
                       (click)="deleteAdvice(i, ad.uuid)"
@@ -1650,7 +1650,7 @@
               <ul class="items-list" *ngIf="tests.length">
                 <li *ngFor="let t of tests; let i = index">
                   <div class="d-flex justify-content-between">
-                    <span>{{ t.value }}</span>
+                    <span>{{ t.value|translate }}</span>
                     <button
                       mat-icon-button
                       (click)="deleteTest(i, t.uuid)"

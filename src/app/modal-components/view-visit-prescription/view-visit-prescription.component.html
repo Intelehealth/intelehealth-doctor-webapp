@@ -30,7 +30,7 @@
             </div>
             <div class="ml-3">
               <h6>
-                {{ patient?.person.display }} ({{ patient?.person.gender }})
+                {{ patient?.person.display }} ({{ (patient?.person.gender|translate) }})
               </h6>
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
@@ -249,7 +249,7 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let d of existingDiagnosis; let i = index">
-                      <td>{{ d.diagnosisName }}</td>
+                      <td>{{ d.diagnosisName|translate }}</td>
                       <td>{{ d.diagnosisType|translate  }}</td>
                       <td>{{ d.diagnosisStatus|translate }}</td>
                     </tr>
@@ -317,8 +317,8 @@
                   <tbody>
                     <ng-container *ngIf="medicines.length; else noMedicines">
                       <tr *ngFor="let m of medicines; let i = index">
-                        <td>{{ m.drug }}</td>
-                        <td>{{ m.strength }}</td>
+                        <td>{{ m.drug|translate }}</td>
+                        <td>{{ m.strength|translate }}</td>
                         <td>{{ m.days }}</td>
                         <td>{{ m.timing }}</td>
                         <td>{{ m.remark }}</td>
@@ -379,7 +379,7 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <span>{{ a.value }}</span>
+                    <span>{{ a.value|translate }}</span>
                   </div>
                 </li>
               </ul>
@@ -399,7 +399,7 @@
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
-                    <span>{{ t.value }}</span>
+                    <span>{{ t.value|translate }}</span>
                   </div>
                 </li>
               </ul>

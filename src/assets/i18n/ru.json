@@ -159,7 +159,7 @@
   "Appointment on":"Назначено",
   "Status":"Статус",
   "Provided by":"Предоставлено",
-  "Vitals":"Жизненно важные показатели",
+  "Vitals":"Показатели",
   "Height (cm)":"Рост (см)",
   "Weight (kg)":"Вес (кг)",
   "Pulse":"Пульс",
@@ -485,7 +485,9 @@
   "Patient reports":"Отчеты пациентов",
   "Patient denies":"Пациент отрицает",
   "Neonatal jaundice":"неонатальная желтуха",
-
+  "Follow-up Requested":"Требуются последующие действия",
+  "National ID":"Национальное удостоверение личности",
+  
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
     "Login Successful":"Вход успешный",
@@ -5807,7 +5809,7 @@
   "Phone No":"Номер телефона",
   "WhatsApp No":"WhatsApp номер",
   "Email Id":"E-mail идентификатор(ID)",
-  "Registration No":"номер мед. регистрации сотрудника",
+  "Registration No":"Регистрационный номер",
   "Signature":"Подпись",
   "Update Details":"Детали обновления",
   "create":"Создайте",

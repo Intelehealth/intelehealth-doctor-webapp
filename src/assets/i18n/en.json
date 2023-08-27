@@ -470,7 +470,9 @@
   "Patient reports":"Patient reports",
   "Patient denies":"Patient denies",
   "Neonatal jaundice":"Neonatal jaundice",
-  
+  "Follow-up Requested":"Follow-up Requested",
+  "National ID":"National ID",
+
   "messages":{
     "You have sucessfully logged in.":"You have sucessfully logged in.",
     "Login Successful":"Login Successful",

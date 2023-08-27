@@ -82,6 +82,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       }
     };
     this.eventsSubscription = this.download?.subscribe((val) => { if(val) this.downloadPrescription(); });
+    moment.locale(localStorage.getItem('selectedLanguage'));    
   }
 
   getVisit(uuid: string) {
@@ -107,6 +108,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
             }
+            this.getCheckUpReason(visit.encounters);
+            this.getVitalObs(visit.encounters);
 
             visit.encounters.forEach((encounter: any) => {
               if (encounter.encounterType.display == 'Remote Prescription') {
@@ -330,7 +333,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getPersonAttributeValue(attrType: string) {
-    let val = 'NA';
+    let val = this.translateService.instant('NA');;
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
         if (attrType == attr.attributeType.display) {
@@ -419,7 +422,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage, pageCount) => {
         return {
           columns: [
-            { text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5,5,5,5] },
+            { text: this.translateService.instant('Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation'), fontSize: 8, margin: [5,5,5,5]},
             { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5,5,5,5], alignment: 'right'}
           ]
         };
@@ -435,7 +438,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: 'Intelehealth e-' + this.translateService.instant('Prescription'),
                   alignment: 'center',
                   style: 'header'
                 },
@@ -457,7 +460,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         },
                         [
                           {
-                            text: `${this.patient?.person.display} (${this.patient?.person.gender})`,
+                            text: `${this.patient?.person.display} (${this.translateService.instant(this.patient?.person.gender)})`,
                             bold: true,
                             margin: [0, 15, 0, 5],
                           }
@@ -473,9 +476,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
-                          {text: 'Age', style: 'subheader'},
+                          {text: this.translateService.instant('Age'), style: 'subheader'},
                           `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
-                          {text: 'Address', style: 'subheader'},
+                          {text: this.translateService.instant('Address'), style: 'subheader'},
                           `${this.patient?.person.preferredAddress.cityVillage.replace(':',' : ')}`
                         ]
                       ]
@@ -489,9 +492,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
-                          {text: 'Occupation', style: 'subheader'},
+                          {text: this.translateService.instant('Occupation'), style: 'subheader'},
                           `${this.getPersonAttributeValue("occupation")}`,
-                          {text: 'National ID', style: 'subheader'},
+                          {text: this.translateService.instant('National ID'), style: 'subheader'},
                           `${this.getPersonAttributeValue("NationalID")}`
                         ]
                       ]
@@ -503,9 +506,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   table: {
                     widths: ['auto','*'],
                     body: [
-                      [ {text: 'Contact no.', style: 'subheader', colSpan: 2}, ''],
-                      [ {image: 'phone', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):'NA'}`],
-                      [ {image: 'whatsApp', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):'NA'}`]
+                      [ {text: this.translateService.instant('Contact no.'), style: 'subheader', colSpan: 2}, ''],
+                      [ 
+                        {image: 'phone', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):this.translateService.instant('NA')}`
+                      ],
+                      [ 
+                        {image: 'whatsApp', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):this.translateService.instant('NA')}`
+                      ]
                     ]
                   },
                   layout: 'noBorders'
@@ -518,7 +525,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Cheif Complaint', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] },
+                      {text: this.translateService.instant('Cheif Complaint'), style: 'sectionheader', border: [false, false, false, true] }],
                       [
                         {
                           colSpan: 2,
@@ -544,7 +552,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'vitals', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Vitals', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'vitals', width: 25, height: 25, border: [false, false, false, true] }, 
+                        {text: this.translateService.instant('Vitals'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -570,13 +581,16 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, 
+                        {text: this.translateService.instant('Consultation details'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
                           ul: [
-                            {text: [{text: 'Patient ID:', bold: true},` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: 'Prescription Issued:', bold: true},` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                            {text: [{text: this.translateService.instant('Patient ID') + ":", bold: true},` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: this.translateService.instant('Prescription Issued') + ":", bold: true},` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
@@ -597,7 +611,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'diagnosis', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Diagnosis', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'diagnosis', width: 25, height: 25, border: [false, false, false, true]  }, 
+                        {text: this.translateService.instant('Diagnosis'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -605,7 +622,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths: ['*','*', '*'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Diagnosis', style: 'tableHeader'}, {text: 'Type', style: 'tableHeader'}, {text: 'Status', style: 'tableHeader'}],
+                              [
+                                {text: this.translateService.instant('Diagnosis'), style: 'tableHeader'}, 
+                                {text: this.translateService.instant('Type'), style: 'tableHeader'}, 
+                                {text: this.translateService.instant('Status'), style: 'tableHeader'}
+                              ],
                               ...this.getRecords('diagnosis')
                             ]
                           },
@@ -629,7 +650,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'medication', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Medication', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'medication', width: 25, height: 25, border: [false, false, false, true]  }, 
+                        {text: this.translateService.instant('Medication'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -637,14 +661,20 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths: ['*','auto', 'auto', 'auto', 'auto'],
                             headerRows: 1,
                             body: [
-                              [{text:'Drug name', style: 'tableHeader'}, {text:'Strength', style: 'tableHeader'}, {text:'No. of days', style: 'tableHeader'}, {text:'Timing', style: 'tableHeader'}, {text:'Remarks', style: 'tableHeader'}],
+                              [
+                                {text:this.translateService.instant('Drug name'), style: 'tableHeader'}, 
+                                {text:this.translateService.instant('Strength'), style: 'tableHeader'}, 
+                                {text:this.translateService.instant('No. of days'), style: 'tableHeader'}, 
+                                {text:this.translateService.instant('Timing'), style: 'tableHeader'}, 
+                                {text:this.translateService.instant('Remarks'), style: 'tableHeader'}
+                              ],
                               ...this.getRecords('medication')
                             ]
                           },
                           layout: 'lightHorizontalLines'
                         }
                       ],
-                      [{ text: 'Additional Instructions:', style: 'sectionheader', colSpan:2 },''],
+                      [{ text: this.translateService.instant('Additional instructions') + ':', style: 'sectionheader', colSpan:2 },''],
                       [
                         {
                           colSpan: 2,
@@ -670,7 +700,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'advice', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Advice', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'advice', width: 25, height: 25, border: [false, false, false, true]  }, 
+                        {text: this.translateService.instant('Advice'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -696,7 +729,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'test', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Test', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'test', width: 25, height: 25, border: [false, false, false, true]  }, 
+                        {text: this.translateService.instant('Test'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -754,7 +790,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'followUp', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Follow-up', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'followUp', width: 25, height: 25, border: [false, false, false, true]  }, 
+                        {text: this.translateService.instant('Follow-up'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -762,7 +801,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                             widths: ['30%','30%', '10%', '30%'],
                             headerRows: 1,
                             body: [
-                              [{text: 'Follow-up Requested', style: 'tableHeader'}, {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
+                              [
+                                {text: this.translateService.instant('Follow-up Requested'), style: 'tableHeader'}, 
+                                {text: this.translateService.instant('Date'), style: 'tableHeader'}, 
+                                {text: this.translateService.instant('Time'), style: 'tableHeader'}, 
+                                {text: this.translateService.instant('Reason'), style: 'tableHeader'}
+                              ],
                               ...this.getRecords('followUp')
                             ]
                           },
@@ -787,7 +831,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     // { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
                     { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0,5,0,5]},
                     { text: `${this.consultedDoctor?.qualification}`},
-                    { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
+                    { text: `${this.translateService.instant('Registration No')}. ${this.consultedDoctor?.registrationNumber}`},
                   ]
                 },
                 '',
@@ -855,7 +899,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'diagnosis':
         if (this.existingDiagnosis.length) {
           this.existingDiagnosis.forEach(d => {
-            records.push([d.diagnosisName, d.diagnosisType, d.diagnosisStatus]);
+            records.push([this.translateService.instant(d.diagnosisName), this.translateService.instant(d.diagnosisType), this.translateService.instant(d.diagnosisStatus)]);
           });
         } else {
           records.push([{ text: 'NIL', colSpan: 3, alignment: 'center' }]);
@@ -864,7 +908,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'medication':
         if (this.medicines.length) {
           this.medicines.forEach(m => {
-            records.push([m.drug, m.strength, m.days, m.timing, m.remark]);
+            records.push([this.translateService.instant(m.drug), this.translateService.instant(m.strength), m.days, m.timing, m.remark]);
           });
         } else {
           records.push([{ text: 'NIL', colSpan: 5, alignment: 'center' }]);
@@ -880,14 +924,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'advice':
         if (this.advices.length) {
           this.advices.forEach(a => {
-            records.push({ text: a.value, margin: [0, 5, 0, 5] });
+            records.push({ text: this.translateService.instant(a.value), margin: [0, 5, 0, 5] });
           });
         }
         break;
       case 'test':
         if (this.tests.length) {
           this.tests.forEach(t => {
-            records.push({ text: t.value, margin: [0, 5, 0, 5] });
+            records.push({ text: this.translateService.instant(t.value), margin: [0, 5, 0, 5] });
           });
         }
         break;
@@ -902,7 +946,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
       case 'followUp':
           if (this.followUp) {
-            records.push([this.followUp.wantFollowUp, moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
+            records.push([this.translateService.instant(this.followUp.wantFollowUp), moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
           } else {
             records.push(['No','-','-','-']);
           }

@@ -367,7 +367,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
     let drugsList = this.drugNameList.concat(medicines);
-    console.log(this.drugNameList,"drugs");
     drugsList.forEach(ans => {
       this.drugNameList.push(this.translateService.instant(`medicines.${ans.name}`));
     });
@@ -582,10 +581,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   dateFinder(data: string){
     const regex = /(\d{2}\/[A-Za-z]{3}\/\d{4})/g; // Regular expression for the format DD/MMM/YYYY
     const matches = data.match(regex);
-    moment.locale(localStorage.getItem('selectedLanguage'));
-    const replacement = moment(matches[0]).format('DD/MMMM/YYYY'); // Replace with the desired replacement value
-    const modifiedString = data.replace(regex, replacement);
-    return modifiedString
+    if(matches){
+      moment.locale(localStorage.getItem('selectedLanguage'));
+      const replacement = moment(matches[0]).format('DD/MMMM/YYYY'); // Replace with the desired replacement value
+      const modifiedString = data.replace(regex, replacement);
+      return modifiedString
+    }else{
+      return data
+    }
   }
 
   getPhysicalExamination(encounters: any) {
@@ -1206,7 +1209,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
     this.diagnosisService.concept(testUuid).subscribe(res => {
       const result = res.answers;
-      console.log(result,"result");
 
       result.forEach(ans => {
         this.testsList.push(this.translateService.instant(`tests.${ans.display}`));
