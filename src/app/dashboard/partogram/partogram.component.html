@@ -53,8 +53,8 @@
                           <td colspan="41"><span>Visit Complete Reason:</span> Labor Complete</td>
                         </tr>
                         <tr class="page-title-row-2">
-                          <td [attr.colspan]="birthOutcome == 'Other' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
-                          <td colspan="21" *ngIf="birthOutcome == 'Other'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
+                          <td [attr.colspan]="birthOutcome == 'Other' || birthOutcome == 'OTHER' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                          <td colspan="21" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                         </tr>
                         <tr class="page-title-row-2">
                           <td [attr.colspan]="motherDeceased == 'YES' ? 20 : 41"><span>Mother Deceased :</span> {{motherDeceased}}</td>

@@ -192,7 +192,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             } else {
               visit.completeReason = "Labor Complete";
               visit.birthOutcome = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
-              if (visit.birthOutcome == 'Other') {
+              if (visit.birthOutcome == 'Other'||visit.birthOutcome == 'OTHER') {
                 visit.birthOutcomeOther = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
               }
               visit.motherDeceased = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
