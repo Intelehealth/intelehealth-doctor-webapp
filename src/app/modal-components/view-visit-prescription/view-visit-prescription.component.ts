@@ -462,7 +462,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           {
                             text: `${this.patient?.person.display} (${this.translateService.instant(this.patient?.person.gender)})`,
                             bold: true,
-                            margin: [0, 15, 0, 5],
+                            margin: [ 0, 5, 0, 5],
                           }
                         ]
                       ]
@@ -484,7 +484,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                       ]
                     ]
                   },
-                  layout: 'noBorders'
+                  layout: 'noBorders',
+                  margin: [ 25, 0, 0, 0],
                 },
                 {
                   table: {
@@ -500,7 +501,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                       ]
                     ]
                   },
-                  layout: 'noBorders'
+                  layout: 'noBorders',
+                  margin: [ 10, 0, 0, 0],
                 },
                 {
                   table: {
@@ -961,7 +963,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'vitals':
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${this.translateService.instant(v.concept.display)} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: `${this.translateService.instant(v.concept.display.toUpperCase())} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
           });
         }
         break;
