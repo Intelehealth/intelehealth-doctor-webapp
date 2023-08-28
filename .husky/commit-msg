@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Checking Commit Message - Follow README.md"
+
+npx --no-install commitlint --edit
