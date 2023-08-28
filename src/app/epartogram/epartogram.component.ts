@@ -380,6 +380,8 @@ export class EpartogramComponent implements OnInit {
               }
               if (parameterIndex == 20) {
                 this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] ,{ value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
+              } else if (parameterIndex == 19 || parameterIndex == 21) {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = { value: encs[x].obs[y].value.startsWith("{") ? JSON.parse(encs[x].obs[y].value) : encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
               } else {
                 this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
               }
