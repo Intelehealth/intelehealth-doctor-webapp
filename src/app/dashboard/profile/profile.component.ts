@@ -652,19 +652,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
 
       case 'Generate':
-        // this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
-        //   if (res.fname) {
-        //     fetch(res.fname).then(res => res.blob()).then(blob => {
-        //       let reader = new FileReader();
-        //       reader.onload = () => {
-        //         signature = reader.result.toString();
-        //         this.personalInfoForm.patchValue({ signature });
+        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
+          if (res.fname) {
+            fetch(res.fname).then(res => res.blob()).then(blob => {
+              let reader = new FileReader();
+              reader.onload = () => {
+                signature = reader.result.toString();
+                this.personalInfoForm.patchValue({ signature });
                 this.updateProviderAttributes();
-        //       }
-        //       reader.readAsDataURL(blob);
-        //     });
-        //   }
-        // });
+              }
+              reader.readAsDataURL(blob);
+            });
+          }
+        });
         break;
 
       case 'Upload':
