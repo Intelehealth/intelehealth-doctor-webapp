@@ -239,7 +239,7 @@
                                 <div>
                                   {{birthOutcome|uppercase}}
                                 </div>
-                                <ng-container *ngIf="birthOutcome == 'Other'">
+                                <ng-container *ngIf="birthOutcome == 'Other'||birthOutcome == 'OTHER'">
                                   <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="birthOutcomeOther" matTooltipPosition="right">info_outline</mat-icon>
                                 </ng-container>
                               </div>
