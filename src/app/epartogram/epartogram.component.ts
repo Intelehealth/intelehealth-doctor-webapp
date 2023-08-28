@@ -303,7 +303,7 @@ export class EpartogramComponent implements OnInit {
       } else {
         this.visitCompleteReason = "Labor Complete";
         this.birthOutcome = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
-        if (this.birthOutcome == 'Other') {
+        if (this.birthOutcome == 'Other'||this.birthOutcome == 'OTHER') {
           this.birthOutcomeOther = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
         }
         this.motherDeceased = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;

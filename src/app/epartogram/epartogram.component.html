@@ -46,8 +46,8 @@
                       <td colspan="41"><span>Visit Complete Reason:</span> Labor Complete</td>
                     </tr>
                     <tr class="page-title-row-2">
-                      <td [attr.colspan]="birthOutcome == 'Other' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
-                      <td colspan="21" *ngIf="birthOutcome == 'Other'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
+                      <td [attr.colspan]="birthOutcome == 'Other' || birthOutcome == 'OTHER' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                      <td colspan="21" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                     </tr>
                     <tr class="page-title-row-2">
                       <td [attr.colspan]="motherDeceased == 'YES' ? 20 : 41"><span>Mother Deceased :</span> {{motherDeceased}}</td>
@@ -84,7 +84,7 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
-                  <td rowspan="50" class="divider"></td>
+                  <td rowspan="51" class="divider"></td>
                   <ng-container *ngFor="let item of timeStage2; let i=index;">
                     <td colspan="4" [ngClass]="{ 'sos': (parameters[24].stage2values) ? parameters[24].stage2values[i]?.value === 'SOS' : false }">
                       <div class="value-item" *ngIf="item">
@@ -232,7 +232,7 @@
                             <div>
                               {{birthOutcome|uppercase}}
                             </div>
-                            <ng-container *ngIf="birthOutcome == 'Other'">
+                            <ng-container *ngIf="birthOutcome == 'Other'||birthOutcome == 'OTHER'">
                               <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="birthOutcomeOther" matTooltipPosition="right">info_outline</mat-icon>
                             </ng-container>
                           </div>

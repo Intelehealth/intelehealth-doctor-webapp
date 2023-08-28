@@ -295,10 +295,12 @@
               <ng-container matColumnDef="birth_outcome">
                 <th mat-header-cell *matHeaderCellDef> Birth Outcome </th>
                 <td mat-cell *matCellDef="let element">
-                  {{element.birthOutcome ? element.birthOutcome : '-'}}
-                  <ng-container *ngIf="element.birthOutcome == 'Other'||element.birthOutcome == 'OTHER'">
-                    <mat-icon class="ml-1" aria-hidden="false" aria-label="help icon" [matTooltip]="element.birthOutcomeOther" matTooltipPosition="right">info_outline</mat-icon>
-                  </ng-container>
+                  <div class="d-flex align-items-center">
+                    {{element.birthOutcome ? element.birthOutcome : '-'}}
+                    <ng-container *ngIf="element.birthOutcome == 'Other'||element.birthOutcome == 'OTHER'">
+                      <mat-icon class="ml-1" aria-hidden="false" aria-label="help icon" [matTooltip]="element.birthOutcomeOther" matTooltipPosition="right">info_outline</mat-icon>
+                    </ng-container>
+                  </div>
                 </td>
               </ng-container>
 
