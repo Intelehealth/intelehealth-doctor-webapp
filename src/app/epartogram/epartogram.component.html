@@ -214,6 +214,11 @@
                   <td colspan="27" class="divider2"></td>
                   <td colspan="12" class="divider2">
                     <div class="birth-outcome-con">
+                      <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
+                        <div style="white-space: pre-wrap;">
+                          {{visitCompleteReason}}
+                        </div>
+                      </ng-container>
                       <ng-container *ngIf="visitCompleteReason == 'Out Of Time'">
                         <div>
                           {{'OUT OF TIME'|uppercase}}
