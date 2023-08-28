@@ -961,7 +961,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'vitals':
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${v.concept.display} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: `${this.translateService.instant(v.concept.display)} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
           });
         }
         break;

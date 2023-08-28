@@ -464,7 +464,7 @@
                       <ul class="items-list pt-0">
                         <li *ngFor="let pei of pe.data">
                           <div class="list-item">
-                            <label>{{ pei.key }}</label>
+                            <label>{{ pei.key|translate }}</label>
                             <div
                               class="list-item-content"
                               [class.text-muted]="!pei.value"
