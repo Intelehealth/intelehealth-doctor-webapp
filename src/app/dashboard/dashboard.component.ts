@@ -169,18 +169,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       for (let x = 0; x < encounters.length; x++) {
         if (Array.isArray(encounters[x].obs)) {
           for (let y = 0; y < encounters[x].obs.length; y++) {
+            const key = encounters[x].obs[y].display.split(':')[0]?.trim();
+            const value = encounters[x].obs[y].display.split(':')[1]?.trim();
             if (encounters[x].obs[y]?.comment === "R") {
-              const key = encounters[x].obs[y].display.split(':')[0]?.trim();
-              const value = encounters[x].obs[y].display.split(':')[1]?.trim();
               if (this.allowedNotesToShow.includes(key)) {
                 notesObj[key] = value;
               }
-              if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
-                visit.cervixPlotX = value;
-              }
-              if (key == 'Descent 0-5') {
-                visit.descentPlotO = value;
-              }
+            }
+            if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
+              visit.cervixPlotX = value;
+            }
+            if (key == 'Descent 0-5') {
+              visit.descentPlotO = value;
             }
           }
 
