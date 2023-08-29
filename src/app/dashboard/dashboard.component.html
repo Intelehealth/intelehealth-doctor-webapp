@@ -53,11 +53,14 @@
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
+                  <input type="text" #apSearchInput class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource1.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button mat-icon-button aria-label="Reset appointment search" *ngIf="dataSource1.filter" (click)="clearFilter('Appointment')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -136,11 +139,14 @@
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpPriority">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
+                  <input type="text" #prSearchInput class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">
-                      <img src="assets/svgs/search-icon-red.svg" alt="" width="20px" height="20px">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource2.filter">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button mat-icon-button aria-label="Reset priority search" *ngIf="dataSource2.filter" (click)="clearFilter('Priority')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -216,11 +222,14 @@
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAwaiting">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAwaitingDashboard">
+                  <input type="text" #awSearchInput class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAwaitingDashboard">
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource3.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button mat-icon-button aria-label="Reset awaiting search" *ngIf="dataSource3.filter" (click)="clearFilter('Awaiting')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -296,11 +305,14 @@
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpInprogress">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchInprogressDashboard">
+                  <input type="text" #ipSearchInput class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchInprogressDashboard">
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource4.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button mat-icon-button aria-label="Reset inprogress search" *ngIf="dataSource4.filter" (click)="clearFilter('In-progress')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
