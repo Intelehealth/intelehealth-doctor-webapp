@@ -168,6 +168,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (Array.isArray(encounters)) {
       for (let x = 0; x < encounters.length; x++) {
         if (Array.isArray(encounters[x].obs)) {
+          if (!encounters[x].display.includes('Visit Complete')) {
+            visit.cervixPlotX = null;
+            visit.descentPlotO = null;
+          }
           for (let y = 0; y < encounters[x].obs.length; y++) {
             const key = encounters[x].obs[y].display.split(':')[0]?.trim();
             const value = encounters[x].obs[y].display.split(':')[1]?.trim();
