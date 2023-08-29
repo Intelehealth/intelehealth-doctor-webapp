@@ -122,33 +122,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
       (response: any) => {
         let visits = response.results;
         visits.forEach((visit: any) => {
+          visit.seen = false;
           // Check if visit has encounters
           if (visit.encounters.length > 0) {
             /*
             Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
             If no attributes, consider it as General Physician
             */
-           if (visit.attributes.length) {
-             for (let t = 0; t < visit.attributes.length; t++) {
-               if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                 // If specialization matches process visit
-                 if (visit.attributes[t].value == this.specialization) {
-                   this.processVisit(visit);
-                   break;
+            if (visit.attributes.length) {
+              for (let t = 0; t < visit.attributes.length; t++) {
+                if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+                  // If specialization matches process visit
+                  if (visit.attributes[t].value == this.specialization) {
+                    this.processVisit(visit);
+                    //  break;
+                  }
+                }
+                if (visit.attributes[t].attributeType.uuid == "2e4b62a5-aa71-43e2-abc9-f4a777697b19") {
+                  if (visit.attributes[t].value.includes(this.user?.uuid.split('-')[0])) {
+                    visit.seen = true;
                   }
                 }
               }
-            } else if(this.specialization == 'General Physician') {
+            } else if (this.specialization == 'General Physician') {
               this.processVisit(visit);
             }
           }
         });
       });
-    }
+  }
 
-    checkIfEncounterExists(encounters: any, visitType: string) {
-      return encounters.find(({ display = "" }) => display.includes(visitType));
-    }
+  checkIfEncounterExists(encounters: any, visitType: string) {
+    return encounters.find(({ display = "" }) => display.includes(visitType));
+  }
+
+  get user() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
 
   processVisit(visit: any) {
     let notes = [];
@@ -198,7 +208,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             } else {
               visit.completeReason = "Labor Complete";
               visit.birthOutcome = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
-              if (visit.birthOutcome == 'Other'||visit.birthOutcome == 'OTHER') {
+              if (visit.birthOutcome == 'Other' || visit.birthOutcome == 'OTHER') {
                 visit.birthOutcomeOther = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
               }
               visit.motherDeceased = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
@@ -299,7 +309,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getCreatedAt(data: any) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
-    if(hours > 24) {
+    if (hours > 24) {
       return moment(data).format('DD MMM, YYYY hh:mm a');
     };
     if (hours < 1) {

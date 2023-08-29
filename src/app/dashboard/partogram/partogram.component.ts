@@ -321,6 +321,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         this.readPatientAttributes();
         this.readStageData();
         this.readVisitHolder();
+        this.updateSeen();
       }
     }, (error: any) => {
       this.router.navigate(['/dashboard']);
@@ -331,6 +332,31 @@ export class PartogramComponent implements OnInit, OnDestroy {
     if (Array.isArray(this.visit?.attributes)) {
       const visitHolder = this.visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder');
       this.webrtcSvc.visitHolderId = visitHolder?.value;
+    }
+  }
+
+  updateSeen() {
+    if (Array.isArray(this.visit?.attributes)) {
+      const visitSeenBy = this.visit.attributes.find(va => va?.attributeType?.display === 'Visit Read');
+      if (visitSeenBy) {
+        if (!visitSeenBy?.value.includes(this.userId)) {
+          const json = {
+            attributeType: '2e4b62a5-aa71-43e2-abc9-f4a777697b19',
+            value: visitSeenBy?.value.concat(`,${this.userId.split('-')[0]}`)
+          }
+          this.visitService.updateAttribute(this.visit.uuid, visitSeenBy?.uuid, json).subscribe(r => {
+            console.log(r);
+          });
+        }
+      } else {
+        const json = {
+          attributeType: '2e4b62a5-aa71-43e2-abc9-f4a777697b19',
+          value: this.userId.split('-')[0]
+        }
+        this.visitService.postAttribute(this.visit.uuid, json).subscribe(r => {
+          console.log(r);
+        });
+      }
     }
   }
 
