@@ -19,9 +19,9 @@ import { AuthService } from '../services/auth.service';
 export class DashboardComponent implements OnInit, OnDestroy {
 
   showAll: boolean = false;
-  displayedColumns1: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
-  displayedColumns2: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'alarming_readings', 'provider'];
-  displayedColumns3: string[] = ['name', 'age', 'date_of_birth', 'no_of_alerts', 'stage', 'alarming_readings', 'birth_outcome', 'reason', 'provider'];
+  displayedColumns1: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'cervix_plot', 'descent_plot', 'alarming_readings', 'provider'];
+  displayedColumns2: string[] = ['name', 'age', 'in_labor_duration', 'no_of_alerts', 'stage', 'cervix_plot', 'descent_plot', 'alarming_readings', 'provider'];
+  displayedColumns3: string[] = ['name', 'age', 'date_of_birth', 'no_of_alerts', 'stage', 'cervix_plot', 'descent_plot', 'alarming_readings', 'birth_outcome', 'reason', 'provider'];
 
   dataSource1 = new MatTableDataSource<any>();
   dataSource2 = new MatTableDataSource<any>();
@@ -174,6 +174,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
               const value = encounters[x].obs[y].display.split(':')[1]?.trim();
               if (this.allowedNotesToShow.includes(key)) {
                 notesObj[key] = value;
+              }
+              if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
+                visit.cervixPlotX = value;
+              }
+              if (key == 'Descent 0-5') {
+                visit.descentPlotO = value;
               }
             }
           }

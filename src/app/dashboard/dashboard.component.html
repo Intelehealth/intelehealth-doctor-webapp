@@ -98,6 +98,18 @@
                 </td>
               </ng-container>
 
+              <!-- Cervix Plot Column -->
+              <ng-container matColumnDef="cervix_plot">
+                <th mat-header-cell *matHeaderCellDef> Cervix [Plot X] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.cervixPlotX ? element?.cervixPlotX : '-'}} </td>
+              </ng-container>
+
+              <!-- Descent Plot Column -->
+              <ng-container matColumnDef="descent_plot">
+                <th mat-header-cell *matHeaderCellDef> Descent [Plot O] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.deschentPlotO ? element?.deschentPlotO : '-'}} </td>
+              </ng-container>
+
               <ng-container matColumnDef="alarming_readings">
                 <th mat-header-cell *matHeaderCellDef> Alarming readings </th>
                 <td mat-cell *matCellDef="let element">
@@ -191,6 +203,18 @@
                 </td>
               </ng-container>
 
+              <!-- Cervix Plot Column -->
+              <ng-container matColumnDef="cervix_plot">
+                <th mat-header-cell *matHeaderCellDef> Cervix [Plot X] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.cervixPlotX ? element?.cervixPlotX : '-'}} </td>
+              </ng-container>
+
+              <!-- Descent Plot Column -->
+              <ng-container matColumnDef="descent_plot">
+                <th mat-header-cell *matHeaderCellDef> Descent [Plot O] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.deschentPlotO ? element?.deschentPlotO : '-'}} </td>
+              </ng-container>
+
               <ng-container matColumnDef="alarming_readings">
                 <th mat-header-cell *matHeaderCellDef> Alarming readings </th>
                 <td mat-cell *matCellDef="let element">
@@ -281,6 +305,18 @@
                     {{ element.score }}
                   </div>
                 </td>
+              </ng-container>
+
+              <!-- Cervix Plot Column -->
+              <ng-container matColumnDef="cervix_plot">
+                <th mat-header-cell *matHeaderCellDef> Cervix [Plot X] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.cervixPlotX ? element?.cervixPlotX : '-'}} </td>
+              </ng-container>
+
+              <!-- Descent Plot Column -->
+              <ng-container matColumnDef="descent_plot">
+                <th mat-header-cell *matHeaderCellDef> Descent [Plot O] </th>
+                <td mat-cell *matCellDef="let element"> {{element?.deschentPlotO ? element?.deschentPlotO : '-'}} </td>
               </ng-container>
 
               <ng-container matColumnDef="alarming_readings">
