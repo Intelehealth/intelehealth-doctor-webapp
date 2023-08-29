@@ -58,7 +58,7 @@
                     <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource1.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
-                    <button mat-icon-button aria-label="Reset appointment search" *ngIf="dataSource1.filter" (click)="clearFilter('Appointment')">
+                    <button data-test-id="btnResetApSerach" mat-icon-button aria-label="Reset appointment search" *ngIf="dataSource1.filter" (click)="clearFilter('Appointment')">
                       <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
                     </button>
                   </div>
@@ -144,7 +144,7 @@
                     <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource2.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
-                    <button mat-icon-button aria-label="Reset priority search" *ngIf="dataSource2.filter" (click)="clearFilter('Priority')">
+                    <button data-test-id="btnResetPrSerach" mat-icon-button aria-label="Reset priority search" *ngIf="dataSource2.filter" (click)="clearFilter('Priority')">
                       <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
                     </button>
                   </div>
@@ -227,7 +227,7 @@
                     <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource3.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
-                    <button mat-icon-button aria-label="Reset awaiting search" *ngIf="dataSource3.filter" (click)="clearFilter('Awaiting')">
+                    <button data-test-id="btnResetAwSerach" mat-icon-button aria-label="Reset awaiting search" *ngIf="dataSource3.filter" (click)="clearFilter('Awaiting')">
                       <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
                     </button>
                   </div>
@@ -310,7 +310,7 @@
                     <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource4.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
-                    <button mat-icon-button aria-label="Reset inprogress search" *ngIf="dataSource4.filter" (click)="clearFilter('In-progress')">
+                    <button data-test-id="btnResetIpSerach" mat-icon-button aria-label="Reset inprogress search" *ngIf="dataSource4.filter" (click)="clearFilter('In-progress')">
                       <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
                     </button>
                   </div>
