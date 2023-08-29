@@ -35,3 +35,17 @@ A step by step series of examples that tell you how to get a development environ
 * [Angular](https://angular.io/) - Angular Framework
 * [Angular Material](https://material.angular.io/) - Designing
 * [BootStrap](https://getbootstrap.com/) - Table, Cards and other UI design
+
+## Commeting Message (Examples)
+1.Commit message with description and change in body
+```
+fix: allow provided config object to extend other configs
+```
+2.Commit message with scope
+```
+feat(lang): add language data
+```
+3.Commit message with optional ! to draw attention to breaking change
+```
+revert!: drop Node 8 from testing matrix
+```
