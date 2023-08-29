@@ -1,0 +1,428 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~angular-calendar/css/angular-calendar.css";
+
+@font-face {
+  font-family: arty;
+  src: url(assets/fonts/Arty.otf) format("opentype");
+}
+
+@font-face {
+  font-family: lato;
+  src: url(assets/fonts/Lato-Regular.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: asem;
+  src: url(assets/fonts/Asem.otf) format("opentype");
+}
+
+@font-face {
+  font-family: youthness;
+  src: url(assets/fonts/Youthness.ttf) format("opentype");
+}
+
+@font-face {
+  font-family: almondita;
+  src: url(assets/fonts/almondita.ttf) format("opentype");
+}
+
+body {
+  background-color: #f1f4f6;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.alert-primary {
+  display: flex !important;
+}
+
+.doctor-value {
+  width: 92%;
+}
+
+body.font-lato div,
+body.font-lato span,
+body.font-lato h1,
+body.font-lato h2,
+body.font-lato h3,
+body.font-lato h4,
+body.font-lato h5,
+body.font-lato h6,
+body.font-lato a:not(.fa-whatsapp, .fa-phone-volume, .material-icons),
+body.font-lato th,
+body.font-lato td {
+  font-family: lato;
+}
+
+.red-snackbar {
+  color: white;
+  font-weight: bold;
+  background-color: #f44336 !important;
+}
+
+.timepicker-overlay,
+.timepicker-backdrop-overlay {
+  z-index: 1001 !important;
+}
+
+.cdk-overlay-container {
+  z-index: 1051 !important;
+}
+
+.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background: lightgray;
+}
+
+.red-star {
+  color: red;
+}
+
+/* mat-confirm-dialog (customised dialog) */
+.confirm-dialog-container .mat-dialog-container {
+  border-radius: 0.25em 0.25em 0.4em 0.4em;
+  padding: 0px;
+}
+
+.confirm-dialog-container .content-container {
+  margin: 5px 5px -12px;
+  color: #8f9cb5;
+  display: flex;
+}
+
+.confirm-dialog-container #close-icon {
+  margin-left: auto;
+  order: 2;
+  font-weight: bolder;
+}
+
+.confirm-dialog-container #close-icon:hover {
+  cursor: pointer;
+}
+
+.confirm-dialog-container #no-button {
+  height: 50px;
+  width: 50%;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 0px;
+}
+
+.confirm-dialog-container #yes-button {
+  height: 50px;
+  width: 50%;
+  background-color: #3f51b5;
+  color: white;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+.confirm-dialog-container span.content-span {
+  padding: 35px 16px;
+  text-align: center;
+  font-size: 20px;
+}
+
+
+/* Chatbot css*/
+
+.chatbot-backdrop {
+  background: transparent;
+}
+
+.chatbot-container .mat-dialog-container {
+  overflow: visible;
+  position: relative;
+  padding: 0px;
+  font-family: DM Sans;
+  border-radius: 12px;
+  box-shadow: 0px 4px 24px rgb(31 28 58 / 8%);
+
+  .modal-close-btn {
+    position: absolute;
+    top: -35px;
+    right: 0;
+    z-index: 1066;
+    width: 32px;
+    height: 32px;
+    padding: 0px;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: none;
+  }
+
+  .mat-dialog-title {
+    margin: 0px;
+    padding: 20px;
+    background: #4B39B7;
+    color: #ffffff;
+    border-radius: 12px 12px 0px 0px;
+
+    h6 {
+      font-size: 18px;
+    }
+
+    img {
+      cursor: pointer;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .mat-dialog-content {
+    margin: 0px;
+    max-height: 330px;
+    padding: 0px;
+
+    ul.chat-item-list {
+      list-style: none;
+      min-height: 320px;
+      max-height: 320px;
+      padding: 0px;
+      margin: 0px;
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 0px 20px;
+      overflow: auto;
+
+      li.chat-item {
+        max-width: 90%;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 8px 8px 8px 0px;
+        font-size: 14px;
+        margin: 4px 0px;
+        background: #faf9ff;
+        text-overflow: wrap;
+      }
+
+      li.chat-item.left {
+        background: #e6fff3;
+        margin-left: auto;
+        border-radius: 8px 8px 0px 8px;
+      }
+
+      li.chat-item.timestamp-item {
+        background: #ffffff;
+        max-width: 100%;
+        width: 100%;
+        padding: 0px;
+        color: #7f7b92;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      li.chat-item.read-status {
+        background: #ffffff;
+        max-width: 100%;
+        width: 100%;
+        padding: 0px;
+        color: #7f7b92;
+        text-align: right;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .mat-dialog-actions {
+    margin: 0px;
+    padding: 8px 20px;
+    flex-wrap: nowrap;
+    font-family: DM Sans;
+
+    input[type="text"] {
+      background: #faf9ff;
+      border: 1px solid rgba(178, 175, 190, 0.2);
+      border-radius: 8px;
+      font-size: 16px;
+      padding: 12px 16px;
+      outline: none;
+      height: 44px;
+
+      input[type="text"]:focus-visible {
+        outline: none;
+      }
+    }
+
+    .send-btn {
+      border: none;
+      outline: none;
+      padding: 12px;
+      width: 44px;
+      height: 44px;
+      background: #4B39B7;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+
+      .mat-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .material-icons {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+
+.modal-md {
+  width: 490px;
+  max-width: 90% !important;
+
+  .mat-dialog-container {
+    padding: 0px;
+    background: #ffffff;
+    border-radius: 12px;
+    position: relative;
+
+    .select-lang-modal {
+      padding: 24px;
+
+      .modal-title-con {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0px 0px 24px;
+
+        h6 {
+          font-size: 24px;
+          line-height: 150%;
+          font-weight: bold;
+          color: #1B163A;
+        }
+
+        .close-btn-con {
+          .modal-close-btn {
+            border: none;
+            background: transparent;
+            outline: none;
+          }
+        }
+      }
+
+      .modal-con {
+        .lang-item {
+          background: #FFFFFF;
+          border: 1px solid rgba(178, 175, 190, 0.2);
+          border-radius: 8px;
+          padding: 12px;
+          font-size: 16px;
+          line-height: 150%;
+          color: #1B163A;
+          margin-bottom: 5px;
+        }
+
+        .modal-btn {
+          padding: 8px 24px;
+          min-width: 119px;
+          height: 48px;
+          background: #FFFFFF;
+          border: 1px solid #EFE8FF;
+          border-radius: 8px;
+          font-size: 18px;
+          line-height: 150%;
+          color: #2E1E91;
+          font-weight: bold;
+        }
+
+        .modal-btn.blue-btn {
+          background: #2E1E91;
+          border: 1px solid #2E1E91;
+          color: #FFFFFF;
+        }
+      }
+    }
+
+    .intel-con-modal {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+
+      .close-btn-con {
+        position: absolute;
+        right: 24px;
+        top: 24px;
+
+        .modal-close-btn {
+          border: none;
+          background: transparent;
+          outline: none;
+        }
+      }
+
+      .modal-con {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h6 {
+          font-size: 24px;
+          font-weight: bold;
+          text-align: center;
+          line-height: 150%;
+        }
+
+        p {
+          font-size: 18px;
+          color: #7F7B92;
+          text-align: center;
+          line-height: 150%;
+        }
+      }
+
+      .modal-action-btn-con {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        .modal-btn {
+          padding: 8px 24px;
+          min-width: 119px;
+          min-height: 48px;
+          background: #FFFFFF;
+          border: 1px solid #EFE8FF;
+          border-radius: 8px;
+          font-size: 18px;
+          line-height: 150%;
+          color: #2E1E91;
+          font-weight: bold;
+        }
+
+        .modal-btn.blue-btn {
+          background: #2E1E91;
+          border: 1px solid #2E1E91;
+          color: #FFFFFF;
+        }
+      }
+    }
+  }
+}

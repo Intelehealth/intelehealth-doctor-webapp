@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { VideoCallComponent } from '../modal-components/video-call/video-call.component';
+import { ChatComponent } from '../component/chat/chat.component';
 
 @Injectable({
   providedIn: 'root'
@@ -44,10 +45,10 @@ export class CoreService {
   //   return dialogRef.afterClosed();
   // }
 
-  // openChatBoxModal(data: any): MatDialogRef<ChatBoxComponent> {
-  //   const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false });
-  //   return dialogRef;
-  // }
+  openChatBoxModal(data: any): MatDialogRef<ChatComponent> {
+    const dialogRef = this.dialog.open(ChatComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false });
+    return dialogRef;
+  }
 
   openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
     const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false });

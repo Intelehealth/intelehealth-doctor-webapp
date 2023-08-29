@@ -352,4 +352,14 @@ export class VisitSummaryComponent implements OnInit {
       this.diagnosisService.isVisitSummaryChanged = false;
     });
   }
+
+  openChatModal() {
+    this.cs.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
+    });
+  }
 }

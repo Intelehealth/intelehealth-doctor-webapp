@@ -32,7 +32,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   room = "";
   initiator = "dr";
-  doctorName = "";
   nurseId: string = null;
   connectToDrId = "";
   isStreamAvailable: any;
@@ -65,7 +64,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const patientVisitProvider: any = this.patientVisitProvider;
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    this.doctorName = localStorage.getItem("doctorName") || this.user.display;
     this.nurseId = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid || this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
@@ -141,6 +139,14 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.connecting = false;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
+  }
+
+  get doctorName() {
+    try {
+      return JSON.parse(localStorage.getItem("doctorName")) || this.user.display;
+    } catch (error) {
+      return localStorage.getItem("doctorName") || this.user.display;
+    }
   }
 
   onCallConnect() {

@@ -80,13 +80,14 @@ export class LoginPageComponent implements OnInit {
               this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
                 duration: 4000,
               });
-              saveToStorage("doctorName", provider.results[0].person.display);
+              console.log('provider.results[0].person.display: ', provider.results[0].person.display);
+              saveToStorage("doctorName", `${provider.results[0].person.display}`);
             },
             (error) => {
               this.router.navigate(["home"]);
             }
           );
-          
+
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,

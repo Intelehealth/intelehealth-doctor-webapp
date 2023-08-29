@@ -58,7 +58,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -98,6 +98,7 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
 import { CookieModule } from "ngx-cookie";
 import { ToastrModule } from "ngx-toastr";
 import { VideoCallComponent } from './modal-components/video-call/video-call.component';
+import { MomentModule } from "ngx-moment";
 
 @NgModule({
   declarations: [
@@ -275,7 +276,8 @@ import { VideoCallComponent } from './modal-components/video-call/video-call.com
     }),
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
-    })
+    }),
+    MomentModule
   ],
   providers: [
     AuthGuard,
@@ -284,6 +286,8 @@ import { VideoCallComponent } from './modal-components/video-call/video-call.com
     MatNativeDateModule,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} },
     SocketService,
     ChatService,
   ],
