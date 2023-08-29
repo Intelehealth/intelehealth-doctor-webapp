@@ -426,3 +426,38 @@ body.font-lato td {
     }
   }
 }
+
+.vc-modal-lg {
+  width: 96%;
+  max-width: 96% !important;
+
+  .mat-dialog-container {
+    padding: 0px;
+    background: #ffffff;
+    border-radius: 12px;
+    position: relative;
+  }
+
+  .mat-dialog-title {
+    margin: 0px;
+  }
+
+  .mat-dialog-content {
+    padding: 0px;
+    margin: 0px;
+    max-height: 85vh;
+  }
+
+  .mat-dialog-actions {
+    margin: 0px;
+    border-top: 2px solid rgba(178, 175, 190, 0.2);
+  }
+}
+
+.vc-modal-lg.minimized {
+  width: fit-content;
+
+  .mat-dialog-container {
+    width: fit-content;
+  }
+}
