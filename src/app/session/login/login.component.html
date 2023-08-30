@@ -7,13 +7,13 @@
       </p>
     </div>
     <div class="col-md-12 px-0 py-4">
-      <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="formLogin">
+      <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="form">
         <div class="form-group">
           <label for="username">
             {{'Username'|translate}}
-            <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsernameLogin">{{'Forgot Username'|translate}} ?</a></span>
+            <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsername">{{'Forgot Username'|translate}} ?</a></span>
           </label>
-          <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsernameLogin">
+          <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsername">
           <div *ngIf="submitted && f.username.errors">
             <small *ngIf="f.username.errors.required" class="error-msg">{{'Please enter username'|translate}}</small>
             <small *ngIf="f.username.errors.usernameExists" class="error-msg">Couldn’t find you, please enter valid username</small>
@@ -22,11 +22,11 @@
         <div class="form-group">
           <label for="password">
             {{'Password'|translate}}
-            <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPasswordLogin">{{'Forgot Password'|translate}} ?</a></span>
+            <span class="link"><a routerLink="/session/forgot-password" data-test-id="linkForgotPassword">{{'Forgot Password'|translate}} ?</a></span>
           </label>
           <div class="password-field">
-            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPasswordLogin">
-            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePasswordLogin">
+            <input [attr.type]="visible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" data-test-id="etPassword">
+            <button class="btn toggle-password-btn" type="button" (click)="visible = !visible" data-test-id="btnTogglePassword">
               <img src="assets/svgs/icon-eye.svg" alt="">
             </button>
           </div>
@@ -62,7 +62,7 @@
           </div>
         </div> -->
         <div class="form-group mt-3">
-          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitLogin">
+          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
             {{'Next'|translate}}
             <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
           </button>
@@ -71,7 +71,7 @@
     </div>
     <div class="col-md-12">
       <p class="section-terms-conditions">
-        Intelehealth <a data-test-id="linkTermsAndConditionsLogin" href="https://intelehealth.org/terms-of-use" target="_blank">{{'Terms & Conditions'|translate}}</a>  {{'AND'|translate}} <a data-test-id="linkPrivacyPolicyLogin" href="https://intelehealth.org/privacy-policy" target="_blank">{{'Privacy Policy'|translate}}</a>
+        Intelehealth <a data-test-id="linkTermsAndConditions" href="https://intelehealth.org/terms-of-use" target="_blank">{{'Terms & Conditions'|translate}}</a>  {{'AND'|translate}} <a data-test-id="linkPrivacyPolicy" href="https://intelehealth.org/privacy-policy" target="_blank">{{'Privacy Policy'|translate}}</a>
       </p>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
@@ -23,6 +23,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   pageSize:number = 5;
   @Output() fetchPageEvent = new EventEmitter<number>();
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
+  @ViewChild('compSearchInput', { static: true }) searchElement: ElementRef;
 
   constructor() { }
 
@@ -73,6 +74,11 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.tempPaginator.firstPage();
     this.paginator.firstPage();
+  }
+
+  clearFilter() {
+    this.dataSource.filter = null;
+    this.searchElement.nativeElement.value = "";
   }
 
 }

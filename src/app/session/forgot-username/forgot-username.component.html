@@ -10,7 +10,7 @@
 
       <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs nav-fill" (activeIdChange)="reset()">
         <li [ngbNavItem]="'phone'">
-          <a ngbNavLink data-test-id="navMobileForgotUsername">{{'Mobile number'|translate}}</a>
+          <a ngbNavLink data-test-id="navMobile">{{'Mobile number'|translate}}</a>
           <ng-template ngbNavContent>
             <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
               <div class="form-group">
@@ -19,7 +19,7 @@
                 </label>
                 <div class="phone-field">
                   <input type="text"
-                    data-test-id="etMobileForgotUsername"
+                    data-test-id="etMobile"
                     ng2TelInput
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true}"
                     (hasError)="hasError($event)"
@@ -42,7 +42,7 @@
                 </div>
               </div>
               <div class="form-group mt-5">
-                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitMobileForgotUsername">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitMobile">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
                 </button>
@@ -51,7 +51,7 @@
           </ng-template>
         </li>
         <li [ngbNavItem]="'email'">
-          <a ngbNavLink data-test-id="navEmailForgotUsername">{{'EMAIL'|translate}}</a>
+          <a ngbNavLink data-test-id="navEmail">{{'EMAIL'|translate}}</a>
           <ng-template ngbNavContent>
             <form [formGroup]="forgotUsernameForm" (ngSubmit)="forgotUsername()">
               <div class="form-group">
@@ -59,7 +59,7 @@
                   {{'EMAIL'|translate}}
                 </label>
                 <div class="email-id-field">
-                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}" data-test-id="etEmailForgotUsername">
+                  <input type="email" class="form-control" formControlName="email" placeholder="{{'Enter Email ID'|translate}}" data-test-id="etEmail">
                   <button class="btn toggle-password-btn" type="button">
                     <img src="assets/svgs/email.svg" alt="">
                   </button>
@@ -70,7 +70,7 @@
                 </div>
               </div>
               <div class="form-group mt-5">
-                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitEmailForgotUsername">
+                <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitEmail">
                   {{'Next'|translate}}
                   <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
                 </button>

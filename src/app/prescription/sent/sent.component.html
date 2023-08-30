@@ -11,11 +11,14 @@
                 <h6 class="mb-0 ml-2">{{'Prescription Sent'|translate}} ({{prescriptionsSentCount ? prescriptionsSentCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits that shared prescription with patients'|translate}}" matTooltipPosition="right" data-test-id="matIcoHelpSent">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchSent">
+                  <input type="text" #sentSearchInput class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchSent">
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button data-test-id="btnResetSentSerach" mat-icon-button aria-label="Reset sent search" *ngIf="dataSource.filter" (click)="clearFilter()">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>

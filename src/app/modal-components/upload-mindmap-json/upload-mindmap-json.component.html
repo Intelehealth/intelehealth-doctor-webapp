@@ -1,12 +1,12 @@
 <div class="hiddenFileInput">
-  <input type="file" accept="application/JSON" #hiddenFileInput (change)="onFileChanged($event)" data-test-id="fileInputUploadMindmap">
+  <input type="file" accept="application/JSON" #hiddenFileInput (change)="onFileChanged($event)" data-test-id="hiddenFileInput">
 </div>
 <div class="upload-json-input d-flex flex-column justify-content-center align-items-center" *ngIf="!file">
   <div class="close-btn-wrapper">
-    <button class="modal-close-btn" (click)="close()" data-test-id="btnCloseUploadMindmap"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="close()" data-test-id="btnClosehiddenFileInput"><img src="assets/svgs/CloseX.svg" alt=""></button>
   </div>
   <div class="mt-4">
-    <ngx-dropzone (change)="onFilesDropped($event)" [expandable]="true" [disableClick]="false" [multiple]="false" accept="application/JSON" data-test-id="dropzoneUploadMindmap">
+    <ngx-dropzone (change)="onFilesDropped($event)" [expandable]="true" [disableClick]="false" [multiple]="false" accept="application/JSON" data-test-id="dropzonehiddenFileInput">
       <ngx-dropzone-label>
         <div class="dropzone d-flex flex-column justify-content-center align-items-center">
           <img src="assets/svgs/add-key.svg" alt="" width="80px" height="80px">
@@ -17,27 +17,27 @@
     </ngx-dropzone>
   </div>
   <div class="d-flex justify-content-center">
-    <button class="cancel-btn mr-3" type="button" (click)="close()" data-test-id="btnCancelUploadMindmap">{{'Cancel' | translate}}</button>
-    <button class="confirm-btn" type="button" (click)="hiddenFileInput.click()" data-test-id="btnSelectUploadMindmap">{{'Select' | translate}}</button>
+    <button class="cancel-btn mr-3" type="button" (click)="close()" data-test-id="btnCancelhiddenFileInput">{{'Cancel' | translate}}</button>
+    <button class="confirm-btn" type="button" (click)="hiddenFileInput.click()" data-test-id="btnSelecthiddenFileInput">{{'Select' | translate}}</button>
   </div>
 </div>
 
 <div class="upload-json-modal" *ngIf="file">
   <div class="modal-title">
     <h6 class="mb-0">{{'Add Mindmap' | translate}}</h6>
-    <button class="modal-close-btn" (click)="close()" data-test-id="btnCloseUploadMindmap"><img src="assets/svgs/Close.svg" alt=""></button>
+    <button class="modal-close-btn" (click)="close()" data-test-id="btnClosehiddenFileInput"><img src="assets/svgs/Close.svg" alt=""></button>
   </div>
   <div class="modal-body">
     <div class="upload-item d-flex flex-row align-items-center">
        <img src="assets/svgs/add-btn.svg" alt="">
        <span class="ml-2">{{filename}}</span>
-       <button mat-icon-button class="ml-auto" (click)="reset()" data-test-id="btnResetUploadMindmap">
+       <button mat-icon-button class="ml-auto" (click)="reset()" data-test-id="btnResethiddenFileInput">
         <mat-icon>close</mat-icon>
       </button>
     </div>
     <div class="d-flex justify-content-center mt-3">
-      <button class="cancel-btn mr-3" type="button" (click)="reset()" data-test-id="btnChangeUploadMindmap">{{'Change' | translate}}</button>
-      <button class="confirm-btn" type="button" (click)="uploadMindmap()" data-test-id="btnSubmitUploadMindmap">{{'Upload' | translate}}</button>
+      <button class="cancel-btn mr-3" type="button" (click)="reset()" data-test-id="btnChangehiddenFileInput">{{'Change' | translate}}</button>
+      <button class="confirm-btn" type="button" (click)="uploadMindmap()" data-test-id="btnSubmithiddenFileInput">{{'Upload' | translate}}</button>
     </div>
   </div>
 </div>

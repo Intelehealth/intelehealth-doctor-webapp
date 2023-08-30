@@ -58,7 +58,7 @@
                 type="button"
                 class="video-ctrl-btn red"
                 (click)="endCallInRoom()"
-                data-test-id="btnEndVideoCall"
+                data-test-id="btnEnd"
               >
                 <img src="assets/svgs/call-end.svg" alt="" />
               </button>
@@ -66,7 +66,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleAudio()"
-                data-test-id="btnToggleAudioVideoCall"
+                data-test-id="btnToggleAudio"
                 [class.gray]="_localAudioMute"
               >
                 <img
@@ -82,7 +82,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleVideo()"
-                data-test-id="btnToggleVideoVideoCall"
+                data-test-id="btnToggleVideo"
                 [class.gray]="_localVideoOff"
               >
                 <img
@@ -115,7 +115,7 @@
                 type="button"
                 class="video-ctrl-btn"
                 (click)="toggleWindow()"
-                data-test-id="btnToggleWindowVideoCall"
+                data-test-id="btnToggleWindow"
               >
                 <img
                   src="{{
@@ -223,7 +223,7 @@
                   placeholder="Type here"
                   [(ngModel)]="message"
                   (keyup.enter)="sendMessage()"
-                  data-test-id="etChatMessageVideoCall"
+                  data-test-id="etChatMessage"
                 />
                 <div class="input-group-append">
                   <button type="button" (click)="fileInput.click()">
@@ -237,7 +237,7 @@
                   </button>
                 </div>
               </div>
-              <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessageVideoCall">
+              <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessage">
                 <img src="assets/svgs/send-icon-white.svg" alt="" />
               </button>
             </div>

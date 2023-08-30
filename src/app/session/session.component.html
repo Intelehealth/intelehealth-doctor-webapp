@@ -32,7 +32,7 @@
         <div class="container">
           <div class="row">
             <div class="col-md-12 px-0 py-4">
-              <ng-select hidden data-test-id="selectLanguageSession" class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="code" [searchable]="false" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage" (ngModelChange)="changeLanguage()">
+              <ng-select data-test-id="selectLanguageSession" class="language-select-input ml-auto" [items]="languages" bindLabel="name" bindValue="code" [searchable]="false" [clearable]="false" [multiple]="false" [(ngModel)]="selectedLanguage" (ngModelChange)="changeLanguage()">
               </ng-select>
             </div>
           </div>

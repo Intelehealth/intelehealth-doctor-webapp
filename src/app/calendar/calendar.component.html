@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="col p-0 pb-2">
-      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar" data-test-id="btnManageCalendar">{{'Manage calendar'|translate}}</button>
+      <button mat-button class="view-btn" routerLink="/calendar/setup-calendar" data-test-id="btnManageCal">{{'Manage calendar'|translate}}</button>
     </div>
   </div>
   <div class="row">
@@ -28,10 +28,10 @@
               <div class="header-date-con">
                 <img class="mr-2" src="assets/svgs/calendar-white.svg" alt="">
                 <h6 class="mb-0 mr-2">{{ viewDate | calendarDate:(view + 'ViewTitle'): locale }}</h6>
-                <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)" data-test-id="btnCalendarPreviousView">
+                <button class="arrow-btn mr-2" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)" data-test-id="btnCalPreviousView">
                   <img src="assets/svgs/chevron-left.svg" alt="" width="100%">
                 </button>
-                <button class="arrow-btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)" data-test-id="btnCalendarNextView">
+                <button class="arrow-btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="dateChanged($event)" data-test-id="btnCalNextView">
                   <img src="assets/svgs/chevron-right.svg" alt="" width="100%">
                 </button>
               </div>
@@ -161,7 +161,7 @@
             tabindex="0"
             role="application"
             [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
-            <div class="event-con" data-test-id="mwlCalendarDayView">
+            <div class="event-con" data-test-id="mwlCalDayView">
               <div class="con-item">
                 <img class="mr-2" src="assets/svgs/appointment.svg" alt="">
                 <div class="con-info">
@@ -211,7 +211,7 @@
             tabindex="0"
             role="application"
             [attr.aria-label]="{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }| calendarA11y: 'eventDescription'">
-            <div class="event-con" data-test-id="mwlCalendarWeekView">
+            <div class="event-con" data-test-id="mwlCalWeekView">
               <h6 class="mb-0">{{((weekEvent.tempEvent || weekEvent.event).title) | translate}}</h6>
               <p class="mb-0">{{(weekEvent.tempEvent || weekEvent.event).start|date:'h:mm'}} {{(weekEvent.tempEvent || weekEvent.event).start|date:'a'|lowercase|translate}} -
                  {{(weekEvent.tempEvent || weekEvent.event).end|date:'h:mm'}}{{(weekEvent.tempEvent || weekEvent.event).end|date:'a'|lowercase|translate}}</p>
@@ -287,7 +287,7 @@
           let-trackByEventId="trackByEventId"
           let-validateDrag="validateDrag">
           <div [class.dayOff]="checkIfDayOff(day.date)">
-            <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'"  data-test-id="mwlCalendarMonthView">
+            <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'"  data-test-id="mwlCalMonthView">
               <span aria-hidden="true">
                 <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
                 <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
