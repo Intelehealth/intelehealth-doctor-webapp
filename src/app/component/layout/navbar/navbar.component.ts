@@ -50,6 +50,7 @@ export class NavbarComponent implements OnInit {
   });
 
   @Output() messageEvent = new EventEmitter<string>();
+  providerType: string = '';
 
   constructor(
     private authService: AuthService,
@@ -65,6 +66,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     const userDetails = getFromStorage("user");
+    this.providerType = getFromStorage("providerType");
     this.subscribeAccess = getFromStorage("subscribed") || false;
     if (userDetails) {
       const roles = userDetails["roles"];
@@ -98,7 +100,7 @@ export class NavbarComponent implements OnInit {
   createUpdateStatus(status = "active") {
     const roles = this.user["roles"];
     var isDoctor = false;
-    roles.forEach((role) => {
+    roles?.forEach((role) => {
       if (role.uuid === "a5df6aa5-d6e5-4b56-b0e7-315ee0899f97") {
         isDoctor = true;
       }

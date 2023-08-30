@@ -6,7 +6,7 @@ import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
 import { VisitService } from "src/app/services/visit.service";
 import { environment } from "src/environments/environment";
-declare var saveToStorage: any,  getFromStorage: any
+declare var saveToStorage: any,  getFromStorage: any;
 @Component({
   selector: "app-login-page",
   templateUrl: "./login-page.component.html",
@@ -70,23 +70,43 @@ export class LoginPageComponent implements OnInit {
         if (response.authenticated === true) {
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
+              saveToStorage("provider", provider.results[0]);
               this.authService.sendToken(response.sessionId);
               saveToStorage("user", response.user);
-              if (provider.results[0].attributes.length === 0) {
-                this.router.navigate(["/myAccount"]);
+              let isNurse = response.user.roles.find((r: any) => r.name == 'Organizational: Nurse');
+              let isDoctor = response.user.roles.find((r: any) => r.name == 'Organizational: Doctor');
+              if (isNurse) {
+                if (isDoctor) {
+                  if (provider.results[0].attributes.length === 0) {
+                    this.router.navigate(["/myAccount"]);
+                  } else {
+                    this.router.navigate(["/home"]);
+                  }
+                  saveToStorage("providerType", 'Both');
+                  saveToStorage("doctorName", provider.results[0].person.display);
+                } else {
+                  this.router.navigate(["/myAccount"]);
+                  saveToStorage("providerType", 'Nurse');
+                  saveToStorage("nurseName", provider.results[0].person.display);
+                }
               } else {
-                this.router.navigate(["/home"]);
+                if (provider.results[0].attributes.length === 0) {
+                  this.router.navigate(["/myAccount"]);
+                } else {
+                  this.router.navigate(["/home"]);
+                }
+                saveToStorage("providerType", 'Doctor');
+                saveToStorage("doctorName", provider.results[0].person.display);
               }
               this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
                 duration: 4000,
               });
-              saveToStorage("doctorName", provider.results[0].person.display);
             },
             (error) => {
               this.router.navigate(["home"]);
             }
           );
-          
+
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
