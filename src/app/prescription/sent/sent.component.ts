@@ -1,4 +1,4 @@
-import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   pageSize:number = 5;
   @Output() fetchPageEvent = new EventEmitter<number>();
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
+  @ViewChild('sentSearchInput', { static: true }) searchElement: ElementRef;
 
   constructor(private translateService: TranslateService) { }
 
@@ -75,6 +76,11 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.tempPaginator.firstPage();
     this.paginator.firstPage();
+  }
+
+  clearFilter() {
+    this.dataSource.filter = null;
+    this.searchElement.nativeElement.value = "";
   }
 
 }
