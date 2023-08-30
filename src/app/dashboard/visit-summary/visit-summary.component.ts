@@ -102,7 +102,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       { id : 6 , name : "TH"},
       { id : 7 , name : "GH"},
       { id : 8 , name : "Private Hospital"},
-      { id : 9 , name : "Other Facility*"}
   ];
   specializations: any[] = [
     {
@@ -133,8 +132,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       { id: 8, name : "ENT Specialist"},
       { id: 9, name : "Eye Specialist"},
       { id: 10, name : "Dental Surgeon"},
-      { id: 11, name : "Other Specialist*"},
   ];
+
+  refer_priorities=[
+    {id:1, name:"Elective"},
+    {id:1, name:"Urgent"}
+  ]
   
   diagnosis: any[] = [
     // {
@@ -369,13 +372,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.addReferralForm = new FormGroup({
-      refer:new FormControl(false, [Validators.required]),
       facility:new FormControl(null, [Validators.required]),
-      other_facility:new FormControl(),
       speciality: new FormControl(null, [Validators.required]),
-      other_speciality: new FormControl(),
       priority_refer: new FormControl("Elective", [Validators.required]),
-      reason: new FormControl(null, [Validators.required])
+      reason: new FormControl(null)
     });
 
     this.followUpForm = new FormGroup({
@@ -1312,11 +1312,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleReferral() {
-    this.addMoreReferral = !this.addMoreReferral;
-    this.addReferralForm.reset();
-  }
-
   checkIfReferralPresent() {
     this.referrals = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
@@ -1324,7 +1319,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         response.results.forEach((obs: any) => {
           let obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[1].trim(), facility: obs_values[0].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
         });
       });
@@ -1334,22 +1329,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.addReferralForm.invalid) {
       return;
     }
-    let refer_facility = this.addReferralForm.value.other_facility ?  this.addReferralForm.value.other_facility : this.addReferralForm.value.facility;
-    let refer_speciality = this.addReferralForm.value.other_speciality ?  this.addReferralForm.value.other_speciality : this.addReferralForm.value.speciality;
-    // if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
-    //   this.toastr.warning(this.translateService.instant("Referral already added, please add another referral."), this.translateService.instant("Already Added"));
-    //   return;
-    // }
+    if (this.referrals.find((o: any) => o.speciality == this.addReferralForm.value.speciality)) {
+      this.toastr.warning(this.translateService.instant("Referral already added, please add another referral."), this.translateService.instant("Already Added"));
+      return;
+    }
+    let refer_reason = this.addReferralForm.value.reason ? this.addReferralForm.value.reason : '';
     this.encounterService.postObs({
       concept: this.conceptReferral,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: `${refer_speciality}:${refer_facility}:${this.addReferralForm.value.priority_refer}:${this.addReferralForm.value.reason}`,
+      value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
       encounter: this.visitNotePresent.uuid,
     }).subscribe(response => {
-      this.referrals.push({ uuid: response.uuid, speciality: refer_speciality, facility:refer_facility, priority: this.addReferralForm.value.priority_refer, reason:this.addReferralForm.value.reason });
+      this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, facility:this.addReferralForm.value.facility, priority: this.addReferralForm.value.priority_refer, reason:refer_reason });
       this.addReferralForm.reset();
-      this.addReferralForm.controls.refer.setValue(false);
       this.addReferralForm.controls.priority_refer.setValue("Elective");
     });
   }
