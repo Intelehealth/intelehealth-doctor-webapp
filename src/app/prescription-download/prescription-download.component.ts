@@ -33,6 +33,9 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   patient: any;
   eventsSubject: Subject<any> = new Subject<any>();
 
+  selectedLanguage: string = "ru";
+  lang = localStorage.getItem("selectedLanguage");
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -61,6 +64,17 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
       // this.verifyToken();
       this.prescriptionVerified = true;
       this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
+    }
+    if (localStorage.getItem("selectedLanguage")) {
+      this.translateService.setDefaultLang(localStorage.getItem("selectedLanguage"));
+      this.selectedLanguage = localStorage.getItem("selectedLanguage");
+      const browserLang = this.translateService.getBrowserLang();
+      this.translateService.use(browserLang.match(/ru|fr/) ? browserLang : this.lang);  
+    } else {
+      this.translateService.setDefaultLang(this.selectedLanguage);
+      const browserLang = this.translateService.getBrowserLang();
+      this.translateService.use(browserLang.match(/ru|fr/) ? browserLang : 'ru');
+      localStorage.setItem("selectedLanguage", this.selectedLanguage);
     }
   }
 
