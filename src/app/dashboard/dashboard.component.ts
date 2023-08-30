@@ -130,11 +130,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
             If no attributes, consider it as General Physician
             */
             if (visit.attributes.length) {
+              let flag = 0;
               for (let t = 0; t < visit.attributes.length; t++) {
                 if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
                   // If specialization matches process visit
                   if (visit.attributes[t].value == this.specialization) {
-                    this.processVisit(visit);
+                    flag = 1;
+                    // this.processVisit(visit);
                     //  break;
                   }
                 }
@@ -143,6 +145,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     visit.seen = true;
                   }
                 }
+              }
+              if (flag == 1) {
+                this.processVisit(visit);
               }
             } else if (this.specialization == 'General Physician') {
               this.processVisit(visit);
