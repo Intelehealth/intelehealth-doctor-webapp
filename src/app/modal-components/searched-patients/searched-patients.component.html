@@ -17,7 +17,7 @@
             </th>
             <td>{{ value.person.display}} ({{ (value.person.gender)| translate}}, {{ value.person.age}})</td>
             <td>
-              <button mat-button type="button" class="blue-btn float-right" (click)="view(value.uuid)" data-test-id="{{'btnViewSearchedPatients'+i}}">
+              <button mat-button type="button" class="blue-btn float-right" (click)="view(value.uuid)" [attr.data-test-id]="'btnViewSearchedPatients'+i">
                 {{'View' | translate}}
               </button>
             </td>
@@ -35,7 +35,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close="false" class="blue-btn mr-2" data-test-id="btnCloseSearchedPatients">
+  <button mat-button mat-dialog-close="false" class="blue-btn mr-2" [attr.data-test-id]="'btnCloseSearchedPatients'">
     {{'Close'| translate}}
   </button>
 </mat-dialog-actions>
