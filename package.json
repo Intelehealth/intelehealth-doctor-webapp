@@ -13,7 +13,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "src/**/*.{ts,css,html}": "tslint -p ./tsconfig.json"
+    "src/**/*.{ts,css}": "tslint -p ./tsconfig.json"
   },
   "private": true,
   "dependencies": {

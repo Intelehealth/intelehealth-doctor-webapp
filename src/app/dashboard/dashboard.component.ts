@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -72,6 +72,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
   @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
   @ViewChild('tempPaginator3') tempPaginator3: MatPaginator;
+
+  @ViewChild('apSearchInput', { static: true }) apSearchElement: ElementRef;
+  @ViewChild('prSearchInput', { static: true }) prSearchElement: ElementRef;
+  @ViewChild('awSearchInput', { static: true }) awSearchElement: ElementRef;
+  @ViewChild('ipSearchInput', { static: true }) ipSearchElement: ElementRef;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -581,6 +586,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dataSource4.filter = filterValue.trim().toLowerCase();
     this.tempPaginator3.firstPage();
     this.inprogressPaginator.firstPage();
+  }
+
+  clearFilter(dataSource: string) {
+    switch (dataSource) {
+      case 'Appointment':
+        this.dataSource1.filter = null;
+        this.apSearchElement.nativeElement.value = "";
+        break;
+      case 'Priority':
+        this.dataSource2.filter = null;
+        this.prSearchElement.nativeElement.value = "";
+        break;
+      case 'Awaiting':
+        this.dataSource3.filter = null;
+        this.awSearchElement.nativeElement.value = "";
+        break;
+      case 'In-progress':
+        this.dataSource4.filter = null;
+        this.ipSearchElement.nativeElement.value = "";
+        break;
+      default:
+        break;
+    }
   }
 
   ngOnDestroy() {

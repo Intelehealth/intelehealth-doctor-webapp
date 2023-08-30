@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
@@ -26,6 +26,7 @@ export class AppointmentsComponent implements OnInit {
   appointments: any = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('searchInput', { static: true }) searchElement: ElementRef;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -217,6 +218,11 @@ export class AppointmentsComponent implements OnInit {
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  clearFilter() {
+    this.dataSource.filter = null;
+    this.searchElement.nativeElement.value = "";
   }
 
 }
