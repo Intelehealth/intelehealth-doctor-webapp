@@ -9,7 +9,7 @@
               <label for="profile-pic">
                 <img src="assets/svgs/camera.svg" alt="">
               </label>
-              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)" data-test-id="fileInputProfile">
+              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)" data-test-id="fileInput">
             </div>
           </div>
         </div>
@@ -21,8 +21,8 @@
     </div>
     <div class="col-md-9 p-1">
       <div class="intel-card">
-        <mat-stepper linear #stepper [disableRipple]="true" (selectionChange)="stepChanged($event)" data-test-id="matStepperProfile">
-          <mat-step data-test-id="matStepPersonalProfile">
+        <mat-stepper linear #stepper [disableRipple]="true" (selectionChange)="stepChanged($event)" data-test-id="matstepChanged">
+          <mat-step data-test-id="matPersonal">
             <ng-template matStepLabel>
               <div class="custom-step-label">
                 <span class="label-index">1</span>
@@ -33,7 +33,7 @@
               <div class="form-row">
                 <div class="form-group col-md-4">
                   <label for="givenName">{{'First name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenNameProfile">
+                  <input type="text" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
                   <div *ngIf="submitted && f1.givenName.errors">
                     <small class="error-msg" *ngIf="f1.givenName.errors.required">{{'Enter first name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.givenName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="middleName">{{'Middle name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleNameProfile">
+                  <input type="text" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
                   <div *ngIf="submitted && f1.middleName.errors">
                     <small class="error-msg" *ngIf="f1.middleName.errors.required">{{'Enter middle name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.middleName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="familyName">{{'Last name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyNameProfile">
+                  <input type="text" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
                   <div *ngIf="submitted && f1.familyName.errors">
                     <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter last name'| translate}}</small>
                     <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only'| translate}}</small>
@@ -61,19 +61,19 @@
                   <label for="gender">{{'Gender'| translate}} *</label>
                   <div class="py-2">
                     <div class="pretty p-default p-round">
-                      <input type="radio" value="M"  formControlName="gender" data-test-id="radioGenderMaleProfile">
+                      <input type="radio" value="M"  formControlName="gender" data-test-id="rdGenderMale">
                       <div class="state p-success">
                           <label>{{'Male'| translate}}</label>
                       </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="F"  formControlName="gender" data-test-id="radioGenderFemaleProfile">
+                          <input type="radio" value="F"  formControlName="gender" data-test-id="rdGenderFemale">
                           <div class="state p-success">
                               <label>{{'Female'| translate}}</label>
                           </div>
                       </div>
                       <div class="pretty p-default p-round">
-                          <input type="radio" value="U"  formControlName="gender" data-test-id="radioGenderOtherProfile">
+                          <input type="radio" value="U"  formControlName="gender" data-test-id="rdGenderOther">
                           <div class="state p-success">
                               <label>{{'Other'| translate}}</label>
                           </div>
@@ -84,11 +84,11 @@
                   <label for="birthdate">{{'Date of birth'| translate}} *</label>
                   <div class="input-group">
                     <input type="text" class="form-control" formControlName="birthdate" [max]="today" [matDatepicker]="dobdp" placeholder="{{'Enter DOB'| translate}}" aria-label="Birthdate"
-                      aria-describedby="basic-addon1" readonly data-test-id="etBirthdateProfile">
+                      aria-describedby="basic-addon1" readonly data-test-id="etBirthdate">
                     <mat-datepicker #dobdp></mat-datepicker>
                     <div class="input-group-append">
                       <span class="input-group-text" id="basic-addon1">
-                        <mat-datepicker-toggle matSuffix [for]="dobdp" data-test-id="dpBirthdateProfile">
+                        <mat-datepicker-toggle matSuffix [for]="dobdp" data-test-id="dpBirthdate">
                           <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                         </mat-datepicker-toggle>
                       </span>
@@ -100,7 +100,7 @@
                 </div>
                 <div class="form-group col-md-2">
                   <label for="age">{{'Age'| translate}} *</label>
-                  <input type="number" class="form-control" formControlName="age" placeholder="{{'Enter age'| translate}}" readonly data-test-id="etAgeProfile">
+                  <input type="number" class="form-control" formControlName="age" placeholder="{{'Enter age'| translate}}" readonly data-test-id="etAge">
                   <div *ngIf="submitted && f1.age.errors">
                     <small class="error-msg" *ngIf="f1.age.errors.required">{{'Enter age'| translate }}</small>
                     <small class="error-msg" *ngIf="f1.age.errors.pattern">{{'Enter numeric value only' | translate}}</small>
@@ -113,7 +113,7 @@
                   <label for="phoneNumber">{{'Phone Number'| translate}} *</label>
                   <input type="text"
                     ng2TelInput
-                    data-test-id="etPhoneNumberProfile"
+                    data-test-id="etPhoneNumber"
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'phoneNumber')"
                     (ng2TelOutput)="getNumber($event, 'phoneNumber')"
@@ -142,7 +142,7 @@
                   <label for="whatsapp">{{'WhatsApp Number'| translate}} *</label>
                   <input type="text"
                     ng2TelInput
-                    data-test-id="etWhatsAppNumberProfile"
+                    data-test-id="etWhatsAppNumber"
                     [ng2TelInputOptions]="{initialCountry: 'in', separateDialCode: true, autoHideDialCode: false}"
                     (hasError)="hasError($event, 'whatsAppNumber')"
                     (ng2TelOutput)="getNumber($event, 'whatsAppNumber')"
@@ -163,7 +163,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6 email-field">
                   <label for="emailId">{{'Email ID'| translate}} *</label>
-                  <input type="email" class="form-control" formControlName="emailId" placeholder="{{'Enter email'| translate}}" data-test-id="etEmailProfile">
+                  <input type="email" class="form-control" formControlName="emailId" placeholder="{{'Enter email'| translate}}" data-test-id="etEmail">
                   <div class="check">
                     <mat-spinner diameter="20" *ngIf="f1.emailId?.pending"></mat-spinner>
                     <mat-icon class="success" *ngIf="!f1?.emailId?.errors && !f1.emailId?.pending">done_all</mat-icon>
@@ -181,33 +181,33 @@
               <div class="form-row">
                 <div class="col-md-12">
                   <h6>{{'Add signature' | translate}}</h6>
-                  <mat-tab-group class="signature-tab-group" mat-align-tabs="start" [selectedIndex]="selectedSignatureTabIndex" (selectedTabChange)="signatureTabChanged($event)" data-test-id="mtgSignatureProfile">
-                    <mat-tab label="{{'Draw'| translate}}" data-test-id="mtDrawProfile">
+                  <mat-tab-group class="signature-tab-group" mat-align-tabs="start" [selectedIndex]="selectedSignatureTabIndex" (selectedTabChange)="signatureTabChanged($event)" data-test-id="mtgSignature">
+                    <mat-tab label="{{'Draw'| translate}}" data-test-id="mtDraw">
                       <div class="container">
                         <div class="form-row">
                           <div class="form-group col-md-12">
                             <label for="drawSignature">{{'Draw signature'| translate}} * <span class="link"><a (click)="clearSignature()">{{'clear sign'| translate}}</a></span></label>
                           </div>
                           <div class="col-md-12" id="signature-container">
-                            <signature-pad data-test-id="signaturePadProfile" [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
+                            <signature-pad data-test-id="signaturePad" [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
                           </div>
                         </div>
                       </div>
                     </mat-tab>
 
-                    <mat-tab label="{{'Generate' | translate}}" data-test-id="mtGenerateProfile">
+                    <mat-tab label="{{'Generate' | translate}}" data-test-id="mtGenerate">
                       <div class="container">
                         <div class="form-row">
                           <div class="form-group col-md-6">
                             <label for="textOfSign">{{'Signature letters' | translate}} *</label>
-                            <input type="text" class="form-control" placeholder="{{'Enter signature letters'|translate}}" formControlName="textOfSign" data-test-id="etSignatureLettersProfile">
+                            <input type="text" class="form-control" placeholder="{{'Enter signature letters'|translate}}" formControlName="textOfSign" data-test-id="etSignature">
                             <div *ngIf="submitted && f1.textOfSign.errors">
                               <small class="error-msg" *ngIf="f1.textOfSign.errors.required">{{'Enter signature letters'|translate}}</small>
                             </div>
                           </div>
                           <div class="form-group col-md-6">
                             <label for="fontOfSign">{{'Select Signature'| translate}} *</label>
-                            <ng-select appendTo=".form-group" class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="{{'Select Signature'|translate}}" formControlName="fontOfSign" data-test-id="etSignatureFontProfile">
+                            <ng-select appendTo=".form-group" class="profile-select" [items]="fonts" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" placeholder="{{'Select Signature'|translate}}" formControlName="fontOfSign" data-test-id="etSignatureFont">
                               <ng-template ng-label-tmp let-item="item">
                                 <p class="mb-0" [style.fontFamily]="item.name" style="font-size: 30px;">{{item.text}}</p>
                               </ng-template>
@@ -223,10 +223,10 @@
                       </div>
                     </mat-tab>
 
-                    <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUploadProfile">
+                    <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
                       <ng-container *ngIf="!signatureFile; else signaturePreview">
-                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="50000" (change)="onFilesDropped($event)" data-test-id="dropzoneSignatureProfile"></ngx-dropzone>
-                        <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFileSelectProfile">
+                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="50000" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
+                        <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFile">
                           <img src="assets/svgs/add-btn-blue-square.svg" alt="" width="48px" height="48px">
                           <p class="ml-2">{{'Upload a scanned image of your signature.' | translate}}<br> {{'Image size (5kb to 50kb)' | translate}}</p>
                         </div>
@@ -234,7 +234,7 @@
                       <ng-template #signaturePreview>
                         <div class="dropzone d-flex justify-content-center align-items-center">
                           <img [src]="signaturePicUrl" alt="" width="100%" height="80px">
-                          <button mat-icon-button (click)="reset()" data-test-id="btnResetDropzoneProfile">
+                          <button mat-icon-button (click)="reset()" data-test-id="btnDropzone">
                             <mat-icon>{{'close' | translate}}</mat-icon>
                           </button>
                         </div>
@@ -248,7 +248,7 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-12 text-right">
-                  <button type="submit" class="btn next-btn" data-test-id="btnNextProfile">
+                  <button type="submit" class="btn next-btn" data-test-id="btnNext">
                     {{'Next'| translate}}
                     <img class="btn-icon" src="assets/svgs/right-arrow.svg" alt="">
                   </button>
@@ -257,7 +257,7 @@
             </form>
           </mat-step>
 
-          <mat-step data-test-id="matStepProfessionalProfile">
+          <mat-step data-test-id="matStep">
             <ng-template matStepLabel>
               <div class="custom-step-label">
                 <span class="label-index">2</span>
@@ -268,7 +268,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="typeOfProfession">{{'Type of profession' | translate}} *</label>
-                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="{{'Select type of profession'|translate}}" data-test-id="selectTypeOfProfessionProfile">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false"  formControlName="typeOfProfession" placeholder="{{'Select type of profession'|translate}}" data-test-id="selTypeOf">
                     <ng-option *ngFor="let profession of professions" [value]="profession.name">
                       {{ (profession.name) |translate }}
                 </ng-option>
@@ -279,7 +279,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="registrationNumber">{{'Registration Number'|translate}} *</label>
-                  <input type="text" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistrationNumberProfile">
+                  <input type="text" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistedNum">
                   <div *ngIf="submitted && f2.registrationNumber.errors">
                     <small class="error-msg" *ngIf="f2.registrationNumber.errors.required">{{'Enter registration number'|translate}}</small>
                   </div>
@@ -288,7 +288,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="specialization">{{'Specialization'|translate}} *</label>
-                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}" data-test-id="selectSpecializationProfile">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}" data-test-id="selSpecialization">
                     <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
                           {{ (specialization.name) |translate }}
                     </ng-option>
@@ -299,7 +299,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="consultationLanguage">{{'Consultation Language'|translate}} *</label>
-                  <ng-select class="profile-select" [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="consultationLanguage" placeholder="{{'Select consultation language'|translate}}" data-test-id="selectConsultationLanguageProfile">
+                  <ng-select class="profile-select" [items]="languages" [closeOnSelect]="false" [clearable]="false" [multiple]="true" [searchable]="false" bindLabel="name" bindValue="name" formControlName="consultationLanguage" placeholder="{{'Select consultation language'|translate}}" data-test-id="selLanguage">
                     <ng-template ng-label-tmp let-item="item">
                       {{item.name}},
                     </ng-template>
@@ -321,7 +321,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="workExperience">{{'Work Experience'|translate}}*</label>
-                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="{{'Eg. General Physician'|translate}}" data-test-id="selectWorkExperienceProfile">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="workExperience" placeholder="{{'Eg. General Physician'|translate}}" data-test-id="selWorkExperience">
                     <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
                       {{ (specialization.name) |translate }}
                 </ng-option>
@@ -332,7 +332,7 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="researchExperience">{{'Research Experience'|translate}} *</label>
-                  <input type="text" class="form-control" formControlName="researchExperience" placeholder="{{'Enter research experience'|translate}}" data-test-id="etResearchExperienceProfile">
+                  <input type="text" class="form-control" formControlName="researchExperience" placeholder="{{'Enter research experience'|translate}}" data-test-id="etExperience">
                   <div *ngIf="submitted && f2.researchExperience.errors">
                     <small class="error-msg" *ngIf="f2.researchExperience.errors.required">{{'Enter research experience'|translate}}</small>
                   </div>
@@ -341,7 +341,7 @@
               <div class="form-row">
                 <div class="form-group col-md-12">
                   <label for="workExperienceDetails">{{'Work Experience Details'|translate}}*</label>
-                  <textarea class="form-control" rows="3" formControlName="workExperienceDetails" placeholder="{{'Type here'|translate}}" data-test-id="etWorkExpDetailsProfile"></textarea>
+                  <textarea class="form-control" rows="3" formControlName="workExperienceDetails" placeholder="{{'Type here'|translate}}" data-test-id="etWorkExperience"></textarea>
                   <div *ngIf="submitted && f2.workExperienceDetails.errors">
                     <small class="error-msg" *ngIf="f2.workExperienceDetails.errors.required">{{'Enter experience'|translate}}</small>
                   </div>
@@ -349,13 +349,13 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <button type="button" class="btn back-btn" matStepperPrevious data-test-id="btnPreviousStepProfile">
+                  <button type="button" class="btn back-btn" matStepperPrevious data-test-id="btnPreviousStep">
                     {{'Back'|translate}}
                     <img class="btn-icon" src="assets/svgs/left-arrow-blue.svg" alt="">
                   </button>
                 </div>
                 <div class="form-group col-md-6 text-right">
-                  <button type="submit" class="btn next-btn" data-test-id="btnSubmitProfile">
+                  <button type="submit" class="btn next-btn" data-test-id="btnSubmit">
                     {{'Save'|translate}}
                   </button>
                 </div>

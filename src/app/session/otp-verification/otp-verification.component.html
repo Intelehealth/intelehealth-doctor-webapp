@@ -12,7 +12,7 @@
           <label for="email">
             {{'Enter OTP'|translate}}
           </label>
-          <ng-otp-input data-test-id="etOtpInputOtpVerification" [formCtrl]="fCtrl"  [config]="{ length: 6, placeholder: '_', inputClass: 'otp-input-box', allowNumbersOnly: true }"></ng-otp-input>
+          <ng-otp-input data-test-id="etOtpInput" [formCtrl]="fCtrl"  [config]="{ length: 6, placeholder: '_', inputClass: 'otp-input-box', allowNumbersOnly: true }"></ng-otp-input>
           <div *ngIf="submitted && fCtrl.errors">
             <small *ngIf="fCtrl.errors.required" class="error-msg">{{'Please enter otp'|translate}}</small>
             <small *ngIf="fCtrl.errors.minlength || fCtrl.errors.maxlength" class="error-msg">{{'Please enter valid otp'|translate}}</small>
@@ -20,11 +20,11 @@
         </div>
         <div class="resend-otp-text">
           {{'Didn’t receive OTP ?'|translate}}
-          <a href="javascript:void(0)" *ngIf="counter > 0" data-test-id="linkResendInOtpVerification">{{'Resend in'|translate}} {{resendIn}}</a>
-          <a href="javascript:void(0)" *ngIf="counter == 0" (click)="resendOtp()" data-test-id="linkResendOtpVerification">{{'Resend'|translate}}</a>
+          <a href="javascript:void(0)" *ngIf="counter > 0" data-test-id="linkResendIn">{{'Resend in'|translate}} {{resendIn}}</a>
+          <a href="javascript:void(0)" *ngIf="counter == 0" (click)="resendOtp()" data-test-id="linkResend">{{'Resend'|translate}}</a>
         </div>
         <div class="form-group mt-5">
-          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmitOtpVerification">
+          <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
             {{'Verify'|translate}}
           </button>
         </div>
