@@ -275,7 +275,10 @@ import { MomentModule } from "ngx-moment";
       registrationStrategy: "registerImmediately",
     }),
     ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right'
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
     }),
     MomentModule
   ],

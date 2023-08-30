@@ -40,6 +40,7 @@
               "src/js/util.js"
             ],
             "styles": [
+              "src/toastr.css",
               "src/styles.scss",
               "node_modules/intro.js/introjs.css"
             ],

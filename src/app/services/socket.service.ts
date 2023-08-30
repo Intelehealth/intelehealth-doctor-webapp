@@ -10,7 +10,7 @@ import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
 import { VisitService } from "./visit.service";
 import { WebrtcService } from "./webrtc.service";
-import { CoreService } from "./core.service";
+// import { CoreService } from "./core/core.service";
 import { ToastrService } from "ngx-toastr";
 
 @Injectable({
@@ -36,7 +36,7 @@ export class SocketService {
     private dialog: MatDialog,
     private visitSvc: VisitService,
     private webrtcSvc: WebrtcService,
-    private cs: CoreService,
+    // private cs: CoreService,
     private toastr: ToastrService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
@@ -77,18 +77,19 @@ export class SocketService {
     });
 
     this.onEvent("cancel_hw").subscribe((data) => {
+      console.log('data:cancel_hw ', data);
       this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
       this.closeVcOverlay();
     });
 
-    // this.onEvent("incoming_call").subscribe((data = {}) => {
-    //   if (!location.hash.includes("test/chat")) {
-    //     localStorage.patientId = data.patientId;
-    //     if (localStorage.patientId) {
-    //       this.openVcOverlay(data);
-    //     }
-    //   }
-    // });
+    this.onEvent("incoming_call").subscribe((data = {}) => {
+      if (!location.hash.includes("test/chat")) {
+        localStorage.patientId = data.patientId;
+        if (localStorage.patientId) {
+          this.openVcOverlay(data);
+        }
+      }
+    });
 
     this.onEvent("updateMessage").subscribe((data) => {
       this.showNotification({
@@ -128,23 +129,23 @@ export class SocketService {
     }
   }
 
-  // public openVcOverlay(data: any) {
-  //   this.callRing = new Audio("assets/phone.mp3");
-  //   this.cs.openVideoCallOverlayModal(data);
-  //   this.callRing.play();
+  public openVcOverlay(data: any) {
+    // this.callRing = new Audio("assets/phone.mp3");
+    // this.cs.openVideoCallOverlayModal(data);
+    // this.callRing.play();
 
-  //   this.ringTimeout = setInterval(() => {
-  //     this.callRing.pause();
-  //     this.callRing = new Audio("assets/phone.mp3");
-  //     this.callRing.play();
-  //   }, 10000);
+    // this.ringTimeout = setInterval(() => {
+    //   this.callRing.pause();
+    //   this.callRing = new Audio("assets/phone.mp3");
+    //   this.callRing.play();
+    // }, 10000);
 
-  //   this.closeOverlayTimeout = setTimeout(() => {
-  //     if (!this.webrtcSvc.callConnected) {
-  //       this.closeVcOverlay();
-  //     }
-  //   }, 59000);
-  // }
+    // this.closeOverlayTimeout = setTimeout(() => {
+    //   if (!this.webrtcSvc.callConnected) {
+    //     this.closeVcOverlay();
+    //   }
+    // }, 59000);
+  }
 
   public closeVcOverlay() {
     const dailog = this.dialog.getDialogById("vcOverlayModal");
