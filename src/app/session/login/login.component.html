@@ -10,7 +10,7 @@
       <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="form">
         <div class="form-group">
           <label for="username">
-            {{'Username'|translate}}
+            {{'Usernames'|translate}}
             <span class="link"><a routerLink="/session/forgot-username" data-test-id="linkForgotUsername">{{'Forgot Username'|translate}} ?</a></span>
           </label>
           <input type="text" class="form-control" formControlName="username" placeholder="Enter username" data-test-id="etUsername">
