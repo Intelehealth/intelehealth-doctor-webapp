@@ -1866,7 +1866,7 @@
                         <tr *ngFor="let r of referrals; let i = index">
                           <td>{{ (r.speciality) | translate }}</td>
                           <td>{{ (r.facility) | translate }}</td>
-                          <td>{{ (r.facility) | translate }}</td>
+                          <td>{{ (r.priority) | translate }}</td>
                           <td>{{ r.reason }}</td>
                           <td class="pr-0">
                             <button
@@ -1882,8 +1882,30 @@
                           </td>
                         </tr>
                       </ng-container>
+                      <ng-template #noReferrals>
+                        <tr>
+                          <td colspan="6" class="text-center font-weight-bold">
+                            {{'No medicines added!'|translate}}
+                          </td>
+                        </tr>
+                      </ng-template>
                       <ng-container *ngIf="isVisitNoteProvider && !visitEnded">
-                        <tr *ngIf="!addMoreMedicine">
+                        <tr *ngIf="addMoreReferral">
+                          <td colspan="6" class="px-0">
+                            <div class="form-group mb-0">
+                              <button
+                                type="button"
+                                class="add-more-btn"
+                                (click)="toggleReferral()"
+                                data-test-id="btnAddMoreReferralVisitSummary"
+                              >
+                                <img src="assets/svgs/plus-circle.svg" alt="" />
+                                <span class="ml-2">{{'Add more Referral'|translate}}</span>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="!addMoreReferral">
                           <td>
                             <div class="form-group mb-0">
                               <ng-select
@@ -1956,12 +1978,13 @@
                             </div>
                           </td>
                         </tr>
-                        <tr *ngIf="!addMoreMedicine">
+                        <tr *ngIf="!addMoreReferral">
                           <td colspan="6" class="border-top-0">
                             <div class="form-group mb-0 float-right">
                               <button
-                                type="reset"
+                                type="button"
                                 class="white-btn mr-2"
+                                (click)="toggleReferral()"
                                 data-test-id="btnCancelReferralVisitSummary"
                               >
                                 {{'Cancel'|translate}}

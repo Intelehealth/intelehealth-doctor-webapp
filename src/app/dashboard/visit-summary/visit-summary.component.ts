@@ -1312,6 +1312,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleReferral() {
+    this.addMoreReferral = !this.addMoreReferral;
+    this.addReferralForm.reset();
+  }
+
   checkIfReferralPresent() {
     this.referrals = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
