@@ -816,5 +816,6 @@ th.mat-header-cell:last-child {
 ::ng-deep ngb-typeahead-window {
   max-height: 200px;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
+  max-width: 100%;
 }
