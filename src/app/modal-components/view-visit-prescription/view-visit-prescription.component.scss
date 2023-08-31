@@ -221,7 +221,8 @@
 
 .signature {
   height: 200px;
-  // width: 150px;
+  width: 200px;
+  margin-bottom: -50px;
 }
 
 .btn_download_pdf{
@@ -230,4 +231,10 @@
   border: unset;
   background: transparent;
   font-size: 18px;
+}
+
+.logo-telemedkg {
+  right: 30px;
+  width: 70px !important;
+  top: 6px;
 }

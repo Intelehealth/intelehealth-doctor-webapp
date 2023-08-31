@@ -420,6 +420,16 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
   }
 
+  getObsValue(obsName: string) {
+    let val = null;
+    this.vitalObs.forEach((obs: any) => {
+      if (obs.concept.display == obsName) {
+        val = obs.value;
+      }
+    });
+    return val;
+  }
+
   async downloadPrescription() {
     // console.log(this.signature);
     let userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
@@ -455,7 +465,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'TeleMed KG e-' + this.translateService.instant('Prescription'),
+                  text: this.translateService.instant('Telemed KG') + ' e-' + this.translateService.instant('Prescription'),
                   alignment: 'center',
                   style: 'header'
                 },
@@ -544,8 +554,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: [30,'*'],
                     headerRows: 1,
                     body: [
-                      [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] },
-                      {text: this.translateService.instant('Cheif Complaint'), style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] },
+                        {text: this.translateService.instant('Cheif Complaint'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
                       [
                         {
                           colSpan: 2,
@@ -848,7 +860,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   alignment: 'right',
                   stack: [
                     { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0,5,0,5]},
+                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0,-25,0,5]},
                     { text: `${this.consultedDoctor?.qualification}`},
                     { text: `${this.translateService.instant('Registration No')}. ${this.consultedDoctor?.registrationNumber}`},
                   ]
@@ -983,6 +995,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
             records.push({text: [{text: `${this.translateService.instant(v.concept.display.toUpperCase())} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
+            if(v.concept.display == "Weight (kg)"){
+              this.vitalObs.forEach(y => {
+                if(y.concept.display == "Height (cm)"){
+                  records.push({text: [{text: `${this.translateService.instant('BMI')} : `, bold: true},`${ (this.getObsValue('Weight (kg)')/((this.getObsValue('Height (cm)')/100)*(this.getObsValue('Height (cm)')/100))).toFixed(2)}`], margin: [0, 5, 0, 5]});
+                }
+              })
+            }
           });
         }
         break;

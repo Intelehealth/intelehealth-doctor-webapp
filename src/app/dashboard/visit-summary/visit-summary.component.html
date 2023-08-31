@@ -334,15 +334,14 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label>{{'Temprature (F)'|translate}}</label>
+                      <label>{{'Temprature (C)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('TEMPERATURE (C)')"
                       >
                         {{
                           getObsValue("TEMPERATURE (C)")
-                            ? ((getObsValue("TEMPERATURE (C)") * 9) / 5 + 32
-                              | number : "0.2-2")
+                            ? (getObsValue("TEMPERATURE (C)"))
                             : "No information"|translate
                         }}
                       </div>
