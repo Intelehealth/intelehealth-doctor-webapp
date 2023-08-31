@@ -36,7 +36,7 @@ export class SessionComponent implements OnInit {
   languages: any = [
     {
       id: 1,
-      name: 'Russian',
+      name: 'Русский',
       code: 'ru'
     },
     {
