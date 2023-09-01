@@ -415,7 +415,7 @@
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
                               >
-                                {{ ckri.value ? ckri.value : ("None"|translate) }}
+                                {{ ckri.value ? (ckri.value|translate) : ("None"|translate) }}
                               </div>
                             </div>
                           </li>
@@ -431,7 +431,7 @@
                                 class="list-item-content"
                                 [class.text-muted]="!ckri.value"
                               >
-                                {{ ckri.value ? ckri.value : ("None"|translate) }}
+                                {{ ckri.value ? (ckri.value|translate) : ("None"|translate) }}
                               </div>
                             </div>
                           </li>
@@ -468,7 +468,7 @@
                               class="list-item-content"
                               [class.text-muted]="!pei.value"
                             >
-                              {{ pei.value ? pei.value : ("None"|translate) }}
+                              {{ pei.value ? (pei.value|translate) : ("None"|translate) }}
                             </div>
                           </div>
                         </li>
@@ -499,10 +499,10 @@
                       </ul>
                     </ng-container>
                     <ng-container *ngIf="pe.title == 'Abdomen'">
-                      <h6 class="my-3">{{ pe.title }}</h6>
+                      <h6 class="my-3">{{ pe.title|translate }}</h6>
                       <ul class="items-list pt-0">
                         <li *ngFor="let pei of pe.data">
-                          {{ pei.key }}
+                          {{ pei.key|translate }}
                         </li>
                       </ul>
                     </ng-container>

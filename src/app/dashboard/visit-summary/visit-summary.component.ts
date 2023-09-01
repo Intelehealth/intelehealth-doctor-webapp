@@ -554,7 +554,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
-                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1] });
+                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1].trim() });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -565,7 +565,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
                       const splitByDash = splitByBr[k].split(' -');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join(' -') });
+                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join(' -').trim() });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -620,7 +620,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     if (splitByBr[k].trim()) {
                       const splitByDash = splitByBr[k].split('-');
                       // obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
-                      obj1.data.push({ key: splitByDash[1].replace('• ', ''), value: splitByDash[2] });
+                      obj1.data.push({ key: splitByDash[1].replace('• ', ''), value: splitByDash[2].trim() });
                     }
                   }
                   this.physicalExaminationData.push(obj1);
@@ -646,7 +646,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
                 const splitByDash = medicalHistory[i].split('-');
-                obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-') });
+                obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-').trim() });
               }
             }
             this.patientHistoryData.push(obj1);
@@ -663,7 +663,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByComma = splitByColon[1].split('.');
                 for(let x = 0; x < splitByComma.length; x++){
                   if (splitByComma[x]) {
-                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
+                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1].trim() + "." });
                   }
                 };
                 // obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });
