@@ -1521,7 +1521,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: any) => {
-                if (encounter.encounterType.display == 'Visit Complete') {
+                if (encounter.encounterType.display == 'Remote Prescription') {
                   visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                   encounter.obs.forEach((o: any) => {
                     if (o.concept.display == 'Doctor details') {

@@ -297,7 +297,7 @@
                     <label>{{'Qualification'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.typeOfProfession : ("NA"|translate)
+                        consultedDoctor ? consultedDoctor.qualification : ("NA"|translate)
                       }}
                     </div>
                   </div>
@@ -307,7 +307,7 @@
                     <label>{{'Speciality'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        consultedDoctor ? consultedDoctor.specialization : ("NA"|translate)
+                        consultedDoctor ? (consultedDoctor.specialization|translate) : ("NA"|translate)
                       }}
                     </div>
                   </div>
@@ -547,7 +547,7 @@
           </div>
         </div> -->
 
-        <div *ngIf="followUp" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/follow-up.svg" alt="" />

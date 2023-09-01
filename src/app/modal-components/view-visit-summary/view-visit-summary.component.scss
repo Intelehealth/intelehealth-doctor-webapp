@@ -22,6 +22,18 @@
     font-weight: bold;
     margin-bottom: 0px;
   }
+
+  .close-btn-con {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    .modal-close-btn {
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+  }
 }
 
 .main-content {

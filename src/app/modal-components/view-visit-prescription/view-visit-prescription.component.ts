@@ -981,7 +981,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (this.followUp) {
             records.push([this.translateService.instant(this.followUp.wantFollowUp), moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
           } else {
-            records.push(['No','-','-','-']);
+            records.push([this.translateService.instant('No'),'-','-','-']);
           }
           break;
       case 'cheifComplaint':

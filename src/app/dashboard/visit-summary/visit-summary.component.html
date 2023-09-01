@@ -683,7 +683,7 @@
                 <ng-container matColumnDef="created_on">
                   <th mat-header-cell *matHeaderCellDef>{{'Created on'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
-                    {{ element.created_on | date : "dd MM, yyyy":'':locale }}
+                    {{ element.created_on | date : "dd MMM, yyyy":'':locale }}
                   </td>
                 </ng-container>
 
@@ -709,7 +709,7 @@
                       />
                       <span class="font-bold ml-2"
                         >{{ element?.doctor?.name }} ({{
-                          element?.doctor?.gender
+                          element?.doctor?.gender|translate
                         }})</span
                       >
                     </div>
