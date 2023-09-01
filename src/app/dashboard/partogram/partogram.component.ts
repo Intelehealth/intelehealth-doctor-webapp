@@ -339,7 +339,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
     if (Array.isArray(this.visit?.attributes)) {
       const visitSeenBy = this.visit.attributes.find(va => va?.attributeType?.display === 'Visit Read');
       if (visitSeenBy) {
-        if (!visitSeenBy?.value.includes(this.userId)) {
+        if (!visitSeenBy?.value.includes(this.userId.split('-')[0])) {
           const json = {
             attributeType: '2e4b62a5-aa71-43e2-abc9-f4a777697b19',
             value: visitSeenBy?.value.concat(`,${this.userId.split('-')[0]}`)
