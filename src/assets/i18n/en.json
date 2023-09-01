@@ -477,6 +477,7 @@
   "e-":"e-",
 
   "messages":{
+    "Diagnosis already added, please add another diagnosis.":"Diagnosis already added, please add another diagnosis.",
     "You have sucessfully logged in.":"You have sucessfully logged in.",
     "Login Successful":"Login Successful",
     "Couldn't find provider.":"Couldn't find provider.",

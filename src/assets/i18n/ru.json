@@ -492,6 +492,7 @@
   "e-":"Электронный ",
   
   "messages":{
+    "Diagnosis already added, please add another diagnosis.":"Диагноз уже добавлен, пожалуйста, добавьте другой диагноз.",
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",
     "Login Successful":"Вход успешный",
     "Couldn't find provider.":"Не удалось найти провайдера.",

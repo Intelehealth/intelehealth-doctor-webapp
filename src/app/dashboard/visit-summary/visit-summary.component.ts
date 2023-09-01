@@ -1000,6 +1000,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   saveDiagnosis() {
+    if (this.existingDiagnosis.find((o: any) => o.diagnosisName == this.diagnosisForm.value.diagnosisName)) {
+      this.toastr.warning(this.translateService.instant(`messages.${"Diagnosis already added, please add another diagnosis."}`), this.translateService.instant(`messages.${"Already Added"}`));
+      return;
+    }
     if (this.diagnosisForm.invalid || !this.isVisitNoteProvider) {
       return;
     }

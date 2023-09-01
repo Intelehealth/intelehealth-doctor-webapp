@@ -36,7 +36,7 @@
               </h6>
               <div class="slot-chips">
                 <div class="slot-chip-item" [class.selected]="selectedSlot == s" *ngFor="let s of scheduleData.morning;" (click)="selectedSlot = s">
-                  {{s}}
+                  {{s.modified}}
                 </div>
               </div>
             </div>
@@ -47,7 +47,7 @@
               </h6>
               <div class="slot-chips">
                 <div class="slot-chip-item" [class.selected]="selectedSlot == s" *ngFor="let s of scheduleData.afternoon;" (click)="selectedSlot = s">
-                  {{s}}
+                  {{s.modified}}
                 </div>
               </div>
             </div>
@@ -58,7 +58,7 @@
               </h6>
               <div class="slot-chips">
                 <div class="slot-chip-item" [class.selected]="selectedSlot == s" *ngFor="let s of scheduleData.evening;" (click)="selectedSlot = s">
-                  {{s}}
+                  {{s.modified}}
                 </div>
               </div>
             </div>

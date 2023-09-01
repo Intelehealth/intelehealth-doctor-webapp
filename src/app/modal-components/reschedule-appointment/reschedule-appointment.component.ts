@@ -84,11 +84,11 @@ export class RescheduleAppointmentComponent implements OnInit {
           let matchedSlot = userSlots.find((s: any) => s.slotDate == slot.slotDate && s.slotTime == slot.slotTime);
           if(!matchedSlot){
             if (moment(slot.slotTime, "LT").isBefore(moment("12:00 PM", "LT"))) {
-              this.scheduleData.morning.push(slot.slotTime);
+              this.scheduleData.morning.push({ original: slot.slotTime, modified: moment(slot.slotTime, "LT").format("H:mm")});
             } else if (moment(slot.slotTime, "LT").isBetween(moment("11:30 AM", "LT"), moment("5:00 PM", "LT"))) {
-              this.scheduleData.afternoon.push(slot.slotTime);
+              this.scheduleData.afternoon.push({ original: slot.slotTime, modified: moment(slot.slotTime, "LT").format("H:mm")});
             } else {
-              this.scheduleData.evening.push(slot.slotTime);
+              this.scheduleData.evening.push({ original: slot.slotTime, modified: moment(slot.slotTime, "LT").format("H:mm")});
             }
           }
         });
@@ -98,7 +98,7 @@ export class RescheduleAppointmentComponent implements OnInit {
 
   reschedule() {
     if (this.selectedDate && this.selectedSlot) {
-      this.close({ date: this.selectedDate, slot: this.selectedSlot });
+      this.close({ date: this.selectedDate, slot: this.selectedSlot.original });
     } else {
       this.toastr.warning(this.translateService.instant(`messages.${"Please select slot to reschedule."}`), this.translateService.instant(`messages.${"Select Slot"}`));
     }
