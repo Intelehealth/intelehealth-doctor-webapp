@@ -487,8 +487,9 @@
   "Neonatal jaundice":"неонатальная желтуха",
   "Follow-up Requested":"Требуются последующие действия",
   "National ID":"Национальное удостоверение личности",
-  "undefined.":"Не определено.",
   "Add item":"Добавить",
+  "undefined.":"Не определено.",
+  "e-":"Электронный ",
   
   "messages":{
     "You have sucessfully logged in.":"Вы успешно вошли в систему.",

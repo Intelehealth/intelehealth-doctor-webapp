@@ -465,7 +465,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: this.translateService.instant('Telemed KG') + ' e-' + this.translateService.instant('Prescription'),
+                  text: 'Telemed KG ' + this.translateService.instant('e-') + this.translateService.instant('Prescription'),
                   alignment: 'center',
                   style: 'header'
                 },

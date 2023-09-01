@@ -6,7 +6,7 @@
       src="assets/images/Intelehealth-logo-white.png"
       width="100%"
     />
-    {{ isDownloadPrescription ? ('Telemed KG'|translate) + " e-" : "" }}{{'Prescription'|translate}}
+    {{ isDownloadPrescription ? 'Telemed KG ' + ('e-'|translate) : "" }}{{'prescription'|translate}}
 
     <img
       *ngIf="isDownloadPrescription"
