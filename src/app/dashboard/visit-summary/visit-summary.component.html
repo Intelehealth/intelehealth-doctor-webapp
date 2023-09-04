@@ -973,7 +973,7 @@
                   <li *ngIf="!patientInteractionForm.value.present">
                     <div class="row">
                       <label class="col-sm-3 col-form-label"
-                        >{{'Have you spoken with the patient directly?'|translate}}</label
+                        >{{'Have you spoken with the patient directly?'|translate}}*</label
                       >
                       <div class="col-sm-9 d-flex align-items-center">
                         <div class="pretty p-default p-round">
@@ -1129,7 +1129,7 @@
                         <label
                           for="select-diagnosis"
                           class="col-sm-3 col-form-label"
-                          >{{'Select diagnosis'|translate}}</label
+                          >{{'Select diagnosis'|translate}}*</label
                         >
                         <div class="col-sm-3">
                           <ng-select
@@ -1152,7 +1152,7 @@
                     <li>
                       <div class="row">
                         <label class="col-sm-3 col-form-label"
-                          >{{'Diagnosis type'|translate}}</label
+                          >{{'Diagnosis type'|translate}}*</label
                         >
                         <div class="col-sm-9 d-flex align-items-center">
                           <div class="pretty p-default p-round">
@@ -1182,7 +1182,7 @@
                     </li>
                     <li>
                       <div class="row">
-                        <label class="col-sm-3 col-form-label">{{'Select'|translate}}</label>
+                        <label class="col-sm-3 col-form-label">{{'Select'|translate}}*</label>
                         <div class="col-sm-9 d-flex align-items-center">
                           <div class="pretty p-default p-round">
                             <input
@@ -1361,7 +1361,7 @@
                 <ng-container *ngIf="!addMoreNote">
                   <div class="form-group">
                     <label for="note"
-                      ><b>{{'Note'|translate}}&nbsp;</b>
+                      ><b>{{'Note'|translate}}*&nbsp;</b>
                       <span class="text-muted"
                         >({{'Not shared with patient'|translate}})</span
                       ></label
@@ -1500,7 +1500,7 @@
                                 formControlName="drug"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Enter drug'|translate}}"
+                                placeholder="{{'Enter drug'|translate}}*"
                                 [ngbTypeahead]="search3"
                                 data-test-id="etDrugName"
                               />
@@ -1512,7 +1512,7 @@
                                 formControlName="strength"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Enter strength'|translate}}"
+                                placeholder="{{'Enter strength'|translate}}*"
                                 [ngbTypeahead]="search4"
                                 data-test-id="etDrugStrength"
                               />
@@ -1524,7 +1524,7 @@
                                 formControlName="days"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Enter days'|translate}}"
+                                placeholder="{{'Enter days'|translate}}*"
                                 [ngbTypeahead]="search5"
                                 data-test-id="etDays"
                               />
@@ -1541,7 +1541,7 @@
                               [clearable]="false"
                               [searchable]="true"
                               [addTag]="true"
-                              placeholder="{{'Select timing'|translate}}"
+                              placeholder="{{'Select timing'|translate}}*"
                               data-test-id="selectTiming"
                             >
                             </ng-select>
@@ -1552,7 +1552,7 @@
                                 formControlName="remark"
                                 type="text"
                                 class="form-control"
-                                placeholder="{{'Enter Remark'|translate}}"
+                                placeholder="{{'Enter Remark'|translate}}*"
                                 data-test-id="etRemarkMed"
                               />
                             </div>
@@ -1586,7 +1586,7 @@
                 </div>
               </form>
 
-              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}</h6>
+              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
               <ng-container *ngIf="additionalInstructions.length">
                 <ul class="items-list">
                   <li *ngFor="let ai of additionalInstructions; let i = index">
@@ -1714,7 +1714,7 @@
                   *ngIf="!addMoreAdvice"
                 >
                   <div class="form-group">
-                    <label for="note"><b>{{'Advice'|translate}}</b></label>
+                    <label for="note"><b>{{'Advice'|translate}}*</b></label>
                     <input
                       type="text"
                       class="form-control"
@@ -1801,7 +1801,7 @@
                   *ngIf="!addMoreTest"
                 >
                   <div class="form-group">
-                    <label for="note"><b>{{'Test'|translate}}</b></label>
+                    <label for="note"><b>{{'Test'|translate}}*</b></label>
                     <input
                       type="text"
                       class="form-control"
@@ -2062,7 +2062,7 @@
                     <li>
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label"
-                          >{{'Select date'|translate}}</label
+                          >{{'Select date'|translate}}*</label
                         >
                         <div class="col-sm-3">
                           <!-- <input type="date" class="form-control" placeholder="Enter date" formControlName="followUpDate"> -->
@@ -2098,7 +2098,7 @@
                     <li>
                       <div class="row">
                         <label for="follow-date" class="col-sm-3 col-form-label"
-                          >{{'Select time'| translate}}</label
+                          >{{'Select time'| translate}}*</label
                         >
                         <div class="col-sm-3">
                           <ng-select
