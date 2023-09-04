@@ -87,11 +87,17 @@ export class WebrtcService {
     this.remoteElement = remoteElement;
     this.clearAudioVideo();
 
+    console.log('VideoPresets.h90.resolution: ', VideoPresets.h90.resolution);
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: VideoPresets.h90.resolution,
+        resolution: {
+          aspectRatio: 1.7777777777777777,
+          frameRate: 15,
+          height: 160,
+          width: 90
+        },
       },
       audioCaptureDefaults: {
         echoCancellation: true,
