@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit {
     if (this.data.patientId && this.data.visitId) {
       this.getMessagesAndCheckRead();
     }
-    // this.socketSvc.initSocket(true);
+    this.socketSvc.initSocket(true);
     this.socketSvc.updateMessage = true;
     this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       if (this.socketSvc.updateMessage) {
