@@ -893,7 +893,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       },
       styles: {
         header: {
-          fontSize: 14,
+          fontSize: 18,
           bold: true,
           margin: [0, 10, 0, 10]
         },
@@ -913,7 +913,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           color: 'black'
         },
         sectionheader: {
-          fontSize: 12,
+          fontSize: 13,
           bold: true,
           margin: [0, 5, 0, 10]
         },
@@ -994,11 +994,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'vitals':
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${this.translateService.instant(v.concept.display.toUpperCase())} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: `${this.translateService.instant(v.concept.display.toUpperCase())} : `, fontSize: 11},`${v.value}`], margin: [0, 5, 0, 5], fontSize: 11});
             if(v.concept.display == "Weight (kg)"){
               this.vitalObs.forEach(y => {
                 if(y.concept.display == "Height (cm)"){
-                  records.push({text: [{text: `${this.translateService.instant('BMI')} : `, bold: true},`${ (this.getObsValue('Weight (kg)')/((this.getObsValue('Height (cm)')/100)*(this.getObsValue('Height (cm)')/100))).toFixed(2)}`], margin: [0, 5, 0, 5]});
+                  records.push({text: [{text: `${this.translateService.instant('BMI')} : `, fontSize: 11},`${ (this.getObsValue('Weight (kg)')/((this.getObsValue('Height (cm)')/100)*(this.getObsValue('Height (cm)')/100))).toFixed(2)}`], margin: [0, 5, 0, 5], fontSize: 11});
                 }
               })
             }
