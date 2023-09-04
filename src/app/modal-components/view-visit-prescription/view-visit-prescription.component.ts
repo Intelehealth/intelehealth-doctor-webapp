@@ -555,6 +555,36 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     headerRows: 1,
                     body: [
                       [ 
+                        {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, 
+                        {text: this.translateService.instant('Consultation details'), style: 'sectionheader', border: [false, false, false, true] }
+                      ],
+                      [
+                        {
+                          colSpan: 2,
+                          ul: [
+                            {text: [{text: this.translateService.instant('Patient ID') + ":", bold: true},` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: this.translateService.instant('Prescription Issued') + ":", bold: true},` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30,'*'],
+                    headerRows: 1,
+                    body: [
+                      [ 
                         {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] },
                         {text: this.translateService.instant('Cheif Complaint'), style: 'sectionheader', border: [false, false, false, true] }
                       ],
@@ -592,36 +622,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           colSpan: 2,
                           ul: [
                             ...this.getRecords('vitals')
-                          ]
-                        }
-                      ]
-                    ]
-                  },
-                  layout: {
-                    defaultBorder: false
-                  }
-                },
-                '',
-                '',
-                ''
-              ],
-              [
-                {
-                  colSpan: 4,
-                  table: {
-                    widths: [30,'*'],
-                    headerRows: 1,
-                    body: [
-                      [ 
-                        {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, 
-                        {text: this.translateService.instant('Consultation details'), style: 'sectionheader', border: [false, false, false, true] }
-                      ],
-                      [
-                        {
-                          colSpan: 2,
-                          ul: [
-                            {text: [{text: this.translateService.instant('Patient ID') + ":", bold: true},` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: this.translateService.instant('Prescription Issued') + ":", bold: true},` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
