@@ -138,6 +138,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     encounters.forEach((encounter: any) => {
       if (encounter.display.match("ADULTINITIAL") !== null) {
         this.providerName = encounter.encounterProviders[0].display;
+        localStorage.setItem('patientVisitProvider', JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
             if (attribute.display.match("phoneNumber") != null) {
@@ -174,7 +175,8 @@ export class ViewVisitSummaryComponent implements OnInit {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint = obs.value.split('<b>');
+            const updatedDate =  this.dateFinder(obs.value);
+            const currentComplaint = updatedDate.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -189,7 +191,7 @@ export class ViewVisitSummaryComponent implements OnInit {
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
-                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1] });
+                      obj1.data.push({ key: splitByBr[j].replace('• ', '').replace(' -', ''), value: splitByBr[j + 1].trim() });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -199,8 +201,8 @@ export class ViewVisitSummaryComponent implements OnInit {
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
                     if (splitByBr[k].trim() && splitByBr[k].trim().length > 1) {
-                      const splitByDash = splitByBr[k].split('-');
-                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
+                      const splitByDash = splitByBr[k].split(' -');
+                      obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join(' -').trim() });
                     }
                   }
                   this.checkUpReasonData.push(obj1);
@@ -211,6 +213,19 @@ export class ViewVisitSummaryComponent implements OnInit {
         });
       }
     });
+  }
+  
+  dateFinder(data: string){
+    const regex = /(\d{2}\/[A-Za-z]{3}\/\d{4})/g; // Regular expression for the format DD/MMM/YYYY
+    const matches = data.match(regex);
+    if(matches){
+      moment.locale(localStorage.getItem('selectedLanguage'));
+      const replacement = moment(matches[0]).format('DD/MMMM/YYYY'); // Replace with the desired replacement value
+      const modifiedString = data.replace(regex, replacement);
+      return modifiedString
+    }else{
+      return data
+    }
   }
 
   getPhysicalExamination(encounters: any) {
@@ -282,8 +297,12 @@ export class ViewVisitSummaryComponent implements OnInit {
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
                 const splitByColon = familyHistory[i].split(':');
-                const splitByComma = splitByColon[1].split(',');
-                obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                const splitByComma = splitByColon[1].split('.');
+                for(let x = 0; x < splitByComma.length; x++){
+                  if (splitByComma[x]) {
+                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
+                  }
+                };
               }
             }
             this.patientHistoryData.push(obj1);

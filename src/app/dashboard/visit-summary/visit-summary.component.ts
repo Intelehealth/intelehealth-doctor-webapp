@@ -649,7 +649,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 obj1.data.push({ key: splitByDash[0].replace('• ', '').trim(), value: splitByDash.slice(1, splitByDash.length).join('-').trim() });
               }
             }
-            this.patientHistoryData.push(obj1);
+            this.patientHistoryData.unshift(obj1);
           }
 
           if (obs.concept.display == 'FAMILY HISTORY') {
@@ -663,16 +663,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByComma = splitByColon[1].split('.');
                 for(let x = 0; x < splitByComma.length; x++){
                   if (splitByComma[x]) {
-                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1].trim() + "." });
+                    obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
                   }
                 };
-                // obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma.toString() });
-                // for (let x = 0; x < splitByComma.length; x++) {
-                //   if (splitByComma[x]) {
-                //     obj1.data.push({ key: splitByColon[0].replace('•', '').trim(), value: splitByComma[x] });
-                //   }
-                // }
-                // obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
               }
             }
             this.patientHistoryData.push(obj1);
