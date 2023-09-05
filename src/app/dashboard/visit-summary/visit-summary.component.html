@@ -989,7 +989,7 @@
                   <tbody>
                     <ng-container *ngIf="existingDiagnosis.length">
                       <tr *ngFor="let d of existingDiagnosis; let i = index">
-                        <td>{{ d.diagnosisName|translate }}</td>
+                        <td>{{ d.diagnosisName }}</td>
                         <td>{{ d.diagnosisType|translate }}</td>
                         <td>{{ d.diagnosisStatus|translate }}</td>
                         <td class="pr-0">
@@ -1053,12 +1053,12 @@
                             notFoundText="{{'No items found'|translate}}"
                             addTagText="{{'Add item'|translate}}"
                           >
-                          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                          <!-- <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
                             {{item.name|translate}}
                           </ng-template>
                           <ng-template ng-label-tmp let-item="item">
                             {{item.name|translate}}
-                          </ng-template>
+                          </ng-template> -->
                           </ng-select>
                         </div>
                       </div>
@@ -1923,7 +1923,6 @@
                         <div class="col-sm-3">
                           <ng-select
                             class="visit-select custom"
-                            appendTo="body"
                             formControlName="followUpTime"
                             [items]="timeList"
                             bindLabel="name"
