@@ -434,7 +434,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.callStartedAt) {
       duration = moment.duration(moment().diff(this.callStartedAt))
     }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    return duration ? `${duration.hours() < 10 ? '0' + duration.hours(): duration.hours()}:${duration.minutes() < 10 ? '0' + duration.minutes(): duration.minutes()}:${duration.seconds() < 10 ? '0' + duration.seconds(): duration.seconds()}` : '';
   }
 
   isPdf(url) {
