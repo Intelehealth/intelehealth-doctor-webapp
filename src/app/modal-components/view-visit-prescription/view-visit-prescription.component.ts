@@ -711,7 +711,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           colSpan: 2,
                           ul: [
                             ...this.getRecords('additionalInstruction')
-                          ]
+                          ],
+                          margin: [0, -10, 0, 0]
                         }
                       ]
                     ]

@@ -598,9 +598,9 @@
       <div *ngIf="isDownloadPrescription" class="signature w-100">
         <div class="float-right my-4">
           <img class="signature" [src]="signature?.value" />
-          <div class="title-name">{{ consultedDoctor?.name }}</div>
-          <div class="title-qual">{{ consultedDoctor?.qualification }}</div>
-          <div class="sub-title">
+          <div class="title-name text-right">{{ consultedDoctor?.name }}</div>
+          <div class="title-qual text-right">{{ consultedDoctor?.qualification }}</div>
+          <div class="sub-title text-right">
             {{'Registration No:'|translate}}{{ consultedDoctor?.registrationNumber }}
           </div>
         </div>
