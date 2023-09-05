@@ -326,3 +326,31 @@
   font-size: 18px;
   line-height: 150%;
 }
+
+.help-menu-container .menu-item {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-size: 16px;
+  line-height: 150%;
+  font-weight: bold;
+
+  span {
+    background: black;
+    color: white;
+    border-radius: 4px;
+    padding: 5px;
+  }
+}
+
+.help-menu-container .help-btn-2 {
+  height: 56px;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 80px;
+  border: none;
+  outline: none;
+
+  img {
+    border-radius: 50%;
+  }
+}

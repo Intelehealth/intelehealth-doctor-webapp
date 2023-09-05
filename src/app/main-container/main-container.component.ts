@@ -18,6 +18,7 @@ import { SocketService } from '../services/socket.service';
 import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
+import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-ticket.component';
 
 @Component({
   selector: 'app-main-container',
@@ -45,6 +46,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
+  dialogRef2: MatDialogRef<RaiseTicketComponent>;
   routeUrl: string = '';
   adminUnread: number = 0;
   notificationEnabled: boolean = false;
@@ -294,6 +296,17 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  openRaiseTicketModal() {
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
+      return;
+    };
+    this.dialogRef2 = this.coreService.openRaiseTicketModal();
+    this.dialogRef2.afterClosed().subscribe(result => {
+      this.dialogRef2 = undefined;
+    });
+  }
+
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
       // console.log(res);
@@ -310,6 +323,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.subscription1?.unsubscribe();
     if (this.dialogRef) {
       this.dialogRef.close();
+    }
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
     }
   }
 
