@@ -373,7 +373,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.strengthList.forEach(ans => {
       this.strengthDataList.push(this.translateService.instant(`strengths.${ans.name}`));
     });
-    this.timeList = this.getHours();
+    // this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
@@ -422,6 +422,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.followUpForm.get('followUpDate').updateValueAndValidity();
         this.followUpForm.get('followUpTime').clearValidators();
         this.followUpForm.get('followUpTime').updateValueAndValidity();
+      }
+    });
+    this.followUpForm.get('followUpDate').valueChanges.subscribe((val: any) => {
+      if (val) {
+        this.timeList = this.getHours(false, val);
+      } else {
+        this.timeList = [];
       }
     });
   }
@@ -1309,7 +1316,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         moment({
           hour,
           minutes: 0,
-        }).format("LT")
+        }).format("H:mm")
     );
     hours.splice(0, 9);
     if (this.isToday(date) && !returnAll) {
