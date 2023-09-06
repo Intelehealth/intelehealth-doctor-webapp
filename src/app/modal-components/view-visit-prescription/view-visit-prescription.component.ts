@@ -433,6 +433,33 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   async downloadPrescription() {
     // console.log(this.signature);
     let userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
+    pdfMake.tableLayouts = {
+      exampleLayout: {
+        margin:[0, 0, 0, 0 ],
+        hLineWidth: function (i, node) {
+          if (i === 0 || i === node.table.body.length) {
+            return 0;
+          }
+          // return (i === node.table.headerRows) ? 2 : 1;
+          return 1;
+        },
+        vLineWidth: function (i) {
+          return 0;
+        },
+        hLineColor: function (i) {
+          return i === 1 ? 'black' : '#aaa';
+        },
+        paddingLeft: function (i) {
+          // return i === 0 ? 0 : 8;
+          return 0;
+        },
+        paddingRight: function (i, node) {
+          // return (i === node.table.widths.length - 1) ? 0 : 8;
+          return 0;
+        }
+      }
+    };
+    
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -661,7 +688,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                               ...this.getRecords('diagnosis')
                             ]
                           },
-                          layout: 'lightHorizontalLines'
+                          layout: 'exampleLayout'
                         }
                       ]
                     ]
@@ -702,7 +729,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                               ...this.getRecords('medication')
                             ]
                           },
-                          layout: 'lightHorizontalLines'
+                          layout: 'exampleLayout'
                         }
                       ],
                       [{ text: this.translateService.instant('Additional instructions') + ':', style: 'sectionheader', colSpan:2 },''],
@@ -842,7 +869,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                               ...this.getRecords('followUp')
                             ]
                           },
-                          layout: 'lightHorizontalLines'
+                          layout: 'exampleLayout'
                         }
                       ]
                     ]
