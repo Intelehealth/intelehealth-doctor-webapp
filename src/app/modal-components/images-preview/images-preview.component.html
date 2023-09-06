@@ -1,8 +1,8 @@
 <div class="modal-nav">
-  <button mat-icon-button (click)="close(false)" data-test-id="btnCloseImagesPreview">
+  <button mat-icon-button (click)="close(false)" data-test-id="btnClose">
     <img src="assets/svgs/arrow-right-white.svg" alt="" />
   </button>
-  <button mat-icon-button (click)="imgLink.click()" data-test-id="btnDownloadImagesPreview">
+  <button mat-icon-button (click)="imgLink.click()" data-test-id="btnDownload">
     <img src="assets/svgs/download-white.svg" alt="" />
   </button>
 </div>
@@ -13,7 +13,7 @@
         href="javascript:void(0)"
         (click)="previous()"
         [hidden]="startIndex == min"
-        data-test-id="linkPreviousImagesPreview"
+        data-test-id="linkPrevious"
       >
         <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%" />
       </a>
@@ -41,11 +41,11 @@
         href="javascript:void(0)"
         (click)="next()"
         [hidden]="startIndex == max"
-        data-test-id="linkNextImagesPreview"
+        data-test-id="linkNext"
       >
         <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
       </a>
     </div>
   </div>
-  <a [href]="imgUrl" download="image.png" #imgLink data-test-id="linkImageImagesPreview"></a>
+  <a [href]="imgUrl" download="image.png" #imgLink data-test-id="linkImage"></a>
 </mat-dialog-content>

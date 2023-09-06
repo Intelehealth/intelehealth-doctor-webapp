@@ -2,7 +2,7 @@
   <div class="modal-title-con">
     <h6 class="mb-0">{{'Select Language'|translate}}</h6>
     <div class="close-btn-con">
-      <button class="modal-close-btn" (click)="close(false)" data-test-id="btnCloseSelectLanguage"><img src="assets/svgs/CloseX.svg" alt=""></button>
+      <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
     </div>
   </div>
   <div class="modal-con">
@@ -13,7 +13,7 @@
             <div class="col-6 p-1">
               <div class="lang-item">
                 <div class="pretty p-default p-round">
-                  <input type="radio" value="en" formControlName="language" data-test-id="radioEnglishSelectLanguage"/>
+                  <input type="radio" value="en" formControlName="language" data-test-id="radioEnglish"/>
                   <div class="state p-success-o">
                     <label>English</label>
                   </div>
@@ -23,7 +23,7 @@
             <div class="col-6 p-1">
               <div class="lang-item">
                 <div class="pretty p-default p-round">
-                  <input type="radio" value="ru" formControlName="language" data-test-id="radioRussianSelectLanguage"/>
+                  <input type="radio" value="ru" formControlName="language" data-test-id="radioRussian"/>
                   <div class="state p-success-o">
                     <label>Russian</label>
                   </div>
@@ -141,7 +141,7 @@
               </div>
             </div> -->
             <div class="col-12 text-center py-2">
-              <button class="modal-btn blue-btn" type="submit" data-test-id="btnSubmitSelectLanguage">{{'Select'|translate}}</button>
+              <button class="modal-btn blue-btn" type="submit" data-test-id="btnSubmit">{{'Select'|translate}}</button>
             </div>
           </div>
         </form>

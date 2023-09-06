@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="col-md-4 p-0 pb-2">
-      <button mat-button class="view-btn" routerLink="/calendar/view-calendar" data-test-id="btnViewCalendar">{{'View calendar'|translate}}</button>
+      <button mat-button class="view-btn" routerLink="/calendar/view-calendar" data-test-id="btnViewCal">{{'View calendar'|translate}}</button>
     </div>
   </div>
   <div class="row mt-3">
@@ -22,12 +22,12 @@
         <ul class="month-list">
           <ng-container *ngFor="let m of scheduledMonths; let i=index;">
             <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
-              <span data-test-id="spanSelectedMonth">{{(m.name)| translate}}</span>
+              <span data-test-id="spSelectMonth">{{(m.name)| translate}}</span>
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
           <li class="add-more-list-item">
-            <a href="javascript:void(0)" (click)="addMonth()" data-test-id="linkAddMoreMonths">
+            <a href="javascript:void(0)" (click)="addMonth()" data-test-id="linkAddMonths">
               <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
               {{'Add more months'|translate}}
             </a>
@@ -50,10 +50,10 @@
                 <label>{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
                   <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon1" readonly data-test-id="etSelectStartDate">
+                    aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
                   <mat-datepicker #picker1></mat-datepicker>
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon1" data-test-id="datepickerSelectStartDate">
+                    <span class="input-group-text" id="basic-addon1" data-test-id="dpicSelStartDate">
                       <mat-datepicker-toggle matSuffix [for]="picker1">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                       </mat-datepicker-toggle>
@@ -65,10 +65,10 @@
                 <label>{{'End date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.endDate.errors">
                   <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
-                    aria-describedby="basic-addon2" readonly data-test-id="etSelectEndDate">
+                    aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
                   <mat-datepicker #picker2></mat-datepicker>
                   <div class="input-group-append">
-                    <span class="input-group-text" id="basic-addon2" data-test-id="datepickerSelectEndDate">
+                    <span class="input-group-text" id="basic-addon2" data-test-id="dpicSelEndDate">
                       <mat-datepicker-toggle matSuffix [for]="picker2">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
                       </mat-datepicker-toggle>
@@ -183,7 +183,7 @@
 
                       <tr *ngIf="!_addMoreTiming && last">
                         <td colspan="4">
-                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddMoreTimings">
+                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddTime">
                             <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
                            {{'Add more timings'|translate}}
                           </a>
@@ -199,7 +199,7 @@
                               [placeholder]="timeList[0].name"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selectStartTime">
+                              data-test-id="selStartTime">
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -208,7 +208,7 @@
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selectStartTimeAm&Pm">
+                              data-test-id="selStartAm&Pm">
                             </ng-select>
                           </div>
                         </td>
@@ -221,7 +221,7 @@
                               [placeholder]="timeList[0].name"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selectEndTime">
+                              data-test-id="selEndTime">
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -230,7 +230,7 @@
                               [placeholder]="(clockTimeAmPM[0].name)|translate"
                               [clearable]="false"
                               [searchable]="false"
-                              data-test-id="selectEndTimeAm&Pm">
+                              data-test-id="selEndAm&Pm">
                             </ng-select>
                           </div>
                         </td>
@@ -245,7 +245,7 @@
                             [closeOnSelect]="false"
                             [clearable]="false"
                             [searchable]="false"
-                            data-test-id="selectDays">
+                            data-test-id="selDays">
                             <ng-template ng-label-tmp let-item="item">
                               {{(item.shortName) | translate}},
                             </ng-template>
@@ -284,11 +284,11 @@
                 <label>{{'Dates'|translate}}</label>
                 <div class="input-group">
                   <input type="text" [value]="daysOffDates" class="form-control" placeholder="{{'Select dates'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon3" readonly data-test-id="etDaysOff">
+                    aria-describedby="basic-addon3" readonly data-test-id="etDayOff">
                   <input type="text" class="form-control hidden-input" [min]="minDate" [max]="maxDate" (dateChange)="dayOffSelected($event)" [matDatepicker]="picker3" placeholder="{{'Select dates'|translate}}" aria-label="Start date"
-                    aria-describedby="basic-addon3" readonly data-test-id="etDaysOffSelection">
+                    aria-describedby="basic-addon3" readonly data-test-id="etDayOffSelect">
                   <mat-datepicker #picker3 [panelClass]="'daysOffCalendar'" [dateClass]="isDayOff"></mat-datepicker>
-                  <div class="input-group-append" data-test-id="datepickerSelectDaysOff">
+                  <div class="input-group-append" data-test-id="dpicSelDayOff">
                     <span class="input-group-text" id="basic-addon3">
                       <mat-datepicker-toggle matSuffix [for]="picker3">
                         <img matDatepickerToggleIcon src="assets/svgs/calendar-date.svg" alt="">
@@ -299,10 +299,10 @@
               </div>
               <div class="col-md-6 pb-3">
                 <div class="h-100 d-flex align-items-end">
-                  <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()" data-test-id="btnSaveDaysOff">
+                  <button mat-button type="button" class="save-btn mr-2" (click)="saveDaysOff()" data-test-id="btnSaveDayOff">
                     {{'Save'|translate}}
                   </button>
-                  <button mat-button type="button" class="cancel-btn" (click)="resetSelectedDaysOff()" data-test-id="btnCanelDaysOff">
+                  <button mat-button type="button" class="cancel-btn" (click)="resetSelectedDaysOff()" data-test-id="btnCanelDayOff">
                     {{'Cancel'|translate}}
                   </button>
                 </div>
