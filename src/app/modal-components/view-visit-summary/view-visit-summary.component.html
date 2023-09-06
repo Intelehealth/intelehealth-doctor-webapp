@@ -218,7 +218,7 @@
                           <div class="list-item">
                             <label>{{ckri.key|translate}}</label>
                             <div class="list-item-content" [class.text-muted]="!ckri.value">
-                              {{(ckri.value)?ckri.value:('None'|translate)}}
+                              {{(ckri.value) ? (ckri.value|translate) : ('None'|translate)}}
                             </div>
                           </div>
                         </li>
@@ -231,7 +231,7 @@
                           <div class="list-item-col">
                             <label>{{ckri.key|translate}}</label>
                             <div class="list-item-content" [class.text-muted]="!ckri.value">
-                              {{(ckri.value)?ckri.value:('None'|translate)}}
+                              {{(ckri.value) ? (ckri.value|translate) : ('None'|translate)}}
                             </div>
                           </div>
                         </li>
@@ -260,13 +260,13 @@
                         <div class="list-item">
                           <label>{{pei.key|translate}}</label>
                           <div class="list-item-content" [class.text-muted]="!pei.value">
-                            {{(pei.value)?pei.value:('None'|translate)}}
+                            {{(pei.value) ? (pei.value|translate) : ('None'|translate)}}
                           </div>
                         </div>
                       </li>
                       <li *ngIf="eyeImages.length">
                         <div class="list-item">
-                          <label>Eye images</label>
+                          <label>{{'Eye images'|translate}}</label>
                           <div class="list-item-content">
                             <div class="eye-images-con">
                               <div class="eye-item" *ngFor="let e of eyeImages;let x=index;">
@@ -310,7 +310,7 @@
                       <div class="list-item">
                         <label>{{phi.key|translate}}</label>
                         <div class="list-item-content" [class.text-muted]="!phi.value">
-                          {{(phi.value)?phi.value:('None'|translate)}}
+                          {{(phi.value) ? (phi.value|translate) : ('None'|translate)}}
                         </div>
                       </div>
                     </li>
