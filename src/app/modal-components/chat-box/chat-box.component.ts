@@ -34,7 +34,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const patientVisitProvider = JSON.parse(getCacheData("patientVisitProvider"));
+    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
@@ -102,7 +102,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   onImgError(event: any) {

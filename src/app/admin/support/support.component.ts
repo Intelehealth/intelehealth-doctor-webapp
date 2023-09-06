@@ -40,7 +40,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);
@@ -176,7 +176,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   // setImage(src) {

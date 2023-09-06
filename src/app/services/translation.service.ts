@@ -20,7 +20,7 @@ export class TranslationService {
   }
 
   getSelectedLanguage() {
-    return this.translateService.use(getCacheData('selectedLanguage'));
+    return this.translateService.use(getCacheData(false,'selectedLanguage'));
   }
 
   getDropdownTranslation(element:string, elementName:string) {

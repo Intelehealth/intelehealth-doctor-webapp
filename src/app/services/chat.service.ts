@@ -65,7 +65,7 @@ export class ChatService {
 
   public get user() {
     try {
-      return JSON.parse(getCacheData('user'));
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

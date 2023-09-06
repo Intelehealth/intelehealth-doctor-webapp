@@ -34,7 +34,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translate.use(getCacheData('selectedLanguage'));
+    this.translate.use(getCacheData(false,'selectedLanguage'));
     this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));

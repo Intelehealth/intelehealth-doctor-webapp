@@ -42,9 +42,9 @@ export class WebrtcService {
      *  error = 4,
      *  silent = 5,
      */
-    if (getCacheData('webrtcLogLevel')) {
+    if (getCacheData(false,'webrtcLogLevel')) {
       try {
-        setLogLevel(JSON.parse(getCacheData('webrtcLogLevel')));
+        setLogLevel(getCacheData(true,'webrtcLogLevel'));
       } catch (error) {
         console.log('error: ', error);
       }

@@ -55,7 +55,7 @@ export class DiagnosisService {
   }
 
   isSameDoctor() {
-    const providerDetails = JSON.parse(getCacheData('provider'));
+    const providerDetails = getCacheData(true,'provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;

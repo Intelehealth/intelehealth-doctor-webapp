@@ -1,5 +1,9 @@
-export function getCacheData(key: string) {
-  return localStorage.getItem(key);
+export function getCacheData(parse: boolean, key: string) {
+  if (parse) {
+    return JSON.parse(localStorage.getItem(key));
+  } else {
+    return localStorage.getItem(key);
+  }
 }
 
 export function setCacheData(key: string, value: string) {
@@ -20,9 +24,9 @@ export function isJsonString(str) {
 }
 
 export function getEncounterProviderUUID() {
-  return JSON.parse(getCacheData('visitNoteProvider')).encounterProviders[0].provider.uuid;
+  return getCacheData(true,'visitNoteProvider').encounterProviders[0].provider.uuid;
 }
 
 export function getEncounterUUID() {
-  return JSON.parse(getCacheData('visitNoteProvider')).uuid;
+  return getCacheData(true,'visitNoteProvider').uuid;
 }

@@ -29,7 +29,7 @@ export class AddLicenseKeyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.today = new Date().toISOString().slice(0, 10);
     this.licenseForm.patchValue({
       key: this.data?.keyName,

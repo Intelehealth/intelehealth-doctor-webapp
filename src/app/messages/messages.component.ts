@@ -46,7 +46,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
@@ -165,7 +165,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get patientName() {
-    return getCacheData('patientName') || "";
+    return getCacheData(false,'patientName') || "";
   }
 
   clickMenu() {
@@ -207,7 +207,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   setImage(src) {

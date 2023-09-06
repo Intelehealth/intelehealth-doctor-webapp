@@ -49,8 +49,8 @@ export class SessionComponent implements OnInit {
   constructor(public translate: TranslateService) { }
 
   ngOnInit(): void {
-    if(getCacheData('selectedLanguage')) {
-      this.selectedLanguage = getCacheData('selectedLanguage');
+    if(getCacheData(false,'selectedLanguage')) {
+      this.selectedLanguage = getCacheData(false,'selectedLanguage');
     }
   }
 

@@ -35,14 +35,14 @@ export class AuthService {
     private rolesService: NgxRolesService,
     private permissionsService: NgxPermissionsService
   ) {
-    let locStorageUser = JSON.parse(getCacheData('currentUser'));
-    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(getCacheData('currentUser')));
+    let locStorageUser = getCacheData(true,'currentUser');
+    this.currentUserSubject = new BehaviorSubject<any>(getCacheData(true,'currentUser'));
     this.currentUser = this.currentUserSubject.asObservable();
     if (locStorageUser) {
       this.permissionsService.loadPermissions(this.extractPermissions(locStorageUser.user.privileges));
       this.rolesService.addRoles(this.extractRolesAndPermissions(locStorageUser.user.privileges, locStorageUser.user.roles));
     }
-    this.base64Cred = getCacheData('xsddsdass');
+    this.base64Cred = getCacheData(false,'xsddsdass');
   }
   public fingerPrint;
 
@@ -138,7 +138,7 @@ export class AuthService {
   }
 
   get authToken() {
-    return getCacheData('token') || '';
+    return getCacheData(false,'token') || '';
   }
 
   getProvider(userId: string): Observable<any> {
@@ -280,7 +280,7 @@ export class AuthService {
 
   get userId() {
     try {
-      return JSON.parse(getCacheData('user')).uuid;
+      return getCacheData(true,'user').uuid;
     } catch (error) {
       return null;
     }

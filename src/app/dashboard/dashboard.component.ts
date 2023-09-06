@@ -90,9 +90,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
-    let provider = JSON.parse(getCacheData('provider'));
+    let provider = getCacheData(true,'provider');
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
@@ -258,7 +258,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
-    this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
@@ -347,7 +347,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
 
         // Check appointments
-        this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
           .subscribe((res: any) => {
             let appointmentsdata = res.data;
             appointmentsdata.forEach(appointment => {
@@ -413,7 +413,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
   //     if (res) {
   //       let visits = res.results;
-  //       this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
+  //       this.appointmentService.getUserSlots(getCacheData(true,'user')).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
   //       .subscribe((res: any) => {
   //         let appointmentsdata = res.data;
   //         appointmentsdata.forEach(appointment => {

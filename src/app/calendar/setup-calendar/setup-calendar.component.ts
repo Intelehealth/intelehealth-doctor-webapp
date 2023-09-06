@@ -685,18 +685,18 @@ export class SetupCalendarComponent implements OnInit {
   };
 
   private get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   private get drName() {
     return (
-      JSON.parse(getCacheData('user'))?.person?.display ||
-      JSON.parse(getCacheData('user'))?.display
+      getCacheData(true,'user')?.person?.display ||
+      getCacheData(true,'user')?.display
     );
   }
 
   private getSpeciality() {
-    return JSON.parse(getCacheData('provider')).attributes.find((a: any) =>
+    return getCacheData(true,'provider').attributes.find((a: any) =>
       a.display.includes("specialization")
     )?.value;
   }

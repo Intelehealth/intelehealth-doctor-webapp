@@ -41,7 +41,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   }
 
   get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   close(val: any) {

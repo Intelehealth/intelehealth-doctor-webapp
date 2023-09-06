@@ -72,9 +72,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    // this.user = JSON.parse(getCacheData('user'));
-    // this.provider = JSON.parse(getCacheData('provider'));
-    this.translateService.use(getCacheData('selectedLanguage'));
+    // this.user = getCacheData(true,'user'));
+    // this.provider = getCacheData(true,'provider'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -315,10 +315,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   get user() {
-    return JSON.parse(getCacheData('user'));
+    return getCacheData(true,'user');
   }
 
   get provider() {
-    return JSON.parse(getCacheData('provider'));
+    return getCacheData(true,'provider');
   }
 }

@@ -84,7 +84,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   }
 
   get user() {
-    return JSON.parse(getCacheData('user'));
+    return getCacheData(true,'user');
   }
 
   ngOnDestroy(): void {

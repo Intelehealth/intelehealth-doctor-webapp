@@ -24,9 +24,9 @@ export class GetStartedComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
-    this.doctorName = getCacheData('doctorName');
+    this.doctorName = getCacheData(false,'doctorName');
     let now = new Date();
     let hrs = now.getHours();
     if (hrs < 12)

@@ -59,10 +59,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) {
       this.initiator = this.data.initiator;
     }
-    const patientVisitProvider = JSON.parse(getCacheData("patientVisitProvider"));
+    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = getCacheData("doctorName");
+    const doctorName = getCacheData(false,'doctorName');
     this.doctorName = doctorName ? doctorName : this.user.display;
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
@@ -138,7 +138,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   onImgError(event: any) {
@@ -147,7 +147,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   get user() {
     try {
-      return JSON.parse(getCacheData('user'));
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

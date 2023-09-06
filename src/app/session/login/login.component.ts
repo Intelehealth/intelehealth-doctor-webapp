@@ -46,15 +46,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    if(getCacheData('selectedLanguage')) {
-      this.translate.setDefaultLang(getCacheData('selectedLanguage'));
-      this.translate.use(getCacheData('selectedLanguage'));
+    if(getCacheData(false,'selectedLanguage')) {
+      this.translate.setDefaultLang(getCacheData(false,'selectedLanguage'));
+      this.translate.use(getCacheData(false,'selectedLanguage'));
     } else {
       let browserlang = this.translate.getBrowserLang();
       this.translate.setDefaultLang(browserlang);
       setCacheData("selectedLanguage", browserlang);
     }
-    this.selectedLanguage = getCacheData('selectedLanguage');
+    this.selectedLanguage = getCacheData(false,'selectedLanguage');
     // this.checkSession();
   }
 

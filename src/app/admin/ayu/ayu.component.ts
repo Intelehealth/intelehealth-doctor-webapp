@@ -34,7 +34,7 @@ export class AyuComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
     this.fetchMindmaps();
   }

@@ -393,10 +393,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
-    this.provider = JSON.parse(getCacheData("provider"));
+    this.provider = getCacheData(true,"provider");
     medicines.forEach(med => {
       this.drugNameList.push({'id':med.id, 'name':this.translateService.instant(med.name)});
     });
@@ -928,11 +928,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   get username() {
-    return JSON.parse(getCacheData('user')).username;
+    return getCacheData(true,'user').username;
   }
 
   checkIfDateOldThanOneDay(data: any) {

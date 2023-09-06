@@ -101,7 +101,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   verifyLogin() {
     let payload: any = {};
     payload.verifyFor = "verification";
-    payload.username = (JSON.parse(getCacheData('user'))).username ? (JSON.parse(getCacheData('user'))).username : (JSON.parse(getCacheData('user'))).systemId;
+    payload.username = (getCacheData(true,'user')).username ? (getCacheData(true,'user')).username : (getCacheData(true,'user')).systemId;
     if (this.via == 'phone') {
       payload.phoneNumber = this.cred.split('||')[1]
     } else {
@@ -182,7 +182,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
-        payload.username = (JSON.parse(getCacheData('user'))).username;
+        payload.username = (getCacheData(true,'user')).username;
         if (this.via == 'phone') {
           payload.phoneNumber = this.cred.split('||')[1],
             payload.countryCode = this.cred.split('||')[0]

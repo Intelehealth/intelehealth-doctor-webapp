@@ -56,7 +56,7 @@ export class SocketService {
         setCacheData('socketQuery',`userId=${this.userUuid}&name=${this.userName}`);
       }
       this.socket = io(environment.socketURL, {
-        query: getCacheData('socketQuery'),
+        query: getCacheData(false,'socketQuery'),
       });
       this.onEvent("allUsers").subscribe((data) => {
         this.activeUsers = data;
@@ -64,14 +64,14 @@ export class SocketService {
       // this.onEvent("incoming_call").subscribe((data = {}) => {
       //   if (!location.hash.includes("test/chat")) {
       //     setCacheData('patientUuid', data.patientUuid);
-      //     console.log("patientUuid: ", getCacheData('patientUuid'));
-      //     if (getCacheData('patientUuid')) {
+      //     console.log("patientUuid: ", getCacheData(false,'patientUuid'));
+      //     if (getCacheData(false,'patientUuid')) {
       //       this.openVcOverlay();
       //     }
       //   }
       // });
       this.onEvent("log").subscribe((array) => {
-        if (getCacheData('log') === "1") console.log.apply(console, array);
+        if (getCacheData(false,'log') === "1") console.log.apply(console, array);
       });
     }
   }
@@ -125,9 +125,9 @@ export class SocketService {
     // this.dialog.open(VcComponent, {
     //   disableClose: true,
     //   data: {
-    //     patientUuid: getCacheData('patientUuid'),
+    //     patientUuid: getCacheData(false,'patientUuid'),
     //     initiator,
-    //     connectToDrId: getCacheData('connectToDrId'),
+    //     connectToDrId: getCacheData(false,'connectToDrId'),
     //   },
     // });
   }
@@ -152,8 +152,8 @@ export class SocketService {
       hasBackdrop: false,
       position,
       data: {
-        patientUuid: getCacheData('patientUuid'),
-        connectToDrId: getCacheData('connectToDrId'),
+        patientUuid: getCacheData(false,'patientUuid'),
+        connectToDrId: getCacheData(false,'connectToDrId'),
         visitId,
         initiator,
       },
@@ -162,16 +162,16 @@ export class SocketService {
     // this.dialog.open(CallStateComponent, {
     //   disableClose: true,
     //   data: {
-    //     patientUuid: getCacheData('patientUuid'),
+    //     patientUuid: getCacheData(false,'patientUuid'),
     //     initiator,
-    //     connectToDrId: getCacheData('connectToDrId'),
+    //     connectToDrId: getCacheData(false,'connectToDrId'),
     //   },
     // });
   }
 
   get user() {
     try {
-      return JSON.parse(getCacheData('user'));
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

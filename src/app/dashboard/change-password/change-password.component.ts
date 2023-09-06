@@ -40,7 +40,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);

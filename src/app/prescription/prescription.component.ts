@@ -24,7 +24,7 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
-    let provider = JSON.parse(getCacheData('provider'));
+    let provider = getCacheData(true,'provider');
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);

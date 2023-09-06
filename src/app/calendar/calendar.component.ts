@@ -45,10 +45,10 @@ export class CalendarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
-    this.user = JSON.parse(getCacheData('user'));
-    this.provider = JSON.parse(getCacheData('provider'));
+    this.user = getCacheData(true,'user');
+    this.provider = getCacheData(true,'provider');
     this.fetchedYears.push(new Date().getFullYear());
     this.fetchedMonths.push(`${moment(new Date()).format("MMMM")} ${moment(new Date()).format("YYYY")}`);
     this.getFollowUpVisit();
@@ -68,7 +68,7 @@ export class CalendarComponent implements OnInit {
   }
 
   getAppointments(from: any, to: any) {
-    this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, from, to)
+    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, from, to)
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: any) => {
@@ -208,22 +208,22 @@ export class CalendarComponent implements OnInit {
   }
 
   get providerId() {
-    return JSON.parse(getCacheData('provider')).uuid;
+    return getCacheData(true,'provider').uuid;
   }
 
   private get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   private get drName() {
     return (
-      JSON.parse(getCacheData('user'))?.person?.display ||
-      JSON.parse(getCacheData('user'))?.display
+      getCacheData(true,'user')?.person?.display ||
+      getCacheData(true,'user')?.display
     );
   }
 
   private getSpeciality() {
-    return JSON.parse(getCacheData('provider')).attributes.find((a: any) =>
+    return getCacheData(true,'provider').attributes.find((a: any) =>
       a.display.includes("specialization")
     ).value;
   }
@@ -463,7 +463,7 @@ export class CalendarComponent implements OnInit {
   }
 
   get locale() {
-    return getCacheData("selectedLanguage");
+    return getCacheData(false,'selectedLanguage');
   }
 
 }

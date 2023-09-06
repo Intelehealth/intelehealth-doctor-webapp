@@ -42,14 +42,14 @@ export class AppointmentsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
     // this.getVisits();
     this.getAppointments();
   }
 
   getAppointments() {
-    this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
@@ -92,7 +92,7 @@ export class AppointmentsComponent implements OnInit {
 
   // getAppointements() {
   //   this.appointmentService
-  //     .getUserSlots(JSON.parse(getCacheData('user')).uuid,'01/01/2022','31/12/2022')
+  //     .getUserSlots(getCacheData(true,'user')).uuid,'01/01/2022','31/12/2022')
   //     .subscribe({
   //       next: (res: any) => {
   //         console.log(res);
@@ -105,7 +105,7 @@ export class AppointmentsComponent implements OnInit {
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         let visits = res.results;
-        this.appointmentService.getUserSlots(JSON.parse(getCacheData('user')).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
+        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
           appointmentsdata.forEach((appointment: any) => {
@@ -213,7 +213,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   get userId() {
-    return JSON.parse(getCacheData('user')).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   applyFilter1(event: Event) {
