@@ -451,15 +451,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dialogRef.afterClosed().subscribe(async result => {
         console.log(result)
         if(result){
-          this.profilePicUrl = result;
-          console.log(this.profilePicUrl);
-          let imageBlob = this.profilePicUrl.toString().split(',')[1];
+          let imageBlob = result.toString().split(',')[1];
           let payload = {
             person: this.provider.person.uuid,
             base64EncodedImage: imageBlob
           }
-          console.log(payload);
           this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+            this.profilePicUrl = result;
+            this.profileService.setProfilePic(result);
             this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
           });
         }

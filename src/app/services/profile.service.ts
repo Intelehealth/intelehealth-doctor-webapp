@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,9 @@ export class ProfileService {
     iVBORw0KGgo: "image/png",
     "/9j/": "image/jpg"
   };
+
+  private profilePic: Subject<string> = new Subject<string>();
+  profilePicUpdateEvent = this.profilePic.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -104,5 +107,9 @@ export class ProfileService {
         return this.mimeTypes[s];
       }
     }
+  }
+
+  setProfilePic(imageBase64){
+    this.profilePic.next(imageBase64);
   }
 }
