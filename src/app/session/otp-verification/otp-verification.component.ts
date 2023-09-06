@@ -8,6 +8,7 @@ import { Subscription, timer } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-otp-verification',
@@ -100,7 +101,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   verifyLogin() {
     let payload: any = {};
     payload.verifyFor = "verification";
-    payload.username = (JSON.parse(localStorage.getItem('user'))).username ? (JSON.parse(localStorage.getItem('user'))).username : (JSON.parse(localStorage.getItem('user'))).systemId;
+    payload.username = (JSON.parse(getCacheData('user'))).username ? (JSON.parse(getCacheData('user'))).username : (JSON.parse(getCacheData('user'))).systemId;
     if (this.via == 'phone') {
       payload.phoneNumber = this.cred.split('||')[1]
     } else {
@@ -181,7 +182,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
-        payload.username = (JSON.parse(localStorage.getItem('user'))).username;
+        payload.username = (JSON.parse(getCacheData('user'))).username;
         if (this.via == 'phone') {
           payload.phoneNumber = this.cred.split('||')[1],
             payload.countryCode = this.cred.split('||')[0]
@@ -191,7 +192,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         this.authService.requestOtp(payload).subscribe((res: any) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
-             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : 
+             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) :
              this.replaceWithStar(this.cred)} ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
           } else {
             this.translationService.getTranslation(res.message, "Error",false);
@@ -210,7 +211,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         this.authService.requestOtp(payload).subscribe((res: any) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
-             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) : 
+             this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) :
              this.replaceWithStar(this.cred)} ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
           } else {
             this.translationService.getTranslation(res.message, "Error",false);

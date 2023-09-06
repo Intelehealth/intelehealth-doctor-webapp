@@ -8,9 +8,9 @@ import { catchError, map, mergeMap } from "rxjs/operators";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
-declare var deleteFromStorage: any;
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
+import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
 
 @Injectable({
   providedIn: "root",
@@ -35,14 +35,14 @@ export class AuthService {
     private rolesService: NgxRolesService,
     private permissionsService: NgxPermissionsService
   ) {
-    let localStorageUser = JSON.parse(localStorage.getItem('currentUser'));
-    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
+    let locStorageUser = JSON.parse(getCacheData('currentUser'));
+    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(getCacheData('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
-    if (localStorageUser) {
-      this.permissionsService.loadPermissions(this.extractPermissions(localStorageUser.user.privileges));
-      this.rolesService.addRoles(this.extractRolesAndPermissions(localStorageUser.user.privileges, localStorageUser.user.roles));
+    if (locStorageUser) {
+      this.permissionsService.loadPermissions(this.extractPermissions(locStorageUser.user.privileges));
+      this.rolesService.addRoles(this.extractRolesAndPermissions(locStorageUser.user.privileges, locStorageUser.user.roles));
     }
-    this.base64Cred = localStorage.getItem('xsddsdass');
+    this.base64Cred = getCacheData('xsddsdass');
   }
   public fingerPrint;
 
@@ -61,10 +61,10 @@ export class AuthService {
   logout() {
     this.sessionService.session().subscribe((res) => {
       this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
-        deleteFromStorage("user");
-        deleteFromStorage("provider");
-        deleteFromStorage("visitNoteProvider");
-        deleteFromStorage("session");
+        deleteCacheData('user');
+        deleteCacheData('provider');
+        deleteCacheData('visitNoteProvider');
+        deleteCacheData('session');
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
@@ -87,7 +87,7 @@ export class AuthService {
 
   login(credBase64: string) {
     this.base64Cred = credBase64;
-    localStorage.setItem('xsddsdass', credBase64);
+    setCacheData('xsddsdass', credBase64);
     // console.log(this.cookieService.getAll());
     // this.cookieService.delete('JSESSIONID');
     // this.cookieService.delete('JSESSIONID', '/');
@@ -112,8 +112,8 @@ export class AuthService {
           map((user: any) => {
             if (user.authenticated) {
               user.verified = false;
-              localStorage.setItem('currentUser', JSON.stringify(user));
-              localStorage.setItem('user', JSON.stringify(user.user));
+              setCacheData('currentUser', JSON.stringify(user));
+              setCacheData('user', JSON.stringify(user.user));
               this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
               this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
               this.currentUserSubject.next(user);
@@ -131,14 +131,14 @@ export class AuthService {
     const url = this.gatewayURL.replace('/v2', '');
     return this.http.post(`${url}auth/login`, { username, password }).pipe(
       map((res: any) => {
-        localStorage.setItem('token', res.token);
+        setCacheData('token', res.token);
         return res;
       })
     );
   }
 
   get authToken() {
-    return localStorage.getItem('token') || '';
+    return getCacheData('token') || '';
   }
 
   getProvider(userId: string): Observable<any> {
@@ -151,12 +151,13 @@ export class AuthService {
     // headers = headers.set('cookie', `JSESSIONID=${id}`);
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('user');
-      localStorage.removeItem('provider');
-      localStorage.removeItem('doctorName');
-      localStorage.removeItem('xsddsdass');
-      localStorage.removeItem('token');
+      deleteCacheData('currentUser');
+      deleteCacheData('user');
+      deleteCacheData('provider');
+      deleteCacheData('doctorName');
+      deleteCacheData('xsddsdass');
+      deleteCacheData('token');
+      deleteCacheData('socketQuery');
       // console.log(this.cookieService.getAll());
       // this.cookieService.delete('JSESSIONID');
       // this.cookieService.delete('JSESSIONID', '/');
@@ -200,7 +201,7 @@ export class AuthService {
 
   updateVerificationStatus() {
     this.currentUserSubject.next({ ...this.currentUserValue, verified: true });
-    localStorage.setItem('currentUser', JSON.stringify({ ...this.currentUserValue, verified: true }));
+    setCacheData('currentUser', JSON.stringify({ ...this.currentUserValue, verified: true }));
   }
 
   checkIfUsernameExists(username: string): Observable<any> {
@@ -279,7 +280,7 @@ export class AuthService {
 
   get userId() {
     try {
-      return JSON.parse(localStorage.user).uuid;
+      return JSON.parse(getCacheData('user')).uuid;
     } catch (error) {
       return null;
     }

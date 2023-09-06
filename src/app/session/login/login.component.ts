@@ -6,6 +6,7 @@ import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
+import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -45,15 +46,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    if(localStorage.getItem('selectedLanguage')) {
-      this.translate.setDefaultLang(localStorage.getItem('selectedLanguage'));
-      this.translate.use(localStorage.getItem('selectedLanguage'));
+    if(getCacheData('selectedLanguage')) {
+      this.translate.setDefaultLang(getCacheData('selectedLanguage'));
+      this.translate.use(getCacheData('selectedLanguage'));
     } else {
       let browserlang = this.translate.getBrowserLang();
       this.translate.setDefaultLang(browserlang);
-      localStorage.setItem("selectedLanguage", browserlang);
+      setCacheData("selectedLanguage", browserlang);
     }
-    this.selectedLanguage = localStorage.getItem('selectedLanguage');
+    this.selectedLanguage = getCacheData('selectedLanguage');
     // this.checkSession();
   }
 
@@ -71,8 +72,8 @@ export class LoginComponent implements OnInit {
         this.authService.getAuthToken(val.username, val.password).subscribe(token => {
           this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
             if (provider.results.length) {
-              localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-              localStorage.setItem("doctorName", provider.results[0].person.display);
+              setCacheData('provider', JSON.stringify(provider.results[0]));
+              setCacheData("doctorName", provider.results[0].person.display);
               this.loginSuccess();
               // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
               //   this.loginSuccess();

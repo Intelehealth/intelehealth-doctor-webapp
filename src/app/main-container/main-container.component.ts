@@ -18,6 +18,7 @@ import { SocketService } from '../services/socket.service';
 import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from '../utils/utility-functions';
 
 @Component({
   selector: 'app-main-container',
@@ -71,9 +72,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    // this.user = JSON.parse(localStorage.getItem('user'));
-    // this.provider = JSON.parse(localStorage.getItem('provider'));
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    // this.user = JSON.parse(getCacheData('user'));
+    // this.provider = JSON.parse(getCacheData('provider'));
+    this.translateService.use(getCacheData('selectedLanguage'));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -314,10 +315,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   get user() {
-    return JSON.parse(localStorage.getItem('user'));
+    return JSON.parse(getCacheData('user'));
   }
 
   get provider() {
-    return JSON.parse(localStorage.getItem('provider'));
+    return JSON.parse(getCacheData('provider'));
   }
 }

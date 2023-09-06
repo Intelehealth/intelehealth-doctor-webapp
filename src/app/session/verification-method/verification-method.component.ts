@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-verification-method',
@@ -22,7 +23,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   maxTelLegth: number = 10;
   subscription: Subscription;
 
-  constructor(private authService: AuthService, private router: Router, 
+  constructor(private authService: AuthService, private router: Router,
     private toastr: ToastrService, private translate: TranslateService) {
     this.verificationForm = new FormGroup({
       phone: new FormControl('', [Validators.required]),
@@ -74,7 +75,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
 
     let payload: any = {
       otpFor: "verification",
-      username: (JSON.parse(localStorage.getItem('user'))).username ? (JSON.parse(localStorage.getItem('user'))).username : (JSON.parse(localStorage.getItem('user'))).systemId
+      username: (JSON.parse(getCacheData('user'))).username ? (JSON.parse(getCacheData('user'))).username : (JSON.parse(getCacheData('user'))).systemId
     };
     if (this.active == 'phone') {
       payload.phoneNumber = this.verificationForm.value.phone,

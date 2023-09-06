@@ -16,6 +16,7 @@ import {
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
+import { getCacheData } from '../utils/utility-functions';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +42,9 @@ export class WebrtcService {
      *  error = 4,
      *  silent = 5,
      */
-    if (localStorage.webrtcLogLevel) {
+    if (getCacheData('webrtcLogLevel')) {
       try {
-        setLogLevel(JSON.parse(localStorage.webrtcLogLevel));
+        setLogLevel(JSON.parse(getCacheData('webrtcLogLevel')));
       } catch (error) {
         console.log('error: ', error);
       }

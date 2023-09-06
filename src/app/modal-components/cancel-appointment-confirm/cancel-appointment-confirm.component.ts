@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-cancel-appointment-confirm',
@@ -40,7 +41,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   }
 
   get userId() {
-    return JSON.parse(localStorage.user).uuid;
+    return JSON.parse(getCacheData('user')).uuid;
   }
 
   close(val: any) {

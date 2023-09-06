@@ -9,6 +9,7 @@ import { MatDatepicker } from '@angular/material/datepicker';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -684,18 +685,18 @@ export class SetupCalendarComponent implements OnInit {
   };
 
   private get userId() {
-    return JSON.parse(localStorage.user).uuid;
+    return JSON.parse(getCacheData('user')).uuid;
   }
 
   private get drName() {
     return (
-      JSON.parse(localStorage.user)?.person?.display ||
-      JSON.parse(localStorage.user)?.display
+      JSON.parse(getCacheData('user'))?.person?.display ||
+      JSON.parse(getCacheData('user'))?.display
     );
   }
 
   private getSpeciality() {
-    return JSON.parse(localStorage.provider).attributes.find((a: any) =>
+    return JSON.parse(getCacheData('provider')).attributes.find((a: any) =>
       a.display.includes("specialization")
     )?.value;
   }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
+import { getCacheData } from '../utils/utility-functions';
 
 @Component({
   selector: 'app-prescription',
@@ -23,7 +24,7 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
-    let provider = JSON.parse(localStorage.getItem('provider'));
+    let provider = JSON.parse(getCacheData('provider'));
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
