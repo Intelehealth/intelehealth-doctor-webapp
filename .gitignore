@@ -47,3 +47,5 @@ Thumbs.db
 #env files
 .env
 src/environments/*
+.scannerwork/*
+.vscode
