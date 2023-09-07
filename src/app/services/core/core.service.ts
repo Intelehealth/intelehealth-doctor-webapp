@@ -15,6 +15,7 @@ import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-cr
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { RaiseTicketComponent } from 'src/app/modal-components/raise-ticket/raise-ticket.component';
 import { RescheduleAppointmentConfirmComponent } from 'src/app/modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
 import { RescheduleAppointmentComponent } from 'src/app/modal-components/reschedule-appointment/reschedule-appointment.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
@@ -152,6 +153,11 @@ export class CoreService {
   openConfirmOpenMrsIdModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true } );
     return dialogRef.afterClosed();
+  }
+
+  openRaiseTicketModal(): MatDialogRef<RaiseTicketComponent> {
+    const dialogRef = this.dialog.open(RaiseTicketComponent, { panelClass: "modal-md" } );
+    return dialogRef;
   }
 
   openImageCropModal(data: any): MatDialogRef<ImageCropComponent> {

@@ -32,4 +32,12 @@ export class SupportService {
   getDoctorsList(userUuid: string) {
     return this.http.get(`${this.baseURL}/support/getDoctorsList/${userUuid}?ngsw-bypass=true`);
   }
+
+  raiseTicket(data: { title: string, description: string, priority: string }): Observable<any> {
+    return this.http.post(`https://demo.intelehealth.org/createticket`, data);
+  }
+
+  storeTicket(userUuid: string, data: { ticketnumber: string }): Observable<any> {
+    return this.http.post(`${this.baseURL}/support/createTicket/${userUuid}`, data);
+  }
 }

@@ -37,6 +37,7 @@ import { ConfirmHoursOffComponent } from './confirm-hours-off/confirm-hours-off.
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { PwaPromptComponent } from './pwa-prompt/pwa-prompt.component';
 import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-id.component';
+import { RaiseTicketComponent } from './raise-ticket/raise-ticket.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropComponent } from './image-crop/image-crop.component';
 
@@ -67,6 +68,7 @@ import { ImageCropComponent } from './image-crop/image-crop.component';
         ConfirmHoursOffComponent,
         PwaPromptComponent,
         ConfirmOpenmrsIdComponent,
+        RaiseTicketComponent,
         ImageCropComponent
     ],
     imports: [
