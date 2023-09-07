@@ -39,6 +39,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   assessments: any[] = [];
   parameters: any[] = [
     {
+      id: 0,
       name: 'Companion',
       conceptName: 'Companion',
       stage1Count: 12,
@@ -46,6 +47,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 1,
       name: 'Pain relief',
       conceptName: 'Pain relief',
       stage1Count: 12,
@@ -53,6 +55,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 2,
       name: 'Oral Fluid',
       conceptName: 'Oral Fluid',
       stage1Count: 12,
@@ -60,6 +63,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 3,
       name: 'Posture',
       conceptName: 'Posture',
       stage1Count: 12,
@@ -67,6 +71,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 4,
       name: 'Baseline FHR',
       conceptName: 'Baseline FHR',
       stage1Count: 24,
@@ -74,6 +79,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 5,
       name: 'FHR deceleration',
       conceptName: 'FHR Deceleration',
       stage1Count: 24,
@@ -81,6 +87,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 6,
       name: 'Amniotic fluid',
       conceptName: 'Amniotic fluid',
       stage1Count: 12,
@@ -88,6 +95,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 7,
       name: 'Fetal position',
       conceptName: 'Fetal position',
       stage1Count: 12,
@@ -95,6 +103,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 8,
       name: 'Caput',
       conceptName: 'Caput',
       stage1Count: 12,
@@ -102,6 +111,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 9,
       name: 'Moulding',
       conceptName: 'Moulding',
       stage1Count: 12,
@@ -109,6 +119,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 10,
       name: 'Pulse',
       conceptName: 'PULSE',
       stage1Count: 12,
@@ -116,6 +127,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 11,
       name: 'Systolic BP',
       conceptName: 'Systolic BP',
       stage1Count: 12,
@@ -123,6 +135,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 12,
       name: 'Diastolic BP',
       conceptName: 'Diastolic BP',
       stage1Count: 12,
@@ -130,6 +143,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 13,
       name: 'Temperature ℃',
       conceptName: 'TEMPERATURE (C)',
       stage1Count: 12,
@@ -137,6 +151,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 14,
       name: 'Urine protein',
       conceptName: 'Urine protein',
       stage1Count: 12,
@@ -144,6 +159,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 15,
       name: 'Contractions per 10 min',
       conceptName: 'Contractions per 10 min',
       stage1Count: 24,
@@ -151,6 +167,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 16,
       name: 'Duration of contractions',
       conceptName: 'Duration of contraction',
       stage1Count: 24,
@@ -158,6 +175,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 17,
       name: 'Cervix [Plot X]',
       conceptName: 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm',
       stage1Count: 12,
@@ -165,6 +183,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 18,
       name: 'Descent [Plot O]',
       conceptName: 'Descent 0-5',
       stage1Count: 12,
@@ -172,6 +191,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: true
     },
     {
+      id: 19,
       name: 'Oxytocin (U/L, drops/min)',
       conceptName: 'Oxytocin U/l, Drops per min',
       stage1Count: 12,
@@ -179,6 +199,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 20,
       name: 'Medicine',
       conceptName: 'Medicine',
       stage1Count: 12,
@@ -186,6 +207,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 21,
       name: 'IV fluids',
       conceptName: 'IV fluids',
       stage1Count: 12,
@@ -193,6 +215,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 22,
       name: 'ASSESSMENT',
       conceptName: 'Assessment',
       stage1Count: 12,
@@ -200,6 +223,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 23,
       name: 'PLAN',
       conceptName: 'Additional Comments',
       stage1Count: 12,
@@ -207,6 +231,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 24,
       name: 'Encounter Status',
       conceptName: 'Encounter status',
       stage1Count: 12,
@@ -214,6 +239,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       alert: false
     },
     {
+      id: 25,
       name: 'Urine Acetone',
       conceptName: 'Urine acetone',
       stage1Count: 12,
