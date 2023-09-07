@@ -312,7 +312,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
       this.pc.onicecandidate = this.onIceCandidate.bind(this);
       this.pc.onaddstream = this.onAddStream.bind(this);
-      this.pc.addEventListener('icecandidateerror', (event) => { console.log(event) });
+      this.pc.addEventListener('icecandidateerror', (event) => { });
       this.pc.addStream(this.localStream);
 
     } catch (e) {
@@ -338,10 +338,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   sendOffer() {
-
-    this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
-    });
+    this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {});
   }
 
   stop() {
@@ -357,15 +354,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   sendAnswer() {
-
-    this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
-    });
+    this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {});
   }
 
   setAndSendLocalDescription(sessionDescription) {
     this.pc.setLocalDescription(sessionDescription);
-
     this.sendMessage2(sessionDescription);
   }
 

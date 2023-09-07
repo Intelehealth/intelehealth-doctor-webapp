@@ -46,7 +46,6 @@ export class WebrtcService {
       try {
         setLogLevel(getCacheData(true,'webrtcLogLevel'));
       } catch (error) {
-        console.log('error: ', error);
       }
     }
   }
@@ -113,7 +112,6 @@ export class WebrtcService {
 
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
 
-    console.log('url:- ', this.url);
     console.clear();
     await this.room.connect(this.url, this.token);
 
@@ -127,7 +125,6 @@ export class WebrtcService {
       this.localContainer.innerHTML = '';
       this.remoteContainer.innerHTML = '';
     } catch (error) {
-      console.log('error: ', error);
     }
   }
 
@@ -174,14 +171,11 @@ export class WebrtcService {
   }
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
-    console.log('track: handleLocalTrackUnpublished', track);
-    console.log('participant: ', participant);
     // when local tracks are ended, update UI to remove them from rendering
     // track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
-    console.log('speakers: ', speakers);
     // show UI indicators when participant is speaking
   }
 
@@ -204,7 +198,6 @@ export class WebrtcService {
 
 
   handleDisconnect() {
-    console.log('disconnected from room');
     this.room.disconnect(true);
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
@@ -260,7 +253,6 @@ export class WebrtcService {
    * Noop function to be passed as default function if nothing passed
    */
   noop() {
-    console.log('Not Implemented.')
   }
 
 }

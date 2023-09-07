@@ -55,11 +55,7 @@ export class AyuComponent implements OnInit {
         this.mindmaps = response.data;
         this.selectedLicense = this.mindmaps[0].keyName
         this.licenceKeySelecter();
-      },
-      (err) => {
-        console.log("Something went wrong");
-      }
-    );
+      });
   }
 
   /** Get lsit of available mindmaps for the selected license key. */
@@ -74,11 +70,7 @@ export class AyuComponent implements OnInit {
           (m) => m.keyName === this.selectedLicense
         );
         this.expiryDate = expiry;
-      },
-      (err) => {
-        console.log("Something went wrong");
-      }
-    );
+      });
   }
 
   /** Open Upload Json Mindmap Modal. */

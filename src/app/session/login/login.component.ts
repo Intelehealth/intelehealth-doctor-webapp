@@ -95,7 +95,6 @@ export class LoginComponent implements OnInit {
         this.translationService.getTranslation("Couldn't find you, credentials provided are wrong.", "Login Failed!",false);
       }
     }, err => {
-      console.log(err);
       if(this.loginAttempt < 3) this.login();
     });
   }

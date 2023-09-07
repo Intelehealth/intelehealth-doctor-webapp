@@ -47,7 +47,6 @@ export class SocketService {
   }
 
   public initSocket(forceInit = false) {
-    console.log("initSocket:called");
     if (forceInit && this.socket?.id && this.socket?.disconnect) {
       this.socket.disconnect();
     }
@@ -64,7 +63,6 @@ export class SocketService {
       // this.onEvent("incoming_call").subscribe((data = {}) => {
       //   if (!location.hash.includes("test/chat")) {
       //     setCacheData('patientUuid', data.patientUuid);
-      //     console.log("patientUuid: ", getCacheData(false,'patientUuid'));
       //     if (getCacheData(false,'patientUuid')) {
       //       this.openVcOverlay();
       //     }

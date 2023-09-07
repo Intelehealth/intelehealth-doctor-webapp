@@ -36,11 +36,9 @@ export class UploadMindmapJsonComponent implements OnInit {
       }
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        //  console.log(JSON.parse(fileReader.result.toString()));
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsText(this.file, "UTF-8");
@@ -58,11 +56,9 @@ export class UploadMindmapJsonComponent implements OnInit {
       }
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        //  console.log(JSON.parse(fileReader.result.toString()));
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsText(this.file, "UTF-8");
