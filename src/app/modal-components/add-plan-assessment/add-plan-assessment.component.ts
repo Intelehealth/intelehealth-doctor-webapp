@@ -68,15 +68,15 @@ export class AddPlanAssessmentComponent implements OnInit {
     },
     {
       id: 2,
-      name: 'Subcutaneous'
+      name: 'Subcutaneous (SC)'
     },
     {
       id: 3,
-      name: 'Intramuscular'
+      name: 'Intramuscular (IM)'
     },
     {
       id: 4,
-      name: 'Intravenous'
+      name: 'Intravenous (IV)'
     },
     {
       id: 5,
@@ -84,7 +84,7 @@ export class AddPlanAssessmentComponent implements OnInit {
     },
     {
       id: 6,
-      name: 'Sublingual'
+      name: 'Sublingual (SL)'
     },
     {
       id: 7,
@@ -109,6 +109,14 @@ export class AddPlanAssessmentComponent implements OnInit {
     {
       id: 12,
       name: 'Vaginal Route'
+    },
+    {
+      id: 13,
+      name: 'IV Infusion'
+    },
+    {
+      id: 14,
+      name: 'Intradermal (ID)'
     }
   ];
   typeOfMedicineList: any = [
@@ -177,7 +185,35 @@ export class AddPlanAssessmentComponent implements OnInit {
     {
       id: 6,
       name: 'Every 12 hour'
-    }
+    },
+    {
+      id: 7,
+      name: 'Once daily (OD)'
+    },
+    {
+      id: 8,
+      name: 'Twice daily (BD)'
+    },
+    {
+      id: 9,
+      name: 'Thrice daily (TID)'
+    },
+    {
+      id: 10,
+      name: 'Four times in a day (QID)'
+    },
+    {
+      id: 11,
+      name: 'Single Dose'
+    },
+    {
+      id: 12,
+      name: 'Stat Dose'
+    },
+    {
+      id: 13,
+      name: 'As required (SOS)'
+    },
   ];
   dosageUnitList: any = [
     {
@@ -267,11 +303,11 @@ export class AddPlanAssessmentComponent implements OnInit {
             id: new FormControl(this.data.medicines[x].uuid),
             medicineName: new FormControl((medicine[0])? medicine[0] : null, [Validators.required, Validators.maxLength(100)]),
             strength: new FormControl((medicine[1])? medicine[1] : null, [Validators.required, Validators.maxLength(10)]),
-            dosage: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[0] : null : null, [Validators.required, Validators.maxLength(10)]),
-            dosageUnit: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[1] : medicine[2].split('::')[0] : null, [Validators.required, Validators.maxLength(10)]),
-            duration: new FormControl((medicine[3])? medicine[3] : null, [Validators.required, Validators.maxLength(15)]),
-            typeOfMedicine: new FormControl((medicine[4])? medicine[4] : null, [Validators.required, Validators.maxLength(15)]),
-            routeOfMedicine: new FormControl((medicine[5])? medicine[5] : null, [Validators.required, Validators.maxLength(15)]),
+            dosage: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[0] : null : null, [Validators.required, Validators.maxLength(15)]),
+            dosageUnit: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[1] : medicine[2].split('::')[0] : null, [Validators.required, Validators.maxLength(15)]),
+            duration: new FormControl((medicine[3])? medicine[3] : null, [Validators.required, Validators.maxLength(30)]),
+            typeOfMedicine: new FormControl((medicine[4])? medicine[4] : null, [Validators.required, Validators.maxLength(25)]),
+            routeOfMedicine: new FormControl((medicine[5])? medicine[5] : null, [Validators.required, Validators.maxLength(25)]),
             isDeleted: new FormControl(false),
             index: new FormControl(x)
           }));
