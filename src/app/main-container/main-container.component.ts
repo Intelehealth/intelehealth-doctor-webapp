@@ -18,6 +18,7 @@ import { SocketService } from '../services/socket.service';
 import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
+import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 
 @Component({
@@ -49,6 +50,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   routeUrl: string = '';
   adminUnread: number = 0;
   notificationEnabled: boolean = false;
+  profilePic:string;
+  profilePicSubscription;
+  // baseUrl + '/personimage/' + provider?.person.uuid 
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -62,7 +66,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private router: Router,
     private socketService: SocketService,
     private _swPush: SwPush,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private profileService: ProfileService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -117,6 +122,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
     this.requestSubscription();
     this.getNotificationStatus();
+
+    this.profilePic = this.baseUrl + '/personimage/' + this.provider?.person.uuid;
+    this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img=>{
+      this.profilePic = img;
+    });
   }
 
   requestSubscription() {
@@ -309,6 +319,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
+    this.profilePicSubscription.unsubscribe()
     if (this.dialogRef) {
       this.dialogRef.close();
     }

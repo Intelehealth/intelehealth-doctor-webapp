@@ -18,6 +18,9 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { TranslateService } from '@ngx-translate/core';
+import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-crop.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 
 export const PICK_FORMATS = {
@@ -60,6 +63,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+  dialogRef: MatDialogRef<ImageCropComponent>;
 
   fonts: any[] = [
     {
@@ -175,6 +179,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneValid: boolean = false;
   emailValid: boolean = false;
   checkingPhoneValidity: boolean = false;
+  @ViewChild('fileUploader') fileUploader:ElementRef;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -185,7 +190,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
-    private translateService: TranslateService) {
+    private translateService: TranslateService,
+    private coreService: CoreService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -427,7 +433,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
-  preview(event: any) {
+  async preview(event: any) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       console.log(this.file.name);
@@ -435,19 +441,33 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toastr.warning(this.translateService.instant("Upload JPG/JPEG format image only."), this.translateService.instant("Upload error!"));
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profilePicUrl = reader.result;
-        let imageBolb = reader.result.toString().split(',');
-        let payload = {
-          person: this.provider.person.uuid,
-          base64EncodedImage: imageBolb[1]
+
+      if (this.dialogRef) {
+        this.dialogRef.close();
+        return;
+      };
+
+      let imageBase64 = await this.coreService.blobToBase64(this.file);
+      this.dialogRef = this.coreService.openImageCropModal({base64:imageBase64.toString().split(',')[1]});
+      this.dialogRef.afterClosed().subscribe(async result => {
+        console.log(result)
+        if(result){
+          let imageBlob = result.toString().split(',')[1];
+          let payload = {
+            person: this.provider.person.uuid,
+            base64EncodedImage: imageBlob
+          }
+          this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+            this.profilePicUrl = result;
+            this.profileService.setProfilePic(result);
+            this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
+          });
         }
-        this.profileService.updateProfileImage(payload).subscribe((res: any) => {
-          this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
-        });
-      }
-      reader.readAsDataURL(this.file);
+        this.dialogRef = undefined;
+        this.fileUploader.nativeElement.value = null;
+      });
+
+      
     }
   }
 

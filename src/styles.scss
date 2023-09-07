@@ -606,6 +606,74 @@ body.font-lato td {
         }
       }
     }
+
+    .image-crop-modal {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+  
+      .close-btn-con {
+        position: absolute;
+        right: 24px;
+        top: 24px;
+  
+        .modal-close-btn {
+          border: none;
+          background: transparent;
+          outline: none;
+        }
+      }
+  
+      .modal-con {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+  
+        h6 {
+          font-size: 24px;
+          font-weight: bold;
+          text-align: center;
+          line-height: 150%;
+        }
+  
+        p {
+          font-size: 18px;
+          color: #7F7B92;
+          text-align: center;
+          line-height: 150%;
+        }
+      }
+  
+      .modal-action-btn-con {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+  
+        .modal-btn {
+          padding: 8px 24px;
+          min-width: 119px;
+          min-height: 48px;
+          background: #FFFFFF;
+          border: 1px solid #EFE8FF;
+          border-radius: 8px;
+          font-size: 18px;
+          line-height: 150%;
+          color: #2E1E91;
+          font-weight: bold;
+        }
+  
+        .modal-btn.blue-btn {
+          background: #2E1E91;
+          border: 1px solid #2E1E91;
+          color: #FFFFFF;
+        }
+      }
+    }
   }
 }
 
