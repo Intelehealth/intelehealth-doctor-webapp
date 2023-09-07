@@ -9,6 +9,7 @@
             [aspectRatio]="4 / 4"
             format="jpeg"
             output="base64"
+            [roundCropper]="true"
             (imageCropped)="imageCropped($event)"
             (loadImageFailed)="loadImageFailed()"
             [resizeToWidth]="256"
