@@ -49,9 +49,10 @@
               <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
               <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
             </div>
-            <div class="call-duration" [class.d-none]="_minimized">
-              <!-- <span>Call ends in</span> -->
-              <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
+            <div class="call-duration-container">
+              <div class="call-duration" [class.d-none]="_minimized">
+                <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
+              </div>
             </div>
             <div class="video-controls" [class.d-none]="_minimized">
               <button
