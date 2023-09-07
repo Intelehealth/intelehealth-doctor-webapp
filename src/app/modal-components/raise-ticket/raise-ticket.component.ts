@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SupportService } from 'src/app/services/support.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-raise-ticket',
@@ -42,13 +43,13 @@ export class RaiseTicketComponent implements OnInit {
     }
 
     const data = {
-      title: `IDA4 - ${this.raiseTicketForm.value.title} <${JSON.parse(localStorage.getItem('provider'))?.person.display}>`,
+      title: `IDA4 - ${this.raiseTicketForm.value.title} <${getCacheData(true,'provider')?.person.display}>`,
       description: this.raiseTicketForm.value.description,
       priority: this.raiseTicketForm.value.priority
     };
     this.supportService.raiseTicket(data).subscribe(res => {
       if (res) {
-        this.supportService.storeTicket(JSON.parse(localStorage.getItem('user'))?.uuid, res).subscribe(data => {
+        this.supportService.storeTicket(getCacheData(true, 'user')?.uuid, res).subscribe(data => {
           this.toastr.success('Ticket has been raised successfully!', 'Ticket raised');
           this.submitted = false;
           this.close(true);
