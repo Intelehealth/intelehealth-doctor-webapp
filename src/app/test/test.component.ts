@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { DiagnosisService } from "../services/diagnosis.service";
 import { EncounterService } from "../services/encounter.service";
-declare var getEncounterUUID: any;
+import { getEncounterUUID } from "../utils/utility-functions";
 
 @Component({
   selector: "app-test",
@@ -84,6 +84,6 @@ export class TestComponent implements OnInit {
       .subscribe(() => {
         this.testData.splice(i, 1);
       });
-    }  
+    }
   }
 }

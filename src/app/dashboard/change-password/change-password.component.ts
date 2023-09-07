@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -39,7 +40,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);
@@ -54,7 +55,7 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning(this.translateService.instant("Password and Confirm Password doesn't match."), 
+      this.toastr.warning(this.translateService.instant("Password and Confirm Password doesn't match."),
       this.translateService.instant("Password doesn't match!"));
       return;
     }

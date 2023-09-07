@@ -7,6 +7,7 @@ import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from '../utils/utility-functions';
 
 @Component({
   selector: 'app-messages',
@@ -45,7 +46,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
@@ -164,7 +165,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get patientName() {
-    return localStorage.patientName || "";
+    return getCacheData(false,'patientName') || "";
   }
 
   clickMenu() {
@@ -206,7 +207,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   setImage(src) {

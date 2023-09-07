@@ -5,6 +5,7 @@ import { of } from "rxjs";
 import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
+import { getCacheData } from "../utils/utility-functions";
 
 @Injectable({
   providedIn: "root",
@@ -64,7 +65,7 @@ export class ChatService {
 
   public get user() {
     try {
-      return JSON.parse(localStorage.user);
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

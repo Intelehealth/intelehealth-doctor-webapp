@@ -6,6 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-video-call',
@@ -58,10 +59,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) {
       this.initiator = this.data.initiator;
     }
-    const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
+    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = localStorage.getItem("doctorName");
+    const doctorName = getCacheData(false,'doctorName');
     this.doctorName = doctorName ? doctorName : this.user.display;
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
@@ -137,7 +138,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   onImgError(event: any) {
@@ -146,7 +147,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   get user() {
     try {
-      return JSON.parse(localStorage.user);
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

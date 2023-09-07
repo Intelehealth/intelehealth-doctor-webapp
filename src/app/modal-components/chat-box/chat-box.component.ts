@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -33,7 +34,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
+    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
@@ -101,7 +102,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   onImgError(event: any) {

@@ -12,6 +12,7 @@ import { environment } from "../../environments/environment";
 // import { VcComponent } from "../component/vc/vc.component";
 // import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
+import { getCacheData, setCacheData } from "../utils/utility-functions";
 
 @Injectable()
 export class SocketService {
@@ -52,25 +53,25 @@ export class SocketService {
     }
     if (!this.socket || forceInit) {
       if (!sessionStorage.webrtcDebug) {
-        localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+        setCacheData('socketQuery',`userId=${this.userUuid}&name=${this.userName}`);
       }
       this.socket = io(environment.socketURL, {
-        query: localStorage.socketQuery,
+        query: getCacheData(false,'socketQuery'),
       });
       this.onEvent("allUsers").subscribe((data) => {
         this.activeUsers = data;
       });
       // this.onEvent("incoming_call").subscribe((data = {}) => {
       //   if (!location.hash.includes("test/chat")) {
-      //     localStorage.patientUuid = data.patientUuid;
-      //     console.log("patientUuid: ", localStorage.patientUuid);
-      //     if (localStorage.patientUuid) {
+      //     setCacheData('patientUuid', data.patientUuid);
+      //     console.log("patientUuid: ", getCacheData(false,'patientUuid'));
+      //     if (getCacheData(false,'patientUuid')) {
       //       this.openVcOverlay();
       //     }
       //   }
       // });
       this.onEvent("log").subscribe((array) => {
-        if (localStorage.log === "1") console.log.apply(console, array);
+        if (getCacheData(false,'log') === "1") console.log.apply(console, array);
       });
     }
   }
@@ -124,9 +125,9 @@ export class SocketService {
     // this.dialog.open(VcComponent, {
     //   disableClose: true,
     //   data: {
-    //     patientUuid: localStorage.patientUuid,
+    //     patientUuid: getCacheData(false,'patientUuid'),
     //     initiator,
-    //     connectToDrId: localStorage.connectToDrId,
+    //     connectToDrId: getCacheData(false,'connectToDrId'),
     //   },
     // });
   }
@@ -151,8 +152,8 @@ export class SocketService {
       hasBackdrop: false,
       position,
       data: {
-        patientUuid: localStorage.patientUuid,
-        connectToDrId: localStorage.connectToDrId,
+        patientUuid: getCacheData(false,'patientUuid'),
+        connectToDrId: getCacheData(false,'connectToDrId'),
         visitId,
         initiator,
       },
@@ -161,16 +162,16 @@ export class SocketService {
     // this.dialog.open(CallStateComponent, {
     //   disableClose: true,
     //   data: {
-    //     patientUuid: localStorage.patientUuid,
+    //     patientUuid: getCacheData(false,'patientUuid'),
     //     initiator,
-    //     connectToDrId: localStorage.connectToDrId,
+    //     connectToDrId: getCacheData(false,'connectToDrId'),
     //   },
     // });
   }
 
   get user() {
     try {
-      return JSON.parse(localStorage.user);
+      return getCacheData(true,'user');
     } catch (error) {
       return {};
     }

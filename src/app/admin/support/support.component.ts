@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -39,7 +40,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);
@@ -175,7 +176,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   // setImage(src) {

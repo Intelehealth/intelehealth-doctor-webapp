@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from '../core/page-title/page-title.service';
+import { getCacheData } from '../utils/utility-functions';
 
 @Component({
   selector: 'app-help-and-support',
@@ -15,7 +16,7 @@ export class HelpAndSupportComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: "Help & Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
   }
 

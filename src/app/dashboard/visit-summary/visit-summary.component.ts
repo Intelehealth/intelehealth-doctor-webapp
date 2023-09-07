@@ -24,6 +24,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
+import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -138,7 +139,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     {id:1, name:"Elective"},
     {id:1, name:"Urgent"}
   ]
-  
+
   diagnosis: any[] = [
     // {
     //   id: 1,
@@ -392,10 +393,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
-    this.provider = JSON.parse(localStorage.getItem("provider"));
+    this.provider = getCacheData(true,"provider");
     medicines.forEach(med => {
       this.drugNameList.push({'id':med.id, 'name':this.translateService.instant(med.name)});
     });
@@ -545,8 +546,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     encounters.forEach((encounter: any) => {
       if (encounter.display.match("ADULTINITIAL") !== null) {
         this.providerName = encounter.encounterProviders[0].provider.person.display;
-        // store visit provider in localStorage
-        localStorage.setItem('patientVisitProvider', JSON.stringify(encounter.encounterProviders[0]));
+        // store visit provider in local-Storage
+        setCacheData('patientVisitProvider', JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
             if (attribute.display.match("phoneNumber") != null) {
@@ -814,11 +815,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.visitStatus = 'In-progress Visit';
     } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
       this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'Flagged')['encounterDatetime'];
-      console.log(this.checkIfEncounterExists(encounters, 'Flagged'))
       this.visitStatus = 'Priority Visit';
     } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
       this.visit["uploadTime"]= this.checkIfEncounterExists(encounters, 'ADULTINITIAL')['encounterDatetime'];
-      console.log(this.checkIfEncounterExists(encounters, 'ADULTINITIAL'))
       this.visitStatus = 'Awaiting Visit';
     }
   }
@@ -929,11 +928,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true,'user').uuid;
   }
 
   get username() {
-    return JSON.parse(localStorage.user).username;
+    return getCacheData(true,'user').username;
   }
 
   checkIfDateOldThanOneDay(data: any) {
@@ -1664,7 +1663,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    localStorage.removeItem('patientVisitProvider');
+    deleteCacheData('patientVisitProvider');
   }
 
 }

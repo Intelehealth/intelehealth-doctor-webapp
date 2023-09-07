@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MindmapService } from 'src/app/services/mindmap.service';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-add-license-key',
@@ -28,7 +29,7 @@ export class AddLicenseKeyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.today = new Date().toISOString().slice(0, 10);
     this.licenseForm.patchValue({
       key: this.data?.keyName,

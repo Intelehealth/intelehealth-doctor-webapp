@@ -16,6 +16,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { TranslateService } from '@ngx-translate/core';
+import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -96,18 +97,18 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         countryCode2: new FormControl('+91'),
         phoneNumber: new FormControl('', [Validators.required]),
         whatsapp: new FormControl('', [Validators.required]),
-        emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', JSON.parse(localStorage.getItem('provider')).uuid)])
+        emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true,'provider').uuid)])
       });
   }
 
   get f1() { return this.personalInfoForm.controls; }
 
   ngOnInit(): void {
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.today = moment().format('YYYY-MM-DD');
-    this.user = JSON.parse(localStorage.getItem('user'));
-    this.provider = JSON.parse(localStorage.getItem('provider'));
-    this.hwName = localStorage.getItem('doctorName');
+    this.user = getCacheData(true,'user');
+    this.provider = getCacheData(true,'provider');
+    this.hwName = getCacheData(false,'doctorName');
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
@@ -390,13 +391,13 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(JSON.parse(localStorage.user).uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true,'user').uuid).subscribe((provider: any) => {
           if (provider.results.length) {
-            localStorage.setItem('provider', JSON.stringify(provider.results[0]));
-            localStorage.setItem("doctorName", provider.results[0].person.display);
-            let u = JSON.parse(localStorage.user);
+            setCacheData('provider', JSON.stringify(provider.results[0]));
+            setCacheData("doctorName", provider.results[0].person.display);
+            let u = getCacheData(true,'user');
             u.person.display = provider.results[0].person.display;
-            localStorage.setItem("user", JSON.stringify(u));
+            setCacheData("user", JSON.stringify(u));
             this.toastr.success("Profile has been updated successfully", "Profile Updated");
           }
         });

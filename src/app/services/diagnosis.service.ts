@@ -4,9 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
-declare var getEncounterProviderUUID: any,
-  getFromStorage: any;
-
+import { getCacheData, getEncounterProviderUUID } from '../utils/utility-functions';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +55,7 @@ export class DiagnosisService {
   }
 
   isSameDoctor() {
-    const providerDetails = getFromStorage("provider");
+    const providerDetails = getCacheData(true,'provider');
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;

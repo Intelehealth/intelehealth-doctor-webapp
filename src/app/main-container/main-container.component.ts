@@ -19,6 +19,7 @@ import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ProfileService } from '../services/profile.service';
+import { getCacheData } from '../utils/utility-functions';
 
 @Component({
   selector: 'app-main-container',
@@ -76,10 +77,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    // this.user = JSON.parse(localStorage.getItem('user'));
-    // this.provider = JSON.parse(localStorage.getItem('provider'));
-    
-    this.translateService.use(localStorage.getItem('selectedLanguage'));
+    // this.user = getCacheData(true,'user'));
+    // this.provider = getCacheData(true,'provider'));
+    this.translateService.use(getCacheData(false,'selectedLanguage'));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -326,10 +326,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   get user() {
-    return JSON.parse(localStorage.getItem('user'));
+    return getCacheData(true,'user');
   }
 
   get provider() {
-    return JSON.parse(localStorage.getItem('provider'));
+    return getCacheData(true,'provider');
   }
 }

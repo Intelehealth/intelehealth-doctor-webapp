@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTr
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/services/appointment.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,8 @@ export class DashboardGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const provider = JSON.parse(localStorage.getItem('provider'));
+      const user = getCacheData(true,'user');
+      const provider = getCacheData(true,'provider');
       return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
         if (res) {
           if (res.data.length && provider.attributes.length) {

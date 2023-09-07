@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-forgot-username',
@@ -22,7 +23,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   maxTelLegth: number = 10;
   subscription: Subscription;
 
-  constructor(private toastr: ToastrService, private router: Router, 
+  constructor(private toastr: ToastrService, private router: Router,
     private authService: AuthService,
     private translate: TranslateService) {
     this.forgotUsernameForm = new FormGroup({
@@ -33,7 +34,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translate.use(localStorage.getItem('selectedLanguage'));
+    this.translate.use(getCacheData(false,'selectedLanguage'));
     this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));

@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
+import { getCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-help-menu',
@@ -83,7 +84,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   }
 
   get user() {
-    return JSON.parse(localStorage.user);
+    return getCacheData(true,'user');
   }
 
   ngOnDestroy(): void {

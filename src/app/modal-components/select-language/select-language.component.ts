@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { setCacheData } from 'src/app/utils/utility-functions';
 
 @Component({
   selector: 'app-select-language',
@@ -25,7 +26,7 @@ export class SelectLanguageComponent implements OnInit {
   select() {
     this.translate.use(this.languageForm.value.language);
     this.translate.setDefaultLang(this.languageForm.value.language);
-    localStorage.setItem("selectedLanguage", this.languageForm.value.language);
+    setCacheData("selectedLanguage", this.languageForm.value.language);
     this.dialogRef.close(this.languageForm.value);
     window.location.reload();
   }
