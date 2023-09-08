@@ -72,6 +72,7 @@ export class AppointmentsComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
+      // Checking comment
       if (display.match('ADULTINITIAL') !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
