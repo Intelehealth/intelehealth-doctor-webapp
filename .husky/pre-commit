@@ -3,4 +3,4 @@
 
 echo "Checking tslint issues in stage files."
 
-#npx lint-staged --no-stash -q
+npx lint-staged --no-stash -q
