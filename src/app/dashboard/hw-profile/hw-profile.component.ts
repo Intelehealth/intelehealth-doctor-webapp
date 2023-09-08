@@ -174,7 +174,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           case 'fontOfSign':
             break;
           case 'phoneNumber':
-            console.log(this.getAttributeValue(attrType.uuid, attrType.display));
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             (personalFormValues.phoneNumber) ? this.phoneNumberValid = true : this.phoneNumberValid = false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -231,7 +230,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   preview(event: any) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
-      console.log(this.file.name);
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
         this.toastr.warning("Upload JPG/JPEG format image only.", "Upload error!");
         return;
@@ -257,7 +255,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   }
 
   hasError(event: any, errorFor: string) {
-    // console.log(event);
     switch (errorFor) {
       case 'phoneNumber':
         this.phoneNumberValid = event;
@@ -269,7 +266,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   }
 
   getNumber(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case 'phoneNumber':
         this.phoneNumberValid = true;
@@ -284,7 +280,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   }
 
   telInputObject(event: any, objectFor: string) {
-    // console.log($event);
     switch (objectFor) {
       case 'phoneNumber':
         this.phoneNumberObj = event;
@@ -296,7 +291,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   }
 
   onCountryChange(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case 'phoneNumber':
         this.phoneNumberValid = false;
@@ -322,15 +316,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     let pf1 = this.personalInfoForm.value;
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
-      // console.log(res1);
       if (this.provider.person?.preferredName) {
         this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateProviderAttributes();
         });
       } else {
         this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateProviderAttributes();
         });
       }
@@ -384,7 +375,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      // console.log(responseList);
       if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
         this.toastr.success("Profile has been updated successfully", "Profile Updated");
         this.toastr.warning("Kindly re-login to see updated details", "Re-login");

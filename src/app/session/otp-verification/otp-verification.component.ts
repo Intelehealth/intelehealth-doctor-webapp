@@ -67,7 +67,6 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   get fCtrl() { return this.otpVerificationForm.get('otp') }
 
   onOtpChange($event: any) {
-    console.log($event);
   }
 
   verify() {

@@ -524,7 +524,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                         this.ddx.data.push(cols);
                       });
                       this.ddx.maxCols = maxCol;
-                      console.log(this.ddx);
                     }
                   });
                 });
@@ -760,7 +759,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(event: number) {
-    // console.log(event);
     this.selectedTabIndex = event;
   }
 
@@ -1455,7 +1453,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
-                  this.appointmentService.completeAppointment({visitUuid:this.visit.uuid}).subscribe((res)=>{console.log(res)});
+                  this.appointmentService.completeAppointment({visitUuid:this.visit.uuid}).subscribe((res)=>{});
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (res: any) => {
                       const link = res.data.hash;
@@ -1637,7 +1635,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           this.ddx.data.push(cols);
         });
         this.ddx.maxCols = maxCol;
-        console.log(this.ddx);
         this.encounterService.postEncounter({
           patient: this.visit.patient.uuid,
           encounterType: "850cb3e8-9f8e-4c81-a1f9-c72395ae399b", //differential diagnosis encounter type uuid

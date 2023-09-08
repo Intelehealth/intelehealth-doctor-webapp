@@ -400,7 +400,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   async downloadPrescription() {
-    // console.log(this.signature);
     let userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     pdfMake.createPdf({
       pageSize: 'A4',

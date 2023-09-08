@@ -36,7 +36,6 @@ export class UploadMindmapJsonComponent implements OnInit {
       }
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        //  console.log(JSON.parse(fileReader.result.toString()));
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {
@@ -58,7 +57,6 @@ export class UploadMindmapJsonComponent implements OnInit {
       }
       const fileReader = new FileReader();
       fileReader.onload = () => {
-        //  console.log(JSON.parse(fileReader.result.toString()));
         this.jsonData = fileReader.result.toString();
       }
       fileReader.onerror = (error) => {

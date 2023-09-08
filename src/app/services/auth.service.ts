@@ -88,7 +88,6 @@ export class AuthService {
   login(credBase64: string) {
     this.base64Cred = credBase64;
     setCacheData('xsddsdass', credBase64);
-    // console.log(this.cookieService.getAll());
     // this.cookieService.delete('JSESSIONID');
     // this.cookieService.delete('JSESSIONID', '/');
     // this.cookieService.delete('JSESSIONID', '/openmrs');
@@ -158,7 +157,6 @@ export class AuthService {
       deleteCacheData('xsddsdass');
       deleteCacheData('token');
       deleteCacheData('socketQuery');
-      // console.log(this.cookieService.getAll());
       // this.cookieService.delete('JSESSIONID');
       // this.cookieService.delete('JSESSIONID', '/');
       // this.cookieService.delete('JSESSIONID', '/openmrs');
@@ -214,7 +212,6 @@ export class AuthService {
 
   getInternationalMaskByCountryCode(countryCode: CountryCode, withPrefix: boolean = true) {
     const number = getExampleNumber(countryCode, examples);
-    console.log(number);
     const asYouType = new AsYouType(countryCode);
     asYouType.input(number.formatInternational());
     const template = asYouType.getTemplate();
