@@ -579,7 +579,29 @@
                 </ng-container>
               </mat-expansion-panel>
 
-              <mat-expansion-panel [expanded]="true" class="bg-gray"data-test-id="matExpAdditionalDoc">
+              <mat-expansion-panel [expanded]="true" class="bg-gray" data-test-id="matExpAdditionalNotes">
+                <mat-expansion-panel-header data-test-id="matExpHeaderAdditionalNotes">
+                  <mat-panel-title>
+                    <div class="intel-accordion-title">
+                      <img
+                        src="assets/svgs/note-icon-green.svg"
+                        alt=""
+                        width="44px"
+                      />
+                      <h6 class="mb-0 ml-2" data-test-id="etAdditionalNotes">{{'Additional Notes'|translate}}</h6>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ul class="items-list">
+                  <li>
+                    <div class="d-flex justify-content-between">
+                      <span>{{ additionalNotes }}</span>
+                    </div>
+                  </li>
+                </ul>
+              </mat-expansion-panel>
+
+              <mat-expansion-panel [expanded]="true" data-test-id="matExpAdditionalDoc">
                 <mat-expansion-panel-header data-test-id="matExpHeaderAdditionalDoc">
                   <mat-panel-title>
                     <div class="intel-accordion-title">

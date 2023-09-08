@@ -273,6 +273,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   ddx: any;
   ddxPresent: any = false;
 
+  additionalNotes: string = "";
+
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -971,6 +973,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     attributes.forEach((attr: any) => {
       if (attr.attributeType.display == 'Patient Interaction') {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
+      }
+      if (attr.attributeType.display == 'AdditionalNote') {
+        this.additionalNotes = attr.value;
       }
     });
   }
