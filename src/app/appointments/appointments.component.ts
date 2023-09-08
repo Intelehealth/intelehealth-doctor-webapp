@@ -72,7 +72,7 @@ export class AppointmentsComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match('ADULTINITIAL1') !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.concept_id == 163212) {
