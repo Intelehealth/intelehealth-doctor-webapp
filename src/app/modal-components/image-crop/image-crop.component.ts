@@ -32,7 +32,6 @@ export class ImageCropComponent implements OnInit {
   
   imageCropped(event: ImageCroppedEvent) {
       this.croppedImage = event.base64;
-      console.log('image64',this.croppedImage);
   }
   loadImageFailed() {
       this.isError = true;

@@ -436,7 +436,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   async preview(event: any) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
-      console.log(this.file.name);
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
         this.toastr.warning(this.translateService.instant("Upload JPG/JPEG format image only."), this.translateService.instant("Upload error!"));
         return;
@@ -450,7 +449,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       let imageBase64 = await this.coreService.blobToBase64(this.file);
       this.dialogRef = this.coreService.openImageCropModal({base64:imageBase64.toString().split(',')[1]});
       this.dialogRef.afterClosed().subscribe(async result => {
-        console.log(result)
         if(result){
           let imageBlob = result.toString().split(',')[1];
           let payload = {
@@ -476,7 +474,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   hasError(event: any, errorFor: string) {
-    // console.log(event);
     switch (errorFor) {
       case 'phoneNumber':
         this.phoneNumberValid = event;
@@ -488,7 +485,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNumber(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case 'phoneNumber':
         this.phoneNumberValid = true;
@@ -503,7 +499,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   telInputObject(event: any, objectFor: string) {
-    // console.log($event);
     switch (objectFor) {
       case 'phoneNumber':
         this.phoneNumberObj = event;
@@ -515,7 +510,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCountryChange(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case 'phoneNumber':
         this.phoneNumberValid = false;
@@ -538,12 +532,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   drawComplete() {
     // will be notified of szimek/signature_pad's onEnd event
-    console.log(this.signaturePad.toDataURL());
   }
 
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
-    console.log('begin drawing');
   }
 
   signatureTabChanged(event: any) {
@@ -566,7 +558,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.signaturePicUrl = fileReader.result;
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsDataURL(this.signatureFile);
@@ -612,15 +603,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     let pf1 = this.personalInfoForm.value;
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
-      // console.log(res1);
       if (this.provider.person?.preferredName) {
         this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateSignature();
         });
       } else {
         this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateSignature();
         });
       }
@@ -727,7 +715,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      // console.log(responseList);
       if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
         this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
         this.toastr.warning(this.translateService.instant("Kindly re-login to see updated details"), this.translateService.instant("Re-login"));
