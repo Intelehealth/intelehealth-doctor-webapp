@@ -133,7 +133,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   requestSubscription() {
     if (!this._swPush.isEnabled) {
-      console.log("Notification is not enabled.");
       return;
     }
     this._swPush.subscription.subscribe(sub => {
@@ -141,12 +140,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then((_) => {
-          console.log(JSON.stringify(_));
           (async () => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
             const result = await fp.get();
-            console.log(result.visitorId);
             this.authService.subscribePushNotification(
               _,
               this.user.uuid,
@@ -154,13 +151,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
               this.provider.person.display,
               this.getSpecialization()
             ).subscribe(response => {
-              console.log(response);
             });
           })();
-        }).catch((_) => console.log);
+        }).catch((_) => {});
       } else {
         this._swPush.messages.subscribe(payload => {
-          console.log(payload);
         });
       }
     });
@@ -168,7 +163,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   getNotificationStatus() {
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
       }
@@ -196,7 +190,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   selectLanguage(): void {
     this.coreService.openSelectLanguageModal().subscribe((res: any) => {
-      console.log(res);
     });
   }
 
@@ -320,7 +313,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,

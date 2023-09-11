@@ -257,11 +257,9 @@ export class CalendarComponent implements OnInit {
   }
 
   hourSegmentClicked(hourSegment: any) {
-    console.log(hourSegment);
   }
 
   dayClicked(view: any, day: any) {
-    // console.log(day);
     if (view == 'monthView') {
       // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
       let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
@@ -352,7 +350,6 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEvent(view: any, event: any) {
-    // console.log(view, event);
     if (view == 'dayView' || view == 'weekView') {
       // if (event.title == 'Appointment') {
         this.coreService.openAppointmentDetailDayViewModal(event).subscribe((res: any) => {

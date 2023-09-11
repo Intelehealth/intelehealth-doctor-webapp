@@ -16,7 +16,7 @@ export function deleteCacheData(key: string) {
 
 export function isJsonString(str) {
   try {
-    var json = JSON.parse(str);
+    const json = JSON.parse(str);
     return (typeof json === 'object');
   } catch (e) {
     return false;
@@ -24,9 +24,9 @@ export function isJsonString(str) {
 }
 
 export function getEncounterProviderUUID() {
-  return getCacheData(true,'visitNoteProvider').encounterProviders[0].provider.uuid;
+  return getCacheData(true, 'visitNoteProvider').encounterProviders[0].provider.uuid;
 }
 
 export function getEncounterUUID() {
-  return getCacheData(true,'visitNoteProvider').uuid;
+  return getCacheData(true, 'visitNoteProvider').uuid;
 }

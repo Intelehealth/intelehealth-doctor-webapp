@@ -90,8 +90,7 @@ export class ChatService {
           }
         } else {
           const imageCount = messages.reduce((total: number, item: any) => total + ((item.type === 'attachment' && !this.isPdf(item.message)) ? 1 : 0), 0)
-          console.log('imageCount: ', imageCount);
-
+       
           if (imageCount >= 5) {
             this.toastr.warning('Image upload capacity exceeded, only 5 per chat allowed.');
             return of(true);

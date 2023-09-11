@@ -340,7 +340,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   sendOffer() {
 
     this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
     });
   }
 
@@ -359,7 +358,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   sendAnswer() {
 
     this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
     });
   }
 
