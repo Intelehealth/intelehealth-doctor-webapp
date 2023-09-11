@@ -49,8 +49,8 @@
             </div>
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatienAge">{{'Age'|translate}}</h6>
-                <p data-test-id="etPatient">
+                <h6>{{'Age'|translate}}</h6>
+                <p data-test-id="etPatientAge">
                   {{
                     patient?.person.birthdate
                       ? getAge(patient?.person.birthdate)
@@ -59,23 +59,23 @@
                 </p>
               </div>
               <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
-                <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+                <h6>{{'Address'|translate}}</h6>
+                <p data-test-id="etPatientAddrs">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item mb-3">
-                <h6 data-test-id="etPatient">{{'Occupation'|translate}}</h6>
-                <p data-test-id="etPatient">{{ getPersonAttributeValue("occupation") }}</p>
+                <h6>{{'Occupation'|translate}}</h6>
+                <p data-test-id="etPatientOccup">{{ getPersonAttributeValue("occupation") }}</p>
               </div>
               <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'National ID'|translate}}</h6>
-                <p data-test-id="etPatient">{{ getPersonAttributeValue("NationalID") }}</p>
+                <h6>{{'National ID'|translate}}</h6>
+                <p data-test-id="etPatientNatId">{{ getPersonAttributeValue("NationalID") }}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">
               <div class="patient-info-item">
-                <h6 data-test-id="etPatient">{{'Contact no.'| translate}}</h6>
+                <h6>{{'Contact no.'| translate}}</h6>
                 <p data-test-id="etWhatsApp" *ngIf="getPersonAttributeValue('Telephone Number') === 'NA'">
                    {{ getPersonAttributeValue("Telephone Number") }}
                 </p>
