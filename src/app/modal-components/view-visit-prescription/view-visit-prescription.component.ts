@@ -340,7 +340,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   replaceWithStar(str: string) {
     let n = str.length;
-    return str.replace(str.substring(0, n - 4), "*****");
+    return str.replace(str.substring(0, n - 4), "*******");
   }
 
   getVisitProvider(encounters: any) {
