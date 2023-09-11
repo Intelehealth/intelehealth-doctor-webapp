@@ -16,14 +16,14 @@ import { environment } from 'src/environments/environment';
 export class ChangePasswordComponent implements OnInit {
 
   resetPasswordForm: FormGroup;
-  submitted: boolean = false;
-  visible1: boolean = false;
-  visible2: boolean = false;
-  visible3: boolean = false;
+  submitted = false;
+  visible1 = false;
+  visible2 = false;
+  visible3 = false;
   username: string;
   userUuid: string;
   baseUrl: string = environment.baseURL;
-  level: number = 1;
+  level = 1;
 
   constructor(
     private coreService: CoreService,
@@ -40,7 +40,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, 'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);
@@ -55,29 +55,29 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning(this.translateService.instant("Password and Confirm Password doesn't match."),
-      this.translateService.instant("Password doesn't match!"));
+      this.toastr.warning(this.translateService.instant('Password and Confirm Password doesn\'t match.'),
+      this.translateService.instant('Password doesn\'t match!'));
       return;
     }
-    let passwd = this.resetPasswordForm.value.password;
+    const passwd = this.resetPasswordForm.value.password;
     if (!this.hasLowerCase(passwd) || !this.hasUpperCase(passwd) || !this.hasSpecialCharacter(passwd) || !this.hasNumber(passwd)) {
-      this.toastr.warning( this.translateService.instant("Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols."),
-      this.translateService.instant("Password invalid!"));
+      this.toastr.warning( this.translateService.instant('Password must be of atleast 8 characters & a mix of upper & lower case letters, numbers & symbols.'),
+      this.translateService.instant('Password invalid!'));
       return;
     }
     this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res: any) => {
-      this.toastr.success(this.translateService.instant("Password has been changed successfully!"),
-      this.translateService.instant("Password Changed!"));
+      this.toastr.success(this.translateService.instant('Password has been changed successfully!'),
+      this.translateService.instant('Password Changed!'));
     });
   }
 
   generatePassword() {
     let passwd = '';
-    let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*@$&';
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*@$&';
     do {
       passwd = '';
       for (let i = 0; i < 8; i++) {
-        var c = Math.floor(Math.random()*chars.length + 1);
+        const c = Math.floor(Math.random() * chars.length + 1);
         passwd += chars.charAt(c);
       }
     } while (!this.hasLowerCase(passwd) || !this.hasUpperCase(passwd) || !this.hasSpecialCharacter(passwd) || !this.hasNumber(passwd));
@@ -90,9 +90,9 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   checkPasswordStrength(str: string) {
-    let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})');
-    let mediumPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
-    let fairPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
+    const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})');
+    const mediumPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
+    const fairPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})');
     if (strongPassword.test(str)) {
       this.level = 4;
     } else if (mediumPassword.test(str)) {
