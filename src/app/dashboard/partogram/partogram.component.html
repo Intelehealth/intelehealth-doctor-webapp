@@ -1514,13 +1514,13 @@
                     <tr>
                       <ng-container *ngFor="let item of encuuid1; let i=index;">
                         <td colspan="2">
-                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage1values[i]||parameters[22].stage1values[i]||parameters[23].stage1values[i])">
+                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage1values[i].length||parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                             <span>Add <br> Plan / Assessment</span>
                             <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="addAssessmentAndPlan(1, i)">
                               <img src="assets/svgs/add-btn.svg" alt="" width="100%">
                             </button>
                           </div>
-                          <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage1values[i]||parameters[22].stage1values[i]||parameters[23].stage1values[i])">
+                          <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage1values[i].length||parameters[22].stage1values[i]||parameters[23].stage1values[i])">
                             <span>Plan / Assessment <br> Added</span>
                             <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(i+1)" (click)="editAssessmentAndPlan(1, i)">
                               <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
@@ -1626,13 +1626,13 @@
                       </td> -->
                       <ng-container *ngFor="let item of encuuid2; let i=index;">
                         <td colspan="4">
-                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
+                          <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage2values[i].length||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
                             <span>Add <br> Plan / Assessment</span>
                             <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="addAssessmentAndPlan(2, i)">
                               <img src="assets/svgs/add-btn.svg" alt="" width="100%">
                             </button>
                           </div>
-                          <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage2values[i]||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
+                          <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage2values[i].length||parameters[22].stage2values[i]||parameters[23].stage2values[i])">
                             <span>Plan / Assessment <br> Added</span>
                             <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="editAssessmentAndPlan(2, i)">
                               <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
