@@ -5,7 +5,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { ProfileService } from 'src/app/services/profile.service';
-import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +47,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
   conceptAdvice = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
-  conceptReferral = "605b6f15-8f7a-4c45-b06d-14165f6974be";
+  conceptReferral = '605b6f15-8f7a-4c45-b06d-14165f6974be';
   conceptFollow = 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86';
 
   signaturePicUrl: any = null;
@@ -69,13 +69,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.getVisit(this.isDownloadPrescription ? this.visitId : this.data.uuid);
     pdfMake.fonts = {
       DmSans: {
-        normal: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/DM_Sans/DMSans-Regular.ttf`,
-        bold: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/DM_Sans/DMSans-Bold.ttf`,
-        italics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/DM_Sans/DMSans-Italic.ttf`,
-        bolditalics: `${window.location.origin}${environment.production?'/intelehealth':''}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
+        normal: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Regular.ttf`,
+        bold: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Bold.ttf`,
+        italics: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Italic.ttf`,
+        bolditalics: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
       }
     };
-    this.eventsSubscription = this.download?.subscribe((val) => { if(val) this.downloadPrescription(); });
+    this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadPrescription(); } });
   }
 
   getVisit(uuid: string) {
@@ -105,10 +105,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             this.getVitalObs(visit.encounters);
 
             visit.encounters.forEach((encounter: any) => {
-              if (encounter.encounterType.display == 'Visit Complete') {
+              if (encounter.encounterType.display === 'Visit Complete') {
                 this.completedEncounter = encounter;
                 encounter.obs.forEach((o: any) => {
-                  if (o.concept.display == 'Doctor details') {
+                  if (o.concept.display === 'Doctor details') {
                     this.consultedDoctor = JSON.parse(o.value);
                   }
                 });
@@ -133,10 +133,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   getCheckUpReason(encounters: any) {
     this.cheifComplaints = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == 'ADULTINITIAL') {
+      if (enc.encounterType.display === 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
+          if (obs.concept.display === 'CURRENT COMPLAINT') {
+            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -153,7 +153,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   getVitalObs(encounters: any) {
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == 'Vitals') {
+      if (enc.encounterType.display === 'Vitals') {
         this.vitalObs = enc.obs;
       }
     });
@@ -161,7 +161,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   checkIfPatientInteractionPresent(attributes: any) {
     attributes.forEach((attr: any) => {
-      if (attr.attributeType.display == 'Patient Interaction') {
+      if (attr.attributeType.display === 'Patient Interaction') {
         this.spokenWithPatient = attr.value;
       }
     });
@@ -206,13 +206,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptMed).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          if (obs.value.includes(":")) {
+          if (obs.value.includes(':')) {
             this.medicines.push({
-              drug: obs.value?.split(":")[0],
-              strength: obs.value?.split(":")[1],
-              days: obs.value?.split(":")[2],
-              timing: obs.value?.split(":")[3],
-              remark: obs.value?.split(":")[4],
+              drug: obs.value?.split(':')[0],
+              strength: obs.value?.split(':')[1],
+              days: obs.value?.split(':')[2],
+              timing: obs.value?.split(':')[3],
+              remark: obs.value?.split(':')[4],
               uuid: obs.uuid
             });
           } else {
@@ -254,7 +254,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
       .subscribe((response: any) => {
         response.results.forEach((obs: any) => {
-          let obs_values = obs.value.split(':');
+          const obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
           }
@@ -266,9 +266,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: any) => {
       response.results.forEach((obs: any) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          let followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
-          let followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
-          let followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
+          const followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
+          const followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
+          const followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
           this.followUp = {
             present: true,
             wantFollowUp: 'Yes',
@@ -284,7 +284,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   getPatientIdentifier(identifierType: string) {
     if (this.patient) {
       this.patient.identifiers.forEach((idf: any) => {
-        if (idf.identifierType == 'OpenMRS ID') {
+        if (idf.identifierType === 'OpenMRS ID') {
           return idf.identifier;
         }
       });
@@ -306,7 +306,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+    return encounters.find(({ display = '' }) => display.includes(visitType));
   }
 
   onImgError(event: any) {
@@ -314,9 +314,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getAge(birthdate: string) {
-    let years = moment().diff(birthdate, 'years');
-    var months = moment().diff(birthdate, 'months');
-    let days = moment().diff(birthdate, 'days');
+    const years = moment().diff(birthdate, 'years');
+    const months = moment().diff(birthdate, 'months');
+    const days = moment().diff(birthdate, 'days');
     if (years > 1) {
       return `${years} years`;
     } else if (months > 1) {
@@ -330,7 +330,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     let val = this.translateService.instant('NA');
     if (this.patient) {
       this.patient.person.attributes.forEach((attr: any) => {
-        if (attrType == attr.attributeType.display) {
+        if (attrType === attr.attributeType.display) {
           val = attr.value;
         }
       });
@@ -339,17 +339,17 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   replaceWithStar(str: string) {
-    let n = str.length;
-    return str.replace(str.substring(0, n - 4), "*****");
+    const n = str.length;
+    return str.replace(str.substring(0, n - 4), '*****');
   }
 
   getVisitProvider(encounters: any) {
     encounters.forEach((encounter: any) => {
-      if (encounter.display.match("ADULTINITIAL") !== null) {
+      if (encounter.display.match('ADULTINITIAL') !== null) {
         this.providerName = encounter.encounterProviders[0].display;
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match("phoneNumber") != null) {
+            if (attribute.display.match('phoneNumber') != null) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -363,7 +363,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   get isPrescriptionModal() {
-    return location.hash.includes('#/i/')
+    return location.hash.includes('#/i/');
   }
 
   get attributes() {
@@ -371,11 +371,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   get signatureType() {
-    return this.attributes.find(a => a?.attributeType?.display === "signatureType");
+    return this.attributes.find(a => a?.attributeType?.display === 'signatureType');
   }
 
   get signature() {
-    return this.attributes.find(a => a?.attributeType?.display === "signature");
+    return this.attributes.find(a => a?.attributeType?.display === 'signature');
   }
 
   detectMimeType(b64: string) {
@@ -391,7 +391,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         fetch(signature)
           .then(res => res.blob())
           .then(blob => {
-            this.signatureFile = new File([blob], "intelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
+            this.signatureFile = new File([blob], 'intelehealth', { type: this.detectMimeType(signature.split(',')[0]) });
           });
         break;
       default:
@@ -400,7 +400,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   async downloadPrescription() {
-    let userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
+    const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -415,8 +415,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       footer: (currentPage, pageCount) => {
         return {
           columns: [
-            { text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5,5,5,5] },
-            { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5,5,5,5], alignment: 'right'}
+            { text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 5, 5, 5] },
+            { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
           ]
         };
       },
@@ -424,7 +424,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['20%','*','30%','30%'],
+            widths: ['20%', '*', '30%', '30%'],
             body: [
               // ['', '', '', { image: 'logo', width: 90, height: 30, alignment: 'right' }],
               [
@@ -442,14 +442,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               [
                 {
                   table: {
-                    widths: ['auto','*'],
+                    widths: ['auto', '*'],
                     body: [
                       [
                         {
-                          image: (userImg && !userImg?.includes('application/json'))?userImg: 'user',
+                          image: (userImg && !userImg?.includes('application/json')) ? userImg : 'user',
                           width: 30,
                           height: 30,
-                          margin: [0, (userImg && !userImg?.includes('application/json'))? 15 : 5, 0, 5]
+                          margin: [0, (userImg && !userImg?.includes('application/json')) ? 15 : 5, 0, 5]
                         },
                         [
                           {
@@ -472,7 +472,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           {text: 'Age', style: 'subheader'},
                           `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
                           {text: 'Address', style: 'subheader'},
-                          `${this.patient?.person.preferredAddress.cityVillage.replace(':',' : ')}`
+                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`
                         ]
                       ]
                     ]
@@ -486,9 +486,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                       [
                         [
                           {text: 'Occupation', style: 'subheader'},
-                          `${this.getPersonAttributeValue("occupation")}`,
+                          `${this.getPersonAttributeValue('occupation')}`,
                           {text: 'National ID', style: 'subheader'},
-                          `${this.getPersonAttributeValue("NationalID")}`
+                          `${this.getPersonAttributeValue('NationalID')}`
                         ]
                       ]
                     ]
@@ -497,11 +497,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 },
                 {
                   table: {
-                    widths: ['auto','*'],
+                    widths: ['auto', '*'],
                     body: [
                       [ {text: 'Contact no.', style: 'subheader', colSpan: 2}, ''],
-                      [ {image: 'phone', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):'NA'}`],
-                      [ {image: 'whatsApp', width: 15, height: 15 }, `${this.getPersonAttributeValue("Telephone Number")?this.getPersonAttributeValue('Telephone Number'):'NA'}`]
+                      [ {image: 'phone', width: 15, height: 15 }, `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`],
+                      [ {image: 'whatsApp', width: 15, height: 15 }, `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`]
                     ]
                   },
                   layout: 'noBorders'
@@ -511,7 +511,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Cheif Complaint', style: 'sectionheader', border: [false, false, false, true] }],
@@ -537,7 +537,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'vitals', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Vitals', style: 'sectionheader', border: [false, false, false, true] }],
@@ -563,7 +563,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'consultation', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
@@ -571,8 +571,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           ul: [
-                            {text: [{text: 'Patient ID:', bold: true},` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: 'Prescription Issued:', bold: true},` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                            {text: [{text: 'Patient ID:', bold: true}, ` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Prescription Issued:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
@@ -590,7 +590,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'diagnosis', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Diagnosis', style: 'sectionheader', border: [false, false, false, true] }],
@@ -598,7 +598,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','*', '*'],
+                            widths: ['*', '*', '*'],
                             headerRows: 1,
                             body: [
                               [{text: 'Diagnosis', style: 'tableHeader'}, {text: 'Type', style: 'tableHeader'}, {text: 'Status', style: 'tableHeader'}],
@@ -622,7 +622,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'medication', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Medication', style: 'sectionheader', border: [false, false, false, true] }],
@@ -630,17 +630,17 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['*','auto', 'auto', 'auto', 'auto'],
+                            widths: ['*', 'auto', 'auto', 'auto', 'auto'],
                             headerRows: 1,
                             body: [
-                              [{text:'Drug name', style: 'tableHeader'}, {text:'Strength', style: 'tableHeader'}, {text:'No. of days', style: 'tableHeader'}, {text:'Timing', style: 'tableHeader'}, {text:'Remarks', style: 'tableHeader'}],
+                              [{text: 'Drug name', style: 'tableHeader'}, {text: 'Strength', style: 'tableHeader'}, {text: 'No. of days', style: 'tableHeader'}, {text: 'Timing', style: 'tableHeader'}, {text: 'Remarks', style: 'tableHeader'}],
                               ...this.getRecords('medication')
                             ]
                           },
                           layout: 'lightHorizontalLines'
                         }
                       ],
-                      [{ text: 'Additional Instructions:', style: 'sectionheader', colSpan:2 },''],
+                      [{ text: 'Additional Instructions:', style: 'sectionheader', colSpan: 2 }, ''],
                       [
                         {
                           colSpan: 2,
@@ -663,7 +663,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'advice', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Advice', style: 'sectionheader', border: [false, false, false, true] }],
@@ -689,7 +689,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'test', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Test', style: 'sectionheader', border: [false, false, false, true] }],
@@ -715,7 +715,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Out', style: 'sectionheader', border: [false, false, false, true] }],
@@ -723,7 +723,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['30%','30%','10%','30%'],
+                            widths: ['30%', '30%', '10%', '30%'],
                             headerRows: 1,
                             body: [
                               [{text: 'Referral to', style: 'tableHeader'}, {text: 'Referral facility', style: 'tableHeader'}, {text: 'Priority', style: 'tableHeader'}, {text: 'Referral for (Reason)', style: 'tableHeader'}],
@@ -747,7 +747,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 {
                   colSpan: 4,
                   table: {
-                    widths: [30,'*'],
+                    widths: [30, '*'],
                     headerRows: 1,
                     body: [
                       [ {image: 'followUp', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Follow-up', style: 'sectionheader', border: [false, false, false, true] }],
@@ -755,7 +755,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         {
                           colSpan: 2,
                           table: {
-                            widths: ['30%','30%', '10%', '30%'],
+                            widths: ['30%', '30%', '10%', '30%'],
                             headerRows: 1,
                             body: [
                               [{text: 'Follow-up Requested', style: 'tableHeader'}, {text: 'Date', style: 'tableHeader'}, {text: 'Time', style: 'tableHeader'}, {text: 'Reason', style: 'tableHeader'}],
@@ -777,11 +777,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               ],
               [
                 {
-                  colSpan:4,
+                  colSpan: 4,
                   alignment: 'right',
                   stack: [
                     { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, 5, 0, 5] },
-                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0,-30,0,0]},
+                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
                     { text: `${this.consultedDoctor?.typeOfProfession}`},
                     { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
                   ]
@@ -792,7 +792,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
               ],
             ]
           },
-          layout:'noBorders'
+          layout: 'noBorders'
         }
       ],
       images: {
@@ -845,7 +845,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   getRecords(type: string) {
-    let records = [];
+    const records = [];
     switch (type) {
       case 'diagnosis':
         if (this.existingDiagnosis.length) {
@@ -899,20 +899,20 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (this.followUp) {
             records.push([this.followUp.wantFollowUp, moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
           } else {
-            records.push(['No','-','-','-']);
+            records.push(['No', '-', '-', '-']);
           }
           break;
       case 'cheifComplaint':
         if (this.cheifComplaints.length) {
           this.cheifComplaints.forEach(cc => {
-            records.push({text: [{text: cc, bold: true},``], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: cc, bold: true}, ``], margin: [0, 5, 0, 5]});
           });
         }
         break;
       case 'vitals':
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${v.concept.display} : `, bold: true},`${v.value}`], margin: [0, 5, 0, 5]});
+            records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
           });
         }
         break;
@@ -922,12 +922,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   toObjectUrl(url: any) {
     return fetch(url)
-        .then((response)=> {
+        .then((response) => {
           return response.blob();
         })
-        .then(blob=> {
+        .then(blob => {
           return new Promise((resolve, _) => {
-              if(!blob) resolve("");
+              if (!blob) { resolve(''); }
               const reader = new FileReader();
               reader.onloadend = () => resolve(reader.result);
               reader.readAsDataURL(blob);

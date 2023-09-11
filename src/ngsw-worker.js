@@ -216,7 +216,7 @@
      * Use of this source code is governed by an MIT-style license that can be
      * found in the LICENSE file at https://angular.io/license
      */
-    var UpdateCacheStatus = /*@__PURE__*/ (function (UpdateCacheStatus) {
+    const UpdateCacheStatus = /*@__PURE__*/ (function (UpdateCacheStatus) {
         UpdateCacheStatus[UpdateCacheStatus["NOT_CACHED"] = 0] = "NOT_CACHED";
         UpdateCacheStatus[UpdateCacheStatus["CACHED_BUT_UNUSED"] = 1] = "CACHED_BUT_UNUSED";
         UpdateCacheStatus[UpdateCacheStatus["CACHED"] = 2] = "CACHED";
@@ -305,7 +305,7 @@
     function rol32(a, count) {
         return (a << count) | (a >>> (32 - count));
     }
-    var Endian = /*@__PURE__*/ (function (Endian) {
+    const Endian = /*@__PURE__*/ (function (Endian) {
         Endian[Endian["Little"] = 0] = "Little";
         Endian[Endian["Big"] = 1] = "Big";
         return Endian;
@@ -1854,7 +1854,7 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
         'actions', 'badge', 'body', 'data', 'dir', 'icon', 'image', 'lang', 'renotify',
         'requireInteraction', 'silent', 'tag', 'timestamp', 'title', 'vibrate'
     ];
-    var DriverReadyState = /*@__PURE__*/ (function (DriverReadyState) {
+    let DriverReadyState = /*@__PURE__*/ (function (DriverReadyState) {
         // The SW is operating in a normal mode, responding to all traffic.
         DriverReadyState[DriverReadyState["NORMAL"] = 0] = "NORMAL";
         // The SW does not have a clean installation of the latest version of the app, but older
