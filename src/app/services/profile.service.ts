@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable} from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +10,15 @@ export class ProfileService {
   base = environment.base;
   baseURL = environment.baseURL;
   mimeTypes = {
-    JVBERi0: "application/pdf",
-    R0lGODdh: "image/gif",
-    R0lGODlh: "image/gif",
-    iVBORw0KGgo: "image/png",
-    "/9j/": "image/jpg"
+    JVBERi0: 'application/pdf',
+    R0lGODdh: 'image/gif',
+    R0lGODlh: 'image/gif',
+    iVBORw0KGgo: 'image/png',
+    '/9j/': 'image/jpg'
   };
+
+  private profilePic: Subject<string> = new Subject<string>();
+  profilePicUpdateEvent = this.profilePic.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -66,9 +69,9 @@ export class ProfileService {
 
   updateProfileImage(json: object): Observable<any> {
     const URL = `${this.baseURL}/personimage`;
-    var header = {
+    const header = {
       headers: new HttpHeaders({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       }),
     };
     return this.http.post(URL, json, header);
@@ -94,15 +97,19 @@ export class ProfileService {
   }
 
   deleteProviderAttribute(uuid: string, existingUuid: string): Observable<any> {
-    const URL = `${this.baseURL}/provider/${uuid}/attribute/${existingUuid}`
+    const URL = `${this.baseURL}/provider/${uuid}/attribute/${existingUuid}`;
     return this.http.delete(URL);
   }
 
   detectMimeType(b64: string) {
-    for (var s in this.mimeTypes) {
+    for (const s in this.mimeTypes) {
       if (b64.indexOf(s) === 0) {
         return this.mimeTypes[s];
       }
     }
+  }
+
+  setProfilePic(imageBase64) {
+    this.profilePic.next(imageBase64);
   }
 }

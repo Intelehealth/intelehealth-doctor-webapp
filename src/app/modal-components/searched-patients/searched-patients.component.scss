@@ -1,13 +1,13 @@
 .modal-title {
   padding: 24px;
-  background: #EFE8FF;
+  background: var(--color-lightGray);
 
   h6 {
     font-family: 'DM Sans';
     font-weight: 700;
     font-size: 18px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
   }
 }
 
@@ -15,7 +15,7 @@
   vertical-align: middle;
   white-space: nowrap;
   font-size: 16px;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
 }
 
 .identifier {
@@ -33,11 +33,11 @@
 
 .blue-btn {
   height: 48px;
-  background: #2E1E91;
+  background: var(--color-darkBlue);
   border-radius: 8px;
   font-weight: 700;
   font-size: 16px;
   line-height: 150%;
-  color: #FFFFFF;
+  color: var(--color-white);
   margin-left: auto;
 }

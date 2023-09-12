@@ -306,7 +306,6 @@ export class SetupCalendarComponent implements OnInit {
       this.filteredDays.push(element);
      }
     });
-    // console.log(this.addSlotsForm.value);
   }
 
   getSlotsArray(utslots: any) {
@@ -412,7 +411,6 @@ export class SetupCalendarComponent implements OnInit {
     if (flag == 1) {
       return;
     }
-    // console.log(this.addSlotsForm.getRawValue());
     let body = { ...this.addSlotsForm.value };
     delete body['timings'];
     delete body['daysOff'];
@@ -502,7 +500,6 @@ export class SetupCalendarComponent implements OnInit {
         if (flag == 1) {
           return;
         }
-        // console.log(this.addSlotsForm.getRawValue());
         let body = { ...this.addSlotsForm.value };
         delete body['timings'];
         delete body['daysOff'];
@@ -774,7 +771,6 @@ export class SetupCalendarComponent implements OnInit {
     if (flag == 1) {
       return;
     }
-    // console.log(this.addSlotsForm.getRawValue());
     let body = { ...this.addSlotsForm.value };
     delete body['timings'];
     delete body['daysOff'];

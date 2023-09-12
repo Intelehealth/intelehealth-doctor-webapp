@@ -53,7 +53,6 @@ export class AppointmentDetailComponent implements OnInit {
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
-    // console.log(hours, minutes);
     if(hours > 24) {
       return `${this.translate.instant('Starts in')} ${Math.round(hours/24)} ${this.translate.instant('days')}`;
     };

@@ -107,18 +107,15 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   getNumber($event: any) {
-    console.log($event);
     this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
   telInputObject($event: any) {
-    // console.log($event);
     this.telObject = $event;
   }
 
   onCountryChange($event: any) {
-    // console.log($event);
     this.telObject.setCountry($event.iso2);
     this.forgotUsernameForm.patchValue({
       countryCode: $event.dialCode

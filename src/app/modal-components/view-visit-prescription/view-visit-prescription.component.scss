@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #1b163a86;
+  background: var(--color-darkestBlue)86;
   padding: 10px;
 }
 
@@ -30,7 +30,7 @@
   h6 {
     font-size: 24px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     text-align: center;
     font-weight: bold;
     margin-bottom: 0px;
@@ -64,12 +64,12 @@
         font-size: 18px;
         font-weight: bold;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #7F7B92;
+        color: var(--color-gray);
         font-size: 16px;
         line-height: 150%;
       }
@@ -80,12 +80,12 @@
         margin-bottom: 0px;
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
       }
@@ -113,7 +113,7 @@
     h6 {
       font-size: 20px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       font-weight: bold;
       margin-bottom: 0px;
     }
@@ -154,12 +154,12 @@
 }
 
 .text-important-red {
-  color: #FF475D;
+  color: var(--color-red);
   font-weight: bold;
 }
 
 .text-important-green {
-  color: #0FD197;
+  color: var(--color-green);
   font-weight: bold;
 }
 
@@ -226,7 +226,7 @@
 
 .btn_download_pdf{
   position: absolute;
-  color: #7F7B92;
+  color: var(--color-gray);
   border: unset;
   background: transparent;
   font-size: 18px;

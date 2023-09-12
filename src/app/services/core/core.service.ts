@@ -11,9 +11,11 @@ import { ConfirmDialogComponent } from 'src/app/modal-components/confirm-dialog/
 import { ConfirmHoursOffComponent } from 'src/app/modal-components/confirm-hours-off/confirm-hours-off.component';
 import { ConfirmOpenmrsIdComponent } from 'src/app/modal-components/confirm-openmrs-id/confirm-openmrs-id.component';
 import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.component';
+import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-crop.component';
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { RaiseTicketComponent } from 'src/app/modal-components/raise-ticket/raise-ticket.component';
 import { RescheduleAppointmentConfirmComponent } from 'src/app/modal-components/reschedule-appointment-confirm/reschedule-appointment-confirm.component';
 import { RescheduleAppointmentComponent } from 'src/app/modal-components/reschedule-appointment/reschedule-appointment.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
@@ -151,5 +153,23 @@ export class CoreService {
   openConfirmOpenMrsIdModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true } );
     return dialogRef.afterClosed();
+  }
+
+  openRaiseTicketModal(): MatDialogRef<RaiseTicketComponent> {
+    const dialogRef = this.dialog.open(RaiseTicketComponent, { panelClass: "modal-md" } );
+    return dialogRef;
+  }
+
+  openImageCropModal(data: any): MatDialogRef<ImageCropComponent> {
+    const dialogRef = this.dialog.open(ImageCropComponent, { panelClass: 'modal-md', data,  });
+    return dialogRef;
+  }
+
+  blobToBase64(blob) {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
   }
 }

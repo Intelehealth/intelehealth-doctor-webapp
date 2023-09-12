@@ -18,6 +18,9 @@ import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { TranslateService } from '@ngx-translate/core';
+import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-crop.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { notifications } from 'src/config/constant';
 
@@ -61,6 +64,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+  dialogRef: MatDialogRef<ImageCropComponent>;
 
   fonts: any[] = [
     {
@@ -150,7 +154,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     'minWidth': 5,
     'canvasWidth': 300,
     'canvasHeight': 100,
-    'backgroundColor': '#FAF9FF'
+    'backgroundColor': 'var(--color-offWhite)'
   };
 
   personalInfoForm: FormGroup;
@@ -176,6 +180,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneValid: boolean = false;
   emailValid: boolean = false;
   checkingPhoneValidity: boolean = false;
+  @ViewChild('fileUploader') fileUploader:ElementRef;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -186,7 +191,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
-    private translateService: TranslateService) {
+    private translateService: TranslateService,
+    private coreService: CoreService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -428,27 +434,39 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
-  preview(event: any) {
+  async preview(event: any) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
-      console.log(this.file.name);
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
         this.toastr.warning(this.translateService.instant("Upload JPG/JPEG format image only."), this.translateService.instant("Upload error!"));
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profilePicUrl = reader.result;
-        let imageBolb = reader.result.toString().split(',');
-        let payload = {
-          person: this.provider.person.uuid,
-          base64EncodedImage: imageBolb[1]
+
+      if (this.dialogRef) {
+        this.dialogRef.close();
+        return;
+      };
+
+      let imageBase64 = await this.coreService.blobToBase64(this.file);
+      this.dialogRef = this.coreService.openImageCropModal({base64:imageBase64.toString().split(',')[1]});
+      this.dialogRef.afterClosed().subscribe(async result => {
+        if(result){
+          let imageBlob = result.toString().split(',')[1];
+          let payload = {
+            person: this.provider.person.uuid,
+            base64EncodedImage: imageBlob
+          }
+          this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+            this.profilePicUrl = result;
+            this.profileService.setProfilePic(result);
+            this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
+          });
         }
-        this.profileService.updateProfileImage(payload).subscribe((res: any) => {
-          this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
-        });
-      }
-      reader.readAsDataURL(this.file);
+        this.dialogRef = undefined;
+        this.fileUploader.nativeElement.value = null;
+      });
+
+      
     }
   }
 
@@ -457,7 +475,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   hasError(event: any, errorFor: string) {
-    // console.log(event);
     switch (errorFor) {
       case notifications.PHONE_NUMBER:
         this.phoneNumberValid = event;
@@ -469,7 +486,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNumber(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case notifications.PHONE_NUMBER:
         this.phoneNumberValid = true;
@@ -484,7 +500,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   telInputObject(event: any, objectFor: string) {
-    // console.log($event);
     switch (objectFor) {
       case notifications.PHONE_NUMBER:
         this.phoneNumberObj = event;
@@ -496,7 +511,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCountryChange(event: any, changedFor: string) {
-    // console.log(event);
     switch (changedFor) {
       case notifications.PHONE_NUMBER:
         this.phoneNumberValid = false;
@@ -519,12 +533,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   drawComplete() {
     // will be notified of szimek/signature_pad's onEnd event
-    console.log(this.signaturePad.toDataURL());
   }
 
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
-    console.log('begin drawing');
   }
 
   signatureTabChanged(event: any) {
@@ -547,7 +559,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.signaturePicUrl = fileReader.result;
       }
       fileReader.onerror = (error) => {
-        console.log(error);
         this.reset();
       }
       fileReader.readAsDataURL(this.signatureFile);
@@ -593,15 +604,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     let pf1 = this.personalInfoForm.value;
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
-      // console.log(res1);
       if (this.provider.person?.preferredName) {
         this.providerService.updatePersonName(this.provider.person.uuid, this.provider.person?.preferredName.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateSignature();
         });
       } else {
         this.providerService.createPersonName(this.provider.person.uuid, pf1.givenName, pf1.middleName, pf1.familyName).subscribe(res2 => {
-          // console.log(res2);
           this.updateSignature();
         });
       }
@@ -708,7 +716,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      // console.log(responseList);
       if (this.personalInfoForm.get(notifications.PHONE_NUMBER).dirty && this.oldPhoneNumber != this.getAttributeValueFromForm(notifications.PHONE_NUMBER)) {
         this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
         this.toastr.warning(this.translateService.instant("Kindly re-login to see updated details"), this.translateService.instant("Re-login"));

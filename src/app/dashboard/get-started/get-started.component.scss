@@ -12,7 +12,7 @@
     top: 20px;
     right: 24px;
     font-weight: bold;
-    color: #7F7B92;
+    color: var(--color-gray);
     font-size: 16px;
     cursor: pointer;
   }
@@ -22,7 +22,7 @@
     font-size: 20px;
     line-height: 150%;
     font-weight: bold;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     margin-bottom: 0px;
     max-width: 60%;
   }
@@ -30,7 +30,7 @@
   p {
     font-size: 16px;
     line-height: 150%;
-    color: #7F7B92;
+    color: var(--color-gray);
     margin-bottom: 0px;
     max-width: 60%;
   }

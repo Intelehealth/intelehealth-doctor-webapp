@@ -9,7 +9,7 @@
               <label for="profile-pic">
                 <img src="assets/svgs/camera.svg" alt="">
               </label>
-              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)" data-test-id="fileInput">
+              <input id="profile-pic" type="file" accept="image/jpg" (change)="preview($event)" data-test-id="fileInput" #fileUploader>
             </div>
           </div>
         </div>

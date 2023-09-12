@@ -18,6 +18,8 @@ import { SocketService } from '../services/socket.service';
 import { SwPush } from '@angular/service-worker';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { TranslateService } from '@ngx-translate/core';
+import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-ticket.component';
+import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { notifications } from 'src/config/constant';
 
@@ -47,9 +49,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   public breadcrumbs: any[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
+  dialogRef2: MatDialogRef<RaiseTicketComponent>;
   routeUrl: string = '';
   adminUnread: number = 0;
   notificationEnabled: boolean = false;
+  profilePic:string;
+  profilePicSubscription;
+  // baseUrl + '/personimage/' + provider?.person.uuid
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -63,7 +69,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private router: Router,
     private socketService: SocketService,
     private _swPush: SwPush,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private profileService: ProfileService
   ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -118,11 +125,15 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
     this.requestSubscription();
     this.getNotificationStatus();
+
+    this.profilePic = this.baseUrl + '/personimage/' + this.provider?.person.uuid;
+    this.profilePicSubscription = this.profileService.profilePicUpdateEvent.subscribe(img=>{
+      this.profilePic = img;
+    });
   }
 
   requestSubscription() {
     if (!this._swPush.isEnabled) {
-      console.log("Notification is not enabled.");
       return;
     }
     this._swPush.subscription.subscribe(sub => {
@@ -130,12 +141,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then((_) => {
-          console.log(JSON.stringify(_));
           (async () => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
             const result = await fp.get();
-            console.log(result.visitorId);
             this.authService.subscribePushNotification(
               _,
               this.user.uuid,
@@ -143,13 +152,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
               this.provider.person.display,
               this.getSpecialization()
             ).subscribe(response => {
-              console.log(response);
             });
           })();
-        }).catch((_) => console.log);
+        }).catch((_) => {});
       } else {
         this._swPush.messages.subscribe(payload => {
-          console.log(payload);
         });
       }
     });
@@ -157,7 +164,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   getNotificationStatus() {
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
       }
@@ -185,7 +191,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   selectLanguage(): void {
     this.coreService.openSelectLanguageModal().subscribe((res: any) => {
-      console.log(res);
     });
   }
 
@@ -296,9 +301,19 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  openRaiseTicketModal() {
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
+      return;
+    };
+    this.dialogRef2 = this.coreService.openRaiseTicketModal();
+    this.dialogRef2.afterClosed().subscribe(result => {
+      this.dialogRef2 = undefined;
+    });
+  }
+
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
@@ -310,8 +325,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
+    this.profilePicSubscription.unsubscribe()
     if (this.dialogRef) {
       this.dialogRef.close();
+    }
+    if (this.dialogRef2) {
+      this.dialogRef2.close();
     }
   }
 

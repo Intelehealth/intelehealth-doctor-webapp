@@ -17,7 +17,7 @@ th.mat-header-cell {
   border: none;
   font-size: 14px !important;
   font-weight: 700;
-  color: #7F7B92;
+  color: var(--color-gray);
   height: 21px;
 }
 
@@ -28,14 +28,14 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   padding-right: 24px;
 
   span.alert-danger {
-    color: #FF475D;
+    color: var(--color-red);
     font-weight: bold;
     background: transparent;
     border: none;
   }
 
   span.alert-success {
-    color: #0FD197;;
+    color: var(--color-green);;
     font-weight: bold;
     background: transparent;
     border: none;
@@ -79,19 +79,19 @@ th:last-child {
     padding: 6px 8px;
     background: white;
     border-radius: 4px;
-    color: black;
+    color: var(--color-black);
     font-family: DM Sans;
     font-size: 16px;
   }
 
   .blue-btn {
-    background: #EFE8FF;
-    color: #2E1E91;
+    background: var(--color-lightGray);
+    color: var(--color-darkBlue);
   }
 
   .pink-btn {
-    background: #FFE8E8;
-    color: #FF475D;
+    background: var(--color-lightPink);
+    color: var(--color-red);
   }
 }
 
@@ -102,7 +102,7 @@ th:last-child {
 }
 
 .input-group {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid rgba(127, 123, 146, 0.5);
   border-radius: 6px;
   height: 46px;

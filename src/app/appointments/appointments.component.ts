@@ -91,16 +91,6 @@ export class AppointmentsComponent implements OnInit {
     return recent;
   }
 
-  // getAppointements() {
-  //   this.appointmentService
-  //     .getUserSlots(getCacheData(true,'user')).uuid,'01/01/2022','31/12/2022')
-  //     .subscribe({
-  //       next: (res: any) => {
-  //         console.log(res);
-  //       },
-  //     });
-  // }
-
   getVisits() {
     this.appointments = [];
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
@@ -131,7 +121,6 @@ export class AppointmentsComponent implements OnInit {
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
-    // console.log(hours, minutes);
     if(hours > 24) {
       return moment(data).format('DD MMM, YYYY hh:mm A');
     };

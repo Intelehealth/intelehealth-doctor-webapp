@@ -18,7 +18,7 @@
     .mat-tab-label-container {
 
       .mat-ink-bar {
-        background: #EA315B;
+        background: var(--color-lightRed);
         border-radius: 1px;
       }
 
@@ -30,7 +30,7 @@
           font-weight: 700;
           font-size: 16px;
           line-height: 150%;
-          color: #1B163A;
+          color: var(--color-darkestBlue);
         }
       }
     }
@@ -47,7 +47,7 @@
     font-size: 18px;
     line-height: 150%;
     font-weight: bold;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     margin-bottom: 10px;
 
     img {
@@ -59,7 +59,7 @@
   p {
     font-size: 14px;
     line-height: 150%;
-    color: #7F7B92;
+    color: var(--color-gray);
   }
 }
 
@@ -100,7 +100,7 @@
       font-weight: 500;
       font-size: 16px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       font-weight: bold;
     }
   }

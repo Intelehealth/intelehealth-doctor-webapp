@@ -8,7 +8,7 @@
   
   padding: 32px 24px;
 
-  background: #faf9ff;
+  background: var(--color-offWhite);
 
   border-radius: 12px;
 }
@@ -33,7 +33,7 @@
   height: 30px;
   width: 196px;
 
-  color: #1b163a;
+  color: var(--color-darkestBlue);
 
   font-weight: 700;
   font-size: 19px;
@@ -67,7 +67,7 @@
   
   padding: 14px 16px;
   
-  background: #faf9ff;
+  background: var(--color-offWhite);
 
   border: 0.770833px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
@@ -77,9 +77,9 @@
   height: 45px;
   width: 107px;
 
-  color: #2e1e91;
+  color: var(--color-darkBlue);
   
-  background: #ffffff;
+  background: var(--color-white);
   
   font-size: 18px;
   line-height: 150%;
@@ -89,7 +89,7 @@
 }
 
 .add-test-btn {
-  background: #efe8ff;
+  background: var(--color-lightGray);
 }
 
 .btn-height {
