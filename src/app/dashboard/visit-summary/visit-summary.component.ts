@@ -501,6 +501,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               this.checkIfReferralPresent();
               this.checkIfFollowUpPresent();
             }
+            this.getAdditionalNote(visit.attributes);
             this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             this.getVitalObs(visit.encounters);
@@ -974,6 +975,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (attr.attributeType.display === 'Patient Interaction') {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
+    });
+  }
+
+  getAdditionalNote(attributes: any) {
+    attributes.forEach((attr: any) => {
       if (attr.attributeType.display === 'AdditionalNote') {
         this.additionalNotes = attr.value;
       }
