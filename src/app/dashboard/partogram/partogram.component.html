@@ -1802,7 +1802,7 @@
                           <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
                           <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                         </tr>
-                        <tr *ngIf="birthOutcome !== 'Other'||birthOutcome !== 'OTHER'">
+                        <tr *ngIf="birthOutcome !== 'Other'&&birthOutcome !== 'OTHER'">
                           <td class="text-nowrap"><span>Birth Weight:</span>&nbsp;{{birthWeight}}</td>
                           <td class="text-nowrap"><span>Apgar at 1 min:</span>&nbsp;{{apgar1}}</td>
                           <td class="text-nowrap"><span>Apgar at 5 min:</span>&nbsp;{{apgar5}}</td>
