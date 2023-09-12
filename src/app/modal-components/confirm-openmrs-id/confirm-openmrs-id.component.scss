@@ -1,11 +1,11 @@
 .form-control {
   padding: 14px 16px;
-  background: #FAF9FF;
+  background: var(--color-offWhite);
   border: 1px solid rgba(178, 175, 190, 0.2);
   border-radius: 8px;
   height: 48px;
   font-size: 16px;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
   text-align: center;
 }
 
