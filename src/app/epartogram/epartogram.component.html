@@ -1634,7 +1634,7 @@
                       <tr>
                         <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Labor Complete</td>
                       </tr>
-                      <ng-container *ngIf="motherDeceased != 'YES'">
+                      <ng-container *ngIf="motherDeceased != 'YES'||(motherDeceased == 'YES') && birthOutcome">
                         <tr>
                           <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
                           <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
