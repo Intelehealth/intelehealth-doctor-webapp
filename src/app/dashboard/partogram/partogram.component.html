@@ -1783,33 +1783,33 @@
                 <table class="table table-stripped mb-0">
                   <tbody>
                     <tr *ngIf="visitCompleteReason == 'Out Of Time'">
-                      <td><span>Visit Complete Reason:</span> Out Of Time</td>
+                      <td class="text-nowrap"><span>Visit Complete Reason:</span> Out Of Time</td>
                       <td colspan="4"><span>Out of Time Reason:</span> {{outOfTimeReason}}</td>
                     </tr>
                     <tr *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
-                      <td colspan="5"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
+                      <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
                     </tr>
                     <tr *ngIf="visitCompleteReason == 'Other'">
-                      <td><span>Visit Complete Reason:</span> Other</td>
+                      <td class="text-nowrap"><span>Visit Complete Reason:</span> Other</td>
                       <td colspan="4"><span>Other Reason:</span> {{referTypeOtherReason}}</td>
                     </tr>
                     <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
                       <tr>
-                        <td colspan="5"><span>Visit Complete Reason:</span> Labor Complete</td>
+                        <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Labor Complete</td>
                       </tr>
                       <tr>
-                        <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                        <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
                         <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
                       </tr>
                       <tr>
-                        <td><span>Birth Weight:</span>&nbsp;{{birthWeight}}</td>
-                        <td><span>Apgar at 1 min:</span>&nbsp;{{apgar1}}</td>
-                        <td><span>Apgar at 5 min:</span>&nbsp;{{apgar5}}</td>
-                        <td><span>Baby Sex:</span>&nbsp;{{babyGender}}</td>
+                        <td class="text-nowrap"><span>Birth Weight:</span>&nbsp;{{birthWeight}}</td>
+                        <td class="text-nowrap"><span>Apgar at 1 min:</span>&nbsp;{{apgar1}}</td>
+                        <td class="text-nowrap"><span>Apgar at 5 min:</span>&nbsp;{{apgar5}}</td>
+                        <td class="text-nowrap"><span>Baby Sex:</span>&nbsp;{{babyGender}}</td>
                         <td><span>Baby Status:</span>&nbsp;{{babyStatus}}</td>
                       </tr>
                       <tr>
-                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5"><span>Mother Deceased :</span> {{motherDeceased}}</td>
+                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5" class="text-nowrap"><span>Mother Deceased :</span> {{motherDeceased}}</td>
                         <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
                       </tr>
                     </ng-container>
