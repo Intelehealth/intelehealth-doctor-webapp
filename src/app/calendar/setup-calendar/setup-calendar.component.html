@@ -166,7 +166,7 @@
                               <div class="pretty p-image p-plain">
                                 <input type="checkbox" [checked]="item$.selected"/>
                                 <div class="state">
-                                    <img class="image" src="assets/svgs/checkbox-tick.png">
+                                    <img class="image" src="assets/svgs/checkbox-tick.png" alt="">
                                     <label>{{(item.name) | translate}}</label>
                                 </div>
                               </div>
@@ -253,7 +253,7 @@
                               <div class="pretty p-image p-plain">
                                 <input type="checkbox" [checked]="item$.selected"/>
                                 <div class="state">
-                                    <img class="image" src="assets/svgs/checkbox-tick.png">
+                                    <img class="image" src="assets/svgs/checkbox-tick.png" alt="">
                                     <label>{{(item.name)|translate}}</label>
                                 </div>
                               </div>
@@ -314,7 +314,7 @@
                 <ng-container *ngFor="let doff of fd.controls; let j=index;">
                   <div class="chip-item">
                     <span>{{doff.value|date:'dd MMM YYYY'}}</span>
-                    <button mat-icon-button type="button" (click)="removeDaysOff(j)" data-test-id="{{'btnRemoveDaysOff' + j}}">
+                    <button mat-icon-button type="button" (click)="removeDaysOff(j)" [attr.data_test_id]="'btnRemoveDaysOff' + j">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>

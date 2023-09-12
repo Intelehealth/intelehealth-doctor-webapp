@@ -6,7 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
-
+import { notifications } from 'src/config/constant'
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -40,11 +40,11 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("supportMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       // this.socketSvc.showNotification({
       //   title: "New chat message for support",
       //   body: data.message,
@@ -66,7 +66,7 @@ export class SupportComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscription2 = this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
       if (data.msgTo == this.selectedConversation?.userUuid) {
         this.getMessages();
       }
@@ -176,7 +176,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true,notifications.USER).uuid;
   }
 
   // setImage(src) {

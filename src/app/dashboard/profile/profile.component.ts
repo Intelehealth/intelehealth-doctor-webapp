@@ -19,6 +19,7 @@ import { NgxRolesService } from 'ngx-permissions';
 import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttributeValidator';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
+import { notifications } from 'src/config/constant';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -198,7 +199,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
-      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true,'provider').uuid)]),
+      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, notifications.EMAIL_ID, getCacheData(true,notifications.PROVIDER).uuid)]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
       fontOfSign: new FormControl(null),
@@ -221,26 +222,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.today = moment().format('YYYY-MM-DD');
-    this.user = getCacheData(true,'user');
-    this.provider = getCacheData(true,'provider');
-    this.doctorName = getCacheData(false,'doctorName');
+    this.user = getCacheData(true,notifications.USER);
+    this.provider = getCacheData(true,notifications.PROVIDER);
+    this.doctorName = getCacheData(false,notifications.DOCTOR_NAME);
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
-    this.subscription1 = this.personalInfoForm.get('phoneNumber').valueChanges.subscribe((val: any) => {
+    this.subscription1 = this.personalInfoForm.get(notifications.PHONE_NUMBER).valueChanges.subscribe((val: any) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
-          this.personalInfoForm.get('phoneNumber').setValue(val.substring(0, this.maxTelLegth1));
+          this.personalInfoForm.get(notifications.PHONE_NUMBER).setValue(val.substring(0, this.maxTelLegth1));
         }
       }
     });
-    this.subscription2 = this.personalInfoForm.get('whatsapp').valueChanges.subscribe((val: any) => {
+    this.subscription2 = this.personalInfoForm.get(notifications.WHATS_APP).valueChanges.subscribe((val: any) => {
       if (val) {
         if (val.length > this.maxTelLegth2) {
-          this.personalInfoForm.get('whatsapp').setValue(val.substring(0, this.maxTelLegth2));
+          this.personalInfoForm.get(notifications.WHATS_APP).setValue(val.substring(0, this.maxTelLegth2));
         }
       }
     });
@@ -253,7 +254,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formControlValueChanges() {
-    this.personalInfoForm.get('textOfSign').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(notifications.TEXT_OF_SIGN).valueChanges.subscribe(val => {
       if (val) {
         this.fonts.map((f: any) => f.text = val);
       } else {
@@ -261,20 +262,20 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(notifications.SIGNATURE_TYPE).valueChanges.subscribe(val => {
       let tabs = ['Draw', 'Generate', 'Upload'];
       if (val) {
         this.signatureType = val;
         if (val == 'Generate') {
-          this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+          this.personalInfoForm.get(notifications.TEXT_OF_SIGN).setValidators([Validators.required]);
+          this.personalInfoForm.get(notifications.TEXT_OF_SIGN).updateValueAndValidity();
+          this.personalInfoForm.get(notifications.FONT_OF_SIGN).setValidators([Validators.required]);
+          this.personalInfoForm.get(notifications.FONT_OF_SIGN).updateValueAndValidity();
         } else {
-          this.personalInfoForm.get('textOfSign').clearValidators();
-          this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-          this.personalInfoForm.get('fontOfSign').clearValidators();
-          this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+          this.personalInfoForm.get(notifications.TEXT_OF_SIGN).clearValidators();
+          this.personalInfoForm.get(notifications.TEXT_OF_SIGN).updateValueAndValidity();
+          this.personalInfoForm.get(notifications.FONT_OF_SIGN).clearValidators();
+          this.personalInfoForm.get(notifications.FONT_OF_SIGN).updateValueAndValidity();
         }
         if (this.selectedSignatureTabIndex != tabs.indexOf(val)) {
           setTimeout(() => {
@@ -282,17 +283,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           }, 1000);
         }
       } else {
-        this.personalInfoForm.get('textOfSign').clearValidators();
-        this.personalInfoForm.get('textOfSign').updateValueAndValidity();
-        this.personalInfoForm.get('fontOfSign').clearValidators();
-        this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
+        this.personalInfoForm.get(notifications.TEXT_OF_SIGN).clearValidators();
+        this.personalInfoForm.get(notifications.TEXT_OF_SIGN).updateValueAndValidity();
+        this.personalInfoForm.get(notifications.FONT_OF_SIGN).clearValidators();
+        this.personalInfoForm.get(notifications.FONT_OF_SIGN).updateValueAndValidity();
         setTimeout(() => {
           this.personalInfoForm.patchValue({ signatureType: 'Draw' });
         }, 1000);
       }
     });
 
-    this.personalInfoForm.get('birthdate').valueChanges.subscribe(val => {
+    this.personalInfoForm.get(notifications.BIRTHDATE).valueChanges.subscribe(val => {
       if (val) {
         this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
@@ -325,60 +326,60 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
       this.providerAttributeTypes.forEach((attrType: any) => {
         switch (attrType.display) {
-          case 'address':
+          case notifications.ADDRESS:
 
             break;
-          case 'consultationLanguage':
+          case notifications.CONSULTATION_LANGUAGE:
             professionalFormValues.consultationLanguage = this.getAttributeValue(attrType.uuid, attrType.display)?.split(',');
             break;
-          case 'countryCode':
+          case notifications.COUNTRY_CODE:
             personalFormValues.countryCode1 = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.countryCode2 = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'emailId':
+          case notifications.EMAIL_ID:
             personalFormValues.emailId = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'fontOfSign':
+          case notifications.FONT_OF_SIGN:
             personalFormValues.fontOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'phoneNumber':
+          case notifications.PHONE_NUMBER:
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             (personalFormValues.phoneNumber) ? this.phoneNumberValid = true : this.phoneNumberValid = false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'qualification':
+          case notifications.QUALIFICATION:
 
             break;
-          case 'registrationNumber':
+          case notifications.REGISTRATION_NUMBER:
             professionalFormValues.registrationNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'researchExperience':
+          case notifications.RESEARCH_EXPERIENCE:
             professionalFormValues.researchExperience = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'signature':
+          case notifications.SIGNATURE:
             personalFormValues.signature = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'signatureType':
+          case notifications.SIGNATURE_TYPE:
             this.signatureType = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.signatureType = this.signatureType;
             break;
-          case 'specialization':
+          case notifications.SPECIALIZATION:
             professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'textOfSign':
+          case notifications.TEXT_OF_SIGN:
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'typeOfProfession':
+          case notifications.TYPE_OF_PROFESSION:
             professionalFormValues.typeOfProfession = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'whatsapp':
+          case notifications.WHATS_APP:
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
             (personalFormValues.whatsapp) ? this.whatsAppNumberValid = true : this.whatsAppNumberValid = false;
             break;
-          case 'workExperience':
+          case notifications.WORK_EXPERIENCE:
             professionalFormValues.workExperience = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
-          case 'workExperienceDetails':
+          case notifications.WORK_EXPERIENCE_DETAILS:
             professionalFormValues.workExperienceDetails = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           default:
@@ -386,7 +387,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
-      if (personalFormValues.phoneNumber) this.validateProviderAttribute('phoneNumber');
+      if (personalFormValues.phoneNumber) this.validateProviderAttribute(notifications.PHONE_NUMBER);
       this.professionalInfoForm.patchValue(professionalFormValues);
       let signature = this.personalInfoForm.value.signature;
       switch (this.signatureType) {
@@ -458,10 +459,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   hasError(event: any, errorFor: string) {
     // console.log(event);
     switch (errorFor) {
-      case 'phoneNumber':
+      case notifications.PHONE_NUMBER:
         this.phoneNumberValid = event;
         break;
-      case 'whatsAppNumber':
+      case notifications.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = event;
         break;
     }
@@ -470,12 +471,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   getNumber(event: any, changedFor: string) {
     // console.log(event);
     switch (changedFor) {
-      case 'phoneNumber':
+      case notifications.PHONE_NUMBER:
         this.phoneNumberValid = true;
         this.phoneNumber = event;
-        this.validateProviderAttribute('phoneNumber');
+        this.validateProviderAttribute(notifications.PHONE_NUMBER);
         break;
-      case 'whatsAppNumber':
+      case notifications.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = true;
         this.whatsAppNumber = event;
         break;
@@ -485,10 +486,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   telInputObject(event: any, objectFor: string) {
     // console.log($event);
     switch (objectFor) {
-      case 'phoneNumber':
+      case notifications.PHONE_NUMBER:
         this.phoneNumberObj = event;
         break;
-      case 'whatsAppNumber':
+      case notifications.WHATS_APP_NUMBER:
         this.whatsAppObj = event;
         break;
     }
@@ -497,13 +498,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onCountryChange(event: any, changedFor: string) {
     // console.log(event);
     switch (changedFor) {
-      case 'phoneNumber':
+      case notifications.PHONE_NUMBER:
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
         this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
         break;
-      case 'whatsAppNumber':
+      case notifications.WHATS_APP_NUMBER:
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
@@ -621,7 +622,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
 
       case 'Generate':
-        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
+        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(notifications.TEXT_OF_SIGN), this.getAttributeValueFromForm(notifications.FONT_OF_SIGN)).subscribe((res: any) => {
           if (res.fname) {
             fetch(res.fname).then(res => res.blob()).then(blob => {
               let reader = new FileReader();
@@ -653,53 +654,53 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     let requests = [];
     this.providerAttributeTypes.forEach((attrType: any) => {
       switch (attrType.display) {
-        case 'address':
+        case notifications.ADDRESS:
           break;
-        case 'consultationLanguage':
+        case notifications.CONSULTATION_LANGUAGE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display).toString()));
           break;
-        case 'countryCode':
+        case notifications.COUNTRY_CODE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm('countryCode1')));
           break;
-        case 'emailId':
+        case notifications.EMAIL_ID:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'fontOfSign':
+        case notifications.FONT_OF_SIGN:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'phoneNumber':
+        case notifications.PHONE_NUMBER:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'qualification':
+        case notifications.QUALIFICATION:
           break;
-        case 'registrationNumber':
+        case notifications.REGISTRATION_NUMBER:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'researchExperience':
+        case notifications.RESEARCH_EXPERIENCE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'signature':
+        case notifications.SIGNATURE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'signatureType':
+        case notifications.SIGNATURE_TYPE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'specialization':
+        case notifications.SPECIALIZATION:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'textOfSign':
+        case notifications.TEXT_OF_SIGN:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'typeOfProfession':
+        case notifications.TYPE_OF_PROFESSION:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'whatsapp':
+        case notifications.WHATS_APP:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'workExperience':
+        case notifications.WORK_EXPERIENCE:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
-        case 'workExperienceDetails':
+        case notifications.WORK_EXPERIENCE_DETAILS:
           requests.push(this.providerService.addOrUpdateProviderAttribute(this.provider.uuid, this.getAttributeUuid(attrType.uuid, attrType.display), attrType.uuid, this.getAttributeValueFromForm(attrType.display)));
           break;
         default:
@@ -708,19 +709,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
       // console.log(responseList);
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
+      if (this.personalInfoForm.get(notifications.PHONE_NUMBER).dirty && this.oldPhoneNumber != this.getAttributeValueFromForm(notifications.PHONE_NUMBER)) {
         this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
         this.toastr.warning(this.translateService.instant("Kindly re-login to see updated details"), this.translateService.instant("Re-login"));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(getCacheData(true,'user').uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true,notifications.USER).uuid).subscribe((provider: any) => {
           if (provider.results.length) {
-            setCacheData('provider', JSON.stringify(provider.results[0]));
-            setCacheData("doctorName", provider.results[0].person.display);
-            let u = getCacheData(true,'user');
+            setCacheData(notifications.PROVIDER, JSON.stringify(provider.results[0]));
+            setCacheData(notifications.DOCTOR_NAME, provider.results[0].person.display);
+            let u = getCacheData(true,notifications.USER);
             u.person.display = provider.results[0].person.display;
-            setCacheData("user", JSON.stringify(u));
+            setCacheData(notifications.USER, JSON.stringify(u));
             this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
             let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
@@ -758,7 +759,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
       if (res.success) {
-        (type == 'phoneNumber') ? this.phoneValid = res.data : this.emailValid = res.data;
+        (type == notifications.PHONE_NUMBER) ? this.phoneValid = res.data : this.emailValid = res.data;
         setTimeout(() => {
           this.checkingPhoneValidity = false;
         }, 500);

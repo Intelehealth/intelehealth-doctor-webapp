@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-help-menu',
@@ -21,7 +22,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getMessages(true);
     this.socketService.initSocketSupport(true);
-    this.subscription1 = this.socketService.onEvent("supportMessage").subscribe((data) => {
+    this.subscription1 = this.socketService.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       // this.socketService.showNotification({
       //   title: "New message from support team",
       //   body: data.message,
@@ -32,7 +33,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       this.messages= data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.subscription2 = this.socketService.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketService.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
       if (data.msgTo == 'System Administrator') {
         this.getMessages();
       }
@@ -84,7 +85,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   }
 
   get user() {
-    return getCacheData(true,'user');
+    return getCacheData(true,notifications.USER);
   }
 
   ngOnDestroy(): void {

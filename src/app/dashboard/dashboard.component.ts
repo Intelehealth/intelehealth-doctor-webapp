@@ -13,6 +13,7 @@ import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-dashboard',
@@ -90,9 +91,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
-    let provider = getCacheData(true,'provider');
+    let provider = getCacheData(true,notifications.PROVIDER);
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
@@ -136,7 +137,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.visit_created = this.getEncounterCreated2(visit, notifications.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
@@ -179,7 +180,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'Flagged');
+          visit.visit_created = this.getEncounterCreated2(visit, notifications.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
@@ -222,8 +223,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
-          visit.prescription_started = this.getEncounterCreated2(visit, 'Visit Note');
+          visit.visit_created = this.getEncounterCreated2(visit, notifications.ADULTINITIAL);
+          visit.prescription_started = this.getEncounterCreated2(visit, notifications.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
@@ -258,7 +259,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true,notifications.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
@@ -293,14 +294,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(notifications.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -340,14 +341,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
                   }
                 }
               });
-            } else if (this.specialization == 'General Physician') {
+            } else if (this.specialization == notifications.GENERAL_PHYSICIAN) {
               this.processVisit(visit);
             }
           }
         });
 
         // Check appointments
-        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+        this.appointmentService.getUserSlots(getCacheData(true,notifications.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
           .subscribe((res: any) => {
             let appointmentsdata = res.data;
             appointmentsdata.forEach(appointment => {
@@ -375,15 +376,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   processVisit(visit: any) {
     const { encounters } = visit;
     visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    visit.visit_created = (visit.encounters[0].display.includes(notifications.FLAGGED)) ? this.getEncounterCreated(visit, notifications.FLAGGED) :this.getEncounterCreated(visit, notifications.ADULTINITIAL) ;
+    if (this.checkIfEncounterExists(encounters, notifications.VISIT_COMPLETE) || this.checkIfEncounterExists(encounters, notifications.PATIENT_EXIT_SURVEY)) {
 
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
+    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_NOTE)) {
+      visit.prescription_started = this.getEncounterCreated(visit, notifications.VISIT_NOTE);
       this.inProgressVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.FLAGGED)) {
       this.priorityVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(encounters, notifications.VITALS)) {
       this.awaitingVisits.push(visit);
     }
 
@@ -476,14 +477,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(notifications.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+          if (currentObs.display.match(notifications.CURRENT_COMPLAINT) !== null) {
             const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -509,7 +510,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
     // }).length;
     const len = appointment.visit.encounters.filter((e: any) => {
-      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
+      return (e.type.name == notifications.PATIENT_EXIT_SURVEY || e.type.name == notifications.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {

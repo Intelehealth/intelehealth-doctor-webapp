@@ -4,6 +4,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -77,14 +78,14 @@ export class AppointmentDetailComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(notifications.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach((currentObs: any) => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+          if (currentObs.display.match(notifications.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -93,13 +94,13 @@ export class AppointmentDetailComponent implements OnInit {
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
           providerAttribute.forEach((attribute: any) => {
-            if (attribute.display.match("phoneNumber") != null) {
+            if (attribute.display.match(notifications.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;
             }
           });
         }
       }
-      if (display.match('Visit Complete') !== null) {
+      if (display.match(notifications.VISIT_COMPLETE) !== null) {
         prescriptionCreatedAt = this.checkPrescriptionCreatedAt(encounter.encounterDatetime);
       }
     });
@@ -107,15 +108,15 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    if (this.checkIfEncounterExists(encounters, notifications.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Complete')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_COMPLETE)) {
       return 'Completed';
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_NOTE)) {
       return 'In-progress';
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.FLAGGED)) {
       return'Priority';
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+    } else if (this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(encounters, notifications.VITALS)) {
       return 'Awaiting';
     }
   }

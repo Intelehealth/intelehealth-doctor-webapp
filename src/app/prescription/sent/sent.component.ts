@@ -3,6 +3,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { notifications } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -30,7 +31,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   constructor(private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
     this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
     this.dataSource.paginator = this.tempPaginator;

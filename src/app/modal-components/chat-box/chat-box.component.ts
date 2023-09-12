@@ -5,6 +5,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { notifications } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -34,14 +35,14 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
+    const patientVisitProvider = getCacheData(true,notifications.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
     }
     this.socketSvc.initSocket(true);
-    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       // this.socketSvc.showNotification({
       //   title: "New chat message",
       //   body: data.message,
@@ -102,7 +103,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true,notifications.USER).uuid;
   }
 
   onImgError(event: any) {

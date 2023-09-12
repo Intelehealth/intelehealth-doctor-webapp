@@ -6,6 +6,7 @@ import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { getCacheData } from "../utils/utility-functions";
+import { notifications } from "src/config/constant";
 
 @Injectable({
   providedIn: "root",
@@ -65,7 +66,7 @@ export class ChatService {
 
   public get user() {
     try {
-      return getCacheData(true,'user');
+      return getCacheData(true,notifications.USER);
     } catch (error) {
       return {};
     }

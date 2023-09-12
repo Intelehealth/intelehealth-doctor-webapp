@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-messages',
@@ -46,11 +47,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
-    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       // this.socketSvc.showNotification({
       //   title: "New chat message",
       //   body: data.message,
@@ -207,7 +208,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true,notifications.USER).uuid;
   }
 
   setImage(src) {

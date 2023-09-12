@@ -10,6 +10,7 @@ import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-appointments',
@@ -42,14 +43,14 @@ export class AppointmentsComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Appointments", imgUrl: "assets/svgs/menu-video-circle.svg" });
     // this.getVisits();
     this.getAppointments();
   }
 
   getAppointments() {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true,notifications.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
@@ -72,14 +73,14 @@ export class AppointmentsComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(notifications.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -105,7 +106,7 @@ export class AppointmentsComponent implements OnInit {
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         let visits = res.results;
-        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
+        this.appointmentService.getUserSlots(getCacheData(true,notifications.USER).uuid, moment().startOf('year').format('DD/MM/YYYY') ,moment().endOf('year').format('DD/MM/YYYY'))
         .subscribe((res: any) => {
           let appointmentsdata = res.data;
           appointmentsdata.forEach((appointment: any) => {
@@ -146,14 +147,14 @@ export class AppointmentsComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(notifications.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+          if (currentObs.display.match(notifications.CURRENT_COMPLAINT) !== null) {
             const currentComplaint = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -169,7 +170,7 @@ export class AppointmentsComponent implements OnInit {
     //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
     // }).length;
     const len = appointment.visit.encounters.filter((e: any) => {
-      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
+      return (e.type.name == notifications.PATIENT_EXIT_SURVEY || e.type.name == notifications.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
@@ -213,7 +214,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   get userId() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true,notifications.USER).uuid;
   }
 
   applyFilter1(event: Event) {
