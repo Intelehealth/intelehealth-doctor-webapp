@@ -975,15 +975,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (attr.attributeType.display === 'Patient Interaction') {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
-      if (attr.attributeType.display === 'AdditionalNote') {
-        this.additionalNotes = attr.value;
-      }
     });
   }
 
   getAdditionalNote(attributes: any) {
     attributes.forEach((attr: any) => {
-      if (attr.attributeType.display == 'AdditionalNote') {
+      if (attr.attributeType.display === 'AdditionalNote') {
         this.additionalNotes = attr.value;
       }
     });
