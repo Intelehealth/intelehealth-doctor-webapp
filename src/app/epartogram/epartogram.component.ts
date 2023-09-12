@@ -227,6 +227,11 @@ export class EpartogramComponent implements OnInit {
   birthOutcomeOther: string;
   motherDeceased: string;
   motherDeceasedReason: string;
+  apgar1: any;
+  apgar5: any;
+  birthWeight: any;
+  babyStatus: any;
+  babyGender: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -311,6 +316,16 @@ export class EpartogramComponent implements OnInit {
           this.motherDeceasedReason = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
         }
       }
+
+      this.apgar1 = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Apgar at 1 min')?.value;
+      this.apgar5 = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
+      this.birthWeight = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
+      this.babyStatus = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Baby status')?.value;
+      this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Baby Sex')?.value;
+
+      setTimeout(() => {
+        document.querySelector('#vcd').scrollIntoView();
+      }, 500);
 
       // visitCompleteEnc.obs.forEach((obs: any) => {
       //   if (obs.display.includes('Birth Outcome')) {

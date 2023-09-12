@@ -26,7 +26,7 @@
                   </td>
                   <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
                 </tr>
-                <ng-container *ngIf="visitCompleted">
+                <!-- <ng-container *ngIf="visitCompleted">
                   <tr>
                     <td colspan="41" class="divider"></td>
                   </tr>
@@ -57,7 +57,7 @@
                   <tr>
                     <td colspan="41" class="divider"></td>
                   </tr>
-                </ng-container>
+                </ng-container> -->
                 <tr>
                   <td colspan="3" class="nb"></td>
                   <td>Time</td>
@@ -1551,6 +1551,9 @@
           </div>
 
           <div class="intel-card mt-5">
+            <div class="card-header">
+              <h6 class="mb-0">Plan, Assessment & Medication</h6>
+            </div>
             <div class="card-body bg-white">
               <div class="mat-elevation-z8">
                 <table mat-table [dataSource]="dataSource">
@@ -1605,6 +1608,52 @@
                   aria-label="Select page of periodic elements">
                 </mat-paginator>
               </div>
+            </div>
+          </div>
+
+          <div class="intel-card mt-5" *ngIf="visitCompleted" id="vcd">
+            <div class="card-header">
+              <h6 class="mb-0">Visit Complete Details</h6>
+            </div>
+            <div class="card-body bg-white">
+              <div class="table-responsive">
+                <table class="table table-stripped mb-0">
+                  <tbody>
+                    <tr *ngIf="visitCompleteReason == 'Out Of Time'">
+                      <td><span>Visit Complete Reason:</span> Out Of Time</td>
+                      <td colspan="4"><span>Out of Time Reason:</span> {{outOfTimeReason}}</td>
+                    </tr>
+                    <tr *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
+                      <td colspan="5"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
+                    </tr>
+                    <tr *ngIf="visitCompleteReason == 'Other'">
+                      <td><span>Visit Complete Reason:</span> Other</td>
+                      <td colspan="4"><span>Other Reason:</span> {{referTypeOtherReason}}</td>
+                    </tr>
+                    <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
+                      <tr>
+                        <td colspan="5"><span>Visit Complete Reason:</span> Labor Complete</td>
+                      </tr>
+                      <tr>
+                        <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                        <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
+                      </tr>
+                      <tr>
+                        <td><span>Apgar at 1 min:</span>{{apgar1}}</td>
+                        <td><span>Apgar at 5 min:</span>{{apgar5}}</td>
+                        <td><span>Baby Status:</span>{{babyStatus}}</td>
+                        <td><span>Baby Sex:</span>{{babyGender}}</td>
+                        <td><span>Birth Weight:</span>{{babyWeight}}</td>
+                      </tr>
+                      <tr>
+                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5"><span>Mother Deceased :</span> {{motherDeceased}}</td>
+                        <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
           </div>
 
