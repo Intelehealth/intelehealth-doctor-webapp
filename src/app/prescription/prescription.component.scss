@@ -56,7 +56,7 @@
       background: transparent;
 
       .chip-item .chip-info h6, .chip-item .chip-info span {
-        var(--color-white);
+        color: var(--color-white);
       }
 
       .chip-item-blue {
