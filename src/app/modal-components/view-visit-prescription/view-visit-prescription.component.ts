@@ -405,7 +405,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 20 ],
-      watermark: { text: 'INTELEHEALTH', color: '#7F7B92', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
       header: {
         columns: [
           { text: ''},
@@ -820,7 +820,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           fontSize: 12,
           bold: false,
           margin: [0, 5, 0, 5],
-          color: '#7F7B92'
+          color: 'var(--color-gray)'
         },
         tableExample: {
           margin: [0, 5, 0, 5],

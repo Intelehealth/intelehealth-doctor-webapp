@@ -9,21 +9,21 @@
   height: 70vh;
 
   .chat-sidebar-title {
-    background: #EFE8FF;
+    background: var(--color-lightGray);
     padding: 16px 20px;
     height: 86px;
 
     h6 {
       font-size: 18px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       font-weight: bold;
     }
 
     span {
       font-size: 14px;
       line-height: 163%;
-      color: #7F7B92;
+      color: var(--color-gray);
     }
   }
 
@@ -37,7 +37,7 @@
       height: 80px;
 
       .input-group {
-        background: #FAF9FF;
+        background: var(--color-offWhite);
         border: 2px solid rgba(178, 175, 190, 0.2);
         border-radius: 8px;
         height: 52px;
@@ -94,7 +94,7 @@
           margin-bottom: 0px;
           font-size: 16px;
           line-height: 150%;
-          color: #1B163A;
+          color: var(--color-darkestBlue);
           font-weight: bold;
         }
 
@@ -106,13 +106,13 @@
           margin-bottom: 0px;
           font-size: 14px;
           line-height: 150%;
-          color: #7F7B92;
+          color: var(--color-gray);
         }
       }
     }
 
     li.selected {
-      background: #FAF9FF;
+      background: var(--color-offWhite);
       border: 1px solid rgba(178, 175, 190, 0.2);
 
       .chat-item-con {
@@ -125,7 +125,7 @@
 
 .no-conversation-selected {
   height: 70vh;
-  background: #FAF9FF;
+  background: var(--color-offWhite);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -138,7 +138,7 @@
   h6 {
     font-size: 18px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     font-weight: bold;
   }
 
@@ -146,7 +146,7 @@
     font-size: 16px;
     line-height: 150%;
     text-align: center;
-    color: #7F7B92;
+    color: var(--color-gray);
   }
 }
 
@@ -180,21 +180,21 @@
       h6 {
         font-size: 18px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         font-weight: bold;
       }
 
       span {
         font-size: 14px;
         line-height: 163%;
-        color: #7F7B92;
+        color: var(--color-gray);
       }
     }
 
     .ng-select.custom {
       width: fit-content;
       height: 48px;
-      background: #FAF9FF;
+      background: var(--color-offWhite);
       border: 0.770833px solid rgba(178, 175, 190, 0.2);
       border-radius: 8px;
       outline: none;
@@ -228,7 +228,7 @@
 
   .chat-con-body {
     margin: 0px 5px 10px;
-    background: #FAF9FF;
+    background: var(--color-offWhite);
     padding: 10px;
     height: calc(70vh - 86px);
     border-radius: 0px 0px 10px 0px;
@@ -256,10 +256,10 @@
         padding: 8px 12px;
         max-width: 80%;
         width: fit-content;
-        background: #FFFFFF;
+        background: var(--color-white);
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         margin: 4px 0px;
         overflow: auto;
         flex-shrink: 0;
@@ -267,7 +267,7 @@
 
       .chat-message.right {
         border: none;
-        background: #EFE8FF;
+        background: var(--color-lightGray);
         border-radius: 8px 8px 0px 8px;
         margin-left: auto;
       }
@@ -275,7 +275,7 @@
       .chat-status {
         font-size: 12px;
         line-height: 18px;
-        color: #7F7B92;
+        color: var(--color-gray);
         display: flex;
         align-items: center;
         margin: 4px 0px;
@@ -294,7 +294,7 @@
       padding: 10px 0px;
 
       .input-group {
-        background: #EFE8FF;
+        background: var(--color-lightGray);
         ;
         border: 1px solid rgba(178, 175, 190, 0.2);
         border-radius: 8px;
@@ -326,7 +326,7 @@
         outline: none;
         width: 44px;
         height: 44px;
-        background: #2E1E91;
+        background: var(--color-darkBlue);
         border-radius: 8px;
       }
     }
@@ -341,7 +341,7 @@
 
   .chat-main-con {
     .chat-con-title {
-      border-top: 1px solid #7F7B92;
+      border-top: 1px solid var(--color-gray);
 
       .chat-item-info {
         .title {
@@ -361,6 +361,6 @@
   width: 60px;
 
   object-fit: contain;
-  background-color: white;
+  background-var(--color-white);
   cursor: pointer;
 }

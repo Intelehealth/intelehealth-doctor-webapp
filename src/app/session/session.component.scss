@@ -1,7 +1,7 @@
 .login-info-wrapper {
   width: 100%;
   min-height: 100vh;
-  background: #2E1E91;
+  background: var(--color-darkBlue);
   display: flex;
   flex-direction: column;
   font-family: 'DM Sans';
@@ -54,7 +54,7 @@
         font-weight: 700;
         font-size: 28px;
         line-height: 132%;
-        color: #FFFFFF;
+        color: var(--color-white);
         min-height: 74px;
         text-align: center;
         padding: 0px 30px;
@@ -115,7 +115,7 @@
   .ng-select.language-select-input  {
     width: fit-content;
     height: 48px;
-    background: #FAF9FF;
+    background: var(--color-offWhite);
     border: 0.770833px solid rgba(178, 175, 190, 0.2);
     border-radius: 8px;
     outline: none;
