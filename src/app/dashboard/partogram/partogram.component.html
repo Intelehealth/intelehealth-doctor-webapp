@@ -1797,17 +1797,19 @@
                       <tr>
                         <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Labor Complete</td>
                       </tr>
-                      <tr>
-                        <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
-                        <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
-                      </tr>
-                      <tr>
-                        <td class="text-nowrap"><span>Birth Weight:</span>&nbsp;{{birthWeight}}</td>
-                        <td class="text-nowrap"><span>Apgar at 1 min:</span>&nbsp;{{apgar1}}</td>
-                        <td class="text-nowrap"><span>Apgar at 5 min:</span>&nbsp;{{apgar5}}</td>
-                        <td class="text-nowrap"><span>Baby Sex:</span>&nbsp;{{babyGender}}</td>
-                        <td><span>Baby Status:</span>&nbsp;{{babyStatus}}</td>
-                      </tr>
+                      <ng-container *ngIf="motherDeceased != 'YES'">
+                        <tr>
+                          <td [attr.colspan]="birthOutcome == 'Other'||birthOutcome == 'OTHER' ? 1 : 5" class="text-nowrap"><span>Birth Outcome:</span> {{birthOutcome}}</td>
+                          <td colspan="4" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
+                        </tr>
+                        <tr *ngIf="birthOutcome !== 'Other'||birthOutcome !== 'OTHER'">
+                          <td class="text-nowrap"><span>Birth Weight:</span>&nbsp;{{birthWeight}}</td>
+                          <td class="text-nowrap"><span>Apgar at 1 min:</span>&nbsp;{{apgar1}}</td>
+                          <td class="text-nowrap"><span>Apgar at 5 min:</span>&nbsp;{{apgar5}}</td>
+                          <td class="text-nowrap"><span>Baby Sex:</span>&nbsp;{{babyGender}}</td>
+                          <td><span>Baby Status:</span>&nbsp;{{babyStatus}}</td>
+                        </tr>
+                      </ng-container>
                       <tr>
                         <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5" class="text-nowrap"><span>Mother Deceased :</span> {{motherDeceased}}</td>
                         <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
