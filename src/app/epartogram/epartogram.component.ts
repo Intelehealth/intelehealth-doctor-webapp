@@ -321,7 +321,7 @@ export class EpartogramComponent implements OnInit {
       this.apgar5 = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Apgar at 5 min')?.value;
       this.birthWeight = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'BirthWeight')?.value;
       this.babyStatus = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Baby status')?.value;
-      this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Baby Sex')?.value;
+      this.babyGender = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Sex')?.value;
 
       setTimeout(() => {
         document.querySelector('#vcd').scrollIntoView();

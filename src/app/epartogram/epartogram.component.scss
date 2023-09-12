@@ -382,6 +382,7 @@ th:last-child {
   border-radius: 0 !important;
 
   span {
+    text-wrap: nowrap;
     color: #212529;
   }
 }
