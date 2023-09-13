@@ -50,12 +50,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
     this.subscription1 = this.socketSvc.onEvent('updateMessage').subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
@@ -63,10 +57,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
       this.getMessages();
     });
-  }
-
-  search() {
-
   }
 
   get filteredConversations() {
@@ -136,23 +126,13 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   getMessages() {
-    this.chatSvc.getPatientMessages(this.toUserId, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
+    this.chatSvc.getPatientMessages(this.selectedConversation?.toUser, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
       .subscribe({
         next: (res: any) => {
           this.messageList = res?.data;
           this.getPatientsVisits(this.selectedConversation?.patientId);
         },
       });
-  }
-
-  get toUserId() {
-    if (this.selectedConversation?.toUser === this.chatSvc?.user?.uuid) {
-      return this.selectedConversation.fromUser;
-    } else if (this.selectedConversation?.fromUser === this.chatSvc?.user?.uuid) {
-      return this.selectedConversation?.toUser;
-    } else {
-      return null;
-    }
   }
 
   readMessages(messageId: any) {
