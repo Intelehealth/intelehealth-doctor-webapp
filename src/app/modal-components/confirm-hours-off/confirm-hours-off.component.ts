@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-confirm-hours-off',
   templateUrl: './confirm-hours-off.component.html',
-  styleUrls: ['./confirm-hours-off.component.scss']
 })
 export class ConfirmHoursOffComponent implements OnInit {
 

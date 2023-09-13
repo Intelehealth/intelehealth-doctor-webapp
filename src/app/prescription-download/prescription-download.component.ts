@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, } from '@angular/router';
-import * as html2pdf from 'html2pdf.js';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
@@ -29,7 +28,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   hash: any = null;
   accessToken: any = null;
   visit: any;
-  prescriptionVerified: boolean = false;
+  prescriptionVerified = false;
   patient: any;
   eventsSubject: Subject<any> = new Subject<any>();
 
@@ -45,7 +44,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.hash = this.route.snapshot.paramMap.get("hash");
+    this.hash = this.route.snapshot.paramMap.get('hash');
 
     const { accessToken, visitId } = window.history.state;
     if (accessToken) {
@@ -88,12 +87,12 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
       next: (visit: any) => {
         if (visit) {
           this.patient = visit.patient;
-          const attrs = Array.isArray(this.patient?.attributes) ? this.patient?.attributes : []
+          const attrs = Array.isArray(this.patient?.attributes) ? this.patient?.attributes : [];
           const patientPhoneNumber = attrs.find((attr: any) => attr?.attributeType?.display === doctorDetails.TELEPHONE_NUMBER);
           if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
             this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
               if (res.success) {
-                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} successfully!`, "OTP Sent");
+                this.toastr.success(`OTP sent on ${this.authService.replaceWithStar(patientPhoneNumber?.value, 'phone')} successfully!`, 'OTP Sent');
                 this.router.navigate(['/session/verify-otp'], {
                   state: {
                     verificationFor: 'presctiption-verification',
@@ -106,12 +105,12 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
                   }
                 });
               } else {
-                this.toastr.error(res.message, "Error");
+                this.toastr.error(res.message, 'Error');
               }
             });
           } else {
             this.cs.openConfirmOpenMrsIdModal(this.patient?.identifiers[0].identifier).subscribe(res => {
-              if(res) {
+              if (res) {
                 this.prescriptionVerified = true;
                 this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
               }

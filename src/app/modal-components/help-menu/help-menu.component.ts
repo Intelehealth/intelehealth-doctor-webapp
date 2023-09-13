@@ -8,12 +8,11 @@ import { notifications, doctorDetails } from 'src/config/constant';
 @Component({
   selector: 'app-help-menu',
   templateUrl: './help-menu.component.html',
-  styleUrls: ['./help-menu.component.scss']
 })
 export class HelpMenuComponent implements OnInit, OnDestroy {
 
   messages: any = [];
-  message: string = "";
+  message = '';
   subscription1: Subscription;
   subscription2: Subscription;
 
@@ -30,11 +29,11 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       // });
 
       this.readMessagesSupport(data.id);
-      this.messages= data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messages = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketService.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
-      if (data.msgTo == 'System Administrator') {
+      if (data.msgTo === 'System Administrator') {
         this.getMessages();
       }
     });
@@ -50,7 +49,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       };
       this.supportService.sendMessage(payload).subscribe((res: any) => {
         if (res.success) {
-          this.message = "";
+          this.message = '';
           this.getMessages();
         }
       });
@@ -64,7 +63,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
           if (res.success) {
             this.messages = res?.data;
             if (init && this.messages.length) {
-              let mid = this.messages.find(m => m.from == 'System Administrator')?.id;
+              const mid = this.messages.find(m => m.from === 'System Administrator')?.id;
               if (mid) {
                 this.readMessagesSupport(mid);
               }

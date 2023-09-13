@@ -1,4 +1,4 @@
-import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,13 +17,13 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
   @Input() prescriptionsSent: any = [];
-  @Input() prescriptionsSentCount: number = 0;
+  @Input() prescriptionsSentCount = 0;
   @ViewChild('sentPaginator') paginator: MatPaginator;
   offset: number = environment.recordsPerPage;
   recordsFetched: number = environment.recordsPerPage;
   pageEvent: PageEvent;
-  pageIndex:number = 0;
-  pageSize:number = 5;
+  pageIndex = 0;
+  pageSize = 5;
   @Output() fetchPageEvent = new EventEmitter<number>();
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
   @ViewChild('sentSearchInput', { static: true }) searchElement: ElementRef;
@@ -33,7 +33,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
     this.dataSource.paginator = this.tempPaginator;
   }
 
@@ -47,21 +47,21 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
   }
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  public getData(event?:PageEvent){
+  public getData(event?: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     if (this.dataSource.filter) {
       this.paginator.firstPage();
     }
-    if (((event.pageIndex+1)*this.pageSize) > this.recordsFetched) {
-      this.fetchPageEvent.emit((this.recordsFetched+this.offset)/this.offset)
+    if (((event.pageIndex + 1) * this.pageSize) > this.recordsFetched) {
+      this.fetchPageEvent.emit((this.recordsFetched + this.offset) / this.offset);
     } else {
       // this.dataSource = new MatTableDataSource(this.prescriptionsSent.slice(event.pageIndex*this.pageSize, (event.pageIndex+1)*this.pageSize));
       if (event.previousPageIndex < event.pageIndex) {
@@ -82,7 +82,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   clearFilter() {
     this.dataSource.filter = null;
-    this.searchElement.nativeElement.value = "";
+    this.searchElement.nativeElement.value = '';
   }
 
 }
