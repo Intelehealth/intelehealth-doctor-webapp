@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-forgot-password',
@@ -40,7 +40,7 @@ export class ForgotPasswordComponent implements OnInit {
     }
 
     let payload: any = {
-      otpFor: notifications.PASSWORD,
+      otpFor: doctorDetails.PASSWORD,
       username: this.forgotPasswordForm.value.username
     };
 

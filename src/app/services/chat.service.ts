@@ -1,12 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
-import { of } from "rxjs";
-import { Subject } from "rxjs";
+import { of, Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { getCacheData } from "../utils/utility-functions";
-import { notifications } from "src/config/constant";
+import { doctorDetails } from "src/config/constant";
 
 @Injectable({
   providedIn: "root",
@@ -66,7 +65,7 @@ export class ChatService {
 
   public get user() {
     try {
-      return getCacheData(true,notifications.USER);
+      return getCacheData(true, doctorDetails.USER);
     } catch (error) {
       return {};
     }

@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { languages, doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -47,15 +47,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    if(getCacheData(false,notifications.SELECTED_LANGUAGE)) {
-      this.translate.setDefaultLang(getCacheData(false,notifications.SELECTED_LANGUAGE));
-      this.translate.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
+      this.translate.setDefaultLang(getCacheData(false, languages.SELECTED_LANGUAGE));
+      this.translate.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     } else {
       let browserlang = this.translate.getBrowserLang();
       this.translate.setDefaultLang(browserlang);
-      setCacheData(notifications.SELECTED_LANGUAGE, browserlang);
+      setCacheData(languages.SELECTED_LANGUAGE, browserlang);
     }
-    this.selectedLanguage = getCacheData(false,notifications.SELECTED_LANGUAGE);
+    this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     // this.checkSession();
   }
 
@@ -73,8 +73,8 @@ export class LoginComponent implements OnInit {
         this.authService.getAuthToken(val.username, val.password).subscribe(token => {
           this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
             if (provider.results.length) {
-              setCacheData(notifications.PROVIDER, JSON.stringify(provider.results[0]));
-              setCacheData(notifications.DOCTOR_NAME, provider.results[0].person.display);
+              setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
+              setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
               this.loginSuccess();
               // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
               //   this.loginSuccess();

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { notifications, doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-help-menu',
@@ -85,7 +85,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   }
 
   get user() {
-    return getCacheData(true,notifications.USER);
+    return getCacheData(true, doctorDetails.USER);
   }
 
   ngOnDestroy(): void {

@@ -8,7 +8,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from '../services/core/core.service';
 import { Meta } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-prescription-download',
@@ -89,7 +89,7 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
         if (visit) {
           this.patient = visit.patient;
           const attrs = Array.isArray(this.patient?.attributes) ? this.patient?.attributes : []
-          const patientPhoneNumber = attrs.find((attr: any) => attr?.attributeType?.display === notifications.TELEPHONE_NUMBER);
+          const patientPhoneNumber = attrs.find((attr: any) => attr?.attributeType?.display === doctorDetails.TELEPHONE_NUMBER);
           if (patientPhoneNumber && patientPhoneNumber?.value.length > 3) {
             this.linkSvc.requestPresctionOtp(this.hash, patientPhoneNumber?.value).subscribe((res: any) => {
               if (res.success) {

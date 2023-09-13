@@ -1,4 +1,4 @@
-import { notifications } from "src/config/constant";
+import { visitTypes } from "src/config/constant";
 
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
@@ -26,9 +26,9 @@ export function isJsonString(str) {
 }
 
 export function getEncounterProviderUUID() {
-  return getCacheData(true, notifications.VISIT_NOTE_PROVIDER).encounterProviders[0].provider.uuid;
+  return getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER).encounterProviders[0].provider.uuid;
 }
 
 export function getEncounterUUID() {
-  return getCacheData(true, notifications.VISIT_NOTE_PROVIDER).uuid;
+  return getCacheData(true, visitTypes.VISIT_NOTE_PROVIDER).uuid;
 }

@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-video-call',
@@ -60,10 +60,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) {
       this.initiator = this.data.initiator;
     }
-    const patientVisitProvider = getCacheData(true,notifications.PATIENT_VISIT_PROVIDER);
+    const patientVisitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = getCacheData(false,notifications.DOCTOR_NAME);
+    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
     this.doctorName = doctorName ? doctorName : this.user.display;
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
@@ -139,7 +139,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   onImgError(event: any) {
@@ -148,7 +148,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   get user() {
     try {
-      return getCacheData(true,notifications.USER);
+      return getCacheData(true, doctorDetails.USER);
     } catch (error) {
       return {};
     }

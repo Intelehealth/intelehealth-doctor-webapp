@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-ayu',
@@ -35,7 +35,7 @@ export class AyuComponent implements OnInit {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: 'Ayu', imgUrl: 'assets/svgs/ayu.svg', info: true })
     this.fetchMindmaps();
   }

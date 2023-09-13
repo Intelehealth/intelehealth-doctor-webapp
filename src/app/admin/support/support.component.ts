@@ -6,7 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
-import { notifications } from 'src/config/constant'
+import { notifications, doctorDetails, languages } from 'src/config/constant'
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -40,7 +40,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
     // this.socketSvc.initSocketSupport(true);
@@ -176,7 +176,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   // setImage(src) {

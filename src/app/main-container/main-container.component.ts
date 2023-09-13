@@ -21,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-ticket.component';
 import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { languages, doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-main-container',
@@ -82,7 +82,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   ngOnInit(): void {
     // this.user = getCacheData(true,'user'));
     // this.provider = getCacheData(true,'provider'));
-    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
     });
@@ -335,10 +335,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   get user() {
-    return getCacheData(true,notifications.USER);
+    return getCacheData(true, doctorDetails.USER);
   }
 
   get provider() {
-    return getCacheData(true,notifications.PROVIDER);
+    return getCacheData(true, doctorDetails.PROVIDER);
   }
 }

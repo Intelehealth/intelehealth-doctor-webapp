@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +19,8 @@ export class DashboardGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> {
-      const user = getCacheData(true,notifications.USER);
-      const provider = getCacheData(true,notifications.PROVIDER);
+      const user = getCacheData(true, doctorDetails.USER);
+      const provider = getCacheData(true, doctorDetails.PROVIDER);
       return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
         if (res) {
           if (res.data.length && provider.attributes.length) {

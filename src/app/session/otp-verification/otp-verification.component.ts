@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-otp-verification',
@@ -101,7 +101,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   verifyLogin() {
     let payload: any = {};
     payload.verifyFor = "verification";
-    payload.username = (getCacheData(true,notifications.USER)).username ? (getCacheData(true,notifications.USER)).username : (getCacheData(true,notifications.USER)).systemId;
+    payload.username = (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId;
     if (this.via == 'phone') {
       payload.phoneNumber = this.cred.split('||')[1]
     } else {
@@ -153,7 +153,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
 
   verifyForgetPassword() {
     let payload: any = {}
-    payload.verifyFor = notifications.PASSWORD;
+    payload.verifyFor = doctorDetails.PASSWORD;
     payload.username = this.cred;
     payload.otp = this.otpVerificationForm.value.otp;
     this.authService.verifyOtp(payload).subscribe((res: any) => {
@@ -182,7 +182,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
-        payload.username = (getCacheData(true,notifications.USER)).username;
+        payload.username = (getCacheData(true, doctorDetails.USER)).username;
         if (this.via == 'phone') {
           payload.phoneNumber = this.cred.split('||')[1],
             payload.countryCode = this.cred.split('||')[0]
@@ -221,7 +221,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
 
       case 'forgot-password':
         payload = {
-          otpFor: notifications.PASSWORD,
+          otpFor: doctorDetails.PASSWORD,
           username: this.cred
         };
         this.authService.requestOtp(payload).subscribe((res: any) => {

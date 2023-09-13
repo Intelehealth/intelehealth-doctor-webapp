@@ -4,7 +4,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
-import { notifications } from 'src/config/constant';
+import { doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -77,14 +77,14 @@ export class AppointmentDetailComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match(notifications.ADULTINITIAL) !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach((currentObs: any) => {
-          if (currentObs.display.match(notifications.CURRENT_COMPLAINT) !== null) {
+          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -93,13 +93,13 @@ export class AppointmentDetailComponent implements OnInit {
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
           providerAttribute.forEach((attribute: any) => {
-            if (attribute.display.match(notifications.PHONE_NUMBER) != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;
             }
           });
         }
       }
-      if (display.match(notifications.VISIT_COMPLETE) !== null) {
+      if (display.match(visitTypes.VISIT_COMPLETE) !== null) {
         prescriptionCreatedAt = this.checkPrescriptionCreatedAt(encounter.encounterDatetime);
       }
     });
@@ -107,15 +107,15 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, notifications.PATIENT_EXIT_SURVEY)) {
+    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_COMPLETE)) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
       return 'Completed';
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_NOTE)) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
       return 'In-progress';
-    } else if (this.checkIfEncounterExists(encounters, notifications.FLAGGED)) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
       return'Priority';
-    } else if (this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(encounters, notifications.VITALS)) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
       return 'Awaiting';
     }
   }

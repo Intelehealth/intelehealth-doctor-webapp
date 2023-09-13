@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
-import { notifications } from 'src/config/constant';
+import { doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -80,16 +80,16 @@ export class ViewVisitSummaryComponent implements OnInit {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, notifications.PATIENT_EXIT_SURVEY)) {
-      this.visitStatus = notifications.ENDED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_COMPLETE)) {
-      this.visitStatus = notifications.COMPLETED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_NOTE)) {
-      this.visitStatus = notifications.IN_PROGRESS_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.FLAGGED)) {
-      this.visitStatus = notifications.PRIORITY_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(encounters, notifications.VITALS)) {
-      this.visitStatus = notifications.AWAITING_VISIT;
+    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+      this.visitStatus = visitTypes.ENDED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
+      this.visitStatus = visitTypes.COMPLETED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
+      this.visitStatus = visitTypes.IN_PROGRESS_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
+      this.visitStatus = visitTypes.PRIORITY_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
+      this.visitStatus = visitTypes.AWAITING_VISIT;
     }
   }
 
@@ -133,11 +133,11 @@ export class ViewVisitSummaryComponent implements OnInit {
 
   getVisitProvider(encounters: any) {
     encounters.forEach((encounter: any) => {
-      if (encounter.display.match(notifications.ADULTINITIAL) !== null) {
+      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
         this.providerName = encounter.encounterProviders[0].display;
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match(notifications.PHONE_NUMBER) != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -148,7 +148,7 @@ export class ViewVisitSummaryComponent implements OnInit {
 
   getVitalObs(encounters: any) {
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == notifications.VITALS) {
+      if (enc.encounterType.display == visitTypes.VITALS) {
         this.vitalObs = enc.obs;
       }
     });
@@ -168,21 +168,21 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == notifications.ADULTINITIAL) {
+      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == notifications.CURRENT_COMPLAINT) {
+          if (obs.concept.display == visitTypes.CURRENT_COMPLAINT) {
             const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
-                if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
+                if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   this.cheifComplaints.push(obs1[0]);
                 }
 
                 const splitByBr = currentComplaint[i].split('<br/>');
-                if (splitByBr[0].includes(notifications.ASSOCIATED_SYMPTOMS)) {
+                if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   let obj1: any = {};
-                  obj1.title = notifications.ASSOCIATED_SYMPTOMS;
+                  obj1.title = visitTypes.ASSOCIATED_SYMPTOMS;
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
@@ -213,7 +213,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   getPhysicalExamination(encounters: any) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == notifications.ADULTINITIAL) {
+      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
             const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
@@ -254,9 +254,9 @@ export class ViewVisitSummaryComponent implements OnInit {
   getMedicalHistory(encounters: any) {
     this.patientHistoryData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display == notifications.ADULTINITIAL) {
+      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display == notifications.MEDICAL_HISTORY) {
+          if (obs.concept.display == visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
             obj1.title = 'Patient history';
@@ -270,7 +270,7 @@ export class ViewVisitSummaryComponent implements OnInit {
             this.patientHistoryData.push(obj1);
           }
 
-          if (obs.concept.display == notifications.FAMILY_HISTORY) {
+          if (obs.concept.display == visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
             let obj1: any = {};
             obj1.title = 'Family history';

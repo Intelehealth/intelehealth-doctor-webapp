@@ -25,7 +25,7 @@ import { VideoCallComponent } from 'src/app/modal-components/video-call/video-ca
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
 import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -396,10 +396,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
-    this.provider = getCacheData(true,notifications.PROVIDER);
+    this.provider = getCacheData(true, doctorDetails.PROVIDER);
     medicines.forEach(med => {
       this.drugNameList.push({'id': med.id, 'name': this.translateService.instant(med.name)});
     });
@@ -414,7 +414,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   formControlValueChanges() {
     this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
       if (val) {
-        this.referSpecialityForm.get(notifications.SPECIALIZATION).setValue(null);
+        this.referSpecialityForm.get( doctorDetails.SPECIALIZATION).setValue(null);
       }
     });
 
@@ -465,10 +465,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
-        if (this.checkIfEncounterExists(visit.encounters, notifications.FLAGGED)) {
-          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, notifications.FLAGGED)['encounterDatetime'];
-        } else if (this.checkIfEncounterExists(visit.encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(visit.encounters, notifications.VITALS)) {
-          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, notifications.ADULTINITIAL)['encounterDatetime'];
+        if (this.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
+          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)['encounterDatetime'];
+        } else if (this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(visit.encounters, visitTypes.VITALS)) {
+          this.visit['visitUploadTime'] = this.checkIfEncounterExists(visit.encounters, visitTypes.ADULTINITIAL)['encounterDatetime'];
         }
         this.checkVisitStatus(visit.encounters);
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: any) => {
@@ -476,11 +476,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.patient = patient;
             this.clinicName = visit.location.display;
             // check if visit note exists for this visit
-            this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, notifications.VISIT_NOTE);
+            this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             // check if visit complete exists for this visit
-            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, notifications.VISIT_COMPLETE);
+            this.visitCompleted = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if visit note provider and logged in provider are same
-            this.visitEnded = this.checkIfEncounterExists(visit.encounters, notifications.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
+            this.visitEnded = this.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             // check if visit note exists for this visit
             this.ddxPresent = this.checkIfEncounterExists(visit.encounters, 'Differential Diagnosis');
             // check if visit note provider and logged in provider are same
@@ -546,13 +546,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getVisitProvider(encounters: any) {
     encounters.forEach((encounter: any) => {
-      if (encounter.display.match(notifications.ADULTINITIAL) !== null) {
+      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
         this.providerName = encounter.encounterProviders[0].provider.person.display;
         // store visit provider in local-Storage
-        setCacheData(notifications.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
+        setCacheData(visitTypes.PATIENT_VISIT_PROVIDER, JSON.stringify(encounter.encounterProviders[0]));
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match(notifications.PHONE_NUMBER) != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -583,7 +583,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getVitalObs(encounters: any) {
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === notifications.VITALS) {
+      if (enc.encounterType.display === visitTypes.VITALS) {
         this.vitalObs = enc.obs;
       }
     });
@@ -603,22 +603,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === notifications.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display === notifications.CURRENT_COMPLAINT) {
+          if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
             const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
-                if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
+                if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   this.cheifComplaints.push(obs1[0]);
                 }
 
                 const splitByBr = currentComplaint[i].split('<br/>');
-                if (splitByBr[0].includes(notifications.ASSOCIATED_SYMPTOMS)) {
+                if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   const obj1: any = {};
-                  obj1.title = this.translateService.instant(notifications.ASSOCIATED_SYMPTOMS);
+                  obj1.title = this.translateService.instant(visitTypes.ASSOCIATED_SYMPTOMS);
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
                     if (splitByBr[j].trim() && splitByBr[j].trim().length > 1) {
@@ -649,7 +649,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getPhysicalExamination(encounters: any) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === notifications.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display === 'PHYSICAL EXAMINATION') {
             const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
@@ -690,9 +690,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getMedicalHistory(encounters: any) {
     this.patientHistoryData = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === notifications.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display === notifications.MEDICAL_HISTORY) {
+          if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
             const obj1: any = {};
             obj1.title = this.translateService.instant('Patient history');
@@ -706,7 +706,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.patientHistoryData.push(obj1);
           }
 
-          if (obs.concept.display === notifications.FAMILY_HISTORY) {
+          if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
             const obj1: any = {};
             obj1.title = this.translateService.instant('Family history');
@@ -795,7 +795,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   getWhatsAppLink() {
-    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(notifications.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
+    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(doctorDetails.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
   }
 
   replaceWithStar(str: string) {
@@ -808,18 +808,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, notifications.PATIENT_EXIT_SURVEY)) {
-      this.visitStatus = notifications.ENDED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_COMPLETE)) {
-      this.visitStatus = notifications.COMPLETED_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.VISIT_NOTE)) {
-      this.visitStatus = notifications.IN_PROGRESS_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.FLAGGED)) {
-      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, notifications.FLAGGED)['encounterDatetime'];
-      this.visitStatus = notifications.PRIORITY_VISIT;
-    } else if (this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL) || this.checkIfEncounterExists(encounters, notifications.VITALS)) {
-      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, notifications.ADULTINITIAL)['encounterDatetime'];
-      this.visitStatus = notifications.AWAITING_VISIT;
+    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+      this.visitStatus = visitTypes.ENDED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
+      this.visitStatus = visitTypes.COMPLETED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
+      this.visitStatus = visitTypes.IN_PROGRESS_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
+      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)['encounterDatetime'];
+      this.visitStatus = visitTypes.PRIORITY_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
+      this.visit['uploadTime'] = this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL)['encounterDatetime'];
+      this.visitStatus = visitTypes.AWAITING_VISIT;
     }
   }
 
@@ -929,11 +929,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return getCacheData(true, notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   get username() {
-    return getCacheData(true, notifications.USER).username;
+    return getCacheData(true, doctorDetails.USER).username;
   }
 
   checkIfDateOldThanOneDay(data: any) {
@@ -972,7 +972,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   checkIfPatientInteractionPresent(attributes: any) {
     attributes.forEach((attr: any) => {
-      if (attr.attributeType.display === notifications.PATIENT_INTERACTION) {
+      if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION) {
         this.patientInteractionForm.patchValue({ present: true, spoken: attr.value, uuid: attr.uuid });
       }
       if (attr.attributeType.display === 'AdditionalNote') {
@@ -1531,23 +1531,23 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getDoctorDetails() {
     const d: any = {};
     const attrs: string[] = [
-      notifications.QUALIFICATION,
-      notifications.FONT_OF_SIGN,
-      notifications.WHATS_APP,
-      notifications.REGISTRATION_NUMBER,
-      notifications.CONSULTATION_LANGUAGE,
-      notifications.TYPE_OF_PROFESSION,
-      notifications.ADDRESS,
-      notifications.WORK_EXPERIENCE,
-      notifications.RESEARCH_EXPERIENCE,
-      notifications.TEXT_OF_SIGN,
-      notifications.SPECIALIZATION,
-      notifications.PHONE_NUMBER,
-      notifications.COUNTRY_CODE,
-      notifications.EMAIL_ID,
-      notifications.WORK_EXPERIENCE_DETAILS,
-      notifications.SIGNATURE_TYPE,
-      notifications.SIGNATURE
+      doctorDetails.QUALIFICATION,
+      doctorDetails.FONT_OF_SIGN,
+      doctorDetails.WHATS_APP,
+      doctorDetails.REGISTRATION_NUMBER,
+      doctorDetails.CONSULTATION_LANGUAGE,
+      doctorDetails.TYPE_OF_PROFESSION,
+      doctorDetails.ADDRESS,
+      doctorDetails.WORK_EXPERIENCE,
+      doctorDetails.RESEARCH_EXPERIENCE,
+      doctorDetails.TEXT_OF_SIGN,
+      doctorDetails.SPECIALIZATION,
+      doctorDetails.PHONE_NUMBER,
+      doctorDetails.COUNTRY_CODE,
+      doctorDetails.EMAIL_ID,
+      doctorDetails.WORK_EXPERIENCE_DETAILS,
+      doctorDetails.SIGNATURE_TYPE,
+      doctorDetails.SIGNATURE
     ];
     d.name = this.provider.person.display;
     d.uuid = this.provider.uuid;
@@ -1573,7 +1573,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: any) => {
-                if (encounter.encounterType.display === notifications.VISIT_COMPLETE) {
+                if (encounter.encounterType.display === visitTypes.VISIT_COMPLETE) {
                   visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                   encounter.obs.forEach((o: any) => {
                     if (o.concept.display === 'Doctor details') {
@@ -1600,14 +1600,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
-      if (display.match(notifications.ADULTINITIAL) !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
-          if (currentObs.display.match(notifications.CURRENT_COMPLAINT) !== null) {
+          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(notifications.ASSOCIATED_SYMPTOMS)) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -1666,7 +1666,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    deleteCacheData(notifications.PATIENT_VISIT_PROVIDER);
+    deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
   }
 
 }

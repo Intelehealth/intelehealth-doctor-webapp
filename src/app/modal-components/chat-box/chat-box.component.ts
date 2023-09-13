@@ -5,7 +5,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -35,7 +35,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const patientVisitProvider = getCacheData(true,notifications.PATIENT_VISIT_PROVIDER);
+    const patientVisitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     if (this.data.patientId && this.data.visitId) {
@@ -103,7 +103,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   onImgError(event: any) {

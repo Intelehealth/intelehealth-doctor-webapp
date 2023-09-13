@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-cancel-appointment-confirm',
@@ -42,7 +42,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   }
 
   get userId() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   close(val: any) {

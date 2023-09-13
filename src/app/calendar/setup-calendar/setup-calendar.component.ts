@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails } from 'src/config/constant';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -683,19 +683,19 @@ export class SetupCalendarComponent implements OnInit {
   };
 
   private get userId() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   private get drName() {
     return (
-      getCacheData(true,notifications.USER)?.person?.display ||
-      getCacheData(true,notifications.USER)?.display
+      getCacheData(true, doctorDetails.USER)?.person?.display ||
+      getCacheData(true, doctorDetails.USER)?.display
     );
   }
 
   private getSpeciality() {
-    return getCacheData(true,notifications.PROVIDER).attributes.find((a: any) =>
-      a.display.includes(notifications.SPECIALIZATION)
+    return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: any) =>
+      a.display.includes(doctorDetails.SPECIALIZATION)
     )?.value;
   }
 

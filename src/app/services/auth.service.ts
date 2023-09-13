@@ -11,7 +11,7 @@ import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
-import { notifications } from "src/config/constant";
+import { doctorDetails, visitTypes } from "src/config/constant";
 
 @Injectable({
   providedIn: "root",
@@ -62,9 +62,9 @@ export class AuthService {
   logout() {
     this.sessionService.session().subscribe((res) => {
       this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
-        deleteCacheData(notifications.USER);
-        deleteCacheData(notifications.PROVIDER);
-        deleteCacheData(notifications.VISIT_NOTE_PROVIDER);
+        deleteCacheData(doctorDetails.USER);
+        deleteCacheData(doctorDetails.PROVIDER);
+        deleteCacheData(visitTypes.VISIT_NOTE_PROVIDER);
         deleteCacheData('session');
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
@@ -113,7 +113,7 @@ export class AuthService {
             if (user.authenticated) {
               user.verified = false;
               setCacheData('currentUser', JSON.stringify(user));
-              setCacheData(notifications.USER, JSON.stringify(user.user));
+              setCacheData(doctorDetails.USER, JSON.stringify(user.user));
               this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
               this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
               this.currentUserSubject.next(user);
@@ -152,9 +152,9 @@ export class AuthService {
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       deleteCacheData('currentUser');
-      deleteCacheData(notifications.USER);
-      deleteCacheData(notifications.PROVIDER);
-      deleteCacheData(notifications.DOCTOR_NAME);
+      deleteCacheData(doctorDetails.USER);
+      deleteCacheData(doctorDetails.PROVIDER);
+      deleteCacheData(doctorDetails.DOCTOR_NAME);
       deleteCacheData('xsddsdass');
       deleteCacheData('token');
       deleteCacheData('socketQuery');
@@ -278,7 +278,7 @@ export class AuthService {
 
   get userId() {
     try {
-      return getCacheData(true,notifications.USER).uuid;
+      return getCacheData(true, doctorDetails.USER).uuid;
     } catch (error) {
       return null;
     }

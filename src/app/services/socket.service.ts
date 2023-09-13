@@ -13,7 +13,7 @@ import { environment } from "../../environments/environment";
 // import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
-import { notifications } from "src/config/constant";
+import { doctorDetails } from "src/config/constant";
 
 @Injectable()
 export class SocketService {
@@ -162,7 +162,7 @@ export class SocketService {
 
   get user() {
     try {
-      return getCacheData(true,notifications.USER);
+      return getCacheData(true,doctorDetails.USER);
     } catch (error) {
       return {};
     }

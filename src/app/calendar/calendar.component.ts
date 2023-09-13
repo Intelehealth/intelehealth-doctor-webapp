@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { getCacheData } from '../utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-calendar',
@@ -46,10 +46,10 @@ export class CalendarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,notifications.SELECTED_LANGUAGE));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
-    this.user = getCacheData(true,notifications.USER);
-    this.provider = getCacheData(true,notifications.PROVIDER);
+    this.user = getCacheData(true, doctorDetails.USER);
+    this.provider = getCacheData(true, doctorDetails.PROVIDER);
     this.fetchedYears.push(new Date().getFullYear());
     this.fetchedMonths.push(`${moment(new Date()).format("MMMM")} ${moment(new Date()).format("YYYY")}`);
     this.getFollowUpVisit();
@@ -69,7 +69,7 @@ export class CalendarComponent implements OnInit {
   }
 
   getAppointments(from: any, to: any) {
-    this.appointmentService.getUserSlots(getCacheData(true,notifications.USER).uuid, from, to)
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, from, to)
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: any) => {
@@ -182,7 +182,7 @@ export class CalendarComponent implements OnInit {
     let encounterDateTime = '';
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match(notifications.VISIT_NOTE) !== null) {
+      if (display.match(visitTypes.VISIT_NOTE) !== null) {
         encounterDateTime = encounter.encounterDatetime;
       }
     });
@@ -198,7 +198,7 @@ export class CalendarComponent implements OnInit {
     };
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match(notifications.ADULTINITIAL) !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         obj.hwName = encounter.encounterProviders[0].provider.person.display;
         obj.hwAge = encounter.encounterProviders[0].provider.person.age;
         obj.hwGender = encounter.encounterProviders[0].provider.person.gender;
@@ -209,23 +209,23 @@ export class CalendarComponent implements OnInit {
   }
 
   get providerId() {
-    return getCacheData(true,notifications.PROVIDER).uuid;
+    return getCacheData(true, doctorDetails.PROVIDER).uuid;
   }
 
   private get userId() {
-    return getCacheData(true,notifications.USER).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   private get drName() {
     return (
-      getCacheData(true,notifications.USER)?.person?.display ||
-      getCacheData(true,notifications.USER)?.display
+      getCacheData(true, doctorDetails.USER)?.person?.display ||
+      getCacheData(true, doctorDetails.USER)?.display
     );
   }
 
   private getSpeciality() {
-    return getCacheData(true,notifications.PROVIDER).attributes.find((a: any) =>
-      a.display.includes(notifications.SPECIALIZATION)
+    return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: any) =>
+      a.display.includes(doctorDetails.SPECIALIZATION)
     ).value;
   }
 
@@ -380,7 +380,6 @@ export class CalendarComponent implements OnInit {
     if (withConfirmation) {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
-          // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
           this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success(this.translateService.instant("The Appointment has been successfully canceled."), this.translateService.instant('Canceling successful'));
           setTimeout(() => {
@@ -397,7 +396,6 @@ export class CalendarComponent implements OnInit {
       this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
           if(res) {
             if (res.status) {
-              // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
               this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
               setTimeout(() => {
                 this.refresh.next();
@@ -410,7 +408,7 @@ export class CalendarComponent implements OnInit {
 
   reschedule(appointment: any) {
     const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes(notifications.PATIENT_EXIT_SURVEY) || e.display.includes(notifications.VISIT_COMPLETE));
+      return (e.display.includes(visitTypes.PATIENT_EXIT_SURVEY) || e.display.includes(visitTypes.VISIT_COMPLETE));
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
@@ -428,7 +426,6 @@ export class CalendarComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
                   this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
                   this.events.push({
                     id: appointment.visitUuid,
@@ -450,7 +447,6 @@ export class CalendarComponent implements OnInit {
   }
 
   checkIfDayOff(date: Date) {
-    // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
     let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[date.getMonth()] && o.year == date.getFullYear().toString());
     if (oldDaysOff && oldDaysOff?.daysOff) {
       if (oldDaysOff.daysOff.indexOf(moment(date).format('DD/MM/YYYY')) != -1) {
@@ -461,7 +457,7 @@ export class CalendarComponent implements OnInit {
   }
 
   get locale() {
-    return getCacheData(false,notifications.SELECTED_LANGUAGE);
+    return getCacheData(false, languages.SELECTED_LANGUAGE);
   }
 
 }

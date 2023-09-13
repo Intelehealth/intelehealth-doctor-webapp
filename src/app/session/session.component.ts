@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from '../utils/utility-functions';
-import { notifications } from 'src/config/constant';
+import { languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-session',
@@ -50,14 +50,14 @@ export class SessionComponent implements OnInit {
   constructor(public translate: TranslateService) { }
 
   ngOnInit(): void {
-    if(getCacheData(false,notifications.SELECTED_LANGUAGE)) {
-      this.selectedLanguage = getCacheData(false,notifications.SELECTED_LANGUAGE);
+    if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
+      this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
     }
   }
 
   changeLanguage() {
     this.translate.use(this.selectedLanguage);
-    setCacheData(notifications.SELECTED_LANGUAGE, this.selectedLanguage);
+    setCacheData( languages.SELECTED_LANGUAGE, this.selectedLanguage);
     window.location.reload();
   }
 
