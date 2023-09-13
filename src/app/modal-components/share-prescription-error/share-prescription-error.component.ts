@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-share-prescription-error',
   templateUrl: './share-prescription-error.component.html',
-  styleUrls: ['./share-prescription-error.component.scss']
 })
 export class SharePrescriptionErrorComponent implements OnInit {
 

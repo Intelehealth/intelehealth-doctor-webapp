@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-share-prescription-success',
   templateUrl: './share-prescription-success.component.html',
-  styleUrls: ['./share-prescription-success.component.scss']
 })
 export class SharePrescriptionSuccessComponent implements OnInit {
 

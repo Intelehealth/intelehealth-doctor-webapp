@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
@@ -18,11 +17,11 @@ export class LoginComponent implements OnInit {
 
   siteKey: string = environment.siteKey;
   loginForm: FormGroup;
-  submitted: boolean = false;
-  visible: boolean = false;
-  rememberMe: boolean = false;
-  loginAttempt: number = 0;
-  selectedLanguage:string ='en'
+  submitted = false;
+  visible = false;
+  rememberMe = false;
+  loginAttempt = 0;
+  selectedLanguage = 'en';
   showCaptcha: boolean = environment.showCaptcha;
 
   constructor(
@@ -33,9 +32,9 @@ export class LoginComponent implements OnInit {
     public translationService: TranslationService) {
 
     this.loginForm = new FormGroup({
-      username: new FormControl("", Validators.required),
-      password: new FormControl("", Validators.required),
-      recaptcha: new FormControl("")
+      username: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+      recaptcha: new FormControl('')
     });
     if (this.showCaptcha) {
       this.loginForm.get('recaptcha').setValidators([Validators.required]);
@@ -46,15 +45,15 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    if(getCacheData(false,'selectedLanguage')) {
-      this.translate.setDefaultLang(getCacheData(false,'selectedLanguage'));
-      this.translate.use(getCacheData(false,'selectedLanguage'));
+    if (getCacheData(false, 'selectedLanguage')) {
+      this.translate.setDefaultLang(getCacheData(false, 'selectedLanguage'));
+      this.translate.use(getCacheData(false, 'selectedLanguage'));
     } else {
-      let browserlang = this.translate.getBrowserLang();
+      const browserlang = this.translate.getBrowserLang();
       this.translate.setDefaultLang(browserlang);
-      setCacheData("selectedLanguage", browserlang);
+      setCacheData('selectedLanguage', browserlang);
     }
-    this.selectedLanguage = getCacheData(false,'selectedLanguage');
+    this.selectedLanguage = getCacheData(false, 'selectedLanguage');
     // this.checkSession();
   }
 
@@ -73,7 +72,7 @@ export class LoginComponent implements OnInit {
           this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
             if (provider.results.length) {
               setCacheData('provider', JSON.stringify(provider.results[0]));
-              setCacheData("doctorName", provider.results[0].person.display);
+              setCacheData('doctorName', provider.results[0].person.display);
               this.loginSuccess();
               // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
               //   this.loginSuccess();
@@ -86,16 +85,15 @@ export class LoginComponent implements OnInit {
               //   this.loginSuccess();
               // }
             } else {
-              this.translationService.getTranslation("Couldn't find provider.", "Login Failed!",false);
+              this.translationService.getTranslation('Couldn\'t find provider.', 'Login Failed!', false);
             }
           });
         });
-      }
-      else {
-        this.translationService.getTranslation("Couldn't find you, credentials provided are wrong.", "Login Failed!",false);
+      } else {
+        this.translationService.getTranslation('Couldn\'t find you, credentials provided are wrong.', 'Login Failed!', false);
       }
     }, err => {
-      if(this.loginAttempt < 3) this.login();
+      if (this.loginAttempt < 3) { this.login(); }
     });
   }
 
@@ -110,9 +108,9 @@ export class LoginComponent implements OnInit {
 
   loginSuccess() {
     this.authService.updateVerificationStatus();
-    this.translationService.getTranslation("You have sucessfully logged in.", "Login Successful",true);
-    let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-    let isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
+    this.translationService.getTranslation('You have sucessfully logged in.', 'Login Successful', true);
+    const role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+    const isNurse = this.rolesService.getRole('ORGANIZATIONAL: NURSE');
     if (role) {
       this.router.navigate(['/admin']);
     } else {

@@ -4,7 +4,6 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 import { ChatService } from '../services/chat.service';
 import { SocketService } from '../services/socket.service';
 import { CoreService } from '../services/core/core.service';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
@@ -22,12 +21,12 @@ export class MessagesComponent implements OnInit, OnDestroy {
   searchResults: any = [];
   selectedConversation: any;
 
-  message = "";
+  message = '';
   fromUuid = null;
   visits: any = [];
   messageList: any;
   visitId: any;
-  openMenu: boolean = false;
+  openMenu = false;
   isOver = false;
   isAttachment = false;
   readSentImg: any;
@@ -46,11 +45,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
-    this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
+    this.translateService.use(getCacheData(false, 'selectedLanguage'));
+    this.pageTitleService.setTitle({ title: 'Messages', imgUrl: 'assets/svgs/menu-message-circle.svg' });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
-    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent('updateMessage').subscribe((data) => {
       // this.socketSvc.showNotification({
       //   title: "New chat message",
       //   body: data.message,
@@ -61,7 +60,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.subscription2 = this.socketSvc.onEvent("isread").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
       this.getMessages();
     });
   }
@@ -93,7 +92,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   get patientPic() {
     if (!this.conversations.patientPic) {
-      return "assets/svgs/user.svg";
+      return 'assets/svgs/user.svg';
     }
     return this.conversations.patientPic;
   }
@@ -112,9 +111,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   submitMessage(event) {
-    let value = event.target.value.trim();
-    this.message = "";
-    if (value.length < 1) return false;
+    const value = event.target.value.trim();
+    this.message = '';
+    if (value.length < 1) { return false; }
     this.selectedConversation.latestMessage = value;
     this.selectedConversation.messages.unshift({
       id: 1,
@@ -165,7 +164,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get patientName() {
-    return getCacheData(false,'patientName') || "";
+    return getCacheData(false, 'patientName') || '';
   }
 
   clickMenu() {
@@ -202,12 +201,12 @@ export class MessagesComponent implements OnInit, OnDestroy {
             this.isAttachment = false;
           }
         });
-      this.message = "";
+      this.message = '';
     }
   }
 
   get fromUser() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, 'user').uuid;
   }
 
   setImage(src) {
@@ -226,7 +225,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.message = res.data;
         this.sendMessage();
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {
