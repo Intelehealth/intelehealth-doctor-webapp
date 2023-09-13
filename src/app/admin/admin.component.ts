@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit, OnDestroy {
 
@@ -16,7 +15,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("adminUnreadCount").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent('adminUnreadCount').subscribe((data) => {
       this.socketSvc.addCount(data);
     });
     setTimeout(() => {

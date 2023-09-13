@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-confirm-day-off',
   templateUrl: './confirm-day-off.component.html',
-  styleUrls: ['./confirm-day-off.component.scss']
 })
 export class ConfirmDayOffComponent implements OnInit {
 

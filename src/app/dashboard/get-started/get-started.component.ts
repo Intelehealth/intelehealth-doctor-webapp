@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-// import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-get-started',
@@ -12,10 +11,10 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 })
 export class GetStartedComponent implements OnInit {
 
-  doctorName : string = '';
-  greetingMsg: string = 'Hi';
-  pc: boolean = true;
-  sc: boolean = true;
+  doctorName = '';
+  greetingMsg = 'Hi';
+  pc = true;
+  sc = true;
   constructor(
     private pageTitleService: PageTitleService,
     private router: Router,
@@ -24,20 +23,21 @@ export class GetStartedComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, 'selectedLanguage'));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
-    this.doctorName = getCacheData(false,'doctorName');
-    let now = new Date();
-    let hrs = now.getHours();
-    if (hrs < 12)
+    this.doctorName = getCacheData(false, 'doctorName');
+    const now = new Date();
+    const hrs = now.getHours();
+    if (hrs < 12) {
       this.greetingMsg = 'Good Morning';
-    else if (hrs >= 12 && hrs <= 17)
+    } else if (hrs >= 12 && hrs <= 17) {
       this.greetingMsg = 'Good Afternoon';
-    else if (hrs >= 17 && hrs <= 24)
+    } else if (hrs >= 17 && hrs <= 24) {
       this.greetingMsg = 'Good Evening';
+    }
 
 
-    if (this.route.snapshot.queryParamMap.get('pc') !=null && this.route.snapshot.queryParamMap.get('sc') != null) {
+    if (this.route.snapshot.queryParamMap.get('pc') != null && this.route.snapshot.queryParamMap.get('sc') != null) {
       this.pc = !JSON.parse(this.route.snapshot.queryParamMap.get('pc'));
       this.sc = !JSON.parse(this.route.snapshot.queryParamMap.get('sc'));
     } else {

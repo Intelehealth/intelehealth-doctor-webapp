@@ -158,28 +158,28 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   personalInfoForm: FormGroup;
   professionalInfoForm: FormGroup;
-  signatureType: string = 'Draw';
-  selectedSignatureTabIndex: number = 0;
+  signatureType = 'Draw';
+  selectedSignatureTabIndex = 0;
   signatureFile: any;
   signaturePicUrl: any;
-  phoneNumberValid: boolean = false;
-  whatsAppNumberValid: boolean = false;
-  phoneNumber: string = '';
-  whatsAppNumber: string = '';
-  submitted: boolean = false;
+  phoneNumberValid = false;
+  whatsAppNumberValid = false;
+  phoneNumber = '';
+  whatsAppNumber = '';
+  submitted = false;
   providerAttributeTypes: any = [];
   phoneNumberObj: any;
   whatsAppObj: any;
   subscription1: Subscription;
   subscription2: Subscription;
-  maxTelLegth1: number = 10;
-  maxTelLegth2: number = 10;
-  oldPhoneNumber: string = '';
+  maxTelLegth1 = 10;
+  maxTelLegth2 = 10;
+  oldPhoneNumber = '';
   today: any;
-  phoneValid: boolean = false;
-  emailValid: boolean = false;
-  checkingPhoneValidity: boolean = false;
-  @ViewChild('fileUploader') fileUploader:ElementRef;
+  phoneValid = false;
+  emailValid = false;
+  checkingPhoneValidity = false;
+  @ViewChild('fileUploader') fileUploader: ElementRef;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -204,7 +204,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       countryCode2: new FormControl('+91'),
       phoneNumber: new FormControl('', [Validators.required]),
       whatsapp: new FormControl('', [Validators.required]),
-      emailId: new FormControl('', [Validators.required, Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true,'provider').uuid)]),
+      emailId: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')], [ProviderAttributeValidator.createValidator(this.authService, 'emailId', getCacheData(true, 'provider').uuid)]),
       signatureType: new FormControl('Draw', [Validators.required]),
       textOfSign: new FormControl(null),
       fontOfSign: new FormControl(null),
@@ -227,11 +227,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, 'selectedLanguage'));
     this.today = moment().format('YYYY-MM-DD');
-    this.user = getCacheData(true,'user');
-    this.provider = getCacheData(true,'provider');
-    this.doctorName = getCacheData(false,'doctorName');
+    this.user = getCacheData(true, 'user');
+    this.provider = getCacheData(true, 'provider');
+    this.doctorName = getCacheData(false, 'doctorName');
     this.profilePicUrl = this.baseUrl + '/personimage/' + this.provider.person.uuid;
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
@@ -268,10 +268,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.personalInfoForm.get('signatureType').valueChanges.subscribe(val => {
-      let tabs = ['Draw', 'Generate', 'Upload'];
+      const tabs = ['Draw', 'Generate', 'Upload'];
       if (val) {
         this.signatureType = val;
-        if (val == 'Generate') {
+        if (val === 'Generate') {
           this.personalInfoForm.get('textOfSign').setValidators([Validators.required]);
           this.personalInfoForm.get('textOfSign').updateValueAndValidity();
           this.personalInfoForm.get('fontOfSign').setValidators([Validators.required]);
@@ -282,7 +282,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           this.personalInfoForm.get('fontOfSign').clearValidators();
           this.personalInfoForm.get('fontOfSign').updateValueAndValidity();
         }
-        if (this.selectedSignatureTabIndex != tabs.indexOf(val)) {
+        if (this.selectedSignatureTabIndex !== tabs.indexOf(val)) {
           setTimeout(() => {
             this.selectedSignatureTabIndex = tabs.indexOf(val);
           }, 1000);
@@ -317,8 +317,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   patchFormValues() {
     if (this.provider) {
 
-      let personalFormValues: any = {};
-      let professionalFormValues: any = {};
+      const personalFormValues: any = {};
+      const professionalFormValues: any = {};
 
       // personalFormValues.givenName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].givenName : null,
       // personalFormValues.middleName = (this.provider.person?.names[0]) ? this.provider.person?.names[0].middleName : null,
@@ -328,7 +328,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       personalFormValues.familyName = (this.provider.person?.preferredName) ? this.provider.person?.preferredName.familyName : null,
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
-      personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null
+      personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null;
       this.providerAttributeTypes.forEach((attrType: any) => {
         switch (attrType.display) {
           case 'address':
@@ -349,7 +349,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'phoneNumber':
             personalFormValues.phoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
-            (personalFormValues.phoneNumber) ? this.phoneNumberValid = true : this.phoneNumberValid = false;
+            this.phoneNumberValid = (personalFormValues.phoneNumber) ?  true : false;
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case 'qualification':
@@ -379,7 +379,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case 'whatsapp':
             personalFormValues.whatsapp = this.getAttributeValue(attrType.uuid, attrType.display);
-            (personalFormValues.whatsapp) ? this.whatsAppNumberValid = true : this.whatsAppNumberValid = false;
+            this.whatsAppNumberValid = (personalFormValues.whatsapp) ?  true : false;
             break;
           case 'workExperience':
             professionalFormValues.workExperience = this.getAttributeValue(attrType.uuid, attrType.display);
@@ -392,9 +392,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       this.personalInfoForm.patchValue(personalFormValues);
-      if (personalFormValues.phoneNumber) this.validateProviderAttribute('phoneNumber');
+      if (personalFormValues.phoneNumber) { this.validateProviderAttribute('phoneNumber'); }
       this.professionalInfoForm.patchValue(professionalFormValues);
-      let signature = this.personalInfoForm.value.signature;
+      const signature = this.personalInfoForm.value.signature;
       switch (this.signatureType) {
         case 'Draw':
           this.signaturePad.clear();
@@ -408,7 +408,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
           fetch(signature)
             .then(res => res.blob())
             .then(blob => {
-              this.signatureFile = new File([blob], "inetelehealth", { type: this.detectMimeType(signature.split(',')[0]) });
+              this.signatureFile = new File([blob], 'inetelehealth', { type: this.detectMimeType(signature.split(',')[0]) });
             });
           break;
         default:
@@ -420,7 +420,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
-      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid && this.provider.attributes[i].voided == false) {
+      if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrValue = this.provider.attributes[i].value;
         break;
       }
@@ -437,35 +437,35 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
-        this.toastr.warning(this.translateService.instant("Upload JPG/JPEG format image only."), this.translateService.instant("Upload error!"));
+        this.toastr.warning(this.translateService.instant('Upload JPG/JPEG format image only.'), this.translateService.instant('Upload error!'));
         return;
       }
 
       if (this.dialogRef) {
         this.dialogRef.close();
         return;
-      };
+      }
 
-      let imageBase64 = await this.coreService.blobToBase64(this.file);
-      this.dialogRef = this.coreService.openImageCropModal({base64:imageBase64.toString().split(',')[1]});
+      const imageBase64 = await this.coreService.blobToBase64(this.file);
+      this.dialogRef = this.coreService.openImageCropModal({base64: imageBase64.toString().split(',')[1]});
       this.dialogRef.afterClosed().subscribe(async result => {
-        if(result){
-          let imageBlob = result.toString().split(',')[1];
-          let payload = {
+        if (result) {
+          const imageBlob = result.toString().split(',')[1];
+          const payload = {
             person: this.provider.person.uuid,
             base64EncodedImage: imageBlob
-          }
+          };
           this.profileService.updateProfileImage(payload).subscribe((res: any) => {
             this.profilePicUrl = result;
             this.profileService.setProfilePic(result);
-            this.toastr.success(this.translateService.instant("Profile picture uploaded successfully!"), this.translateService.instant("Profile Pic Uploaded"));
+            this.toastr.success(this.translateService.instant('Profile picture uploaded successfully!'), this.translateService.instant('Profile Pic Uploaded'));
           });
         }
         this.dialogRef = undefined;
         this.fileUploader.nativeElement.value = null;
       });
 
-      
+
     }
   }
 
@@ -515,13 +515,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.phoneNumberValid = false;
         this.phoneNumberObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode1: event?.dialCode });
-        this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
+        this.maxTelLegth1 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o !== ' ').length;
         break;
       case 'whatsAppNumber':
         this.whatsAppNumberValid = false;
         this.whatsAppObj.setCountry(event.iso2);
         this.personalInfoForm.patchValue({ countryCode2: event?.dialCode });
-        this.maxTelLegth2 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o != ' ').length;
+        this.maxTelLegth2 = this.authService.getInternationalMaskByCountryCode(event.iso2.toUpperCase(), false).filter((o) => o !== ' ').length;
         break;
     }
   }
@@ -547,26 +547,26 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   onFilesDropped(event: any) {
     if (event.addedFiles.length) {
       this.signatureFile = event.addedFiles[0];
-      let filename = this.signatureFile.name;
+      const filename = this.signatureFile.name;
       if (!filename.endsWith('.png') || filename.endsWith('.jgp') || filename.endsWith('.jpeg')) {
         this.reset();
-        alert("Please upload png, jpg or jpeg file only.");
+        alert('Please upload png, jpg or jpeg file only.');
         return;
       }
       const fileReader = new FileReader();
       fileReader.onload = () => {
         this.signaturePicUrl = fileReader.result;
-      }
+      };
       fileReader.onerror = (error) => {
         this.reset();
-      }
+      };
       fileReader.readAsDataURL(this.signatureFile);
     }
     if (event.rejectedFiles.length) {
-      if (event.rejectedFiles[0].reason == 'size') {
+      if (event.rejectedFiles[0].reason === 'size') {
         this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
       }
-      if (event.rejectedFiles[0].reason == 'type') {
+      if (event.rejectedFiles[0].reason === 'type') {
         this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having type png, jpg, jpeg only.'), this.translateService.instant('Invalid File!'));
       }
     }
@@ -582,12 +582,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
       return;
     }
-    if (this.selectedSignatureTabIndex == 0 && this.signaturePad.isEmpty()) {
-      this.toastr.warning(this.translateService.instant("Please draw your signature."), this.translateService.instant("Draw Signature"));
+    if (this.selectedSignatureTabIndex === 0 && this.signaturePad.isEmpty()) {
+      this.toastr.warning(this.translateService.instant('Please draw your signature.'), this.translateService.instant('Draw Signature'));
       return;
     }
-    if (this.selectedSignatureTabIndex == 2 && !this.signatureFile) {
-      this.toastr.warning(this.translateService.instant("Please upload signature."), this.translateService.instant("Upload Signature"));
+    if (this.selectedSignatureTabIndex === 2 && !this.signatureFile) {
+      this.toastr.warning(this.translateService.instant('Please upload signature.'), this.translateService.instant('Upload Signature'));
       return;
     }
     this.stepper.next();
@@ -600,7 +600,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    let pf1 = this.personalInfoForm.value;
+    const pf1 = this.personalInfoForm.value;
 
     this.providerService.updatePerson(this.provider.person.uuid, pf1.gender, pf1.age, pf1.birthdate).subscribe(res1 => {
       if (this.provider.person?.preferredName) {
@@ -621,7 +621,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     switch (this.signatureType) {
       case 'Draw':
-        signature = this.signaturePad.toDataURL("image/jpeg");
+        signature = this.signaturePad.toDataURL('image/jpeg');
         this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res: any) => {
           this.personalInfoForm.patchValue({ signature });
           this.updateProviderAttributes();
@@ -631,13 +631,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'Generate':
         this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm('textOfSign'), this.getAttributeValueFromForm('fontOfSign')).subscribe((res: any) => {
           if (res.fname) {
-            fetch(res.fname).then(res => res.blob()).then(blob => {
-              let reader = new FileReader();
+            fetch(res.fname).then(pRes => pRes.blob()).then(blob => {
+              const reader = new FileReader();
               reader.onload = () => {
                 signature = reader.result.toString();
                 this.personalInfoForm.patchValue({ signature });
                 this.updateProviderAttributes();
-              }
+              };
               reader.readAsDataURL(blob);
             });
           }
@@ -658,7 +658,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateProviderAttributes() {
-    let requests = [];
+    const requests = [];
     this.providerAttributeTypes.forEach((attrType: any) => {
       switch (attrType.display) {
         case 'address':
@@ -715,21 +715,21 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
-      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber != this.getAttributeValueFromForm('phoneNumber')) {
-        this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
-        this.toastr.warning(this.translateService.instant("Kindly re-login to see updated details"), this.translateService.instant("Re-login"));
+      if (this.personalInfoForm.get('phoneNumber').dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm('phoneNumber')) {
+        this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+        this.toastr.warning(this.translateService.instant('Kindly re-login to see updated details'), this.translateService.instant('Re-login'));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(getCacheData(true,'user').uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true, 'user').uuid).subscribe((provider: any) => {
           if (provider.results.length) {
             setCacheData('provider', JSON.stringify(provider.results[0]));
-            setCacheData("doctorName", provider.results[0].person.display);
-            let u = getCacheData(true,'user');
+            setCacheData('doctorName', provider.results[0].person.display);
+            const u = getCacheData(true, 'user');
             u.person.display = provider.results[0].person.display;
-            setCacheData("user", JSON.stringify(u));
-            this.toastr.success(this.translateService.instant("Profile has been updated successfully"), this.translateService.instant("Profile Updated"));
-            let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
+            setCacheData('user', JSON.stringify(u));
+            this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+            const role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
               this.router.navigate(['/admin']);
             } else {
@@ -744,7 +744,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   getAttributeUuid(uuid: string, display: string) {
     let attrUuid = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
-      if (this.provider.attributes[i].attributeType.display == display && this.provider.attributes[i].attributeType.uuid == uuid && this.provider.attributes[i].voided == false) {
+      if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrUuid = this.provider.attributes[i].uuid;
         break;
       }
@@ -765,7 +765,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {
       if (res.success) {
-        (type == 'phoneNumber') ? this.phoneValid = res.data : this.emailValid = res.data;
+        if (type === 'phoneNumber') {
+          this.phoneValid = res.data;
+        } else {
+          this.emailValid = res.data;
+        }
         setTimeout(() => {
           this.checkingPhoneValidity = false;
         }, 500);

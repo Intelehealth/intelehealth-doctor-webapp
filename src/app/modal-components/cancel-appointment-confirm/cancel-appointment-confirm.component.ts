@@ -8,14 +8,13 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 @Component({
   selector: 'app-cancel-appointment-confirm',
   templateUrl: './cancel-appointment-confirm.component.html',
-  styleUrls: ['./cancel-appointment-confirm.component.scss']
 })
 export class CancelAppointmentConfirmComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
-    private toastr: ToastrService, private translateService:TranslateService) {
+    private toastr: ToastrService, private translateService: TranslateService) {
 
   }
 
@@ -29,11 +28,11 @@ export class CancelAppointmentConfirmComponent implements OnInit {
       hwUUID: this.userId,
     };
     this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
-        if(res) {
+        if (res) {
           if (res.status) {
             this.close(true);
           } else {
-            this.toastr.error(this.translateService.instant("You can't cancel the past appointment"), this.translateService.instant("Can't Cancel"));
+            this.toastr.error(this.translateService.instant('You can\'t cancel the past appointment'), this.translateService.instant('Can\'t Cancel'));
             this.close(false);
           }
         }
@@ -41,7 +40,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
   }
 
   get userId() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, 'user').uuid;
   }
 
   close(val: any) {

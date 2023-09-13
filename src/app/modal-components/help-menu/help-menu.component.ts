@@ -7,12 +7,11 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 @Component({
   selector: 'app-help-menu',
   templateUrl: './help-menu.component.html',
-  styleUrls: ['./help-menu.component.scss']
 })
 export class HelpMenuComponent implements OnInit, OnDestroy {
 
   messages: any = [];
-  message: string = "";
+  message = '';
   subscription1: Subscription;
   subscription2: Subscription;
 
@@ -21,7 +20,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getMessages(true);
     this.socketService.initSocketSupport(true);
-    this.subscription1 = this.socketService.onEvent("supportMessage").subscribe((data) => {
+    this.subscription1 = this.socketService.onEvent('supportMessage').subscribe((data) => {
       // this.socketService.showNotification({
       //   title: "New message from support team",
       //   body: data.message,
@@ -29,11 +28,11 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       // });
 
       this.readMessagesSupport(data.id);
-      this.messages= data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messages = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.subscription2 = this.socketService.onEvent("isreadSupport").subscribe((data) => {
-      if (data.msgTo == 'System Administrator') {
+    this.subscription2 = this.socketService.onEvent('isreadSupport').subscribe((data) => {
+      if (data.msgTo === 'System Administrator') {
         this.getMessages();
       }
     });
@@ -49,7 +48,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       };
       this.supportService.sendMessage(payload).subscribe((res: any) => {
         if (res.success) {
-          this.message = "";
+          this.message = '';
           this.getMessages();
         }
       });
@@ -63,7 +62,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
           if (res.success) {
             this.messages = res?.data;
             if (init && this.messages.length) {
-              let mid = this.messages.find(m => m.from == 'System Administrator')?.id;
+              const mid = this.messages.find(m => m.from === 'System Administrator')?.id;
               if (mid) {
                 this.readMessagesSupport(mid);
               }
@@ -84,7 +83,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   }
 
   get user() {
-    return getCacheData(true,'user');
+    return getCacheData(true, 'user');
   }
 
   ngOnDestroy(): void {
