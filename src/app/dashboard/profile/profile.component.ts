@@ -733,7 +733,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             if (role) {
               this.router.navigate(['/admin']);
             } else {
-              this.router.navigate(['/dashboard']);
+              this.stepper.reset();
             }
           }
         });
