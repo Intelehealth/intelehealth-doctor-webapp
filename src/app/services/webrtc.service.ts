@@ -16,13 +16,13 @@ import {
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
-import { getCacheData } from '../utils/utility-functions';
+import { VisitService } from './visit.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebrtcService {
-  public room: any | null = null;
+  public room: any | null | Room = null;
   public url: string = environment.webrtcSdkServerUrl;
   public token: any | null = null;
   public appToken: any | null = null;
@@ -30,9 +30,11 @@ export class WebrtcService {
   public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
+  public visitHolderId: null;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private visitSvc: VisitService
   ) {
     /**
      *  trace = 0,
@@ -42,9 +44,9 @@ export class WebrtcService {
      *  error = 4,
      *  silent = 5,
      */
-    if (getCacheData(false,'webrtcLogLevel')) {
+    if (localStorage.webrtcLogLevel) {
       try {
-        setLogLevel(getCacheData(true,'webrtcLogLevel'));
+        setLogLevel(JSON.parse(localStorage.webrtcLogLevel));
       } catch (error) {
         console.log('error: ', error);
       }
@@ -68,7 +70,6 @@ export class WebrtcService {
     handleConnect = this.noop,
     handleLocalTrackUnpublished = this.handleLocalTrackUnpublished,
     handleLocalTrackPublished = this.attachLocalVideo.bind(this),
-    autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
     handleTrackMuted = this.noop,
@@ -89,7 +90,12 @@ export class WebrtcService {
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: VideoPresets.h90.resolution,
+        resolution: {
+          aspectRatio: 1.7777777777777777,
+          frameRate: 15,
+          height: 160,
+          width: 90
+        },
       },
       audioCaptureDefaults: {
         echoCancellation: true,
@@ -110,21 +116,17 @@ export class WebrtcService {
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-
+      .on(RoomEvent.SignalConnected, async () => {
+        await this.room.localParticipant.enableCameraAndMicrophone();
+      });
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
-
-    console.clear();
     await this.room.connect(this.url, this.token);
-
-    if (autoEnableCameraOnConnect) {
-      await this.room.localParticipant.enableCameraAndMicrophone();
-    }
   }
 
   clearAudioVideo() {
     try {
-      this.localContainer.innerHTML = '';
-      this.remoteContainer.innerHTML = '';
+      if (this.localContainer) this.localContainer.innerHTML = '';
+      if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
       console.log('error: ', error);
     }
@@ -174,7 +176,7 @@ export class WebrtcService {
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
-    // track?.detach();
+    if (track?.detach) track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
@@ -201,8 +203,13 @@ export class WebrtcService {
 
   handleDisconnect() {
     this.room.disconnect(true);
+    this.callConnected = false;
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
+  }
+
+  async disconnect(stopTracks = true) {
+    this.room.disconnect(stopTracks);
   }
 
   get remoteContainer() {
@@ -258,4 +265,15 @@ export class WebrtcService {
     console.log('Not Implemented.')
   }
 
+  updateVisitHolderId(uuid: string) {
+    return new Promise((res, rej) => {
+      this.visitSvc.fetchVisitDetails(uuid).subscribe((visit: any) => {
+        this.visitHolderId = visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder')?.value;
+        res(this.visitHolderId);
+      }, (error: any) => {
+        res(false);
+      });
+    });
+  }
 }
+
