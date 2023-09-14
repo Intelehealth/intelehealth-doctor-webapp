@@ -76,18 +76,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.initSocketEvents();
 
     this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     await this.connect();
-    // await this.changeVoiceCallIcons();
     /**
      * Don't remove this, required change detection for duration
      */
@@ -223,16 +216,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.socketSvc.emitEvent("create or join", this.room);
     }, 500);
   }
-
-  // async changeVoiceCallIcons() {
-  //   this.voiceCallIcons = of(
-  //     "assets/svgs/mute-voice.svg",
-  //     "assets/svgs/Unmute.svg"
-  //   ).pipe(
-  //     concatMap((url) => of(url).pipe(delay(1000))),
-  //     repeat()
-  //   );
-  // }
 
   initSocketEvents() {
     this.socketSvc.onEvent("message").subscribe((data) => {

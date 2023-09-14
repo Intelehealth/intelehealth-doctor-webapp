@@ -26,7 +26,6 @@
                       <input
                         type="text"
                         [(ngModel)]="searchValue"
-                        (ngModelChange)="search()"
                         class="form-control"
                         placeholder="{{'Search by patient name or ID'|translate}}"
                         aria-label="Username"
@@ -113,9 +112,6 @@
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
                     </ng-select>
-                    <!-- <button mat-icon-button>
-                      <img src="assets/svgs/phone.svg" alt="" />
-                    </button> -->
                   </div>
                 </div>
                 <div class="chat-con-body">
@@ -172,15 +168,6 @@
                       </li>
                     </ng-container>
                   </ul>
-                  <!-- <ul class="chat-messages-list">
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message">The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.</li>
-                    <li class="chat-message">The patient was not feeling good for 2-3 days but lately the patient is doing well. </li>
-                    <li class="chat-message right">Hi! How is patient feeling now?</li>
-
-                  </ul> -->
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
                       <input

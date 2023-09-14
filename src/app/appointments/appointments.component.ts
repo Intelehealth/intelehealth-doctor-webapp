@@ -154,9 +154,6 @@ export class AppointmentsComponent implements OnInit {
   }
 
   reschedule(appointment: any) {
-    // const len = appointment.visit_info.encounters.filter((e: any) => {
-    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
-    // }).length;
     const len = appointment.visit.encounters.filter((e: any) => {
       return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;

@@ -53,7 +53,6 @@ export class ViewVisitSummaryComponent implements OnInit {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
-            // this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             this.getVitalObs(visit.encounters);
             this.getCheckUpReason(visit.encounters);

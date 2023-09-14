@@ -12,11 +12,6 @@ export class VisitService {
   private baseURL = environment.baseURL;
   private baseURLMindmap = environment.mindmapURL;
 
-  // public flagVisit: VisitData[] = [];
-  // public waitingVisit: VisitData[] = [];
-  // public progressVisit: VisitData[] = [];
-  // public completedVisit: VisitData[] = [];
-
   public isVisitSummaryShow: boolean = false;
 
   public isHelpButtonShow: boolean = false;
@@ -43,13 +38,6 @@ export class VisitService {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?includeInactive=false&v=custom:(uuid,patient:(uuid,identifiers:(identifier),person:(display,gender,age,birthdate)),location:(display),encounters:(display,encounterDatetime,voided,encounterType:(display),encounterProviders),attributes)`;
     return this.http.get(url);
-  }
-
-  clearVisits() {
-    // this.flagVisit = new Array();
-    // this.waitingVisit = new Array();
-    // this.progressVisit = new Array();
-    // this.completedVisit = new Array();
   }
 
   recentVisits(id): Observable<any> {

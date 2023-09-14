@@ -80,16 +80,6 @@ export class SetupCalendarComponent implements OnInit {
       name: 'Sunday',
       shortName: 'Sun'
     },
-    // {
-    //   id: 8,
-    //   name: 'Weekdays',
-    //   shortName: 'Weekdays'
-    // },
-    // {
-    //   id: 9,
-    //   name: 'Weekends',
-    //   shortName: 'Weekends'
-    // }
   ];
   timeList: any = [
     { id: 1, name: "9:00" },
@@ -203,7 +193,6 @@ export class SetupCalendarComponent implements OnInit {
             this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
           }
           else {
-            // this.selectedMonth = _.find(this.scheduledMonths, { name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear().toString() });
             this.selectedMonth = this.scheduledMonths.find((o: any) => o.name == this.monthNames[new Date().getMonth()] && o.year == new Date().getFullYear().toString());
             if (this.selectedMonth) {
               this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
@@ -250,7 +239,6 @@ export class SetupCalendarComponent implements OnInit {
     this.ft.clear();
     this.fd.clear();
     this.fs.clear();
-    // let uniqTiming = _.uniqWith(schedule.slotSchedule, (arrVal: any, otherVal: any) => { return arrVal.startTime == otherVal.startTime && arrVal.endTime == otherVal.endTime });
     let uniqTiming = [];
     for (let h = 0; h < schedule.slotSchedule.length; h++) {
       if (uniqTiming.findIndex((o: any) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
@@ -258,14 +246,12 @@ export class SetupCalendarComponent implements OnInit {
       }
     }
     uniqTiming.forEach((ut: any) => {
-      // let utslots = _.filter(schedule.slotSchedule, { startTime: ut.startTime, endTime: ut.endTime });
       let utslots = schedule.slotSchedule.filter((o: any) => o.startTime == ut.startTime && o.endTime == ut.endTime);
       let timingFormGroup = new FormGroup({
         startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
         startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
         endTime: new FormControl({ value: ut.endTime.split(" ")[0], disabled: true }, Validators.required),
         endMeridiem: new FormControl({ value: ut.endTime.split(" ")[1], disabled: true }, Validators.required),
-        // days: new FormControl({ value: _.map(_.uniq(_.map(utslots,'day')), (val) => val.slice(0,3)), disabled: true }, Validators.required),
         days: new FormControl({ value: [...new Set(utslots.map((item: any) => item.day))].map((val: any) => val.slice(0,3)), disabled: true }, Validators.required),
         slots: this.getSlotsArray(utslots)
       });
@@ -350,7 +336,6 @@ export class SetupCalendarComponent implements OnInit {
         let oldSlots = [...this.getSlotsFormArray(i).value];
         this.getSlotsFormArray(i).clear();
         for (let x = 0; x < oldSlots.length; x++) {
-          // if (_.find(newSlots, { date: oldSlots[x].date, day: oldSlots[x].day })) {
           if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
@@ -374,7 +359,6 @@ export class SetupCalendarComponent implements OnInit {
         }
         oldSlots = [...this.getSlotsFormArray(i).value];
         for (let x = 0; x < newSlots.length; x++) {
-          // if (!_.find(oldSlots, { date: newSlots[x].date, day: newSlots[x].day })) {
           if (!oldSlots.find((o: any) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
@@ -398,7 +382,6 @@ export class SetupCalendarComponent implements OnInit {
         }
 
         if (i == ts.length-1) {
-          // this.addSlotsForm.get('slotDays').setValue(_.uniq(_.map([...this.getSlotsFormArray(i).value],'day')).join('||'));
           this.addSlotsForm.get('slotDays').setValue([...new Set([...this.getSlotsFormArray(i).value].map((o: any) => o.day))].join('||'));
         }
       }
@@ -441,7 +424,6 @@ export class SetupCalendarComponent implements OnInit {
               let oldSlots = [...this.getSlotsFormArray(i).value];
               this.getSlotsFormArray(i).clear();
               for (let x = 0; x < oldSlots.length; x++) {
-                // if (_.find(newSlots, { date: oldSlots[x].date, day: oldSlots[x].day })) {
                 if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
                   this.getSlotsFormArray(i).push(
                     new FormGroup({
@@ -465,7 +447,6 @@ export class SetupCalendarComponent implements OnInit {
               }
               oldSlots = [...this.getSlotsFormArray(i).value];
               for (let x = 0; x < newSlots.length; x++) {
-                // if (!_.find(oldSlots, { date: newSlots[x].date, day: newSlots[x].day })) {
                 if (!oldSlots.find((o: any) => o.date == newSlots[x].date  && o.day == newSlots[x].day)) {
                   this.getSlotsFormArray(i).push(
                     new FormGroup({
@@ -581,9 +562,6 @@ export class SetupCalendarComponent implements OnInit {
 
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
-        // let finalDaysOff = _.map(_.uniq([...this.fd.value].concat(this.daysOffSelected)), (val: any)=> {
-        //   return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
-        // });
         let finalDaysOff = [...new Set([...this.fd.value].concat(this.daysOffSelected))].map((val: any)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
         });
@@ -646,9 +624,6 @@ export class SetupCalendarComponent implements OnInit {
       if (res) {
         let finalDaysOff = [...this.fd.value];
         finalDaysOff.splice(index, 1);
-        // finalDaysOff = _.map(_.uniq(finalDaysOff), (val: any)=> {
-        //   return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
-        // });
         finalDaysOff = [...new Set(finalDaysOff)].map((val: any)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
         });
@@ -713,7 +688,6 @@ export class SetupCalendarComponent implements OnInit {
         let oldSlots = [...this.getSlotsFormArray(i).value];
         this.getSlotsFormArray(i).clear();
         for (let x = 0; x < oldSlots.length; x++) {
-          // if (_.find(newSlots, { date: oldSlots[x].date, day: oldSlots[x].day })) {
           if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
@@ -737,7 +711,6 @@ export class SetupCalendarComponent implements OnInit {
         }
         oldSlots = [...this.getSlotsFormArray(i).value];
         for (let x = 0; x < newSlots.length; x++) {
-          // if (!_.find(oldSlots, { date: newSlots[x].date, day: newSlots[x].day })) {
           if (oldSlots.find((o: any) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({

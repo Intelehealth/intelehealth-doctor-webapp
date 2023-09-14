@@ -43,14 +43,7 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
-    // this.socketSvc.initSocketSupport(true);
     this.subscription1 = this.socketSvc.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message for support",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
         this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
@@ -110,18 +103,6 @@ export class SupportComponent implements OnInit, OnDestroy {
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
   }
-
-  // submitMessage(event) {
-  //   let value = event.target.value.trim();
-  //   this.message = "";
-  //   if (value.length < 1) return false;
-  //   this.selectedConversation.latestMessage = value;
-  //   this.selectedConversation.messages.unshift({
-  //     id: 1,
-  //     message: value,
-  //     me: true,
-  //   });
-  // }
 
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)

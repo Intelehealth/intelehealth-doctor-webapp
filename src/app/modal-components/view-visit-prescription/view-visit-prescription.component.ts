@@ -88,7 +88,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
-            // this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
             this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
@@ -179,13 +178,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
             uuid: obs.uuid
           });
-          // this.diagnosis = {
-          //   present: true,
-          //   diagnosisIdentified: 'Yes',
-          //   diagnosisName: obs.value.split(':')[0].trim(),
-          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
-          // };
         }
       });
     });
@@ -427,7 +419,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           table: {
             widths: ['20%', '*', '30%', '30%'],
             body: [
-              // ['', '', '', { image: 'logo', width: 90, height: 30, alignment: 'right' }],
               [
                 {
                   colSpan: 4,
@@ -839,7 +830,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         },
       },
       defaultStyle: {
-        // alignment: 'justify',
         font: 'DmSans'
       }
     }).download('e-precription');

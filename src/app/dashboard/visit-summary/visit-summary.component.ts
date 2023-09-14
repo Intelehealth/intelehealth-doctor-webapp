@@ -141,12 +141,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     {id: 1, name: 'Urgent'}
   ];
 
-  diagnosis: any[] = [
-    // {
-    //   id: 1,
-    //   name: 'Viral Flu'
-    // }
-  ];
+  diagnosis: any[] = [];
   strengthList: any[] = [
     {
       id: 1,
@@ -344,8 +339,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.diagnosisForm = new FormGroup({
-      // present: new FormControl(false, [Validators.required]),
-      // diagnosisIdentified: new FormControl('No', [Validators.required]),
       diagnosisName: new FormControl(null, Validators.required),
       diagnosisType: new FormControl(null, Validators.required),
       diagnosisStatus: new FormControl(null, Validators.required)
@@ -403,7 +396,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     medicines.forEach(med => {
       this.drugNameList.push({'id': med.id, 'name': this.translateService.instant(med.name)});
     });
-    // this.timeList = this.getHours();
     this.getVisit(id);
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
@@ -1022,13 +1014,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
             uuid: obs.uuid
           });
-          // this.diagnosisForm.patchValue({
-          //   present: true,
-          //   diagnosisIdentified: 'Yes',
-          //   diagnosisName: obs.value.split(':')[0].trim(),
-          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
-          // });
         }
       });
     });
@@ -1036,7 +1021,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   onKeyUp(event: any) {
     this.dSearchSubject.next(event.term);
-    // this.dSearchSubject.next(event.target.value);
   }
 
   searchDiagnosis(val: any) {
@@ -1073,7 +1057,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {
-        // this.diagnosisForm.patchValue({ present: true });
         this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
         this.diagnosisForm.reset();
       }

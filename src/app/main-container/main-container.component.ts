@@ -33,8 +33,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   collapsed = false;
   baseUrl: string = environment.baseURL;
   baseURLLegacy: string = environment.baseURLLegacy;
-  // user: any;
-  // provider: any;
   username = '';
   header: PageTitleItem;
   _mode = 'side';
@@ -55,7 +53,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   notificationEnabled = false;
   profilePic: string;
   profilePicSubscription;
-  // baseUrl + '/personimage/' + provider?.person.uuid
 
   constructor(
     private cdref: ChangeDetectorRef,
@@ -80,8 +77,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   ngOnInit(): void {
-    // this.user = getCacheData(true,'user'));
-    // this.provider = getCacheData(true,'provider'));
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.title.subscribe((val: PageTitleItem) => {
       this.header = val;
@@ -99,16 +94,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this._opened = !this.isMobile;
       this.sidebarClosed = false;
     });
-
-    // this.subscription = this.searchForm.valueChanges.pipe(
-    //   debounceTime(1000),
-    //   distinctUntilChanged()
-    // ).subscribe(val => {
-    //   if (this.searchForm.invalid) {
-    //     return;
-    //   }
-    //   this.search();
-    // });
 
     this.subscription = this.router.events.pipe(
       filter((event: Event) => event instanceof NavigationEnd),
@@ -249,7 +234,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     if (isDynamicRoute && !!rs) {
       const paramName = lastRoutePart.split(':')[1];
       path = path.replace(lastRoutePart, rs.params[paramName]);
-      // label = rs.params[paramName];
     }
 
     // In the routeConfig the complete path is not available,

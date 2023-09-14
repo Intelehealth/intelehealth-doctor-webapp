@@ -161,7 +161,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       this.providerAttributeTypes.forEach((attrType: any) => {
         switch (attrType.display) {
           case doctorDetails.ADDRESS:
-
             break;
           case doctorDetails.CONSULTATION_LANGUAGE:
             break;
@@ -181,7 +180,6 @@ export class HwProfileComponent implements OnInit, OnDestroy {
             this.oldPhoneNumber = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case doctorDetails.QUALIFICATION:
-
             break;
           case doctorDetails.REGISTRATION_NUMBER:
             break;

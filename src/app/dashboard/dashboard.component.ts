@@ -101,31 +101,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/get-started']);
       }
       this.getAppointments();
-      // this.getVisits();
-      // this.getVisitCounts(this.specialization);
       this.getAwaitingVisits(1);
       this.getPriorityVisits(1);
       this.getInProgressVisits(1);
     }
 
-
     this.socket.initSocket(true);
-    // this.socket.onEvent("updateMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
-    // this.socket.onEvent("supportMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New support chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
   }
 
   getAwaitingVisits(page: number = 1) {
@@ -161,7 +142,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
       this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator2.nextPage();
       } else {
@@ -204,7 +184,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
       this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator1.nextPage();
       } else {
@@ -248,7 +227,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
       this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator3.nextPage();
       } else {

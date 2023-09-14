@@ -63,7 +63,6 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     if (((event.pageIndex + 1) * this.pageSize) > this.recordsFetched) {
       this.fetchPageEvent.emit((this.recordsFetched + this.offset) / this.offset);
     } else {
-      // this.dataSource = new MatTableDataSource(this.prescriptionsSent.slice(event.pageIndex*this.pageSize, (event.pageIndex+1)*this.pageSize));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator.nextPage();
       } else {
