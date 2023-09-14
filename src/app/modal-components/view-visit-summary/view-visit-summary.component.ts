@@ -102,7 +102,7 @@ export class ViewVisitSummaryComponent implements OnInit {
 
   getAge(birthdate: string) {
     let years = moment().diff(birthdate, 'years');
-    var months = moment().diff(birthdate, 'months');
+    let months = moment().diff(birthdate, 'months');
     let days = moment().diff(birthdate, 'days');
     if (years > 1) {
       return `${years} years`;

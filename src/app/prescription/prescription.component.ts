@@ -31,7 +31,6 @@ export class PrescriptionComponent implements OnInit {
         this.specialization = this.getSpecialization(provider.attributes);
       }
     }
-    // this.getVisits();
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
   }
@@ -168,26 +167,6 @@ export class PrescriptionComponent implements OnInit {
               this.prescriptionSent.push(visit);
             }
           }
-
-
-          // let flag = 0;
-          // visit.encounters.forEach((encounter: any) => {
-          //   if (encounter.encounterType.display == 'Patient Exit Survey') {
-          //     visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-          //     visit.cheif_complaint = this.getCheifComplaint(visit);
-          //     this.completedVisits.push(visit);
-          //     flag = 1;
-          //   }
-          // });
-          // if (flag == 0) {
-          //   visit.encounters.forEach((encounter: any) => {
-          //     if (encounter.encounterType.display == 'Visit Complete') {
-          //       visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-          //       visit.cheif_complaint = this.getCheifComplaint(visit);
-          //       this.prescriptionSent.push(visit);
-          //     }
-          //   });
-          // }
         });
         this.loaded1 = true;
       }

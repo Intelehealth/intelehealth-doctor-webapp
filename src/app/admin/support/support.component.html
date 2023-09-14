@@ -42,7 +42,6 @@
                             }}
                             <span class="badge badge-success" *ngIf="conversation?.unread">{{conversation?.unread}}</span>
                           </h6>
-                          <!-- <p>{{ conversation.message }}</p> -->
                         </div>
                       </div>
                     </li>
@@ -63,9 +62,6 @@
                         : 'Unknown'| translate
                         }}
                       </h6>
-                      <!-- <span>
-                        CHW: {{ selectedConversation?.hwName | titlecase }}
-                      </span> -->
                     </div>
                   </div>
                 </div>
@@ -99,7 +95,7 @@
                               isPdf(item.message)
                                 ? pdfDefaultImage
                                 : defaultImage
-                            " (click)="setImage(item.message)" />
+                            " (click)="setImage(item.message)" alt=""/>
                         </ng-container>
                         <ng-template #message>
                           {{ item.message }}

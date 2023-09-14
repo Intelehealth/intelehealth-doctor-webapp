@@ -53,10 +53,8 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     }
 
     if (!this.accessToken) {
-      // this.verifyMobileNumber();
       this.getVisitFromHash();
     } else {
-      // this.verifyToken();
       this.prescriptionVerified = true;
       this.meta.updateTag({ name: 'viewport', content: 'width=1024' });
     }

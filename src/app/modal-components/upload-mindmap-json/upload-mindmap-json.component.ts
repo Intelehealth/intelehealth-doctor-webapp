@@ -75,9 +75,6 @@ export class UploadMindmapJsonComponent implements OnInit {
   }
 
   uploadMindmap() {
-    if (this.file, this) {
-
-    }
     this.dialogRef.close({
       filename: this.filename,
       value: this.jsonData
