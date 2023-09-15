@@ -7,7 +7,6 @@ import { setCacheData } from 'src/app/utils/utility-functions';
 @Component({
   selector: 'app-select-language',
   templateUrl: './select-language.component.html',
-  styleUrls: ['./select-language.component.scss']
 })
 export class SelectLanguageComponent implements OnInit {
 
@@ -26,7 +25,7 @@ export class SelectLanguageComponent implements OnInit {
   select() {
     this.translate.use(this.languageForm.value.language);
     this.translate.setDefaultLang(this.languageForm.value.language);
-    setCacheData("selectedLanguage", this.languageForm.value.language);
+    setCacheData('selectedLanguage', this.languageForm.value.language);
     this.dialogRef.close(this.languageForm.value);
     window.location.reload();
   }
