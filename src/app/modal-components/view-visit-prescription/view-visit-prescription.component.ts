@@ -9,6 +9,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { doctorDetails, visitTypes } from 'src/config/constant';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -87,10 +88,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
-            // this.getAppointment(visit.uuid);
             this.getVisitProvider(visit.encounters);
             // check if visit note exists for this visit
-            this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, 'Visit Note');
+            this.visitNotePresent = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_NOTE);
             if (this.visitNotePresent) {
               this.checkIfPatientInteractionPresent(visit.attributes);
               this.checkIfDiagnosisPresent();
@@ -105,7 +105,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             this.getVitalObs(visit.encounters);
 
             visit.encounters.forEach((encounter: any) => {
-              if (encounter.encounterType.display === 'Visit Complete') {
+              if (encounter.encounterType.display === visitTypes.VISIT_COMPLETE) {
                 this.completedEncounter = encounter;
                 encounter.obs.forEach((o: any) => {
                   if (o.concept.display === 'Doctor details') {
@@ -133,14 +133,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   getCheckUpReason(encounters: any) {
     this.cheifComplaints = [];
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === 'ADULTINITIAL') {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
-          if (obs.concept.display === 'CURRENT COMPLAINT') {
+          if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
-                if (!obs1[0].match('Associated symptoms')) {
+                if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   this.cheifComplaints.push(obs1[0]);
                 }
               }
@@ -153,7 +153,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   getVitalObs(encounters: any) {
     encounters.forEach((enc: any) => {
-      if (enc.encounterType.display === 'Vitals') {
+      if (enc.encounterType.display === visitTypes.VITALS) {
         this.vitalObs = enc.obs;
       }
     });
@@ -161,7 +161,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   checkIfPatientInteractionPresent(attributes: any) {
     attributes.forEach((attr: any) => {
-      if (attr.attributeType.display === 'Patient Interaction') {
+      if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION) {
         this.spokenWithPatient = attr.value;
       }
     });
@@ -178,13 +178,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim(),
             uuid: obs.uuid
           });
-          // this.diagnosis = {
-          //   present: true,
-          //   diagnosisIdentified: 'Yes',
-          //   diagnosisName: obs.value.split(':')[0].trim(),
-          //   diagnosisType: obs.value.split(':')[1].split('&')[0].trim(),
-          //   diagnosisStatus: obs.value.split(':')[1].split('&')[1].trim()
-          // };
         }
       });
     });
@@ -292,16 +285,16 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   checkVisitStatus(encounters: any) {
-    if (this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
-      this.visitStatus = 'Ended Visit';
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Complete')) {
-      this.visitStatus = 'Completed Visit';
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      this.visitStatus = 'In-progress Visit';
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
-      this.visitStatus = 'Priority Visit';
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
-      this.visitStatus = 'Awaiting Visit';
+    if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
+      this.visitStatus = visitTypes.ENDED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
+      this.visitStatus = visitTypes.COMPLETED_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
+      this.visitStatus = visitTypes.IN_PROGRESS_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
+      this.visitStatus = visitTypes.PRIORITY_VISIT;
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
+      this.visitStatus = visitTypes.AWAITING_VISIT;
     }
   }
 
@@ -345,11 +338,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   getVisitProvider(encounters: any) {
     encounters.forEach((encounter: any) => {
-      if (encounter.display.match('ADULTINITIAL') !== null) {
+      if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
         this.providerName = encounter.encounterProviders[0].display;
         encounter.encounterProviders[0].provider.attributes.forEach(
           (attribute) => {
-            if (attribute.display.match('phoneNumber') != null) {
+            if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               this.hwPhoneNo = attribute.value;
             }
           }
@@ -371,11 +364,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   }
 
   get signatureType() {
-    return this.attributes.find(a => a?.attributeType?.display === 'signatureType');
+    return this.attributes.find(a => a?.attributeType?.display === doctorDetails.SIGNATURE_TYPE);
   }
 
   get signature() {
-    return this.attributes.find(a => a?.attributeType?.display === 'signature');
+    return this.attributes.find(a => a?.attributeType?.display === doctorDetails.SIGNATURE);
   }
 
   detectMimeType(b64: string) {
@@ -426,7 +419,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           table: {
             widths: ['20%', '*', '30%', '30%'],
             body: [
-              // ['', '', '', { image: 'logo', width: 90, height: 30, alignment: 'right' }],
               [
                 {
                   colSpan: 4,
@@ -838,7 +830,6 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         },
       },
       defaultStyle: {
-        // alignment: 'justify',
         font: 'DmSans'
       }
     }).download('e-precription');
@@ -909,7 +900,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           });
         }
         break;
-      case 'vitals':
+      case visitTypes.VITALS:
         if (this.vitalObs.length) {
           this.vitalObs.forEach(v => {
             records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});

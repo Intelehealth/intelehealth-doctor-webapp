@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-verification-method',
@@ -75,7 +76,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
 
     let payload: any = {
       otpFor: "verification",
-      username: (getCacheData(true,'user')).username ? (getCacheData(true,'user')).username : (getCacheData(true,'user')).systemId
+      username: (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId
     };
     if (this.active == 'phone') {
       payload.phoneNumber = this.verificationForm.value.phone,

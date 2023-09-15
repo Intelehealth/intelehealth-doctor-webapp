@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages, doctorDetails } from 'src/config/constant';
 
 @Component({
   selector: 'app-get-started',
@@ -23,9 +24,9 @@ export class GetStartedComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false, 'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
-    this.doctorName = getCacheData(false, 'doctorName');
+    this.doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
     const now = new Date();
     const hrs = now.getHours();
     if (hrs < 12) {

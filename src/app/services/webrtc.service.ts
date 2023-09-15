@@ -111,8 +111,6 @@ export class WebrtcService {
       .on(RoomEvent.TrackMuted, handleTrackMuted)
       .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
 
-    // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
-
     console.clear();
     await this.room.connect(this.url, this.token);
 
@@ -174,7 +172,6 @@ export class WebrtcService {
 
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
-    // track?.detach();
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {

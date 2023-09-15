@@ -6,7 +6,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
-
+import { notifications, doctorDetails, languages } from 'src/config/constant'
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -40,17 +40,10 @@ export class SupportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Support", imgUrl: "assets/svgs/menu-info-circle.svg" });
     this.getDoctorsList(this.userId);
-    // this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("supportMessage").subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message for support",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
+    this.subscription1 = this.socketSvc.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
         this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
@@ -66,7 +59,7 @@ export class SupportComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscription2 = this.socketSvc.onEvent("isreadSupport").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
       if (data.msgTo == this.selectedConversation?.userUuid) {
         this.getMessages();
       }
@@ -110,18 +103,6 @@ export class SupportComponent implements OnInit, OnDestroy {
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
   }
-
-  // submitMessage(event) {
-  //   let value = event.target.value.trim();
-  //   this.message = "";
-  //   if (value.length < 1) return false;
-  //   this.selectedConversation.latestMessage = value;
-  //   this.selectedConversation.messages.unshift({
-  //     id: 1,
-  //     message: value,
-  //     me: true,
-  //   });
-  // }
 
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)
@@ -176,27 +157,8 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get userId() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
-
-  // setImage(src) {
-  //   this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
-  // }
-
-  // isPdf(url) {
-  //   return url.includes('.pdf');
-  // }
-
-  // uploadFile(files) {
-  //   this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-  //     next: (res: any) => {
-  //       this.isAttachment = true;
-
-  //       this.message = res.data;
-  //       this.sendMessage();
-  //     }
-  //   })
-  // }
 
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();

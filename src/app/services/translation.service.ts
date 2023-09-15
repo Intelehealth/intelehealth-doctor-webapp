@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { getCacheData } from '../utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class TranslationService {
   }
 
   getSelectedLanguage() {
-    return this.translateService.use(getCacheData(false,'selectedLanguage'));
+    return this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
   }
 
   getDropdownTranslation(element:string, elementName:string) {

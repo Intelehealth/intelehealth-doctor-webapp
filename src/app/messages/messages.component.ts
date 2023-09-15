@@ -7,6 +7,7 @@ import { CoreService } from '../services/core/core.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { notifications, doctorDetails, languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-messages',
@@ -45,11 +46,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false, 'selectedLanguage'));
-    this.pageTitleService.setTitle({ title: 'Messages', imgUrl: 'assets/svgs/menu-message-circle.svg' });
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
+    this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
-    this.subscription1 = this.socketSvc.onEvent('updateMessage').subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
@@ -186,7 +187,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true, 'user').uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   setImage(src) {

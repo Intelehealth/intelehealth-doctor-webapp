@@ -1,0 +1,60 @@
+export const notifications = {
+    ADMIN_UNREAD_COUNT:'adminUnreadCount',
+    GET_ADMIN_UNREAD_COUNT:'getAdminUnreadCount',
+    SUPPORT_MESSAGE:'supportMessage',
+    ISREAD_SUPPORT:'isreadSupport',
+    UPDATE_MESSAGE:'updateMessage',
+}
+
+export const languages ={
+    SELECTED_LANGUAGE:'selectedLanguage',
+}
+
+export const visitTypes = {
+    VISIT_NOTE_PROVIDER:'visitNoteProvider',
+    PATIENT_VISIT_PROVIDER:'patientVisitProvider',
+    ENDED_VISIT:'Ended Visit',
+    COMPLETED_VISIT:'Completed Visit',
+    IN_PROGRESS_VISIT:'In-progress Visit',
+    PRIORITY_VISIT:'Priority Visit',
+    AWAITING_VISIT:'Awaiting Visit',
+    PATIENT_INTERACTION:'Patient Interaction',
+    GENERAL_PHYSICIAN:'General Physician',
+    ADULTINITIAL:'ADULTINITIAL',
+    ASSOCIATED_SYMPTOMS:'Associated symptoms',
+    CURRENT_COMPLAINT:'CURRENT COMPLAINT',
+    PATIENT_EXIT_SURVEY:'Patient Exit Survey',
+    VISIT_COMPLETE:'Visit Complete',
+    FLAGGED:'Flagged',
+    VITALS:'Vitals',
+    VISIT_NOTE:'Visit Note',
+    MEDICAL_HISTORY:'MEDICAL HISTORY',
+    FAMILY_HISTORY:'FAMILY HISTORY',
+}
+
+export const doctorDetails = {
+    TELEPHONE_NUMBER:'Telephone Number',
+    SPECIALIZATION:'specialization',
+    PROVIDER:'provider',
+    USER:'user',
+    DOCTOR_NAME:'doctorName',
+    PASSWORD:'password',
+    PHONE_NUMBER:'phoneNumber',
+    WHATS_APP:'whatsapp',
+    BIRTHDATE:'birthdate',
+    ADDRESS:'address',
+    CONSULTATION_LANGUAGE:'consultationLanguage',
+    COUNTRY_CODE:'countryCode',
+    EMAIL_ID:'emailId',
+    FONT_OF_SIGN:'fontOfSign',
+    QUALIFICATION:'qualification',
+    REGISTRATION_NUMBER:'registrationNumber',
+    RESEARCH_EXPERIENCE:'researchExperience',
+    SIGNATURE:'signature',
+    SIGNATURE_TYPE:'signatureType',
+    TEXT_OF_SIGN:'textOfSign',
+    TYPE_OF_PROFESSION:'typeOfProfession',
+    WORK_EXPERIENCE:'workExperience',
+    WORK_EXPERIENCE_DETAILS:'workExperienceDetails',
+    WHATS_APP_NUMBER:'whatsAppNumber',
+}

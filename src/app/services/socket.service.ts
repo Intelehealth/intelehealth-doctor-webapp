@@ -8,11 +8,9 @@ import {
 import { BehaviorSubject, Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
-// import { CallStateComponent } from "../component/call-state/call-state.component";
-// import { VcComponent } from "../component/vc/vc.component";
-// import { VcallOverlayComponent } from "../component/vc/vcall-overlay/vcall-overlay.component";
 import { VisitService } from "./visit.service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
+import { doctorDetails } from "src/config/constant";
 
 @Injectable()
 export class SocketService {
@@ -92,15 +90,6 @@ export class SocketService {
 
   callRing = new Audio("assets/phone.mp3");
   public openVcOverlay() {
-    // this.dialog.open(VcallOverlayComponent, {
-    //   disableClose: false,
-    //   hasBackdrop: true,
-    //   id: "vcOverlay",
-    // });
-    // this.callRing.play();
-    // setTimeout(() => {
-    //   this.closeVcOverlay();
-    // }, 10000);
   }
 
   public closeVcOverlay() {
@@ -112,14 +101,6 @@ export class SocketService {
   }
 
   public openVcModal(initiator = "dr") {
-    // this.dialog.open(VcComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: getCacheData(false,'patientUuid'),
-    //     initiator,
-    //     connectToDrId: getCacheData(false,'connectToDrId'),
-    //   },
-    // });
   }
 
   public openNewVCModal(
@@ -148,20 +129,11 @@ export class SocketService {
         initiator,
       },
     };
-    // this.dialog.open(CallStateComponent, config);
-    // this.dialog.open(CallStateComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: getCacheData(false,'patientUuid'),
-    //     initiator,
-    //     connectToDrId: getCacheData(false,'connectToDrId'),
-    //   },
-    // });
   }
 
   get user() {
     try {
-      return getCacheData(true,'user');
+      return getCacheData(true,doctorDetails.USER);
     } catch (error) {
       return {};
     }

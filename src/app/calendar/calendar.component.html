@@ -289,7 +289,6 @@
           <div [class.dayOff]="checkIfDayOff(day.date)">
             <div class="cal-cell-top-con" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y: 'monthCell'"  data-test-id="mwlCalMonthView">
               <span aria-hidden="true">
-                <!-- <span class="cal-day-badge-con" *ngIf="day.badgeTotal > 0">{{day.badgeTotal}}</span> -->
                 <span class="cal-day-number-con">{{ day.date | calendarDate: 'monthViewDayNumber':locale }}</span>
               </span>
               <div class="day-off-con">

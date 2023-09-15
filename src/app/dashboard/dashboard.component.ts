@@ -13,6 +13,7 @@ import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-dashboard',
@@ -90,9 +91,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private translateService: TranslateService) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Dashboard", imgUrl: "assets/svgs/menu-info-circle.svg" });
-    let provider = getCacheData(true,'provider');
+    let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
@@ -100,31 +101,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/get-started']);
       }
       this.getAppointments();
-      // this.getVisits();
-      // this.getVisitCounts(this.specialization);
       this.getAwaitingVisits(1);
       this.getPriorityVisits(1);
       this.getInProgressVisits(1);
     }
 
-
     this.socket.initSocket(true);
-    // this.socket.onEvent("updateMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
-    // this.socket.onEvent("supportMessage").subscribe((data) => {
-    //   this.socket.showNotification({
-    //     title: "New support chat message",
-    //     body: data.message,
-    //     timestamp: new Date(data.createdAt).getTime(),
-    //   });
-    //   this.playNotify();
-    // });
   }
 
   getAwaitingVisits(page: number = 1) {
@@ -136,7 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
@@ -160,7 +142,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize1) > this.awatingRecordsFetched) {
       this.getAwaitingVisits((this.awatingRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource3 = new MatTableDataSource(this.awaitingVisits.slice(event.pageIndex*this.pageSize1, (event.pageIndex+1)*this.pageSize1));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator2.nextPage();
       } else {
@@ -179,7 +160,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'Flagged');
+          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
@@ -203,7 +184,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize2) > this.priorityRecordsFetched) {
       this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource2 = new MatTableDataSource(this.priorityVisits.slice(event.pageIndex*this.pageSize2, (event.pageIndex+1)*this.pageSize2));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator1.nextPage();
       } else {
@@ -222,8 +202,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
-          visit.prescription_started = this.getEncounterCreated2(visit, 'Visit Note');
+          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
+          visit.prescription_started = this.getEncounterCreated2(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
@@ -247,7 +227,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (((event.pageIndex+1)*this.pageSize3) > this.inprogressRecordsFetched) {
       this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
     } else {
-      // this.dataSource4 = new MatTableDataSource(this.inProgressVisits.slice(event.pageIndex*this.pageSize3, (event.pageIndex+1)*this.pageSize3));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator3.nextPage();
       } else {
@@ -258,7 +237,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
@@ -293,14 +272,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -340,14 +319,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
                   }
                 }
               });
-            } else if (this.specialization == 'General Physician') {
+            } else if (this.specialization == visitTypes.GENERAL_PHYSICIAN) {
               this.processVisit(visit);
             }
           }
         });
 
         // Check appointments
-        this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+        this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
           .subscribe((res: any) => {
             let appointmentsdata = res.data;
             appointmentsdata.forEach(appointment => {
@@ -375,15 +354,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   processVisit(visit: any) {
     const { encounters } = visit;
     visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+    visit.visit_created = (visit.encounters[0].display.includes(visitTypes.FLAGGED)) ? this.getEncounterCreated(visit, visitTypes.FLAGGED) :this.getEncounterCreated(visit, visitTypes.ADULTINITIAL) ;
+    if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE) || this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
 
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_NOTE)) {
+      visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
       this.inProgressVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.FLAGGED)) {
       this.priorityVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+    } else if (this.checkIfEncounterExists(encounters, visitTypes.ADULTINITIAL) || this.checkIfEncounterExists(encounters, visitTypes.VITALS)) {
       this.awaitingVisits.push(visit);
     }
 
@@ -394,45 +373,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
     this.dataSource4.paginator = this.inprogressPaginator;
   }
-
-  // getVisitCounts(specialization: string) {
-  //   const getTotal = (data, type) => {
-  //     const item = data.find(({ Status }: any) => Status === type);
-  //     return item?.Total || 0;
-  //   };
-  //   this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
-  //     if (data.length) {
-  //       this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
-  //       this.priorityVisitsCount = getTotal(data, "Priority");
-  //       this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
-  //     }
-  //   });
-  // }
-
-  // getAppointments() {
-  //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
-  //     if (res) {
-  //       let visits = res.results;
-  //       this.appointmentService.getUserSlots(getCacheData(true,'user')).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
-  //       .subscribe((res: any) => {
-  //         let appointmentsdata = res.data;
-  //         appointmentsdata.forEach(appointment => {
-  //           if (appointment.status == 'booked') {
-  //             let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-  //             if (matchedVisit) {
-  //               matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-  //             }
-  //             appointment.visit_info = matchedVisit;
-  //             appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-  //             this.appointments.push(appointment);
-  //           }
-  //         });
-  //         this.dataSource1 = new MatTableDataSource(this.appointments);
-  //         this.dataSource1.paginator = this.appointmentPaginator;
-  //       });
-  //     }
-  //   });
-  // }
 
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
@@ -476,14 +416,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -505,11 +445,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   reschedule(appointment: any) {
-    // const len = appointment.visit_info.encounters.filter((e: any) => {
-    //   return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
-    // }).length;
     const len = appointment.visit.encounters.filter((e: any) => {
-      return (e.type.name == "Patient Exit Survey" || e.type.name == "Visit Complete");
+      return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {

@@ -3,6 +3,7 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { getCacheData } from '../utils/utility-functions';
+import { doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-prescription',
@@ -24,13 +25,12 @@ export class PrescriptionComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: "Prescription", imgUrl: "assets/svgs/menu-treatment-circle.svg" });
-    let provider = getCacheData(true,'provider');
+    let provider = getCacheData(true, doctorDetails.PROVIDER);
     if (provider) {
       if (provider.attributes.length) {
         this.specialization = this.getSpecialization(provider.attributes);
       }
     }
-    // this.getVisits();
     this.getPrescriptionSentVisits();
     this.getCompletedVisits();
   }
@@ -43,10 +43,10 @@ export class PrescriptionComponent implements OnInit {
         let records = [];
         for (let i = 0; i < cv.data.length; i++) {
           let visit = cv.data[i];
-          let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
-          let pesenc = this.checkIfEncounterExists2(visit.encounters, 'Patient Exit Survey');
+          let vcenc = this.checkIfEncounterExists2(visit.encounters, visitTypes.VISIT_COMPLETE);
+          let pesenc = this.checkIfEncounterExists2(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY);
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
           if (pesenc) {
             visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounter_datetime.replace('Z','+0530'));
@@ -74,9 +74,9 @@ export class PrescriptionComponent implements OnInit {
         let records = [];
         for (let i = 0; i < ps.data.length; i++) {
           let visit = ps.data[i];
-          let vcenc = this.checkIfEncounterExists2(visit.encounters, 'Visit Complete');
+          let vcenc = this.checkIfEncounterExists2(visit.encounters, visitTypes.VISIT_COMPLETE);
           visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, 'ADULTINITIAL');
+          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
           visit.prescription_sent = (vcenc) ? this.checkIfDateOldThanOneDay(vcenc.encounter_datetime.replace('Z','+0530')) : null;
           visit.person.age = this.calculateAge(visit.person.birthdate);
           records.push(visit);
@@ -120,14 +120,14 @@ export class PrescriptionComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }
@@ -146,8 +146,8 @@ export class PrescriptionComponent implements OnInit {
     this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
       if (res) {
         res.results.forEach((visit: any) => {
-          let vcenc = this.checkIfEncounterExists(visit.encounters, 'Visit Complete');
-          let pesenc = this.checkIfEncounterExists(visit.encounters, 'Patient Exit Survey');
+          let vcenc = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
+          let pesenc = this.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY);
 
           if (visit.stopDateTime) {
             if (vcenc) visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
@@ -167,26 +167,6 @@ export class PrescriptionComponent implements OnInit {
               this.prescriptionSent.push(visit);
             }
           }
-
-
-          // let flag = 0;
-          // visit.encounters.forEach((encounter: any) => {
-          //   if (encounter.encounterType.display == 'Patient Exit Survey') {
-          //     visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-          //     visit.cheif_complaint = this.getCheifComplaint(visit);
-          //     this.completedVisits.push(visit);
-          //     flag = 1;
-          //   }
-          // });
-          // if (flag == 0) {
-          //   visit.encounters.forEach((encounter: any) => {
-          //     if (encounter.encounterType.display == 'Visit Complete') {
-          //       visit.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
-          //       visit.cheif_complaint = this.getCheifComplaint(visit);
-          //       this.prescriptionSent.push(visit);
-          //     }
-          //   });
-          // }
         });
         this.loaded1 = true;
       }
@@ -212,14 +192,14 @@ export class PrescriptionComponent implements OnInit {
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
         obs.forEach(currentObs => {
-          if (currentObs.display.match('CURRENT COMPLAINT') !== null) {
+          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
               const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match('Associated symptoms')) {
+              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
                 recent.push(obs1[0]);
               }
             }

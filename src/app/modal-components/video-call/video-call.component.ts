@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-video-call',
@@ -59,10 +60,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) {
       this.initiator = this.data.initiator;
     }
-    const patientVisitProvider = getCacheData(true,"patientVisitProvider");
+    const patientVisitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = getCacheData(false,'doctorName');
+    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
     this.doctorName = doctorName ? doctorName : this.user.display;
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
@@ -74,19 +75,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.initSocket(true);
     this.initSocketEvents();
 
-    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
+    this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     await this.connect();
-    // await this.changeVoiceCallIcons();
     /**
      * Don't remove this, required change detection for duration
      */
@@ -138,7 +132,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   onImgError(event: any) {
@@ -147,7 +141,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   get user() {
     try {
-      return getCacheData(true,'user');
+      return getCacheData(true, doctorDetails.USER);
     } catch (error) {
       return {};
     }
@@ -222,16 +216,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.socketSvc.emitEvent("create or join", this.room);
     }, 500);
   }
-
-  // async changeVoiceCallIcons() {
-  //   this.voiceCallIcons = of(
-  //     "assets/svgs/mute-voice.svg",
-  //     "assets/svgs/Unmute.svg"
-  //   ).pipe(
-  //     concatMap((url) => of(url).pipe(delay(1000))),
-  //     repeat()
-  //   );
-  // }
 
   initSocketEvents() {
     this.socketSvc.onEvent("message").subscribe((data) => {

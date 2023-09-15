@@ -11,6 +11,7 @@ import { NgxPermissionsService, NgxRolesService } from "ngx-permissions";
 import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
+import { doctorDetails, visitTypes } from "src/config/constant";
 
 @Injectable({
   providedIn: "root",
@@ -61,9 +62,9 @@ export class AuthService {
   logout() {
     this.sessionService.session().subscribe((res) => {
       this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
-        deleteCacheData('user');
-        deleteCacheData('provider');
-        deleteCacheData('visitNoteProvider');
+        deleteCacheData(doctorDetails.USER);
+        deleteCacheData(doctorDetails.PROVIDER);
+        deleteCacheData(visitTypes.VISIT_NOTE_PROVIDER);
         deleteCacheData('session');
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
@@ -88,19 +89,7 @@ export class AuthService {
   login(credBase64: string) {
     this.base64Cred = credBase64;
     setCacheData('xsddsdass', credBase64);
-    // this.cookieService.delete('JSESSIONID');
-    // this.cookieService.delete('JSESSIONID', '/');
-    // this.cookieService.delete('JSESSIONID', '/openmrs');
-    // this.cookieService.delete('JSESSIONID', '/', this.base);
-    // this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
     this.cookieService.deleteAll();
-    // this.cookieService.deleteAll('/');
-    // this.cookieService.deleteAll('/openmrs');
-    // this.cookieService.deleteAll('/', this.base);
-    // this.cookieService.deleteAll('/openmrs', this.base);
-    // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-
     return this.http.delete(`${this.baseUrl}/session`).pipe(
       catchError((err) => throwError(err)),
       map(res => res),
@@ -112,7 +101,7 @@ export class AuthService {
             if (user.authenticated) {
               user.verified = false;
               setCacheData('currentUser', JSON.stringify(user));
-              setCacheData('user', JSON.stringify(user.user));
+              setCacheData(doctorDetails.USER, JSON.stringify(user.user));
               this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
               this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
               this.currentUserSubject.next(user);
@@ -147,28 +136,16 @@ export class AuthService {
   logOut() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
-    // headers = headers.set('cookie', `JSESSIONID=${id}`);
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
       deleteCacheData('currentUser');
-      deleteCacheData('user');
-      deleteCacheData('provider');
-      deleteCacheData('doctorName');
+      deleteCacheData(doctorDetails.USER);
+      deleteCacheData(doctorDetails.PROVIDER);
+      deleteCacheData(doctorDetails.DOCTOR_NAME);
       deleteCacheData('xsddsdass');
       deleteCacheData('token');
       deleteCacheData('socketQuery');
-      // this.cookieService.delete('JSESSIONID');
-      // this.cookieService.delete('JSESSIONID', '/');
-      // this.cookieService.delete('JSESSIONID', '/openmrs');
-      // this.cookieService.delete('JSESSIONID', '/', this.base);
-      // this.cookieService.delete('JSESSIONID', '/openmrs', this.base);
       this.cookieService.deleteAll();
-      // this.cookieService.deleteAll('/');
-      // this.cookieService.deleteAll('/openmrs');
-      // this.cookieService.deleteAll('/', this.base);
-      // this.cookieService.deleteAll('/openmrs', this.base);
-      // document.cookie = 'JSESSIONID' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      // document.cookie = 'JSESSIONID' +'=; Path=/openmrs; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       this.currentUserSubject.next(null);
       this.permissionsService.flushPermissions();
       this.rolesService.flushRoles();
@@ -277,7 +254,7 @@ export class AuthService {
 
   get userId() {
     try {
-      return getCacheData(true,'user').uuid;
+      return getCacheData(true, doctorDetails.USER).uuid;
     } catch (error) {
       return null;
     }

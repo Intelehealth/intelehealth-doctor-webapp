@@ -112,9 +112,6 @@
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
                     </ng-select>
-                    <!-- <button mat-icon-button>
-                      <img src="assets/svgs/phone.svg" alt="" />
-                    </button> -->
                   </div>
                 </div>
                 <div class="chat-con-body">
@@ -163,6 +160,7 @@
                                 : defaultImage
                             "
                             (click)="setImage(item.message)"
+                            alt=""
                           />
                         </ng-container>
                         <ng-template #message>
@@ -171,15 +169,6 @@
                       </li>
                     </ng-container>
                   </ul>
-                  <!-- <ul class="chat-messages-list">
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message">The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.</li>
-                    <li class="chat-message">The patient was not feeling good for 2-3 days but lately the patient is doing well. </li>
-                    <li class="chat-message right">Hi! How is patient feeling now?</li>
-
-                  </ul> -->
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
                       <input
@@ -190,17 +179,6 @@
                         (keyup.enter)="sendMessage()"
                         data-test-id="etSendMessage1"
                       />
-                      <!-- <div class="input-group-append">
-                        <button type="button" (click)="fileInput.click()">
-                          <img src="assets/svgs/attachment-icon.svg" alt="" />
-                          <input
-                            #fileInput
-                            type="file"
-                            (change)="uploadFile($event.target.files)"
-                            style="display: none"
-                          />
-                        </button>
-                      </div> -->
                     </div>
                     <button
                       type="button"
