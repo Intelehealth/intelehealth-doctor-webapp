@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
-// import { VisitData } from "../component/homepage/homepage.component";
 
 @Injectable({
   providedIn: "root",
@@ -41,7 +40,6 @@ export class VisitService {
   }
 
   recentVisits(id): Observable<any> {
-    // const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     const url = `${this.baseURL}/visit?patient=${id}&v=full`;
     return this.http.get(url);
   }

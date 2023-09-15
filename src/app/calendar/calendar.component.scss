@@ -107,7 +107,6 @@
 .day-view-con ::ng-deep .cal-week-view .cal-time-events {
   border: none;
   background: var(--color-offWhite);
-  // overflow: hidden;
 }
 
 .week-view-con ::ng-deep .cal-week-view {
@@ -278,7 +277,6 @@
   .cal-header-con {
     overflow: hidden;
     text-overflow: ellipsis;
-    // white-space: nowrap;
     flex: 1;
     text-align: center;
     padding: 10px 5px;
@@ -292,10 +290,6 @@
     background: #4B39B7 !important;
     color: var(--color-white) !important;
   }
-
-  // .cal-header-con.cal-weekend {
-  //   background: #F5F5F7;
-  // }
 
   .cal-header-con.dayOff {
     background: #F5F5F7;
@@ -386,10 +380,6 @@
     flex: 1;
   }
 
-  // .cal-cell-con.cal-weekend {
-  //   background: #F5F5F7;
-  // }
-
   .cal-cell-con.dayOff {
     background: #F5F5F7;
   }
@@ -446,10 +436,6 @@
     display: block;
   }
 }
-
-// .dayOff .cal-events-con {
-//   display: none;
-// }
 
 .day-off-con {
   position: absolute;
@@ -525,10 +511,6 @@
   border-bottom: 0;
   background: var(--color-offWhite);
 }
-
-// ::ng-deep .cal-month-view .cal-day-cell.cal-weekend {
-//   background: #F0EFF7;
-// }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-weekend .cal-day-number-con {
   background: #F3F2F7;

@@ -410,27 +410,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       }
     });
 
-    // this.diagnosisForm.get('diagnosisIdentified').valueChanges.subscribe((val: any) => {
-    //   if (val == 'Yes') {
-    //     this.diagnosisForm.get('diagnosisName').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisType').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisStatus').setValidators(Validators.required);
-    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-    //   } else {
-    //     this.diagnosisForm.get('diagnosisName').setValue(null);
-    //     this.diagnosisForm.get('diagnosisName').clearValidators();
-    //     this.diagnosisForm.get('diagnosisName').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisType').setValue(null);
-    //     this.diagnosisForm.get('diagnosisType').clearValidators();
-    //     this.diagnosisForm.get('diagnosisType').updateValueAndValidity();
-    //     this.diagnosisForm.get('diagnosisStatus').setValue(null);
-    //     this.diagnosisForm.get('diagnosisStatus').clearValidators();
-    //     this.diagnosisForm.get('diagnosisStatus').updateValueAndValidity();
-    //   }
-    // });
-
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: any) => {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);

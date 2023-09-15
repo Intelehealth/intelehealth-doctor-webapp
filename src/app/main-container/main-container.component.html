@@ -169,7 +169,6 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
-        <!-- <button class="help-btn" type="button" (click)="openHelpMenu()" data-test-id="btnToggleHelpMenu">{{'Help'| translate}}</button> -->
         <div class="menu-item">
           <span>{{'Raise a Ticket'| translate}}</span>
           <button class="help-btn-2 mr-1" type="button" (click)="openRaiseTicketModal()" data-test-id="btnToggleTicket">

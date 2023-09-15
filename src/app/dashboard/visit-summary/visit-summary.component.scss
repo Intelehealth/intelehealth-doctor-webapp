@@ -200,7 +200,6 @@
   li .list-item {
     display: flex;
     flex-wrap: nowrap;
-    // align-items: center;
 
     label {
       width: 25%;
@@ -520,10 +519,6 @@ textarea.form-control {
   border-radius: 8px;
   box-shadow: none;
 
-  // .ng-value-container {
-  //   position: relative;
-  // }
-
   .ng-value-container .ng-input {
     top: 50%;
     transform: translateY(-50%);
@@ -642,10 +637,6 @@ tr.mat-footer-row {
 tr.mat-row.upcoming {
   background: #E6FFF3 !important;
 }
-
-// tr.mat-row:nth-child(odd){
-//   background: #F7F7FA;
-// }
 
 td.mat-cell:first-child,
 th.mat-header-cell:first-child {
@@ -803,7 +794,6 @@ th.mat-header-cell:last-child {
   z-index: 999;
   display: flex;
   flex-direction: column;
-  // width: 87px;
   align-items: center;
 
   img {

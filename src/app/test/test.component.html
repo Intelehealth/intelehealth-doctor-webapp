@@ -51,18 +51,6 @@
     <ng-container *ngIf="!showAddMore && !readOnly">
       <span class="text-area-label font-bold">Test </span>
       <input *ngIf="!readOnly" class="text-area mt-2 w-100" matInput [ngbTypeahead]="search" [(ngModel)]="newTest">
-      <!-- <textarea
-        *ngIf="!readOnly"
-        class="text-area mt-2 w-100"
-        name="test"
-        id=""
-        cols="8"
-        rows="4"
-      >
-    Blood pressure test
-    </textarea
-      > -->
-
       <button
         *ngIf="!readOnly"
         type="button"
@@ -80,8 +68,6 @@
       >
         Add test
       </button>
-
-      <!-- <div *ngIf="readOnly" class="mt-1 ml-label">Blood pressure test</div> -->
     </ng-container>
   </div>
 </div>

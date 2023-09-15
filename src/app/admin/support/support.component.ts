@@ -160,25 +160,6 @@ export class SupportComponent implements OnInit, OnDestroy {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  // setImage(src) {
-  //   this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
-  // }
-
-  // isPdf(url) {
-  //   return url.includes('.pdf');
-  // }
-
-  // uploadFile(files) {
-  //   this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-  //     next: (res: any) => {
-  //       this.isAttachment = true;
-
-  //       this.message = res.data;
-  //       this.sendMessage();
-  //     }
-  //   })
-  // }
-
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();
     this.subscription2?.unsubscribe();

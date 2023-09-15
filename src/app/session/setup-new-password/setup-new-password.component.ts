@@ -79,11 +79,6 @@ export class SetupNewPasswordComponent implements OnInit {
       }
     });
 
-    // this.mindmapService.changePassword({ newPassword: passwd, otp: '111111' }, this.userUuid).subscribe((result: any) => {
-    //   this.coreService.openPasswordResetSuccessModal().subscribe((res: any) => {
-    //     this.router.navigate(['/session/login']);
-    //   });
-    // });
   }
 
   generatePassword() {

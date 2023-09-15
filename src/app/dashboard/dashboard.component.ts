@@ -374,45 +374,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dataSource4.paginator = this.inprogressPaginator;
   }
 
-  // getVisitCounts(specialization: string) {
-  //   const getTotal = (data, type) => {
-  //     const item = data.find(({ Status }: any) => Status === type);
-  //     return item?.Total || 0;
-  //   };
-  //   this.visitService.getVisitCounts(specialization).subscribe(({ data }: any) => {
-  //     if (data.length) {
-  //       this.inprogressVisitsCount = getTotal(data, "Visit In Progress");
-  //       this.priorityVisitsCount = getTotal(data, "Priority");
-  //       this.awaitingVisitsCount = getTotal(data, "Awaiting Consult");
-  //     }
-  //   });
-  // }
-
-  // getAppointments() {
-  //   this.visitService.getVisits({ includeInactive: false }).subscribe((res: any) =>{
-  //     if (res) {
-  //       let visits = res.results;
-  //       this.appointmentService.getUserSlots(getCacheData(true,'user')).uuid, moment().startOf('year').format('MM/DD/YYYY') ,moment().endOf('year').format('MM/DD/YYYY'))
-  //       .subscribe((res: any) => {
-  //         let appointmentsdata = res.data;
-  //         appointmentsdata.forEach(appointment => {
-  //           if (appointment.status == 'booked') {
-  //             let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-  //             if (matchedVisit) {
-  //               matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-  //             }
-  //             appointment.visit_info = matchedVisit;
-  //             appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-  //             this.appointments.push(appointment);
-  //           }
-  //         });
-  //         this.dataSource1 = new MatTableDataSource(this.appointments);
-  //         this.dataSource1.paginator = this.appointmentPaginator;
-  //       });
-  //     }
-  //   });
-  // }
-
   checkIfDateOldThanOneDay(data: any) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');

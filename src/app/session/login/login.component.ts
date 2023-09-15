@@ -55,7 +55,6 @@ export class LoginComponent implements OnInit {
       setCacheData(languages.SELECTED_LANGUAGE, browserlang);
     }
     this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
-    // this.checkSession();
   }
 
   login() {
@@ -75,16 +74,6 @@ export class LoginComponent implements OnInit {
               setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
               setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
               this.loginSuccess();
-              // if (res.user.username == 'doctorai' || res.user.username == 'doctor' || res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
-              //   this.loginSuccess();
-              // }
-              // else if (this.rememberMe) {
-              //   this.loginSuccess();
-              // } else if (provider.results[0].attributes.length) {
-              //   this.router.navigate(['/session/verification']);
-              // } else {
-              //   this.loginSuccess();
-              // }
             } else {
               this.translationService.getTranslation('Couldn\'t find provider.', 'Login Failed!', false);
             }

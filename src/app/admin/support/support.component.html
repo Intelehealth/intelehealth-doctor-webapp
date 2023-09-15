@@ -107,17 +107,6 @@
                     <div class="input-group mr-2">
                       <input type="text" class="form-control" placeholder="{{'Type here' | translate}}" [(ngModel)]="message"
                         (keyup.enter)="sendMessage()" data-test-id="etSendMessages"/>
-                      <!-- <div class="input-group-append">
-                        <button type="button" (click)="fileInput.click()">
-                          <img src="assets/svgs/attachment-icon.svg" alt="" />
-                          <input
-                            #fileInput
-                            type="file"
-                            (change)="uploadFile($event.target.files)"
-                            style="display: none"
-                          />
-                        </button>
-                      </div> -->
                     </div>
                     <button type="button" class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessages">
                       <img src="assets/svgs/send-icon-white.svg" alt="" />

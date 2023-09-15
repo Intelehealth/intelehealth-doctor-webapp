@@ -45,12 +45,8 @@
                 }}"
                 alt=""
               />
-              <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
             </div>
             <div class="call-duration" [class.d-none]="_minimized">
-              <!-- <span>Call ends in</span> -->
               <span *ngIf="callDuration" class="pill">{{ callDuration }}</span>
             </div>
             <div class="video-controls" [class.d-none]="_minimized">
@@ -94,21 +90,6 @@
                   alt=""
                 />
               </button>
-              <!-- <button
-                type="button"
-                class="video-ctrl-btn"
-                [class.blue]="_chatOpened"
-                (click)="_chatOpened = !_chatOpened"
-              >
-                <img
-                  src="{{
-                    _chatOpened
-                      ? 'assets/svgs/message-white.svg'
-                      : 'assets/svgs/message-blue.svg'
-                  }}"
-                  alt=""
-                />
-              </button> -->
             </div>
             <div class="window-controls" [class.minimized]="_minimized">
               <button
@@ -147,9 +128,6 @@
                 }}"
                 alt=""
               />
-              <!-- <img class="audio-img" src="assets/svgs/audio-wave.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-2.svg" alt="">
-              <img class="audio-img" src="assets/svgs/audio-wave-mute.svg" alt=""> -->
             </div>
           </div>
         </div>

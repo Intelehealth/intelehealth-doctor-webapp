@@ -137,33 +137,25 @@ export class CalendarComponent implements OnInit {
                   end,
                   meta: {
                     createdAt: this.getCreatedAtTime(visit.encounters),
-                    // createdBy: "612322d6-8b80-4027-af3a-c2805bd32007",
                     drName: this.provider?.person.display,
                     hwAge: hw.hwAge,
                     hwGender: hw.hwGender,
                     hwName: hw.hwName,
                     hwPic: null,
                     hwUUID: hw.hwProviderUuid,
-                    // id: 3,
-                    // locationUuid: "eb374eaf-430e-465e-81df-fe94c2c515be",
                     openMrsId: visit.patient.identifiers[0].identifier,
                     patientAge: visit.patient.person.age,
                     patientGender: visit.patient.person.gender,
                     patientId: visit.patient.uuid,
                     patientName: visit.patient.person.display,
                     patientPic: null,
-                    // reason: null,
                     slotDate: moment(followUpDate).format('DD/MM/YYYY'),
                     slotDay: moment(followUpDate).format('dddd'),
                     slotDuration: 30,
                     slotDurationUnit: "minutes",
                     slotJsDate: moment(start).utc().format(),
                     slotTime: (followUpTime)?followUpTime:"9:00 AM",
-                    // speciality: "General Physician",
-                    // status: "booked",
                     type: "follow-up visit",
-                    // updatedAt: "2023-02-13T11:49:25.000Z",
-                    // updatedBy: null,
                     userUuid: this.user.uuid,
                     visitUuid: visit.uuid,
                     visit_info: visit
@@ -287,21 +279,6 @@ export class CalendarComponent implements OnInit {
                         if (index != -1) {
                           this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
                         }
-                        // else {
-                        //   this.daysOff.push({
-                        //     type: "month",
-                        //     month: res.data.month,
-                        //     year: res.data.year,
-                        //     slotSchedule: [],
-                        //     startDate: moment(day.date).startOf('month').toISOString(),
-                        //     endDate: moment(day.date).endOf('month').toISOString(),
-                        //     drName: this.drName,
-                        //     userUuid: this.userId,
-                        //     speciality: this.getSpeciality(),
-                        //     daysOff: [moment(day.date).format('DD/MM/YYYY')],
-                        //     slotDays: ""
-                        //   });
-                        // }
                         day.events.forEach((event: any) => {
                           if (event.title == 'Appointment') {
                             this.cancel(event.meta, false);
