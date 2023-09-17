@@ -4,7 +4,7 @@
       <div class="chip-item chip-item-red">
         <img class="chip-img" src="assets/svgs/priority-square.svg" alt="" />
         <div class="chip-info">
-          <h6>{{priorityCases.length ? priorityCases.length : 0}}</h6>
+          <h6>{{priorityVisitsCount}}</h6>
           <span>Priority cases</span>
         </div>
       </div>
@@ -13,7 +13,7 @@
       <div class="chip-item chip-item-blue">
         <img class="chip-img" src="assets/svgs/prescription-square.svg" alt="" />
         <div class="chip-info">
-          <h6>{{normalCases.length ? normalCases.length : 0}}</h6>
+          <h6>{{inprogressVisitsCount}}</h6>
           <span>In-progress cases</span>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <div class="chip-item chip-item-outline">
         <img class="chip-img" src="assets/svgs/prescription-completed-square.svg" alt="" />
         <div class="chip-info">
-          <h6>{{completedCases.length ? completedCases.length : 0}}</h6>
+          <h6>{{completedVisitsCount}}</h6>
           <span>Completed cases</span>
         </div>
       </div>
@@ -40,14 +40,17 @@
             <mat-panel-title>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/priority-square.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">Priority cases ({{priorityCases.length ? priorityCases.length : 0}})</h6>
+                <h6 class="mb-0 ml-2">Priority cases ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress high priority cases" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search priority cases" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" #prSearchInput class="form-control" placeholder="Search priority cases" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()">
                   <div class="input-group-append">
-                    <span class="input-group-text click" id="basic-addon1">
-                      <img src="assets/svgs/search-icon-red.svg" alt="" width="20px" height="20px">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource2.filter">
+                      <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button data-test-id="btnResetPrSerach" mat-icon-button aria-label="Reset priority search" *ngIf="dataSource2.filter" (click)="clearFilter('Priority')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -63,10 +66,10 @@
                 <td mat-cell *matCellDef="let element">
 
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
                     <div class="d-flex flex-column ml-2">
-                      <span class="font-bold">{{element.patient.person.display}}</span>
-                      <span>{{element.patient.identifiers[0]?.identifier}}</span>
+                      <span class="font-bold">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{element.person.gender}})</span>
+                      <span>{{element.patient.identifier}}</span>
                     </div>
                   </div>
                 </td>
@@ -75,7 +78,7 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element"> {{element.person.age}}y </td>
               </ng-container>
 
               <!-- Starts In Column -->
@@ -134,7 +137,9 @@
               <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns2;" [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.table-record]="i==0" [class.unseen]="!row.seen"></tr>
             </table>
 
-            <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #priorityPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            [length]="priorityVisitsCount" [pageIndex]="pageIndex1" [pageSize]="pageSize1" (page)="pageEvent1 = getPriorityData($event)"
               aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
@@ -146,14 +151,17 @@
             <mat-panel-title>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/prescription-square.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">In-progress cases ({{normalCases.length ? normalCases.length : 0}})</h6>
+                <h6 class="mb-0 ml-2">In-progress cases ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="In-progress normal cases" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search in-progress cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" #ipSearchInput class="form-control" placeholder="Search in-progress cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()">
                   <div class="input-group-append">
-                    <span class="input-group-text click" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource1.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button data-test-id="btnResetIpSerach" mat-icon-button aria-label="Reset awaiting search" *ngIf="dataSource1.filter" (click)="clearFilter('In-progress')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -168,10 +176,10 @@
                 <td mat-cell *matCellDef="let element">
 
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
                     <div class="d-flex flex-column ml-2">
-                      <span class="font-bold">{{element.patient.person.display}}</span>
-                      <span>{{element.patient.identifiers[0]?.identifier}}</span>
+                      <span class="font-bold">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{element.person.gender}})</span>
+                      <span>{{element.patient.identifier}}</span>
                     </div>
                   </div>
                 </td>
@@ -180,7 +188,7 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element"> {{element.person.age}}y </td>
               </ng-container>
 
               <!-- Starts In Column -->
@@ -239,7 +247,9 @@
               <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns1;" [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.table-row]="i==0" [class.unseen]="!row.seen"></tr>
             </table>
 
-            <mat-paginator #normalPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #normalPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            [length]="inprogressVisitsCount" [pageIndex]="pageIndex2" [pageSize]="pageSize2" (page)="pageEvent2 = getInprogressData($event)"
               aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>
@@ -250,14 +260,17 @@
             <mat-panel-title>
               <div class="intel-accordion-title">
                 <img src="assets/svgs/prescription-completed-square.svg" alt="" width="44px">
-                <h6 class="mb-0 ml-2">Completed cases ({{completedCases.length ? completedCases.length : 0}})</h6>
+                <h6 class="mb-0 ml-2">Completed cases ({{completedVisitsCount ? completedVisitsCount : 0}})</h6>
                 <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="Completed cases" matTooltipPosition="right">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
-                  <input type="text" class="form-control" placeholder="Search completed cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()">
+                  <input type="text" #coSearchInput class="form-control" placeholder="Search completed cases" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()">
                   <div class="input-group-append">
-                    <span class="input-group-text click" id="basic-addon1">
+                    <span class="input-group-text" id="basic-addon1" *ngIf="!dataSource3.filter">
                       <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                     </span>
+                    <button data-test-id="btnResetAwSerach" mat-icon-button aria-label="Reset awaiting search" *ngIf="dataSource3.filter" (click)="clearFilter('Completed')">
+                      <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -273,10 +286,10 @@
                 <td mat-cell *matCellDef="let element">
 
                   <div class="d-flex align-items-center">
-                    <img src="{{ baseUrl + '/personimage/' + element.patient.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
+                    <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" (error) ="onImgError($event)" alt="" width="32px" height="32px" style="border-radius: 50%;">
                     <div class="d-flex flex-column ml-2">
-                      <span class="font-bold">{{element.patient.person.display}}</span>
-                      <span>{{element.patient.identifiers[0]?.identifier}}</span>
+                      <span class="font-bold">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{element.person.gender}})</span>
+                      <span>{{element.patient.identifier}}</span>
                     </div>
                   </div>
                 </td>
@@ -285,7 +298,7 @@
               <!-- Age Column -->
               <ng-container matColumnDef="age">
                 <th mat-header-cell *matHeaderCellDef> Age </th>
-                <td mat-cell *matCellDef="let element"> {{element.patient.person.age}}y </td>
+                <td mat-cell *matCellDef="let element"> {{element.person.age}}y </td>
               </ng-container>
 
               <ng-container matColumnDef="date_of_birth">
@@ -370,7 +383,9 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns3;"  [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.unseen]="!row.seen"></tr>
             </table>
 
-            <mat-paginator #completedPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
+            <mat-paginator #completedPaginator hidePageSize [pageSizeOptions]="[5, 10, 20]"
+            [length]="completedVisitsCount" [pageIndex]="pageIndex3" [pageSize]="pageSize3" (page)="pageEvent3 = getCompletedVisitsData($event)"
               aria-label="Select page of periodic elements">
             </mat-paginator>
           </div>

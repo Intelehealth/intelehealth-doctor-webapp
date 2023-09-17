@@ -3,17 +3,14 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
-// import { VisitData } from "../component/homepage/homepage.component";
 
 @Injectable({
   providedIn: "root",
 })
 export class VisitService {
   private baseURL = environment.baseURL;
-  // public flagVisit: VisitData[] = [];
-  // public waitingVisit: VisitData[] = [];
-  // public progressVisit: VisitData[] = [];
-  // public completedVisit: VisitData[] = [];
+  private baseURLMindmap = environment.mindmapURL;
+  private recordsPerPage = environment.recordsPerPage;
 
   public isVisitSummaryShow: boolean = false;
 
@@ -51,7 +48,6 @@ export class VisitService {
   }
 
   recentVisits(id): Observable<any> {
-    // const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     const url = `${this.baseURL}/visit?patient=${id}&v=full`;
     return this.http.get(url);
   }
@@ -128,5 +124,17 @@ export class VisitService {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
+  }
+
+  getPriorityVisits(page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getPriorityVisits?limit=${this.recordsPerPage}&page=${page}`);
+  }
+
+  getInProgressVisits(page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getInProgressVisits?limit=${this.recordsPerPage}&page=${page}`);
+  }
+
+  getCompletedVisits(page: number = 1): Observable<any> {
+    return this.http.get(`${this.baseURLMindmap}/openmrs/getCompletedVisits?limit=${this.recordsPerPage}&page=${page}`);
   }
 }

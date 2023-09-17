@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'src/environments/environment';
 import { PageTitleService } from '../core/page-title/page-title.service';
 import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
-// import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -33,6 +32,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   completedCases: any = [];
 
   specialization: string = '';
+  priorityVisitsCount: number = 0;
+  inprogressVisitsCount: number = 0;
+  completedVisitsCount: number = 0;
+
   hourlyStages = [
     'Stage1_Hour1_1',
     'Stage1_Hour1_2',
@@ -81,12 +84,64 @@ export class DashboardComponent implements OnInit, OnDestroy {
     'Diastolic BP'
   ];
 
+  obsConcepts = [
+    'Companion',
+    'Pain relief',
+    'Oral Fluid',
+    'Posture',
+    'Baseline FHR',
+    'FHR Deceleration',
+    'Amniotic fluid',
+    'Fetal position',
+    'Caput',
+    'Moulding',
+    'PULSE',
+    'Systolic BP',
+    'Diastolic BP',
+    'TEMPERATURE (C)',
+    'Urine protein',
+    'Contractions per 10 min',
+    'Duration of contraction',
+    'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm',
+    'Descent 0-5',
+    'Oxytocin U/l, Drops per min',
+    'Medicine',
+    'IV fluids',
+    'Assessment',
+    'Additional Comments',
+    'Encounter status',
+    'Urine acetone'
+  ]
+
   @ViewChild(MatAccordion) accordion: MatAccordion;
   @ViewChild('normalPaginator') normalPaginator: MatPaginator;
   @ViewChild('priorityPaginator') priorityPaginator: MatPaginator;
   @ViewChild('completedPaginator') completedPaginator: MatPaginator;
 
+  offset: number = environment.recordsPerPage;
+  priorityRecordsFetched: number = 0;
+  pageEvent1: PageEvent;
+  pageIndex1:number = 0;
+  pageSize1:number = 5;
+
+  inprogressRecordsFetched: number = 0;
+  pageEvent2: PageEvent;
+  pageIndex2:number = 0;
+  pageSize2:number = 5;
+
+  completedRecordsFetched: number = 0;
+  pageEvent3: PageEvent;
+  pageIndex3:number = 0;
+  pageSize3:number = 5;
+
+  @ViewChild('tempPaginator1') tempPaginator1: MatPaginator;
+  @ViewChild('tempPaginator2') tempPaginator2: MatPaginator;
+  @ViewChild('tempPaginator3') tempPaginator3: MatPaginator;
   subscription: Subscription;
+
+  @ViewChild('prSearchInput', { static: true }) prSearchElement: ElementRef;
+  @ViewChild('ipSearchInput', { static: true }) ipSearchElement: ElementRef;
+  @ViewChild('coSearchInput', { static: true }) coSearchElement: ElementRef;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -103,7 +158,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         this.router.navigate(['/dashboard/get-started']);
       }
-      this.getVisits();
+      this.getPriorityVisits(1);
+      this.getInProgressVisits(1);
+      this.getCompletedVisits(1);
 
       this.subscription = this.authService.$tour.subscribe(val => {
         if (val) {
@@ -114,129 +171,200 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  getVisits() {
-    this.normalCases = [];
-    this.priorityCases = [];
-    this.completedCases = [];
-    this.visitService.getVisits({ includeInactive: true }).subscribe(
-      (response: any) => {
-        let visits = response.results;
-        visits.forEach((visit: any) => {
-          visit.seen = false;
-          // Check if visit has encounters
-          if (visit.encounters.length > 0) {
-            /*
-            Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
-            If no attributes, consider it as General Physician
-            */
-            if (visit.attributes.length) {
-              let flag = 0;
-              for (let t = 0; t < visit.attributes.length; t++) {
-                if (visit.attributes[t].attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                  // If specialization matches process visit
-                  if (visit.attributes[t].value == this.specialization) {
-                    flag = 1;
-                    // this.processVisit(visit);
-                    //  break;
-                  }
-                }
-                if (visit.attributes[t].attributeType.uuid == "2e4b62a5-aa71-43e2-abc9-f4a777697b19") {
-                  if (visit.attributes[t].value.includes(this.user?.uuid.split('-')[0])) {
-                    visit.seen = true;
-                  }
-                }
-              }
-              if (flag == 1) {
-                this.processVisit(visit);
-              }
-            } else if (this.specialization == 'General Physician') {
-              this.processVisit(visit);
-            }
-          }
-        });
-      });
+  getPriorityVisits(page: number = 1) {
+    if(page == 1) this.priorityCases = [];
+    this.visitService.getPriorityVisits(page).subscribe((pv: any) => {
+      if (pv.success) {
+        this.priorityVisitsCount = pv.totalCount;
+        this.priorityRecordsFetched += this.offset;
+        for (let visit of pv.data) {
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.priorityCases.push({ ...visit, ...this.extractVisitDetail(visit) });
+        }
+        this.dataSource2.data = [...this.priorityCases];
+        if (page == 1) {
+          this.dataSource2.paginator = this.tempPaginator1;
+          this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator1.length = this.priorityCases.length;
+          this.tempPaginator1.nextPage();
+        }
+      }
+    });
   }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+  public getPriorityData(event?:PageEvent){
+    this.pageIndex1 = event.pageIndex;
+    this.pageSize1 = event.pageSize;
+    if (this.dataSource2.filter) {
+      this.priorityPaginator.firstPage();
+    }
+    if (((event.pageIndex+1)*this.pageSize1) > this.priorityRecordsFetched) {
+      this.getPriorityVisits((this.priorityRecordsFetched+this.offset)/this.offset);
+    } else if (event.previousPageIndex < event.pageIndex) {
+      this.tempPaginator1.nextPage();
+    } else {
+      this.tempPaginator1.previousPage();
+    }
+    return event;
   }
 
-  get user() {
-    return JSON.parse(localStorage.getItem('user'));
+  getInProgressVisits(page: number = 1) {
+    if(page == 1) this.normalCases = [];
+    this.visitService.getInProgressVisits(page).subscribe((iv: any) => {
+      if (iv.success) {
+        this.inprogressVisitsCount = iv.totalCount;
+        this.inprogressRecordsFetched += this.offset;
+        for (let visit of iv.data) {
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.normalCases.push({ ...visit, ...this.extractVisitDetail(visit) });
+        }
+        this.dataSource1.data = [...this.normalCases];
+        if (page == 1) {
+          this.dataSource1.paginator = this.tempPaginator2;
+          this.dataSource1.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator2.length = this.normalCases.length;
+          this.tempPaginator2.nextPage();
+        }
+      }
+    });
   }
 
-  processVisit(visit: any) {
+  public getInprogressData(event?:PageEvent){
+    this.pageIndex2 = event.pageIndex;
+    this.pageSize2 = event.pageSize;
+    if (this.dataSource1.filter) {
+      this.normalPaginator.firstPage();
+    }
+    if (((event.pageIndex+1)*this.pageSize2) > this.inprogressRecordsFetched) {
+      this.getInProgressVisits((this.inprogressRecordsFetched+this.offset)/this.offset);
+    } else if (event.previousPageIndex < event.pageIndex) {
+      this.tempPaginator2.nextPage();
+    } else {
+      this.tempPaginator2.previousPage();
+    }
+    return event;
+  }
+
+  getCompletedVisits(page: number = 1) {
+    if(page == 1) this.completedCases = [];
+    this.visitService.getCompletedVisits(page).subscribe((com: any) => {
+      if (com.success) {
+        this.completedVisitsCount = com.totalCount;
+        this.completedRecordsFetched += this.offset;
+        for (let visit of com.data) {
+          visit.person.age = this.calculateAge(visit.person.birthdate);
+          this.completedCases.push({ ...visit, ...this.extractVisitDetail(visit) });
+        }
+        this.dataSource3.data = [...this.completedCases];
+        if (page == 1) {
+          this.dataSource3.paginator = this.tempPaginator3;
+          this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+        } else {
+          this.tempPaginator3.length = this.completedCases.length;
+          this.tempPaginator3.nextPage();
+        }
+      }
+    });
+  }
+
+  public getCompletedVisitsData(event?:PageEvent){
+    this.pageIndex3 = event.pageIndex;
+    this.pageSize3 = event.pageSize;
+    if (this.dataSource3.filter) {
+      this.completedPaginator.firstPage();
+    }
+    if (((event.pageIndex+1)*this.pageSize3) > this.completedRecordsFetched) {
+      this.getCompletedVisits((this.completedRecordsFetched+this.offset)/this.offset);
+    } else if (event.previousPageIndex < event.pageIndex) {
+      this.tempPaginator3.nextPage();
+    } else {
+      this.tempPaginator3.previousPage();
+    }
+    return event;
+  }
+
+  calculateAge(birthdate: any) {
+    return moment().diff(birthdate, 'years');
+  }
+
+  extractVisitDetail(visit: any) {
+    let in_labour_duration = this.getCreatedAt(visit.date_started);
+    let stage = visit.encounters.filter((e: any) => e.type.name.includes('Stage2')).length ? 2 : 1;
     let notes = [];
     let notesObj = {};
-    const { encounters } = visit;
-    encounters.sort((a: any, b: any) => {
-      return (
-        new Date(a.encounterDatetime).getTime() -
-        new Date(b.encounterDatetime).getTime()
-      );
-    });
+    let cervixPlotX = null;
+    let descentPlotO = null;
+    let completeReason = null;
+    let outOfTimeReason = null;
+    let referTypeOtherReason = null;
+    let birthOutcome = null;
+    let birthOutcomeOther =  null;
+    let motherDeceased = null;
+    let motherDeceasedReason = null;
+    let dateTimeOfBirth = null;
+    let provider = null;
+    let seen = false;
 
-    visit.score = this.setScore(encounters);
-    visit.in_labour_duration = this.getCreatedAt(visit.startDatetime);
-    visit.stage = encounters.filter((e: any) => e.display.includes('Stage2')).length ? 2 : 1;
-    visit.notesObj = {};
-    if (Array.isArray(encounters)) {
-      for (let x = 0; x < encounters.length; x++) {
-        if (Array.isArray(encounters[x].obs)) {
-          for (let y = 0; y < encounters[x].obs.length; y++) {
-            const key = encounters[x].obs[y].display.split(':')[0]?.trim();
-            const value = encounters[x].obs[y].display.split(':')[1]?.trim();
-            if (encounters[x].obs[y]?.comment === "R") {
+    const visitReadAttr = visit.attributes.find(a => a.attribute_type?.name == "Visit Read");
+    if (visitReadAttr) {
+      if (visitReadAttr.value_reference.includes(this.user?.uuid.split('-')[0])) {
+        seen = true;
+      }
+    }
+
+    if (Array.isArray(visit.encounters)) {
+      for (let x = 0; x < visit.encounters.length; x++) {
+        if (Array.isArray(visit.encounters[x].obs)) {
+          for (let y = 0; y < visit.encounters[x].obs.length; y++) {
+            const obs_concept_name = visit.encounters[x].obs[y].concept.concept_name.find(c => this.obsConcepts.indexOf(c.name) != -1);
+            const key = obs_concept_name ? obs_concept_name.name.trim() : visit.encounters[x].obs[y].concept.concept_name[0].name.trim();
+            const value = visit.encounters[x].obs[y].value_text||visit.encounters[x].obs[y].value_numeric;
+            if (visit.encounters[x].obs[y]?.comments === "R") {
               if (this.allowedNotesToShow.includes(key)) {
                 notesObj[key] = value;
               }
             }
             if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
-              visit.cervixPlotX = value;
+              cervixPlotX = value;
             }
             if (key == 'Descent 0-5') {
-              visit.descentPlotO = value;
+              descentPlotO = value;
             }
           }
 
-          if (encounters[x].display.includes('Visit Complete')) {
-            let outOfTimeIndex = encounters[x].obs.findIndex((o: any) => o.concept.display == 'OUT OF TIME');
-            let referTypeIndex = encounters[x].obs.findIndex((o: any) => o.concept.display == 'Refer Type');
+          if (visit.encounters[x].type.name === 'Visit Complete') {
+            let outOfTimeIndex = visit.encounters[x].obs.findIndex((o: any) => o.concept.concept_name[0].name == 'OUT_OF_TIME'); //165186
+            let referTypeIndex = visit.encounters[x].obs.findIndex((o: any) => o.concept.concept_name[0].name == 'Refer Type'); //165175
             if (outOfTimeIndex != -1) {
-              visit.completeReason = "Out Of Time";
-              visit.outOfTimeReason = encounters[x].obs[outOfTimeIndex].value;
+              completeReason = "Out Of Time";
+              outOfTimeReason = visit.encounters[x].obs[outOfTimeIndex].value_text;
             } else if (referTypeIndex != -1) {
-              visit.completeReason = encounters[x].obs[referTypeIndex].value;
-              if (encounters[x].obs[referTypeIndex].value == 'Other') {
-                visit.referTypeOtherReason = encounters[x].obs.find((o: any) => o.concept.display == 'Refer Type Other')?.value;
+              completeReason = visit.encounters[x].obs[referTypeIndex].value_text;
+              if (completeReason == 'Other') {
+                referTypeOtherReason = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Refer Type Other')?.value_text; //165189
               }
             } else {
-              visit.completeReason = "Labor Complete";
-              visit.birthOutcome = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
-              if (visit.birthOutcome == 'Other' || visit.birthOutcome == 'OTHER') {
-                visit.birthOutcomeOther = encounters[x].obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
+              completeReason = "Labor Complete";
+              birthOutcome = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Birth Outcome')?.value_text; //163206
+              if (birthOutcome == 'Other' || birthOutcome == 'OTHER') {
+                birthOutcomeOther = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Birth Outcome Other')?.value_text; //165188_
               }
-              visit.motherDeceased = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
-              if (visit.motherDeceased == 'YES') {
-                visit.motherDeceasedReason = encounters[x].obs.find((o: any) => o.concept.display == 'MOTHER DECEASED REASON')?.value;
+              motherDeceased = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'MOTHER DECEASED NEW')?.value_text; //165191
+              if (motherDeceased == 'YES') {
+                motherDeceasedReason = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'MOTHER DECEASED REASON')?.value_text;//165187
               }
-              visit.dateTimeOfBirth = encounters[x].encounterDatetime;
+              dateTimeOfBirth = visit.encounters[x].encounter_datetime;
             }
-            // for (let y = 0; y < encounters[x].obs.length; y++) {
-            //   if (encounters[x].obs[y].display.includes('Birth Outcome')) {
-            //     visit.birthOutcome = encounters[x].obs[y].value;
-            //   }
-            //   if (encounters[x].obs[y].display.includes('Refer to other Hospital')) {
-            //     visit.birthOutcome = 'RTOH';
-            //   }
-            //   if (encounters[x].obs[y].display.includes('Self discharge against Medical Advice')) {
-            //     visit.birthOutcome = 'DAMA';
-            //   }
-            //   visit.dateTimeOfBirth = encounters[x].encounterDatetime;
-            // }
           }
         }
       }
+
+      if (!completeReason) {
+        completeReason = "Ended";
+      }
+
       if (Array.isArray(notes)) {
         for (const k in notesObj) {
           if (Object.prototype.hasOwnProperty.call(notesObj, k)) {
@@ -249,66 +377,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
         notes = notes.sort((a, b) => a?.key.localeCompare(b?.key));
       }
     }
-    visit.notes = notes;
-    visit.provider = encounters[0]?.encounterProviders[0]?.provider.name || 'NA';
 
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey') || visit.stopDatetime != null) {
-      this.completedCases.push(visit);
-    } else if (visit.score > 22) {
-      this.priorityCases.push(visit);
-    } else {
-      this.normalCases.push(visit);
+    provider = visit.encounters[0]?.encounter_provider?.provider.person.person_name.given_name + ' ' + visit.encounters[0]?.encounter_provider?.provider.person.person_name.family_name || 'NA';
+
+    return {
+      in_labour_duration,
+      stage,
+      notes,
+      cervixPlotX,
+      descentPlotO,
+      completeReason,
+      outOfTimeReason,
+      referTypeOtherReason,
+      birthOutcome,
+      birthOutcomeOther,
+      motherDeceased,
+      motherDeceasedReason,
+      dateTimeOfBirth,
+      provider,
+      seen
     }
-
-    this.dataSource1 = new MatTableDataSource(this.normalCases);
-    this.dataSource1.paginator = this.normalPaginator;
-    this.dataSource1.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
-    this.dataSource2 = new MatTableDataSource(this.priorityCases);
-    this.dataSource2.paginator = this.priorityPaginator;
-    this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
-    this.dataSource3 = new MatTableDataSource(this.completedCases);
-    this.dataSource3.paginator = this.completedPaginator;
-    this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifiers[0]?.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient.person.display.toLowerCase().indexOf(filter) != -1;
   }
 
-  setScore(encounters: any) {
-    let score: any = 0;
-    let stageData = {};
-    let statusData = {};
-    for (let t = 0; t < encounters.length; t++) {
-      if (Array.isArray(encounters[t].obs) && encounters[t].obs.length) {
-        const stage = encounters[t].display;
-        if (!stageData[stage]) stageData[stage] = 0;
-
-        let score1 = stageData[stage];
-        const yellow = encounters[t].obs.filter(
-          (obs: any) => obs.comment === "Y"
-        ).length;
-        const red = encounters[t].obs.filter(
-          (obs: any) => obs.comment === "R"
-        ).length;
-        score1 += red * 2;
-        score1 += yellow * 1;
-        stageData[stage] = score1;
-      }
-    }
-
-    for (const key in stageData) {
-      if (Object.prototype.hasOwnProperty.call(stageData, key)) {
-        const value = stageData[key];
-        this.hourlyStages.forEach(stage => {
-          if (!statusData[stage]) statusData[stage] = 0;
-          if (key.includes(stage)) {
-            statusData[stage] += value;
-          }
-        });
-      }
-    }
-
-    score = Object.values(stageData).pop();
-    // score = Object.values(statusData).filter(a => a).pop();
-    if (!score) score = 0;
-    return score;
+  get user() {
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   getCreatedAt(data: any) {
@@ -345,21 +437,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator1.firstPage();
+    this.priorityPaginator.firstPage();
   }
 
   applyFilter2(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource1.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator2.firstPage();
+    this.normalPaginator.firstPage();
   }
 
   applyFilter3(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource3.filter = filterValue.trim().toLowerCase();
+    this.tempPaginator3.firstPage();
+    this.completedPaginator.firstPage();
+  }
+
+  clearFilter(dataSource: string) {
+    switch (dataSource) {
+      case 'Priority':
+        this.dataSource2.filter = null;
+        this.prSearchElement.nativeElement.value = "";
+        break;
+      case 'In-progress':
+        this.dataSource1.filter = null;
+        this.ipSearchElement.nativeElement.value = "";
+        break;
+      case 'Completed':
+        this.dataSource3.filter = null;
+        this.coSearchElement.nativeElement.value = "";
+        break;
+      default:
+        break;
+    }
   }
 
   ngOnDestroy() {
-    // if (this.socket.socket && this.socket.socket.close)
-    //   this.socket.socket.close();
     this.subscription?.unsubscribe();
   }
 

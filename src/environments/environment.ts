@@ -16,7 +16,8 @@ export const environment = {
   externalPrescriptionCred: 'c3lzbnVyc2U6SUhOdXJzZSMx',
   vapidPublicKey: "BLDLmm1FrOhRJsumFL3lZ8fgnC_c1rFoNp-mz6KWObQpgPkhWzUh66GCGPzioTWBc4u0SB8P4spimU8SH2eWNfg",
   webrtcSdkServerUrl: "wss://ezazi.intelehealth.org:9090",
-  webrtcTokenServerUrl: 'https://ezazi.intelehealth.org:3000/'
+  webrtcTokenServerUrl: 'https://ezazi.intelehealth.org:3000/',
+  recordsPerPage: 50
 };
 
 /*
