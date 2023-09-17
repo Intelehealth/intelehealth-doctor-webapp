@@ -15,7 +15,7 @@ import { getCacheData } from '../utils/utility-functions';
 })
 export class MessagesComponent implements OnInit, OnDestroy {
 
-  conversations: any;
+  conversations: any = [];
   searchValue: string;
   baseURL = environment.baseURL;
   searchResults: any = [];
@@ -131,6 +131,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           this.messageList = res?.data;
           this.getPatientsVisits(this.selectedConversation?.patientId);
+          this.conversations[this.conversations.findIndex(c => c.id === this.selectedConversation.id)].message = this.messageList[0].message
         },
       });
   }
@@ -157,7 +158,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
       const payload = {
         visitId: this.selectedConversation?.visitId,
-        patientName: this.patientName,
+        patientName: this.selectedConversation.patientName,
         hwName: this.selectedConversation?.hwName,
         type: this.isAttachment ? 'attachment' : 'text'
       };
@@ -173,6 +174,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.isAttachment = false;
             this.getMessages();
+            this.conversations[this.conversations.findIndex(c => c.id === this.selectedConversation.id)].message = this.selectedConversation.latestMessage;
           },
           error: () => {
             this.isAttachment = false;
