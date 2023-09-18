@@ -13,8 +13,8 @@ export const environment = {
   socketURL: "https://afitraining.ekalarogya.org:3004",
   webrtcSdkServerUrl: "wss://afitraining.ekalarogya.org:9090",
   webrtcTokenServerUrl: 'https://afitraining.ekalarogya.org:3000/',
-  version: "AEAT-v1.7.2",
-  versionCode: "42"
+  version: "AEAT-v1.9.0",
+  versionCode: "48"
 };
 
 /*

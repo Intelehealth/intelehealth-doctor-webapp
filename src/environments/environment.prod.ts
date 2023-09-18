@@ -8,6 +8,6 @@ export const environment = {
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
-  version: "AEAT-v1.7.2",
-  versionCode: "42"
+  version: "AEAT-v1.9.0",
+  versionCode: "48"
 };
