@@ -25,8 +25,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
   @ViewChild('compSearchInput', { static: true }) searchElement: ElementRef;
 
-  constructor() { }
-
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.completedVisits);
     this.dataSource.paginator = this.tempPaginator;

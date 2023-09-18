@@ -66,10 +66,6 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
-  search() {
-
-  }
-
   get filteredConversations() {
     return this.conversations.filter((conversation: any) => {
       return (
