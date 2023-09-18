@@ -248,8 +248,6 @@ export class CalendarComponent implements OnInit {
     return count;
   }
 
-  hourSegmentClicked(hourSegment: any) {
-  }
 
   dayClicked(view: any, day: any) {
     if (view == 'monthView') {

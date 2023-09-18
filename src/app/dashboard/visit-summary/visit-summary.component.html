@@ -702,7 +702,7 @@
 
           <mat-tab label="{{'Past visit history'|translate}}" data-test-id="mtPast">
             <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
-              <table mat-table [dataSource]="dataSource">
+              <table mat-table [dataSource]="dataSource" aria-describedby="pastVisit">
                 <!-- Action Column -->
                 <ng-container matColumnDef="action">
                   <th mat-header-cell *matHeaderCellDef></th>
@@ -843,7 +843,7 @@
                   </div>
                 </mat-panel-title>
               </mat-expansion-panel-header>
-              <table *ngIf="ddx" class="ddx-table mt-3">
+              <table *ngIf="ddx" class="ddx-table mt-3" aria-describedby="">
                 <thead>
                   <tr>
                     <th *ngFor="let h of ddx.data[0]" [attr.colspan]="ddx.data[0].length == 1 && ddx.maxCols > ddx.data[0].length ? ddx.maxCols : 1">{{h}}</th>
@@ -1005,7 +1005,7 @@
                   </button>
                 </div>
                 <div class="table-responsive" *ngIf="patientInteractionForm.value.present">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Patient interaction'|translate}}</th>
@@ -1053,7 +1053,7 @@
               </mat-expansion-panel-header>
 
               <div class="table-responsive">
-                <table class="table">
+                <table class="table" aria-describedby="">
                   <thead>
                     <tr>
                       <th scope="col">{{'Diagnosis'|translate}}</th>
@@ -1323,7 +1323,7 @@
 
               <form [formGroup]="addMedicineForm" (ngSubmit)="addMedicine()">
                 <div class="table-responsive medication-con">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Drug name'|translate}}</th>
@@ -1736,7 +1736,7 @@
 
               <form [formGroup]="addReferralForm" (ngSubmit)="addReferral()">
                 <div class="table-responsive medication-con">
-                  <table class="table">
+                  <table class="table" aria-describedby="">
                     <thead>
                       <tr>
                         <th scope="col">{{'Referral to' | translate}}</th>
@@ -2041,7 +2041,7 @@
               </form>
 
               <div class="table-responsive" *ngIf="followUpForm.value.present">
-                <table class="table">
+                <table class="table" aria-describedby="">
                   <thead>
                     <tr>
                       <th scope="col">{{'Follow Up Requested'|translate}}</th>
@@ -2103,6 +2103,6 @@
 </div>
 
 <div class="webrtc-controls">
-  <img class="img shadow" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
-  <img class="img shadow" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
+  <img class="img shadow" alt="" src="assets/svgs/video-frame.svg" (click)="startCall()" data-test-id="imgStartVideoCall"/>
+  <img class="img shadow" alt="" src="assets/svgs/chat-icon-blue-circle.svg" (click)="startChat()" data-test-id="imgStartChat"/>
 </div>

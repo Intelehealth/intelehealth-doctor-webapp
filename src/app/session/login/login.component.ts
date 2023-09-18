@@ -87,15 +87,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  handleReset() { }
-
-  handleExpire() { }
-
-  handleLoad() { }
-
-  handleSuccess(event: any) {
-  }
-
+  
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.translationService.getTranslation('You have sucessfully logged in.', 'Login Successful', true);
