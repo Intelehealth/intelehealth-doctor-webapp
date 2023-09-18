@@ -54,7 +54,6 @@ export class TestChatComponent implements OnInit {
 
   onsubmit() {
     if (this.message) {
-      console.log(this.message);
       this.user_messages = {
         message: this.message,
         isUser: true,

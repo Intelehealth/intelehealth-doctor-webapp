@@ -62,7 +62,6 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    console.log('chat destroyed');
     this.dialogRef.close();
     this.socketSvc.updateMessage = false;
   }

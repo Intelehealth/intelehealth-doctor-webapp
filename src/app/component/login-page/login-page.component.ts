@@ -83,12 +83,10 @@ export class LoginPageComponent implements OnInit {
                     this.router.navigate(["/home"]);
                   }
                   saveToStorage("providerType", 'Both');
-                  console.log('provider.results[0].person.display: ', provider.results[0].person.display);
                   saveToStorage("doctorName", provider.results[0].person.display);
                 } else {
                   this.router.navigate(["/myAccount"]);
                   saveToStorage("providerType", 'Nurse');
-                  console.log('provider.results[0].person.display: ', provider.results[0].person.display);
                   saveToStorage("nurseName", provider.results[0].person.display);
                 }
               } else {
@@ -98,7 +96,6 @@ export class LoginPageComponent implements OnInit {
                   this.router.navigate(["/home"]);
                 }
                 saveToStorage("providerType", 'Doctor');
-                console.log('provider.results[0].person.display: ', provider.results[0].person.display);
                 saveToStorage("doctorName", provider.results[0].person.display);
               }
               this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {

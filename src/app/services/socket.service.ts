@@ -53,7 +53,6 @@ export class SocketService {
   }
 
   public initSocket(forceInit = false) {
-    console.log("initSocket:called");
     if (forceInit && this.socket?.id && this.socket?.disconnect) {
       this.socket.disconnect();
     }
@@ -77,7 +76,6 @@ export class SocketService {
     });
 
     this.onEvent("cancel_hw").subscribe((data) => {
-      console.log('data:cancel_hw ', data);
       this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
       this.closeVcOverlay();
     });
@@ -152,7 +150,6 @@ export class SocketService {
       dailog.close();
     }
     this.callRing.pause();
-    console.log('this.callRing: >>>> Paussseee --- ');
   }
 
   public openNewVCModal(

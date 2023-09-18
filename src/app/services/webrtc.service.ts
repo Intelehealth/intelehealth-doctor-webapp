@@ -87,7 +87,6 @@ export class WebrtcService {
     this.remoteElement = remoteElement;
     this.clearAudioVideo();
 
-    console.log('VideoPresets.h90.resolution: ', VideoPresets.h90.resolution);
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
       dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
@@ -182,7 +181,6 @@ export class WebrtcService {
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
-    console.log('speakers: ', speakers);
     // show UI indicators when participant is speaking
   }
 
@@ -205,7 +203,6 @@ export class WebrtcService {
 
 
   handleDisconnect() {
-    console.log('disconnected from room');
     this.room.disconnect(true);
     this.callConnected = false;
     this.localContainer.innerHTML = '';

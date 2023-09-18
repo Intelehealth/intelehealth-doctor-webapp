@@ -190,7 +190,6 @@ export class MonitoringComponent implements OnInit {
     });
     let _data: any = this.allData.filter(d => d.userType === "Health Worker")
     _data = _data.map(item => {
-      console.log('item: ', item);
       return this.setTableData(item)
     });
     _data.sort((a, b) => new Date(b.lastSyncTimestamp).getTime() - new Date(a.lastSyncTimestamp).getTime());

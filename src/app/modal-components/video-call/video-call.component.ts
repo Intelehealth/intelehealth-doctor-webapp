@@ -110,9 +110,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async startCall() {
     this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
     if (!this.webrtcSvc.token) {
-      const hwVisitHolderId = this.webrtcSvc.visitHolderId || this.nurseId;
-      console.log('this.webrtcSvc.visitHolderId: ', this.webrtcSvc.visitHolderId);
-      await this.webrtcSvc.getToken(this.provider?.uuid, this.room, hwVisitHolderId).toPromise().catch(err => {
+      await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
@@ -170,7 +168,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
-        console.log('call_time_up: ', this.nurseId);
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
