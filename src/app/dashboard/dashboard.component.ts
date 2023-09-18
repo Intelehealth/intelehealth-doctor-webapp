@@ -290,7 +290,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   extractVisitDetail(visit: any) {
-    let in_labour_duration = this.getCreatedAt(visit.date_started);
+    let in_labour_duration = this.getCreatedAt(visit.date_started.replace('Z','+0530'));
     let stage = visit.encounters.filter((e: any) => e.type.name.includes('Stage2')).length ? 2 : 1;
     let notes = [];
     let notesObj = {};
@@ -307,7 +307,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let provider = null;
     let seen = false;
 
-    const visitReadAttr = visit.attributes.find(a => a.attribute_type?.name == "Visit Read");
+    const visitReadAttr = visit.attributes.find(a => a.attribute_type?.name == "Visit Read" && !a.voided);
     if (visitReadAttr) {
       if (visitReadAttr.value_reference.includes(this.user?.uuid.split('-')[0])) {
         seen = true;
@@ -316,21 +316,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (Array.isArray(visit.encounters)) {
       for (let x = 0; x < visit.encounters.length; x++) {
-        if (Array.isArray(visit.encounters[x].obs)) {
+        if (Array.isArray(visit.encounters[x].obs) && !visit.encounters[x].voided) {
           for (let y = 0; y < visit.encounters[x].obs.length; y++) {
-            const obs_concept_name = visit.encounters[x].obs[y].concept.concept_name.find(c => this.obsConcepts.indexOf(c.name) != -1);
-            const key = obs_concept_name ? obs_concept_name.name.trim() : visit.encounters[x].obs[y].concept.concept_name[0].name.trim();
-            const value = visit.encounters[x].obs[y].value_text||visit.encounters[x].obs[y].value_numeric;
-            if (visit.encounters[x].obs[y]?.comments === "R") {
-              if (this.allowedNotesToShow.includes(key)) {
-                notesObj[key] = value;
+            if (!visit.encounters[x].obs[y].voided) {
+              const obs_concept_name = visit.encounters[x].obs[y].concept.concept_name.find(c => this.obsConcepts.indexOf(c.name) != -1 && !c.voided);
+              const key = obs_concept_name ? obs_concept_name.name.trim() : visit.encounters[x].obs[y].concept.concept_name[0].name.trim();
+              const value = visit.encounters[x].obs[y].value_text||visit.encounters[x].obs[y].value_numeric;
+              if (visit.encounters[x].obs[y]?.comments === "R") {
+                if (this.allowedNotesToShow.includes(key)) {
+                  notesObj[key] = value;
+                }
               }
-            }
-            if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
-              cervixPlotX = value;
-            }
-            if (key == 'Descent 0-5') {
-              descentPlotO = value;
+              if (key == 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm') {
+                cervixPlotX = value;
+              }
+              if (key == 'Descent 0-5') {
+                descentPlotO = value;
+              }
             }
           }
 
@@ -355,7 +357,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               if (motherDeceased == 'YES') {
                 motherDeceasedReason = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'MOTHER DECEASED REASON')?.value_text;//165187
               }
-              dateTimeOfBirth = visit.encounters[x].encounter_datetime;
+              dateTimeOfBirth = visit.encounters[x].encounter_datetime.replace('Z','+0530');
             }
           }
         }
