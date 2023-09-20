@@ -45,6 +45,7 @@ td.mat-cell {
 tr.mat-row, tr.mat-footer-row {
   height: 88px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 tr.mat-row.upcoming {
