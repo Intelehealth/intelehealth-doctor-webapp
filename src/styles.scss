@@ -709,6 +709,19 @@ body.font-lato td {
     min-width: auto;
     max-width: 96% !important;
   }
+  .intel-accordion-con {
+    .mat-expansion-panel {
+      padding: 10px !important;
+      margin-bottom: 10px !important;
+    }
+  }
+  .mat-expansion-indicator{
+    padding: 1rem !important;
+  }
+  
+  .mat-tab-label{
+    padding: 0px 10px !important;
+  }
 }
 
 .vc-modal-lg.minimized {

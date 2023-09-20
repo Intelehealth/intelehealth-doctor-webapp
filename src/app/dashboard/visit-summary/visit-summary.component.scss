@@ -754,13 +754,13 @@ th.mat-header-cell:last-child {
     align-items: flex-start;
   }
 
-  .intel-accordion-con .mat-expansion-panel .intel-accordion-title h6 {
-    font-size: 14px;
-  }
+  // .intel-accordion-con .mat-expansion-panel .intel-accordion-title h6 {
+  //   font-size: 14px;
+  // }
 
-  .intel-accordion-con .mat-expansion-panel .intel-accordion-title img {
-    width: 30px;
-  }
+  // .intel-accordion-con .mat-expansion-panel .intel-accordion-title img {
+  //   width: 30px;
+  // }
 
   .items-list {
     list-style-type: none;
@@ -772,16 +772,18 @@ th.mat-header-cell:last-child {
 
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
 
     li .list-item-col {
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
 
