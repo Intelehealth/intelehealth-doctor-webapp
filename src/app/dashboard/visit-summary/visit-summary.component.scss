@@ -754,6 +754,10 @@ th.mat-header-cell:last-child {
     align-items: flex-start;
   }
 
+  .intel-accordion-title{
+    flex-wrap: nowrap !important;
+  }
+
   // .intel-accordion-con .mat-expansion-panel .intel-accordion-title h6 {
   //   font-size: 14px;
   // }
