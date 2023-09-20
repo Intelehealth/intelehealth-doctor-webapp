@@ -74,7 +74,7 @@
         line-height: 150%;
         color: #1B163A;
         margin: 4px 0px;
-        overflow: auto;
+        word-wrap: break-word;
         flex-shrink: 0;
       }
 
@@ -154,5 +154,3 @@
   background-color: white;
   cursor: pointer;
 }
-
-
