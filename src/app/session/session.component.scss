@@ -146,8 +146,12 @@
  }
 }
 
+.mobile-logo{
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .row {
+  .main-container-row {
     display: flex;
     flex-direction: column-reverse;
   }
@@ -156,18 +160,7 @@
     padding: 20px 30px 80px;
   }
 
-  .login-info-wrapper {
-    .info-banner {
-      padding: 10px 40px 10px;
-    }
-
-    .carousel-container {
-      .carousel-caption {
-        h3 {
-          font-size: 20px;
-          min-height: 80px;
-        }
-      }
-    }
+  .mobile-logo{
+    display: block;
   }
 }

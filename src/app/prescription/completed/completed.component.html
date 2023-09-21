@@ -9,7 +9,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/pad-2.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Completed Visits'|translate}} ({{completedVisitsCount}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Ended visits after prescription'|translate}}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
+                <mat-icon class="info_icon" aria-hidden="false" aria-label="help icon" matTooltip="{{'Ended visits after prescription'|translate}}" matTooltipPosition="right" data-test-id="matIcoHelpCompleted">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #compSearchInput class="form-control" placeholder="Search" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchCompleted">
                   <div class="input-group-append">
