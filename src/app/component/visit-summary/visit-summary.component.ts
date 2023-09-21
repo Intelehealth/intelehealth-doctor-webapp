@@ -354,6 +354,7 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   openChatModal() {
+    console.log('chat');
     this.cs.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
