@@ -13,6 +13,8 @@
     p {
       font-size: 14px;
       color: var(--color-gray);
+      margin-top: 0.50rem;
+      line-height: normal;
     }
   }
 
@@ -382,5 +384,9 @@
     .view-btn {
       width: 100%;
     }
+  }
+  .chip-item span{
+    width: 6rem;
+    display: inline-block;
   }
 }

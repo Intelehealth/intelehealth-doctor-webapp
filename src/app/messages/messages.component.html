@@ -1,11 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12 p-0">
-      <div class="card intel-card">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-4 p-0">
-              <div class="chat-sidebar-wrapper">
+              <div class="chat-sidebar-wrapper card intel-card chat-list-border-radius">
                 <div class="chat-sidebar-title">
                   <h6 class="mb-0">{{'Patients'| translate}}</h6>
                   <span>({{'Via Comunity health workers' | translate}})</span>
@@ -70,7 +69,7 @@
             </div>
             <div class="col-md-8 p-0">
               <div
-                class="chat-main-con"
+                class="chat-main-con card intel-card chat-border-radius"
                 *ngIf="selectedConversation; else noConversationSelected"
               >
                 <div class="chat-con-title">
@@ -214,7 +213,7 @@
                 </div>
               </div>
               <ng-template #noConversationSelected>
-                <div class="no-conversation-selected">
+                <div class="no-conversation-selected chat-border-radius">
                   <img src="assets/svgs/chat-messages.png" alt="" />
                   <h6>{{'No messages selected'|translate}}</h6>
                   <p>
@@ -226,7 +225,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 </div>

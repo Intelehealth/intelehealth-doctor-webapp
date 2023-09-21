@@ -339,9 +339,8 @@
   }
 
   .chat-main-con {
+    margin-top: 5%;
     .chat-con-title {
-      border-top: 1px solid var(--color-gray);
-
       .chat-item-info {
         .title {
           flex-shrink: 0;
@@ -353,6 +352,19 @@
       border-radius: 0px 0px 10px 10px;
     }
   }
+
+  .no-conversation-selected{
+    margin-top: 5%;
+    border-radius: 12px;
+  }
+
+  .chat-list-border-radius{
+    border-radius: 12px !important;
+  }
+  
+  .chat-border-radius{
+    border-radius: 12px !important;
+  }
 }
 
 .attachment {
@@ -362,4 +374,12 @@
   object-fit: contain;
   background-color: var(--color-white);
   cursor: pointer;
+}
+
+.chat-list-border-radius{
+  border-radius: 12px 0px 0px 12px;
+}
+
+.chat-border-radius{
+  border-radius: 0px 12px 12px 0px;
 }
