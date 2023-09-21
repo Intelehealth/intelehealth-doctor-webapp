@@ -1364,7 +1364,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       concept: this.conceptFollow,
       person: this.visit.patient.uuid,
       obsDatetime: new Date(),
-      value: (this.followUpForm.value.followUpReason) ? `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`,
+      value: (this.followUpForm.value.followUpReason) ? `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${moment(this.followUpForm.value.followUpTime, "LT").format('hh:mm A')}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: any) => {
       if (res) {
