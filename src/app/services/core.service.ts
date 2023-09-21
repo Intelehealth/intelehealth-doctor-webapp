@@ -46,8 +46,10 @@ export class CoreService {
   // }
 
   openChatBoxModal(data: any): MatDialogRef<ChatComponent> {
-    const dialogRef = this.dialog.open(ChatComponent, { data, id: 'chatx-modal', panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false })
-    return dialogRef;
+    if (!document.getElementById('chatx-modal')) {
+      const dialogRef = this.dialog.open(ChatComponent, { data, id: 'chatx-modal', panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false })
+      return dialogRef;
+    }
   }
 
   openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
