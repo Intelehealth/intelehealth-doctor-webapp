@@ -1,8 +1,8 @@
 import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import {
   FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -46,9 +46,9 @@ export class AppointmentComponent implements OnInit {
     startTime: "9:00 AM",
     endTime: "6:00 PM",
   };
-  scheduleForm = new FormGroup({
-    startTime: new FormControl(this.slot.startTime, [Validators.required]),
-    endTime: new FormControl(this.slot.endTime, [Validators.required]),
+  scheduleForm = new UntypedFormGroup({
+    startTime: new UntypedFormControl(this.slot.startTime, [Validators.required]),
+    endTime: new UntypedFormControl(this.slot.endTime, [Validators.required]),
   });
   userSchedule: any = Object;
   type: string = "month";

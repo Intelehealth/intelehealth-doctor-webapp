@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
@@ -16,7 +16,7 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = ["General Physician"];
-  editForm: FormGroup;
+  editForm: UntypedFormGroup;
   status = false;
   name = "Enter text";
   userDetails: any;
@@ -32,33 +32,33 @@ export class EditDetailsComponent implements OnInit {
         ? data?.timings?.value
         : "";
     const [startTime = null, endTime = null] = timings.split(" - ");
-    this.editForm = new FormGroup({
-      aboutMe: new FormControl(
+    this.editForm = new UntypedFormGroup({
+      aboutMe: new UntypedFormControl(
         this.data.aboutMe ? this.data.aboutMe.value : null
       ),
-      gender: new FormControl(
+      gender: new UntypedFormControl(
         this.data.person ? this.data.person.gender : null
       ),
-      phoneNumber: new FormControl(
+      phoneNumber: new UntypedFormControl(
         this.data.phoneNumber ? this.data.phoneNumber.value : null
       ),
-      whatsapp: new FormControl(
+      whatsapp: new UntypedFormControl(
         this.data.whatsapp ? this.data.whatsapp.value : null
       ),
-      emailId: new FormControl(
+      emailId: new UntypedFormControl(
         this.data.emailId ? this.data.emailId.value : null
       ),
-      qualification: new FormControl(
+      qualification: new UntypedFormControl(
         this.data.qualification ? this.data.qualification.value : null
       ),
-      specialization: new FormControl(
+      specialization: new UntypedFormControl(
         this.data.specialization ? this.data.specialization.value : null
       ),
-      registrationNumber: new FormControl(
+      registrationNumber: new UntypedFormControl(
         this.data.registrationNumber ? this.data.registrationNumber.value : null
       ),
-      startTime: new FormControl(startTime),
-      endTime: new FormControl(endTime),
+      startTime: new UntypedFormControl(startTime),
+      endTime: new UntypedFormControl(endTime),
     });
   }
 

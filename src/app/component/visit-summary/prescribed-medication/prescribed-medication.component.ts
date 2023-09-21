@@ -4,7 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { DiagnosisService } from "../../../services/diagnosis.service";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import {
   transition,
   trigger,
@@ -60,18 +60,18 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptDurationUnit = [];
   conceptMed = "c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca";
 
-  medForm = new FormGroup({
-    med: new FormControl("", [Validators.required]),
-    dose: new FormControl("", Validators.min(0)),
-    unit: new FormControl("", [Validators.required]),
-    amount: new FormControl("", Validators.min(1)),
-    unitType: new FormControl("", [Validators.required]),
-    frequency: new FormControl("", [Validators.required]),
-    route: new FormControl(""),
-    reason: new FormControl(""),
-    duration: new FormControl("", Validators.min(1)),
-    durationUnit: new FormControl("", [Validators.required]),
-    additional: new FormControl(""),
+  medForm = new UntypedFormGroup({
+    med: new UntypedFormControl("", [Validators.required]),
+    dose: new UntypedFormControl("", Validators.min(0)),
+    unit: new UntypedFormControl("", [Validators.required]),
+    amount: new UntypedFormControl("", Validators.min(1)),
+    unitType: new UntypedFormControl("", [Validators.required]),
+    frequency: new UntypedFormControl("", [Validators.required]),
+    route: new UntypedFormControl(""),
+    reason: new UntypedFormControl(""),
+    duration: new UntypedFormControl("", Validators.min(1)),
+    durationUnit: new UntypedFormControl("", [Validators.required]),
+    additional: new UntypedFormControl(""),
   });
 
   constructor(

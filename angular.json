@@ -8,7 +8,11 @@
       "sourceRoot": "src",
       "projectType": "application",
       "prefix": "app",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -16,7 +20,11 @@
             "allowedCommonJsDependencies": [
               "socket.io-client",
               "debug",
-              "socket.io-parser"
+              "socket.io-parser",
+              "moment",
+              "intro.js/intro.js",
+              "luxon",
+              "export-to-csv"
             ],
             "outputPath": "dist/intelehealth-ui",
             "index": "src/index.html",
@@ -31,8 +39,22 @@
               "src/ngsw.json",
               "src/js/util.js"
             ],
-            "styles": ["src/styles.css", "node_modules/intro.js/introjs.css"],
-            "scripts": ["src/app/js/util.js", "node_modules/intro.js/intro.js"]
+            "styles": [
+              "src/toastr.css",
+              "src/styles.scss",
+              "node_modules/intro.js/introjs.css"
+            ],
+            "scripts": [
+              "src/app/js/util.js",
+              "node_modules/intro.js/intro.js"
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -45,7 +67,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -60,19 +81,23 @@
               ],
               "serviceWorker": true,
               "ngswConfigPath": "ngsw-config.json"
-            }
-          }
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "intelehealth-ui:build"
-          },
+          "options": {},
           "configurations": {
             "production": {
               "browserTarget": "intelehealth-ui:build:production"
+            },
+            "development": {
+              "browserTarget": "intelehealth-ui:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -87,21 +112,20 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": ["src/styles.css", "node_modules/intro.js/introjs.css"],
-            "scripts": ["node_modules/intro.js/intro.js", "src/app/js/util.js"],
+            "styles": [
+              "src/styles.css",
+              "node_modules/intro.js/introjs.css"
+            ],
+            "scripts": [
+              "node_modules/intro.js/intro.js",
+              "src/app/js/util.js"
+            ],
             "assets": [
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
               "src/js/util.js"
             ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -114,26 +138,21 @@
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "intelehealth-ui:serve"
+            "protractorConfig": "e2e/protractor.conf.js"
           },
           "configurations": {
             "production": {
               "devServerTarget": "intelehealth-ui:serve:production"
+            },
+            "development": {
+              "devServerTarget": "intelehealth-ui:serve:development"
             }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
-          }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }
   },
-  "defaultProject": "intelehealth-ui",
   "cli": {
     "analytics": false
   }

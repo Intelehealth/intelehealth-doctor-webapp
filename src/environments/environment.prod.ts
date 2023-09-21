@@ -6,6 +6,8 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
-  version:"AEAT-v1.7.2",
-  versionCode:"42"
+  webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
+  webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
+  version: "AEAT-v1.9.0",
+  versionCode: "48"
 };

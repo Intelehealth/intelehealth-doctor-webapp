@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { environment } from "src/environments/environment";
-import { FormGroup, FormControl } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
@@ -30,8 +30,8 @@ export class ReassignSpecialityComponent implements OnInit {
   ];
   errorText: string;
 
-  updateSpeciality = new FormGroup({
-    specialization: new FormControl(""),
+  updateSpeciality = new UntypedFormGroup({
+    specialization: new UntypedFormControl(""),
   });
   constructor(
     private visitService: VisitService,

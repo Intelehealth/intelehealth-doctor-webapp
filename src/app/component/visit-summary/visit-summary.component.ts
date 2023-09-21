@@ -1,4 +1,3 @@
-import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { VisitService } from "../../services/visit.service";
 import { Component, OnInit } from "@angular/core";
 import { EncounterService } from "src/app/services/encounter.service";
@@ -6,8 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
-import { MatDialog } from "@angular/material/dialog";
-import { VcComponent } from "../vc/vc.component";
+import { CoreService } from "src/app/services/core.service";
 declare var getFromStorage: any,
   saveToStorage: any;
 
@@ -46,6 +44,7 @@ export class VisitSummaryComponent implements OnInit {
     "d63ae965-47fb-40e8-8f08-1f46a8a60b2b"
   ];
   roleAccess: any;
+  visit: any;
   videoIcon = "assets/svgs/video-w.svg";
 
   constructor(
@@ -56,8 +55,7 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private diagnosisService: DiagnosisService,
-    private pushNotificationService: PushNotificationsService,
-    private dialog: MatDialog
+    private cs: CoreService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -77,11 +75,12 @@ export class VisitSummaryComponent implements OnInit {
           this.managerRoleAccess = true;
         }
       });
-    } 
+    }
     this.patientId = this.route.snapshot.paramMap.get("patient_id");
 
-    const visitUuid = this.route.snapshot.paramMap.get("visit_id");
-    this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+    this.visitUuid = this.route.snapshot.paramMap.get("visit_id");
+    this.visitService.fetchVisitDetails(this.visitUuid).subscribe((visitDetails) => {
+      this.visit = visitDetails;
       if (Array.isArray(visitDetails.attributes)) {
         this.isSevikaVisit = !!visitDetails.attributes.find(atr => atr.value === 'Specialist doctor not needed')
       }
@@ -90,11 +89,11 @@ export class VisitSummaryComponent implements OnInit {
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
-          const ObsData = visit.obs.filter(a=> a.display.match("TELEMEDICINE DIAGNOSIS"));
-          if(ObsData.length>0){
+          const ObsData = visit.obs.filter(a => a.display.match("TELEMEDICINE DIAGNOSIS"));
+          if (ObsData.length > 0) {
             this.diagnosisService.isVisitSummaryChanged = true
           }
-          else{
+          else {
             this.diagnosisService.isVisitSummaryChanged = false
           }
         }
@@ -158,6 +157,10 @@ export class VisitSummaryComponent implements OnInit {
 
   sign() {
     this.signandsubmit();
+  }
+
+  get user() {
+    return getFromStorage("user");
   }
 
   signandsubmit() {
@@ -281,12 +284,21 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   openVcModal() {
-    this.dialog.open(VcComponent, {
-      disableClose: true,
-      data: {
-        patientUuid: this.patientId,
-      },
+    this.cs.openVideoCallModal({
+      patientId: this.patientId,
+      visitId: this.visitUuid,
+      connectToDrId: this.user?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit.patient?.identifiers?.[0]?.identifier,
+      initiator: 'dr'
     });
+    // this.dialog.open(VcComponent, {
+    //   disableClose: true,
+    //   data: {
+    //     patientUuid: this.patientId,
+    //   },
+    // });
   }
 
   private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
@@ -338,6 +350,16 @@ export class VisitSummaryComponent implements OnInit {
         });
       }
       this.diagnosisService.isVisitSummaryChanged = false;
+    });
+  }
+
+  openChatModal() {
+    this.cs.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
     });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validators } from "@angular/forms";
 import { VisitService } from "src/app/services/visit.service";
 import { EncounterService } from "src/app/services/encounter.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
@@ -57,8 +57,8 @@ export class PatientInteractionComponent implements OnInit {
   visitId: string;
   adviceObs: any = [];
 
-  interaction = new FormGroup({
-    interaction: new FormControl("", [Validators.required]),
+  interaction = new UntypedFormGroup({
+    interaction: new UntypedFormControl("", [Validators.required]),
   });
   constructor(
     private diagnosisService: DiagnosisService,

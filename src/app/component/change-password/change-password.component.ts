@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, Validators, FormBuilder } from "@angular/forms";
+import { UntypedFormGroup, Validators, UntypedFormBuilder } from "@angular/forms";
 import { MustMatch } from "./password.validator";
 import { HttpClient } from "@angular/common/http";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -13,10 +13,10 @@ import { environment } from "../../../environments/environment";
 })
 export class ChangePasswordComponent implements OnInit {
   baseURL = environment.baseURL;
-  changePasswordForm: FormGroup;
+  changePasswordForm: UntypedFormGroup;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private http: HttpClient,
     private snackbar: MatSnackBar,
     private dialogRef: MatDialogRef<ChangePasswordComponent>

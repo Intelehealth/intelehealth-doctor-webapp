@@ -1,7 +1,7 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, Inject } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl } from "@angular/forms";
 import { EncounterService } from "src/app/services/encounter.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { environment } from "../../../../environments/environment";
@@ -15,9 +15,9 @@ declare var getFromStorage: any;
 export class SignatureComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.pid}/attribute`;
-  addSignatureForm = new FormGroup({
-    signature: new FormControl(""),
-    text: new FormControl(""),
+  addSignatureForm = new UntypedFormGroup({
+    signature: new UntypedFormControl(""),
+    text: new UntypedFormControl(""),
   });
   status = false;
   name = "Enter text";

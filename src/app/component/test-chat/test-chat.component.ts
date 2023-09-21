@@ -54,7 +54,6 @@ export class TestChatComponent implements OnInit {
 
   onsubmit() {
     if (this.message) {
-      console.log(this.message);
       this.user_messages = {
         message: this.message,
         isUser: true,
@@ -69,7 +68,7 @@ export class TestChatComponent implements OnInit {
   }
 
   get toUser() {
-    return this.patientVisitProvider.provider.uuid;
+    return this.patientVisitProvider?.provider?.uuid;
   }
 
   sendMessage(event) {

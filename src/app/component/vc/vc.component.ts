@@ -110,7 +110,6 @@ export class VcComponent implements OnInit, OnDestroy {
   makeCall() {
     this.startUserMedia();
     this.socketService.emitEvent("create or join", this.room);
-    console.log("Attempted to create or  join room", this.room);
     this.toast({
       message: "Calling....",
       duration: 8000,

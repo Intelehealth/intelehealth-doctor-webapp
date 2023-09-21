@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserIdleService } from 'angular-user-idle';
 import * as introJs from 'intro.js/intro.js';
 import { Router } from '@angular/router';
 // import { GlobalConstants } from './js/global-constants';

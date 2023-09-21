@@ -11,8 +11,10 @@ export const environment = {
   mindmapURL: "https://afitraining.ekalarogya.org:3004/api",
   notificationURL: "https://afitraining.ekalarogya.org:3004/notification",
   socketURL: "https://afitraining.ekalarogya.org:3004",
-  version:"AEAT-v1.7.2",
-  versionCode:"42"
+  webrtcSdkServerUrl: "wss://afitraining.ekalarogya.org:9090",
+  webrtcTokenServerUrl: 'https://afitraining.ekalarogya.org:3000/',
+  version: "AEAT-v1.9.0",
+  versionCode: "48"
 };
 
 /*
@@ -22,4 +24,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

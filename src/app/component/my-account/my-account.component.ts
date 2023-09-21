@@ -134,7 +134,7 @@ export class MyAccountComponent implements OnInit {
     }
     window.location.reload();
   }
-  /** 
+  /**
    * Open edit details modal
    */
   onEdit() {
@@ -152,10 +152,9 @@ export class MyAccountComponent implements OnInit {
 
 
   getDoctorVisitData(){
-    this.userDetails = getFromStorage("user");    
+    this.userDetails = getFromStorage("user");
     this.service.getDoctorsVisit().subscribe((res)=>{
       const visits = res['rawData'];
-      console.log('visits: ', visits);
       const doctorFilter = visits.filter((v)=>
       v.Doctor_uuid === this.userDetails.uuid)
       const completedVisits = doctorFilter.filter(m=>m.Sign_Submit_time != null);

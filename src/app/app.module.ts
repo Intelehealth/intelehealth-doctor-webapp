@@ -46,10 +46,8 @@ import { HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { CookieService } from "ngx-cookie-service";
 import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
-import { UserIdleModule } from "angular-user-idle";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
@@ -60,7 +58,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -97,6 +95,10 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { SendSmsComponent } from './component/send-sms/send-sms.component';
+import { CookieModule } from "ngx-cookie";
+import { ToastrModule } from "ngx-toastr";
+import { VideoCallComponent } from './modal-components/video-call/video-call.component';
+import { MomentModule } from "ngx-moment";
 
 @NgModule({
   declarations: [
@@ -144,7 +146,8 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
     HoverClassDirective,
     ChatComponent,
     TestChatComponent,
-    SendSmsComponent
+    SendSmsComponent,
+    VideoCallComponent
   ],
 
   imports: [
@@ -176,10 +179,10 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
     HttpClientModule,
     NgxSpinnerModule,
     NgMultiSelectDropDownModule,
-    UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     MatTabsModule,
     MatChipsModule,
     NgxMaterialTimepickerModule,
+    CookieModule.withOptions(),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
@@ -271,18 +274,26 @@ import { SendSmsComponent } from './component/send-sms/send-sms.component';
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
+    }),
+    MomentModule
   ],
   providers: [
-    CookieService,
     AuthGuard,
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
     { provide: APP_BASE_HREF, useValue: "/" },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} },
     SocketService,
     ChatService,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
