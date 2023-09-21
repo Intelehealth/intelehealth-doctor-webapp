@@ -627,7 +627,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     if (splitByBr[k].trim()) {
                       const splitByDash = splitByBr[k].split('-');
                       // obj1.data.push({ key: splitByDash[0].replace('• ', ''), value: splitByDash.slice(1, splitByDash.length).join('-') });
-                      obj1.data.push({ key: splitByDash[1].replace('• ', ''), value: splitByDash[2].trim() });
+                      obj1.data.push({ key: splitByDash[1].replace('• ', ''), value: splitByDash[2] });
                     }
                   }
                   this.physicalExaminationData.push(obj1);
@@ -890,7 +890,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return moment(data).format('DD MMM, YYYY');
     };
     if (hours < 1) {
-      if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY H:mm')}`;
       return `${minutes} ${this.translateService.instant("minutes ago")}`;
     }
     return `${hours} ${this.translateService.instant("hrs ago")}`;
@@ -1522,6 +1522,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         visits.forEach((visit: any) => {
           if (visit.uuid !== this.visit.uuid) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: any) => {
+              console.log(visitdetail,"visits data");
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: any) => {
@@ -1539,6 +1540,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 }
               });
               this.pastVisits.push(visitdetail);
+              console.log(this.pastVisits,"Past visits data");
               this.dataSource = new MatTableDataSource(this.pastVisits);
             });
           }
