@@ -119,6 +119,7 @@ describe('ForgotUsernameComponent', () => {
 
 
   it('CHECK EMAIL BEFORE ENTERING VALUE & VALIDATION', async () => {
+    component.active = 'email';
     fixture.detectChanges();
     await fixture.whenStable();
     const forgotUsernameElement = fixture.nativeElement.querySelector(FORM_EMAIL_ID).querySelectorAll('input')[0];
