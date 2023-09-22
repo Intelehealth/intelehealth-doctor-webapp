@@ -958,7 +958,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             records.push([this.translateService.instant(d.diagnosisName), this.translateService.instant(d.diagnosisType), this.translateService.instant(d.diagnosisStatus)]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 3, alignment: 'center' }]);
+          records.push([{ text: this.translateService.instant('No diagnosis provided'), colSpan: 3, alignment: 'center' }]);
         }
         break;
       case 'medication':
@@ -967,7 +967,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             records.push([this.translateService.instant(m.drug), this.translateService.instant(m.strength), m.days, m.timing, m.remark]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 5, alignment: 'center' }]);
+          records.push([{ text: this.translateService.instant('No medicines provided'), colSpan: 5, alignment: 'center' }]);
         }
         break;
       case 'additionalInstruction':

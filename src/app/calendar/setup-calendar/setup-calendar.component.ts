@@ -94,14 +94,14 @@ export class SetupCalendarComponent implements OnInit {
     { id: 2, name: "10:00" },
     { id: 3, name: "11:00" },
     { id: 4, name: "12:00" },
-    { id: 5, name: "1:00" },
-    { id: 6, name: "2:00" },
-    { id: 7, name: "3:00" },
-    { id: 8, name: "4:00" },
-    { id: 9, name: "5:00" },
-    { id: 10, name: "6:00" },
-    { id: 11, name: "7:00" },
-    { id: 12, name: "8:00" }
+    { id: 5, name: "13:00" },
+    { id: 6, name: "14:00" },
+    { id: 7, name: "15:00" },
+    { id: 8, name: "16:00" },
+    { id: 9, name: "17:00" },
+    { id: 10, name: "18:00" },
+    { id: 11, name: "19:00" },
+    { id: 12, name: "20:00" },
   ];
   clockTimeAmPM: any = [
     { id: 1, name: "AM" },
@@ -254,19 +254,29 @@ export class SetupCalendarComponent implements OnInit {
     this.fs.clear();
     // let uniqTiming = _.uniqWith(schedule.slotSchedule, (arrVal: any, otherVal: any) => { return arrVal.startTime == otherVal.startTime && arrVal.endTime == otherVal.endTime });
     let uniqTiming = [];
-    for (let h = 0; h < schedule.slotSchedule.length; h++) {
-      if (uniqTiming.findIndex((o: any) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
-        uniqTiming.push(schedule.slotSchedule[h]);
+    const updatedSlotSchedule = schedule.slotSchedule.map((d) => {
+      const { endTime, startTime  } = d;
+      const updatedStartTime = moment(startTime, 'LT').format('HH');
+      const updatedEndTime = moment(endTime, 'LT').format('HH');
+      return {
+          ...d,
+          startTime: `${updatedStartTime}:00`,
+          endTime: `${updatedEndTime}:00`,
+      }
+    });
+    for (let h = 0; h < updatedSlotSchedule.length; h++) {
+      if (uniqTiming.findIndex((o: any) => o.startTime == updatedSlotSchedule[h].startTime && o.endTime == updatedSlotSchedule[h].endTime) == -1) {
+        uniqTiming.push(updatedSlotSchedule[h]);
       }
     }
     uniqTiming.forEach((ut: any) => {
-      // let utslots = _.filter(schedule.slotSchedule, { startTime: ut.startTime, endTime: ut.endTime });
-      let utslots = schedule.slotSchedule.filter((o: any) => o.startTime == ut.startTime && o.endTime == ut.endTime);
+      // let utslots = _.filter(updatedSlotSchedule, { startTime: ut.startTime, endTime: ut.endTime });
+      let utslots = updatedSlotSchedule.filter((o: any) => o.startTime == ut.startTime && o.endTime == ut.endTime);
       let timingFormGroup = new FormGroup({
         startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
-        startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
+        // startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
         endTime: new FormControl({ value: ut.endTime.split(" ")[0], disabled: true }, Validators.required),
-        endMeridiem: new FormControl({ value: ut.endTime.split(" ")[1], disabled: true }, Validators.required),
+        // endMeridiem: new FormControl({ value: ut.endTime.split(" ")[1], disabled: true }, Validators.required),
         // days: new FormControl({ value: _.map(_.uniq(_.map(utslots,'day')), (val) => val.slice(0,3)), disabled: true }, Validators.required),
         days: new FormControl({ value: [...new Set(utslots.map((item: any) => item.day))].map((val: any) => val.slice(0,3)), disabled: true }, Validators.required),
         slots: this.getSlotsArray(utslots)
@@ -278,9 +288,9 @@ export class SetupCalendarComponent implements OnInit {
     this.ft.push(
       new FormGroup({
         startTime: new FormControl(null, Validators.required),
-        startMeridiem: new FormControl(null, Validators.required),
+        // startMeridiem: new FormControl(null, Validators.required),
         endTime: new FormControl(null, Validators.required),
-        endMeridiem: new FormControl(null, Validators.required),
+        // endMeridiem: new FormControl(null, Validators.required),
         days: new FormControl(null, Validators.required),
         slots: new FormArray([])
       })
@@ -308,7 +318,6 @@ export class SetupCalendarComponent implements OnInit {
       this.filteredDays.push(element);
      }
     });
-    // console.log(this.addSlotsForm.value);
   }
 
   getSlotsArray(utslots: any) {
@@ -347,6 +356,22 @@ export class SetupCalendarComponent implements OnInit {
     }
     let flag = 0;
     let ts = [...this.ft.getRawValue()];
+    ts = ts.map((d) => {
+      const { endTime, startTime } = d;
+      const splitStartTime = startTime.split(":");
+      const splitEndTime = endTime.split(":");
+      const updateStartTime = Number(splitStartTime[0])
+      const updateEndTime = Number(splitEndTime[0])
+      const startMeridiem = updateStartTime >= 12 ? 'PM' : 'AM'
+      const endMeridiem = updateEndTime >= 12 ? 'PM' : 'AM'
+      return {
+          ...d,
+          startMeridiem,
+          endMeridiem,
+          startTime: `${+updateStartTime % 12 || 12}:00`,
+          endTime: `${+updateEndTime % 12 || 12}:00`,
+      }
+    });
     for (let i = 0; i < ts.length; i++) {
       if (this.validateTimeSlot({ startTime: `${ts[i].startTime} ${ts[i].startMeridiem}`, endTime: `${ts[i].endTime} ${ts[i].endMeridiem}` })) {
         let newSlots = this.createSlots(ts[i].days, `${ts[i].startTime} ${ts[i].startMeridiem}`, `${ts[i].endTime} ${ts[i].endMeridiem}`);
@@ -414,7 +439,6 @@ export class SetupCalendarComponent implements OnInit {
     if (flag == 1) {
       return;
     }
-    // console.log(this.addSlotsForm.getRawValue());
     let body = { ...this.addSlotsForm.value };
     delete body['timings'];
     delete body['daysOff'];
@@ -504,7 +528,6 @@ export class SetupCalendarComponent implements OnInit {
         if (flag == 1) {
           return;
         }
-        // console.log(this.addSlotsForm.getRawValue());
         let body = { ...this.addSlotsForm.value };
         delete body['timings'];
         delete body['daysOff'];
@@ -535,7 +558,8 @@ export class SetupCalendarComponent implements OnInit {
     let currentDate = moment(start);
     while (currentDate <= moment(end)) {
       const currentDateDay = currentDate.format('ddd');
-      if (days.includes(currentDateDay) && !daysOff.includes(currentDate.format("YYYY-MM-DD HH:mm:ss"))) {
+      // if (days.includes(currentDateDay) && !daysOff.includes(currentDate.format("YYYY-MM-DD HH:mm:ss"))) {
+        if (days.includes(currentDateDay)) {
         slots.push({
           id: this.getUniqueId(),
           day: currentDate.format('dddd'),
@@ -776,7 +800,6 @@ export class SetupCalendarComponent implements OnInit {
     if (flag == 1) {
       return;
     }
-    // console.log(this.addSlotsForm.getRawValue());
     let body = { ...this.addSlotsForm.value };
     delete body['timings'];
     delete body['daysOff'];
