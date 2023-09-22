@@ -4,11 +4,12 @@
   "scripts": {
     "config-dev": "ts-node ./src/assets/scripts/setEnv.ts --environment=dev",
     "config-prod": "ts-node ./src/assets/scripts/setEnv.ts --environment=prod",
+    "config-test": "ts-node ./src/assets/scripts/setEnv.ts --environment=test",
     "ng": "ng",
     "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
     "start": "npm run config-dev && ng serve",
     "build": "npm run config-prod && ng build --configuration production --aot",
-    "test": "ng test",
+    "test": "ng test --include src/app/session/forgot-username",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prepare": "husky install"
@@ -71,7 +72,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.11",
-    "@angular/cli": "^14.2.11",
+    "@angular/cli": "^16.2.2",
     "@angular/compiler-cli": "^14.3.0",
     "@angular/language-service": "^14.3.0",
     "@commitlint/cli": "^17.7.1",

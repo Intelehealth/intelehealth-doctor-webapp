@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
     private rolesService: NgxRolesService,
     public translate: TranslateService,
     public translationService: TranslationService) {
-
+      
     this.loginForm = new FormGroup({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
