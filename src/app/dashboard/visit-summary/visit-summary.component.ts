@@ -24,6 +24,7 @@ import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.com
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from 'src/app/services/translation.service';
+declare const $: any;
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -135,7 +136,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       { id: 10, name : "Dental Surgeon"},
       { id: 11, name : "Other Specialist*"},
   ];
-  
+
   diagnosis: any[] = [
     // {
     //   id: 1,
@@ -532,6 +533,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.getDDx();
               }, 1000);
+            }
+
+            const tabs = $('.mat-tab-labels')[0].childNodes;
+            for (let x = 0; x < tabs.length; x++) {
+              if (x === 0) {
+                $('#'+tabs[x].id).attr('data-test-id', "mtCurrentVisit");
+              } else {
+                $('#'+tabs[x].id).attr('data-test-id', "mtPastVisit");
+              }
             }
           }
         });

@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+declare const $: any;
 
 @Component({
   selector: 'app-calendar',
@@ -53,6 +54,18 @@ export class CalendarComponent implements OnInit {
     this.getFollowUpVisit();
     this.getAppointments(moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'));
     this.getSchedule();
+    setTimeout(() => {
+      const tabs = $('.mat-tab-labels')[0].childNodes;
+      for (let x = 0; x < tabs.length; x++) {
+        if (x === 0) {
+          $('#'+tabs[x].id).attr('data-test-id', "mtDayView");
+        } else if (x === 1) {
+          $('#'+tabs[x].id).attr('data-test-id', "mtWeekView");
+        } else {
+          $('#'+tabs[x].id).attr('data-test-id', "mtMonthView");
+        }
+      }
+    }, 500);
   }
 
   dateChanged(viewDate: Date) {

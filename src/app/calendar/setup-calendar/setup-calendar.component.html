@@ -4,7 +4,7 @@
       <div class="title-con d-flex align-items-center">
         <img class="mr-2" src="assets/svgs/menu-calendar-circle.svg" alt="">
         <div class="d-flex flex-column">
-          <h6 class="mb-0">{{'Setup your calendar'|translate}}</h6>
+          <h6 class="mb-0" data-test-id="labelSetupCaledar">{{'Setup your calendar'|translate}}</h6>
           <p class="mb-0">{{'Please set up your scedule for the month according to your availability'|translate}}</p>
         </div>
       </div>
@@ -21,8 +21,8 @@
         </div>
         <ul class="month-list">
           <ng-container *ngFor="let m of scheduledMonths; let i=index;">
-            <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
-              <span data-test-id="spSelectMonth">{{(m.name)| translate}}</span>
+            <li class="list-item" [attr.data-test-id]="'month'+ i" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
+              <span [attr.data-test-id]="'labelMonth'+i">{{(m.name)| translate}}</span>
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
@@ -39,7 +39,7 @@
       <form [formGroup]="addSlotsForm">
         <div class="card intel-card">
           <div class="month-title2">
-            <h6 class="mb-0">{{(selectedMonth?.name) |translate}} {{selectedMonth?.year}}</h6>
+            <h6 class="mb-0" data-test-id="labelSelectedMonth">{{(selectedMonth?.name) |translate}} {{selectedMonth?.year}}</h6>
           </div>
           <div class="card-header">
             <h6 class="mb-0 color-blue">{{'Working days'|translate}}</h6>
@@ -47,7 +47,7 @@
           <div class="card-body">
             <div class="form-row">
               <div class="form-group col-md-6">
-                <label>{{'Start date'|translate}}</label>
+                <label data-test-id="startDate">{{'Start date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.startDate.errors">
                   <input type="text" class="form-control" formControlName="startDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker1" placeholder="{{'Select start date'|translate}}" aria-label="Start date"
                     aria-describedby="basic-addon1" readonly data-test-id="etSelStartDate">
@@ -62,7 +62,7 @@
                 </div>
               </div>
               <div class="form-group col-md-6">
-                <label>{{'End date'|translate}}</label>
+                <label data-test-id="endDate">{{'End date'|translate}}</label>
                 <div class="input-group" [class.invalid-input]="submitted && f.endDate.errors">
                   <input type="text" class="form-control" formControlName="endDate" [min]="minDate" [max]="maxDate" [matDatepicker]="picker2" placeholder="{{'Select end date'|translate}}" aria-label="End date"
                     aria-describedby="basic-addon2" readonly data-test-id="etSelEndDate">
@@ -81,10 +81,10 @@
               <table class="table" formArrayName="timings">
                 <thead>
                   <tr>
-                    <th scope="col">{{'Start time'|translate}}</th>
-                    <th scope="col">{{'End time'|translate}}</th>
-                    <th scope="col">{{'Days'|translate}}</th>
-                    <th scope="col"></th>
+                    <th scope="col" data-test-id="colStartTime">{{'Start time'|translate}}</th>
+                    <th scope="col" data-test-id="colEndTime">{{'End time'|translate}}</th>
+                    <th scope="col" data-test-id="colDays">{{'Days'|translate}}</th>
+                    <th scope="col" data-test-id="colAction"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -174,7 +174,7 @@
                           </ng-select>
                         </td>
                         <td>
-                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)" data-test-id="btnDeleteSlot">
+                          <button mat-button type="button" class="delete-btn" (click)="deleteSlot(i)" [attr.data-test-id]="'btnDeleteSlot'+i">
                             <img src="assets/svgs/delete-icon.svg" alt="">
                             {{'Delete'|translate}}
                           </button>
@@ -183,7 +183,7 @@
 
                       <tr *ngIf="!_addMoreTiming && last">
                         <td colspan="4">
-                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddTime">
+                          <a href="javascript:void(0)" class="add-more-btn" [class.disbled]="filteredDays.length == 0" (click)="toggleAddMoreTiming()" data-test-id="linkAddMoreTiming">
                             <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
                            {{'Add more timings'|translate}}
                           </a>
@@ -200,6 +200,11 @@
                               [clearable]="false"
                               [searchable]="false"
                               data-test-id="selStartTime">
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <span [attr.data-test-id]="'startTimeOption'+index">
+                                  {{item.name}}
+                                </span>
+                              </ng-template>
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.startMeridiem.errors" formControlName="startMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -209,6 +214,11 @@
                               [clearable]="false"
                               [searchable]="false"
                               data-test-id="selStartAm&Pm">
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <span [attr.data-test-id]="'startAmPm'+index">
+                                  {{item.name}}
+                                </span>
+                              </ng-template>
                             </ng-select>
                           </div>
                         </td>
@@ -222,6 +232,11 @@
                               [clearable]="false"
                               [searchable]="false"
                               data-test-id="selEndTime">
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <span [attr.data-test-id]="'endTimeOption'+index">
+                                  {{item.name}}
+                                </span>
+                              </ng-template>
                             </ng-select>
                             <ng-select [class.invalid-input]="submitted && t.controls.endMeridiem.errors" formControlName="endMeridiem" class="customSelect2" [items]="clockTimeAmPM"
                               appendTo=".intel-card"
@@ -231,6 +246,11 @@
                               [clearable]="false"
                               [searchable]="false"
                               data-test-id="selEndAm&Pm">
+                              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                <span [attr.data-test-id]="'endAmPm'+index">
+                                  {{item.name}}
+                                </span>
+                              </ng-template>
                             </ng-select>
                           </div>
                         </td>
@@ -250,8 +270,8 @@
                               {{(item.shortName) | translate}},
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                              <div class="pretty p-image p-plain">
-                                <input type="checkbox" [checked]="item$.selected"/>
+                              <div class="pretty p-image p-plain" [attr.data-test-id]="'dayOption'+index">
+                                <input type="checkbox" [checked]="item$.selected" [attr.data-test-id]="'dayOptionIp'+index"/>
                                 <div class="state">
                                     <img class="image" src="assets/svgs/checkbox-tick.png">
                                     <label>{{(item.name)|translate}}</label>
@@ -281,7 +301,7 @@
           <div class="card-body">
             <div class="form-row">
               <div class="form-group col-md-6">
-                <label>{{'Dates'|translate}}</label>
+                <label data-test-id="dayOffDates">{{'Dates'|translate}}</label>
                 <div class="input-group">
                   <input type="text" [value]="daysOffDates" class="form-control" placeholder="{{'Select dates'|translate}}" aria-label="Start date"
                     aria-describedby="basic-addon3" readonly data-test-id="etDayOff">
@@ -309,11 +329,11 @@
               </div>
             </div>
             <div class="days-off-chips-con">
-              <h6 class="mb-0">{{'Your days off'|translate}}</h6>
+              <h6 class="mb-0" data-test-id="labelYourDaysOff">{{'Your days off'|translate}}</h6>
               <div class="days-off-chips" formArrayName="daysOff">
                 <ng-container *ngFor="let doff of fd.controls; let j=index;">
                   <div class="chip-item">
-                    <span>{{doff.value|date:'dd MMM YYYY'}}</span>
+                    <span [attr.data-test-id]="'dayOff'+j">{{doff.value|date:'dd MMM YYYY'}}</span>
                     <button mat-icon-button type="button" (click)="removeDaysOff(j)" data-test-id="{{'btnRemoveDaysOff' + j}}">
                       <mat-icon>close</mat-icon>
                     </button>

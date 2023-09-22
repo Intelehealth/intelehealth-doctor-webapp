@@ -117,7 +117,7 @@
           (selectedIndexChange)="onTabChange($event)"
           data-test-id="mtgVisitSummary"
         >
-          <mat-tab label="{{'Current visit summary'|translate}}" data-test-id="mtCurrent">
+          <mat-tab label="{{'Current visit summary'|translate}}">
             <div class="text-right">
               <button
                 *ngIf="!showAll"
@@ -704,7 +704,7 @@
             </mat-accordion>
           </mat-tab>
 
-          <mat-tab label="{{'Past visit history'|translate}}" data-test-id="mtPast">
+          <mat-tab label="{{'Past visit history'|translate}}">
             <div *ngIf="pastVisits.length > 0"  class="mat-elevation-z8">
               <table mat-table [dataSource]="dataSource">
                 <!-- Action Column -->
