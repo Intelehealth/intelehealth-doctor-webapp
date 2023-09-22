@@ -4,13 +4,13 @@
 
 export const environment = {
   production: false,
-  base: "https://telemedui.intelehealth.org",
-  baseURL: "https://telemedui.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://telemedui.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://telemedui.intelehealth.org/openmrs",
-  mindmapURL: "https://telemedui.intelehealth.org:3004/api",
-  notificationURL: "https://telemedui.intelehealth.org:3004/notification",
-  socketURL: "https://telemedui.intelehealth.org:3004",
+  base: "https://uniceftraining.intelehealth.org",
+  baseURL: "https://uniceftraining.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://uniceftraining.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://uniceftraining.intelehealth.org/openmrs",
+  mindmapURL: "https://uniceftraining.intelehealth.org:3004/api",
+  notificationURL: "https://uniceftraining.intelehealth.org:3004/notification",
+  socketURL: "https://uniceftraining.intelehealth.org:3004",
   captchaSiteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
