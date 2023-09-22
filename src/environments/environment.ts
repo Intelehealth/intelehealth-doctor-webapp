@@ -11,7 +11,7 @@ export const environment = {
   mindmapURL: "https://telemedui.intelehealth.org:3004/api",
   notificationURL: "https://telemedui.intelehealth.org:3004/notification",
   socketURL: "https://telemedui.intelehealth.org:3004",
-  captchaSiteKey: "6LfZkXMmAAAAABrxMovlRqeHeSxokNXK6CjJh4Tz",
+  captchaSiteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",
@@ -28,7 +28,7 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
-  siteKey: "6LfZkXMmAAAAABrxMovlRqeHeSxokNXK6CjJh4Tz",
+  siteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2VAMTIz'
 };
 
