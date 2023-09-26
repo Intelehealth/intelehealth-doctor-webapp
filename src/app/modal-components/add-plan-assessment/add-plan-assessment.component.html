@@ -50,10 +50,179 @@
               </div>
               <ng-container *ngIf="addForm.value.medicine == 'Y'">
                 <ng-container formArrayName="medicines">
-                  <ng-container *ngFor="let m of fm.controls; let i = index; let last = last">
+                  <ng-container *ngFor="let fcm of fm.controls; let i = index; let last = last">
                     <ng-container [formGroupName]="i">
-                      <ng-container *ngIf="!m.value.isDeleted">
+                      <ng-container *ngIf="!fcm.value.isDeleted">
                         <div class="form-row mt-2">
+                          <div class="form-group col-md-4">
+                            <label for="medicineObj">Medicine *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="medicineObj"
+                              [clearable]="false"
+                              bindLabel="name"
+                              [searchable]="true"
+                              [addTag]="true"
+                              placeholder="Enter medicine name">
+                              <ng-option *ngFor="let m of medicines" [value]="m">
+                                {{m.form}} {{m.name}} {{m.strength}}
+                              </ng-option>
+                              <ng-template ng-label-tmp let-item="item">
+                                {{item.name ? item.name : item.label }}
+                              </ng-template>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.medicineObj.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.medicineObj.errors.required">Enter medicine name</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="typeOfMedicine">Form *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="typeOfMedicine"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              placeholder="Select medicine form">
+                              <ng-option *ngFor="let t of typeOfMedicineList" [value]="t.name">
+                                {{t.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i]?.controls?.typeOfMedicine?.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i]?.controls?.typeOfMedicine?.errors.required">Enter type</small>
+                              <small class="error-msg" *ngIf="fm.controls[i]?.controls?.typeOfMedicine?.errors.maxlength">Type should be less than 15 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="strength">Strength *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="strength"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              [addTag]="true"
+                              placeholder="Enter strength">
+                              <ng-option *ngFor="let s of strengthList" [value]="s.name">
+                                {{s.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.strength.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.strength.errors.required">Enter strength</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.strength.errors.maxlength">Strength should be less than 15 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="dosage">Dosage *</label>
+                            <input type="number" class="form-control" placeholder="Enter dosage" formControlName="dosage">
+                            <div *ngIf="submitted && fm.controls[i].controls.dosage.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.required">Enter dosage</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.maxlength">Dosage should be less than 10 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="dosage">Dosage Unit *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="dosageUnit"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              placeholder="Enter dosage unit">
+                              <ng-option *ngFor="let d of dosageUnitList" [value]="d.name">
+                                {{d.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.dosageUnit.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosageUnit.errors.required">Enter dosage unit</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.dosageUnit.errors.maxlength">Dosage unit should be less than 10 characters</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-3">
+                            <label for="dosage">Frequency *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="frequency"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              placeholder="Select frequency">
+                              <ng-option *ngFor="let f of frequencyList" [value]="f.name">
+                                {{f.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.frequency.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.frequency.errors.required">Select frequency</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.frequency.errors.maxlength">Frequency should be less than 25 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="routeOfMedicine">Route of Medicine *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="routeOfMedicine"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              placeholder="Select route">
+                              <ng-option *ngFor="let r of routeList" [value]="r.name">
+                                {{r.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.routeOfMedicine.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.routeOfMedicine.errors.required">Select route</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.routeOfMedicine.errors.maxlength">Route should be less than 25 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="duration">Duration *</label>
+                            <input type="number" class="form-control" placeholder="Enter duration" formControlName="duration">
+                            <div *ngIf="submitted && fm.controls[i].controls.duration.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.required">Enter duration</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.maxlength">Duration should be less than 15 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="routeOfMedicine">Duration Unit *</label>
+                            <ng-select
+                              class="visit-select"
+                              formControlName="durationUnit"
+                              bindLabel="name"
+                              bindValue="name"
+                              [clearable]="false"
+                              [searchable]="true"
+                              placeholder="Select duration unit">
+                              <ng-option *ngFor="let du of durationUnitList" [value]="du.name">
+                                {{du.name}}
+                              </ng-option>
+                            </ng-select>
+                            <div *ngIf="submitted && fm.controls[i].controls.durationUnit.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.durationUnit.errors.required">Select duration unit</small>
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.durationUnit.errors.maxlength">Duration unit should be less than 15 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-2">
+                            <label for="duration">Remark</label>
+                            <input type="text" class="form-control" placeholder="Enter remark" formControlName="remark">
+                            <div *ngIf="submitted && fm.controls[i].controls.remark.errors">
+                              <small class="error-msg" *ngIf="fm.controls[i].controls.remark.errors.maxlength">Remark should be less than 15 characters</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-1">
+                            <label for="deleteBtn">.</label>
+                            <button mat-button type="button" class="delete-btn" (click)="removeMedicine(i)">
+                              <img src="assets/svgs/delete-icon.svg" alt="">
+                            </button>
+                          </div>
+                        </div>
+                        <!-- <div class="form-row mt-2">
                           <div class="form-group col-md-5">
                             <label for="medicineName">Medicine *</label>
                             <input type="text" class="form-control" placeholder="Enter medicine name" formControlName="medicineName" [ngbTypeahead]="search3">
@@ -118,7 +287,7 @@
                               <img src="assets/svgs/delete-icon.svg" alt="">
                             </button>
                           </div>
-                        </div>
+                        </div> -->
                         <ng-container *ngIf="!last">
                           <mat-divider></mat-divider>
                           <mat-divider></mat-divider>

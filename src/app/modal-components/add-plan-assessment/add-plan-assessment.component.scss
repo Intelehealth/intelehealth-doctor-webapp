@@ -115,3 +115,44 @@ textarea.form-control {
   color: #FF475D;
   height: 48px;
 }
+
+::ng-deep .ng-select.visit-select.custom.ng-select-single .ng-select-container,
+.ng-select.visit-select.custom.ng-select-multiple .ng-select-container {
+  background: var(--color-white);
+  min-width: 120px;
+}
+
+::ng-deep .ng-select.visit-select.ng-select-single .ng-select-container,
+::ng-deep .ng-select.visit-select.ng-select-multiple .ng-select-container {
+  height: 48px;
+  width: 100%;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+
+  // .ng-value-container {
+  //   position: relative;
+  // }
+
+  .ng-value-container .ng-input {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border: none;
+  }
+
+  .ng-arrow-wrapper .ng-arrow::after {
+    content: url('../../../assets/svgs/chevron-down-input.svg');
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ng-clear-wrapper {
+    display: none;
+  }
+}

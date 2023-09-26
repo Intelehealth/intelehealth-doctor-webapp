@@ -348,7 +348,6 @@ export class PartogramComponent implements OnInit, OnDestroy {
       if (visit) {
         this.visit = visit;
         this.patient = visit?.patient;
-        // console.log(visit);
         this.readPatientAttributes();
         this.readStageData();
         this.readVisitHolder();
@@ -650,10 +649,10 @@ export class PartogramComponent implements OnInit, OnDestroy {
               concept: this.conceptMedicine,
               person: this.visit.patient.uuid,
               obsDatetime: new Date(),
-              value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+              value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }];
+              (stage == 1) ? this.parameters[20].stage1values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }];
             });
           });
         }
@@ -745,7 +744,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   // console.log(result);
                 });
               } else {
-                this.encounterService.updateObs(m.id, { value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}` }).subscribe((result: any) => {
+                this.encounterService.updateObs(m.id, { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}` }).subscribe((result: any) => {
                   // console.log(result);
                 });
               }
@@ -755,12 +754,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   concept: this.conceptMedicine,
                   person: this.visit.patient.uuid,
                   obsDatetime: new Date(),
-                  value: `${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`,
+                  value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
                   encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
                 }).subscribe((result: any) => {
-                  // console.log(result);
                   m.id = result.uuid;
-                  // (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.medicineName} | ${m.strength} | ${m.dosage} | ${m.duration} | ${m.typeOfMedicine} | ${m.routeOfMedicine}`, uuid: result.uuid }];
+                  (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }];
                 });
               }
             }
@@ -771,7 +769,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
           let med = [];
           for (let x = 0; x < res.medicines.length; x++) {
             if (!res.medicines[x].isDeleted) {
-              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage}::${res.medicines[x].dosageUnit}  | ${res.medicines[x].duration} | ${res.medicines[x].typeOfMedicine} | ${res.medicines[x].routeOfMedicine}` });
+              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].typeOfMedicine} | ${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage}::${res.medicines[x].dosageUnit}  | ${res.medicines[x].frequency} | ${res.medicines[x].routeOfMedicine} | ${res.medicines[x].duration}::${res.medicines[x].durationUnit} | ${res.medicines[x].remark ? ' | '+res.medicines[x].remark: ''}` });
             }
           }
           // console.log(med);
