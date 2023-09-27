@@ -103,6 +103,7 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
+                              [addTag]="addStrengthTag.bind(this)"
                               placeholder="Enter strength">
                               <ng-option *ngFor="let s of strengthList" [value]="s.name">
                                 {{s.name}}

@@ -906,4 +906,8 @@ export class AddPlanAssessmentComponent implements OnInit {
     this.dialogRef.close(val);
   }
 
+  addStrengthTag(tag: string) {
+    return tag;
+  }
+
 }
