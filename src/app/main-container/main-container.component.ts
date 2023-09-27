@@ -15,6 +15,8 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { HelpMenuComponent } from '../modal-components/help-menu/help-menu.component';
 import { TranslateService } from '@ngx-translate/core';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { SwPush, SwUpdate } from "@angular/service-worker";
 
 @Component({
   selector: 'app-main-container',
@@ -53,7 +55,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    public _swPush: SwPush
     ) {
     this.searchForm = new FormGroup({
       keyword: new FormControl('', Validators.required)
@@ -99,6 +102,86 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
     });
+
+    this.getSubscription();
+  }
+
+  getSubscription() {
+    console.log(Notification.permission);
+    if(Notification.permission === 'default') {
+      Notification.requestPermission().then(() => {
+        this.requestSubscription();
+      }).catch(() => {
+        // show permission denied error
+      });
+    }
+    else if(Notification.permission === 'denied') {
+      console.log("Permission denied.");
+      // show permission is denied, please allow it error
+    } else {
+      this.requestSubscription();
+    }
+  }
+
+  requestSubscription() {    
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
+    }
+    // console.log("Checking subscription....");
+    this._swPush.subscription.subscribe(async (sub) => {
+      // console.log("Currently active subscription:", sub);
+      if (!sub) {
+        console.log("Requesting subscription....");
+        await this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then(async (_) => {
+          // console.log("New subscription: ", JSON.stringify(_));
+          // (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization()
+            ).subscribe(response => {
+              console.log(response);
+            });
+          // })();
+        }).catch((_) => console.log);
+      } else {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        console.log(result.visitorId);
+        this.authService.subscribePushNotification(
+          sub,
+          this.user.uuid,
+          result.visitorId,
+          this.provider.person.display,
+          this.getSpecialization()
+        ).subscribe(response => {
+              console.log(response);
+        });
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
+  }
+
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = null;
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
   }
 
   ngAfterContentChecked(): void {

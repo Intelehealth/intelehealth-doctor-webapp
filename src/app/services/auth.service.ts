@@ -23,6 +23,7 @@ export class AuthService {
   private base64Cred: string;
   private mindmapUrl: string = environment.mindmapURL;
   public rememberMe: boolean = false;
+  private notificationUrl: string = environment.notificationURL;
 
   constructor(
     private myRoute: Router,
@@ -31,7 +32,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private rolesService: NgxRolesService,
-    private permissionsService: NgxPermissionsService
+    private permissionsService: NgxPermissionsService,
   ) {
     let localStorageUser = JSON.parse(localStorage.getItem('currentUser'));
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
@@ -264,5 +265,9 @@ export class AuthService {
     } catch (error) {
       return null;
     }
+  }
+
+  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
+    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
   }
 }
