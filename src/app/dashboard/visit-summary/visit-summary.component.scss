@@ -743,6 +743,32 @@ th.mat-header-cell:last-child {
 }
 
 @media (max-width: 768px) {
+
+  ::ng-deep .visit-summary-tab-group.mat-tab-group {
+  
+    .mat-tab-body-wrapper {
+      .mat-tab-body {
+        .mat-tab-body-content {
+          padding: 10px;
+        }
+      }
+    }
+  }
+
+  .intel-card {
+    .card-body {
+      padding: 10px !important;
+    }
+  }
+
+  .patient-info-wrapper{
+    margin: 0 !important;
+  }
+  
+  .no-docs {
+    padding: 10px 0px !important;
+  }
+
   .patient-info-section {
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
     border-right: none !important;
@@ -768,7 +794,7 @@ th.mat-header-cell:last-child {
 
   .items-list {
     list-style-type: none;
-    padding: 24px 0px 0px;
+    padding: 5px 0px 0px;
 
     li .list-item {
       flex-direction: column;
@@ -799,6 +825,10 @@ th.mat-header-cell:last-child {
 
   .col-form-label {
     font-weight: bold;
+  }
+
+  .cheif-complaint-wrapper {
+    padding: 5px 0px 0px !important;
   }
 }
 

@@ -1,6 +1,6 @@
 <div class="title-con position-relative" mat-dialog-title>
   <div *ngIf="!isDownloadPrescription">
-    <button class="btn_download_pdf" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon> Download</button>
+    <button class="btn_download_pdf" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
   </div>
   <h6>
     {{ isDownloadPrescription ? ('Intelehealth e-'|translate) : "" }} {{'Prescription'|translate}}
@@ -13,7 +13,8 @@
     />
   </h6>
   <div class="close-btn-con" *ngIf="!isDownloadPrescription">
-    <button class="modal-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    <button class="modal-close-btn desktop-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
+    <button class="modal-close-btn mobile-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/Close-icon.svg" alt=""></button>
   </div>
 </div>
 <mat-dialog-content>
@@ -112,7 +113,7 @@
               <ul *ngIf="!isDownloadPrescription" class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>{{'Visit ID'|translate}}</label>
+                    <label class="border-0">{{'Visit ID'|translate}}</label>
                     <div class="list-item-content">
                       {{
                         visit?.uuid
@@ -191,7 +192,7 @@
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>{{'Name'|translate}}</label>
+                    <label class="border-0">{{'Name'|translate}}</label>
                     <div class="list-item-content">
                       {{ consultedDoctor ? consultedDoctor.name : ('NA'|translate) }}
                     </div>
@@ -240,7 +241,7 @@
               <ul class="items-list">
                 <li *ngIf="!isDownloadPrescription">
                   <div class="list-item">
-                    <label>{{'Has enough information for diagnosis?'|translate}}</label>
+                    <label class="border-0">{{'Has enough information for diagnosis?'|translate}}</label>
                     <div class="list-item-content">
                       {{ existingDiagnosis.length ? ('Yes'|translate) : ('No'|translate) }}
                     </div>
@@ -466,7 +467,7 @@
               <ul class="items-list">
                 <li>
                   <div class="list-item">
-                    <label>{{'Follow-up suggested'|translate}}</label>
+                    <label class="border-0">{{'Follow-up suggested'|translate}}</label>
                     <div class="list-item-content">
                       {{ followUp ? followUp.wantFollowUp : ('No'|translate) }}
                     </div>
