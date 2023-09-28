@@ -25,5 +25,7 @@ export const environment = {
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
   siteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
-  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2VAMTIz'
+  externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2VAMTIz',
+  vapidPublicKey: 'BCGfng5flfhjlqR_imzFXwHGeEMBA6AzFVAex7sPLDbsMCn_IMKtQmI9TDnmP6raxmPcBcnoKO_AHKaLtctsIjg',
+
 };
