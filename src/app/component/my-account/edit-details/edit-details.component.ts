@@ -198,7 +198,7 @@ export class EditDetailsComponent implements OnInit {
       this.http.post(URL, json).subscribe();
     }
 
-    // this.onClose();
-   // setTimeout(() => window.location.reload(), 2000);
+    this.onClose();
+    setTimeout(() => window.location.reload(), 2000);
   }
 }
