@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { VideoCallComponent } from '../modal-components/video-call/video-call.component';
 import { ChatComponent } from '../component/chat/chat.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
+import { NoopScrollStrategy } from '@angular/cdk/overlay';
 
 @Injectable({
   providedIn: 'root'

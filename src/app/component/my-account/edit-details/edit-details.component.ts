@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
+import * as moment from "moment";
 declare var getFromStorage: any;
 
 @Component({
@@ -21,6 +22,7 @@ export class EditDetailsComponent implements OnInit {
   name = "Enter text";
   userDetails: any;
   providerDetails: any;
+  isErrTime: boolean = false;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<EditDetailsComponent>,
@@ -34,31 +36,31 @@ export class EditDetailsComponent implements OnInit {
     const [startTime = null, endTime = null] = timings.split(" - ");
     this.editForm = new UntypedFormGroup({
       aboutMe: new UntypedFormControl(
-        this.data.aboutMe ? this.data.aboutMe.value : null
+        this.data.aboutMe && !this.data.aboutMe.voided ? this.data.aboutMe.value : null
       ),
       gender: new UntypedFormControl(
-        this.data.person ? this.data.person.gender : null, [Validators.required]
+        this.data.person && !this.data.person.voided ? this.data.person.gender : null, [Validators.required]
       ),
       phoneNumber: new UntypedFormControl(
-        this.data.phoneNumber ? this.data.phoneNumber.value : null, [Validators.required]
+        this.data.phoneNumber && !this.data.phoneNumber.voided ? this.data.phoneNumber.value : null, [Validators.required]
       ),
       whatsapp: new UntypedFormControl(
-        this.data.whatsapp ? this.data.whatsapp.value : null
+        this.data.whatsapp && !this.data.whatsapp.voided ? this.data.whatsapp.value : null
       ),
       emailId: new UntypedFormControl(
-        this.data.emailId ? this.data.emailId.value : null, [Validators.required]
+        this.data.emailId && !this.data.emailId.voided ? this.data.emailId.value : null, [Validators.required]
       ),
       qualification: new UntypedFormControl(
-        this.data.qualification ? this.data.qualification.value : null, [Validators.required]
+        this.data.qualification && !this.data.qualification.voided ? this.data.qualification.value : null, [Validators.required]
       ),
       specialization: new UntypedFormControl(
-        this.data.specialization ? this.data.specialization.value : null, [Validators.required]
+        this.data.specialization && !this.data.specialization.voided ? this.data.specialization.value : null, [Validators.required]
       ),
       registrationNumber: new UntypedFormControl(
-        this.data.registrationNumber ? this.data.registrationNumber.value : null, [Validators.required]
+        this.data.registrationNumber && !this.data.registrationNumber.voided ? this.data.registrationNumber.value : null, [Validators.required]
       ),
-      startTime: new UntypedFormControl(startTime),
-      endTime: new UntypedFormControl(endTime),
+      startTime: new UntypedFormControl(startTime, [Validators.required]),
+      endTime: new UntypedFormControl(endTime, [Validators.required]),
     });
   }
 
@@ -94,11 +96,31 @@ export class EditDetailsComponent implements OnInit {
     this.dialog.open(SignatureComponent, { width: "500px", data: obj });
   }
 
+  isValidTime(value: any) {
+    const { startTime, endTime } = value
+    const mst = moment(startTime, "HH:mm a");
+    const met = moment(endTime, "HH:mm a");
+    return mst.isBefore(met);
+  }
+
+  changeTime() {
+    this.isErrTime = false;
+    const value = this.editForm.value;
+    if(!this.isValidTime(value)) {
+      this.isErrTime = true;
+    }
+  }
+
   /**
    * Take form value from edit details form and update it to the openMRS system
    */
   updateDetails() {
+    
     const value = this.editForm.value;
+    if(this.isErrTime) {
+      return;
+    }
+
     if (value.gender !== null && value.gender !== this.data.person.gender) {
       const URL = `${this.baseURL}/person/${this.data.person.uuid}`;
       const json = {
@@ -113,11 +135,14 @@ export class EditDetailsComponent implements OnInit {
         ? `${this.baseURLProvider}/${this.data.aboutMe.uuid}`
         : this.baseURLProvider;
       const json = {
-        attributeType: "e519784c-572c-43a4-b049-03e937eb501c",
+        attributeType: "3b306c2c-9a30-4001-9ffc-e8e182855eff",
         value: value.aboutMe,
       };
-      console.log('URL..', URL)
-      this.http.post(URL, json).subscribe((response) => { });
+      if(value.aboutMe === '') {
+        this.http.delete(URL).subscribe((response) => { });
+      } else {
+        this.http.post(URL, json).subscribe((response) => { });
+      }
     }
 
     if (value.emailId !== null) {
@@ -151,7 +176,11 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "fccc49f1-49ca-44bb-9e61-21c88ae6dd64",
         value: value.whatsapp.toString(),
       };
-      this.http.post(URL, json).subscribe((response) => { });
+      if(value.whatsapp === '') {
+        this.http.delete(URL).subscribe((response) => { });
+      } else {
+        this.http.post(URL, json).subscribe((response) => { });
+      }
     }
 
     if (value.qualification !== null) {
@@ -192,13 +221,13 @@ export class EditDetailsComponent implements OnInit {
         ? `${this.baseURLProvider}/${this.data.timings.uuid}`
         : this.baseURLProvider;
       const json = {
-        attributeType: "68f03eb2-7914-40b4-bc6b-23a7de67ec7a",
+        attributeType: "d03361fb-21ca-4e73-bfa7-2dfe34d5b7f7",
         value: `${value.startTime} - ${value.endTime}`,
       };
       this.http.post(URL, json).subscribe();
     }
 
-    // this.onClose();
-   // setTimeout(() => window.location.reload(), 2000);
+    this.onClose();
+    setTimeout(() => window.location.reload(), 2000);
   }
 }

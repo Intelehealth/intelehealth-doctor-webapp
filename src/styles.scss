@@ -461,3 +461,11 @@ body.font-lato td {
     width: fit-content;
   }
 }
+
+.timepicker-overlay {
+  z-index: 10000000 !important;
+}
+
+.timepicker-backdrop-overlay {
+  z-index: 10000000 !important;
+}
