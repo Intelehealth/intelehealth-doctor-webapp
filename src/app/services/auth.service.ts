@@ -267,7 +267,7 @@ export class AuthService {
     }
   }
 
-  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
-    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
+  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string, locale: string ) {
+    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName, locale });
   }
 }

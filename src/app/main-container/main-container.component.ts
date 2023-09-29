@@ -144,7 +144,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
               this.user.uuid,
               result.visitorId,
               this.provider.person.display,
-              this.getSpecialization()
+              this.getSpecialization(),
+              localStorage.getItem('selectedLanguage')
             ).subscribe(response => {
               console.log(response);
             });
@@ -158,7 +159,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           this.user.uuid,
           result.visitorId,
           this.provider.person.display,
-          this.getSpecialization()
+          this.getSpecialization(),
+          localStorage.getItem('selectedLanguage')
         ).subscribe(response => {
           console.log(response);
         });
