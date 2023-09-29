@@ -1737,7 +1737,7 @@
                     <th mat-header-cell *matHeaderCellDef> Medicine </th>
                     <td mat-cell *matCellDef="let element" class="nowrap">
                       <ul class="notes-list">
-                        <li *ngFor="let m of element?.medicine;">{{m.value?.replace('::',' ')}}</li>
+                        <li *ngFor="let m of element?.medicine;">{{m.value?.replaceAll('::',' ')}}</li>
                       </ul>
                     </td>
                   </ng-container>
