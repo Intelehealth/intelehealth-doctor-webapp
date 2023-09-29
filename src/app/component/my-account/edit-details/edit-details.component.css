@@ -7,3 +7,10 @@
 .example-full-width {
   width: 100%;
 }
+
+.errTime {
+  display: block;
+  color: red;
+  margin-top: 0px;
+  margin-bottom: 15px;
+}

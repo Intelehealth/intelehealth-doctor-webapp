@@ -29,6 +29,7 @@ export class VisitSummaryComponent implements OnInit {
   patientId: string;
   visitUuid: string;
   isSevikaVisit = false;
+  isSameProvider = false;
   conceptIds = [
     "537bb20d-d09d-4f88-930b-cc45c7d662df",
     "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -86,6 +87,7 @@ export class VisitSummaryComponent implements OnInit {
       }
       visitDetails.encounters.forEach((visit) => {
         if (visit.display.match("Visit Note") !== null) {
+          this.setSameProvider(visit)
           saveToStorage("visitNoteProvider", visit);
           this.visitNotePresent = true;
           this.show = true;
@@ -129,6 +131,21 @@ export class VisitSummaryComponent implements OnInit {
     return !this.diagnosisService.diagnosisExists;
   }
 
+  setSameProvider(visit: any) {
+      let localProvider = localStorage.getItem("provider");
+      if (localProvider !== null) {
+        localProvider = JSON.parse(localProvider) as any;
+        const uuid = localProvider['uuid'];
+        if (visit.encounterProviders.length > 0) {
+          const encounterProvider = visit.encounterProviders[0];
+          const provider = encounterProvider.provider;
+          if (provider) {
+            this.isSameProvider = uuid === provider.uuid
+          }
+        }
+      }
+  }
+
   onStartVisit() {
     const myDate = new Date(Date.now() - 30000);
     const patientUuid = this.route.snapshot.paramMap.get("patient_id");
@@ -140,6 +157,7 @@ export class VisitSummaryComponent implements OnInit {
       if (userDetails && providerDetails) {
         this.setSpiner = true;
         this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
+          this.isSameProvider = true;
           let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
           if (visitNote) {
             this.diagnosisService.isSameDoctor();

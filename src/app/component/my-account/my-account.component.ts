@@ -74,10 +74,12 @@ export class MyAccountComponent implements OnInit {
           ) {
             this.specialization = attribute.value;
           }
-          this.providerDetails[attribute.attributeType.display] = {
-            value: attribute.value,
-            uuid: attribute.uuid,
-          };
+          if (!attribute.voided) {
+            this.providerDetails[attribute.attributeType.display] = {
+              value: attribute.value,
+              uuid: attribute.uuid,
+            };
+          }
           if (
             attribute.attributeType.uuid ===
             this.sessionService.visitStateProviderType

@@ -76,6 +76,8 @@
           placeholder="Start Time"
           [format]="12"
           formControlName="startTime"
+          (ngModelChange)="changeTime()"
+          readonly
         />
         <ngx-material-timepicker #picker1></ngx-material-timepicker>
       </mat-form-field>
@@ -88,11 +90,14 @@
           placeholder="End Time"
           [format]="12"
           formControlName="endTime"
+          (ngModelChange)="changeTime()"
+          readonly
         />
         <ngx-material-timepicker #picker2></ngx-material-timepicker>
       </mat-form-field>
     </div>
   </div>
+  <span *ngIf="isErrTime"  class="errTime">End Time should be greater than Start Time. </span>
   <div
     style="float: left"
     *ngIf="userDetails.roles[0].name != 'Organizational: Nurse'"
@@ -111,7 +116,7 @@
     <button
       mat-raised-button
       color="primary"
-       [disabled]="!editForm.valid"
+       [disabled]="!editForm.valid || this.isErrTime"
       type="submit"
       (click)="updateDetails()"
     >
