@@ -599,7 +599,8 @@
         <div class="float-right my-4">
           <img class="signature" [src]="signature?.value" />
           <div class="title-name text-right">{{ consultedDoctor?.name }}</div>
-          <div class="title-qual text-right">{{ consultedDoctor?.qualification }}</div>
+          <div class="title-qual text-right">{{ consultedDoctor?.qualification }}, {{consultedDoctor?.specialization|translate}}</div>
+          <div class="title-name text-right">{{'Email'|translate}}:{{ consultedDoctor?.emailId }}</div>
           <div class="sub-title text-right">
             {{'Registration No:'|translate}}{{ consultedDoctor?.registrationNumber }}
           </div>

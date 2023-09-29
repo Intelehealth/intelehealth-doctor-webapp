@@ -884,9 +884,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   alignment: 'right',
                   stack: [
                     { image: `${this.signature?.value}`, width: 200, height: 200, margin: [0, 15, -10, 5] },
-                    { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0,-35,0,0]},
-                    { text: `${this.consultedDoctor?.qualification}`},
-                    { text: `${this.translateService.instant('Registration No')}. ${this.consultedDoctor?.registrationNumber}`},
+                    { text: `${this.consultedDoctor?.name}`, margin: [0,-35,0,0]},
+                    { text: `${this.consultedDoctor?.qualification}, ${this.translateService.instant(this.consultedDoctor?.specialization)}`},
+                    { text: `${this.translateService.instant('Email')}: ${this.consultedDoctor?.emailId}`},
+                    { text: `${this.translateService.instant('Registration No')}: ${this.consultedDoctor?.registrationNumber}`},
                   ]
                 },
                 '',
