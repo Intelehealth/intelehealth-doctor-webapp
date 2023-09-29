@@ -109,7 +109,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   getSubscription() {
     console.log(Notification.permission);
     if(Notification.permission === 'default') {
-      console.log("Default");
       Notification.requestPermission().then(() => {
         this.requestSubscription();
       }).catch(() => {
@@ -125,16 +124,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   requestSubscription() {    
-    console.log(this._swPush);
     if (!this._swPush.isEnabled) {
       console.log("Notification is not enabled.");
       return;
     }
-    console.log("Checking subscription....");
     this._swPush.subscription.subscribe(async (sub) => {
-      // console.log("Currently active subscription:", sub);
       if (!sub) {
-        console.log("Requesting subscription....");
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then(async (_) => {
@@ -157,9 +152,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         }).catch((_) => console.log);
       } else {
         const fp = await FingerprintJS.load();
-        console.log(fp);
         const result = await fp.get();
-        console.log(result,result.visitorId);
         this.authService.subscribePushNotification(
           sub,
           this.user.uuid,
@@ -167,7 +160,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           this.provider.person.display,
           this.getSpecialization()
         ).subscribe(response => {
-              console.log(response);
+          console.log(response);
         });
         this._swPush.messages.subscribe(payload => {
           console.log(payload);
