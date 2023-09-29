@@ -8,7 +8,7 @@
         <b>Temp:</b>&nbsp; <span *ngIf="item.temp"> {{ (item.temp * 9) / 5 + 32 | number: "1.2-2" }} F</span>
       </div>
       <div class="vital-item">
-        <b>Height</b>&nbsp; <span *ngIf="item.height">{{item.height}} cm</span>
+        <b>Height</b>&nbsp; <span *ngIf="item.height">{{item.height}}</span>
       </div>
       <div class="vital-item">
         <b>Weight:</b>&nbsp; <span *ngIf="item.weight">{{item.weight}} kg</span>
@@ -26,7 +26,10 @@
     </div>
     <div class="vital-item-row">
       <div class="vital-item">
-        <b>BP:</b>&nbsp; <span *ngIf="v[0]?.sbp && v[0]?.dbp">{{v[0]?.sbp}}/{{v[0]?.dbp}}</span>
+        <b>BP:</b>&nbsp; <span *ngIf="v[0]?.sbp && v[0]?.dbp">
+          <span [style.color]="getSystolicColor(v[0]?.sbp)">{{v[0]?.sbp}}</span>/
+          <span [style.color]="getDSystolicColor(v[0]?.dbp)">{{v[0]?.dbp}}</span>
+        </span>
       </div>
       <div class="vital-item">
         <b>HR:</b>&nbsp; {{v[0]?.pulse}}

@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Component, OnInit, Inject } from "@angular/core";
-import { UntypedFormGroup, UntypedFormControl } from "@angular/forms";
+import { UntypedFormGroup, UntypedFormControl, Validator, Validators } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
@@ -37,25 +37,25 @@ export class EditDetailsComponent implements OnInit {
         this.data.aboutMe ? this.data.aboutMe.value : null
       ),
       gender: new UntypedFormControl(
-        this.data.person ? this.data.person.gender : null
+        this.data.person ? this.data.person.gender : null, [Validators.required]
       ),
       phoneNumber: new UntypedFormControl(
-        this.data.phoneNumber ? this.data.phoneNumber.value : null
+        this.data.phoneNumber ? this.data.phoneNumber.value : null, [Validators.required]
       ),
       whatsapp: new UntypedFormControl(
         this.data.whatsapp ? this.data.whatsapp.value : null
       ),
       emailId: new UntypedFormControl(
-        this.data.emailId ? this.data.emailId.value : null
+        this.data.emailId ? this.data.emailId.value : null, [Validators.required]
       ),
       qualification: new UntypedFormControl(
-        this.data.qualification ? this.data.qualification.value : null
+        this.data.qualification ? this.data.qualification.value : null, [Validators.required]
       ),
       specialization: new UntypedFormControl(
-        this.data.specialization ? this.data.specialization.value : null
+        this.data.specialization ? this.data.specialization.value : null, [Validators.required]
       ),
       registrationNumber: new UntypedFormControl(
-        this.data.registrationNumber ? this.data.registrationNumber.value : null
+        this.data.registrationNumber ? this.data.registrationNumber.value : null, [Validators.required]
       ),
       startTime: new UntypedFormControl(startTime),
       endTime: new UntypedFormControl(endTime),
@@ -107,6 +107,7 @@ export class EditDetailsComponent implements OnInit {
       this.http.post(URL, json).subscribe((response) => { });
     }
 
+
     if (value.aboutMe !== null) {
       const URL = this.data.aboutMe
         ? `${this.baseURLProvider}/${this.data.aboutMe.uuid}`
@@ -115,6 +116,7 @@ export class EditDetailsComponent implements OnInit {
         attributeType: "e519784c-572c-43a4-b049-03e937eb501c",
         value: value.aboutMe,
       };
+      console.log('URL..', URL)
       this.http.post(URL, json).subscribe((response) => { });
     }
 
@@ -196,7 +198,7 @@ export class EditDetailsComponent implements OnInit {
       this.http.post(URL, json).subscribe();
     }
 
-    this.onClose();
-    setTimeout(() => window.location.reload(), 2000);
+    // this.onClose();
+   // setTimeout(() => window.location.reload(), 2000);
   }
 }
