@@ -9,6 +9,7 @@ import { VisitService } from "src/app/services/visit.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import * as moment from "moment";
 import { ImagesService } from "src/app/services/images.service";
+import { NoopScrollStrategy } from '@angular/cdk/overlay';
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -114,11 +115,18 @@ export class MyAccountComponent implements OnInit {
   onSelectFile(event) {
     if (event.target.files && event.target.files[0]) {
       
-      const { name } = event.target.files[0];
+      const { name, size: totalBytes } = event.target.files[0];
       const extension = name.split('.').pop().toLowerCase();
       const allowedExt = ['jpeg', 'jpg'];
       if(!allowedExt.includes(extension)) {
         this.snackbar.open("Upload JPG/JPEG format image only.", null, { duration: 4000 });
+        return;
+      }
+
+      const size = Math.floor(totalBytes/1000000);
+
+      if(size >= 1) {
+        this.snackbar.open("Upload JPG/JPEG should be less than 1 MB.", null, { duration: 4000 });
         return;
       }
       
@@ -142,7 +150,13 @@ export class MyAccountComponent implements OnInit {
         }
         this.http.post(URL, json, header).subscribe((response) => {
           window.location.reload();
-         });
+        },
+        (error) => {
+            this.snackbar.open("Upload Error!", null, {
+              duration: 4000,
+            });
+         }
+        );
       }
     }
     
@@ -154,6 +168,7 @@ export class MyAccountComponent implements OnInit {
     this.dialog.open(EditDetailsComponent, {
       width: "400px",
       data: this.providerDetails,
+      scrollStrategy: new NoopScrollStrategy()
     });
   }
   getStateFromVisit(provider) {
