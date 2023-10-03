@@ -16,7 +16,7 @@
   .chip-info {
     font-family: 'DM Sans';
     font-style: normal;
-    color: black;
+    color: var(--color-black);
     padding: 3%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -32,12 +32,12 @@
 
   .chip-info span {
     font-size: 16px;
-    color: #7F7B92;
+    color: var(--color-gray);
   }
 }
 
 .chip-item-blue {
-  background: #EFE8FF;
+  background: var(--color-lightGray);
 }
 
 .chip-item-green {
@@ -45,7 +45,7 @@
 }
 
 .chip-item-red {
-  background: #FFE8E8;
+  background: var(--color-lightPink);
 }
 
 .mat-elevation-z8 {
@@ -59,15 +59,11 @@ table {
   font-family: DM Sans;
 }
 
-// tr.mat-header-row {
-//   height: 21px;
-// }
-
 th.mat-header-cell {
   border: none;
   font-size: 14px !important;
   font-weight: 700;
-  color: #7F7B92;
+  color: var(--color-gray);
   height: 21px;
 }
 
@@ -78,14 +74,14 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   padding-right: 24px;
 
   span.alert-danger {
-    color: #FF475D;
+    color: var(--color-red);
     font-weight: bold;
     background: transparent;
     border: none;
   }
 
   span.alert-success {
-    color: #0FD197;;
+    color: var(--color-green);
     font-weight: bold;
     background: transparent;
     border: none;
@@ -125,10 +121,10 @@ th:last-child {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: #FFE8E8;
+  background: var(--color-lightPink);
   border-radius: 4px;
   height: 32px;
-  color: #EA315B;
+  color: var(--color-lightRed);
   padding: 4px 6px;
   width: fit-content;
 }
@@ -142,19 +138,19 @@ th:last-child {
     padding: 6px 8px;
     background: white;
     border-radius: 4px;
-    color: black;
+    color: var(--color-black);
     font-family: DM Sans;
     font-size: 16px;
   }
 
   .blue-btn {
-    background: #EFE8FF;
-    color: #2E1E91;
+    background: var(--color-lightGray);
+    color: var(--color-darkBlue);
   }
 
   .pink-btn {
-    background: #FFE8E8;
-    color: #FF475D;
+    background: var(--color-lightPink);
+    color: var(--color-red);
   }
 }
 
@@ -165,7 +161,7 @@ th:last-child {
 }
 
 .input-group {
-  background: #FFFFFF;
+  background: var(--color-white);
   border: 1px solid rgba(127, 123, 146, 0.5);
   border-radius: 6px;
   height: 46px;

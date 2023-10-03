@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { getCacheData } from '../utils/utility-functions';
+import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-calendar',
@@ -45,10 +46,10 @@ export class CalendarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "", imgUrl: "assets/svgs/menu-calendar-circle.svg" });
-    this.user = getCacheData(true,'user');
-    this.provider = getCacheData(true,'provider');
+    this.user = getCacheData(true, doctorDetails.USER);
+    this.provider = getCacheData(true, doctorDetails.PROVIDER);
     this.fetchedYears.push(new Date().getFullYear());
     this.fetchedMonths.push(`${moment(new Date()).format("MMMM")} ${moment(new Date()).format("YYYY")}`);
     this.getFollowUpVisit();
@@ -68,11 +69,10 @@ export class CalendarComponent implements OnInit {
   }
 
   getAppointments(from: any, to: any) {
-    this.appointmentService.getUserSlots(getCacheData(true,'user').uuid, from, to)
+    this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, from, to)
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach((appointment: any) => {
-          // if (!_.find(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } })) {
           if (!this.events.find((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id)) {
             this.events.push({
               id: appointment.visitUuid,
@@ -137,33 +137,25 @@ export class CalendarComponent implements OnInit {
                   end,
                   meta: {
                     createdAt: this.getCreatedAtTime(visit.encounters),
-                    // createdBy: "612322d6-8b80-4027-af3a-c2805bd32007",
                     drName: this.provider?.person.display,
                     hwAge: hw.hwAge,
                     hwGender: hw.hwGender,
                     hwName: hw.hwName,
                     hwPic: null,
                     hwUUID: hw.hwProviderUuid,
-                    // id: 3,
-                    // locationUuid: "eb374eaf-430e-465e-81df-fe94c2c515be",
                     openMrsId: visit.patient.identifiers[0].identifier,
                     patientAge: visit.patient.person.age,
                     patientGender: visit.patient.person.gender,
                     patientId: visit.patient.uuid,
                     patientName: visit.patient.person.display,
                     patientPic: null,
-                    // reason: null,
                     slotDate: moment(followUpDate).format('DD/MM/YYYY'),
                     slotDay: moment(followUpDate).format('dddd'),
                     slotDuration: 30,
                     slotDurationUnit: "minutes",
                     slotJsDate: moment(start).utc().format(),
                     slotTime: (followUpTime)?followUpTime:"9:00 AM",
-                    // speciality: "General Physician",
-                    // status: "booked",
                     type: "follow-up visit",
-                    // updatedAt: "2023-02-13T11:49:25.000Z",
-                    // updatedBy: null,
                     userUuid: this.user.uuid,
                     visitUuid: visit.uuid,
                     visit_info: visit
@@ -181,7 +173,7 @@ export class CalendarComponent implements OnInit {
     let encounterDateTime = '';
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match('Visit Note') !== null) {
+      if (display.match(visitTypes.VISIT_NOTE) !== null) {
         encounterDateTime = encounter.encounterDatetime;
       }
     });
@@ -197,7 +189,7 @@ export class CalendarComponent implements OnInit {
     };
     encounters.forEach((encounter: any) => {
       const display = encounter.display;
-      if (display.match('ADULTINITIAL') !== null) {
+      if (display.match(visitTypes.ADULTINITIAL) !== null) {
         obj.hwName = encounter.encounterProviders[0].provider.person.display;
         obj.hwAge = encounter.encounterProviders[0].provider.person.age;
         obj.hwGender = encounter.encounterProviders[0].provider.person.gender;
@@ -208,23 +200,23 @@ export class CalendarComponent implements OnInit {
   }
 
   get providerId() {
-    return getCacheData(true,'provider').uuid;
+    return getCacheData(true, doctorDetails.PROVIDER).uuid;
   }
 
   private get userId() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   private get drName() {
     return (
-      getCacheData(true,'user')?.person?.display ||
-      getCacheData(true,'user')?.display
+      getCacheData(true, doctorDetails.USER)?.person?.display ||
+      getCacheData(true, doctorDetails.USER)?.display
     );
   }
 
   private getSpeciality() {
-    return getCacheData(true,'provider').attributes.find((a: any) =>
-      a.display.includes("specialization")
+    return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: any) =>
+      a.display.includes(doctorDetails.SPECIALIZATION)
     ).value;
   }
 
@@ -256,12 +248,9 @@ export class CalendarComponent implements OnInit {
     return count;
   }
 
-  hourSegmentClicked(hourSegment: any) {
-  }
 
   dayClicked(view: any, day: any) {
     if (view == 'monthView') {
-      // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
       let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
       if (oldDaysOff) {
         if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
@@ -284,26 +273,10 @@ export class CalendarComponent implements OnInit {
                   this.appointmentService.updateDaysOff(body).subscribe({
                     next: (res: any) => {
                       if (res.status) {
-                        // let index = _.findIndex(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
                         let index = this.daysOff.findIndex((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         if (index != -1) {
                           this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
                         }
-                        // else {
-                        //   this.daysOff.push({
-                        //     type: "month",
-                        //     month: res.data.month,
-                        //     year: res.data.year,
-                        //     slotSchedule: [],
-                        //     startDate: moment(day.date).startOf('month').toISOString(),
-                        //     endDate: moment(day.date).endOf('month').toISOString(),
-                        //     drName: this.drName,
-                        //     userUuid: this.userId,
-                        //     speciality: this.getSpeciality(),
-                        //     daysOff: [moment(day.date).format('DD/MM/YYYY')],
-                        //     slotDays: ""
-                        //   });
-                        // }
                         day.events.forEach((event: any) => {
                           if (event.title == 'Appointment') {
                             this.cancel(event.meta, false);
@@ -311,10 +284,8 @@ export class CalendarComponent implements OnInit {
                         });
 
                         // Update schedule as per new dayOff
-                        // let schedule = _.find(this.daysOff, { month: this.monthNames[day.date.getMonth()], year: day.date.getFullYear().toString() });
                         let schedule = this.daysOff.find((o: any) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         if (schedule?.slotSchedule.length) {
-                          // schedule.slotSchedule = _.filter(schedule.slotSchedule, (s) => { return !moment(day.date).isSame(moment(s.date)) });
                           schedule.slotSchedule = schedule.slotSchedule.filter((s: any) => { return !moment(day.date).isSame(moment(s.date)) });
                           this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
                             next: (res: any) => {
@@ -351,7 +322,6 @@ export class CalendarComponent implements OnInit {
 
   handleEvent(view: any, event: any) {
     if (view == 'dayView' || view == 'weekView') {
-      // if (event.title == 'Appointment') {
         this.coreService.openAppointmentDetailDayViewModal(event).subscribe((res: any) => {
           if (res) {
             switch (res) {
@@ -367,7 +337,6 @@ export class CalendarComponent implements OnInit {
             }
           }
         });
-      // }
     }
   }
 
@@ -379,7 +348,6 @@ export class CalendarComponent implements OnInit {
     if (withConfirmation) {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
-          // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
           this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success(this.translateService.instant("The Appointment has been successfully canceled."), this.translateService.instant('Canceling successful'));
           setTimeout(() => {
@@ -396,7 +364,6 @@ export class CalendarComponent implements OnInit {
       this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
           if(res) {
             if (res.status) {
-              // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
               this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
               setTimeout(() => {
                 this.refresh.next();
@@ -409,7 +376,7 @@ export class CalendarComponent implements OnInit {
 
   reschedule(appointment: any) {
     const len = appointment.visit_info.encounters.filter((e: any) => {
-      return (e.display.includes("Patient Exit Survey") || e.display.includes("Visit Complete"));
+      return (e.display.includes(visitTypes.PATIENT_EXIT_SURVEY) || e.display.includes(visitTypes.VISIT_COMPLETE));
     }).length;
     const isCompleted = Boolean(len);
     if (isCompleted) {
@@ -427,7 +394,6 @@ export class CalendarComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  // this.events = _.reject(this.events, { id: appointment.visitUuid, title: 'Appointment', meta: { id: appointment.id } });
                   this.events.splice(this.events.findIndex((o: any) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
                   this.events.push({
                     id: appointment.visitUuid,
@@ -449,7 +415,6 @@ export class CalendarComponent implements OnInit {
   }
 
   checkIfDayOff(date: Date) {
-    // let oldDaysOff = _.find(this.daysOff, { month: this.monthNames[date.getMonth()], year: date.getFullYear().toString() });
     let oldDaysOff = this.daysOff.find((o: any) => o.month == this.monthNames[date.getMonth()] && o.year == date.getFullYear().toString());
     if (oldDaysOff && oldDaysOff?.daysOff) {
       if (oldDaysOff.daysOff.indexOf(moment(date).format('DD/MM/YYYY')) != -1) {
@@ -460,7 +425,7 @@ export class CalendarComponent implements OnInit {
   }
 
   get locale() {
-    return getCacheData(false,'selectedLanguage');
+    return getCacheData(false, languages.SELECTED_LANGUAGE);
   }
 
 }

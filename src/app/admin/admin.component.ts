@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { Subscription } from 'rxjs';
+import { notifications } from 'src/config/constant';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit, OnDestroy {
 
@@ -16,14 +16,14 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.socketSvc.initSocketSupport(true);
-    this.subscription1 = this.socketSvc.onEvent("adminUnreadCount").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent(notifications.ADMIN_UNREAD_COUNT).subscribe((data) => {
       this.socketSvc.addCount(data);
     });
     setTimeout(() => {
-      this.socketSvc.emitEvent('getAdminUnreadCount', null);
+      this.socketSvc.emitEvent(notifications.GET_ADMIN_UNREAD_COUNT, null);
     }, 1500);
     this.interval = setInterval(() => {
-      this.socketSvc.emitEvent('getAdminUnreadCount', null);
+      this.socketSvc.emitEvent(notifications.GET_ADMIN_UNREAD_COUNT, null);
     }, 30000);
   }
 

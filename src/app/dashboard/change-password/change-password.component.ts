@@ -6,6 +6,7 @@ import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages, doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -40,9 +41,9 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false, 'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
-    this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
+    this.resetPasswordForm.get(doctorDetails.PASSWORD).valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);
     });
   }

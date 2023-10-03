@@ -25,7 +25,7 @@
         .chip-info {
           font-family: 'DM Sans';
           font-style: normal;
-          color: black;
+          color: var(--color-black);
           padding: 16px;
         }
 
@@ -38,12 +38,12 @@
 
         .chip-info span {
           font-size: 16px;
-          color: #7F7B92;
+          color: var(--color-gray);
         }
       }
 
       .chip-item-blue {
-        background: #EFE8FF;
+        background: var(--color-lightGray);
       }
 
       .chip-item-green {
@@ -56,15 +56,15 @@
       background: transparent;
 
       .chip-item .chip-info h6, .chip-item .chip-info span {
-        color: white;
+        color: var(--color-white);
       }
 
       .chip-item-blue {
-        background: #2E1E91;
+        background: var(--color-darkBlue);
       }
 
       .chip-item-green {
-        background: #0FD197;
+        background: var(--color-green);
       }
     }
   }
@@ -80,5 +80,9 @@
         margin: 0px 0px 10px !important;
       }
     }
+  }
+
+  ::ng-deep .info_icon{
+    display: none;
   }
 }

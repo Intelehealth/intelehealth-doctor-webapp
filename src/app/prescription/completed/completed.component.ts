@@ -25,8 +25,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('tempPaginator') tempPaginator: MatPaginator;
   @ViewChild('compSearchInput', { static: true }) searchElement: ElementRef;
 
-  constructor() { }
-
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.completedVisits);
     this.dataSource.paginator = this.tempPaginator;
@@ -59,7 +57,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     if (((event.pageIndex+1)*this.pageSize) > this.recordsFetched) {
       this.fetchPageEvent.emit((this.recordsFetched+this.offset)/this.offset)
     } else {
-      // this.dataSource = new MatTableDataSource(this.completedVisits.slice(event.pageIndex*this.pageSize, (event.pageIndex+1)*this.pageSize));
       if (event.previousPageIndex < event.pageIndex) {
         this.tempPaginator.nextPage();
       } else {

@@ -7,7 +7,7 @@
       </p>
     </div>
     <div class="col-md-12 px-0 py-4">
-      <form [formGroup]="loginForm" (ngSubmit)="login()" data-test-id="form">
+      <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="login()" data-test-id="form">
         <div class="form-group">
           <label for="username">
             {{'Username'|translate}}
@@ -32,7 +32,6 @@
           </div>
           <div *ngIf="submitted && f.password.errors">
             <small *ngIf="f.password.errors.required" class="error-msg">{{'Please enter password'|translate}}</small>
-            <!-- <small *ngIf="" class="error-msg">Couldn’t find you, please enter valid username</small> -->
           </div>
         </div>
         <div class="form-group" *ngIf="showCaptcha">
@@ -48,19 +47,6 @@
             formControlName="recaptcha">
           </ngx-recaptcha2>
         </div>
-        <!-- <div class="form-group mb-0">
-          <div class="pretty p-image p-plain">
-            <input
-              type="checkbox"
-              (change)="authService.rememberMe = !authService.rememberMe"
-              [checked]="authService.rememberMe"
-            />
-            <div class="state">
-              <img class="image" src="assets/svgs/checkbox-tick.png" />
-              <label>Remember me</label>
-            </div>
-          </div>
-        </div> -->
         <div class="form-group mt-3">
           <button type="submit" class="btn btn-block next-btn" data-test-id="btnSubmit">
             {{'Next'|translate}}

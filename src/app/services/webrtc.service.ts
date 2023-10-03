@@ -16,6 +16,7 @@ import {
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
+import { getCacheData } from '../utils/utility-functions';
 import { VisitService } from './visit.service';
 
 @Injectable({
@@ -95,7 +96,7 @@ export class WebrtcService {
           frameRate: 15,
           height: 160,
           width: 90
-        },
+        }
       },
       audioCaptureDefaults: {
         echoCancellation: true,
@@ -119,12 +120,21 @@ export class WebrtcService {
       .on(RoomEvent.SignalConnected, async () => {
         await this.room.localParticipant.enableCameraAndMicrophone();
       });
+      .on(RoomEvent.SignalConnected, async () => {
+        await this.room.localParticipant.enableCameraAndMicrophone();
+      });
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
     await this.room.connect(this.url, this.token);
+
+    // if (autoEnableCameraOnConnect) {
+    //   await this.room.localParticipant.enableCameraAndMicrophone();
+    // }
   }
 
   clearAudioVideo() {
     try {
+      if (this.localContainer) this.localContainer.innerHTML = '';
+      if (this.remoteContainer) this.remoteContainer.innerHTML = '';
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
@@ -200,7 +210,6 @@ export class WebrtcService {
     return this.room.localParticipant.isMicrophoneEnabled;
   }
 
-
   handleDisconnect() {
     this.room.disconnect(true);
     this.callConnected = false;
@@ -264,16 +273,4 @@ export class WebrtcService {
   noop() {
     console.log('Not Implemented.')
   }
-
-  updateVisitHolderId(uuid: string) {
-    return new Promise((res, rej) => {
-      this.visitSvc.fetchVisitDetails(uuid).subscribe((visit: any) => {
-        this.visitHolderId = visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder')?.value;
-        res(this.visitHolderId);
-      }, (error: any) => {
-        res(false);
-      });
-    });
-  }
 }
-

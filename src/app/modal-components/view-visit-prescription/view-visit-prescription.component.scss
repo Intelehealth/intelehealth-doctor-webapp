@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #1b163a86;
+  background: var(--color-darkestBlue)86;
   padding: 10px;
 }
 
@@ -30,7 +30,7 @@
   h6 {
     font-size: 24px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
     text-align: center;
     font-weight: bold;
     margin-bottom: 0px;
@@ -64,12 +64,12 @@
         font-size: 18px;
         font-weight: bold;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #7F7B92;
+        color: var(--color-gray);
         font-size: 16px;
         line-height: 150%;
       }
@@ -80,12 +80,12 @@
         margin-bottom: 0px;
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
       }
 
       p {
         margin-bottom: 0px;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
       }
@@ -113,7 +113,7 @@
     h6 {
       font-size: 20px;
       line-height: 150%;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
       font-weight: bold;
       margin-bottom: 0px;
     }
@@ -154,12 +154,12 @@
 }
 
 .text-important-red {
-  color: #FF475D;
+  color: var(--color-red);
   font-weight: bold;
 }
 
 .text-important-green {
-  color: #0FD197;
+  color: var(--color-green);
   font-weight: bold;
 }
 
@@ -177,7 +177,7 @@
 
   .items-list {
     list-style-type: none;
-    padding: 24px 0px 0px;
+    padding: 5px 0px 0px;
 
     li .list-item {
       flex-direction: column;
@@ -185,18 +185,21 @@
 
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
 
     li .list-item-col {
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
+
   }
 
   .data-section {
@@ -217,6 +220,21 @@
       font-size: 16px;
     }
   }
+
+  .btn_download_pdf span{
+    display: none;
+  }
+
+  .desktop-close-btn{
+    display: none !important;
+  }
+  .mobile-close-btn{
+    display: block !important;
+  }
+
+  .main-content{
+    padding: 10px !important;
+  }
 }
 
 .signature {
@@ -226,8 +244,15 @@
 
 .btn_download_pdf{
   position: absolute;
-  color: #7F7B92;
+  color: var(--color-gray);
   border: unset;
   background: transparent;
   font-size: 18px;
+}
+
+.mobile-close-btn{
+  display: none;
+}
+.dekstop-close-btn{
+  display: block;
 }

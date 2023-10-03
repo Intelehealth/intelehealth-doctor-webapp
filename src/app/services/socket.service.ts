@@ -12,21 +12,28 @@ import { VisitService } from "./visit.service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
 import { WebrtcService } from "./webrtc.service";
 import { ToastrService } from "ngx-toastr";
+import { doctorDetails } from "src/config/constant";
+import { WebrtcService } from "./webrtc.service";
+import { CoreService } from "./core/core.service";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class SocketService {
   public socket: any;
   public incoming;
   public incomingCallData = {};
+  public incomingCallData = {};
   public activeUsers = [];
-  appIcon = "assets/images/intelehealth-logo-reverse.png";
+  appIcon =
+    false && environment.production
+      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
+      : "/assets/images/intelehealth-logo-reverse.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;
   closeOverlayTimeout = null;
   updateMessage = false;
-
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
   public adminUnread: Observable<any>;
@@ -36,7 +43,7 @@ export class SocketService {
     private dialog: MatDialog,
     private visitSvc: VisitService,
     private webrtcSvc: WebrtcService,
-    // private cs: CoreService,
+    private cs: CoreService,
     private toastr: ToastrService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
@@ -63,28 +70,17 @@ export class SocketService {
       this.socket = io(environment.socketURL, {
         query: getCacheData(false, 'socketQuery'),
       });
-      this.initEvents();
-    }
-  }
-
-  initEvents() {
-    this.onEvent("allUsers").subscribe((data) => {
-      this.activeUsers = data;
-    });
-
-    this.onEvent("cancel_hw").subscribe((data) => {
-      this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
-    });
-
-    this.onEvent("updateMessage").subscribe((data) => {
-      this.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
+      this.onEvent("allUsers").subscribe((data) => {
+        const activeUsers = [];
+        for (const key in data) {
+          activeUsers.push({ ...data[key], socketId: key });
+        }
+        this.activeUsers = activeUsers;
       });
-
-      this.emitEvent('ack_msg_received', { messageId: data.id });
-    });
+      this.onEvent("log").subscribe((array) => {
+        if (getCacheData(false,'log') === "1") console.log.apply(console, array);
+      });
+    }
   }
 
   public emitEvent(action, data) {
@@ -109,6 +105,37 @@ export class SocketService {
         });
       }
     }
+  }
+
+  public openVcOverlay(data: any) {
+    this.callRing = new Audio("assets/phone.mp3");
+    this.cs.openVideoCallOverlayModal(data);
+    this.callRing.play();
+
+    this.ringTimeout = setInterval(() => {
+      this.callRing.pause();
+      this.callRing = new Audio("assets/phone.mp3");
+      this.callRing.play();
+    }, 10000);
+
+    this.closeOverlayTimeout = setTimeout(() => {
+      if (!this.webrtcSvc.callConnected) {
+        this.closeVcOverlay();
+      }
+    }, 59000);
+  }
+
+  public closeVcOverlay() {
+    const dailog = this.dialog.getDialogById("vcOverlayModal");
+    clearInterval(this.ringTimeout);
+    clearInterval(this.closeOverlayTimeout);
+    if (dailog) {
+      dailog.close();
+    }
+    this.callRing.pause();
+  }
+
+  public openVcModal(initiator = "dr") {
   }
 
   public openNewVCModal(
@@ -137,20 +164,11 @@ export class SocketService {
         initiator,
       },
     };
-    // this.dialog.open(CallStateComponent, config);
-    // this.dialog.open(CallStateComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: localStorage.patientUuid,
-    //     initiator,
-    //     connectToDrId: localStorage.connectToDrId,
-    //   },
-    // });
   }
 
   get user() {
     try {
-      return JSON.parse(localStorage.user);
+      return getCacheData(true,doctorDetails.USER);
     } catch (error) {
       return {};
     }

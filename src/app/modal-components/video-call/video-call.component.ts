@@ -9,6 +9,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
+import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
 
 @Component({
   selector: 'app-video-call',
@@ -62,10 +63,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
-    const patientVisitProvider: any = this.patientVisitProvider;
+    if (this.data.initiator) {
+      this.initiator = this.data.initiator;
+    }
+    const patientVisitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    this.nurseId = this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid || this.nurseId;
+    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
+    this.doctorName = doctorName ? doctorName : this.user.display;
+    this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.initiator) this.initiator = this.data.initiator;
@@ -272,7 +278,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   get fromUser() {
-    return JSON.parse(localStorage.user).uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   onImgError(event: any) {
@@ -281,7 +287,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   get user() {
     try {
-      return JSON.parse(localStorage.user);
+      return getCacheData(true, doctorDetails.USER);
     } catch (error) {
       return {};
     }

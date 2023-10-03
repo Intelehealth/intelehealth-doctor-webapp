@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-forgot-username',
@@ -34,7 +35,7 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translate.use(getCacheData(false,'selectedLanguage'));
+    this.translate.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: any) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));

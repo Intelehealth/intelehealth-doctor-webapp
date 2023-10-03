@@ -24,6 +24,7 @@ import { SharePrescriptionErrorComponent } from 'src/app/modal-components/share-
 import { SharePrescriptionSuccessComponent } from 'src/app/modal-components/share-prescription-success/share-prescription-success.component';
 import { SharePrescriptionComponent } from 'src/app/modal-components/share-prescription/share-prescription.component';
 import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mindmap-json/upload-mindmap-json.component';
+import { VcallOverlayComponent } from 'src/app/modal-components/vcall-overlay/vcall-overlay.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
 import { ViewVisitPrescriptionComponent } from 'src/app/modal-components/view-visit-prescription/view-visit-prescription.component';
 import { ViewVisitSummaryComponent } from 'src/app/modal-components/view-visit-summary/view-visit-summary.component';
@@ -102,6 +103,11 @@ export class CoreService {
 
   openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
     const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false } );
+    return dialogRef;
+  }
+
+  openVideoCallOverlayModal(data: any): MatDialogRef<VcallOverlayComponent> {
+    const dialogRef = this.dialog.open(VcallOverlayComponent, { panelClass: "modal-sm", data, id: "vcOverlayModal", disableClose: true, hasBackdrop: true });
     return dialogRef;
   }
 

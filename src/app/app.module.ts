@@ -61,6 +61,7 @@ import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 import { getCacheData } from "./utils/utility-functions";
+import { languages } from "src/config/constant";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "#2E1E91",
@@ -71,7 +72,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness
-  text: getCacheData(false,'selectedLanguage') === 'ru' ? "Пожалуйста, подождите..." : "Please Wait..."
+  text: getCacheData(false, languages.SELECTED_LANGUAGE) === 'ru' ? "Пожалуйста, подождите..." : "Please Wait..."
 };
 
 const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt();

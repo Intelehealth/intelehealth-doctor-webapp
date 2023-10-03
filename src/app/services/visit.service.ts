@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
-// import { VisitData } from "../component/homepage/homepage.component";
 
 @Injectable({
   providedIn: "root",
@@ -11,11 +10,6 @@ import { HelperService } from "./helper.service";
 export class VisitService {
   private baseURL = environment.baseURL;
   private baseURLMindmap = environment.mindmapURL;
-
-  // public flagVisit: VisitData[] = [];
-  // public waitingVisit: VisitData[] = [];
-  // public progressVisit: VisitData[] = [];
-  // public completedVisit: VisitData[] = [];
 
   public isVisitSummaryShow: boolean = false;
 
@@ -45,15 +39,7 @@ export class VisitService {
     return this.http.get(url);
   }
 
-  clearVisits() {
-    // this.flagVisit = new Array();
-    // this.waitingVisit = new Array();
-    // this.progressVisit = new Array();
-    // this.completedVisit = new Array();
-  }
-
   recentVisits(id): Observable<any> {
-    // const url = `${this.baseURL}/visit?patient=${id}&v=custom:(uuid,display,patient:(uuid))`;
     const url = `${this.baseURL}/visit?patient=${id}&v=full`;
     return this.http.get(url);
   }

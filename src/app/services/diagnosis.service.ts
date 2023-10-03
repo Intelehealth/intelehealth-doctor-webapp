@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { getCacheData, getEncounterProviderUUID } from '../utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -41,10 +42,6 @@ export class DiagnosisService {
         response.forEach((element: any) => {
           element.concept.conceptMappings.forEach(name => {
             if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-              // const diagnosis = {
-              //   name: element.concept.preferredName,
-              //   code: name.conceptReferenceTerm.code
-              // };
               this.diagnosisArray.push(element.concept.preferredName);
             }
           });
@@ -55,7 +52,7 @@ export class DiagnosisService {
   }
 
   isSameDoctor() {
-    const providerDetails = getCacheData(true,'provider');
+    const providerDetails = getCacheData(true, doctorDetails.PROVIDER);
     const providerUuid = providerDetails.uuid;
     if (providerDetails && providerUuid === getEncounterProviderUUID()) {
       return true;

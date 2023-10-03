@@ -27,22 +27,21 @@
       h6 {
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         font-weight: bold;
       }
       span {
         font-size: 12px;
         line-height: 163%;
-        color: #7F7B92;
+        color: var(--color-gray);
       }
     }
   }
 
   .chat-con-body {
     margin: 0px 5px 5px;
-    background: #FAF9FF;
+    background: var(--color-offWhite);
     padding: 10px 10px 0px;
-    // height: calc(70vh - 86px);
     border-radius: 0px 0px 10px 10px;
 
     .chat-messages-list::-webkit-scrollbar {
@@ -68,10 +67,10 @@
         padding: 8px 12px;
         max-width: 80%;
         width: fit-content;
-        background: #FFFFFF;
+        background: var(--color-white);
         font-size: 16px;
         line-height: 150%;
-        color: #1B163A;
+        color: var(--color-darkestBlue);
         margin: 4px 0px;
         overflow: auto;
         flex-shrink: 0;
@@ -79,7 +78,7 @@
 
       .chat-message.right {
         border: none;
-        background: #EFE8FF;
+        background: var(--color-lightGray);
         border-radius: 8px 8px 0px 8px;
         margin-left: auto;
       }
@@ -87,7 +86,7 @@
       .chat-status {
         font-size: 12px;
         line-height: 18px;
-        color: #7F7B92;
+        color: var(--color-gray);
         display: flex;
         align-items: center;
         margin: 4px 0px;
@@ -106,7 +105,7 @@
       padding: 5px 0px;
 
       .input-group {
-        background: #EFE8FF;;
+        background: var(--color-lightGray);
         border: 1px solid rgba(178, 175, 190, 0.2);
         border-radius: 8px;
         height: 44px;
@@ -137,7 +136,7 @@
         outline: none;
         width: 44px;
         height: 44px;
-        background: #2E1E91;
+        background: var(--color-darkBlue);
         border-radius: 8px;
       }
     }
@@ -149,6 +148,6 @@
   width: 60px;
 
   object-fit: contain;
-  background-color: white;
+  background-color: var(--color-white);
   cursor: pointer;
 }

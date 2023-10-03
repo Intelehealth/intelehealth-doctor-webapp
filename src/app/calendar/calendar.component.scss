@@ -7,21 +7,21 @@
     h6 {
       font-weight: bold;
       font-size: 18px;
-      color: #1B163A;
+      color: var(--color-darkestBlue);
     }
 
     p {
       font-size: 14px;
-      color: #7F7B92;
+      color: var(--color-gray);
     }
   }
 
   .view-btn {
     text-decoration: none;
-    background: #EFE8FF;
+    background: var(--color-lightGray);
     border-radius: 8px;
     height: 44px;
-    color: #2E1E91;
+    color: var(--color-darkBlue);
     font-weight: bold;
     font-size: 18px;
     float: right;
@@ -51,7 +51,7 @@
     .mat-tab-label-container {
 
       .mat-ink-bar {
-        background: #EA315B;
+        background: var(--color-lightRed);
         border-radius: 1px;
       }
 
@@ -63,7 +63,7 @@
           font-weight: 700;
           font-size: 16px;
           line-height: 150%;
-          color: #1B163A;
+          color: var(--color-darkestBlue);
         }
       }
     }
@@ -81,7 +81,7 @@
   h6 {
     font-size: 16px;
     font-weight: bold;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
   }
 
   .arrow-btn {
@@ -97,7 +97,7 @@
 .day-view-con ::ng-deep .cal-week-view {
   border-top: none;
   padding-top: 24px;
-  background: #FAF9FF;
+  background: var(--color-offWhite);
 
   .cal-events-container {
     margin-left: 100px;
@@ -106,8 +106,7 @@
 
 .day-view-con ::ng-deep .cal-week-view .cal-time-events {
   border: none;
-  background: #FAF9FF;
-  // overflow: hidden;
+  background: var(--color-offWhite);
 }
 
 .week-view-con ::ng-deep .cal-week-view {
@@ -120,7 +119,7 @@
 
 .week-view-con ::ng-deep .cal-week-view .cal-time-events {
   border: none;
-  background: #FAF9FF;
+  background: var(--color-offWhite);
 
   .cal-day-columns .cal-day-column:first-child {
     border-left: none;
@@ -150,7 +149,7 @@
   .event-con {
     width: calc(100% - 10px);
     height: calc(100% - 5px);
-    background: #FFFFFF;
+    background: var(--color-white);
     box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
     border-radius: 8px;
     padding: 16px;
@@ -177,14 +176,14 @@
         flex-direction: column;
 
         h6 {
-          color: #1B163A;
+          color: var(--color-darkestBlue);
           font-size: 16px;
           font-weight: bold;
         }
 
         p {
           font-size: 14px;
-          color: #7F7B92;
+          color: var(--color-gray);
         }
       }
     }
@@ -192,16 +191,16 @@
 }
 
 .cal-hour-segment-con {
-  background: #FAF9FF;
+  background: var(--color-offWhite);
   border-top: 1px solid rgba(178, 175, 190, 0.2);
 
   .cal-time-con {
     position: relative;
-    background: #FFFFFF;
+    background: var(--color-white);
     font-weight: bold;
     font-size: 16px;
     line-height: 150%;
-    color: #7F7B92;
+    color: var(--color-gray);
     text-transform: lowercase;
     height: 101%;
     width: 98px;
@@ -212,7 +211,7 @@
       right: 0px;
       left: 0px;
       text-align: center;
-      background: #FFFFFF;
+      background: var(--color-white);
     }
 
     .marker {
@@ -222,7 +221,7 @@
       width: 32px;
       height: 0px;
       text-align: center;
-      background: #FFFFFF;
+      background: var(--color-white);
       border: 1px solid rgba(178, 175, 190, 0.2);
       transform: translateY(-50%);
     }
@@ -235,7 +234,7 @@
 
 .cal-current-time-marker {
   height: 3px;
-  background: #0FD197;
+  background: var(--color-green);
   position: relative;
   margin-left: 100px;
   width: calc(100% - 100px);
@@ -244,7 +243,7 @@
     position: absolute;
     width: 15px;
     height: 15px;
-    background: #0FD197;
+    background: var(--color-green);
     top: 50%;
     left: 0;
     transform: translateY(-50%);
@@ -254,7 +253,7 @@
 
 .cal-current-time-marker-2 {
   height: 3px;
-  background: #0FD197;
+  background: var(--color-green);
   position: absolute;
   width: 100%;
 
@@ -262,7 +261,7 @@
     position: absolute;
     width: 10px;
     height: 10px;
-    background: #0FD197;
+    background: var(--color-green);
     top: 50%;
     left: 0;
     transform: translateY(-50%);
@@ -273,29 +272,24 @@
 .cal-day-headers-con {
   display: flex;
   padding-left: 100px;
-  background: #FFFFFF;
+  background: var(--color-white);
 
   .cal-header-con {
     overflow: hidden;
     text-overflow: ellipsis;
-    // white-space: nowrap;
     flex: 1;
     text-align: center;
     padding: 10px 5px;
     font-weight: 700;
     font-size: 16px;
     line-height: 150%;
-    color: #7F7B92;
+    color: var(--color-gray);
   }
 
   .cal-header-con.cal-today {
     background: #4B39B7 !important;
-    color: #FFFFFF !important;
+    color: var(--color-white) !important;
   }
-
-  // .cal-header-con.cal-weekend {
-  //   background: #F5F5F7;
-  // }
 
   .cal-header-con.dayOff {
     background: #F5F5F7;
@@ -312,7 +306,7 @@
   .event-con {
     width: calc(100% - 2px);
     height: calc(100% - 2px);
-    background: #FFFFFF;
+    background: var(--color-white);
     box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
     border-radius: 8px;
     padding: 10px 6px;
@@ -323,7 +317,7 @@
     justify-content: center;
 
     h6 {
-      color: #2E1E91;
+      color: var(--color-darkBlue);
       font-size: 14px;
       font-weight: bold;
       overflow: hidden;
@@ -335,7 +329,7 @@
 
     p {
       font-size: 12px;
-      color: #7F7B92;
+      color: var(--color-gray);
       overflow: hidden;
       white-space: nowrap;
       max-width: 120px;
@@ -360,7 +354,7 @@
         display: flex;
 
         h6 {
-          color: #1B163A;
+          color: var(--color-darkestBlue);
           max-width: 80px;
         }
       }
@@ -370,11 +364,11 @@
 
 .cal-cell-row-con {
   display: flex;
-  background: #FFFFFF;
+  background: var(--color-white);
   text-align: center;
   font-weight: bold;
   font-size: 16px;
-  color: #7F7B92;
+  color: var(--color-gray);
 
   .cal-cell-con {
     padding: 10px 0px;
@@ -385,10 +379,6 @@
     float: left;
     flex: 1;
   }
-
-  // .cal-cell-con.cal-weekend {
-  //   background: #F5F5F7;
-  // }
 
   .cal-cell-con.dayOff {
     background: #F5F5F7;
@@ -420,7 +410,7 @@
     font-size: 14px;
     line-height: 150%;
     font-weight: bold;
-    color: #2E1E91;
+    color: var(--color-darkBlue);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -432,7 +422,7 @@
     padding: 0px 5px;
     font-size: 12px;
     line-height: 150%;
-    color: #7F7B92;
+    color: var(--color-gray);
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -447,20 +437,16 @@
   }
 }
 
-// .dayOff .cal-events-con {
-//   display: none;
-// }
-
 .day-off-con {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #EFE8FF;
+  background: var(--color-lightGray);
   border-radius: 4px;
   font-size: 14px;
   line-height: 150%;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
   padding: 4px 8px;
   display: none;
   box-shadow: 8px 4px 8px rgba(31, 28, 58, 0.04);
@@ -478,13 +464,13 @@
 ::ng-deep .cal-month-view .cal-day-number-con {
   padding: 4px;
   border-radius: 50%;
-  background: #FFFFFF;
+  background: var(--color-white);
   // opacity: 0.56;
   box-shadow: 0px 4px 8px rgba(31, 28, 58, 0.04);
   font-size: 14px;
   line-height: 150%;
   font-weight: bold;
-  color: #1B163A;
+  color: var(--color-darkestBlue);
   margin: 5px;
   display: inline-block;
   width: 30px;
@@ -493,16 +479,16 @@
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-has-events .cal-cell-top-con {
-  background: #FFFFFF;
+  background: var(--color-white);
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-has-events .cal-day-number-con {
-  background: #EFE8FF !important;
-  color: #1B163A !important;
+  background: var(--color-lightGray) !important;
+  color: var(--color-darkestBlue) !important;
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-today .cal-cell-top-con {
-  background: #EFE8FF !important;
+  background: var(--color-lightGray) !important;
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-out-month .cal-day-number-con {
@@ -511,8 +497,8 @@
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-today .cal-day-number-con {
-  background: #2E1E91 !important;
-  color: #FFFFFF !important;
+  background: var(--color-darkBlue) !important;
+  color: var(--color-white) !important;
 }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-out-month .cal-events-con {
@@ -523,12 +509,8 @@
 ::ng-deep .cal-month-view .cal-days {
   border: 0;
   border-bottom: 0;
-  background: #FAF9FF;
+  background: var(--color-offWhite);
 }
-
-// ::ng-deep .cal-month-view .cal-day-cell.cal-weekend {
-//   background: #F0EFF7;
-// }
 
 ::ng-deep .cal-month-view .cal-day-cell.cal-weekend .cal-day-number-con {
   background: #F3F2F7;

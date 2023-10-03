@@ -42,10 +42,10 @@
           <div class="patient-info-item">
             <h6>{{'Contact no.'|translate}}</h6>
             <p>
-              <img src="assets/svgs/phone-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+              <img src="assets/svgs/phone-var(--color-black).svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
             </p>
             <p>
-              <img src="assets/svgs/whatsapp-black.svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
+              <img src="assets/svgs/whatsapp-var(--color-black).svg" alt=""> {{getPersonAttributeValue('Telephone Number')}}
             </p>
           </div>
         </div>
@@ -332,12 +332,6 @@
                       <img src="assets/svgs/maximize.svg" alt="">
                     </div>
                   </div>
-                  <!-- <div class="doc-item">
-                    <div class="other-doc">
-                      <img src="assets/svgs/pdf-doc.svg" alt="">
-                      <span>Blood test report.pdf</span>
-                    </div>
-                  </div> -->
                 </div>
               </ng-container>
               <ng-template #noAdditionaDocs>
@@ -352,6 +346,3 @@
     </div>
   </div>
 </mat-dialog-content>
-<!-- <mat-dialog-actions align="center">
-  <button type="button" class="intel-blue-btn" (click)="close(true)">Close</button>
-</mat-dialog-actions> -->

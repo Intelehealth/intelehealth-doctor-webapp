@@ -4,10 +4,10 @@ import { PageTitleService } from '../core/page-title/page-title.service';
 import { ChatService } from '../services/chat.service';
 import { SocketService } from '../services/socket.service';
 import { CoreService } from '../services/core/core.service';
-import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
+import { notifications, doctorDetails, languages } from 'src/config/constant';
 
 @Component({
   selector: 'app-messages',
@@ -16,18 +16,18 @@ import { getCacheData } from '../utils/utility-functions';
 })
 export class MessagesComponent implements OnInit, OnDestroy {
 
-  conversations: any;
+  conversations: any = [];
   searchValue: string;
   baseURL = environment.baseURL;
   searchResults: any = [];
   selectedConversation: any;
 
-  message = "";
+  message = '';
   fromUuid = null;
   visits: any = [];
   messageList: any;
   visitId: any;
-  openMenu: boolean = false;
+  openMenu = false;
   isOver = false;
   isAttachment = false;
   readSentImg: any;
@@ -46,28 +46,18 @@ export class MessagesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.use(getCacheData(false,'selectedLanguage'));
+    this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.pageTitleService.setTitle({ title: "Messages", imgUrl: "assets/svgs/menu-message-circle.svg" });
     this.getPatientsList(this.chatSvc?.user?.uuid);
     this.socketSvc.initSocket(true);
-    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
-      // this.socketSvc.showNotification({
-      //   title: "New chat message",
-      //   body: data.message,
-      //   timestamp: new Date(data.createdAt).getTime(),
-      // });
-
+    this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
-    this.subscription2 = this.socketSvc.onEvent("isread").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
       this.getMessages();
     });
-  }
-
-  search() {
-
   }
 
   get filteredConversations() {
@@ -93,7 +83,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   get patientPic() {
     if (!this.conversations.patientPic) {
-      return "assets/svgs/user.svg";
+      return 'assets/svgs/user.svg';
     }
     return this.conversations.patientPic;
   }
@@ -112,9 +102,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   submitMessage(event) {
-    let value = event.target.value.trim();
-    this.message = "";
-    if (value.length < 1) return false;
+    const value = event.target.value.trim();
+    this.message = '';
+    if (value.length < 1) { return false; }
     this.selectedConversation.latestMessage = value;
     this.selectedConversation.messages.unshift({
       id: 1,
@@ -137,23 +127,14 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   getMessages() {
-    this.chatSvc.getPatientMessages(this.toUserId, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
+    this.chatSvc.getPatientMessages(this.selectedConversation?.toUser, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
       .subscribe({
         next: (res: any) => {
           this.messageList = res?.data;
           this.getPatientsVisits(this.selectedConversation?.patientId);
+          this.conversations[this.conversations.findIndex(c => c.id === this.selectedConversation.id)].message = this.messageList[0].message
         },
       });
-  }
-
-  get toUserId() {
-    if (this.selectedConversation?.toUser === this.chatSvc?.user?.uuid) {
-      return this.selectedConversation.fromUser;
-    } else if (this.selectedConversation?.fromUser === this.chatSvc?.user?.uuid) {
-      return this.selectedConversation?.toUser;
-    } else {
-      return null;
-    }
   }
 
   readMessages(messageId: any) {
@@ -165,7 +146,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get patientName() {
-    return getCacheData(false,'patientName') || "";
+    return getCacheData(false, 'patientName') || '';
   }
 
   clickMenu() {
@@ -178,7 +159,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
       const payload = {
         visitId: this.selectedConversation?.visitId,
-        patientName: this.patientName,
+        patientName: this.selectedConversation.patientName,
         hwName: this.selectedConversation?.hwName,
         type: this.isAttachment ? 'attachment' : 'text'
       };
@@ -194,6 +175,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
           next: (res) => {
             this.isAttachment = false;
             this.getMessages();
+            this.conversations[this.conversations.findIndex(c => c.id === this.selectedConversation.id)].message = this.selectedConversation.latestMessage;
           },
           error: () => {
             this.isAttachment = false;
@@ -202,12 +184,12 @@ export class MessagesComponent implements OnInit, OnDestroy {
             this.isAttachment = false;
           }
         });
-      this.message = "";
+      this.message = '';
     }
   }
 
   get fromUser() {
-    return getCacheData(true,'user').uuid;
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 
   setImage(src) {
@@ -226,7 +208,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.message = res.data;
         this.sendMessage();
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
+import { doctorDetails } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -44,7 +45,7 @@ export class SetupNewPasswordComponent implements OnInit {
       this.router.navigate(['/session/login']);
     }
 
-    this.resetPasswordForm.get('password').valueChanges.subscribe((val: string) => {
+    this.resetPasswordForm.get(doctorDetails.PASSWORD).valueChanges.subscribe((val: string) => {
       this.checkPasswordStrength(val);
     });
   }
@@ -78,11 +79,6 @@ export class SetupNewPasswordComponent implements OnInit {
       }
     });
 
-    // this.mindmapService.changePassword({ newPassword: passwd, otp: '111111' }, this.userUuid).subscribe((result: any) => {
-    //   this.coreService.openPasswordResetSuccessModal().subscribe((res: any) => {
-    //     this.router.navigate(['/session/login']);
-    //   });
-    // });
   }
 
   generatePassword() {

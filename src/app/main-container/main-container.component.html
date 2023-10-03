@@ -150,7 +150,7 @@
                 </button>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
                   <img class="user-img mr-3" src="{{profilePic}}" (error) ="onImgError($event)" alt="">
-                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" height="100%"></h6>
+                  <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>
                 </div>
                 <button mat-icon-button [matMenuTriggerFor]="beforeMenu" aria-label="Example icon button with a vertical three dot icon" data-test-id="btnProfileDropdown">
                   <mat-icon>more_vert</mat-icon>
@@ -169,7 +169,6 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container d-flex flex-column" *ngIf="routeUrl.includes('/help') && !dialogRef && !dialogRef2">
-        <!-- <button class="help-btn" type="button" (click)="openHelpMenu()" data-test-id="btnToggleHelpMenu">{{'Help'| translate}}</button> -->
         <div class="menu-item">
           <span>{{'Raise a Ticket'| translate}}</span>
           <button class="help-btn-2 mr-1" type="button" (click)="openRaiseTicketModal()" data-test-id="btnToggleTicket">

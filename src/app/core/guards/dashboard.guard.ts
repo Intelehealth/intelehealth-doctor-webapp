@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
+import { doctorDetails } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -18,14 +19,14 @@ export class DashboardGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> {
-      const user = getCacheData(true,'user');
-      const provider = getCacheData(true,'provider');
+      const user = getCacheData(true, doctorDetails.USER);
+      const provider = getCacheData(true, doctorDetails.PROVIDER);
       return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
         if (res) {
           if (res.data.length && provider.attributes.length) {
             return true;
           } else {
-            this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false, sc: (res.data.length)? true : false } });
+            this.router.navigate(['/dashboard/get-started'], { queryParams: { pc: (provider.attributes.length) ? true : false, sc: (res.data.length) ? true : false } });
             return true;
           }
         }

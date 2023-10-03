@@ -1,11 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12 p-0">
-      <div class="card intel-card">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-4 p-0">
-              <div class="chat-sidebar-wrapper">
+              <div class="chat-sidebar-wrapper card intel-card chat-list-border-radius">
                 <div class="chat-sidebar-title">
                   <h6 class="mb-0">{{'Patients'| translate}}</h6>
                   <span>({{'Via Comunity health workers' | translate}})</span>
@@ -26,7 +25,6 @@
                       <input
                         type="text"
                         [(ngModel)]="searchValue"
-                        (ngModelChange)="search()"
                         class="form-control"
                         placeholder="{{'Search by patient name or ID'|translate}}"
                         aria-label="Username"
@@ -71,7 +69,7 @@
             </div>
             <div class="col-md-8 p-0">
               <div
-                class="chat-main-con"
+                class="chat-main-con card intel-card chat-border-radius"
                 *ngIf="selectedConversation; else noConversationSelected"
               >
                 <div class="chat-con-title">
@@ -90,7 +88,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="d-flex align-items-center">
+                  <div class="d-flex align-items-center chat-date">
                     <ng-select
                       class="custom mr-2"
                       [items]="visits"
@@ -113,9 +111,6 @@
                         {{ item.createdAt | amDateFormat : "DD MMM YYYY" }}
                       </ng-template>
                     </ng-select>
-                    <!-- <button mat-icon-button>
-                      <img src="assets/svgs/phone.svg" alt="" />
-                    </button> -->
                   </div>
                 </div>
                 <div class="chat-con-body">
@@ -164,6 +159,7 @@
                                 : defaultImage
                             "
                             (click)="setImage(item.message)"
+                            alt=""
                           />
                         </ng-container>
                         <ng-template #message>
@@ -172,15 +168,6 @@
                       </li>
                     </ng-container>
                   </ul>
-                  <!-- <ul class="chat-messages-list">
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message right">Great to hear. Keep me posted on the patient.</li>
-                    <li class="chat-message">The patient want to thank you for giving such a good treatment. Also I will send her reports with you as soon as I receive it.</li>
-                    <li class="chat-message">The patient was not feeling good for 2-3 days but lately the patient is doing well. </li>
-                    <li class="chat-message right">Hi! How is patient feeling now?</li>
-
-                  </ul> -->
                   <div class="chat-input-con">
                     <div class="input-group mr-2">
                       <input
@@ -191,17 +178,6 @@
                         (keyup.enter)="sendMessage()"
                         data-test-id="etSendMessage1"
                       />
-                      <!-- <div class="input-group-append">
-                        <button type="button" (click)="fileInput.click()">
-                          <img src="assets/svgs/attachment-icon.svg" alt="" />
-                          <input
-                            #fileInput
-                            type="file"
-                            (change)="uploadFile($event.target.files)"
-                            style="display: none"
-                          />
-                        </button>
-                      </div> -->
                     </div>
                     <button
                       type="button"
@@ -215,7 +191,7 @@
                 </div>
               </div>
               <ng-template #noConversationSelected>
-                <div class="no-conversation-selected">
+                <div class="no-conversation-selected chat-border-radius">
                   <img src="assets/svgs/chat-messages.png" alt="" />
                   <h6>{{'No messages selected'|translate}}</h6>
                   <p>
@@ -227,7 +203,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 </div>

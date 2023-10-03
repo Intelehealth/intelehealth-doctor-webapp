@@ -21,14 +21,14 @@
 }
 
 .external-prescription-col .blue-btn {
-    background: #2E1E91;
-    border: 1px solid #2E1E91;
-    color: #FFFFFF;
+    background: var(--color-darkBlue);
+    border: 1px solid var(--color-darkBlue);
+    color: var(--color-white);
 
     padding: 8px 24px;
     min-width: 119px;
     min-height: 48px;
-    border: 1px solid #EFE8FF;
+    border: 1px solid var(--color-lightGray);
     border-radius: 8px;
     font-size: 18px;
     line-height: 150%;
@@ -56,14 +56,9 @@
 
 .external-prescription .logo {
     right: 30px;
-    background: #2E1E91;
+    background: var(--color-darkBlue);
     width: 60px !important;
 }
-
-// .help-menu-container {
-//     display: none !important;
-// }
-
 
 .external-prescription .title-con {
     h6 {

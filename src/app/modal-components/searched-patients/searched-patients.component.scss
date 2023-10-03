@@ -1,30 +1,20 @@
 .modal-title {
   padding: 24px;
-  background: #EFE8FF;
+  background: var(--color-lightGray);
 
   h6 {
     font-family: 'DM Sans';
     font-weight: 700;
     font-size: 18px;
     line-height: 150%;
-    color: #1B163A;
+    color: var(--color-darkestBlue);
   }
-}
-
-.table th, .table td {
-  vertical-align: middle;
-  white-space: nowrap;
-  font-size: 16px;
-  color: #1B163A;
 }
 
 .identifier {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-
+  font-weight: bold;
   span {
     font-size: 12px;
     font-style: normal;
@@ -33,11 +23,41 @@
 
 .blue-btn {
   height: 48px;
-  background: #2E1E91;
+  background: var(--color-darkBlue);
   border-radius: 8px;
   font-weight: 700;
   font-size: 16px;
   line-height: 150%;
-  color: #FFFFFF;
+  color: var(--color-white);
   margin-left: auto;
+}
+
+.table-responsive{
+  font-size: 16px;
+  .row{
+    border-top: 1px solid rgba(178,175,190,.2);
+  }
+}
+
+.gender::before{
+  content: " ";
+}
+
+@media (max-width: 768px) {
+  .identifier {
+    span {
+      display: none;
+    }
+  }
+  .gender::before{
+    content: "\A";
+    white-space: pre;
+  }
+  .col-3 , .col-6{
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+  .blue-btn {
+    min-width: unset;
+  }
 }
