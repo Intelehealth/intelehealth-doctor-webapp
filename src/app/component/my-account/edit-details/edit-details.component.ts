@@ -5,7 +5,9 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { SignatureComponent } from "../signature/signature.component";
+import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import * as moment from "moment";
+
 declare var getFromStorage: any;
 
 @Component({
@@ -93,7 +95,7 @@ export class EditDetailsComponent implements OnInit {
       pid: this.data.uuid,
       type: "edit",
     };
-    this.dialog.open(SignatureComponent, { width: "500px", data: obj });
+    this.dialog.open(SignatureComponent, { width: "500px", data: obj, scrollStrategy: new NoopScrollStrategy() });
   }
 
   isValidTime(value: any) {
