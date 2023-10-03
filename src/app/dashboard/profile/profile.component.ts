@@ -17,6 +17,8 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { NgxRolesService } from 'ngx-permissions';
 import { TranslateService } from '@ngx-translate/core';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { SwPush, SwUpdate } from "@angular/service-worker";
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -208,7 +210,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
     private translateService: TranslateService,
-    private dateAdapter: DateAdapter<any>
+    private dateAdapter: DateAdapter<any>,
+    public _swPush: SwPush
     ) {
 
     this.personalInfoForm = new FormGroup({
@@ -637,6 +640,83 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.submitted = false;
+    this.getSubscription();
+  }
+
+  getSubscription() {
+    console.log(Notification.permission);
+    if(Notification.permission === 'default') {
+      Notification.requestPermission().then(() => {
+        this.requestSubscription();
+      }).catch(() => {
+        // show permission denied error
+      });
+    }
+    else if(Notification.permission === 'denied') {
+      console.log("Permission denied.");
+      // show permission is denied, please allow it error
+    } else {
+      this.requestSubscription();
+    }
+  }
+
+  requestSubscription() {    
+    if (!this._swPush.isEnabled) {
+      console.log("Notification is not enabled.");
+      return;
+    }
+    this._swPush.subscription.subscribe(async (sub) => {
+      if (!sub) {
+        await this._swPush.requestSubscription({
+          serverPublicKey: environment.vapidPublicKey
+        }).then(async (_) => {
+          // console.log("New subscription: ", JSON.stringify(_));
+          // (async () => {
+            // Get the visitor identifier when you need it.
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            console.log(result.visitorId);
+            this.authService.subscribePushNotification(
+              _,
+              this.user.uuid,
+              result.visitorId,
+              this.provider.person.display,
+              this.getSpecialization(),
+              localStorage.getItem('selectedLanguage')
+            ).subscribe(response => {
+              console.log(response);
+            });
+          // })();
+        }).catch((_) => console.log);
+      } else {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        this.authService.subscribePushNotification(
+          sub,
+          this.user.uuid,
+          result.visitorId,
+          this.provider.person.display,
+          this.getSpecialization(),
+          localStorage.getItem('selectedLanguage')
+        ).subscribe(response => {
+          console.log(response);
+        });
+        this._swPush.messages.subscribe(payload => {
+          console.log(payload);
+        });
+      }
+    });
+  }
+
+  getSpecialization(attr: any = this.provider.attributes) {
+    let specialization = null;
+    for (let x = 0; x < attr.length; x++) {
+      if (attr[x].attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
+        specialization = attr[x].value;
+        break;
+      }
+    }
+    return specialization;
   }
 
   updateSignature() {
