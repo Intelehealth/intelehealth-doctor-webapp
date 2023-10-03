@@ -125,8 +125,8 @@ export class MyAccountComponent implements OnInit {
 
       const size = Math.floor(totalBytes/1000000);
 
-      if(size >= 1) {
-        this.snackbar.open("Upload JPG/JPEG should be less than 1 MB.", null, { duration: 4000 });
+      if(size > 5) {
+        this.snackbar.open("Upload JPG/JPEG should be less than 5  MB.", null, { duration: 4000 });
         return;
       }
       
