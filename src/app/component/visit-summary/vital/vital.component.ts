@@ -27,7 +27,7 @@ export class VitalComponent implements OnInit {
 
   getSystolicColor(n: any) {
     let code: string = '#FF0000';
-    if(n > 90 && n < 120) {
+    if(n >= 90 && n < 120) {
       code = '#008000';
     } else if( n >= 120 && n <= 139) {
       code = '#FFFF00';
