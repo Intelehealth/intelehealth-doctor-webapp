@@ -113,8 +113,17 @@ export class MyAccountComponent implements OnInit {
 
   onSelectFile(event) {
     if (event.target.files && event.target.files[0]) {
+      
+      const { name } = event.target.files[0];
+      const extension = name.split('.').pop().toLowerCase();
+      const allowedExt = ['jpeg', 'jpg'];
+      if(!allowedExt.includes(extension)) {
+        this.snackbar.open("Upload JPG/JPEG format image only.", null, { duration: 4000 });
+        return;
+      }
+      
       var reader = new FileReader();
-
+      
       reader.readAsDataURL(event.target.files[0]); // read file as data url
 
       reader.onload = (event) => { // called once readAsDataURL is completed
@@ -131,10 +140,12 @@ export class MyAccountComponent implements OnInit {
           person: this.providerDetails.person.uuid,
           base64EncodedImage: imageBolb[1]
         }
-        this.http.post(URL, json, header).subscribe((response) => { });
+        this.http.post(URL, json, header).subscribe((response) => {
+          window.location.reload();
+         });
       }
     }
-    window.location.reload();
+    
   }
   /**
    * Open edit details modal
