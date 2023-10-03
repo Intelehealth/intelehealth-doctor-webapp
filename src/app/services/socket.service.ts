@@ -11,17 +11,26 @@ import { environment } from "../../environments/environment";
 import { VisitService } from "./visit.service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
 import { doctorDetails } from "src/config/constant";
+import { WebrtcService } from "./webrtc.service";
+import { CoreService } from "./core/core.service";
+import { ToastrService } from "ngx-toastr";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SocketService {
   public socket: any;
   public incoming;
+  public incomingCallData = {};
   public activeUsers = [];
   appIcon =
     false && environment.production
       ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
       : "/assets/images/intelehealth-logo-reverse.png";
-
+  public callRing = new Audio("assets/phone.mp3");
+  ringTimeout = null;
+  closeOverlayTimeout = null;
+  updateMessage = false;
   private baseURL = environment.socketURL;
   private adminUnreadSubject: BehaviorSubject<any>;
   public adminUnread: Observable<any>;
@@ -29,7 +38,10 @@ export class SocketService {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    private visitSvc: VisitService
+    private visitSvc: VisitService,
+    private webrtcSvc: WebrtcService,
+    private cs: CoreService,
+    private toastr: ToastrService
   ) {
     this.adminUnreadSubject = new BehaviorSubject<any>(0);
     this.adminUnread = this.adminUnreadSubject.asObservable();
@@ -56,7 +68,11 @@ export class SocketService {
         query: getCacheData(false,'socketQuery'),
       });
       this.onEvent("allUsers").subscribe((data) => {
-        this.activeUsers = data;
+        const activeUsers = [];
+        for (const key in data) {
+          activeUsers.push({ ...data[key], socketId: key });
+        }
+        this.activeUsers = activeUsers;
       });
       this.onEvent("log").subscribe((array) => {
         if (getCacheData(false,'log') === "1") console.log.apply(console, array);
@@ -88,12 +104,28 @@ export class SocketService {
     }
   }
 
-  callRing = new Audio("assets/phone.mp3");
-  public openVcOverlay() {
+  public openVcOverlay(data: any) {
+    this.callRing = new Audio("assets/phone.mp3");
+    this.cs.openVideoCallOverlayModal(data);
+    this.callRing.play();
+
+    this.ringTimeout = setInterval(() => {
+      this.callRing.pause();
+      this.callRing = new Audio("assets/phone.mp3");
+      this.callRing.play();
+    }, 10000);
+
+    this.closeOverlayTimeout = setTimeout(() => {
+      if (!this.webrtcSvc.callConnected) {
+        this.closeVcOverlay();
+      }
+    }, 59000);
   }
 
   public closeVcOverlay() {
-    const dailog = this.dialog.getDialogById("vcOverlay");
+    const dailog = this.dialog.getDialogById("vcOverlayModal");
+    clearInterval(this.ringTimeout);
+    clearInterval(this.closeOverlayTimeout);
     if (dailog) {
       dailog.close();
     }
@@ -148,7 +180,9 @@ export class SocketService {
   }
 
   close() {
-    this.socket.close();
+    try {
+      this.socket.close();
+    } catch (error) { }
   }
 
   public initSocketSupport(forceInit = false) {

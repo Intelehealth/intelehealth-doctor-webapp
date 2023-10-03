@@ -26,14 +26,26 @@
         >
           <span class="mr-1">{{ item.createdAt | amDateFormat : "LT" }}</span>
           <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
-            <ng-container *ngIf="item.isRead">
-              <img src="assets/svgs/read-status.svg" alt="" />
-              <span class="ml-1">{{'Read'|translate}}</span>
+            <ng-container *ngIf="sending; else sent">
+              <img src="assets/svgs/sending.svg" alt="" />
+              <span class="ml-1">Sending</span>
             </ng-container>
-            <ng-container *ngIf="!item.isRead">
-              <img src="assets/svgs/sent-status.svg" alt="" />
-              <span class="ml-1">{{'Sent'|translate}}</span>
-            </ng-container>
+            <ng-template #sent>
+              <ng-container *ngIf="item.isRead; else delivered">
+                <img src="assets/svgs/read-status.svg" alt="" />
+                <span class="ml-1">Read</span>
+              </ng-container>
+              <ng-template #delivered>
+                <ng-container *ngIf="item.isDelivered; else third">
+                  <img src="assets/svgs/delivered_double_tick.svg" alt="" />
+                  <span class="ml-1">Delivered</span>
+                </ng-container>
+              </ng-template>
+              <ng-template #third>
+                <img src="assets/svgs/sent-status.svg" alt="" />
+                <span class="ml-1">Sent</span>
+              </ng-template>
+            </ng-template>
           </ng-container>
         </li>
         <li
