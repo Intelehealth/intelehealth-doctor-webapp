@@ -177,7 +177,7 @@
 
   .items-list {
     list-style-type: none;
-    padding: 24px 0px 0px;
+    padding: 5px 0px 0px;
 
     li .list-item {
       flex-direction: column;
@@ -185,18 +185,21 @@
 
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
 
     li .list-item-col {
       label {
         width: 100%;
-        border-bottom: 1px solid rgba(178, 175, 190, 0.2);
+        border-top: 1px solid rgba(178, 175, 190, 0.2);
         font-weight: bold;
+        margin-top: 0.50rem;
       }
     }
+
   }
 
   .data-section {
@@ -217,6 +220,21 @@
       font-size: 16px;
     }
   }
+
+  .btn_download_pdf span{
+    display: none;
+  }
+
+  .desktop-close-btn{
+    display: none !important;
+  }
+  .mobile-close-btn{
+    display: block !important;
+  }
+
+  .main-content{
+    padding: 10px !important;
+  }
 }
 
 .signature {
@@ -230,4 +248,11 @@
   border: unset;
   background: transparent;
   font-size: 18px;
+}
+
+.mobile-close-btn{
+  display: none;
+}
+.dekstop-close-btn{
+  display: block;
 }

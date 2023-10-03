@@ -624,7 +624,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display === 'PHYSICAL EXAMINATION') {
-            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
