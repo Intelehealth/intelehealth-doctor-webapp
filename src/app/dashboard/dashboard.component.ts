@@ -307,10 +307,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let provider = null;
     let seen = false;
 
-    const visitReadAttr = visit.attributes.find(a => a.attribute_type?.name == "Visit Read" && !a.voided);
-    if (visitReadAttr) {
-      if (visitReadAttr.value_reference.includes(this.user?.uuid.split('-')[0])) {
-        seen = true;
+    if (visit?.attributes) {
+      const visitReadAttr = visit.attributes.find(a => a.attribute_type?.name == "Visit Read" && !a.voided);
+      if (visitReadAttr) {
+        if (visitReadAttr.value_reference.includes(this.user?.uuid.split('-')[0])) {
+          seen = true;
+        }
       }
     }
 
