@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { Participant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
+import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
 
@@ -17,8 +17,8 @@ import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
   styleUrls: ['./video-call.component.scss'],
 })
 export class VideoCallComponent implements OnInit, OnDestroy {
-  @ViewChild("localVideo") localVideoRef: any;
-  @ViewChild("remoteVideo") remoteVideoRef: any;
+  @ViewChild("localVideo", { static: false }) localVideoRef: any;
+  @ViewChild("remoteVideo", { static: false }) remoteVideoRef: any;
 
   message: string;
   messageList: any = [];
@@ -63,15 +63,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
-    if (this.data.initiator) {
-      this.initiator = this.data.initiator;
-    }
-    const patientVisitProvider = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+    const patientVisitProvider: any = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
-    const doctorName = getCacheData(false, doctorDetails.DOCTOR_NAME);
-    this.doctorName = doctorName ? doctorName : this.user.display;
-    this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider : this.nurseId;
+    this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.initiator) this.initiator = this.data.initiator;
@@ -84,7 +79,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
      * Don't remove this, required change detection for duration
      */
     this.changeDetForDuration = setInterval(() => { }, 1000);
-    this.startCall();
+    if (this.initiator === 'hw') {
+      this.connecting = true;
+      this.webrtcSvc.token = this.data.token;
+      /**
+       * Changing the execution cycle
+       */
+      setTimeout(() => {
+        this.startCall();
+      }, 0);
+    } else {
+      this.startCall();
+    }
   }
 
   get patientVisitProvider() {
@@ -104,14 +110,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   async startCall() {
-    this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
     if (!this.webrtcSvc.token) {
       await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
         this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
     if (!this.webrtcSvc.token) return;
-    this.toastr.show('Received video call token.', null, { timeOut: 1000 });
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
@@ -164,7 +168,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
-        console.log('call_time_up: ', this.nurseId);
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
@@ -197,7 +200,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.activeSpeakerIds = speakers.map(s => s?.identity);
   }
 
-  handleTrackUnsubscribed(track: RemoteTrack) {
+  handleTrackUnsubscribed(
+    track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant
+  ) {
     // remove tracks from all attached elements
     track.detach();
   }
@@ -269,7 +276,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   readMessages(messageId: any) {
-    console.log('messageId: ', messageId);
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
         this.getMessages();

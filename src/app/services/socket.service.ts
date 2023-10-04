@@ -13,9 +13,7 @@ import { getCacheData, setCacheData } from "../utils/utility-functions";
 import { WebrtcService } from "./webrtc.service";
 import { ToastrService } from "ngx-toastr";
 import { doctorDetails } from "src/config/constant";
-import { WebrtcService } from "./webrtc.service";
 import { CoreService } from "./core/core.service";
-import { ToastrService } from "ngx-toastr";
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +22,8 @@ export class SocketService {
   public socket: any;
   public incoming;
   public incomingCallData = {};
-  public incomingCallData = {};
   public activeUsers = [];
-  appIcon =
-    false && environment.production
-      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
-      : "/assets/images/intelehealth-logo-reverse.png";
+  appIcon = "/assets/images/intelehealth-logo-reverse.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;
   closeOverlayTimeout = null;
@@ -67,20 +61,46 @@ export class SocketService {
       if (!sessionStorage.webrtcDebug) {
         setCacheData('socketQuery', `userId=${this.userUuid}&name=${this.userName}`);
       }
+
       this.socket = io(environment.socketURL, {
         query: getCacheData(false, 'socketQuery'),
       });
-      this.onEvent("allUsers").subscribe((data) => {
-        const activeUsers = [];
-        for (const key in data) {
-          activeUsers.push({ ...data[key], socketId: key });
-        }
-        this.activeUsers = activeUsers;
-      });
+
       this.onEvent("log").subscribe((array) => {
         if (getCacheData(false,'log') === "1") console.log.apply(console, array);
       });
+
+      this.initEvents();
     }
+  }
+
+  initEvents() {
+    this.onEvent("allUsers").subscribe((data) => {
+      this.activeUsers = data;
+    });
+
+    this.onEvent("cancel_hw").subscribe((data) => {
+      this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
+      this.closeVcOverlay();
+    });
+
+    this.onEvent("incoming_call").subscribe((data = {}) => {
+      if (!location.hash.includes("test/chat")) {
+        localStorage.patientId = data.patientId;
+        if (localStorage.patientId) {
+          this.openVcOverlay(data);
+        }
+      }
+    });
+
+    this.onEvent("updateMessage").subscribe((data) => {
+      this.showNotification({
+        title: "New chat message",
+        body: data.message,
+        timestamp: new Date(data.createdAt).getTime(),
+      });
+      this.emitEvent('ack_msg_received', { messageId: data.id });
+    });
   }
 
   public emitEvent(action, data) {
@@ -133,9 +153,6 @@ export class SocketService {
       dailog.close();
     }
     this.callRing.pause();
-  }
-
-  public openVcModal(initiator = "dr") {
   }
 
   public openNewVCModal(

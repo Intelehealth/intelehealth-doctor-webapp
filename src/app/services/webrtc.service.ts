@@ -31,7 +31,6 @@ export class WebrtcService {
   public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
-  public visitHolderId: null;
 
   constructor(
     private http: HttpClient,
@@ -71,6 +70,7 @@ export class WebrtcService {
     handleConnect = this.noop,
     handleLocalTrackUnpublished = this.handleLocalTrackUnpublished,
     handleLocalTrackPublished = this.attachLocalVideo.bind(this),
+    autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
     handleTrackMuted = this.noop,
@@ -120,9 +120,6 @@ export class WebrtcService {
       .on(RoomEvent.SignalConnected, async () => {
         await this.room.localParticipant.enableCameraAndMicrophone();
       });
-      .on(RoomEvent.SignalConnected, async () => {
-        await this.room.localParticipant.enableCameraAndMicrophone();
-      });
     // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
     await this.room.connect(this.url, this.token);
 
@@ -133,8 +130,6 @@ export class WebrtcService {
 
   clearAudioVideo() {
     try {
-      if (this.localContainer) this.localContainer.innerHTML = '';
-      if (this.remoteContainer) this.remoteContainer.innerHTML = '';
       if (this.localContainer) this.localContainer.innerHTML = '';
       if (this.remoteContainer) this.remoteContainer.innerHTML = '';
     } catch (error) {
@@ -218,6 +213,8 @@ export class WebrtcService {
   }
 
   async disconnect(stopTracks = true) {
+    const cam = this.room.localParticipant.getTrack(Track.Source.Camera);
+    const mic = this.room.localParticipant.getTrack(Track.Source.Microphone);
     this.room.disconnect(stopTracks);
   }
 

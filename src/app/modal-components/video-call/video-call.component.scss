@@ -62,30 +62,25 @@
       margin: 0 auto;
       width: 100%;
 
-    .call-duration-container {
-      position: relative;
-      margin: 0 auto;
-      width: 100%;
+      .call-duration {
+        position: absolute;
+        width: 100%;
+        bottom: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: var(--color-darkestBlue);
 
-    .call-duration {
-      position: absolute;
-      top: 5px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
-      color: #1B163A;
-
-      .pill {
-        padding: 4px 12px;
-        color: var(--color-darkBlue);
-        background: var(--color-white);
-        box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
-        border-radius: 20px;
-        font-weight: bold;
+        .pill {
+          padding: 4px 12px;
+          color: var(--color-darkBlue);
+          background: var(--color-white);
+          box-shadow: 0px 4px 16px rgba(31, 28, 58, 0.08);
+          border-radius: 20px;
+          font-weight: bold;
+        }
       }
     }
 
@@ -131,7 +126,7 @@
   }
 
   .remote-con.minimized {
-    width: 20vmin !important;
+    width: 30vmin !important;
     height: 20vmin !important;
     border: 5px solid var(--color-white);
     box-shadow: 0px 4px 20px rgba(31, 28, 58, 0.08);
@@ -140,13 +135,27 @@
     border-radius: 4px;
   }
 
+  .local-container,
+  .remote-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    video {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
   .local-con {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 15vmin;
-    height: 20vmin;
+    width: 20vmin;
+    height: 17vmin;
     border: 5px solid var(--color-white);
+    background: var(--color-lightGray);
     box-shadow: 0px 4px 20px rgba(31, 28, 58, 0.08);
     border-radius: 4px;
     overflow: hidden;
@@ -365,4 +374,35 @@
   object-fit: contain;
   background-color: var(--color-white);
   cursor: pointer;
+}
+
+.call-container {
+  .img-cont {
+    min-height: 350px;
+    justify-content: center;
+    display: grid;
+  }
+  .calling-img {
+    width: auto;
+  }
+  .video-controls {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+  }
+  .calling-txt {
+    // position: absolute;
+    top: 30px;
+    font-size: 18px;
+    font-family: lato;
+  }
+}
+
+.connecting {
+  height: 80vh;
+  div.text {
+    height: 100%;
+    line-height: 65vh;
+    font-size: 30px;
+  }
 }

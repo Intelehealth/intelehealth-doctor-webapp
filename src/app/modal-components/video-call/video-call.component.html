@@ -33,7 +33,7 @@
           class="main-container"
         >
           <div class="remote-con" [class.minimized]="_minimized">
-            <div #remoteVideo class="remote-container h-100"></div>
+            <div #remoteVideo class="remote-container"></div>
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
               class="video-off-container"
@@ -115,7 +115,7 @@
             </div>
           </div>
           <div class="local-con" [class.d-none]="_minimized">
-            <div #localVideo class="local-container h-100 text-center"></div>
+            <div #localVideo class="local-container"></div>
             <div class="video-off-container" *ngIf="_localVideoOff">
               <img
                 src="{{ baseUrl + '/personimage/' + data.drPersonUuid }}"
@@ -136,13 +136,13 @@
           <div class="calling-txt text-center w-100">Calling...</div>
           <div class="img-cont">
             <img
-              class="calling-img mt-5 w-100"
+              class="calling-img mt-5"
               src="assets/images/calling-ih.gif"
               alt="calling"
             />
           </div>
           <div
-            class="video-controls d-flex justify-content-center mb-3"
+            class="video-controls d-flex justify-content-center mb-1"
             [class.d-none]="_minimized"
           >
             <button
