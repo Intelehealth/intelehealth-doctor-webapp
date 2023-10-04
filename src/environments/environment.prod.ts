@@ -10,7 +10,7 @@ export const environment = {
   captchaSiteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   siteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   externalPrescriptionCred: 'c3lzbnVyc2U6SUhOdXJzZSMx',
-  vapidPublicKey: "BLDLmm1FrOhRJsumFL3lZ8fgnC_c1rFoNp-mz6KWObQpgPkhWzUh66GCGPzioTWBc4u0SB8P4spimU8SH2eWNfg",
+  vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
   recordsPerPage: 50
