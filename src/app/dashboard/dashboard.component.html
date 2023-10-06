@@ -51,7 +51,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/cam-icon.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">{{'Appointments' | translate}} ({{appointments.length ? appointments.length : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'Scheduled appointments' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAppointment">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #apSearchInput class="form-control" placeholder="Search appointments" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter1($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAppointmentDashboard">
                   <div class="input-group-append">
@@ -137,7 +137,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/red-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{ 'Priority visits'| translate }} ({{priorityVisitsCount ? priorityVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpPriority">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'High priority visit' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpPriority">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #prSearchInput class="form-control" placeholder="Search priority visits" aria-label="search1" aria-describedby="basic-addon1" (keyup)="applyFilter2($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchPriorityDashboard">
                   <div class="input-group-append">
@@ -220,7 +220,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/green-profile.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2"> {{'Awaiting visits'|translate}} ({{awaitingVisitsCount ? awaitingVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAwaiting">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'General Uploaded Visits' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpAwaiting">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #awSearchInput class="form-control" placeholder="Search awaiting visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter3($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchAwaitingDashboard">
                   <div class="input-group-append">
@@ -303,7 +303,7 @@
               <div class="intel-accordion-title">
                 <img src="assets/svgs/pen-board.svg" alt="" width="44px">
                 <h6 class="mb-0 ml-2">  {{'In-progress visits'| translate }} ({{inprogressVisitsCount ? inprogressVisitsCount : 0}})</h6>
-                <mat-icon aria-hidden="false" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpInprogress">help_outline</mat-icon>
+                <mat-icon aria-hidden="false" class="info-icon" aria-label="help icon" matTooltip="{{'Visits going through the consultation' | translate}}" matTooltipPosition="right" data-test-id="matIcoHelpInprogress">help_outline</mat-icon>
                 <div class="input-group search-bar ml-auto" (click)="$event.stopPropagation();">
                   <input type="text" #ipSearchInput class="form-control" placeholder="Search in-progress visits" aria-label="Username" aria-describedby="basic-addon1" (keyup)="applyFilter4($event)" (keydown.Space)="$event.stopPropagation()" (keydown.Enter)="$event.stopPropagation()" data-test-id="etSearchInprogressDashboard">
                   <div class="input-group-append">
