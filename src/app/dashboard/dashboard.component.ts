@@ -550,8 +550,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.socket.socket && this.socket.socket.close)
-      this.socket.socket.close();
+    // if (this.socket.socket && this.socket.socket.close)
+    //   this.socket.socket.close();
   }
 
 }
