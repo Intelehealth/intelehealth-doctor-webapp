@@ -94,11 +94,6 @@ export class SocketService {
     });
 
     this.onEvent("updateMessage").subscribe((data) => {
-      this.showNotification({
-        title: "New chat message",
-        body: data.message,
-        timestamp: new Date(data.createdAt).getTime(),
-      });
       this.emitEvent('ack_msg_received', { messageId: data.id });
     });
   }
