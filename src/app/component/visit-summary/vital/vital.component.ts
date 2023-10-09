@@ -16,10 +16,10 @@ export class VitalComponent implements OnInit {
     private route: ActivatedRoute,
     private visitService: VisitService,
     private service: EncounterService
-  ) {}
+  ) { }
 
   toFeet(n: any) {
-    const realFeet = ((n*0.393700) / 12);
+    const realFeet = ((n * 0.393700) / 12);
     const feet = Math.floor(realFeet);
     const inches = Math.round((realFeet - feet) * 12);
     return `${feet} ft ${inches} inches`;
@@ -27,9 +27,9 @@ export class VitalComponent implements OnInit {
 
   getSystolicColor(n: any) {
     let code: string = '#FF0000';
-    if(n > 90 && n < 120) {
+    if (n > 90 && n < 120) {
       code = '#008000';
-    } else if( n >= 120 && n <= 139) {
+    } else if (n >= 120 && n <= 139) {
       code = '#FFFF00';
     }
     return code;
@@ -37,9 +37,9 @@ export class VitalComponent implements OnInit {
 
   getDSystolicColor(n: any) {
     let code: string = '#FF0000';
-    if(n < 80) {
+    if (n < 80) {
       code = '#008000';
-    } else if( n >= 80 && n <= 99) {
+    } else if (n >= 80 && n <= 99) {
       code = '#FFFF00';
     }
     return code;
@@ -73,8 +73,9 @@ export class VitalComponent implements OnInit {
                   obs.display.slice(13, obs.display.length)
                 );
               }
-              if (displayObs.match("Height") !== null) {
-                this.answer.height = this.toFeet(obs.display.slice(13, obs.display.length))
+              if (displayObs.includes("Height")) {
+                this.answer.heightCm = obs.display.slice(13, obs.display.length);
+                this.answer.height = this.toFeet(this.answer.heightCm);
               }
               if (displayObs.match("BLOOD OXYGEN SATURATION") !== null) {
                 this.answer.sp02 = Number(

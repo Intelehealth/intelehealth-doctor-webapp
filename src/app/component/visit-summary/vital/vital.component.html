@@ -5,19 +5,19 @@
   <div class="vital-items-wrapper">
     <div class="vital-item-row" *ngFor='let item of v'>
       <div class="vital-item">
-        <b>Temp:</b>&nbsp; <span *ngIf="item.temp"> {{ (item.temp * 9) / 5 + 32 | number: "1.2-2" }} F</span>
+        <b>Temp:</b>&nbsp; <span *ngIf="item.temp"> {{ (item.temp * 9) / 5 + 32 | number: "1.1-1" }} F</span>
       </div>
       <div class="vital-item">
-        <b>Height</b>&nbsp; <span *ngIf="item.height">{{item.height}}</span>
+        <b>Height:</b>&nbsp; <span *ngIf="item.height">{{item.height}}</span>
       </div>
       <div class="vital-item">
         <b>Weight:</b>&nbsp; <span *ngIf="item.weight">{{item.weight}} kg</span>
       </div>
       <div class="vital-item">
-        <b>BMI:</b>&nbsp; 
-        <span *ngIf="item.weight && item.height"> 
+        <b>BMI:</b>&nbsp;
+        <span *ngIf="item.weight && item.heightCm">
           {{
-          item.weight / ((item.height / 100) * (item.height / 100))
+          item.weight / ((item.heightCm / 100) * (item.heightCm / 100))
             | number: "1.2-2"}} </span>
       </div>
       <div class="vital-item">
@@ -46,7 +46,7 @@
     </div>
     <div class="vital-item-row">
       <div class="vital-item">
-        <b>Sugar Level(Fasting/After Meal):</b>&nbsp; 
+        <b>Sugar Level(Fasting/After Meal):</b>&nbsp;
         <span *ngIf="v[0]?.sugarLevelAfterMeal||v[0]?.sugarLevelFasting">
           <span>{{v[0]?.sugarLevelFasting||'NA'}}</span>/<span>{{v[0]?.sugarLevelAfterMeal||'NA'}}</span>
         </span>
