@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +20,7 @@ import { doctorDetails, languages, visitTypes } from 'src/config/constant';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
   showAll: boolean = true;
   displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
@@ -547,11 +547,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       default:
         break;
     }
-  }
-
-  ngOnDestroy() {
-    // if (this.socket.socket && this.socket.socket.close)
-    //   this.socket.socket.close();
   }
 
 }

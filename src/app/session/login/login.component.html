@@ -39,10 +39,6 @@
           <ngx-recaptcha2 #captchaElem
             [siteKey]="siteKey"
             [hl]="selectedLanguage"
-            (reset)="handleReset()"
-            (expire)="handleExpire()"
-            (load)="handleLoad()"
-            (success)="handleSuccess($event)"
             [useGlobalDomain]="false"
             formControlName="recaptcha">
           </ngx-recaptcha2>
