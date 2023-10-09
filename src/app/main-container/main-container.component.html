@@ -144,10 +144,26 @@
                 <button mat-button class="notification-button mr-1" (click)="openHelpMenu()" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']" data-test-id="btnHelpMenu">
                   <mat-icon>help_outline</mat-icon>
                 </button>
-                <button mat-button class="notification-button mr-3" (click)="toggleNotification()" data-test-id="btnNotification">
-                  <mat-icon *ngIf="notificationEnabled">notifications_none</mat-icon>
+                <button mat-button [matMenuTriggerFor]="notificationmenu" class="notification-button mr-3">
+                  <mat-icon *ngIf="notificationEnabled && !snoozed">notifications_none</mat-icon>
+                  <mat-icon *ngIf="notificationEnabled && snoozed">notifications_paused</mat-icon>
                   <mat-icon *ngIf="!notificationEnabled">notifications_off</mat-icon>
                 </button>
+                <mat-menu #notificationmenu="matMenu" class="notification-menu">
+                  <ng-container *ngIf="notificationEnabled && !snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('30m')">Snooze for 30 Minutes</button>
+                    <button mat-menu-item (click)="snoozeNotification('1h')">Snooze for 1 Hour</button>
+                    <button mat-menu-item (click)="snoozeNotification('2h')">Snooze for 2 Hours</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="notificationEnabled && snoozed">
+                    <button mat-menu-item (click)="snoozeNotification('off')">Awake notification</button>
+                    <button mat-menu-item (click)="toggleNotification()">Turn Off</button>
+                  </ng-container>
+                  <ng-container *ngIf="!notificationEnabled">
+                    <button mat-menu-item (click)="toggleNotification()">Turn On</button>
+                  </ng-container>
+                </mat-menu>
                 <div class="user-info-wrap mr-3" routerLink="/dashboard/profile" data-test-id="navProfile">
                   <img class="user-img mr-3" src="{{profilePic}}" (error) ="onImgError($event)" alt="">
                   <h6 class="user-title mb-0">{{'Hello' |translate}}, {{ (user)? user?.person?.display : ('User'|translate) }} <img src="assets/images/Waving-Hand-Emoji.png" alt="" height="100%"></h6>

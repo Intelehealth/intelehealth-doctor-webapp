@@ -51,6 +51,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   routeUrl = '';
   adminUnread = 0;
   notificationEnabled = false;
+  interval: any;
+  snoozed: any = '';
   profilePic: string;
   profilePicSubscription;
 
@@ -108,7 +110,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
       this.adminUnread = res;
     });
 
-    this.requestSubscription();
+    this.getSubscription();
     this.getNotificationStatus();
 
     this.profilePic = this.baseUrl + '/personimage/' + this.provider?.person.uuid;
@@ -121,12 +123,11 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     if (!this._swPush.isEnabled) {
       return;
     }
-    this._swPush.subscription.subscribe(sub => {
+    this._swPush.subscription.subscribe(async (sub) => {
       if (!sub) {
-        this._swPush.requestSubscription({
+        await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
-        }).then((_) => {
-          (async () => {
+        }).then(async (_) => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
             const result = await fp.get();
@@ -136,12 +137,21 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
               result.visitorId,
               this.provider.person.display,
               this.getSpecialization()
-            ).subscribe(response => {
+            ).subscribe(_response => {
             });
-          })();
-        }).catch((_) => {});
+        }).catch((_) => console.log);
       } else {
-        this._swPush.messages.subscribe(payload => {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        this.authService.subscribePushNotification(
+          sub,
+          this.user.uuid,
+          result.visitorId,
+          this.provider.person.display,
+          this.getSpecialization()
+        ).subscribe(_response => {
+        });
+        this._swPush.messages.subscribe(_payload => {
         });
       }
     });
@@ -151,8 +161,31 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: any) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
+        this.snoozed = res.data?.snooze_till;
+        this.interval = setInterval(()=>{
+          if (this.snoozed) {
+            if (new Date().valueOf() > this.snoozed) {
+              this.snoozed = 0;
+            }
+          }
+        }, 30000);
       }
     });
+  }
+
+  getSubscription() {
+    if(Notification.permission === 'default') {
+      Notification.requestPermission().then(() => {
+        this.requestSubscription();
+      }).catch(() => {
+        // show permission denied error
+      });
+    }
+    else if(Notification.permission === 'denied') {
+      // show permission is denied, please allow it error
+    } else {
+      this.requestSubscription();
+    }
   }
 
   getSpecialization(attr: any = this.provider.attributes) {
@@ -306,9 +339,24 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  snoozeNotification(period: string) {
+    this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: any) => {
+      if (res.success) {
+        this.snoozed = res.data?.snooze_till;
+      }
+    });
+  }
+
+  // get snoozeTimeout() {
+  //   return this.notificationService.snoozeTimeout;
+  // }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription1?.unsubscribe();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.profilePicSubscription.unsubscribe();
     if (this.dialogRef) {
       this.dialogRef.close();
