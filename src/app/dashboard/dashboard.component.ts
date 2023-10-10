@@ -122,11 +122,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
           this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
         }
       }
@@ -164,11 +165,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
           this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
         }
       }
@@ -207,11 +209,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
           this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
         }
       }
