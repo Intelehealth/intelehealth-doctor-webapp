@@ -12,7 +12,7 @@ import {
   RoomConnectOptions,
   RoomEvent,
   Track,
-  VideoPresets,
+  // VideoPresets,
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
@@ -22,7 +22,7 @@ import { VisitService } from './visit.service';
   providedIn: 'root'
 })
 export class WebrtcService {
-  public room: any | null | Room = null;
+  public room: Room;
   public url: string = environment.webrtcSdkServerUrl;
   public token: any | null = null;
   public appToken: any | null = null;
@@ -76,11 +76,10 @@ export class WebrtcService {
     handleTrackMuted = this.noop,
     handleTrackUnmuted = this.noop,
     handleParticipantDisconnected = this.noop,
-    handleParticipantConnect = this.noop
+    handleParticipantConnect = this.noop,
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
-      return;
     }
 
     this.localElement = localElement;
@@ -110,19 +109,24 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
       .on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakerChange)
       .on(RoomEvent.Connected, handleConnect)
+      .on(RoomEvent.Connected, async () => {
+        try {
+          await this.room.localParticipant.enableCameraAndMicrophone()
+        } catch (error) {
+          location.reload();
+        }
+      })
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
       .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
-      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-      .on(RoomEvent.SignalConnected, async () => {
-        await this.room.localParticipant.enableCameraAndMicrophone();
-      });
-    // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
+      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted);
+
     await this.room.connect(this.url, this.token);
   }
+
 
   clearAudioVideo() {
     try {
@@ -178,6 +182,12 @@ export class WebrtcService {
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
     if (track?.detach) track?.detach();
+    if (track?.audioTrack?.stop) {
+      track.audioTrack.stop();
+    }
+    if (track?.videoTrack?.stop) {
+      track.videoTrack.stop();
+    }
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
@@ -203,16 +213,30 @@ export class WebrtcService {
 
 
   handleDisconnect() {
-    this.room.disconnect(true);
+    this.disconnect(true);
     this.callConnected = false;
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
   }
 
   async disconnect(stopTracks = true) {
-    const cam = this.room.localParticipant.getTrack(Track.Source.Camera);
-    const mic = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    /**
+    * Fail safe timeout to resolve issue of using camera after disconnect
+    */
+    setTimeout(() => {
+      this.room.disconnect(stopTracks);
+    }, 0);
     this.room.disconnect(stopTracks);
+    const cam: any = this.room.localParticipant.getTrack(Track.Source.Camera);
+    if (cam) {
+      this.room.localParticipant.unpublishTrack(cam, true);
+    }
+
+    const mic: any = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    if (mic) {
+      this.room.localParticipant.unpublishTrack(mic, true);
+    }
+
   }
 
   get remoteContainer() {
