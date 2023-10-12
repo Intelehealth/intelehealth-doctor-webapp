@@ -288,8 +288,8 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="specialization">{{'Specialization'|translate}} *</label>
-                  <ng-select class="profile-select" bindLabel="name" bindValue="name" [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}" data-test-id="selSpecialization">
-                    <ng-option *ngFor="let specialization of specializations" [value]="specialization.name">
+                  <ng-select class="profile-select" bindLabel="name" bindValue="name"  [clearable]="false" [searchable]="false" formControlName="specialization" placeholder="{{'Select specialization'|translate}}" data-test-id="selSpecialization">
+                    <ng-option *ngFor="let specialization of specializations"  [value]="specialization.name">
                           {{ (specialization.name) |translate }}
                     </ng-option>
                   </ng-select>

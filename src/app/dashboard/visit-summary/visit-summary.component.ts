@@ -264,6 +264,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
+      console.log('visit...', visit)
       if (visit) {
         this.visit = visit;
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {

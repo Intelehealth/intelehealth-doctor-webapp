@@ -279,6 +279,41 @@
                       </div>
                     </div>
                   </li>
+
+                  <li>
+                    <div class="list-item">
+                      <label data-test-id="etHBVitals">{{'HB'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        [class.text-muted]="!getObsValue('Hemoglobin Level')"
+                        data-test-id="etHBDataVitals"
+                      >
+                        {{
+                          getObsValue("Hemoglobin Level")
+                            ? getObsValue("Hemoglobin Level")
+                            : ('No information'|translate)
+                        }}
+                      </div>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div class="list-item">
+                      <label data-test-id="etBloodSugarVitals">{{'Blood Sugar'|translate}}</label>
+                      <div
+                        class="list-item-content"
+                        [class.text-muted]="!getObsValue('Blood Sugar Level')"
+                        data-test-id="etBloodSugarDataVitals"
+                      >
+                        {{
+                          getObsValue("Blood Sugar Level")
+                            ? getObsValue("Blood Sugar Level")
+                            : ('No information'|translate)
+                        }}
+                      </div>
+                    </div>
+                  </li>
+
                   <li>
                     <div class="list-item">
                       <label data-test-id="etBMIVitals">{{'BMI'|translate}}</label>

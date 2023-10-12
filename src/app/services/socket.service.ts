@@ -23,7 +23,7 @@ export class SocketService {
   public incoming;
   public incomingCallData = {};
   public activeUsers = [];
-  appIcon = "/assets/images/intelehealth-logo-reverse.png";
+  appIcon = "/assets/images/namma_aarogya_kendra_logo.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;
   closeOverlayTimeout = null;

@@ -113,7 +113,7 @@ button.toast-close-button {
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/info-circle.svg */
 .toast-info {
-  border-left: 7px solid #2E1E91;
+  border-left: 7px solid #d1484c;
 }
 /* https://github.com/FortAwesome/Font-Awesome-Pro/blob/master/advanced-options/raw-svg/regular/times-circle.svg */
 .toast-error {
@@ -150,7 +150,7 @@ button.toast-close-button {
   background-color: #EA315B;
 }
 .toast-info {
-  background-color: #2E1E91;
+  background-color: #d1484c;
 }
 .toast-warning {
   background-color: #F89406;
