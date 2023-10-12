@@ -86,9 +86,9 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
     this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
     this.routeUrl = this.breadcrumbs[this.breadcrumbs.length - 1]?.url;
-    if (localStorage.getItem('collapsed') && this.breadcrumbs.filter((val => val.url.includes('visit-summary'))).length) {
+    if (localStorage.getItem('collapsed') && this.breadcrumbs.filter((val => val.url.includes('elcg'))).length) {
       this.collapsed = true;
-      this.routeUrl = this.breadcrumbs.filter((val => val.url.includes('visit-summary')))[0].url;
+      this.routeUrl = this.breadcrumbs.filter((val => val.url.includes('elcg')))[0].url;
     }
   }
 
@@ -117,7 +117,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
         this.routeUrl = this.router.url;
         this.breadcrumbs = this.buildBreadCrumb(this.activatedRoute.root);
         document.getElementsByClassName('admin-sidenav-content')[0]?.scrollTo(0, 0);
-        if (this.routeUrl.includes('visit-summary')) {
+        if (this.routeUrl.includes('elcg')) {
           localStorage.setItem('collapsed', JSON.stringify(this.collapsed));
           this.collapsed = true;
         } else {

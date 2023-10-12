@@ -290,7 +290,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   extractVisitDetail(visit: any) {
-    let in_labour_duration = this.getCreatedAt(visit.date_started.replace('Z','+0530'));
+    let in_labour_duration = this.getCreatedAt(visit.date_started);
     let stage = visit.encounters.filter((e: any) => e.type.name.includes('Stage2')).length ? 2 : 1;
     let notes = [];
     let notesObj = {};
@@ -359,7 +359,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               if (motherDeceased == 'YES') {
                 motherDeceasedReason = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'MOTHER DECEASED REASON')?.value_text;//165187
               }
-              dateTimeOfBirth = visit.encounters[x].encounter_datetime.replace('Z','+0530');
+              dateTimeOfBirth = visit.encounters[x].encounter_datetime;
             }
           }
         }
