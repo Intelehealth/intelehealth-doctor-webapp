@@ -138,14 +138,43 @@
                     </div>
                   </div>
                 </li>
+
                 <li>
                   <div class="list-item">
-                    <label>{{'BMI'|translate}}</label>
-                    <div class="list-item-content" [class.text-muted]="!getObsValue('Height (cm)') || !getObsValue('Weight (kg)')">
-                      {{(getObsValue('Height (cm)') && getObsValue('Weight (kg)'))? ((getObsValue('Weight (kg)')/((getObsValue('Height (cm)')/100)*(getObsValue('Height (cm)')/100)))|number:'1.2-2') :'No information' | translate}}
+                    <label>{{'Weight (kg)'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('Weight (kg)')">
+                      {{(getObsValue('Weight (kg)'))?getObsValue('Weight (kg)'):'No information' | translate}}
                     </div>
                   </div>
                 </li>
+
+
+                <li>
+                  <div class="list-item">
+                    <label>{{'HB'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('Hemoglobin Level')">
+                      {{
+                        getObsValue("Hemoglobin Level")
+                          ? getObsValue("Hemoglobin Level")
+                          : ('No information'|translate)
+                      }}
+                    </div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="list-item">
+                    <label>{{'Blood Sugar'|translate}}</label>
+                    <div class="list-item-content" [class.text-muted]="!getObsValue('Blood Sugar Level')">
+                      {{
+                        getObsValue("Blood Sugar Level")
+                          ? getObsValue("Blood Sugar Level")
+                          : ('No information'|translate)
+                      }}
+                    </div>
+                  </div>
+                </li>
+
                 <li>
                   <div class="list-item">
                     <label>{{'BP'|translate}}</label>

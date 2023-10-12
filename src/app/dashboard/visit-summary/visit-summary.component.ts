@@ -368,6 +368,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getObsValue(obsName: string) {
     let val = null;
+    console.log(this.vitalObs)
     this.vitalObs.forEach((obs: any) => {
       if (obs.concept.display === obsName) {
         val = obs.value;

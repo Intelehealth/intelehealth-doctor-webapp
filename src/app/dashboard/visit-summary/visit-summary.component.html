@@ -58,9 +58,13 @@
                   }}
                 </p>
               </div>
-              <div class="patient-info-item">
+              <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+              </div>
+              <div class="patient-info-item">
+                <h6 data-test-id="etVegetarian">{{'Are you?'|translate}}</h6>
+                <p data-test-id="etVegetarian">{{ getPersonAttributeValue("IsVegetarian") }}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">

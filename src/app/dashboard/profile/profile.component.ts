@@ -133,20 +133,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   specializations: any[] = [
     {
-      id: 1,
-      name: 'General Physician'
-    },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
       id: 3,
       name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
     }
   ];
 
