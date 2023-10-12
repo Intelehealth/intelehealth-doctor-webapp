@@ -5,7 +5,6 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { DashboardComponent } from './dashboard.component';
 import { GetStartedComponent } from './get-started/get-started.component';
 import { ProfileComponent } from './profile/profile.component';
-// import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { PartogramComponent } from './partogram/partogram.component';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
@@ -35,15 +34,8 @@ const routes: Routes = [
     },
     component: GetStartedComponent
   },
-  // {
-  //   path: 'visit-summary/:id',
-  //   data: {
-  //     breadcrumb: 'Visit Summary'
-  //   },
-  //   component: VisitSummaryComponent
-  // },
   {
-    path: 'visit-summary/:id',
+    path: 'elcg/:id',
     data: {
       breadcrumb: 'WHO LCG View'
     },

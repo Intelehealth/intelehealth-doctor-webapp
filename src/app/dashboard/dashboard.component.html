@@ -134,7 +134,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns2" class="header-row"></tr>
-              <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns2;" [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.table-record]="i==0" [class.unseen]="!row.seen"></tr>
+              <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns2;" [routerLink]="['/dashboard/elcg', row.uuid]" [class.table-record]="i==0" [class.unseen]="!row.seen"></tr>
             </table>
 
             <mat-paginator #tempPaginator1 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
@@ -244,7 +244,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
-              <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns1;" [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.table-row]="i==0" [class.unseen]="!row.seen"></tr>
+              <tr mat-row *matRowDef="let row; let i=index; columns: displayedColumns1;" [routerLink]="['/dashboard/elcg', row.uuid]" [class.table-row]="i==0" [class.unseen]="!row.seen"></tr>
             </table>
 
             <mat-paginator #tempPaginator2 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>
@@ -380,7 +380,7 @@
               </tr>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns3;"  [routerLink]="['/dashboard/visit-summary', row.uuid]" [class.unseen]="!row.seen"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns3;"  [routerLink]="['/dashboard/elcg', row.uuid]" [class.unseen]="!row.seen"></tr>
             </table>
 
             <mat-paginator #tempPaginator3 hidePageSize [pageSizeOptions]="[5, 10, 20]" hidden aria-label="Select page of periodic elements"></mat-paginator>

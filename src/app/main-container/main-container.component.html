@@ -192,7 +192,7 @@
     <div class="main-container">
       <router-outlet></router-outlet>
       <div class="help-menu-container" *ngxPermissionsExcept="['ORGANIZATIONAL: SYSTEM ADMINISTRATOR']">
-        <button class="help-btn" type="button" (click)="openHelpMenu()" *ngIf="!(routeUrl.includes('/visit-summary/')) && !dialogRef">Help <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div></button>
+        <button class="help-btn" type="button" (click)="openHelpMenu()" *ngIf="!(routeUrl.includes('/elcg/')) && !dialogRef">Help <div class="dot" *ngIf="adminUnread">{{adminUnread}}</div></button>
       </div>
     </div>
   </div>
