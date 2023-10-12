@@ -41,7 +41,8 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes.completedVisits.firstChange) {
       this.recordsFetched += this.offset;
-      this.dataSource = new MatTableDataSource(this.completedVisits);
+      this.dataSource.data = [...this.completedVisits];
+      this.tempPaginator.length = this.completedVisits.length;
       this.tempPaginator.nextPage();
     }
   }

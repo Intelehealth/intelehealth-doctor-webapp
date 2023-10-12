@@ -127,7 +127,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAwaitingVisits(page: number = 1) {
-    if(page == 1) this.awaitingVisits = [];
+    if(page == 1) {
+      this.awaitingVisits = [];
+      this.awatingRecordsFetched = 0;
+    }
     this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: any) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
@@ -139,11 +142,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
           this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
         }
       }
@@ -170,7 +174,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getPriorityVisits(page: number = 1) {
-    if(page == 1) this.priorityVisits = [];
+    if(page == 1) {
+      this.priorityVisits = [];
+      this.priorityRecordsFetched = 0;
+    }
     this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: any) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
@@ -182,11 +189,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
           this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
         }
       }
@@ -213,7 +221,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getInProgressVisits(page: number = 1) {
-    if(page == 1) this.inProgressVisits = [];
+    if(page == 1) {
+      this.inProgressVisits = [];
+      this.inprogressRecordsFetched = 0;
+    }
     this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: any) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
@@ -226,11 +237,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
           this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
         }
       }
@@ -257,6 +269,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
@@ -269,7 +282,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
           }
         });
-        this.dataSource1 = new MatTableDataSource(this.appointments);
+        this.dataSource1.data = [...this.appointments];
         this.dataSource1.paginator = this.appointmentPaginator;
         this.dataSource1.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
@@ -314,85 +327,85 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return moment().diff(birthdate, 'years');
   }
 
-  getVisits() {
-    this.appointments = [];
-    this.awaitingVisits = [];
-    this.inProgressVisits = [];
-    this.priorityVisits = [];
-    this.visitService.getVisits({ includeInactive: true }).subscribe(
-      (response: any) => {
-        let visits = response.results;
-        visits.forEach((visit: any) => {
-          // Check if visit has encounters
-          if (visit.encounters.length > 0) {
-            /*
-              Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
-              If no attributes, consider it as General Physician
-            */
-            if (visit.attributes.length) {
-              let flag = 0;
-              visit.attributes.forEach((visitAttr: any) => {
-                if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
-                  // If specialization matches process visit
-                  if (visitAttr.value == this.specialization) {
-                    this.processVisit(visit);
-                  }
-                }
-              });
-            } else if (this.specialization == 'General Physician') {
-              this.processVisit(visit);
-            }
-          }
-        });
+  // getVisits() {
+  //   this.appointments = [];
+  //   this.awaitingVisits = [];
+  //   this.inProgressVisits = [];
+  //   this.priorityVisits = [];
+  //   this.visitService.getVisits({ includeInactive: true }).subscribe(
+  //     (response: any) => {
+  //       let visits = response.results;
+  //       visits.forEach((visit: any) => {
+  //         // Check if visit has encounters
+  //         if (visit.encounters.length > 0) {
+  //           /*
+  //             Check if visit has visit attributes, if yes match visit speciality attribute with current doctor specialization
+  //             If no attributes, consider it as General Physician
+  //           */
+  //           if (visit.attributes.length) {
+  //             let flag = 0;
+  //             visit.attributes.forEach((visitAttr: any) => {
+  //               if (visitAttr.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d") {
+  //                 // If specialization matches process visit
+  //                 if (visitAttr.value == this.specialization) {
+  //                   this.processVisit(visit);
+  //                 }
+  //               }
+  //             });
+  //           } else if (this.specialization == 'General Physician') {
+  //             this.processVisit(visit);
+  //           }
+  //         }
+  //       });
 
-        // Check appointments
-        this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
-          .subscribe((res: any) => {
-            let appointmentsdata = res.data;
-            appointmentsdata.forEach(appointment => {
-              if (appointment.status == 'booked') {
-                let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
-                if (matchedVisit) {
-                  matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
-                  appointment.visit_info = matchedVisit;
-                  appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
-                  this.appointments.push(appointment);
-                }
-              }
-            });
-            this.dataSource1 = new MatTableDataSource(this.appointments);
-            this.dataSource1.paginator = this.appointmentPaginator;
-          });
-      }
-    );
-  }
+  //       // Check appointments
+  //       this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
+  //         .subscribe((res: any) => {
+  //           let appointmentsdata = res.data;
+  //           appointmentsdata.forEach(appointment => {
+  //             if (appointment.status == 'booked') {
+  //               let matchedVisit = visits.find((v: any) => v.uuid == appointment.visitUuid);
+  //               if (matchedVisit) {
+  //                 matchedVisit.cheif_complaint = this.getCheifComplaint(matchedVisit);
+  //                 appointment.visit_info = matchedVisit;
+  //                 appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+  //                 this.appointments.push(appointment);
+  //               }
+  //             }
+  //           });
+  //           this.dataSource1 = new MatTableDataSource(this.appointments);
+  //           this.dataSource1.paginator = this.appointmentPaginator;
+  //         });
+  //     }
+  //   );
+  // }
 
   checkIfEncounterExists(encounters: any, visitType: string) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  processVisit(visit: any) {
-    const { encounters } = visit;
-    visit.cheif_complaint = this.getCheifComplaint(visit);
-    visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
-    if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
+  // processVisit(visit: any) {
+  //   const { encounters } = visit;
+  //   visit.cheif_complaint = this.getCheifComplaint(visit);
+  //   visit.visit_created = (visit.encounters[0].display.includes('Flagged')) ? this.getEncounterCreated(visit, 'Flagged') :this.getEncounterCreated(visit, 'ADULTINITIAL') ;
+  //   if (this.checkIfEncounterExists(encounters, 'Visit Complete') || this.checkIfEncounterExists(encounters, 'Patient Exit Survey')) {
 
-    } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
-      visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
-      this.inProgressVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
-      this.priorityVisits.push(visit);
-    } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
-      this.awaitingVisits.push(visit);
-    }
+  //   } else if (this.checkIfEncounterExists(encounters, 'Visit Note')) {
+  //     visit.prescription_started = this.getEncounterCreated(visit, 'Visit Note');
+  //     this.inProgressVisits.push(visit);
+  //   } else if (this.checkIfEncounterExists(encounters, 'Flagged')) {
+  //     this.priorityVisits.push(visit);
+  //   } else if (this.checkIfEncounterExists(encounters, 'ADULTINITIAL') || this.checkIfEncounterExists(encounters, 'Vitals')) {
+  //     this.awaitingVisits.push(visit);
+  //   }
 
-    this.dataSource2 = new MatTableDataSource(this.priorityVisits);
-    this.dataSource2.paginator = this.priorityPaginator;
-    this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
-    this.dataSource3.paginator = this.awaitingPaginator;
-    this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
-    this.dataSource4.paginator = this.inprogressPaginator;
-  }
+  //   this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+  //   this.dataSource2.paginator = this.priorityPaginator;
+  //   this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+  //   this.dataSource3.paginator = this.awaitingPaginator;
+  //   this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+  //   this.dataSource4.paginator = this.inprogressPaginator;
+  // }
 
   // getVisitCounts(specialization: string) {
   //   const getTotal = (data, type) => {
@@ -526,9 +539,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 const message = res.message;
                 if (res.status) {
                   this.getAppointments();
-                  this.getAwaitingVisits();
-                  this.getPriorityVisits();
-                  this.getInProgressVisits();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {
                   this.toastr.success(message, 'Rescheduling failed!');
@@ -546,9 +556,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (res) {
         this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
         this.getAppointments();
-        this.getAwaitingVisits();
-        this.getPriorityVisits();
-        this.getInProgressVisits();
       }
     });
   }
