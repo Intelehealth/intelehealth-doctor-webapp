@@ -64,11 +64,11 @@ import { getCacheData } from "./utils/utility-functions";
 import { languages } from "src/config/constant";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
-  bgsColor: "#2E1E91",
+  bgsColor: "#d1484c",
   bgsPosition: POSITION.bottomCenter,
   bgsSize: 40,
   bgsType: SPINNER.fadingCircle, // background spinner type
-  fgsColor: "#FFFFFF", //#2E1E91
+  fgsColor: "#FFFFFF", //#d1484c
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness

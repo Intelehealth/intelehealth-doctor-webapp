@@ -22,7 +22,7 @@ import { ImageCropComponent } from 'src/app/modal-components/image-crop/image-cr
 import { MatDialogRef } from '@angular/material/dialog';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
-import { languages, doctorDetails } from 'src/config/constant';
+import { languages, doctorDetails, defaultSpecialization } from 'src/config/constant';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -133,20 +133,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   specializations: any[] = [
     {
-      id: 1,
-      name: 'General Physician'
-    },
-    {
-      id: 2,
-      name: 'Dermatologist'
-    },
-    {
       id: 3,
       name: 'Gynecologist'
-    },
-    {
-      id: 4,
-      name: 'Pediatrician'
     }
   ];
 
@@ -215,7 +203,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.professionalInfoForm = new FormGroup({
       typeOfProfession: new FormControl(null, [Validators.required]),
       registrationNumber: new FormControl(null, [Validators.required]),
-      specialization: new FormControl(null, [Validators.required]),
+      specialization: new FormControl(defaultSpecialization, [Validators.required]),
       consultationLanguage: new FormControl(null, [Validators.required]),
       workExperience: new FormControl(null, [Validators.required]),
       researchExperience: new FormControl(null, [Validators.required]),
