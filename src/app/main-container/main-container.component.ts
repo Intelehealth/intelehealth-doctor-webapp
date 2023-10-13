@@ -175,7 +175,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   selectLanguage(): void {
     this.coreService.openSelectLanguageModal().subscribe((res: any) => {
-      console.log(res);
     });
   }
 
@@ -371,7 +370,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   getSubscription() {
-    console.log(Notification.permission);
     if(Notification.permission === 'default') {
       Notification.requestPermission().then(() => {
         this.requestSubscription();
@@ -388,23 +386,17 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   requestSubscription() {
     if (!this._swPush.isEnabled) {
-      console.log("Notification is not enabled.");
       return;
     }
-    // console.log("Checking subscription....");
     this._swPush.subscription.subscribe(async (sub) => {
-      // console.log("Currently active subscription:", sub);
       if (!sub) {
-        console.log("Requesting subscription....");
         await this._swPush.requestSubscription({
           serverPublicKey: environment.vapidPublicKey
         }).then(async (_) => {
-          // console.log("New subscription: ", JSON.stringify(_));
           // (async () => {
             // Get the visitor identifier when you need it.
             const fp = await FingerprintJS.load();
             const result = await fp.get();
-            console.log(result.visitorId);
             this.authService.subscribePushNotification(
               _,
               this.user.uuid,
@@ -412,14 +404,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
               this.provider.person.display,
               this.getSpecialization()
             ).subscribe(response => {
-              console.log(response);
             });
           // })();
         }).catch((_) => console.log);
       } else {
         const fp = await FingerprintJS.load();
         const result = await fp.get();
-        console.log(result.visitorId);
         this.authService.subscribePushNotification(
           sub,
           this.user.uuid,
@@ -427,10 +417,8 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
           this.provider.person.display,
           this.getSpecialization()
         ).subscribe(response => {
-              console.log(response);
         });
         this._swPush.messages.subscribe(payload => {
-          console.log(payload);
         });
       }
     });
@@ -450,7 +438,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
 
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
-      // console.log(res);
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.toastr.success(`Notifications turned ${ this.notificationEnabled ? 'on' : 'off' } successfully!`, `Notifications ${ this.notificationEnabled ? 'On' : 'Off' }`);

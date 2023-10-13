@@ -108,6 +108,7 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
         'https://ezazi.intelehealth.org:3004/api/messages/',
         'https://ezazi.intelehealth.org:3004/api/support/',
         'https://ezazi.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://ezazi.intelehealth.org/openmrs/ws/rest/v1/visit/'
       ]
     }),
     NgxPermissionsModule.forRoot({

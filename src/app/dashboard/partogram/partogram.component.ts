@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { PanZoomAPI, PanZoomConfig } from 'ngx-panzoom';
 import { ToastrService } from 'ngx-toastr';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 import { PageTitleService } from 'src/app/core/page-title/page-title.service';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
@@ -294,7 +295,8 @@ export class PartogramComponent implements OnInit, OnDestroy {
     private encounterService: EncounterService,
     private socketSvc: SocketService,
     private toastr: ToastrService,
-    private webrtcSvc: WebrtcService
+    private webrtcSvc: WebrtcService,
+    private ngxUiLoaderService: NgxUiLoaderService
   ) { }
 
   ngOnDestroy(): void {
@@ -344,8 +346,10 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   getVisit(uuid: string) {
+    this.ngxUiLoaderService.start();
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
+        this.ngxUiLoaderService.stop();
         this.visit = visit;
         this.patient = visit?.patient;
         this.readPatientAttributes();
@@ -354,6 +358,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         this.updateSeen();
       }
     }, (error: any) => {
+      this.ngxUiLoaderService.stop();
       this.router.navigate(['/dashboard']);
     });
   }
