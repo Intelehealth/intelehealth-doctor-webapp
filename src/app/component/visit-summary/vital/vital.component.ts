@@ -47,13 +47,13 @@ export class VitalComponent implements OnInit {
 
   getBmiColor(n: any) {
     let code: string = '#FF0000'; // red
-    if (n < 18.5) {
+    if (n < 18.50) {
       code = '#FFA500';
-    } else if (n >= 18.5 && n <= 22.9) {
+    } else if (n >= 18.50 && n <= 22.99) {
       code = '#008000';
-    } else if (n >= 23 && n <= 24.9) {
+    } else if (n >= 23 && n <= 24.99) {
       code = '#FFFF00';
-    } else if (n >= 25 && n <= 29.9) {
+    } else if (n >= 25 && n <= 29.99) {
       code = '#F85E5EE6';
     } else if (n >= 30) {
       code = '#FF0000'
@@ -129,7 +129,7 @@ export class VitalComponent implements OnInit {
                 this.answer.sugarLevelRandom = obs.value;
               }
               if (this.answer?.weight && this.answer?.heightCm) {
-                this.answer.bmi = this.answer.weight / ((this.answer.heightCm / 100) * (this.answer.heightCm / 100))
+                this.answer.bmi = Number((this.answer.weight / ((this.answer.heightCm / 100) * (this.answer.heightCm / 100))).toFixed(2))
                 this.answer.bmiColorCode = this.getBmiColor(this.answer.bmi);
               }
             });
