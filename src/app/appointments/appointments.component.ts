@@ -49,6 +49,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
@@ -61,7 +62,7 @@ export class AppointmentsComponent implements OnInit {
             }
           }
         });
-        this.dataSource = new MatTableDataSource(this.appointments);
+        this.dataSource.data = [...this.appointments];
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
@@ -172,7 +173,7 @@ export class AppointmentsComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  this.getVisits();
+                  this.getAppointments();
                   this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
                   this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
@@ -189,7 +190,7 @@ export class AppointmentsComponent implements OnInit {
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
         this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
-        this.getVisits();
+        this.getAppointments();
       }
     });
   }
