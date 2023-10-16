@@ -333,6 +333,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: any) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
+        this.snoozed = '';
         this.toastr.success(`${this.translateService.instant('Notifications turned')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off')} ${this.translateService.instant('successfully!')}`,
          `${this.translateService.instant('Notifications')} ${ this.notificationEnabled ? this.translateService.instant('On') : this.translateService.instant('Off') }`);
       }
