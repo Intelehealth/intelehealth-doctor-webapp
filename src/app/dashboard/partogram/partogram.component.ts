@@ -380,7 +380,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
             value: visitSeenBy?.value.concat(`,${this.userId.split('-')[0]}`)
           }
           this.visitService.updateAttribute(this.visit.uuid, visitSeenBy?.uuid, json).subscribe(r => {
-            console.log(r);
+            // console.log(r);
           });
         }
       } else {
@@ -389,7 +389,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
           value: this.userId.split('-')[0]
         }
         this.visitService.postAttribute(this.visit.uuid, json).subscribe(r => {
-          console.log(r);
+          // console.log(r);
         });
       }
     }

@@ -93,7 +93,7 @@ export class WebrtcService {
       videoCaptureDefaults: {
         resolution: {
           aspectRatio: 1.7777777777777777,
-          frameRate: 30,
+          frameRate: 15,
           height: 160,
           width: 90
         },
