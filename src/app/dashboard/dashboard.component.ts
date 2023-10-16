@@ -110,7 +110,10 @@ export class DashboardComponent implements OnInit {
   }
 
   getAwaitingVisits(page: number = 1) {
-    if(page == 1) this.awaitingVisits = [];
+    if(page == 1) {
+      this.awaitingVisits = [];
+      this.awatingRecordsFetched = 0;
+    }
     this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: any) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
@@ -122,11 +125,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
           this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
         }
       }
@@ -152,7 +156,10 @@ export class DashboardComponent implements OnInit {
   }
 
   getPriorityVisits(page: number = 1) {
-    if(page == 1) this.priorityVisits = [];
+    if(page == 1) {
+      this.priorityVisits = [];
+      this.priorityRecordsFetched = 0;
+    }
     this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: any) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
@@ -164,11 +171,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
           this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
         }
       }
@@ -194,7 +202,10 @@ export class DashboardComponent implements OnInit {
   }
 
   getInProgressVisits(page: number = 1) {
-    if(page == 1) this.inProgressVisits = [];
+    if(page == 1) {
+      this.inProgressVisits = [];
+      this.inprogressRecordsFetched = 0;
+    }
     this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: any) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
@@ -207,11 +218,12 @@ export class DashboardComponent implements OnInit {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
           this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
         }
       }
@@ -237,6 +249,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
@@ -249,7 +262,7 @@ export class DashboardComponent implements OnInit {
             }
           }
         });
-        this.dataSource1 = new MatTableDataSource(this.appointments);
+        this.dataSource1.data = [...this.appointments];
         this.dataSource1.paginator = this.appointmentPaginator;
         this.dataSource1.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
@@ -464,9 +477,6 @@ export class DashboardComponent implements OnInit {
                 const message = res.message;
                 if (res.status) {
                   this.getAppointments();
-                  this.getAwaitingVisits();
-                  this.getPriorityVisits();
-                  this.getInProgressVisits();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {
                   this.toastr.success(message, 'Rescheduling failed!');
@@ -484,9 +494,6 @@ export class DashboardComponent implements OnInit {
       if (res) {
         this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
         this.getAppointments();
-        this.getAwaitingVisits();
-        this.getPriorityVisits();
-        this.getInProgressVisits();
       }
     });
   }
