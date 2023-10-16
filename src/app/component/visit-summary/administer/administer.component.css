@@ -1,0 +1,20 @@
+@media only screen and (max-width: 768px) {
+    .form-row {
+      display: block;
+    }
+  }
+  
+  .comment  {
+    font-size: 10px;
+    color: red;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  
+  .comment-blue  {
+    font-size: 10px;
+    color: darkblue;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  

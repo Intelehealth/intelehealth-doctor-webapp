@@ -1,0 +1,57 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4><i class='fa fa-hospital'></i> {{'Administer'| translate}}</h4>
+    <hr>
+    <div>
+      <ng-container>
+        <table class="table table-responsive borderless">
+          <tr>
+            <div><b>Medicines</b></div>
+            <!-- <ul> 
+              <ng-container *ngIf="meds.length > 0">
+                <div *ngFor="let meds of meds, index as i">
+                  <li>
+                    <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
+                        <div class="doctor-value d-flex flex-column">
+                        <span [class.strike]="meds.comment" [innerHTML]="meds.value.replace('\n','<br>').replace(':','')"></span>
+                        <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                          <span class="comment-blue">{{meds|comment:'addedBy-creator'}} {{meds.creatorRegNo}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                          <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </div>
+              </ng-container>
+            </ul> -->
+            <ul>
+              <li>Medicines 1</li>
+              <li>Medicines 2</li>
+              <li>Medicines 3</li>
+            </ul>
+  
+            <div><b>Aid</b></div>
+            <ul>
+              <li>Aid 1</li>
+              <li>Aid 2</li>
+              <li>Aid 3</li> 
+            </ul>
+  
+            <div><b>Notes</b></div>
+            <ul>
+              <li>Notes 1</li>
+              <li>Notes 2</li>
+              <li>Notes 3</li> 
+            </ul>
+  
+            <div><b>Documents</b></div>
+            <ul>
+              <li>Documents 1</li>
+              <li>Documents 2</li>
+              <li>Documents 3</li>
+            </ul>
+          </tr>
+        </table>
+      </ng-container>
+    </div>
+  </div>
+  

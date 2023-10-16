@@ -1,0 +1,39 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4><i class='fa fa-hospital'></i> {{'Dispense'| translate}}</h4>
+    <hr>
+    <div>
+        <ng-container>
+            <table class="table table-responsive borderless">
+                <tr>
+                    <div><b>Medicines</b></div>
+                    <ul>
+                        <li>Medicines 1</li>
+                        <li>Medicines 2</li>
+                        <li>Medicines 3</li>
+                    </ul>
+
+                    <div><b>Aid</b></div>
+                    <ul>
+                      <li>Aid 1</li>
+                      <li>Aid 2</li>
+                      <li>Aid 3</li> 
+                    </ul>
+                    
+                    <div><b>Notes</b></div>
+                    <ul>
+                        <li>Notes 1</li>
+                        <li>Notes 2</li>
+                        <li>Notes 3</li>
+                    </ul>
+
+                    <div><b>Documents</b></div>
+                    <ul>
+                        <li>Documents 1</li>
+                        <li>Documents 2</li>
+                        <li>Documents 3</li>
+                    </ul>
+                </tr>
+            </table>
+        </ng-container>
+    </div>
+</div>
