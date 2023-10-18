@@ -1,4 +1,4 @@
-<div class="call-detail" mat-dialog-title [class.d-none]="_minimized">
+<!-- <div class="call-detail" mat-dialog-title [class.d-none]="_minimized">
   <div class="chw-item">
     <img src="assets/svgs/chw.svg" alt="" />
     <div class="d-flex flex-column justify-content-center">
@@ -13,7 +13,7 @@
       <span>{{ "Patient" | translate }}</span>
     </div>
   </div>
-</div>
+</div> -->
 <mat-dialog-content>
   <div class="container-fluid">
     <div class="row">
@@ -133,13 +133,14 @@
           [class.d-none]="callConnected"
           class="call-container"
         >
-          <div class="calling-txt text-center w-100">Calling...</div>
-          <div class="img-cont">
-            <img
-              class="calling-img mt-5"
-              src="assets/images/calling-ih.gif"
-              alt="calling"
-            />
+          <div class="content">
+            <div class="profile-img">
+              <img src="{{ baseUrl + '/personimage/' + data?.patientId }}"
+              (error)="onImgError($event)">
+            </div>
+            <div class="user-name">{{ this.data.patientName | titlecase }}</div>
+            <div class="user-desc">{{ this.data.patientGender | titlecase }}, {{ this.data.patientAge }}</div>
+            
           </div>
           <div
             class="video-controls d-flex justify-content-center mb-1"

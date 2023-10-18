@@ -669,6 +669,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.dialogRef2.close();
       return;
     }
+    console.log(this.patient);
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -677,7 +678,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr',
-      drPersonUuid: this.provider?.person.uuid
+      drPersonUuid: this.provider?.person.uuid,
+      patientAge:this.patient.person.age,
+      patientGender: this.patient.person.gender
     });
 
     this.dialogRef2.afterClosed().subscribe((res: any) => {
