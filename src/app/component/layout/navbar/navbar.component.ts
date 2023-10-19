@@ -43,7 +43,7 @@ export class NavbarComponent implements OnInit {
    */
   readonly VapidKEY =
     // "BHkKl1nW4sC_os9IRMGhrSZ4JJp0RHl2_PxTdV_rElOjnHe-dq1hx2zw_bTgrkc4ulFD-VD4x6P63qN1Giroe7U"; // afi ekal training
-  "BO4jQA2_cu-WSdDY0HCbB9OKplPYpCRvjDwmjEPQd7K7m1bIrtjeW7FXCntUUkm2V0eAKh9AGKqmpR4-_gYSYX8" // afi ekal Production
+    "BO4jQA2_cu-WSdDY0HCbB9OKplPYpCRvjDwmjEPQd7K7m1bIrtjeW7FXCntUUkm2V0eAKh9AGKqmpR4-_gYSYX8" // afi ekal Production
 
   searchForm = new UntypedFormGroup({
     findInput: new UntypedFormControl("", [Validators.required]),
@@ -213,7 +213,7 @@ export class NavbarComponent implements OnInit {
           attributes.forEach((element) => {
             if (
               element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
               !element.voided
             ) {
               this.notificationService
