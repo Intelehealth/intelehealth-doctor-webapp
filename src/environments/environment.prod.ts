@@ -7,7 +7,7 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
-  captchaSiteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
+  captchaSiteKey: "6LcPpZYoAAAAAGzXL7fTklWwJl_4J5FhP9d7t0Vh",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",
@@ -24,7 +24,7 @@ export const environment = {
     messagingSenderId: "246647122371",
     appId: "1:246647122371:web:c45944219d1f37bf30b576",
   },
-  siteKey: "6Lc3ZUYoAAAAAPRXxpFBC3zGHjqfbgbNZkd7DVBl",
+  siteKey: "6LcPpZYoAAAAAGzXL7fTklWwJl_4J5FhP9d7t0Vh",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2VAMTIz',
   vapidPublicKey: 'BCGfng5flfhjlqR_imzFXwHGeEMBA6AzFVAex7sPLDbsMCn_IMKtQmI9TDnmP6raxmPcBcnoKO_AHKaLtctsIjg',
 
