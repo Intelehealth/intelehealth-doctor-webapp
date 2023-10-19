@@ -669,7 +669,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.dialogRef2.close();
       return;
     }
-    console.log(this.patient);
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
