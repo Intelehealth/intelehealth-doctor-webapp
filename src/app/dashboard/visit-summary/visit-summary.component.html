@@ -340,7 +340,7 @@
                   </li>
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etTempVitals">{{'Temprature (F)'|translate}}</label>
+                      <label data-test-id="etTempVitals">{{'Temperature (F)'|translate}}</label>
                       <div
                         class="list-item-content"
                         data-test-id="etTempDataVitals"
@@ -1987,7 +1987,7 @@
                         <div class="col-sm-3">
                           <ng-select
                             class="visit-select custom"
-                            appendTo="body"
+                            appendTo=".visit-summary-tab-group"
                             formControlName="followUpTime"
                             [items]="timeList"
                             bindLabel="name"
