@@ -8,7 +8,7 @@
     "ng": "ng",
     "ng-host": "ng s --host 0.0.0.0 --disableHostCheck",
     "start": "npm run config-dev && ng serve",
-    "build": "npm run config-prod && ng build --configuration production --aot",
+    "build": "pnpm run config-prod && ng build --configuration production --aot",
     "test": "ng test --include src/app/session",
     "lint": "ng lint",
     "e2e": "ng e2e",
