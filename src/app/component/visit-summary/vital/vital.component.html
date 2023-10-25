@@ -50,14 +50,13 @@
     </div>
     <div class="vital-item-row">
       <div class="vital-item">
-        <b>Sugar Level(Fasting/After Meal):</b>&nbsp;
-        <span *ngIf="v[0]?.sugarLevelAfterMeal || v[0]?.sugarLevelFasting">
-          <span>{{ v[0]?.sugarLevelFasting || "NA" }}</span
-          >/<span>{{ v[0]?.sugarLevelAfterMeal || "NA" }}</span>
+        <b>Sugar Level(Fasting):</b>&nbsp;
+        <span>
+          <span>{{ v?.[0]?.sugarLevelFasting || "NA" }}</span>
         </span>
       </div>
       <div class="vital-item">
-        <b>Sugar Level - Random:</b>&nbsp; {{ v[0]?.sugarLevelRandom }}
+        <b>Sugar Level - Random:</b>&nbsp; {{ v[0]?.sugarLevelRandom || 'NA' }}
       </div>
     </div>
   </div>
