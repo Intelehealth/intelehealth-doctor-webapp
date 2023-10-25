@@ -287,7 +287,7 @@ import { MomentModule } from "ngx-moment";
     DatePipe,
     MatDatepickerModule,
     MatNativeDateModule,
-    { provide: APP_BASE_HREF, useValue: "/" },
+    { provide: APP_BASE_HREF, useValue: "." },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
