@@ -677,7 +677,7 @@ body.font-lato td {
 
 .vc-modal-lg {
   width: auto;
-  min-width: 60%;
+  min-width: 35%;
   max-width: 80% !important;
 
   .mat-dialog-container {
@@ -1017,4 +1017,8 @@ body.font-lato td {
   .ng-option-label {
     font-weight: normal !important;
   }
+}
+
+.cdk-global-overlay-wrapper{
+  background-color: rgba(0, 0, 0, 0.5);
 }
