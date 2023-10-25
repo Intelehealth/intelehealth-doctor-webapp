@@ -18,15 +18,15 @@ export class VisitSummaryHelperService {
   private baseURLMindmap = environment.mindmapURL;
   public isVisitSummaryShow: boolean = false;
   public isHelpButtonShow: boolean = false;
-  public triggerAction: any = new Subject();
+  public triggerAction: Subject<any> = new Subject();
   public chatVisitId: any;
   public hwPhoneNo: string;
   public patient: any;
 
 
-  
+
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private helper: HelperService,
     private visitService: VisitService,
     private translateService: TranslateService,
@@ -69,14 +69,14 @@ export class VisitSummaryHelperService {
     return currentAttr;
   };
 
-  get userId() {
+  get userId(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   };
 
-  get username() {
+  get username(): string {
     return getCacheData(true, doctorDetails.USER).username;
   };
-  
+
   getHours(returnAll = true, date?: any) {
     const hours = Array.from(
       {

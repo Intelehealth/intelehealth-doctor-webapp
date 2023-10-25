@@ -14,7 +14,7 @@ export class RescheduleAppointmentConfirmComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 

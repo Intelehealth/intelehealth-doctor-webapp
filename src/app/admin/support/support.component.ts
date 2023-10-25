@@ -7,26 +7,24 @@ import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { notifications, doctorDetails, languages } from 'src/config/constant'
+import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
   styleUrls: ['./support.component.scss']
 })
 export class SupportComponent implements OnInit, OnDestroy {
-  conversations: any = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
-  searchResults: any = [];
-  selectedConversation: any;
+  selectedConversation: ConversationModel;
 
   message = "";
   fromUuid = null;
-  messageList: any;
+  messageList: MessageModel[];
   openMenu: boolean = false;
   isOver = false;
   isAttachment = false;
-  readSentImg: any;
-  images: any = {};
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   subscription1: Subscription;
@@ -46,15 +44,15 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.subscription1 = this.socketSvc.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
-        this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
       } else {
-        const doc = this.conversations.findIndex((d: any) => d.userUuid == data.from);
+        const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         if (doc == -1) {
           this.getDoctorsList(this.userId);
         } else {
           this.conversations[doc].createdAt = data.createdAt;
           this.conversations[doc].unread++;
-          this.conversations.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
+          this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
       }
     });
@@ -67,7 +65,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   get filteredConversations() {
-    return this.conversations.filter((conversation: any) => {
+    return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.doctorName
           .toLowerCase()
@@ -81,7 +79,7 @@ export class SupportComponent implements OnInit, OnDestroy {
 
   getDoctorsList(userUuid: string) {
     this.supportService.getDoctorsList(userUuid).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         if (res.success) {
           this.conversations = res.data;
         }
@@ -89,21 +87,21 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
-  conversationSelected(conversation: any) {
+  conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.getMessages();
     this.readMessages(this.selectedConversation?.id);
     this.selectedConversation.unread = 0;
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           if (res.success) {
             this.messageList = res?.data;
           }
@@ -111,7 +109,7 @@ export class SupportComponent implements OnInit, OnDestroy {
       });
   }
 
-  readMessages(messageId: any) {
+  readMessages(messageId: number) {
     this.supportService.readMessageById(this.userId, messageId).subscribe({
       next: (res) => {
         this.getMessages();

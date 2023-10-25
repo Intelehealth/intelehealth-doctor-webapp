@@ -18,6 +18,7 @@ import { ProviderAttributeValidator } from 'src/app/core/validators/ProviderAttr
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
+import { ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -50,12 +51,12 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class HwProfileComponent implements OnInit, OnDestroy {
 
-  file: any;
-  user: any;
-  provider: any;
-  hwName: any;
+  file;
+  user: UserModel;
+  provider: ProviderModel;
+  hwName: string;
   baseUrl: string = environment.baseURL;
-  profilePicUrl: any = 'assets/svgs/user.svg';
+  profilePicUrl: string|ArrayBuffer = 'assets/svgs/user.svg';
   @ViewChild(MatStepper) stepper: MatStepper;
   personalInfoForm: FormGroup;
   phoneNumberValid = false;
@@ -63,15 +64,15 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   phoneNumber = '';
   whatsAppNumber = '';
   submitted = false;
-  providerAttributeTypes: any = [];
-  phoneNumberObj: any;
-  whatsAppObj: any;
+  providerAttributeTypes: ProviderAttributeTypeModel[] = [];
+  phoneNumberObj;
+  whatsAppObj;
   subscription1: Subscription;
   subscription2: Subscription;
   maxTelLegth1 = 10;
   maxTelLegth2 = 10;
   oldPhoneNumber = '';
-  today: any;
+  today: string;
   phoneValid = false;
   emailValid = false;
   checkingPhoneValidity = false;
@@ -114,14 +115,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     this.pageTitleService.setTitle(null);
     this.formControlValueChanges();
     this.getProviderAttributeTypes();
-    this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: any) => {
+    this.subscription1 = this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth1) {
           this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).setValue(val.substring(0, this.maxTelLegth1));
         }
       }
     });
-    this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: any) => {
+    this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth2) {
           this.personalInfoForm.get(doctorDetails.WHATS_APP).setValue(val.substring(0, this.maxTelLegth2));
@@ -139,7 +140,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
   }
 
   getProviderAttributeTypes() {
-    this.providerService.getProviderAttributeTypes().subscribe((res: any) => {
+    this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
       if (res.results.length) {
         this.providerAttributeTypes = res.results;
         this.patchFormValues();
@@ -158,7 +159,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null;
-      this.providerAttributeTypes.forEach((attrType: any) => {
+      this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
         switch (attrType.display) {
           case doctorDetails.ADDRESS:
             break;
@@ -223,11 +224,11 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     return attrValue;
   }
 
-  stepChanged(event: any) {
+  stepChanged(event) {
     this.submitted = false;
   }
 
-  preview(event: any) {
+  preview(event) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
       if (!this.file.name.endsWith('.jpg') && !this.file.name.endsWith('.jpeg')) {
@@ -235,14 +236,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
         return;
       }
       const reader = new FileReader();
-      reader.onload = (e: any) => {
+      reader.onload = (e) => {
         this.profilePicUrl = reader.result;
         const imageBolb = reader.result.toString().split(',');
         const payload = {
           person: this.provider.person.uuid,
           base64EncodedImage: imageBolb[1]
         };
-        this.profileService.updateProfileImage(payload).subscribe((res: any) => {
+        this.profileService.updateProfileImage(payload).subscribe((res) => {
           this.toastr.success('Profile picture uploaded successfully!', 'Profile Pic Uploaded');
         });
       };
@@ -250,11 +251,11 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  hasError(event: any, errorFor: string) {
+  hasError(event, errorFor: string) {
     switch (errorFor) {
       case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = event;
@@ -265,7 +266,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  getNumber(event: any, changedFor: string) {
+  getNumber(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = true;
@@ -279,7 +280,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  telInputObject(event: any, objectFor: string) {
+  telInputObject(event, objectFor: string) {
     switch (objectFor) {
       case doctorDetails.PHONE_NUMBER:
         this.phoneNumberObj = event;
@@ -290,7 +291,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  onCountryChange(event: any, changedFor: string) {
+  onCountryChange(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
         this.phoneNumberValid = false;
@@ -330,7 +331,7 @@ export class HwProfileComponent implements OnInit, OnDestroy {
 
   updateProviderAttributes() {
     const requests = [];
-    this.providerAttributeTypes.forEach((attrType: any) => {
+    this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
       switch (attrType.display) {
         case doctorDetails.ADDRESS:
           break;
@@ -374,14 +375,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
           break;
       }
     });
-    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList: any) => {
+    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
       if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
         this.toastr.success('Profile has been updated successfully', 'Profile Updated');
         this.toastr.warning('Kindly re-login to see updated details', 'Re-login');
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
-        this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: any) => {
+        this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: ProviderResponseModel) => {
           if (provider.results.length) {
             setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
             setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);

@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
+import { AuthGatewayLoginResponseModel, CheckSessionResponseModel, LoginResponseModel, ProviderResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
@@ -31,7 +32,7 @@ export class LoginComponent implements OnInit {
     private rolesService: NgxRolesService,
     public translate: TranslateService,
     public translationService: TranslationService) {
-      
+
     this.loginForm = new FormGroup({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
@@ -66,10 +67,10 @@ export class LoginComponent implements OnInit {
     const val = this.loginForm.value;
     const cred = `${val.username}:${val.password}`;
     const base64cred = btoa(cred);
-    this.authService.login(base64cred).subscribe((res: any) => {
+    this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
       if (res.authenticated && !res.verified) {
-        this.authService.getAuthToken(val.username, val.password).subscribe(token => {
-          this.authService.getProvider(res.user.uuid).subscribe((provider: any) => {
+        this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
+          this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
             if (provider.results.length) {
               setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
               setCacheData(doctorDetails.DOCTOR_NAME, provider.results[0].person.display);
@@ -87,7 +88,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  
+
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.translationService.getTranslation('You have sucessfully logged in.', 'Login Successful', true);
@@ -106,7 +107,7 @@ export class LoginComponent implements OnInit {
 
   checkSession() {
     this.authService.checkSession().subscribe({
-      next: (res: any) => {
+      next: (res: CheckSessionResponseModel) => {
         this.rememberMe = res.rememberme;
         this.authService.rememberMe = this.rememberMe ? true : false;
       }

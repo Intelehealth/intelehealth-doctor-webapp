@@ -12,13 +12,13 @@ declare const $: any;
 })
 export class PwaService {
 
-  private promptEvent: any;
+  private promptEvent;
 
   constructor(private platform: Platform, private bottomSheet: MatBottomSheet, private router: Router) { }
 
   public initPwaPrompt() {
     if (this.platform.ANDROID || this.platform.isBrowser) {
-      window.addEventListener('beforeinstallprompt', (event: any) => {
+      window.addEventListener('beforeinstallprompt', (event) => {
         event.preventDefault();
         this.promptEvent = event;
         this.openPromptComponent('android');

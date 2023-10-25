@@ -5,15 +5,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'app-confirm-day-off',
   templateUrl: './confirm-day-off.component.html',
 })
-export class ConfirmDayOffComponent implements OnInit {
+export class ConfirmDayOffComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<ConfirmDayOffComponent>) { }
 
-  ngOnInit(): void {
-  }
-
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 

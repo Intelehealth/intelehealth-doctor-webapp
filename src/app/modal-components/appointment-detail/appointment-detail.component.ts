@@ -15,7 +15,7 @@ export class AppointmentDetailComponent implements OnInit {
 
   baseUrl: string = environment.baseURL;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
     private visitService: VisitService,
     private translate:TranslateService) { }
@@ -42,11 +42,11 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  close(val: any) {
+  close(val: string|boolean) {
     this.dialogRef.close(val);
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 

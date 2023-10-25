@@ -47,7 +47,7 @@
                     >
                       <div class="chat-item-con">
                         <img
-                          [src]="patientPic"
+                          [src]="conversation.patientPic"
                           alt=""
                           (error)="onImgError($event)"
                         />
@@ -74,7 +74,7 @@
               >
                 <div class="chat-con-title">
                   <div class="chat-item-info">
-                    <img src="assets/svgs/user.svg" alt="" />
+                    <img src="{{selectedConversation.patientPic? selectedConversation.patientPic : 'assets/svgs/user.svg'}}" alt="" />
                     <div class="title">
                       <h6 class="mb-0">
                         {{

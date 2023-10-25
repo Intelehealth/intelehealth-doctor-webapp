@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { ApiResponseModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
@@ -12,7 +13,7 @@ import { doctorDetails } from 'src/config/constant';
 })
 export class CancelAppointmentConfirmComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
     private toastr: ToastrService, private translateService: TranslateService) {
@@ -28,7 +29,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
       visitUuid: this.data.visitUuid,
       hwUUID: this.userId,
     };
-    this.appointmentService.cancelAppointment(payload).subscribe((res: any) => {
+    this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
         if (res) {
           if (res.status) {
             this.close(true);
@@ -44,7 +45,7 @@ export class CancelAppointmentConfirmComponent implements OnInit {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 

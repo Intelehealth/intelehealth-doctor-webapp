@@ -12,6 +12,7 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
 import { doctorDetails, visitTypes } from "src/config/constant";
+import { AuthGatewayLoginResponseModel, LoginResponseModel } from "../model/model";
 
 @Injectable({
   providedIn: "root",
@@ -97,7 +98,7 @@ export class AuthService {
         let headers: HttpHeaders = new HttpHeaders();
         headers = headers.append('Authorization', 'Basic ' + credBase64);
         return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
-          map((user: any) => {
+          map((user: LoginResponseModel) => {
             if (user.authenticated) {
               user.verified = false;
               setCacheData('currentUser', JSON.stringify(user));
@@ -118,7 +119,7 @@ export class AuthService {
   getAuthToken(username: string, password: string) {
     const url = this.gatewayURL.replace('/v2', '');
     return this.http.post(`${url}auth/login`, { username, password }).pipe(
-      map((res: any) => {
+      map((res: AuthGatewayLoginResponseModel) => {
         setCacheData('token', res.token);
         return res;
       })

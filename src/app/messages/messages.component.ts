@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
 import { notifications, doctorDetails, languages } from 'src/config/constant';
+import { ApiResponseModel, ConversationModel, MessageModel, PatientVisitsModel } from '../model/model';
 
 @Component({
   selector: 'app-messages',
@@ -16,24 +17,21 @@ import { notifications, doctorDetails, languages } from 'src/config/constant';
 })
 export class MessagesComponent implements OnInit, OnDestroy {
 
-  conversations: any = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
-  searchResults: any = [];
-  selectedConversation: any;
+  selectedConversation: ConversationModel;
 
   message = '';
   fromUuid = null;
-  visits: any = [];
-  messageList: any;
-  visitId: any;
+  visits: PatientVisitsModel[] = [];
+  messageList: MessageModel[];
+  visitId: string;
   openMenu = false;
   isOver = false;
   isAttachment = false;
-  readSentImg: any;
-  images: any = {};
-  defaultImage = 'assets/images/img-icon.jpeg';
-  pdfDefaultImage = 'assets/images/pdf-icon.png';
+  defaultImage: string = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage: string = 'assets/images/pdf-icon.png';
   subscription1: Subscription;
   subscription2: Subscription;
 
@@ -52,7 +50,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.socketSvc.initSocket(true);
     this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
-      this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
@@ -61,7 +59,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   get filteredConversations() {
-    return this.conversations.filter((conversation: any) => {
+    return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.patientName
           .toLowerCase()
@@ -75,20 +73,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   getPatientsList(drUuid) {
     this.chatSvc.getPatientList(drUuid).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         this.conversations = res.data;
       },
     });
   }
 
-  get patientPic() {
-    if (!this.conversations.patientPic) {
-      return 'assets/svgs/user.svg';
-    }
-    return this.conversations.patientPic;
-  }
+  // get patientPic() {
+  //   if (!this.conversations.patientPic) {
+  //     return 'assets/svgs/user.svg';
+  //   }
+  //   return this.conversations.patientPic;
+  // }
 
-  conversationSelected(conversation: any) {
+  conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
     this.getMessages();
@@ -97,7 +95,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
@@ -115,7 +113,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   getPatientsVisits(patientId) {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         this.visits = res?.data;
       },
     });
@@ -129,7 +127,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   getMessages() {
     this.chatSvc.getPatientMessages(this.selectedConversation?.toUser, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
           this.getPatientsVisits(this.selectedConversation?.patientId);
           this.conversations[this.conversations.findIndex(c => c.id === this.selectedConversation.id)].message = this.messageList[0].message
@@ -137,7 +135,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
       });
   }
 
-  readMessages(messageId: any) {
+  readMessages(messageId: number) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
         this.getMessages();
@@ -202,7 +200,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
         this.message = res.data;

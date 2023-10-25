@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ApiResponseModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
@@ -21,7 +22,7 @@ export class DashboardGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> {
       const user = getCacheData(true, doctorDetails.USER);
       const provider = getCacheData(true, doctorDetails.PROVIDER);
-      return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: any) => {
+      return this.apService.getScheduledMonths(user.uuid, new Date().getFullYear().toString()).pipe(map((res: ApiResponseModel) => {
         if (res) {
           if (res.data.length && provider.attributes.length) {
             return true;
