@@ -49,11 +49,12 @@ export class AppointmentsComponent implements OnInit {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
-          if (appointment.status == 'booked') {
+          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
               appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
@@ -61,7 +62,7 @@ export class AppointmentsComponent implements OnInit {
             }
           }
         });
-        this.dataSource = new MatTableDataSource(this.appointments);
+        this.dataSource.data = [...this.appointments];
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
@@ -160,6 +161,8 @@ export class AppointmentsComponent implements OnInit {
     const isCompleted = Boolean(len);
     if (isCompleted) {
       this.toastr.error(this.translateService.instant("Visit is already completed, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
+    } else if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
@@ -172,7 +175,7 @@ export class AppointmentsComponent implements OnInit {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: any) => {
                 const message = res.message;
                 if (res.status) {
-                  this.getVisits();
+                  this.getAppointments();
                   this.toastr.success(this.translateService.instant("The appointment has been rescheduled successfully!"), this.translateService.instant('Rescheduling successful!'));
                 } else {
                   this.toastr.success(message, this.translateService.instant('Rescheduling failed!'));
@@ -186,10 +189,14 @@ export class AppointmentsComponent implements OnInit {
   }
 
   cancel(appointment: any) {
+    if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      return;
+    }
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
         this.toastr.success(this.translateService.instant('The Appointment has been successfully canceled.'),this.translateService.instant('Canceling successful'));
-        this.getVisits();
+        this.getAppointments();
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +20,7 @@ import { doctorDetails, languages, visitTypes } from 'src/config/constant';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
   showAll: boolean = true;
   displayedColumns1: string[] = ['name', 'age', 'starts_in', 'location', 'cheif_complaint', 'actions'];
@@ -110,7 +110,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAwaitingVisits(page: number = 1) {
-    if(page == 1) this.awaitingVisits = [];
+    if(page == 1) {
+      this.awaitingVisits = [];
+      this.awatingRecordsFetched = 0;
+    }
     this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: any) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
@@ -122,11 +125,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
-        this.dataSource3 = new MatTableDataSource(this.awaitingVisits);
+        this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
           this.dataSource3.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator2.length = this.awaitingVisits.length;
           this.tempPaginator2.nextPage();
         }
       }
@@ -152,7 +156,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getPriorityVisits(page: number = 1) {
-    if(page == 1) this.priorityVisits = [];
+    if(page == 1) {
+      this.priorityVisits = [];
+      this.priorityRecordsFetched = 0;
+    }
     this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: any) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
@@ -164,11 +171,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
-        this.dataSource2 = new MatTableDataSource(this.priorityVisits);
+        this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
           this.dataSource2.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator1.length = this.priorityVisits.length;
           this.tempPaginator1.nextPage();
         }
       }
@@ -194,7 +202,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getInProgressVisits(page: number = 1) {
-    if(page == 1) this.inProgressVisits = [];
+    if(page == 1) {
+      this.inProgressVisits = [];
+      this.inprogressRecordsFetched = 0;
+    }
     this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: any) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
@@ -207,11 +218,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
-        this.dataSource4 = new MatTableDataSource(this.inProgressVisits);
+        this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
           this.dataSource4.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
+          this.tempPaginator3.length = this.inProgressVisits.length;
           this.tempPaginator3.nextPage();
         }
       }
@@ -237,11 +249,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
         appointmentsdata.forEach(appointment => {
-          if (appointment.status == 'booked') {
+          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
               appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
@@ -249,7 +262,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }
           }
         });
-        this.dataSource1 = new MatTableDataSource(this.appointments);
+        this.dataSource1.data = [...this.appointments];
         this.dataSource1.paginator = this.appointmentPaginator;
         this.dataSource1.filterPredicate = (data: any, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
@@ -451,6 +464,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const isCompleted = Boolean(len);
     if (isCompleted) {
       this.toastr.error("Visit is already completed, it can't be rescheduled.", 'Rescheduling failed');
+    } else if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: any) => {
         if (res) {
@@ -464,9 +479,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 const message = res.message;
                 if (res.status) {
                   this.getAppointments();
-                  this.getAwaitingVisits();
-                  this.getPriorityVisits();
-                  this.getInProgressVisits();
                   this.toastr.success("The appointment has been rescheduled successfully!", 'Rescheduling successful!');
                 } else {
                   this.toastr.success(message, 'Rescheduling failed!');
@@ -480,13 +492,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   cancel(appointment: any) {
+    if(appointment.visitStatus == 'Visit In Progress') {
+      this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
+      return;
+    }
     this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: any) => {
       if (res) {
         this.toastr.success("The Appointment has been successfully canceled.", 'Canceling successful');
         this.getAppointments();
-        this.getAwaitingVisits();
-        this.getPriorityVisits();
-        this.getInProgressVisits();
       }
     });
   }
@@ -547,11 +560,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       default:
         break;
     }
-  }
-
-  ngOnDestroy() {
-    if (this.socket.socket && this.socket.socket.close)
-      this.socket.socket.close();
   }
 
 }

@@ -275,4 +275,8 @@ export class AuthService {
   toggleNotificationStatus(user_uuid: string) {
     return this.http.put(`${environment.mindmapURL}/mindmap/toggleNotificationStatus/${user_uuid}`, null);
   }
+
+  snoozeNotification(snooze_for: string, user_uuid: string) {
+    return this.http.put(`${environment.mindmapURL}/mindmap/snooze_notification/${user_uuid}`, { snooze_for });
+  }
 }

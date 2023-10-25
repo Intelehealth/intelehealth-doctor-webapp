@@ -40,7 +40,8 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes.prescriptionsSent.firstChange) {
       this.recordsFetched += this.offset;
-      this.dataSource = new MatTableDataSource(this.prescriptionsSent);
+      this.dataSource.data = [...this.prescriptionsSent];
+      this.tempPaginator.length = this.prescriptionsSent.length
       this.tempPaginator.nextPage();
     }
   }

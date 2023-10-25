@@ -40,6 +40,7 @@ import { ConfirmOpenmrsIdComponent } from './confirm-openmrs-id/confirm-openmrs-
 import { RaiseTicketComponent } from './raise-ticket/raise-ticket.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { ImageCropComponent } from './image-crop/image-crop.component';
+import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +70,8 @@ import { ImageCropComponent } from './image-crop/image-crop.component';
         PwaPromptComponent,
         ConfirmOpenmrsIdComponent,
         RaiseTicketComponent,
-        ImageCropComponent
+        ImageCropComponent,
+        VcallOverlayComponent
     ],
     imports: [
         CommonModule,
