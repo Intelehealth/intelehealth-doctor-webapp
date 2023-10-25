@@ -120,6 +120,10 @@ export class VisitSummaryComponent implements OnInit {
           this.PatientExitSurveyPresent = true;
         }
       });
+      const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+      if(openChat === 'true') {
+        this.openChatModal();
+      }
     });
   }
 
@@ -373,8 +377,8 @@ export class VisitSummaryComponent implements OnInit {
 
   openChatModal() {
     this.cs.openChatBoxModal({
-      patientId: this.visit.patient.uuid,
-      visitId: this.visit.uuid,
+      patientId: this.visit?.patient?.uuid,
+      visitId: this.visit?.uuid,
       patientName: this.visit?.patient?.person?.display,
       patientPersonUuid: this.visit?.patient?.uuid,
       patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
