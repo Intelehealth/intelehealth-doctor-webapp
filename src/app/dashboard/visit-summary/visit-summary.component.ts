@@ -126,6 +126,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   currentComplaint: string;
 
   additionalNotes = '';
+  isCalling: boolean = false;
 
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
@@ -644,8 +645,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   startChat() {
     if (this.dialogRef1) {
       this.dialogRef1.close();
+      this.isCalling = false;
       return;
     }
+    this.isCalling = true;
     this.dialogRef1 = this.coreService.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -656,15 +659,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.dialogRef1.afterClosed().subscribe((res) => {
       this.dialogRef1 = undefined;
+      this.isCalling = false;
     });
   }
 
   startCall() {
     if (this.dialogRef2) {
       this.dialogRef2.close();
+      this.isCalling = false;
       return;
     }
-    console.log(this.patient);
+    this.isCalling = true;
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -680,6 +685,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
+      this.isCalling = false;
     });
   }
 

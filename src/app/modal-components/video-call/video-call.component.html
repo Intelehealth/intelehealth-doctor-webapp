@@ -140,19 +140,13 @@
             </div>
             <div class="user-name">{{ this.data.patientName | titlecase }}</div>
             <div class="user-desc">{{ this.data.patientGender | titlecase }}, {{ this.data.patientAge }}</div>
-            
-          </div>
-          <div
-            class="video-controls d-flex justify-content-center mb-1"
-            [class.d-none]="_minimized"
-          >
             <button
-              type="button"
-              class="video-ctrl-btn red"
-              (click)="endCallInRoom()"
-            >
-              <img src="assets/svgs/call-end.svg" alt="" />
-            </button>
+            type="button"
+            class="video-ctrl-btn red"
+            (click)="endCallInRoom()"
+          >
+            <img src="assets/svgs/call-end.svg" alt="" />
+          </button>
           </div>
         </div>
       </div>
