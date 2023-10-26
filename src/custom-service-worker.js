@@ -2,7 +2,7 @@ importScripts("./ngsw-worker.js");
 
 (function () {
   "use strict";
-  console.log("custom-worker-loaded.");
+  console.log("custom-worker-loaded.-");
 
   self.addEventListener("notificationclick", (event) => {
     if (clients.openWindow && event.notification.data.url) {
