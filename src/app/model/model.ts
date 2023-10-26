@@ -447,7 +447,8 @@ export interface VisitModel {
   doctor?: any,
   created_on?: string,
   cheif_complaint?: string[],
-  prescription_sent?: string
+  prescription_sent?: string,
+  visitUploadTime?: string
 }
 
 export interface VisitAttributeModel {
