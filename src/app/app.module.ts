@@ -270,6 +270,10 @@ import { MomentModule } from "ngx-moment";
       { scrollPositionRestoration: "enabled" }
     ),
     // tslint:disable-next-line: max-line-length
+    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+      enabled: environment.production,
+      registrationStrategy: "registerImmediately",
+    }),
     ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
