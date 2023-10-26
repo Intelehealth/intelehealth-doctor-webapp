@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DocImagesModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-images-preview',
@@ -9,11 +10,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ImagesPreviewComponent implements OnInit {
 
   imgUrl: string;
-  source: any = [];
+  source: DocImagesModel[] = [];
   startIndex: number;
   min: number = -1;
   max: number = -1;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<ImagesPreviewComponent>) { }
 
   ngOnInit(): void {
@@ -24,7 +25,7 @@ export class ImagesPreviewComponent implements OnInit {
     if (this.source.length) this.imgUrl = this.data.source[this.data.startIndex].src;
   }
 
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 
@@ -38,11 +39,11 @@ export class ImagesPreviewComponent implements OnInit {
     this.imgUrl = this.source[this.startIndex].src;
   }
 
-  onImageError(event: any) {
+  onImageError(event) {
     event.target.src = 'assets/svgs/image-placeholder.jpg';
   }
 
-  isPDF(url) {
+  isPDF(url: string) {
     return url.includes('.pdf');
   }
 

@@ -12,7 +12,7 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
 import { doctorDetails, visitTypes } from "src/config/constant";
-import { AuthGatewayLoginResponseModel, LoginResponseModel } from "../model/model";
+import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
 
 @Injectable({
   providedIn: "root",
@@ -83,7 +83,7 @@ export class AuthService {
 
 
 
-  public get currentUserValue(): any {
+  public get currentUserValue() {
     return this.currentUserSubject.value;
   }
 
@@ -138,7 +138,7 @@ export class AuthService {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
-    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe((res: any) => {
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(() => {
       deleteCacheData('currentUser');
       deleteCacheData(doctorDetails.USER);
       deleteCacheData(doctorDetails.PROVIDER);
@@ -154,14 +154,14 @@ export class AuthService {
     });
   }
 
-  extractPermissions(perm: any[]) {
+  extractPermissions(perm: PrivilegesModel[]) {
     let extractedPermissions = perm.map((val) => {
       return val.name;
     });
     return extractedPermissions;
   }
 
-  extractRolesAndPermissions(perm: any[], roles: any[]) {
+  extractRolesAndPermissions(perm: PrivilegesModel[], roles: RolesModel[]) {
     let extractedPermissions = perm.map((val) => {
       return val.name;
     });
@@ -224,11 +224,11 @@ export class AuthService {
     return withPrefix ? ["+", ...mask] : mask;
   }
 
-  requestOtp(payload: any): Observable<any> {
+  requestOtp(payload: RequestOtpModel): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/requestOtp`, payload);
   }
 
-  verifyOtp(payload: any): Observable<any> {
+  verifyOtp(payload: VerifyOtpModel): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/verifyOtp`, payload);
   }
 

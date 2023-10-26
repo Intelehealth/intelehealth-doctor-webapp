@@ -15,7 +15,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
 
   appointmentCount: number = 0;
   followupCount: number = 0;
-  timeList: any = [];
+  timeList: string[] = [];
   dayOffForm: FormGroup;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
@@ -80,7 +80,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     return count;
   }
 
-  getHours(returnAll = true, date?: any) {
+  getHours(returnAll = true, date?: string) {
     const hours = Array.from(
       {
         length: 21,
@@ -100,7 +100,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
-  isToday(date: any) {
+  isToday(date: string) {
     const start = moment().startOf("day");
     const end = moment().endOf("day");
     return (
@@ -109,7 +109,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     );
   }
 
-  validateTimeSlot(from: any, to: any) {
+  validateTimeSlot(from: string, to: string) {
     if (moment(from, "h:mm A").format("HH:mm:ss") >= moment(to, "h:mm A").format("HH:mm:ss")) {
       return false;
     }

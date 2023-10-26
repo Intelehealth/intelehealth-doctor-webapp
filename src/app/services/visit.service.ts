@@ -15,9 +15,9 @@ export class VisitService {
 
   public isHelpButtonShow: boolean = false;
 
-  public triggerAction: any = new Subject();
+  public triggerAction: Subject<any> = new Subject();
 
-  public chatVisitId: any;
+  public chatVisitId: string;
 
   constructor(private http: HttpClient, private helper: HelperService) {}
 
@@ -112,13 +112,13 @@ export class VisitService {
     );
   }
 
-  getWhatsappLink(whatsapp: any, msg: string) {
+  getWhatsappLink(whatsapp: string, msg: string) {
     let text = encodeURI(msg);
     let whatsappLink = `https://wa.me/${whatsapp}?text=${text}`;
     return whatsappLink;
   }
 
-  chatGPTCompletionDDx(payload: any): Observable<any> {
+  chatGPTCompletionDDx(payload: string): Observable<any> {
     return this.http.post(`${environment.mindmapURL}/openai/ddx`, { payload });
   }
 

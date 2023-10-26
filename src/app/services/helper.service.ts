@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
+import { RolesModel } from "../model/model";
 
 @Injectable({
   providedIn: "root",
@@ -31,9 +32,9 @@ export class HelperService {
     return [...arr];
   }
 
-  checkIfRoleExists(role: string, roles: any) {
+  checkIfRoleExists(role: string, roles: RolesModel[]) {
     let exists = false;
-    roles.forEach((r: any) => {
+    roles.forEach((r: RolesModel) => {
       if (r.name == role) {
         exists = true;
       }

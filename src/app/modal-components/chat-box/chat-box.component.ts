@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ApiResponseModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -54,8 +54,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       if (this.socketSvc.updateMessage) {
         this.readMessages(data.id);
       }
-      // this.readMessages(data.id);
-      // this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? 1 : -1);
     });
 
     this.subscription3 = this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
@@ -93,7 +91,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
 
   async sendMessage() {
     if (this.message) {
-      const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
+      const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
         return;

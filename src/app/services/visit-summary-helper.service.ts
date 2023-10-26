@@ -8,6 +8,7 @@ import { VisitService } from 'src/app/services/visit.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
+import { EncounterModel, PatientModel, VisitAttributeModel, VisitModel } from "../model/model";
 
 
 @Injectable({
@@ -19,9 +20,9 @@ export class VisitSummaryHelperService {
   public isVisitSummaryShow: boolean = false;
   public isHelpButtonShow: boolean = false;
   public triggerAction: Subject<any> = new Subject();
-  public chatVisitId: any;
+  public chatVisitId: string;
   public hwPhoneNo: string;
-  public patient: any;
+  public patient: PatientModel;
 
 
 
@@ -32,8 +33,8 @@ export class VisitSummaryHelperService {
     private translateService: TranslateService,
   ) {}
 
-  getCheifComplaint(visit: any) {
-    const recent: any = [];
+  getCheifComplaint(visit: VisitModel) {
+    const recent: string[] = [];
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.display;
@@ -55,13 +56,13 @@ export class VisitSummaryHelperService {
     return recent;
   };
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
+  checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
     return encounters.find(({ display = '' }) => display.includes(visitType));
   };
 
-  checkIfAttributeExists(attrs: any) {
+  checkIfAttributeExists(attrs: VisitAttributeModel[]) {
     let currentAttr;
-    attrs.forEach((attr: any) => {
+    attrs.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === 'Visit Speciality') {
         currentAttr = attr;
       }
@@ -77,7 +78,7 @@ export class VisitSummaryHelperService {
     return getCacheData(true, doctorDetails.USER).username;
   };
 
-  getHours(returnAll = true, date?: any) {
+  getHours(returnAll = true, date?: string) {
     const hours = Array.from(
       {
         length: 21,
@@ -97,7 +98,7 @@ export class VisitSummaryHelperService {
     }
   };
 
-  isToday(date: any) {
+  isToday(date: string) {
     const start = moment().startOf('day');
     const end = moment().endOf('day');
     return (

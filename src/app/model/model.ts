@@ -48,6 +48,10 @@ export interface ProviderAttributeTypesResponseModel {
   results: ProviderAttributeTypeModel[]
 }
 
+export interface ObsApiResponseModel {
+  results: ObsModel[]
+}
+
 export interface ProviderAttributeTypeModel {
   uuid: string,
   display: string
@@ -113,7 +117,8 @@ export interface ApiResponseModel {
   message?: string,
   data?: any,
   dates?: SlotModel[],
-  totalCount?: number
+  totalCount?: number,
+  rescheduledAppointments?: AppointmentModel[]
 }
 
 export interface SlideModel {
@@ -310,16 +315,24 @@ export interface SerachPatientApiResponseModel {
   results: PatientModel[]
 }
 
+export interface RecentVisitsApiResponseModel {
+  results: VisitModel[]
+}
+
 export interface PatientModel {
   uuid: string,
   identifiers: PatientIdentifierModel[],
+  attributes?: PersonAttributeModel[],
   person: {
-    uuid: string,
-    age: number,
-    birthdate: string,
-    display: string,
-    gender: string,
-    attributes: PersonAttributeModel[]
+    uuid?: string,
+    age?: number,
+    birthdate?: string,
+    display?: string,
+    gender?: string,
+    attributes?: PersonAttributeModel[],
+    preferredAddress?: {
+      cityVillage?: string
+    }
   }
 }
 
@@ -327,12 +340,18 @@ export interface PatientIdentifierModel {
   identifier: string,
   identifierType: {
     name: string
+    display?: string,
   }
 }
 
 export interface PersonAttributeModel {
   uuid: string,
-  display?: string
+  display?: string,
+  attributeType?: {
+    uuid: string,
+    display: string
+  },
+  value?: any
 }
 
 export interface BreadcrumbModel {
@@ -346,6 +365,7 @@ export interface FollowUpModel {
 }
 
 export interface EncounterModel {
+  uuid?: string
   display?: string,
   encounterDatetime?: string,
   encounterProviders?: EncounterProviderModel[],
@@ -367,6 +387,11 @@ export interface ObsModel {
   concept?: {
     uuid?: string,
     display?: string
+  },
+  encounter?: {
+    visit?: {
+      uuid?: string
+    }
   }
 }
 
@@ -406,4 +431,96 @@ export interface AppointmentDetailResponseModel {
 export interface ScheduledMonthModel {
   name: string,
   year: string
+}
+
+export interface VisitModel {
+  uuid: string,
+  attributes?: VisitAttributeModel[],
+  display?: string,
+  encounters?: EncounterModel[],
+  location?: {
+    display?: string
+  },
+  patient?: PatientModel,
+  startDatetime?: string,
+  stopDatetime?: string,
+  doctor?: any,
+  created_on?: string,
+  cheif_complaint?: string[],
+  prescription_sent?: string
+}
+
+export interface VisitAttributeModel {
+  uuid: string,
+  voided?: boolean,
+  value?: any,
+  display?: string,
+  attributeType?: {
+    uuid?: string,
+    display?: string
+  }
+}
+
+export interface ReferralModel {
+  uuid?: string,
+  speciality?: string,
+  facility?: string,
+  priority?: string,
+  reason?: string
+}
+
+export interface TestModel {
+  uuid?: string,
+  value?: string
+}
+
+export interface MedicineModel {
+  drug?: string,
+  strength?: string,
+  days?: string,
+  timing?: string,
+  remark?: string,
+  uuid?: string
+}
+
+export interface PatientHistoryModel {
+  title?: string,
+  data?: KeyValueModel[]
+}
+
+export interface KeyValueModel {
+  key?: string,
+  value?: any
+}
+
+export interface DiagnosisModel {
+  diagnosisName?: string,
+  diagnosisType?: string,
+  diagnosisStatus?: string,
+  uuid?: string
+}
+
+export interface DocImagesModel {
+  src: string
+}
+
+export interface SocketUserModel {
+  callStatus?: string,
+  name?: string,
+  socketId: string,
+  status?: string,
+  uuid: string
+}
+
+export interface LivekitTokenModel {
+  token: string,
+  appToken: string
+}
+
+export interface FollowUpDataModel {
+  present?: boolean,
+  wantFollowUp?: string,
+  followUpDate?: string,
+  followUpTime?: string,
+  followUpReason?: string
 }
