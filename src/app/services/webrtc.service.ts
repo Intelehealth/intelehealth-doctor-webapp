@@ -88,13 +88,13 @@ export class WebrtcService {
 
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
-      // dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
+      dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
         resolution: {
           aspectRatio: 1.7777777777777777,
-          frameRate: 30,
-          height: 640,
-          width: 360
+          frameRate: 25,
+          height: 1280,
+          width: 720
         },
       },
       audioCaptureDefaults: {
