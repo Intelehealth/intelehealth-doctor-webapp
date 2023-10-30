@@ -48,7 +48,7 @@ export class CoreService {
 
   openChatBoxModal(data: any): MatDialogRef<ChatComponent> {
     if (!document.getElementById('chatx-modal')) {
-      const dialogRef = this.dialog.open(ChatComponent, { data, id: 'chatx-modal', panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", position: { right: "20px" }, hasBackdrop: false, scrollStrategy: new NoopScrollStrategy() })
+      const dialogRef = this.dialog.open(ChatComponent, { data, id: 'chatx-modal', panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", hasBackdrop: true, disableClose:true, scrollStrategy: new NoopScrollStrategy() })
       return dialogRef;
     }
   }
