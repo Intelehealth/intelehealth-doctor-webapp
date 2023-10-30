@@ -145,6 +145,8 @@ body.font-lato td {
   width: 300px !important;
   height: 500px;
   margin-bottom: 80px;
+  right: 20px;
+  position: fixed !important;
 
   .mat-dialog-container {
     overflow: visible;
@@ -306,6 +308,7 @@ body.font-lato td {
 
     max-width: 100% !important;
     max-height: 76% !important;
+    position: static !important;
   }
 }
 
