@@ -52,10 +52,20 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Callback for page change event and Get visit for a selected page index and page size
+  * @param {PageEvent} event - Page event
+  * @return {void}
+  */
   public getData(event?: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
@@ -74,6 +84,11 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     return event;
   }
 
+  /**
+  * Apply filter on a datasource
+  * @param {Event} event - Input's change event
+  * @return {void}
+  */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -81,6 +96,10 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
     this.paginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource
+  * @return {void}
+  */
   clearFilter() {
     this.dataSource.filter = null;
     this.searchElement.nativeElement.value = '';

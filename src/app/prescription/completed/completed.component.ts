@@ -46,10 +46,20 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - Page event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Callback for page change event and Get visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getData(event?:PageEvent){
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
@@ -68,6 +78,11 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     return event;
   }
 
+  /**
+  * Apply filter on a datasource
+  * @param {Event} event - Input's change event
+  * @return {void}
+  */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -75,6 +90,10 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     this.paginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource
+  * @return {void}
+  */
   clearFilter() {
     this.dataSource.filter = null;
     this.searchElement.nativeElement.value = "";

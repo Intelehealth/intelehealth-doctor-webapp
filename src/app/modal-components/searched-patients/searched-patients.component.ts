@@ -18,10 +18,20 @@ export class SearchedPatientsComponent {
     private visitService: VisitService
   ) { }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * View visit details
+  * @param {string} uuid - visit uuid
+  * @return {void}
+  */
   view(uuid: string) {
     this.visitService.recentVisits(uuid).subscribe((response: RecentVisitsApiResponseModel) => {
       this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);

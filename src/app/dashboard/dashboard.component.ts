@@ -110,6 +110,11 @@ export class DashboardComponent implements OnInit {
     this.socket.initSocket(true);
   }
 
+  /**
+  * Get awaiting visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getAwaitingVisits(page: number = 1) {
     if(page == 1) {
       this.awaitingVisits = [];
@@ -121,8 +126,8 @@ export class DashboardComponent implements OnInit {
         this.awatingRecordsFetched += this.offset;
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
@@ -138,6 +143,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+  * Callback for page change event and Get awaiting visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getAwaitingData(event?:PageEvent){
     this.pageIndex1 = event.pageIndex;
     this.pageSize1 = event.pageSize;
@@ -156,6 +166,11 @@ export class DashboardComponent implements OnInit {
     return event;
   }
 
+  /**
+  * Get priority visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getPriorityVisits(page: number = 1) {
     if(page == 1) {
       this.priorityVisits = [];
@@ -167,8 +182,8 @@ export class DashboardComponent implements OnInit {
         this.priorityRecordsFetched += this.offset;
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.FLAGGED);
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = this.getEncounterCreated(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
@@ -184,6 +199,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+  * Callback for page change event and Get priority visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getPriorityData(event?:PageEvent){
     this.pageIndex2 = event.pageIndex;
     this.pageSize2 = event.pageSize;
@@ -202,6 +222,11 @@ export class DashboardComponent implements OnInit {
     return event;
   }
 
+  /**
+  * Get inprogress visits for a given page number
+  * @param {number} page - Page number
+  * @return {void}
+  */
   getInProgressVisits(page: number = 1) {
     if(page == 1) {
       this.inProgressVisits = [];
@@ -213,9 +238,9 @@ export class DashboardComponent implements OnInit {
         this.inprogressRecordsFetched += this.offset;
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
-          visit.cheif_complaint = this.getCheifComplaint2(visit);
-          visit.visit_created = this.getEncounterCreated2(visit, visitTypes.ADULTINITIAL);
-          visit.prescription_started = this.getEncounterCreated2(visit, visitTypes.VISIT_NOTE);
+          visit.cheif_complaint = this.getCheifComplaint(visit);
+          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
         }
@@ -231,6 +256,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+  * Callback for page change event and Get inprogress visit for a selected page index and page size
+  * @param {PageEvent} event - onerror event
+  * @return {void}
+  */
   public getInprogressData(event?:PageEvent){
     this.pageIndex3 = event.pageIndex;
     this.pageSize3 = event.pageSize;
@@ -249,6 +279,10 @@ export class DashboardComponent implements OnInit {
     return event;
   }
 
+  /**
+  * Get booked appointments for a logged-in doctor in a current year
+  * @return {void}
+  */
   getAppointments() {
     this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
@@ -257,7 +291,7 @@ export class DashboardComponent implements OnInit {
         appointmentsdata.forEach((appointment: AppointmentModel) => {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
-              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
+              appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
               appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
@@ -269,7 +303,13 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  getEncounterCreated2(visit: CustomVisitModel, encounterName: string) {
+  /**
+  * Get encounter datetime for a given encounter type
+  * @param {CustomVisitModel} visit - Visit
+  * @param {string} encounterName - Encounter type
+  * @return {string} - Encounter datetime
+  */
+  getEncounterCreated(visit: CustomVisitModel, encounterName: string) {
     let created_at = '';
     const encounters = visit.encounters;
     encounters.forEach((encounter: CustomEncounterModel) => {
@@ -281,7 +321,12 @@ export class DashboardComponent implements OnInit {
     return created_at;
   }
 
-  getCheifComplaint2(visit: CustomVisitModel) {
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string[]} - Chief complaints array
+  */
+  getCheifComplaint(visit: CustomVisitModel) {
     let recent: string[] = [];
     const encounters = visit.encounters;
     encounters.forEach((encounter: CustomEncounterModel) => {
@@ -304,10 +349,20 @@ export class DashboardComponent implements OnInit {
     return recent;
   }
 
+  /**
+  * Returns the age in years from the birthdate
+  * @param {string} birthdate - Date in string format
+  * @return {number} - Age
+  */
   calculateAge(birthdate: string) {
     return moment().diff(birthdate, 'years');
   }
 
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
   checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
@@ -321,6 +376,11 @@ export class DashboardComponent implements OnInit {
     return `${hours} hrs`;
   }
 
+  /**
+  * Returns the created time in words from the date
+  * @param {string} data - Date
+  * @return {string} - Created time in words from the date
+  */
   getCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
@@ -333,6 +393,11 @@ export class DashboardComponent implements OnInit {
     return `${hours} hrs ago`;
   }
 
+  /**
+  * Get doctor speciality
+  * @param {ProviderAttributeModel[]} attr - Array of provider attributes
+  * @return {string} - Doctor speciality
+  */
   getSpecialization(attr: ProviderAttributeModel[]) {
     let specialization = '';
     attr.forEach((a: ProviderAttributeModel) => {
@@ -343,6 +408,11 @@ export class DashboardComponent implements OnInit {
     return specialization;
   }
 
+  /**
+  * Reschedule appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
       return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
@@ -377,6 +447,11 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  /**
+  * Cancel appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
   cancel(appointment: AppointmentModel) {
     if(appointment.visitStatus == 'Visit In Progress') {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
@@ -390,20 +465,37 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Play notification sound
+  * @return {void}
+  */
   playNotify() {
     const audioUrl = "assets/notification.mp3";
     new Audio(audioUrl).play();
   }
 
+  /**
+  * Clear filter from a datasource 1
+  * @return {void}
+  */
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource1.filter = filterValue.trim().toLowerCase();
   }
 
+  /**
+  * Clear filter from a datasource 2
+  * @return {void}
+  */
   applyFilter2(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource2.filter = filterValue.trim().toLowerCase();
@@ -411,6 +503,10 @@ export class DashboardComponent implements OnInit {
     this.priorityPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource 3
+  * @return {void}
+  */
   applyFilter3(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource3.filter = filterValue.trim().toLowerCase();
@@ -418,6 +514,10 @@ export class DashboardComponent implements OnInit {
     this.awaitingPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a datasource 4
+  * @return {void}
+  */
   applyFilter4(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource4.filter = filterValue.trim().toLowerCase();
@@ -425,6 +525,11 @@ export class DashboardComponent implements OnInit {
     this.inprogressPaginator.firstPage();
   }
 
+  /**
+  * Clear filter from a given datasource
+  * @param {string} dataSource - Datasource name
+  * @return {void}
+  */
   clearFilter(dataSource: string) {
     switch (dataSource) {
       case 'Appointment':

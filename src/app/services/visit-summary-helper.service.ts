@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
-import { HelperService } from "./helper.service";
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { VisitService } from 'src/app/services/visit.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -24,14 +23,11 @@ export class VisitSummaryHelperService {
   public hwPhoneNo: string;
   public patient: PatientModel;
 
-
-
   constructor(
     private http: HttpClient,
-    private helper: HelperService,
     private visitService: VisitService,
     private translateService: TranslateService,
-  ) {}
+  ) { }
 
   getCheifComplaint(visit: VisitModel) {
     const recent: string[] = [];

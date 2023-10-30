@@ -11,11 +11,20 @@ export class PwaPromptComponent {
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { mobileType: 'ios' | 'android', promptEvent?: any },
   private bottomSheetRef: MatBottomSheetRef<PwaPromptComponent>) { }
 
+  /**
+  * Install PWA
+  * @return {void}
+  */
   public installPwa(): void {
     this.data.promptEvent.prompt();
     this.close(true);
   }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.bottomSheetRef.dismiss(val);
   }

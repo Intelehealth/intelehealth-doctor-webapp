@@ -25,24 +25,47 @@ export class ImagesPreviewComponent implements OnInit {
     if (this.source.length) this.imgUrl = this.data.source[this.data.startIndex].src;
   }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Move to next image
+  * @return {void}
+  */
   next() {
     this.startIndex++;
     this.imgUrl = this.source[this.startIndex].src;
   }
 
+  /**
+  * Move to previous image
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   previous() {
     this.startIndex--;
     this.imgUrl = this.source[this.startIndex].src;
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImageError(event) {
     event.target.src = 'assets/svgs/image-placeholder.jpg';
   }
 
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
   isPDF(url: string) {
     return url.includes('.pdf');
   }

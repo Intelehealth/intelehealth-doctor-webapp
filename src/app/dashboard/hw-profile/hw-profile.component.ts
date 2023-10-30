@@ -131,6 +131,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Subscribe to form control value changes observables
+  * @return {void}
+  */
   formControlValueChanges() {
     this.personalInfoForm.get(doctorDetails.BIRTHDATE).valueChanges.subscribe(val => {
       if (val) {
@@ -139,6 +143,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get provider attribute types
+  * @return {void}
+  */
   getProviderAttributeTypes() {
     this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
       if (res.results.length) {
@@ -148,6 +156,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Patch the form values with the provider details
+  * @return {void}
+  */
   patchFormValues() {
     if (this.provider) {
 
@@ -213,6 +225,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Get attribute value for the given provider attribute uuid and type
+  * @param {string} uuid - Provider attribute uuid
+  * @param {string} display - Provider attribute type name/display
+  * @return {any} - Provider attribute value
+  */
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
@@ -224,10 +242,20 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     return attrValue;
   }
 
+  /**
+  * Callback for step change event
+  * @param {Event} event - Step change event
+  * @return {void}
+  */
   stepChanged(event) {
     this.submitted = false;
   }
 
+  /**
+  * Callback for image upload event
+  * @param {Event} event - File upload event
+  * @return {void}
+  */
   preview(event) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
@@ -251,10 +279,21 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @param {string} errorFor - Error for which input
+  * @return {void}
+  */
   hasError(event, errorFor: string) {
     switch (errorFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -266,6 +305,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @param {string} changedFor - Which input changed
+  * @return {void}
+  */
   getNumber(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -280,6 +325,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @param {string} objectFor - Which object changed
+  * @return {void}
+  */
   telInputObject(event, objectFor: string) {
     switch (objectFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -291,6 +342,12 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @param {string} changedFor - For which object country changed
+  * @return {void}
+  */
   onCountryChange(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -308,6 +365,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Update user profile
+  * @return {void}
+  */
   updateProfile() {
     this.submitted = true;
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
@@ -329,6 +390,10 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Update logged-in user provider attributes
+  * @return {void}
+  */
   updateProviderAttributes() {
     const requests = [];
     this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
@@ -396,8 +461,14 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAttributeUuid(uuid: string, display: string) {
-    let attrUuid = null;
+  /**
+  * Get provider attribute uuid for a given diaplay and provider attrubute type uuid
+  * @param {string} uuid - Provider attribute type uuid
+  * @param {string} display - Display name
+  * @return {string} - Provider attribute uuid
+  */
+  getAttributeUuid(uuid: string, display: string): string {
+    let attrUuid: string = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
       if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrUuid = this.provider.attributes[i].uuid;
@@ -407,15 +478,30 @@ export class HwProfileComponent implements OnInit, OnDestroy {
     return attrUuid;
   }
 
+  /**
+  * Get value for a given key from form
+  * @param {string} key - Key name
+  * @return {any} - Value for a given key
+  */
   getAttributeValueFromForm(key: string) {
     const formValue = { ...this.personalInfoForm.value };
     return formValue[key];
   }
 
+  /**
+  * Detect MIME type from the base 64 url
+  * @param {string} b64 - Base64 url
+  * @return {string} - MIME type
+  */
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
+  /**
+  * Validate phone number/email already exists or not
+  * @param {string} type - Attribute Type email/phone number
+  * @return {void}
+  */
   validateProviderAttribute(type: string) {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {

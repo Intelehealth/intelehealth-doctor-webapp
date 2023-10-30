@@ -29,10 +29,19 @@ export class RaiseTicketComponent {
 
   get f() { return this.raiseTicketForm.controls; }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Raise support ticket
+  * @return {void}
+  */
   raiseTicket() {
     this.submitted = true;
     if (this.raiseTicketForm.invalid) {

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ApiResponseModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, MessageModel, UserModel } from 'src/app/model/model';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -34,6 +34,10 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       const payload = {
@@ -51,6 +55,11 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Get all messages to and from admin
+  * @param {boolean} init - Init true/false
+  * @return {void}
+  */
   getMessages(init = false) {
     this.supportService.getSupportMessages(this.user.uuid, 'System Administrator')
       .subscribe({
@@ -68,6 +77,11 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessagesSupport(messageId: number) {
     this.supportService.readMessageById(this.user?.uuid, messageId).subscribe({
       next: (res: ApiResponseModel) => {
@@ -78,6 +92,10 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get user from localstorage
+  * @return {UserModel} - User
+  */
   get user() {
     return getCacheData(true, doctorDetails.USER);
   }

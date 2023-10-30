@@ -20,6 +20,10 @@ export class SelectLanguageComponent {
     });
   }
 
+  /**
+  * Select language
+  * @return {void}
+  */
   select() {
     this.translate.use(this.languageForm.value.language);
     this.translate.setDefaultLang(this.languageForm.value.language);
@@ -28,6 +32,11 @@ export class SelectLanguageComponent {
     window.location.reload();
   }
 
+  /**
+  * Close modal
+  * @param {string|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: string|boolean) {
     this.dialogRef.close(val);
   }

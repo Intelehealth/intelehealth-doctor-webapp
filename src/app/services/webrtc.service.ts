@@ -19,6 +19,7 @@ import { map } from 'rxjs/operators';
 import { getCacheData } from '../utils/utility-functions';
 import { VisitService } from './visit.service';
 import { LivekitTokenModel } from '../model/model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,14 @@ export class WebrtcService {
     }
   }
 
-  getToken(name: string, roomId: string, nurseName: string) {
+  /**
+  * Get token livekit
+  * @param {string} name - Participant (Doctor) name
+  * @param {string} roomId - Room Id
+  * @param {string} nurseName - Participant (Nurse) name
+  * @return {Observable<any>}
+  */
+  getToken(name: string, roomId: string, nurseName: string): Observable<any> {
     return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
       .pipe(map((res: LivekitTokenModel) => {
         this.token = res?.token;
@@ -63,6 +71,10 @@ export class WebrtcService {
       }));
   }
 
+  /**
+  * Create room and connect call
+  * @return {void}
+  */
   async createRoomAndConnectCall({
     handleTrackSubscribed = this.handleTrackSubscribed.bind(this),
     handleTrackUnsubscribed = this.handleTrackUnsubscribed,

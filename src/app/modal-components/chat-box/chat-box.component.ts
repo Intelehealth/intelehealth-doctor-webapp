@@ -65,6 +65,15 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get all messages and update status to read
+  * @param {string} toUser - To user uuid
+  * @param {string} patientId - Patient uuid
+  * @param {string} fromUser - from user uuid
+  * @param {string} visitId - Visit uuid
+  * @param {boolean} isFirstTime - Is first time true/false
+  * @return {void}
+  */
   getMessagesAndCheckRead(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
@@ -79,6 +88,15 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Get all messages
+  * @param {string} toUser - To user uuid
+  * @param {string} patientId - Patient uuid
+  * @param {string} fromUser - from user uuid
+  * @param {string} visitId - Visit uuid
+  * @param {boolean} isFirstTime - Is first time true/false
+  * @return {void}
+  */
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
@@ -89,6 +107,10 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   async sendMessage() {
     if (this.message) {
       const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
@@ -123,6 +145,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
@@ -131,18 +158,36 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Getter for from user uuid
+  * @return {string} - user uuid
+  */
   get fromUser(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
   isPdf(url: string) {
     return url.includes('.pdf');
   }
 
+  /**
+  * Upload attachment
+  * @param {file[]} files - Array of attachemnet files
+  * @return {void}
+  */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
       next: (res: ApiResponseModel) => {
@@ -154,6 +199,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Set image for an attachment
+  * @param {string} src - Attachemnet url
+  * @return {void}
+  */
   setImage(src) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }

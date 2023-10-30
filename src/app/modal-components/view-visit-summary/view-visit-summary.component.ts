@@ -45,6 +45,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.getVisit(this.data.uuid);
   }
 
+  /**
+  * Get visit
+  * @param {string} uuid - Visit uuid
+  * @return {void}
+  */
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
@@ -69,6 +74,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
   getPatientIdentifier(identifierType: string) {
     let identifier: string = '';
     if (this.patient) {
@@ -81,6 +91,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     return identifier;
   }
 
+  /**
+  * Check visit status
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   checkVisitStatus(encounters: EncounterModel[]) {
     if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
@@ -95,14 +110,30 @@ export class ViewVisitSummaryComponent implements OnInit {
     }
   }
 
+  /**
+  * Get encounter for a given encounter type
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @param {string} encounterType - Encounter type
+  * @return {EncounterModel} - Encounter for a given encounter type
+  */
   checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Get age of patient from birthdate
+  * @param {string} birthdate - Birthdate
+  * @return {string} - Age
+  */
   getAge(birthdate: string) {
     let years = moment().diff(birthdate, 'years');
     let months = moment().diff(birthdate, 'months');
@@ -116,6 +147,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     }
   }
 
+  /**
+  * Get person attribute value for a given attribute type
+  * @param {str'} attrType - Person attribute type
+  * @return {any} - Value for a given attribute type
+  */
   getPersonAttributeValue(attrType: string) {
     let val = 'NA';
     if (this.patient) {
@@ -128,11 +164,21 @@ export class ViewVisitSummaryComponent implements OnInit {
     return val;
   }
 
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
   replaceWithStar(str: string) {
     let n = str.length;
     return str.replace(str.substring(0, n - 4), "*****");
   }
 
+  /**
+  * Get visit provider details
+  * @param {EncounterModel[]} encounters - Array of visit encounters
+  * @return {void}
+  */
   getVisitProvider(encounters: EncounterModel[]) {
     encounters.forEach((encounter: EncounterModel) => {
       if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
@@ -148,6 +194,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get vital observations from the vital encounter
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getVitalObs(encounters: EncounterModel[]) {
     encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display == visitTypes.VITALS) {
@@ -156,6 +207,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get observation value for a given observation name
+  * @param {string} obsName - Observation name
+  * @return {any} - Obs value
+  */
   getObsValue(obsName: string) {
     let val = null;
     this.vitalObs.forEach((obs: ObsModel) => {
@@ -166,6 +222,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     return val;
   }
 
+  /**
+  * Get chief complaints and patient visit reason/summary
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getCheckUpReason(encounters: EncounterModel[]) {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
@@ -212,6 +273,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get physical examination details
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getPhysicalExamination(encounters: EncounterModel[]) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: EncounterModel) => {
@@ -253,6 +319,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get medical history details
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getMedicalHistory(encounters: EncounterModel[]) {
     this.patientHistoryData = [];
     encounters.forEach((enc: EncounterModel) => {
@@ -295,6 +366,11 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Get eye images
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
@@ -307,10 +383,20 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Open eye images preview modal
+  * @param {number} index - Index
+  * @return {void}
+  */
   previewEyeImages(index: number) {
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => {});
   }
 
+  /**
+  * Get additional docs
+  * @param {VisitModel} visit - Visit
+  * @return {void}
+  */
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
@@ -323,10 +409,20 @@ export class ViewVisitSummaryComponent implements OnInit {
     });
   }
 
+  /**
+  * Open doc images preview modal
+  * @param {number} index - Index
+  * @return {void}
+  */
   previewDocImages(index: number) {
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => {});
   }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }

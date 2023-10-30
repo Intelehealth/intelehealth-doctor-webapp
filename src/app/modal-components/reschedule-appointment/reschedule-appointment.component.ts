@@ -61,12 +61,24 @@ export class RescheduleAppointmentComponent implements OnInit {
     this.getAppointmentSlots();
   }
 
+  /**
+  * Callback for date change event
+  * @param {Event} event - Date changed event
+  * @return {void}
+  */
   dateChanged(event) {
     this.selectedSlot = null;
     this.selectedDate = moment(event.target.value).format("YYYY-MM-DD");
     this.getAppointmentSlots();
   }
 
+  /**
+  * Get appointment slots for a given speciality, from and to date
+  * @param {string} fromDate - From date
+  * @param {string} toDate - To date
+  * @param {string} speciality - Speciality
+  * @return {void}
+  */
   getAppointmentSlots(fromDate = this.selectedDate, toDate = this.selectedDate, speciality = this.data?.speciality) {
     this.scheduleData = {
       morning: [],
@@ -87,6 +99,10 @@ export class RescheduleAppointmentComponent implements OnInit {
     });
   }
 
+  /**
+  * Reschedule appointment
+  * @return {void}
+  */
   reschedule() {
     if (this.selectedDate && this.selectedSlot) {
       this.close({ date: this.selectedDate, slot: this.selectedSlot });
@@ -95,6 +111,11 @@ export class RescheduleAppointmentComponent implements OnInit {
     }
   }
 
+  /**
+  * Close modal
+  * @param {boolean|RescheduleAppointmentModalResponseModel} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean|RescheduleAppointmentModalResponseModel) {
     this.dialogRef.close(val);
   }

@@ -31,6 +31,10 @@ export class VcallOverlayComponent implements OnInit {
     this.socketService.closeVcOverlay();
   }
 
+  /**
+  * Accept incoiming call and close modal
+  * @return {void}
+  */
   accept() {
     this.socketService.incoming = true;
     this.cs.openVideoCallModal(
@@ -42,6 +46,10 @@ export class VcallOverlayComponent implements OnInit {
     this.dialogRef.close(true);
   }
 
+  /**
+  * Reject incoming call and close modal
+  * @return {void}
+  */
   reject() {
     this.socketService.emitEvent('dr_call_reject', this.data?.nurseId);
     this.dialogRef.close(true);

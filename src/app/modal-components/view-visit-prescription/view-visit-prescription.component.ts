@@ -10,7 +10,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
+import { DiagnosisModel, EncounterModel, EncounterProviderModel, FollowUpDataModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -79,6 +79,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.eventsSubscription = this.download?.subscribe((val) => { if (val) { this.downloadPrescription(); } });
   }
 
+  /**
+  * Get visit
+  * @param {string} uuid - Visit uuid
+  * @returns {void}
+  */
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
@@ -130,6 +135,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get chief complaints and patient visit reason/summary
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getCheckUpReason(encounters: EncounterModel[]) {
     this.cheifComplaints = [];
     encounters.forEach((enc: EncounterModel) => {
@@ -151,6 +161,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get vital observations from the vital encounter
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   getVitalObs(encounters: EncounterModel[]) {
     encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.VITALS) {
@@ -159,6 +174,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Check if patient interaction visit attrubute present or not
+  * @param {VisitAttributeModel[]} attributes - Array of visit attributes
+  * @returns {void}
+  */
   checkIfPatientInteractionPresent(attributes: VisitAttributeModel[]) {
     attributes.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === visitTypes.PATIENT_INTERACTION) {
@@ -167,6 +187,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get diagnosis for the visit
+  * @returns {void}
+  */
   checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
@@ -183,6 +207,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get notes for the visit
+  * @returns {void}
+  */
   checkIfNotePresent() {
     this.notes = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptNote).subscribe((response: ObsApiResponseModel) => {
@@ -194,6 +222,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get medicines for the visit
+  * @returns {void}
+  */
   checkIfMedicationPresent() {
     this.medicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptMed).subscribe((response: ObsApiResponseModel) => {
@@ -216,6 +248,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get advices for the visit
+  * @returns {void}
+  */
   checkIfAdvicePresent() {
     this.advices = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptAdvice)
@@ -230,6 +266,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Get tests for the visit
+  * @returns {void}
+  */
   checkIfTestPresent() {
     this.tests = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptTest)
@@ -242,6 +282,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Get referrals for the visit
+  * @returns {void}
+  */
   checkIfReferralPresent() {
     this.referrals = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptReferral)
@@ -255,6 +299,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Get followup for the visit
+  * @returns {void}
+  */
   checkIfFollowUpPresent() {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
@@ -274,7 +322,12 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPatientIdentifier(identifierType: string) {
+  /**
+  * Get patient identifier for a given identifier type
+  * @param {string} identifierType - Identifier type
+  * @returns {string} - Patient identifier for a given identifier type
+  */
+  getPatientIdentifier(identifierType: string): string {
     let identifier: string = '';
     if (this.patient) {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
@@ -286,6 +339,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     return identifier;
   }
 
+  /**
+  * Check visit status
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @return {void}
+  */
   checkVisitStatus(encounters: EncounterModel[]) {
     if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       this.visitStatus = visitTypes.ENDED_VISIT;
@@ -300,14 +358,30 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
-    return encounters.find(({ display = '' }) => display.includes(visitType));
+  /**
+  * Get encounter for a given encounter type
+  * @param {EncounterModel[]} encounters - Array of encounters
+  * @param {string} encounterType - Encounter type
+  * @return {EncounterModel} - Encounter for a given encounter type
+  */
+  checkIfEncounterExists(encounters: EncounterModel[], encounterType: string) {
+    return encounters.find(({ display = '' }) => display.includes(encounterType));
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Get age of patient from birthdate
+  * @param {string} birthdate - Birthdate
+  * @return {string} - Age
+  */
   getAge(birthdate: string) {
     const years = moment().diff(birthdate, 'years');
     const months = moment().diff(birthdate, 'months');
@@ -321,6 +395,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Get person attribute value for a given attribute type
+  * @param {str'} attrType - Person attribute type
+  * @return {any} - Value for a given attribute type
+  */
   getPersonAttributeValue(attrType: string) {
     let val = this.translateService.instant('NA');
     if (this.patient) {
@@ -333,11 +412,21 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     return val;
   }
 
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
   replaceWithStar(str: string) {
     const n = str.length;
     return str.replace(str.substring(0, n - 4), '******');
   }
 
+  /**
+  * Get visit provider details
+  * @param {EncounterModel[]} encounters - Array of visit encounters
+  * @return {void}
+  */
   getVisitProvider(encounters: EncounterModel[]) {
     encounters.forEach((encounter: EncounterModel) => {
       if (encounter.display.match(visitTypes.ADULTINITIAL) !== null) {
@@ -353,30 +442,62 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Getter for is prescription modal
+  * @return {boolean} - True if prescription modal else false
+  */
   get isPrescriptionModal() {
     return location.hash.includes('#/i/');
   }
 
+  /**
+  * Getter for doctor provider attributes
+  * @return {ProviderAttributeModel[]} - Doctor provider attributes
+  */
   get attributes() {
     return Array.isArray(this.consultedDoctor?.attributes) ? this.consultedDoctor.attributes : [];
   }
 
+  /**
+  * Getter for signature type
+  * @return {string} - Signature type
+  */
   get signatureType() {
     return this.attributes.find(a => a?.attributeType?.display === doctorDetails.SIGNATURE_TYPE);
   }
 
+  /**
+  * Getter for signature
+  * @return {string} - Signature
+  */
   get signature() {
     return this.attributes.find(a => a?.attributeType?.display === doctorDetails.SIGNATURE);
   }
 
+  /**
+  * Detect MIME type from the base 64 url
+  * @param {string} b64 - Base64 url
+  * @return {string} - MIME type
+  */
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
+  /**
+  * Set signature
+  * @param {string} signature - Signature
+  * @param {string} signatureType - Signature type
+  * @return {void}
+  */
   setSignature(signature, signatureType) {
     switch (signatureType) {
       case 'Draw':
@@ -394,6 +515,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Download prescription
+  * @return {void}
+  */
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
     pdfMake.createPdf({
@@ -837,6 +962,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     }).download('e-precription');
   }
 
+  /**
+  * Get rows for make pdf doc defination for a given type
+  * @param {string} type - row type
+  * @return {any} - Rows
+  */
   getRecords(type: string) {
     const records = [];
     switch (type) {
@@ -913,6 +1043,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     return records;
   }
 
+  /**
+  * Get image from url as a base64
+  * @param {string} url - Image url
+  * @return {Promise} - Promise containing base64 image
+  */
   toObjectUrl(url: string) {
     return fetch(url)
         .then((response) => {

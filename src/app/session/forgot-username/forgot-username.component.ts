@@ -46,6 +46,10 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
 
   get f() { return this.forgotUsernameForm.controls; }
 
+  /**
+  * Reset the forgotUsernameForm and its validators
+  * @return {void}
+  */
   reset() {
     if (this.active == 'phone' ) {
       this.forgotUsernameForm.get('phone').setValidators([Validators.required]);
@@ -68,6 +72,10 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     })
   }
 
+  /**
+  * Request the Otp for forgot username and redirect to the otp-verification screen
+  * @return {void}
+  */
   forgotUsername() {
     this.submitted = true;
     if (this.forgotUsernameForm.invalid) {
@@ -98,24 +106,49 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     });
   }
 
-  replaceWithStar(str: string) {
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
+  replaceWithStar(str: string): string {
     let n = str.length;
     return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @return {void}
+  */
   hasError($event: boolean) {
     this.phoneIsValid = $event;
   }
 
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @return {void}
+  */
   getNumber($event: string) {
     this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @return {void}
+  */
   telInputObject($event) {
     this.telObject = $event;
   }
 
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @return {void}
+  */
   onCountryChange($event) {
     this.telObject.setCountry($event.iso2);
     this.forgotUsernameForm.patchValue({

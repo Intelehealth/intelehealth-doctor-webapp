@@ -50,6 +50,10 @@ export class AppointmentDetailMonthComponent implements OnInit {
     })
   }
 
+  /**
+  * Mark a day as Dayoff
+  * @return {void}
+  */
   markDayOff() {
     if (this.dayOffForm.invalid) {
       this.toastr.warning("Please select from and to time", "Invalid Time!");
@@ -66,10 +70,20 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
+  /**
+  * Close modal
+  * @param {AppointmentDetailResponseModel|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: AppointmentDetailResponseModel|boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Get count of events for a given type
+  * @param {string} type - Type of event
+  * @return {number} - Count of events
+  */
   getCount(type: string) {
     let count = 0;
     this.data?.events.forEach((e: CalendarEvent) => {
@@ -80,6 +94,12 @@ export class AppointmentDetailMonthComponent implements OnInit {
     return count;
   }
 
+  /**
+  * Returns all hours segements for a given date
+  * @param {boolean} returnAll - Return all true/false
+  * @param {string} date - date
+  * @return {string[]} - Hour segements for a given date
+  */
   getHours(returnAll = true, date?: string) {
     const hours = Array.from(
       {
@@ -100,6 +120,11 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
+  /**
+  * Check if given date is today's date or not
+  * @param {string} date - Date
+  * @return {boolean} - Returns true if date if today's date else false
+  */
   isToday(date: string) {
     const start = moment().startOf("day");
     const end = moment().endOf("day");
@@ -109,6 +134,12 @@ export class AppointmentDetailMonthComponent implements OnInit {
     );
   }
 
+  /**
+  * Return the slot timing is valid or not
+  * @param {string} from - from time
+  * @param {string} to - to time
+  * @return {boolean} - Returns true if slot timing is valid else false
+  */
   validateTimeSlot(from: string, to: string) {
     if (moment(from, "h:mm A").format("HH:mm:ss") >= moment(to, "h:mm A").format("HH:mm:ss")) {
       return false;

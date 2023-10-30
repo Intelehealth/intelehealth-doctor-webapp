@@ -41,16 +41,23 @@ export class AddLicenseKeyComponent implements OnInit {
 
   get f() { return this.licenseForm.controls; }
 
+  /**
+  * Close modal
+  * @return {void}
+  */
   close() {
     this.dialogRef.close(false);
   }
 
+  /**
+  * Add new license key
+  * @return {void}
+  */
   addLicenseKey() {
     this.submitted = true;
     if (this.licenseForm.invalid) {
       return;
     }
-
     this.mindmapService.addUpdateLicenseKey(this.licenseForm.value).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.dialogRef.close(res.data);
@@ -59,5 +66,4 @@ export class AddLicenseKeyComponent implements OnInit {
       }
     });
   }
-
 }

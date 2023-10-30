@@ -148,6 +148,10 @@ export class SetupCalendarComponent implements OnInit {
     this.getScheduledMonths();
   }
 
+  /**
+  * Add new month
+  * @return {void}
+  */
   addMonth() {
     if (this.scheduledMonths.length !== this.monthNames.length) {
       let today = new Date();
@@ -167,6 +171,12 @@ export class SetupCalendarComponent implements OnInit {
     }
   }
 
+  /**
+  * Select month
+  * @param {string} name - Month
+  * @param {string} year - Year
+  * @return {void}
+  */
   selectMonth(name: string, year: string) {
     if (this.selectedMonth.name != name) {
       this.selectedMonth = { name, year };
@@ -175,6 +185,10 @@ export class SetupCalendarComponent implements OnInit {
     }
   }
 
+  /**
+  * Get max and min date for the selected month
+  * @return {void}
+  */
   getMinMaxDate() {
     let today = moment();
     let min = moment(`${this.selectedMonth.year}-${this.selectedMonth.name}-1`, 'YYYY-MMMM-D');
@@ -183,6 +197,10 @@ export class SetupCalendarComponent implements OnInit {
     this.maxDate = max.format('YYYY-MM-DD');
   }
 
+  /**
+  * Get scheduled months of the current year for the logged-in doctor
+  * @return {void}
+  */
   getScheduledMonths() {
     this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear().toString())
       .subscribe({
@@ -206,6 +224,12 @@ export class SetupCalendarComponent implements OnInit {
       });
   }
 
+  /**
+  * Get calendar schedule for a logged-in doctor for a given year and month
+  * @param {string} year - Year
+  * @param {string} month - Month
+  * @return {void}
+  */
   getSchedule(year = moment(this.minDate).format("YYYY"), month = moment(this.minDate).format("MMMM")) {
     this.appointmentService.getUserAppoitment(this.userId, year, month)
       .subscribe({
@@ -233,6 +257,11 @@ export class SetupCalendarComponent implements OnInit {
       });
   }
 
+  /**
+  * Set schedule data for a selected month
+  * @param {ScheduleModel} schedule - Schedule of the selected month
+  * @return {void}
+  */
   private setData(schedule: ScheduleModel) {
     if (!this.scheduledMonths.some((month: ScheduledMonthModel) => month.name === schedule.month)) {
       this.scheduledMonths.push({ name: schedule.month, year: schedule.year });
@@ -295,7 +324,12 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
-  getSlotsArray(utslots: ScheduleSlotModel[]) {
+  /**
+  * Returns formarray from a given schedule slots
+  * @param {ScheduleSlotModel[]} utslots - Array of schedule slots
+  * @return {FormArray} - Formarray for schedule slots
+  */
+  getSlotsArray(utslots: ScheduleSlotModel[]): FormArray {
     let dataArray = new FormArray([]);
     utslots.forEach((uts: ScheduleSlotModel) => {
       let d: FormGroup;
@@ -311,14 +345,27 @@ export class SetupCalendarComponent implements OnInit {
     return dataArray;
   }
 
+  /**
+  * Toggle add more timing button
+  * @return {void}
+  */
   toggleAddMoreTiming() {
     this._addMoreTiming = !this._addMoreTiming;
   }
 
+  /**
+  * Returns slot formarray at particular index in formgroup array
+  * @param {number} i - Index
+  * @return {FormArray} - Formarray at particular index in formgroup array
+  */
   getSlotsFormArray(i: number): FormArray {
     return this.ft.at(i).get("slots") as FormArray;
   }
 
+  /**
+  * Calculate and save the timing slots for selected schedule month
+  * @return {void}
+  */
   save() {
     this.submitted = true;
     this.fs.clear();
@@ -408,6 +455,11 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
+  /**
+  * Delete the timing slots for selected schedule month from perticular index of formgroup array
+  * @param {number} index - Index
+  * @return {void}
+  */
   deleteSlot(index: number) {
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to delete this timing slot?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
@@ -497,15 +549,27 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
-  validateTimeSlot(slot: ScheduleSlotModel) {
+  /**
+  * Return the created slot timing is valid or not
+  * @param {ScheduleSlotModel} slot - Slot
+  * @return {boolean} - Returns true if slot timing is valid else false
+  */
+  validateTimeSlot(slot: ScheduleSlotModel): boolean {
     if (moment(slot.startTime, ["h:mm A"]).format("HH:mm:ss") >= moment(slot.endTime, ["h:mm A"]).format("HH:mm:ss")) {
       return false;
     }
     return true;
   }
 
-  createSlots(days: string[], startTime: string, endTime: string) {
-    let slots = [];
+  /**
+  * Returns the slots for a given days, startTime and endTime
+  * @param {string[]} days - Array of day
+  * @param {string} startTime - Start Time
+  * @param {string} endTime - End Time
+  * @return {ScheduleSlotModel[]} - Slots for a given days, startTime and endTime
+  */
+  createSlots(days: string[], startTime: string, endTime: string): ScheduleSlotModel[] {
+    let slots: ScheduleSlotModel[] = [];
     const start = moment(this.addSlotsForm.value.startDate).format('YYYY-MM-DD');
     const end = moment(this.addSlotsForm.value.endDate).format('YYYY-MM-DD');
     const daysOff = [...this.fd.value];
@@ -526,7 +590,12 @@ export class SetupCalendarComponent implements OnInit {
     return slots;
   }
 
-  isDayOff = (event) => {
+  /**
+  * Check if date is in dayOff list or not
+  * @param {Date} event - Date
+  * @return {string|null} - Returns 'dayOffDate' if date is in dayOff list else null
+  */
+  isDayOff = (event: Date) => {
     const date = moment(
       event.getFullYear() +
       "-" +
@@ -536,6 +605,11 @@ export class SetupCalendarComponent implements OnInit {
     return this.daysOffSelected.find((x: string) => x == date) ? "dayOffDate" : null;
   }
 
+  /**
+  * Callback for dayOff selected
+  * @param {{value: string}} event - DayOff data
+  * @return {void}
+  */
   dayOffSelected(event: { value: string }) {
     if (event.value) {
       const date = moment(event.value).format('YYYY-MM-DD HH:mm:ss');
@@ -551,10 +625,18 @@ export class SetupCalendarComponent implements OnInit {
     }
   }
 
+  /**
+  * Reset the selected dayOff's list
+  * @return {void}
+  */
   resetSelectedDaysOff() {
     this.daysOffSelected = [];
   }
 
+  /**
+  * Save dayOff's
+  * @return {void}
+  */
   saveDaysOff() {
     if(!this.daysOffSelected.length) {
       this.toastr.warning(this.translateService.instant("Please select atleast 1 date for day off."),this.translateService.instant("Select dates!"));
@@ -620,6 +702,11 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
+  /**
+  * Remove a day from dayOff's list at a given index
+  * @param {number} index - Index
+  * @return {void}
+  */
   removeDaysOff(index: number) {
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to remove this day off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
@@ -646,22 +733,38 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
-  get daysOffDates() {
-    let data = '';
+  /**
+  * Getter for dayOff dates
+  * @return {string} - String containing comma seperated dayOff's list
+  */
+  get daysOffDates(): string {
+    let data: string = '';
     this.daysOffSelected.forEach((d) => {
       data += `${moment(d).format('DD MMM')}, `;
     });
     return data;
   }
 
-  getUniqueId() {
+  /**
+  * Get Unique string
+  * @return {string} - Unique string
+  */
+  getUniqueId(): string {
     return Math.random().toString(36).substr(2, 9);
   };
 
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
   private get userId() {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
+  /**
+  * Get doctor name from localstorage user
+  * @return {string} - Doctor name
+  */
   private get drName() {
     return (
       getCacheData(true, doctorDetails.USER)?.person?.display ||
@@ -669,12 +772,20 @@ export class SetupCalendarComponent implements OnInit {
     );
   }
 
+  /**
+  * Get doctor speciality from localstorage provider
+  * @return {string} - Doctor specialty
+  */
   private getSpeciality() {
     return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: ProviderAttributeModel) =>
       a.display.includes(doctorDetails.SPECIALIZATION)
     )?.value;
   }
 
+  /**
+  * Re-calculate and Update the slots for a selected schedule month
+  * @return {void}
+  */
   updateSlot() {
     this.fs.clear();
     if (moment(this.addSlotsForm.value.startDate) > moment(this.addSlotsForm.value.endDate)) {

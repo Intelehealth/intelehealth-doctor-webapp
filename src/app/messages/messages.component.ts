@@ -58,6 +58,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get filtered conversations based on doctor name or user uuid.
+  * @return {void}
+  */
   get filteredConversations() {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
@@ -71,6 +75,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get patients list/ conversations.
+  * @param {string} drUuid - User uuid of the logged-in doctor
+  * @return {void}
+  */
   getPatientsList(drUuid) {
     this.chatSvc.getPatientList(drUuid).subscribe({
       next: (res: ApiResponseModel) => {
@@ -79,13 +88,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // get patientPic() {
-  //   if (!this.conversations.patientPic) {
-  //     return 'assets/svgs/user.svg';
-  //   }
-  //   return this.conversations.patientPic;
-  // }
-
+  /**
+  * Select conversation.
+  * @param {ConversationModel} conversation - Conversation to select
+  * @return {void}
+  */
   conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
@@ -95,23 +102,21 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  submitMessage(event) {
-    const value = event.target.value.trim();
-    this.message = '';
-    if (value.length < 1) { return false; }
-    this.selectedConversation.latestMessage = value;
-    this.selectedConversation.messages.unshift({
-      id: 1,
-      message: value,
-      me: true,
-    });
-  }
-
-  getPatientsVisits(patientId) {
+  /**
+  * Get patients all visits
+  * @param {string} patientId - onerror event
+  * @return {void}
+  */
+  getPatientsVisits(patientId: string) {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
       next: (res: ApiResponseModel) => {
         this.visits = res?.data;
@@ -119,11 +124,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  onVisitChange(visitId) {
+  /**
+  * Callback for visit changes event
+  * @param {string} visitId - Visit uuid
+  * @return {void}
+  */
+  onVisitChange(visitId: string) {
     this.visitId = visitId;
     this.getMessages();
   }
 
+  /**
+  * Get all messages for the selected conversation.
+  * @return {void}
+  */
   getMessages() {
     this.chatSvc.getPatientMessages(this.selectedConversation?.toUser, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
       .subscribe({
@@ -135,6 +149,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId: number) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
@@ -143,14 +162,18 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  get patientName() {
+  /**
+  * Getter for patient name
+  * @return {string} - Patient name
+  */
+  get patientName(): string {
     return getCacheData(false, 'patientName') || '';
   }
 
-  clickMenu() {
-    this.openMenu = !this.openMenu;
-  }
-
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       this.selectedConversation.latestMessage = this.message;
@@ -186,23 +209,40 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  get fromUser() {
+  /**
+  * Getter for from user uuid
+  * @return {string} - user uuid
+  */
+  get fromUser(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  setImage(src) {
+  /**
+  * Set image for an attachment
+  * @param {string} src - Attachemnet url
+  * @return {void}
+  */
+  setImage(src: string) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
-  isPdf(url) {
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
+  isPdf(url): boolean {
     return url.includes('.pdf');
   }
 
+  /**
+  * Upload attachment
+  * @param {file[]} files - Array of attachemnet files
+  * @return {void}
+  */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
       next: (res: ApiResponseModel) => {
         this.isAttachment = true;
-
         this.message = res.data;
         this.sendMessage();
       }

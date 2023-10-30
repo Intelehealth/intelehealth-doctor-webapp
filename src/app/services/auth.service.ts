@@ -48,31 +48,10 @@ export class AuthService {
   }
   public fingerPrint;
 
-  sendToken(token) {
-    this.cookieService.set("JSESSIONID", token);
-  }
-
-  getToken() {
-    return this.cookieService.check("JSESSIONID");
-  }
-
-  isLoggedIn() {
-    return this.getToken() !== false;
-  }
-
-  logout() {
-    this.sessionService.session().subscribe((res) => {
-      this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
-        deleteCacheData(doctorDetails.USER);
-        deleteCacheData(doctorDetails.PROVIDER);
-        deleteCacheData(visitTypes.VISIT_NOTE_PROVIDER);
-        deleteCacheData('session');
-        this.cookieService.deleteAll();
-        this.myRoute.navigate(["/login"]);
-      });
-    });
-  }
-
+  /**
+  * Get device fingerprint
+  * @return {void}
+  */
   getFingerPrint() {
     (async () => {
       const fp = await FingerprintJS.load();
@@ -81,13 +60,20 @@ export class AuthService {
     })();
   }
 
-
-
+  /**
+  * Getter for current user from currentUser behaviour subject
+  * @return {any} - Current user value
+  */
   public get currentUserValue() {
     return this.currentUserSubject.value;
   }
 
-  login(credBase64: string) {
+  /**
+  * Login
+  * @param {string} credBase64 - Base64 encoded credential(username and password)
+  * @return {Observable<any>}
+  */
+  login(credBase64: string): Observable<any> {
     this.base64Cred = credBase64;
     setCacheData('xsddsdass', credBase64);
     this.cookieService.deleteAll();
@@ -116,7 +102,13 @@ export class AuthService {
     );
   }
 
-  getAuthToken(username: string, password: string) {
+  /**
+  * Get auth token from auth gateway
+  * @param {string} username - Username
+  * @param {string} password - Password
+  * @return {Observable<any>}
+  */
+  getAuthToken(username: string, password: string): Observable<any> {
     const url = this.gatewayURL.replace('/v2', '');
     return this.http.post(`${url}auth/login`, { username, password }).pipe(
       map((res: AuthGatewayLoginResponseModel) => {
@@ -126,14 +118,27 @@ export class AuthService {
     );
   }
 
+  /**
+  * Getter for auth JWT token from localstorage
+  * @return {string} - JWT auth token
+  */
   get authToken() {
     return getCacheData(false,'token') || '';
   }
 
+  /**
+  * Get provider
+  * @param {string} userId - User uuid
+  * @return {Observable<any>}
+  */
   getProvider(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,preferredName),attributes)`);
   }
 
+  /**
+  * Logout
+  * @return {void}
+  */
   logOut() {
     // remove user from local storage to log user out
     let headers: HttpHeaders = new HttpHeaders();
@@ -161,6 +166,12 @@ export class AuthService {
     return extractedPermissions;
   }
 
+  /**
+  * Extract roles and privileges
+  * @param {PrivilegesModel[]} perm - Array of privileges
+  * @param {RolesModel[]} roles - Array of roles
+  * @return {any} - Roles and permissions object
+  */
   extractRolesAndPermissions(perm: PrivilegesModel[], roles: RolesModel[]) {
     let extractedPermissions = perm.map((val) => {
       return val.name;
@@ -175,19 +186,40 @@ export class AuthService {
     return rolesObj;
   }
 
+  /**
+  * Update verification status
+  * @return {void}
+  */
   updateVerificationStatus() {
     this.currentUserSubject.next({ ...this.currentUserValue, verified: true });
     setCacheData('currentUser', JSON.stringify({ ...this.currentUserValue, verified: true }));
   }
 
+  /**
+  * Check if username exists
+  * @param {string} username - Username
+  * @return {Observable<any>}
+  */
   checkIfUsernameExists(username: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/user?q=${username}&v=custom:(uuid,display,username,person:(uuid,display))`);
   }
 
+  /**
+  * Change password
+  * @param {string} oldPassword - Old password
+  * @param {string} newPassword - New password
+  * @return {Observable<any>}
+  */
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/password`, { oldPassword, newPassword });
   }
 
+  /**
+  * Get international mask by country code
+  * @param {CountryCode} countryCode - Country code
+  * @param {boolean} withPrefix - With prefix true/false
+  * @return {string[]} - Mask
+  */
   getInternationalMaskByCountryCode(countryCode: CountryCode, withPrefix: boolean = true) {
     const number = getExampleNumber(countryCode, examples);
     const asYouType = new AsYouType(countryCode);
@@ -224,35 +256,74 @@ export class AuthService {
     return withPrefix ? ["+", ...mask] : mask;
   }
 
+  /**
+  * Request OTP
+  * @param {RequestOtpModel} payload - Payload for request otp
+  * @return {Observable<any>}
+  */
   requestOtp(payload: RequestOtpModel): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/requestOtp`, payload);
   }
 
+  /**
+  * Verify OTP
+  * @param {VerifyOtpModel} payload - Payload for verify otp
+  * @return {Observable<any>}
+  */
   verifyOtp(payload: VerifyOtpModel): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/verifyOtp`, payload);
   }
 
+  /**
+  * Reset password
+  * @param {string} userUuid - User uuid
+  * @param {string} newPassword - New password to set
+  * @return {Observable<any>}
+  */
   resetPassword(userUuid: string, newPassword: string) {
     return this.http.post(`${this.mindmapUrl}/auth/resetPassword/${userUuid}`, { newPassword });
   }
 
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
   replaceWithStar(str: string, type) {
     let n = str?.length;
     return str.replace(str.substring(5, (type == 'phone') ? n - 2 : n - 4), "*****");
   }
 
+  /**
+  * Check if session exists
+  * @return {Observable<any>}
+  */
   checkSession() {
     return this.http.get(`${this.mindmapUrl}/auth/check?ngsw-bypass=true`)
   }
 
-  setRememberMe(userUuid = this.userId) {
+  /**
+  * Set remember me
+  * @param {string} userUuid - User uuid
+  * @return {Observable<any>}
+  */
+  setRememberMe(userUuid = this.userId): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/rememberme?ngsw-bypass=true`, { userUuid })
   }
 
-  resetSession(userUuid = this.userId) {
+  /**
+  * Reset session
+  * @param {string} userUuid - User uuid
+  * @return {Observable<any>}
+  */
+  resetSession(userUuid = this.userId): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/reset?ngsw-bypass=true`, { userUuid })
   }
 
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
   get userId() {
     try {
       return getCacheData(true, doctorDetails.USER).uuid;
@@ -261,23 +332,55 @@ export class AuthService {
     }
   }
 
+  /**
+  * Validate provider attribute
+  * @param {string} attributeType - Provider attribute type
+  * @param {any} attributeValue - Value for attribute
+  * @param {string} providerUuid - Provider uuid
+  * @return {Observable<any>}
+  */
   validateProviderAttribute(attributeType: string, attributeValue: any, providerUuid: string): Observable<any> {
     return this.http.post(`${this.mindmapUrl}/auth/validateProviderAttribute`, { attributeType, attributeValue, providerUuid });
   }
 
-  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
+  /**
+  * Reschedule appointment
+  * @param {PushSubscription} sub - Push subscription object
+  * @param {string} user_uuid - User uuid
+  * @param {string} finger_print - Fingerprint of the system
+  * @param {string} providerName - Provider name
+  * @param {string} speciality - Speciality
+  * @return {Observable<any>}
+  */
+  subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string): Observable<any> {
     return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
   }
 
-  getNotificationStatus(user_uuid: string) {
+  /**
+  * Get notification status
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  getNotificationStatus(user_uuid: string): Observable<any> {
     return this.http.get(`${environment.mindmapURL}/mindmap/getNotificationStatus/${user_uuid}`);
   }
 
-  toggleNotificationStatus(user_uuid: string) {
+  /**
+  * Toggle notification status
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  toggleNotificationStatus(user_uuid: string): Observable<any> {
     return this.http.put(`${environment.mindmapURL}/mindmap/toggleNotificationStatus/${user_uuid}`, null);
   }
 
-  snoozeNotification(snooze_for: string, user_uuid: string) {
+  /**
+  * Snooze notification
+  * @param {string} snooze_for - Snooze for time
+  * @param {string} user_uuid - User uuid
+  * @return {Observable<any>}
+  */
+  snoozeNotification(snooze_for: string, user_uuid: string): Observable<any> {
     return this.http.put(`${environment.mindmapURL}/mindmap/snooze_notification/${user_uuid}`, { snooze_for });
   }
 }

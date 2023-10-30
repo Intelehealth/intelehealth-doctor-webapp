@@ -47,12 +47,16 @@ export class SetupNewPasswordComponent implements OnInit {
     }
 
     this.resetPasswordForm.get(doctorDetails.PASSWORD).valueChanges.subscribe((val: string) => {
-      this.checkPasswordStrength(val);
+      this.level = this.checkPasswordStrength(val);
     });
   }
 
   get f() { return this.resetPasswordForm.controls; }
 
+  /**
+  * Perform the reset password action
+  * @return {void}
+  */
   resetPassword() {
     this.submitted = true;
     if (this.resetPasswordForm.invalid) {
@@ -82,8 +86,12 @@ export class SetupNewPasswordComponent implements OnInit {
 
   }
 
-  generatePassword() {
-    let passwd = '';
+  /**
+  * Generate a random password
+  * @return {string} - Random password string
+  */
+  generatePassword(): string {
+    let passwd: string = '';
     let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*@$&';
     do {
       passwd = '';
@@ -100,37 +108,67 @@ export class SetupNewPasswordComponent implements OnInit {
     return passwd;
   }
 
-  checkPasswordStrength(str: string) {
+  /**
+  * Check the password strength level
+  * @param {string} str - Password string
+  * @return {number} - Strength level between 1 to 4
+  */
+  checkPasswordStrength(str: string): number {
     let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})');
     let mediumPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
     let fairPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
     if (strongPassword.test(str)) {
-      this.level = 4;
+      return 4;
     } else if (mediumPassword.test(str)) {
-      this.level = 3;
+      return 3;
     } else if (fairPassword.test(str)) {
-      this.level = 2;
+      return 2;
     } else {
-      this.level = 1;
+      return 1;
     }
   }
 
+  /**
+  * Check if string has lower case characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasLowerCase(str: string) {
     return (/[a-z]/.test(str));
   }
 
+  /**
+  * Check if string has upper case characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasUpperCase(str: string) {
     return (/[A-Z]/.test(str));
   }
 
+  /**
+  * Check if string has numeric characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasNumber(str: string) {
     return (/[0-9]/.test(str));
   }
 
+  /**
+  * Check if string has special symbol characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasSpecialCharacter(str: string) {
     return (/[^A-Za-z0-9]/.test(str));
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }

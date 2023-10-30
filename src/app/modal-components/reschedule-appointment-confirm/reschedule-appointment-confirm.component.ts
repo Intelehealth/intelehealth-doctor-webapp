@@ -11,6 +11,11 @@ export class RescheduleAppointmentConfirmComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<RescheduleAppointmentConfirmComponent>) { }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }

@@ -18,18 +18,35 @@ export class ImageCropComponent {
     this.imageBase64 = this.data.base64;
   }
 
+  /**
+  * Close modal
+  * @return {void}
+  */
   closeDialog() {
     this.dialogRef.close();
   }
 
+  /**
+  * Save cropped image
+  * @return {void}
+  */
   cropImage(){
     this.dialogRef.close(this.croppedImage);
   }
 
+  /**
+  * Callback for image cropped event
+  * @param {ImageCroppedEvent} event - Image cropped event
+  * @return {void}
+  */
   imageCropped(event: ImageCroppedEvent) {
       this.croppedImage = event.base64;
   }
 
+  /**
+  * Callback for image load failed
+  * @return {void}
+  */
   loadImageFailed() {
       this.isError = true;
   }

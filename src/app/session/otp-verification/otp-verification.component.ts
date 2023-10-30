@@ -68,6 +68,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
 
   get fCtrl() { return this.otpVerificationForm.get('otp') }
 
+  /**
+  * Switch the verification to the desired action
+  * @return {void}
+  */
   verify() {
     this.submitted = true;
     if (this.otpVerificationForm.invalid) {
@@ -96,6 +100,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Verify otp for the login action
+  * @return {void}
+  */
   verifyLogin() {
     let payload: VerifyOtpModel = {};
     payload.verifyFor = "verification";
@@ -130,6 +138,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify Otp for the forgot username action
+  * @return {void}
+  */
   verifyForgetUsername() {
     let payload: VerifyOtpModel = {}
     payload.verifyFor = "username";
@@ -149,6 +161,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify the Otp for forgot password action
+  * @return {void}
+  */
   verifyForgetPassword() {
     let payload: VerifyOtpModel = {}
     payload.verifyFor = doctorDetails.PASSWORD;
@@ -163,6 +179,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Verify prescription otp
+  * @return {void}
+  */
   verifyPrescription() {
     this.linkSvc.verifyPresctionOtp(this.hash, this.otpVerificationForm.value.otp).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
@@ -173,6 +193,10 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Resend otp for which the otp-verification requested
+  * @return {void}
+  */
   resendOtp() {
     this.counter = 60;
     this.resendIn = '01:00';
@@ -240,6 +264,11 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Replcae the string charaters with *
+  * @param {string} str - Original string
+  * @return {string} - Modified string
+  */
   replaceWithStar(str: string) {
     let n = str.length;
     return str.replace(str.substring(5, (this.via == 'phone') ? n - 2 : n - 4), "*****");

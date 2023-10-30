@@ -525,3 +525,10 @@ export interface FollowUpDataModel {
   followUpTime?: string,
   followUpReason?: string
 }
+
+export interface HwModel {
+  hwName: string,
+  hwAge: number,
+  hwGender: string,
+  hwProviderUuid: string
+}

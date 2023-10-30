@@ -58,6 +58,10 @@ export class LoginComponent implements OnInit {
     this.selectedLanguage = getCacheData(false, languages.SELECTED_LANGUAGE);
   }
 
+  /**
+  * Login to the account using username and password
+  * @return {void}
+  */
   login() {
     this.loginAttempt++;
     this.submitted = true;
@@ -89,6 +93,10 @@ export class LoginComponent implements OnInit {
   }
 
 
+  /**
+  * Perform appropriate actions for a sucessful login
+  * @return {void}
+  */
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.translationService.getTranslation('You have sucessfully logged in.', 'Login Successful', true);
@@ -105,6 +113,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+  * Check user session
+  * @return {void}
+  */
   checkSession() {
     this.authService.checkSession().subscribe({
       next: (res: CheckSessionResponseModel) => {

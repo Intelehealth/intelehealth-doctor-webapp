@@ -49,6 +49,10 @@ export class AppointmentsComponent implements OnInit {
     this.getAppointments();
   }
 
+  /**
+  * Get booked appointments for a logged-in doctor in a current year
+  * @return {void}
+  */
   getAppointments() {
     this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
@@ -57,7 +61,7 @@ export class AppointmentsComponent implements OnInit {
         appointmentsdata.forEach((appointment: AppointmentModel) => {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
-              appointment.cheif_complaint = this.getCheifComplaint2(appointment.visit);
+              appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
               appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
@@ -69,7 +73,12 @@ export class AppointmentsComponent implements OnInit {
       });
   }
 
-  getCheifComplaint2(visit: CustomVisitModel) {
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {CustomVisitModel} visit - Visit
+  * @return {string[]} - Chief complaints array
+  */
+  getCheifComplaint(visit: CustomVisitModel): string[] {
     let recent: string[] = [];
     const encounters = visit.encounters;
     encounters.forEach((encounter: CustomEncounterModel) => {
@@ -92,6 +101,11 @@ export class AppointmentsComponent implements OnInit {
     return recent;
   }
 
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
   checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
@@ -105,6 +119,11 @@ export class AppointmentsComponent implements OnInit {
     return `${hours} hrs`;
   }
 
+  /**
+  * Reschedule appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
   reschedule(appointment: AppointmentModel) {
     const len = appointment.visit.encounters.filter((e: CustomEncounterModel) => {
       return (e.type.name == visitTypes.PATIENT_EXIT_SURVEY || e.type.name == visitTypes.VISIT_COMPLETE);
@@ -139,6 +158,11 @@ export class AppointmentsComponent implements OnInit {
     }
   }
 
+  /**
+  * Cancel appointment
+  * @param {AppointmentModel} appointment - Appointment to be rescheduled
+  * @return {void}
+  */
   cancel(appointment: AppointmentModel) {
     if(appointment.visitStatus == 'Visit In Progress') {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be cancelled."), this.translateService.instant('Canceling failed!'));
@@ -152,19 +176,37 @@ export class AppointmentsComponent implements OnInit {
     });
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  get userId() {
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  get userId(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
+  /**
+  * Apply filter on a datasource
+  * @param {Event} event - Input's change event
+  * @return {void}
+  */
   applyFilter1(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  /**
+  * Clear filter from a datasource
+  * @return {void}
+  */
   clearFilter() {
     this.dataSource.filter = null;
     this.searchElement.nativeElement.value = "";

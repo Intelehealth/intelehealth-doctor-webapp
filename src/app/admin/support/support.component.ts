@@ -64,6 +64,10 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get filtered conversations based on doctor name or user uuid.
+  * @return {void}
+  */
   get filteredConversations() {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
@@ -77,6 +81,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get doctors list/ conversations.
+  * @param {string} userUuid - User uuid of the logged-in doctor
+  * @return {void}
+  */
   getDoctorsList(userUuid: string) {
     this.supportService.getDoctorsList(userUuid).subscribe({
       next: (res: ApiResponseModel) => {
@@ -87,6 +96,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Select conversation.
+  * @param {ConversationModel} conversation - Conversation to select
+  * @return {void}
+  */
   conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.getMessages();
@@ -94,10 +108,19 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.selectedConversation.unread = 0;
   }
 
+  /**
+  * Handle image not found error
+  * @param {Event} event - onerror event
+  * @return {void}
+  */
   onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
+  /**
+  * Get all messages for the selected conversation.
+  * @return {void}
+  */
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)
       .subscribe({
@@ -109,6 +132,12 @@ export class SupportComponent implements OnInit, OnDestroy {
       });
   }
 
+
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId: number) {
     this.supportService.readMessageById(this.userId, messageId).subscribe({
       next: (res) => {
@@ -117,6 +146,10 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       this.selectedConversation.message = this.message;
@@ -150,7 +183,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     }
   }
 
-  get userId() {
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  get userId(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 

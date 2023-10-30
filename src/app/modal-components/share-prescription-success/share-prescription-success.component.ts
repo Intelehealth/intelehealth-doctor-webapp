@@ -10,6 +10,11 @@ export class SharePrescriptionSuccessComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SharePrescriptionSuccessComponent>) { }
 
+  /**
+  * Close modal
+  * @param {string|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: string|boolean) {
     this.dialogRef.close(val);
   }
