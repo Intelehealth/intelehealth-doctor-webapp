@@ -1,13 +1,3 @@
-@media only screen and (max-width: 768px) {
-    .form-row {
-      display: block;
-    }
-  }
-  
-  .dropdown-item {
-    white-space: pre-wrap;
-  }
-  
   .comment  {
     font-size: 10px;
     color: red;
@@ -21,4 +11,60 @@
     font-weight: bold;
     white-space: nowrap;
   }
+
+  .eye-images-con {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
   
+    .eye-item {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      border-radius: 4px;
+      margin: 5px;
+      overflow: hidden;
+      cursor: pointer;
+  
+      img {
+        width: 100%;
+        height: 100%;
+      }
+  
+      .cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #1b163a34;
+        overflow: hidden;
+  
+        img {
+          width: 50%;
+        }
+      }
+    }
+  
+  }
+
+  li .list-item {
+    display: flex;
+    flex-wrap: nowrap;
+    /* align-items: center; */
+  }
+
+  .item {
+    width: 45%;
+    min-width: 25%;
+    margin-bottom: 0px;
+    padding: 5px 0px;
+  }
+
+  .list-item-content {
+    margin-left: 4rem;
+    margin-top: 4px;
+  }
