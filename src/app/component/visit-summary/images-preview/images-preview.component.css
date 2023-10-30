@@ -1,0 +1,28 @@
+.modal-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1b163a86;
+    padding: 10px;
+  }
+  
+  .preview-con {
+    .nav-icon {
+      width: 100px;
+      a {
+        text-decoration: none;
+      }
+    }
+    .img-con {
+      height: 65vmin;
+    }
+  
+    .pdf-con{
+      height: 75vmin;
+      width: 100%;
+    }
+  }

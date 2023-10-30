@@ -1,0 +1,49 @@
+<div class="modal-nav">
+    <button mat-icon-button (click)="close(false)">
+      <img src="assets/svgs/arrow-right-white.svg" alt="" />
+    </button>
+    <button mat-icon-button (click)="imgLink.click()">
+      <img src="assets/svgs/download-white.svg" alt="" />
+    </button>
+  </div>
+  <mat-dialog-content>
+    <div class="preview-con d-flex align-items-center justify-content-center">
+      <div class="nav-icon">
+        <a
+          href="javascript:void(0)"
+          (click)="previous()"
+          [hidden]="startIndex == min"
+        >
+          <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%" />
+        </a>
+      </div>
+      <ng-container *ngIf="isPDF(imgUrl); else image">
+        <div class="pdf-con">
+          <pdf-viewer
+            [src]="imgUrl"
+            style="width: 100%; height: 500px"
+          ></pdf-viewer>
+        </div>
+      </ng-container>
+      <ng-template #image>
+        <div class="img-con">
+          <img
+            [src]="imgUrl"
+            alt=""
+            height="100%"
+            (error)="onImageError($event)"
+          />
+        </div>
+      </ng-template>
+      <div class="nav-icon">
+        <a
+          href="javascript:void(0)"
+          (click)="next()"
+          [hidden]="startIndex == max"
+        >
+          <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
+        </a>
+      </div>
+    </div>
+    <a [href]="imgUrl" download="image.png" #imgLink></a>
+  </mat-dialog-content>

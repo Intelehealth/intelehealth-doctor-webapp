@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { SessionService } from 'src/app/services/session.service';
 import { environment } from 'src/environments/environment';
 import { VisitService } from 'src/app/services/visit.service';
+import { CoreService } from 'src/app/services/core/core.service';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class AdministerComponent implements OnInit {
   administerMedAid: any = [];
   medicines = [];
   aids: any = [];
+  eyeImages: any = [];
   patientId: string;
   visitUuid: string;
   baseURL = environment.baseURL;
@@ -47,7 +49,8 @@ export class AdministerComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    private diagnosisService: DiagnosisService
+    private diagnosisService: DiagnosisService,
+    private coreService: CoreService,
   ) { }
 
   ngOnInit(): void {
@@ -65,8 +68,6 @@ export class AdministerComponent implements OnInit {
   getDispense(visitID:any){
     this.visitService.fetchVisitDetails(visitID)
     .subscribe(visitDetail => {
-      console.log(visitDetail,"Visit Details");
-      
       visitDetail.encounters.filter((e) => {
         if(e.display.includes("ADMINISTER")){
           let dispenseObs = {}
@@ -93,12 +94,12 @@ export class AdministerComponent implements OnInit {
             }
             if(e.obs[i].display.includes("Complex Image")){
               const data = { src: `${this.baseURL}/obs/${e.obs[i].uuid}/value` }
+              this.eyeImages.push(data);
               imageDoc.push(data);
               dispenseObs['docImage'] = imageDoc            
             }           
           }
           this.administerMedAid.push(dispenseObs)
-          console.log(this.administerMedAid);
         }
         if(e.display.includes("Visit Note")){
           for(let j = 0; j < e.obs.length; j++){
@@ -118,8 +119,6 @@ export class AdministerComponent implements OnInit {
               this.aids.push(obsAids)
             }
           }
-          console.log(this.aids,"Aidssssss");
-          console.log(this.medicines,"Medssssss");
         }
       });
     });
@@ -132,4 +131,8 @@ export class AdministerComponent implements OnInit {
   getLang() {
     return localStorage.getItem("selectedLanguage");
    }
+
+  previewEyeImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => { });
+  }
 }

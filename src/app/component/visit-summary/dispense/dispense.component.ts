@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import { SessionService } from 'src/app/services/session.service';
 import { environment } from 'src/environments/environment';
 import { VisitService } from 'src/app/services/visit.service';
-
+import { CoreService } from 'src/app/services/core/core.service';
 
 @Component({
   selector: 'app-dispense',
@@ -40,6 +40,7 @@ export class DispenseComponent implements OnInit {
   dispenseMedAid: any = [];
   medicines = [];
   aids: any = [];
+  eyeImages: any = [];
   patientId: string;
   visitUuid: string;
   baseURL = environment.baseURL;
@@ -47,18 +48,14 @@ export class DispenseComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private visitService: VisitService,
-    private diagnosisService: DiagnosisService
+    private diagnosisService: DiagnosisService,
+    private coreService: CoreService,
   ) { }
 
   ngOnInit(): void {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     this.getDispense(this.visitUuid);
-
-    setTimeout(() =>{
-      const data = this.dispenseMedAid
-      this.dataToParent.emit(data);
-    },3000)
   }
 
   getDispense(visitID:any){
@@ -90,12 +87,12 @@ export class DispenseComponent implements OnInit {
             }
             if(e.obs[i].display.includes("Complex Image")){
               const data = { src: `${this.baseURL}/obs/${e.obs[i].uuid}/value` }
+              this.eyeImages.push(data);
               imageDoc.push(data);
-              dispenseObs['docImage'] = imageDoc            
-            }           
+              dispenseObs['docImage'] = imageDoc
+            }
           }
           this.dispenseMedAid.push(dispenseObs)
-          // console.log(this.dispenseMedAid);
         }
         if(e.display.includes("Visit Note")){
           for(let j = 0; j < e.obs.length; j++){
@@ -115,8 +112,6 @@ export class DispenseComponent implements OnInit {
               this.aids.push(obsAids)
             }
           }
-          // console.log(this.aids,"Aidssssss");
-          // console.log(this.medicines,"Medssssss");
         }
       });
     });
@@ -130,4 +125,7 @@ export class DispenseComponent implements OnInit {
     return localStorage.getItem("selectedLanguage");
    }
 
+  previewEyeImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res: any) => { });
+  }
 }
