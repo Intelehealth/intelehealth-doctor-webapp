@@ -8,7 +8,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class NoInternetComponent {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<NoInternetComponent>) { }
 
   /**

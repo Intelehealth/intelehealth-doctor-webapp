@@ -7,7 +7,6 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel } from 'src/app/model/model';
-import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -16,8 +15,6 @@ import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientI
 })
 export class ViewVisitSummaryComponent implements OnInit {
 
-  visit: VisitModel;
-  patient: PatientModel;
   visit: VisitModel;
   patient: PatientModel;
   baseUrl: string = environment.baseURL;
@@ -32,19 +29,11 @@ export class ViewVisitSummaryComponent implements OnInit {
   patientHistoryData: PatientHistoryModel[] = [];
   eyeImages: DocImagesModel[] = [];
   additionalDocs: DocImagesModel[] = [];
-  vitalObs: ObsModel[] = [];
-  cheifComplaints: string[] = [];
-  checkUpReasonData: PatientHistoryModel[] = [];
-  physicalExaminationData: PatientHistoryModel[] = [];
-  patientHistoryData: PatientHistoryModel[] = [];
-  eyeImages: DocImagesModel[] = [];
-  additionalDocs: DocImagesModel[] = [];
   baseURL = environment.baseURL;
   conceptAdditionlDocument = "07a816ce-ffc0-49b9-ad92-a1bf9bf5e2ba";
   conceptPhysicalExamination = '200b7a45-77bc-4986-b879-cc727f5f7d5b';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ViewVisitSummaryComponent>,
     private visitService: VisitService,
@@ -63,11 +52,9 @@ export class ViewVisitSummaryComponent implements OnInit {
   */
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
-    this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
         this.visit = visit;
         this.checkVisitStatus(visit.encounters);
-        this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
@@ -83,7 +70,6 @@ export class ViewVisitSummaryComponent implements OnInit {
         });
       }
     }, (error) => {
-    }, (error) => {
 
     });
   }
@@ -95,18 +81,13 @@ export class ViewVisitSummaryComponent implements OnInit {
   */
   getPatientIdentifier(identifierType: string) {
     let identifier: string = '';
-    let identifier: string = '';
     if (this.patient) {
-      this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
-        if (idf.identifierType.display == identifierType) {
-          identifier = idf.identifier;
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
         if (idf.identifierType.display == identifierType) {
           identifier = idf.identifier;
         }
       });
     }
-    return identifier;
     return identifier;
   }
 
@@ -165,7 +146,6 @@ export class ViewVisitSummaryComponent implements OnInit {
   getPersonAttributeValue(attrType: string) {
     let val = 'NA';
     if (this.patient) {
-      this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
         if (attrType == attr.attributeType.display) {
           val = attr.value;
@@ -226,7 +206,6 @@ export class ViewVisitSummaryComponent implements OnInit {
   getObsValue(obsName: string) {
     let val = null;
     this.vitalObs.forEach((obs: ObsModel) => {
-    this.vitalObs.forEach((obs: ObsModel) => {
       if (obs.concept.display == obsName) {
         val = obs.value;
       }
@@ -243,9 +222,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
     encounters.forEach((enc: EncounterModel) => {
-    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display == visitTypes.CURRENT_COMPLAINT) {
             const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
@@ -259,7 +236,6 @@ export class ViewVisitSummaryComponent implements OnInit {
                 const splitByBr = currentComplaint[i].split('<br/>');
                 if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   let obj1: PatientHistoryModel = {};
-                  let obj1: PatientHistoryModel = {};
                   obj1.title = visitTypes.ASSOCIATED_SYMPTOMS;
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
@@ -269,7 +245,6 @@ export class ViewVisitSummaryComponent implements OnInit {
                   }
                   this.checkUpReasonData.push(obj1);
                 } else {
-                  let obj1: PatientHistoryModel = {};
                   let obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
                   obj1.data = [];
@@ -297,9 +272,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   getPhysicalExamination(encounters: EncounterModel[]) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: EncounterModel) => {
-    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display == 'PHYSICAL EXAMINATION') {
             const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
@@ -308,7 +281,6 @@ export class ViewVisitSummaryComponent implements OnInit {
                 const splitByBr = physicalExam[i].split('<br/>');
 
                 if (splitByBr[0].includes('Abdomen')) {
-                  let obj1: PatientHistoryModel = {};
                   let obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
@@ -319,7 +291,6 @@ export class ViewVisitSummaryComponent implements OnInit {
                   }
                   this.physicalExaminationData.push(obj1);
                 } else {
-                  let obj1: PatientHistoryModel = {};
                   let obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
@@ -347,13 +318,10 @@ export class ViewVisitSummaryComponent implements OnInit {
   getMedicalHistory(encounters: EncounterModel[]) {
     this.patientHistoryData = [];
     encounters.forEach((enc: EncounterModel) => {
-    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
-        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display == visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
             let obj1: PatientHistoryModel = {};
             obj1.title = 'Patient history';
             obj1.data = [];
@@ -368,7 +336,6 @@ export class ViewVisitSummaryComponent implements OnInit {
 
           if (obs.concept.display == visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
             let obj1: PatientHistoryModel = {};
             obj1.title = 'Family history';
             obj1.data = [];
@@ -399,7 +366,6 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach((obs: ObsModel) => {
-      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
           this.eyeImages.push(data);
@@ -415,7 +381,6 @@ export class ViewVisitSummaryComponent implements OnInit {
   */
   previewEyeImages(index: number) {
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => {});
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => {});
   }
 
   /**
@@ -426,7 +391,6 @@ export class ViewVisitSummaryComponent implements OnInit {
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
-      response.results.forEach((obs: ObsModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
@@ -442,7 +406,6 @@ export class ViewVisitSummaryComponent implements OnInit {
   * @return {void}
   */
   previewDocImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => {});
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => {});
   }
 

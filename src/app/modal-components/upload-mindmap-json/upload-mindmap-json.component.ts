@@ -8,14 +8,12 @@ import { MindmapService } from 'src/app/services/mindmap.service';
   styleUrls: ['./upload-mindmap-json.component.scss']
 })
 export class UploadMindmapJsonComponent {
-export class UploadMindmapJsonComponent {
 
   file: any;
   filename: string = '';
   jsonData: string = '';
   @ViewChild('hiddenFileInput', { static: false }) hiddenFileInput: ElementRef;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<UploadMindmapJsonComponent>,
   private mindmapService: MindmapService) { }

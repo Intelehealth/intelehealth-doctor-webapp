@@ -8,10 +8,8 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./confirm-openmrs-id.component.scss']
 })
 export class ConfirmOpenmrsIdComponent {
-export class ConfirmOpenmrsIdComponent {
   openMrsId: string;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private toastr: ToastrService,
     private dialogRef: MatDialogRef<ConfirmOpenmrsIdComponent>) { }

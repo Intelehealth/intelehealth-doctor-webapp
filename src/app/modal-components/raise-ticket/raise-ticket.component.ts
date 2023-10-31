@@ -11,12 +11,10 @@ import { getCacheData } from 'src/app/utils/utility-functions';
   styleUrls: ['./raise-ticket.component.scss']
 })
 export class RaiseTicketComponent {
-export class RaiseTicketComponent {
 
   raiseTicketForm: FormGroup;
   submitted: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<RaiseTicketComponent>,
     private supportService: SupportService,

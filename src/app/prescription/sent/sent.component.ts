@@ -3,7 +3,6 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { CustomVisitModel } from 'src/app/model/model';
-import { CustomVisitModel } from 'src/app/model/model';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
@@ -18,7 +17,6 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
-  @Input() prescriptionsSent: CustomVisitModel[] = [];
   @Input() prescriptionsSent: CustomVisitModel[] = [];
   @Input() prescriptionsSentCount = 0;
   @ViewChild('sentPaginator') paginator: MatPaginator;
