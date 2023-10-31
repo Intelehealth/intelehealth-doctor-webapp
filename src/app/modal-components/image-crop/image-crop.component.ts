@@ -8,16 +8,11 @@ import { ImageCroppedEvent } from 'ngx-image-cropper';
   styleUrls: ['./image-crop.component.scss']
 })
 export class ImageCropComponent {
-export class ImageCropComponent {
 
-  imageBase64: string = '';
-  croppedImage: string = '';
   imageBase64: string = '';
   croppedImage: string = '';
   isError: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
-  private dialogRef: MatDialogRef<ImageCropComponent>) {
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<ImageCropComponent>) {
     this.imageBase64 = this.data.base64;

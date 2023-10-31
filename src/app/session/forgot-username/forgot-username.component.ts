@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
-import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
@@ -23,7 +22,6 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
   phoneIsValid: boolean = false;
   phoneNumber: string;
   telObject;
-  telObject;
   maxTelLegth: number = 10;
   subscription: Subscription;
 
@@ -39,7 +37,6 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.translate.use(getCacheData(false, languages.SELECTED_LANGUAGE));
-    this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: string) => {
     this.subscription = this.forgotUsernameForm.get('phone').valueChanges.subscribe((val: string) => {
       if (val.length > this.maxTelLegth) {
         this.forgotUsernameForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
@@ -89,7 +86,6 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
     }
 
     let payload: RequestOtpModel = {
-    let payload: RequestOtpModel = {
       otpFor: "username"
     };
     if (this.active == 'phone') {
@@ -99,7 +95,6 @@ export class ForgotUsernameComponent implements OnInit, OnDestroy {
       payload.email = this.forgotUsernameForm.value.email
     }
 
-    this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
     this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
       if (res.success) {
         this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)

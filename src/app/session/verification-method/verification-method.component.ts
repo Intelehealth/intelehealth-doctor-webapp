@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
 import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
-import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-verification-method',
@@ -23,7 +22,6 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   phoneIsValid: boolean = false;
   phoneNumber: string;
   telObject;
-  telObject;
   maxTelLegth: number = 10;
   subscription: Subscription;
 
@@ -37,7 +35,6 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription = this.verificationForm.get('phone').valueChanges.subscribe((val: string) => {
     this.subscription = this.verificationForm.get('phone').valueChanges.subscribe((val: string) => {
       if (val.length > this.maxTelLegth) {
         this.verificationForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
@@ -87,7 +84,6 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
     }
 
     let payload: RequestOtpModel = {
-    let payload: RequestOtpModel = {
       otpFor: "verification",
       username: (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId
     };
@@ -98,7 +94,6 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
       payload.email = this.verificationForm.value.email
     }
 
-    this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
     this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
       if (res.success) {
         this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)

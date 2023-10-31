@@ -7,7 +7,6 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bott
   styleUrls: ['./pwa-prompt.component.scss']
 })
 export class PwaPromptComponent {
-export class PwaPromptComponent {
 
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: { mobileType: 'ios' | 'android', promptEvent?: any },
   private bottomSheetRef: MatBottomSheetRef<PwaPromptComponent>) { }

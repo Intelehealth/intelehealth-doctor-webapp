@@ -2,10 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CalendarEvent } from 'angular-calendar';
-import { CalendarEvent } from 'angular-calendar';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { AppointmentDetailResponseModel } from 'src/app/model/model';
 import { AppointmentDetailResponseModel } from 'src/app/model/model';
 
 @Component({
@@ -18,10 +16,8 @@ export class AppointmentDetailMonthComponent implements OnInit {
   appointmentCount: number = 0;
   followupCount: number = 0;
   timeList: string[] = [];
-  timeList: string[] = [];
   dayOffForm: FormGroup;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailMonthComponent>,
     private toastr: ToastrService
@@ -37,7 +33,6 @@ export class AppointmentDetailMonthComponent implements OnInit {
     this.appointmentCount = this.getCount('Appointment');
     this.followupCount = this.getCount('Follow-up visit');
     this.timeList= this.getHours();
-    this.dayOffForm.get('markAs').valueChanges.subscribe((val: string) => {
     this.dayOffForm.get('markAs').valueChanges.subscribe((val: string) => {
       if (val == 'dayOff') {
         this.dayOffForm.get('from').clearValidators();
@@ -91,7 +86,6 @@ export class AppointmentDetailMonthComponent implements OnInit {
   */
   getCount(type: string) {
     let count = 0;
-    this.data?.events.forEach((e: CalendarEvent) => {
     this.data?.events.forEach((e: CalendarEvent) => {
       if (e.title == type) {
         count++;

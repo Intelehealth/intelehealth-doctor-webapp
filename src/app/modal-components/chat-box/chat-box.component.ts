@@ -3,7 +3,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
-import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -23,9 +22,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   messageList: MessageModel[] = [];
   toUser: string;
   hwName: string;
-  messageList: MessageModel[] = [];
-  toUser: string;
-  hwName: string;
   isAttachment = false;
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
@@ -36,7 +32,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   sending = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ChatBoxComponent>,
     private chatSvc: ChatService,
@@ -84,7 +79,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
         next: (res: ApiResponseModel) => {
-        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
           const msg = this.messageList[0];
           if (msg && !msg?.isRead && msg?.fromUser !== this.fromUser) {
@@ -108,7 +102,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
         next: (res: ApiResponseModel) => {
-        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
@@ -120,7 +113,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   */
   async sendMessage() {
     if (this.message) {
-      const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
@@ -189,7 +181,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
