@@ -13,6 +13,7 @@ import { notifications, doctorDetails } from 'src/config/constant';
 export class HelpMenuComponent implements OnInit, OnDestroy {
 
   messages: MessageModel[] = [];
+  messages: MessageModel[] = [];
   message = '';
   subscription1: Subscription;
   subscription2: Subscription;
@@ -48,6 +49,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
         to: 'System Administrator'
       };
       this.supportService.sendMessage(payload).subscribe((res: ApiResponseModel) => {
+      this.supportService.sendMessage(payload).subscribe((res: ApiResponseModel) => {
         if (res.success) {
           this.message = '';
           this.getMessages();
@@ -64,6 +66,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   getMessages(init = false) {
     this.supportService.getSupportMessages(this.user.uuid, 'System Administrator')
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           if (res.success) {
             this.messages = res?.data;
@@ -85,6 +88,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   */
   readMessagesSupport(messageId: number) {
     this.supportService.readMessageById(this.user?.uuid, messageId).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         if (res.success) {
           this.getMessages();

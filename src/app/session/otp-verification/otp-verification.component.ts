@@ -6,6 +6,7 @@ import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription, timer } from 'rxjs';
 import { RequestOtpModel, RequestOtpResponseModel, VerifyOtpModel, VerifyOtpResponseModel } from 'src/app/model/model';
+import { RequestOtpModel, RequestOtpResponseModel, VerifyOtpModel, VerifyOtpResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LinkService } from 'src/app/services/link.service';
 import { TranslationService } from 'src/app/services/translation.service';
@@ -106,6 +107,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   */
   verifyLogin() {
     let payload: VerifyOtpModel = {};
+    let payload: VerifyOtpModel = {};
     payload.verifyFor = "verification";
     payload.username = (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId;
     if (this.via == 'phone') {
@@ -114,6 +116,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
       payload.email = this.cred
     }
     payload.otp = this.otpVerificationForm.value.otp;
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
     this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.authService.updateVerificationStatus();
@@ -152,6 +155,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     }
     payload.otp = this.otpVerificationForm.value.otp;
     this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.translationService.getTranslation("Username has been successfully sent on your email and mobile number", "Username Sent",true);
         this.router.navigate(['/session/login']);
@@ -171,6 +175,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     payload.username = this.cred;
     payload.otp = this.otpVerificationForm.value.otp;
     this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
+    this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.router.navigate(['/session/setup-password'], { state: { username: this.cred, id: this.userUuid } });
       } else {
@@ -184,6 +189,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   verifyPrescription() {
+    this.linkSvc.verifyPresctionOtp(this.hash, this.otpVerificationForm.value.otp).subscribe((res: VerifyOtpResponseModel) => {
     this.linkSvc.verifyPresctionOtp(this.hash, this.otpVerificationForm.value.otp).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
         this.router.navigate(['/i', this.hash], { state: { visitId: this.visitId, accessToken: btoa(this.otpVerificationForm.value.otp) } });
@@ -201,6 +207,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     this.counter = 60;
     this.resendIn = '01:00';
     let payload: RequestOtpModel = {};
+    let payload: RequestOtpModel = {};
     switch (this.verificationFor) {
       case 'login':
         payload.otpFor = "verification";
@@ -211,6 +218,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
         } else {
           payload.email = this.cred
         }
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
         this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
@@ -231,6 +239,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
           payload.email = this.cred
         }
         this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.via == 'phone' ?
              this.replaceWithStar(`+${this.cred.split('||')[0]}${this.cred.split('||')[1]}`) :
@@ -246,6 +255,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
           otpFor: doctorDetails.PASSWORD,
           username: this.cred
         };
+        this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
         this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
           if (res.success) {
             this.translationService.getTranslation(`OTP sent on your mobile number/email successfully!`, "OTP Sent",true);

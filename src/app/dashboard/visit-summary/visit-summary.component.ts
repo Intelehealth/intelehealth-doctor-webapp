@@ -27,6 +27,7 @@ import { deleteCacheData, getCacheData, setCacheData } from 'src/app/utils/utili
 import { doctorDetails, languages, visitTypes, facility, specialization, refer_specialization, refer_prioritie, strength, days, timing, PICK_FORMATS, conceptIds } from 'src/config/constant';
 import { VisitSummaryHelperService } from 'src/app/services/visit-summary-helper.service';
 import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, DiagnosisModel, DocImagesModel, EncounterModel, EncounterProviderModel, MedicineModel, ObsApiResponseModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, ProviderAttributeModel, ProviderModel, RecentVisitsApiResponseModel, ReferralModel, TestModel, VisitAttributeModel, VisitModel } from 'src/app/model/model';
 
 class PickDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
@@ -51,7 +52,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   visit: VisitModel;
   patient: PatientModel;
+  visit: VisitModel;
+  patient: PatientModel;
   baseURL: string = environment.baseURL;
+  visitAppointment: string;
   visitAppointment: string;
   visitStatus: string;
   providerName: string;
@@ -62,7 +66,22 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   checkUpReasonData: PatientHistoryModel[] = [];
   physicalExaminationData: PatientHistoryModel[] = [];
   patientHistoryData: PatientHistoryModel[] = [];
+  vitalObs: ObsModel[] = [];
+  cheifComplaints: string[] = [];
+  checkUpReasonData: PatientHistoryModel[] = [];
+  physicalExaminationData: PatientHistoryModel[] = [];
+  patientHistoryData: PatientHistoryModel[] = [];
 
+  additionalDocs: DocImagesModel[] = [];
+  eyeImages: DocImagesModel[] = [];
+  notes: ObsModel[] = [];
+  medicines: MedicineModel[] = [];
+  existingDiagnosis: DiagnosisModel[] = [];
+  advices: ObsModel[] = [];
+  additionalInstructions: ObsModel[] = [];
+  tests: TestModel[] = [];
+  referrals: ReferralModel[] = [];
+  pastVisits: VisitModel[] = [];
   additionalDocs: DocImagesModel[] = [];
   eyeImages: DocImagesModel[] = [];
   notes: ObsModel[] = [];
@@ -86,12 +105,27 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   drugNameList: DataItemModel[] = [];
   advicesList: string[] = [];
   testsList: string[] = [];
+  facilities: DataItemModel[] = facility.facilities
+  specializations: DataItemModel[] = specialization.specializations
+  refer_specializations: DataItemModel[] = refer_specialization.refer_specializations
+  refer_priorities: DataItemModel[] = refer_prioritie.refer_priorities;
+  strengthList: DataItemModel[] = strength.strengthList
+  daysList: DataItemModel[] = days.daysList
+  timingList: DataItemModel[] = timing.timingList
+  timeList: string[] = [];
+  drugNameList: DataItemModel[] = [];
+  advicesList: string[] = [];
+  testsList: string[] = [];
 
+  visitEnded: EncounterModel|string;
+  visitCompleted: EncounterModel|boolean;
+  visitNotePresent: EncounterModel;
   visitEnded: EncounterModel|string;
   visitCompleted: EncounterModel|boolean;
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
   referSpecialityForm: FormGroup;
+  provider: ProviderModel;
   provider: ProviderModel;
   showAll = true;
   @ViewChild(MatAccordion) accordion: MatAccordion;
@@ -124,16 +158,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
   currentComplaint: string;
+  currentComplaint: string;
 
   additionalNotes = '';
   isCalling: boolean = false;
 
+  mainSearch = (text$: Observable<string>, list: string[]) =>
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? [] : list.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
+
 
   search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
   search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
@@ -244,6 +281,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: string) => {
+    this.followUpForm.get('wantFollowUp').valueChanges.subscribe((val: string) => {
       if (val === 'Yes' || val === 'Да') {
         this.followUpForm.get('followUpDate').setValidators(Validators.required);
         this.followUpForm.get('followUpDate').updateValueAndValidity();
@@ -256,6 +294,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.followUpForm.get('followUpTime').updateValueAndValidity();
       }
     });
+    this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
     this.followUpForm.get('followUpDate').valueChanges.subscribe((val: string) => {
       if (val) {
         this.timeList = this.visitSummaryService.getHours(false, val);
@@ -272,6 +311,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
+    this.visitService.fetchVisitDetails(uuid).subscribe((visit: VisitModel) => {
       if (visit) {
         this.visit = visit;
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
@@ -281,6 +321,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
         this.checkVisitStatus(visit.encounters);
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
+        this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
             this.patient = patient;
             this.clinicName = visit.location.display;
@@ -289,9 +330,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             // check if visit complete exists for this visit
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if Patient Exit Survey exists for this visit
+            // check if Patient Exit Survey exists for this visit
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
             this.getPastVisitHistory();
             if (this.visitNotePresent) {
+              this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
               this.visitNotePresent.encounterProviders.forEach((p: EncounterProviderModel) => {
                 if (p.provider.uuid === this.provider.uuid) {
                   this.isVisitNoteProvider = true;
@@ -320,6 +363,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
         });
       }
+    }, (error) => {
     }, (error) => {
       this.router.navigate(['/dashboard']);
     });
@@ -354,6 +398,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getAppointment(visitId: string) {
     this.appointmentService.getAppointment(visitId).subscribe((res: ApiResponseModel) => {
+    this.appointmentService.getAppointment(visitId).subscribe((res: ApiResponseModel) => {
       if (res) {
         this.visitAppointment = res?.data?.slotJsDate;
       }
@@ -368,6 +413,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getPatientIdentifier(identifierType: string): string {
     let identifier: string = '';
     if (this.patient) {
+      this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
       this.patient.identifiers.forEach((idf: PatientIdentifierModel) => {
         if (idf.identifierType.display === identifierType) {
           identifier = idf.identifier;
@@ -398,6 +444,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getObsValue(obsName: string) {
     let val = null;
     this.vitalObs.forEach((obs: ObsModel) => {
+    this.vitalObs.forEach((obs: ObsModel) => {
       if (obs.concept.display === obsName) {
         val = obs.value;
       }
@@ -414,7 +461,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.cheifComplaints = [];
     this.checkUpReasonData = [];
     encounters.forEach((enc: EncounterModel) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
+        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
@@ -428,6 +477,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 const splitByBr = currentComplaint[i].split('<br/>');
                 if (splitByBr[0].includes(visitTypes.ASSOCIATED_SYMPTOMS)) {
                   const obj1: PatientHistoryModel = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = this.translateService.instant(visitTypes.ASSOCIATED_SYMPTOMS);
                   obj1.data = [];
                   for (let j = 1; j < splitByBr.length; j = j + 2) {
@@ -437,6 +487,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   }
                   this.checkUpReasonData.push(obj1);
                 } else {
+                  const obj1: PatientHistoryModel = {};
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>:', '');
                   obj1.data = [];
@@ -464,7 +515,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getPhysicalExamination(encounters: EncounterModel[]) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: EncounterModel) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
+        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === 'PHYSICAL EXAMINATION') {
             const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
@@ -472,6 +525,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
                 if (splitByBr[0].includes('Abdomen')) {
+                  const obj1: PatientHistoryModel = {};
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
@@ -482,6 +536,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   }
                   this.physicalExaminationData.push(obj1);
                 } else {
+                  const obj1: PatientHistoryModel = {};
                   const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
@@ -509,10 +564,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getMedicalHistory(encounters: EncounterModel[]) {
     this.patientHistoryData = [];
     encounters.forEach((enc: EncounterModel) => {
+    encounters.forEach((enc: EncounterModel) => {
       if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
+        enc.obs.forEach((obs: ObsModel) => {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
+            const obj1: PatientHistoryModel = {};
             const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
@@ -526,6 +584,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
           if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
+            const obj1: PatientHistoryModel = {};
             const obj1: PatientHistoryModel = {};
             obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
@@ -556,6 +615,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
           const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
           this.eyeImages.push(data);
@@ -571,6 +632,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   previewEyeImages(index: number) {
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => { });
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => { });
   }
 
   /**
@@ -580,6 +642,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
+    this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
@@ -596,6 +660,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   previewDocImages(index: number) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => { });
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.additionalDocs }).subscribe((res) => { });
   }
 
@@ -634,6 +699,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getPersonAttributeValue(attrType: string) {
     let val = this.translateService.instant('NA');
     if (this.patient) {
+      this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
       this.patient.person.attributes.forEach((attr: PersonAttributeModel) => {
         if (attrType === attr.attributeType.display) {
           val = attr.value;
@@ -697,15 +763,18 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Are you sure to re-assign this visit to another doctor?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' })
       .afterClosed().subscribe((res: boolean) => {
+      .afterClosed().subscribe((res: boolean) => {
         if (res) {
           const attr = this.visitSummaryService.checkIfAttributeExists(this.visit.attributes);
           if (attr) {
+            this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
             this.visitService.updateAttribute(this.visit.uuid, attr.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
               if (result) {
                 this.updateEncounterForRefer();
               }
             });
           } else {
+            this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
             this.visitService.postAttribute(this.visit.uuid, { attributeType: attr.attributeType.uuid, value: this.referSpecialityForm.value.specialization }).subscribe((result: VisitAttributeModel) => {
               if (result) {
                 this.updateEncounterForRefer();
@@ -764,6 +833,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
 
     this.dialogRef1.afterClosed().subscribe((res) => {
+    this.dialogRef1.afterClosed().subscribe((res) => {
       this.dialogRef1 = undefined;
       this.isCalling = false;
     });
@@ -793,6 +863,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientGender: this.patient.person.gender
     });
 
+    this.dialogRef2.afterClosed().subscribe((res) => {
     this.dialogRef2.afterClosed().subscribe((res) => {
       this.dialogRef2 = undefined;
       this.isCalling = false;
@@ -877,6 +948,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     }
     this.visitService.postAttribute(this.visit.uuid, { attributeType: '6cc0bdfe-ccde-46b4-b5ff-e3ae238272cc', value: this.patientInteractionForm.value.spoken })
       .subscribe((res: VisitAttributeModel) => {
+      .subscribe((res: VisitAttributeModel) => {
         if (res) {
           this.patientInteractionForm.patchValue({ present: true, uuid: res.uuid });
         }
@@ -888,6 +960,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deletePatientInteraction() {
+    this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe(() => {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe(() => {
       this.patientInteractionForm.patchValue({ present: false, spoken: null, uuid: null });
     });
@@ -908,6 +981,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   checkIfDiagnosisPresent() {
     this.existingDiagnosis = [];
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptDiagnosis).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
@@ -972,6 +1047,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       value: `${this.diagnosisForm.value.diagnosisName}:${this.diagnosisForm.value.diagnosisType} & ${this.diagnosisForm.value.diagnosisStatus}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: ObsModel) => {
+    }).subscribe((res: ObsModel) => {
       if (res) {
         this.existingDiagnosis.push({ uuid: res.uuid, ...this.diagnosisForm.value });
         this.diagnosisForm.reset();
@@ -986,6 +1062,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deleteDiagnosis(index: number, uuid: string) {
+    this.diagnosisService.deleteObs(uuid).subscribe(() => {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.existingDiagnosis.splice(index, 1);
     });
@@ -1008,6 +1085,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.notes = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptNote).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           this.notes.push(obs);
         }
@@ -1025,6 +1104,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.notes.find((o: ObsModel) => o.value === this.addNoteForm.value.note)) {
+    if (this.notes.find((o: ObsModel) => o.value === this.addNoteForm.value.note)) {
       this.toastr.warning(this.translateService.instant('Note already added, please add another note.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1034,6 +1114,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: this.addNoteForm.value.note,
       encounter: this.visitNotePresent.uuid
+    }).subscribe((res: ObsModel) => {
     }).subscribe((res: ObsModel) => {
       this.notes.push({ uuid: res.uuid, value: this.addNoteForm.value.note });
       this.addNoteForm.reset();
@@ -1047,6 +1128,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   deleteNote(index: number, uuid: string) {
+    this.diagnosisService.deleteObs(uuid).subscribe(() => {
     this.diagnosisService.deleteObs(uuid).subscribe(() => {
       this.notes.splice(index, 1);
     });
@@ -1078,6 +1160,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.medicines = [];
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptMed).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
           if (obs.value.includes(':')) {
             this.medicines.push({
@@ -1105,6 +1189,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
+    if (this.medicines.find((o: MedicineModel) => o.drug === this.addMedicineForm.value.drug)) {
       this.toastr.warning(this.translateService.instant('Drug already added, please add another drug.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1114,6 +1199,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: `${this.addMedicineForm.value.drug}:${this.addMedicineForm.value.strength}:${this.addMedicineForm.value.days}:${this.addMedicineForm.value.timing}:${this.addMedicineForm.value.remark}`,
       encounter: this.visitNotePresent.uuid
+    }).subscribe((response: ObsModel) => {
     }).subscribe((response: ObsModel) => {
       this.medicines.push({ ...this.addMedicineForm.value, uuid: response.uuid });
       this.addMedicineForm.reset();
@@ -1129,6 +1215,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.additionalInstructions.find((o: ObsModel) => o.value === this.addAdditionalInstructionForm.value.note)) {
+    if (this.additionalInstructions.find((o: ObsModel) => o.value === this.addAdditionalInstructionForm.value.note)) {
       this.toastr.warning(this.translateService.instant('Additional instruction already added, please add another instruction.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1138,6 +1225,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: this.addAdditionalInstructionForm.value.note,
       encounter: this.visitNotePresent.uuid
+    }).subscribe((response: ObsModel) => {
     }).subscribe((response: ObsModel) => {
       this.additionalInstructions.push({ uuid: response.uuid, value: this.addAdditionalInstructionForm.value.note });
       this.addAdditionalInstructionForm.reset();
@@ -1200,6 +1288,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptAdvice)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             if (!obs.value.includes('</a>')) {
               this.advices.push(obs);
@@ -1218,6 +1308,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.advices.find((o: ObsModel) => o.value === this.addAdviceForm.value.advice)) {
+    if (this.advices.find((o: ObsModel) => o.value === this.addAdviceForm.value.advice)) {
       this.toastr.warning(this.translateService.instant('Advice already added, please add another advice.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1227,6 +1318,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: this.addAdviceForm.value.advice,
       encounter: this.visitNotePresent.uuid,
+    }).subscribe((response: ObsModel) => {
     }).subscribe((response: ObsModel) => {
       this.advices.push({ uuid: response.uuid, value: this.addAdviceForm.value.advice });
       this.addAdviceForm.reset();
@@ -1277,6 +1369,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptTest)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             this.tests.push(obs);
           }
@@ -1293,6 +1387,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
+    if (this.tests.find((o: TestModel) => o.value === this.addTestForm.value.test)) {
       this.toastr.warning(this.translateService.instant('Test already added, please add another test.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1302,6 +1397,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: this.addTestForm.value.test,
       encounter: this.visitNotePresent.uuid,
+    }).subscribe((response: ObsModel) => {
     }).subscribe((response: ObsModel) => {
       this.tests.push({ uuid: response.uuid, value: this.addTestForm.value.test });
       this.addTestForm.reset();
@@ -1338,6 +1434,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptReferral)
       .subscribe((response: ObsApiResponseModel) => {
         response.results.forEach((obs: ObsModel) => {
+      .subscribe((response: ObsApiResponseModel) => {
+        response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
             this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
@@ -1355,6 +1453,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
+    if (this.referrals.find((o: ReferralModel) => o.speciality === this.addReferralForm.value.speciality)) {
       this.toastr.warning(this.translateService.instant('Referral already added, please add another referral.'), this.translateService.instant('Already Added'));
       return;
     }
@@ -1365,6 +1464,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       obsDatetime: new Date(),
       value: `${this.addReferralForm.value.speciality}:${this.addReferralForm.value.facility}:${this.addReferralForm.value.priority_refer}:${refer_reason}`,
       encounter: this.visitNotePresent.uuid,
+    }).subscribe((response: ObsModel) => {
     }).subscribe((response: ObsModel) => {
       this.referrals.push({ uuid: response.uuid, speciality: this.addReferralForm.value.speciality, facility: this.addReferralForm.value.facility, priority: this.addReferralForm.value.priority_refer, reason: refer_reason });
       this.addReferralForm.reset();
@@ -1389,6 +1489,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   checkIfFollowUpPresent() {
+    this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
+      response.results.forEach((obs: ObsModel) => {
     this.diagnosisService.getObs(this.visit.patient.uuid, conceptIds.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
@@ -1423,6 +1525,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       value: (this.followUpForm.value.followUpReason) ? `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`,
       encounter: this.visitNotePresent.uuid
     }).subscribe((res: ObsModel) => {
+    }).subscribe((res: ObsModel) => {
       if (res) {
         this.followUpForm.patchValue({ present: true, uuid: res.uuid });
       }
@@ -1444,6 +1547,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   sharePrescription() {
+    this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
     this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
       if (res) {
         if (this.isVisitNoteProvider) {
@@ -1472,6 +1576,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   this.appointmentService.completeAppointment({visitUuid: this.visit.uuid}).subscribe();
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (linkSvcRes: ApiResponseModel) => {
+                    next: (linkSvcRes: ApiResponseModel) => {
                       const link = linkSvcRes.data.hash;
                       this.visitService.postAttribute(
                         this.visit.uuid,
@@ -1479,6 +1584,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                           attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
                           value: `/i/${link}`,
                         }).subscribe();
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
                       this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
                         if (result === 'view') {
                           // Open visit summary modal here....
@@ -1490,6 +1596,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     },
                     error: (err) => {
                       this.toastr.error(err.message);
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
                       this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
                         if (result === 'view') {
                           // Open visit summary modal here....
@@ -1503,6 +1610,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 });
               } else {
                 this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
+                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
                   if (result === 'view') {
                     // Open visit summary modal here....
                     this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
@@ -1513,7 +1621,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               }
             } else {
               this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
+              this.coreService.openSharePrescriptionErrorModal({ msg: 'Unable to send prescription due to poor network connection. Please try again or come back later', confirmBtnText: 'Try again' }).subscribe((c: boolean) => {
                 if (c) {
+                  // Do nothing
                   // Do nothing
                 }
               });
@@ -1595,6 +1705,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                       visitdetail.doctor = JSON.parse(o.value);
                     }
                   });
+                  encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
                   encounter.encounterProviders.forEach((p: EncounterProviderModel) => {
                     visitdetail.doctor.gender = p.provider.person.gender;
                     visitdetail.doctor.person_uuid = p.provider.person.uuid;

@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
+import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
 
 @Component({
   selector: 'app-prescription',
@@ -14,6 +15,8 @@ import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttri
 export class PrescriptionComponent implements OnInit {
 
   active: number = 1;
+  completedVisits: CustomVisitModel[] = [];
+  prescriptionSent: CustomVisitModel[] = [];
   completedVisits: CustomVisitModel[] = [];
   prescriptionSent: CustomVisitModel[] = [];
   loaded1: boolean = false;
@@ -43,6 +46,7 @@ export class PrescriptionComponent implements OnInit {
   */
   getCompletedVisits(page: number = 1) {
     if(page == 1) this.completedVisits = [];
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: ApiResponseModel) => {
     this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: ApiResponseModel) => {
       if (cv.success) {
         this.completedVisitsCount = cv.totalCount;
@@ -85,6 +89,7 @@ export class PrescriptionComponent implements OnInit {
   getPrescriptionSentVisits(page: number = 1) {
     if(page == 1) this.prescriptionSent = [];
     this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
+    this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
         let records = [];
@@ -121,6 +126,7 @@ export class PrescriptionComponent implements OnInit {
   getEncounterCreated(visit: CustomVisitModel, encounterName: string): string {
     let created_at: string = '';
     const encounters = visit.encounters;
+    encounters.forEach((encounter: CustomEncounterModel) => {
     encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {

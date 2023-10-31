@@ -58,6 +58,8 @@ export class ChatService {
     ).pipe(map(
       (res: ApiResponseModel) => {
         res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      (res: ApiResponseModel) => {
+        res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
         return res;
       }
     ))

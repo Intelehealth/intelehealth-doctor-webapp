@@ -30,8 +30,12 @@ export class CalendarComponent implements OnInit {
   base: string = environment.base;
   provider: ProviderModel;
   user: UserModel;
+  provider: ProviderModel;
+  user: UserModel;
   fetchedYears: number[] = [];
   fetchedMonths: string[] = [];
+  daysOff: ScheduleModel[] = [];
+  monthNames: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   daysOff: ScheduleModel[] = [];
   monthNames: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   refresh = new Subject<void>();
@@ -97,6 +101,21 @@ export class CalendarComponent implements OnInit {
                 });
               }
             }
+      .subscribe((res: ApiResponseModel) => {
+        let appointmentsdata: AppointmentModel[] = res.data;
+        appointmentsdata.forEach((appointment: AppointmentModel) => {
+          if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
+            if (appointment.visit) {
+              if (!this.events.find((o: CalendarEvent) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id)) {
+                this.events.push({
+                  id: appointment.visitUuid,
+                  title: 'Appointment',
+                  start: moment(appointment.slotJsDate).toDate(),
+                  end: moment(appointment.slotJsDate).add(appointment.slotDuration, appointment.slotDurationUnit).toDate(),
+                  meta: appointment
+                });
+              }
+            }
           }
         });
         setTimeout(() => {
@@ -114,6 +133,7 @@ export class CalendarComponent implements OnInit {
   getSchedule(year = moment(new Date()).format("YYYY"), month = moment(new Date()).format("MMMM")) {
     this.appointmentService.getUserAppoitment(this.userId, year, month)
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           if (res && res.data) {
             if (!res.data.daysOff) {
@@ -146,8 +166,10 @@ export class CalendarComponent implements OnInit {
   getFollowUpVisit() {
     this.appointmentService.getFollowUpVisit(this.providerId).subscribe({
       next: (res: FollowUpModel[]) => {
+      next: (res: FollowUpModel[]) => {
         if(res) {
           let followUpVisits = res;
+          followUpVisits.forEach((folloUp: FollowUpModel) => {
           followUpVisits.forEach((folloUp: FollowUpModel) => {
             this.visitService.fetchVisitDetails(folloUp.visit_id).subscribe((visit)=> {
               let followUpDate = (folloUp.followup_text.includes('Time:')) ? moment(folloUp.followup_text.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(folloUp.followup_text.split(', Remark: ')[0]).format('YYYY-MM-DD');
@@ -180,6 +202,7 @@ export class CalendarComponent implements OnInit {
                     slotDuration: 30,
                     slotDurationUnit: "minutes",
                     slotJsDate: moment(start).utc().format(),
+                    slotTime: (followUpTime) ? followUpTime:"9:00 AM",
                     slotTime: (followUpTime) ? followUpTime:"9:00 AM",
                     type: "follow-up visit",
                     userUuid: this.user.uuid,
@@ -224,6 +247,7 @@ export class CalendarComponent implements OnInit {
       hwGender: null,
       hwProviderUuid: null
     };
+    encounters.forEach((encounter: EncounterModel) => {
     encounters.forEach((encounter: EncounterModel) => {
       const display = encounter.display;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
@@ -325,6 +349,7 @@ export class CalendarComponent implements OnInit {
   dayClicked(view: string, day: any) {
     if (view == 'monthView') {
       let oldDaysOff = this.daysOff.find((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+      let oldDaysOff = this.daysOff.find((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
       if (oldDaysOff) {
         if (oldDaysOff.daysOff.indexOf(moment(day.date).format('DD/MM/YYYY')) != -1) {
           this.toastr.warning(this.translateService.instant("This day is already marked as Day Off"), this.translateService.instant("Already DayOff"));
@@ -332,9 +357,11 @@ export class CalendarComponent implements OnInit {
         }
       }
       this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: AppointmentDetailResponseModel) => {
+      this.coreService.openAppointmentDetailMonthViewModal(day).subscribe((res: AppointmentDetailResponseModel) => {
         if (res) {
           switch (res.markAs) {
             case 'dayOff':
+              this.coreService.openConfirmDayOffModal(day.date).subscribe((result: boolean) => {
               this.coreService.openConfirmDayOffModal(day.date).subscribe((result: boolean) => {
                 if (result) {
                   let body = {
@@ -345,11 +372,14 @@ export class CalendarComponent implements OnInit {
                   };
                   this.appointmentService.updateDaysOff(body).subscribe({
                     next: (res: ApiResponseModel) => {
+                    next: (res: ApiResponseModel) => {
                       if (res.status) {
+                        let index = this.daysOff.findIndex((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         let index = this.daysOff.findIndex((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         if (index != -1) {
                           this.daysOff[index].daysOff = (this.daysOff[index].daysOff)?this.daysOff[index].daysOff.concat(moment(day.date).format('DD/MM/YYYY')): [moment(day.date).format('DD/MM/YYYY')];
                         }
+                        day.events.forEach((event: CalendarEvent) => {
                         day.events.forEach((event: CalendarEvent) => {
                           if (event.title == 'Appointment') {
                             this.cancel(event.meta, false);
@@ -358,9 +388,12 @@ export class CalendarComponent implements OnInit {
 
                         // Update schedule as per new dayOff
                         let schedule = this.daysOff.find((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
+                        let schedule = this.daysOff.find((o: ScheduleModel) => o.month == this.monthNames[day.date.getMonth()] && o.year == day.date.getFullYear().toString());
                         if (schedule?.slotSchedule.length) {
                           schedule.slotSchedule = schedule.slotSchedule.filter((s: ScheduleSlotModel) => { return !moment(day.date).isSame(moment(s.date)) });
+                          schedule.slotSchedule = schedule.slotSchedule.filter((s: ScheduleSlotModel) => { return !moment(day.date).isSame(moment(s.date)) });
                           this.appointmentService.updateOrCreateAppointment(schedule).subscribe({
+                            next: (res: ApiResponseModel) => {
                             next: (res: ApiResponseModel) => {
                               if (res.status) {
                                 this.daysOff[index] = schedule;
@@ -376,7 +409,9 @@ export class CalendarComponent implements OnInit {
               break;
             case 'hoursOff':
               this.coreService.openConfirmHoursOffModal({ day: day.date, detail: res}).subscribe((result: boolean) => {
+              this.coreService.openConfirmHoursOffModal({ day: day.date, detail: res}).subscribe((result: boolean) => {
                 if (result) {
+                  day.events.forEach((event: CalendarEvent) => {
                   day.events.forEach((event: CalendarEvent) => {
                     if (event.title == 'Appointment') {
                       if (moment(event.meta.slotTime,'LT').isBetween(moment(res.from, 'LT'), moment(res.to, 'LT'))) {
@@ -401,6 +436,7 @@ export class CalendarComponent implements OnInit {
   */
   handleEvent(view: string, event: CalendarEvent) {
     if (view == 'dayView' || view == 'weekView') {
+        this.coreService.openAppointmentDetailDayViewModal(event).subscribe((res: string|boolean) => {
         this.coreService.openAppointmentDetailDayViewModal(event).subscribe((res: string|boolean) => {
           if (res) {
             switch (res) {
@@ -428,7 +464,9 @@ export class CalendarComponent implements OnInit {
   cancel(appointment: AppointmentModel, withConfirmation: boolean = true) {
     if (withConfirmation) {
       this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
+      this.coreService.openConfirmCancelAppointmentModal(appointment).subscribe((res: boolean) => {
         if (res) {
+          this.events.splice(this.events.findIndex((o: CalendarEvent) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.events.splice(this.events.findIndex((o: CalendarEvent) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
           this.toastr.success(this.translateService.instant("The Appointment has been successfully canceled."), this.translateService.instant('Canceling successful'));
           setTimeout(() => {
@@ -443,8 +481,10 @@ export class CalendarComponent implements OnInit {
         hwUUID: this.userId,
       };
       this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
+      this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
           if(res) {
             if (res.status) {
+              this.events.splice(this.events.findIndex((o: CalendarEvent) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
               this.events.splice(this.events.findIndex((o: CalendarEvent) => o.id == appointment.visitUuid && o.title == 'Appointment' && o.meta?.id == appointment.id), 1);
               setTimeout(() => {
                 this.refresh.next();

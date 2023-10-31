@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ApiResponseModel, MessageModel } from '../model/model';
+import { ApiResponseModel, MessageModel } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,8 @@ export class SupportService {
   */
   getSupportMessages(from: string, to: string) {
     return this.http.get(`${this.baseURL}/support/getMessages/${from}/${to}?ngsw-bypass=true`).pipe(map(
+      (res: ApiResponseModel) => {
+        res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
       (res: ApiResponseModel) => {
         res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
         return res;

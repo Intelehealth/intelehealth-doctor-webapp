@@ -6,7 +6,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './share-prescription-error.component.html',
 })
 export class SharePrescriptionErrorComponent {
+export class SharePrescriptionErrorComponent {
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SharePrescriptionErrorComponent>) { }
 

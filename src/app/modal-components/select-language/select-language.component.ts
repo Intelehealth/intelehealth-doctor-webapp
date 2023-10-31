@@ -10,9 +10,11 @@ import { languages } from 'src/config/constant';
   templateUrl: './select-language.component.html',
 })
 export class SelectLanguageComponent {
+export class SelectLanguageComponent {
 
   languageForm: FormGroup;
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SelectLanguageComponent>, private translate: TranslateService) {
     this.languageForm = new FormGroup({

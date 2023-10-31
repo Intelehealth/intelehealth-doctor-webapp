@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
+import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,6 +36,10 @@ export class DashboardComponent implements OnInit {
   dataSource4 = new MatTableDataSource<any>();
 
   baseUrl: string = environment.baseURL;
+  appointments: AppointmentModel[] = [];
+  priorityVisits: CustomVisitModel[] = [];
+  awaitingVisits: CustomVisitModel[] = [];
+  inProgressVisits: CustomVisitModel[] = [];
   appointments: AppointmentModel[] = [];
   priorityVisits: CustomVisitModel[] = [];
   awaitingVisits: CustomVisitModel[] = [];
@@ -121,6 +126,7 @@ export class DashboardComponent implements OnInit {
       this.awatingRecordsFetched = 0;
     }
     this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: ApiResponseModel) => {
+    this.visitService.getAwaitingVisits(this.specialization, page).subscribe((av: ApiResponseModel) => {
       if (av.success) {
         this.awaitingVisitsCount = av.totalCount;
         this.awatingRecordsFetched += this.offset;
@@ -134,6 +140,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource3.data = [...this.awaitingVisits];
         if (page == 1) {
           this.dataSource3.paginator = this.tempPaginator2;
+          this.dataSource3.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
           this.dataSource3.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator2.length = this.awaitingVisits.length;
@@ -177,6 +184,7 @@ export class DashboardComponent implements OnInit {
       this.priorityRecordsFetched = 0;
     }
     this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: ApiResponseModel) => {
+    this.visitService.getPriorityVisits(this.specialization, page).subscribe((pv: ApiResponseModel) => {
       if (pv.success) {
         this.priorityVisitsCount = pv.totalCount;
         this.priorityRecordsFetched += this.offset;
@@ -190,6 +198,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource2.data = [...this.priorityVisits];
         if (page == 1) {
           this.dataSource2.paginator = this.tempPaginator1;
+          this.dataSource2.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
           this.dataSource2.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator1.length = this.priorityVisits.length;
@@ -233,6 +242,7 @@ export class DashboardComponent implements OnInit {
       this.inprogressRecordsFetched = 0;
     }
     this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: ApiResponseModel) => {
+    this.visitService.getInProgressVisits(this.specialization, page).subscribe((iv: ApiResponseModel) => {
       if (iv.success) {
         this.inprogressVisitsCount = iv.totalCount;
         this.inprogressRecordsFetched += this.offset;
@@ -247,6 +257,7 @@ export class DashboardComponent implements OnInit {
         this.dataSource4.data = [...this.inProgressVisits];
         if (page == 1) {
           this.dataSource4.paginator = this.tempPaginator3;
+          this.dataSource4.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
           this.dataSource4.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
         } else {
           this.tempPaginator3.length = this.inProgressVisits.length;
@@ -287,7 +298,9 @@ export class DashboardComponent implements OnInit {
     this.appointments = [];
     this.appointmentService.getUserSlots(getCacheData(true, doctorDetails.USER).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: ApiResponseModel) => {
+      .subscribe((res: ApiResponseModel) => {
         let appointmentsdata = res.data;
+        appointmentsdata.forEach((appointment: AppointmentModel) => {
         appointmentsdata.forEach((appointment: AppointmentModel) => {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
@@ -299,6 +312,7 @@ export class DashboardComponent implements OnInit {
         });
         this.dataSource1.data = [...this.appointments];
         this.dataSource1.paginator = this.appointmentPaginator;
+        this.dataSource1.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
         this.dataSource1.filterPredicate = (data, filter: string) => data?.openMrsId.toLowerCase().indexOf(filter) != -1 || data?.patientName.toLowerCase().indexOf(filter) != -1;
       });
   }
@@ -312,6 +326,7 @@ export class DashboardComponent implements OnInit {
   getEncounterCreated(visit: CustomVisitModel, encounterName: string) {
     let created_at = '';
     const encounters = visit.encounters;
+    encounters.forEach((encounter: CustomEncounterModel) => {
     encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
@@ -330,9 +345,11 @@ export class DashboardComponent implements OnInit {
     let recent: string[] = [];
     const encounters = visit.encounters;
     encounters.forEach((encounter: CustomEncounterModel) => {
+    encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
+        obs.forEach((currentObs :CustomObsModel) => {
         obs.forEach((currentObs :CustomObsModel) => {
           if (currentObs.concept_id == 163212) {
             const currentComplaint = this.visitService.getData2(currentObs)?.value_text.replace(new RegExp('►', 'g'), '').split('<b>');
@@ -401,6 +418,7 @@ export class DashboardComponent implements OnInit {
   getSpecialization(attr: ProviderAttributeModel[]) {
     let specialization = '';
     attr.forEach((a: ProviderAttributeModel) => {
+    attr.forEach((a: ProviderAttributeModel) => {
       if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
         specialization = a.value;
       }
@@ -424,13 +442,16 @@ export class DashboardComponent implements OnInit {
       this.toastr.error(this.translateService.instant("Visit is in progress, it can't be rescheduled."), this.translateService.instant('Rescheduling failed!'));
     } else {
       this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
+      this.coreService.openRescheduleAppointmentModal(appointment).subscribe((res: RescheduleAppointmentModalResponseModel) => {
         if (res) {
           let newSlot = res;
+          this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: boolean) => {
           this.coreService.openRescheduleAppointmentConfirmModal({ appointment, newSlot }).subscribe((result: boolean) => {
             if (result) {
               appointment.appointmentId = appointment.id;
               appointment.slotDate = moment(newSlot.date, "YYYY-MM-DD").format('DD/MM/YYYY');
               appointment.slotTime = newSlot.slot;
+              this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
               this.appointmentService.rescheduleAppointment(appointment).subscribe((res: ApiResponseModel) => {
                 const message = res.message;
                 if (res.status) {

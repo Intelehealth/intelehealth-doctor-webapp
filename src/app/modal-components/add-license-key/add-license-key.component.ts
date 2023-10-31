@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { ApiResponseModel } from 'src/app/model/model';
+import { ApiResponseModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-add-license-key',
@@ -18,8 +19,10 @@ export class AddLicenseKeyComponent implements OnInit {
   licenseForm: FormGroup;
   submitted: boolean = false;
   today: string;
+  today: string;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AddLicenseKeyComponent>,
     private mindmapService: MindmapService,

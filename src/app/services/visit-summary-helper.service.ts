@@ -8,6 +8,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { EncounterModel, PatientModel, VisitAttributeModel, VisitModel } from "../model/model";
+import { EncounterModel, PatientModel, VisitAttributeModel, VisitModel } from "../model/model";
 
 
 @Injectable({
@@ -20,6 +21,8 @@ export class VisitSummaryHelperService {
   public isHelpButtonShow: boolean = false;
   public triggerAction: Subject<any> = new Subject();
   public chatVisitId: string;
+  public triggerAction: Subject<any> = new Subject();
+  public chatVisitId: string;
   public hwPhoneNo: string;
   public patient: PatientModel;
 
@@ -29,6 +32,8 @@ export class VisitSummaryHelperService {
     private translateService: TranslateService,
   ) { }
 
+  getCheifComplaint(visit: VisitModel) {
+    const recent: string[] = [];
   getCheifComplaint(visit: VisitModel) {
     const recent: string[] = [];
     const encounters = visit.encounters;
@@ -53,11 +58,14 @@ export class VisitSummaryHelperService {
   };
 
   checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
+  checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
     return encounters.find(({ display = '' }) => display.includes(visitType));
   };
 
   checkIfAttributeExists(attrs: VisitAttributeModel[]) {
+  checkIfAttributeExists(attrs: VisitAttributeModel[]) {
     let currentAttr;
+    attrs.forEach((attr: VisitAttributeModel) => {
     attrs.forEach((attr: VisitAttributeModel) => {
       if (attr.attributeType.display === 'Visit Speciality') {
         currentAttr = attr;
@@ -67,12 +75,16 @@ export class VisitSummaryHelperService {
   };
 
   get userId(): string {
+  get userId(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   };
 
   get username(): string {
+  get username(): string {
     return getCacheData(true, doctorDetails.USER).username;
   };
+
+  getHours(returnAll = true, date?: string) {
 
   getHours(returnAll = true, date?: string) {
     const hours = Array.from(
@@ -94,6 +106,7 @@ export class VisitSummaryHelperService {
     }
   };
 
+  isToday(date: string) {
   isToday(date: string) {
     const start = moment().startOf('day');
     const end = moment().endOf('day');

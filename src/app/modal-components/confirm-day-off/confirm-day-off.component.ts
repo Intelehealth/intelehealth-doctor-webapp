@@ -6,7 +6,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './confirm-day-off.component.html',
 })
 export class ConfirmDayOffComponent {
+export class ConfirmDayOffComponent {
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<ConfirmDayOffComponent>) { }
 
