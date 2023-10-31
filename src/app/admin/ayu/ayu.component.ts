@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { ApiResponseModel, UploadMindmapResponseModel, MindmapKeyModel, MindmapModel } from 'src/app/model/model';
+import { ApiResponseModel, UploadMindmapResponseModel, MindmapKeyModel, MindmapModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-ayu',
@@ -23,6 +24,8 @@ export class AyuComponent implements OnInit {
   selection = new SelectionModel<any>(false, []);
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  mindmaps: MindmapKeyModel[] = [];
+  mindmapDatas: MindmapModel[] = [];
   mindmaps: MindmapKeyModel[] = [];
   mindmapDatas: MindmapModel[] = [];
   selectedLicense: string;
@@ -66,6 +69,7 @@ export class AyuComponent implements OnInit {
   fetchMindmaps(): void {
     this.mindmapService.getMindmapKey().subscribe(
       (response: ApiResponseModel) => {
+      (response: ApiResponseModel) => {
         this.mindmaps = response.data;
         this.selectedLicense = this.mindmaps[0].keyName
         this.licenceKeySelecter();
@@ -82,6 +86,7 @@ export class AyuComponent implements OnInit {
   */
   licenceKeySelecter(): void {
     this.mindmapService.detailsMindmap(this.selectedLicense).subscribe(
+      (response: ApiResponseModel) => {
       (response: ApiResponseModel) => {
         this.mindmapDatas = response.data;
         this.dataSource = new MatTableDataSource(this.mindmapDatas);
@@ -104,9 +109,11 @@ export class AyuComponent implements OnInit {
   */
   openUploadMindmapModal() {
     this.coreService.openUploadMindmapModal().subscribe((result: UploadMindmapResponseModel) => {
+    this.coreService.openUploadMindmapModal().subscribe((result: UploadMindmapResponseModel) => {
       if (result) {
         if (result.filename && result.value) {
           result.key = this.selectedLicense;
+          this.mindmapService.postMindmap(result).subscribe((res: ApiResponseModel) => {
           this.mindmapService.postMindmap(result).subscribe((res: ApiResponseModel) => {
             if (res.success) {
               this.mindmapDatas.push(res.data);

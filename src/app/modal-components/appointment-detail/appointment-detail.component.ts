@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
+import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -17,12 +18,14 @@ export class AppointmentDetailComponent implements OnInit {
   baseUrl: string = environment.baseURL;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
     private visitService: VisitService,
     private translate:TranslateService) { }
 
   ngOnInit(): void {
     if (this.data?.title == 'Appointment') {
+      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
       this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
         this.data.meta.visit_info = visit;
         let cdata = this.getCheifComplaint(visit);
@@ -88,9 +91,11 @@ export class AppointmentDetailComponent implements OnInit {
 
     const encounters = visit.encounters;
     encounters.forEach((encounter: EncounterModel) => {
+    encounters.forEach((encounter: EncounterModel) => {
       const display = encounter.display;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
+        obs.forEach((currentObs: ObsModel) => {
         obs.forEach((currentObs: ObsModel) => {
           if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
@@ -104,6 +109,7 @@ export class AppointmentDetailComponent implements OnInit {
         });
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
+          providerAttribute.forEach((attribute: ProviderAttributeModel) => {
           providerAttribute.forEach((attribute: ProviderAttributeModel) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;

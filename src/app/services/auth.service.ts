@@ -13,6 +13,7 @@ import { CountryCode, AsYouType, getExampleNumber } from "libphonenumber-js";
 import { deleteCacheData, getCacheData, setCacheData } from "../utils/utility-functions";
 import { doctorDetails, visitTypes } from "src/config/constant";
 import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
+import { AuthGatewayLoginResponseModel, LoginResponseModel, PrivilegesModel, RequestOtpModel, RolesModel, VerifyOtpModel } from "../model/model";
 
 @Injectable({
   providedIn: "root",
@@ -85,6 +86,7 @@ export class AuthService {
         headers = headers.append('Authorization', 'Basic ' + credBase64);
         return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
           map((user: LoginResponseModel) => {
+          map((user: LoginResponseModel) => {
             if (user.authenticated) {
               user.verified = false;
               setCacheData('currentUser', JSON.stringify(user));
@@ -111,6 +113,7 @@ export class AuthService {
   getAuthToken(username: string, password: string): Observable<any> {
     const url = this.gatewayURL.replace('/v2', '');
     return this.http.post(`${url}auth/login`, { username, password }).pipe(
+      map((res: AuthGatewayLoginResponseModel) => {
       map((res: AuthGatewayLoginResponseModel) => {
         setCacheData('token', res.token);
         return res;
@@ -144,6 +147,7 @@ export class AuthService {
     let headers: HttpHeaders = new HttpHeaders();
     headers = headers.set('Authorization', `Basic ${this.base64Cred}`);
     this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(() => {
+    this.http.delete(`${this.baseUrl}/session`, { headers }).subscribe(() => {
       deleteCacheData('currentUser');
       deleteCacheData(doctorDetails.USER);
       deleteCacheData(doctorDetails.PROVIDER);
@@ -159,6 +163,7 @@ export class AuthService {
     });
   }
 
+  extractPermissions(perm: PrivilegesModel[]) {
   extractPermissions(perm: PrivilegesModel[]) {
     let extractedPermissions = perm.map((val) => {
       return val.name;

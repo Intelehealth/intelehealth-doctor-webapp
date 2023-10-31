@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponseModel } from 'src/app/model/model';
+import { ApiResponseModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
@@ -13,6 +14,7 @@ import { doctorDetails } from 'src/config/constant';
 })
 export class CancelAppointmentConfirmComponent {
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
@@ -28,6 +30,7 @@ export class CancelAppointmentConfirmComponent {
       visitUuid: this.data.visitUuid,
       hwUUID: this.userId,
     };
+    this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
     this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
         if (res) {
           if (res.status) {

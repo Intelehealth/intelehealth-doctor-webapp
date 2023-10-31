@@ -8,6 +8,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { notifications, doctorDetails, languages } from 'src/config/constant'
 import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -15,12 +16,15 @@ import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model
 })
 export class SupportComponent implements OnInit, OnDestroy {
   conversations: ConversationModel[] = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
+  selectedConversation: ConversationModel;
   selectedConversation: ConversationModel;
 
   message = "";
   fromUuid = null;
+  messageList: MessageModel[];
   messageList: MessageModel[];
   openMenu: boolean = false;
   isOver = false;
@@ -45,13 +49,16 @@ export class SupportComponent implements OnInit, OnDestroy {
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
         this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
       } else {
+        const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         if (doc == -1) {
           this.getDoctorsList(this.userId);
         } else {
           this.conversations[doc].createdAt = data.createdAt;
           this.conversations[doc].unread++;
+          this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
           this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
       }
@@ -69,6 +76,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   get filteredConversations() {
+    return this.conversations.filter((conversation: ConversationModel) => {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.doctorName
@@ -88,6 +96,7 @@ export class SupportComponent implements OnInit, OnDestroy {
   */
   getDoctorsList(userUuid: string) {
     this.supportService.getDoctorsList(userUuid).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         if (res.success) {
           this.conversations = res.data;

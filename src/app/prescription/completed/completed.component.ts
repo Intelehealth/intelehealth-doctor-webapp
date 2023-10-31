@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomVisitModel } from 'src/app/model/model';
+import { CustomVisitModel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -14,6 +15,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'visit_ended'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
+  @Input() completedVisits: CustomVisitModel[] = [];
   @Input() completedVisits: CustomVisitModel[] = [];
   @Input() completedVisitsCount: number = 0;
   @ViewChild('completedPaginator') paginator: MatPaginator;
@@ -30,10 +32,12 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     this.dataSource = new MatTableDataSource(this.completedVisits);
     this.dataSource.paginator = this.tempPaginator;
     this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
     this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 

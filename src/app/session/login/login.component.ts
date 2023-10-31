@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxRolesService } from 'ngx-permissions';
 import { AuthGatewayLoginResponseModel, CheckSessionResponseModel, LoginResponseModel, ProviderResponseModel } from 'src/app/model/model';
+import { AuthGatewayLoginResponseModel, CheckSessionResponseModel, LoginResponseModel, ProviderResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { TranslationService } from 'src/app/services/translation.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
     private rolesService: NgxRolesService,
     public translate: TranslateService,
     public translationService: TranslationService) {
+
 
     this.loginForm = new FormGroup({
       username: new FormControl('', Validators.required),
@@ -72,7 +74,10 @@ export class LoginComponent implements OnInit {
     const cred = `${val.username}:${val.password}`;
     const base64cred = btoa(cred);
     this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
+    this.authService.login(base64cred).subscribe((res: LoginResponseModel) => {
       if (res.authenticated && !res.verified) {
+        this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
+          this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
         this.authService.getAuthToken(val.username, val.password).subscribe((token: AuthGatewayLoginResponseModel) => {
           this.authService.getProvider(res.user.uuid).subscribe((provider: ProviderResponseModel) => {
             if (provider.results.length) {
@@ -119,6 +124,7 @@ export class LoginComponent implements OnInit {
   */
   checkSession() {
     this.authService.checkSession().subscribe({
+      next: (res: CheckSessionResponseModel) => {
       next: (res: CheckSessionResponseModel) => {
         this.rememberMe = res.rememberme;
         this.authService.rememberMe = this.rememberMe ? true : false;

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponseModel } from 'src/app/model/model';
+import { ApiResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails } from 'src/config/constant';
@@ -64,6 +65,7 @@ export class SetupNewPasswordComponent implements OnInit {
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
       this.toastr.warning(this.translate.instant("Password and Confirm Password doesn't match."),
+      this.toastr.warning(this.translate.instant("Password and Confirm Password doesn't match."),
       this.translate.instant("Password doesn't match!"));
       return;
     }
@@ -75,7 +77,9 @@ export class SetupNewPasswordComponent implements OnInit {
     }
 
     this.authService.resetPassword(this.userUuid, passwd).subscribe((res: ApiResponseModel) => {
+    this.authService.resetPassword(this.userUuid, passwd).subscribe((res: ApiResponseModel) => {
       if (res.success) {
+        this.coreService.openPasswordResetSuccessModal().subscribe((result) => {
         this.coreService.openPasswordResetSuccessModal().subscribe((result) => {
           this.router.navigate(['/session/login']);
         });

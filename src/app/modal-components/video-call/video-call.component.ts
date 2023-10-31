@@ -25,6 +25,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   messageList: MessageModel[] = [];
   toUser: string;
   hwName: string;
+  messageList: MessageModel[] = [];
+  toUser: string;
+  hwName: string;
   baseUrl: string = environment.baseURL;
   _chatOpened: boolean = false;
   _localAudioMute: boolean = false;
@@ -53,6 +56,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
@@ -64,6 +68,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
+    const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
@@ -333,6 +338,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
         next: (res: ApiResponseModel) => {
+        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
@@ -419,6 +425,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.socketSvc.onEvent("isread").subscribe((data) => {
     this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
@@ -548,6 +555,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 

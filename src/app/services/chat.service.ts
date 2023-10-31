@@ -58,6 +58,8 @@ export class ChatService {
     ).pipe(map(
       (res: ApiResponseModel) => {
         res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      (res: ApiResponseModel) => {
+        res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
         return res;
       }
     ))
@@ -143,6 +145,7 @@ export class ChatService {
           }
         } else {
           const imageCount = messages.reduce((total: number, item: any) => total + ((item.type === 'attachment' && !this.isPdf(item.message)) ? 1 : 0), 0)
+
 
           if (imageCount >= 5) {
             this.toastr.warning('Image upload capacity exceeded, only 5 per chat allowed.');

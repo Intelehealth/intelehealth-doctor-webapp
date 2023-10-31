@@ -29,6 +29,8 @@ export class WebrtcService {
   public url: string = environment.webrtcSdkServerUrl;
   public token: string | null = null;
   public appToken: string | null = null;
+  public token: string | null = null;
+  public appToken: string | null = null;
   public remoteUser: any | null = null;
   public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
@@ -64,6 +66,7 @@ export class WebrtcService {
   */
   getToken(name: string, roomId: string, nurseName: string): Observable<any> {
     return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
+      .pipe(map((res: LivekitTokenModel) => {
       .pipe(map((res: LivekitTokenModel) => {
         this.token = res?.token;
         this.appToken = res?.appToken;
