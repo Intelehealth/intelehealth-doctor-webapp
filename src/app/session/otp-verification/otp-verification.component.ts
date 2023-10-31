@@ -146,8 +146,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   verifyForgetUsername() {
-    let payload: VerifyOtpModel = {}
-    let payload: VerifyOtpModel = {}
+    let payload: VerifyOtpModel = {};
     payload.verifyFor = "username";
     if (this.via == 'phone') {
       payload.phoneNumber = this.cred.split('||')[1]
@@ -171,8 +170,7 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   verifyForgetPassword() {
-    let payload: VerifyOtpModel = {}
-    let payload: VerifyOtpModel = {}
+    let payload: VerifyOtpModel = {};
     payload.verifyFor = doctorDetails.PASSWORD;
     payload.username = this.cred;
     payload.otp = this.otpVerificationForm.value.otp;

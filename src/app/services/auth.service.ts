@@ -163,6 +163,11 @@ export class AuthService {
     });
   }
 
+  /**
+  * Extract privileges
+  * @param {PrivilegesModel[]} perm - Array of privileges
+  * @return {string[]} - Array of Permissions
+  */
   extractPermissions(perm: PrivilegesModel[]) {
   extractPermissions(perm: PrivilegesModel[]) {
     let extractedPermissions = perm.map((val) => {
