@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
+import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -22,6 +23,9 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   messageList: MessageModel[] = [];
   toUser: string;
   hwName: string;
+  messageList: MessageModel[] = [];
+  toUser: string;
+  hwName: string;
   isAttachment = false;
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
@@ -32,6 +36,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   sending = false;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ChatBoxComponent>,
     private chatSvc: ChatService,
@@ -65,10 +70,20 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get all messages and update status to read
+  * @param {string} toUser - To user uuid
+  * @param {string} patientId - Patient uuid
+  * @param {string} fromUser - from user uuid
+  * @param {string} visitId - Visit uuid
+  * @param {boolean} isFirstTime - Is first time true/false
+  * @return {void}
+  */
   getMessagesAndCheckRead(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
           const msg = this.messageList[0];
@@ -79,18 +94,33 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Get all messages
+  * @param {string} toUser - To user uuid
+  * @param {string} patientId - Patient uuid
+  * @param {string} fromUser - from user uuid
+  * @param {string} visitId - Visit uuid
+  * @param {boolean} isFirstTime - Is first time true/false
+  * @return {void}
+  */
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   async sendMessage() {
     if (this.message) {
+      const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
@@ -123,6 +153,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
@@ -131,20 +166,30 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Getter for from user uuid
+  * @return {string} - user uuid
+  */
   get fromUser(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
   isPdf(url: string) {
     return url.includes('.pdf');
   }
 
+  /**
+  * Upload attachment
+  * @param {file[]} files - Array of attachemnet files
+  * @return {void}
+  */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
@@ -154,6 +199,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Set image for an attachment
+  * @param {string} src - Attachemnet url
+  * @return {void}
+  */
   setImage(src) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }

@@ -61,10 +61,19 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Emit event to child component for download
+  * @param {boolean} - True to download
+  * @return {void}
+  */
   emitEventToChild(val: boolean) {
     this.eventsSubject.next(val);
   }
 
+  /**
+  * Fetch the visit details from a the hash
+  * @return {void}
+  */
   getVisitFromHash() {
     this.linkSvc.getShortenedLink(this.hash).subscribe({
       next: (res: ApiResponseModel) => {
@@ -81,6 +90,11 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get patient details for a given visit
+  * @param {string} uuid - Visit uuid
+  * @return {void}
+  */
   fetchVisitPatient(uuid: string = this.visitId) {
     this.visitService.fetchVisitPatient(uuid).subscribe({
       next: (visit: VisitModel) => {
@@ -120,6 +134,10 @@ export class PrescriptionDownloadComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Emit download prescription event
+  * @return {void}
+  */
   async download() {
     this.emitEventToChild(true);
   }

@@ -33,6 +33,10 @@ export class ForgotPasswordComponent implements OnInit {
 
   get f() { return this.forgotPasswordForm.controls; }
 
+  /**
+  * Request the otp for the forgot password and redirect to otp-verification screen
+  * @return {void}
+  */
   forgotPassword() {
     this.submitted = true;
     if (this.forgotPasswordForm.invalid) {

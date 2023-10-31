@@ -68,7 +68,7 @@ export class SocketService {
       });
 
       this.onEvent("log").subscribe((array) => {
-        if (getCacheData(false,'log') === "1") console.log.apply(console, array);
+        if (getCacheData(false, 'log') === "1") console.log.apply(console, array);
       });
 
       this.initEvents();
@@ -163,25 +163,11 @@ export class SocketService {
       top: "90px",
       right: "0px",
     };
-    const config: MatDialogConfig = {
-      width: "calc(100% - 300px)",
-      height: "82vh",
-      maxHeight: "90vh",
-      autoFocus: false,
-      hasBackdrop: false,
-      position,
-      data: {
-        patientUuid: getCacheData(false, 'patientUuid'),
-        connectToDrId: getCacheData(false, 'connectToDrId'),
-        visitId,
-        initiator,
-      },
-    };
   }
 
   get user() {
     try {
-      return getCacheData(true,doctorDetails.USER);
+      return getCacheData(true, doctorDetails.USER);
     } catch (error) {
       return {};
     }

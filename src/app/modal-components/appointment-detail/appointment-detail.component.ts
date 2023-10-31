@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
+import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -17,12 +18,14 @@ export class AppointmentDetailComponent implements OnInit {
   baseUrl: string = environment.baseURL;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
     private visitService: VisitService,
     private translate:TranslateService) { }
 
   ngOnInit(): void {
     if (this.data?.title == 'Appointment') {
+      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
       this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
         this.data.meta.visit_info = visit;
         let cdata = this.getCheifComplaint(visit);
@@ -43,14 +46,20 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
+  /**
+  * Close modal
+  * @param {string|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: string|boolean) {
     this.dialogRef.close(val);
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Check how old the date is from now
+  * @param {string} data - Date in string format
+  * @return {string} - Returns how old the date is from now
+  */
   checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
@@ -70,6 +79,11 @@ export class AppointmentDetailComponent implements OnInit {
     return `${this.translate.instant('Starts in')} ${hours} ${this.translate.instant('hrs')}`;
   }
 
+  /**
+  * Retreive the chief complaints for the visit
+  * @param {VisitModel} visit - Visit
+  * @return {{complaint: string[],hwPhoneNo: string, prescriptionCreatedAt: string }} - Object having Chief complaints array, HW phone number and prescription created time
+  */
   getCheifComplaint(visit: VisitModel) {
     let recent: string[] = [];
     let hwPhoneNo: string = '';
@@ -77,9 +91,11 @@ export class AppointmentDetailComponent implements OnInit {
 
     const encounters = visit.encounters;
     encounters.forEach((encounter: EncounterModel) => {
+    encounters.forEach((encounter: EncounterModel) => {
       const display = encounter.display;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
+        obs.forEach((currentObs: ObsModel) => {
         obs.forEach((currentObs: ObsModel) => {
           if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
@@ -94,6 +110,7 @@ export class AppointmentDetailComponent implements OnInit {
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
           providerAttribute.forEach((attribute: ProviderAttributeModel) => {
+          providerAttribute.forEach((attribute: ProviderAttributeModel) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;
             }
@@ -107,6 +124,11 @@ export class AppointmentDetailComponent implements OnInit {
     return { complaint: recent, hwPhoneNo, prescriptionCreatedAt };
   }
 
+  /**
+  * Check visit status
+  * @param {EncounterModel[]} encounters - Array of visit encounters
+  * @return {string} - Returns visit status
+  */
   checkVisitStatus(encounters: EncounterModel[]) {
     if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
@@ -121,10 +143,20 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
+  /**
+  * Returns the ecounter for a given encounter type
+  * @param {CustomEncounterModel[]} encounters - Array of visit encounters
+  * @return {CustomEncounterModel} - Ecounter for a given encounter type
+  */
+  checkIfEncounterExists(encounters: EncounterModel[], encounterType: string) {
+    return encounters.find(({ display = "" }) => display.includes(encounterType));
   }
 
+  /**
+  * Returns the prescription created time
+  * @param {string} data - Timestamp
+  * @return {string} - Prescription created time
+  */
   checkPrescriptionCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');

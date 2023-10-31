@@ -36,141 +36,273 @@ export class CoreService {
 
   constructor(private dialog: MatDialog) { }
 
+  /**
+  * Open Confirmation dialog modal
+  * @param {{ confirmationMsg: string, cancelBtnText: string, confirmBtnText: string }} data - Dialog data
+  * @return {MatDialogRef<ConfirmDialogComponent>} - Dialog reference
+  */
   openConfirmationDialog(data: { confirmationMsg: string, cancelBtnText: string, confirmBtnText: string }): MatDialogRef<ConfirmDialogComponent> {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, { panelClass: 'modal-md', data } );
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { panelClass: 'modal-md', data });
     return dialogRef;
   }
 
+  /**
+  * Open help chat modal
+  * @return {MatDialogRef<HelpMenuComponent>} - Dialog reference
+  */
   openHelpMenuModal(): MatDialogRef<HelpMenuComponent> {
-    const dialogRef = this.dialog.open(HelpMenuComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "20px", right: "20px" }, hasBackdrop: false } );
+    const dialogRef = this.dialog.open(HelpMenuComponent, { panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "20px", right: "20px" }, hasBackdrop: false });
     return dialogRef;
   }
 
+  /**
+  * Open add license modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openAddLicenseKeyModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(AddLicenseKeyComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open upload mindmap modal
+  * @return {Observable<any>} - Dialog result
+  */
   openUploadMindmapModal(): Observable<any> {
     const dialogRef = this.dialog.open(UploadMindmapJsonComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open no ineternat connection modal
+  * @return {Observable<any>} - Dialog result
+  */
   openNoInternetConnectionModal(): Observable<any> {
     const dialogRef = this.dialog.open(NoInternetComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open password reset success modal
+  * @return {Observable<any>} - Dialog result
+  */
   openPasswordResetSuccessModal(): Observable<any> {
     const dialogRef = this.dialog.open(PasswordResetSuccessComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open select language modal
+  * @return {Observable<any>} - Dialog result
+  */
   openSelectLanguageModal(): Observable<any> {
     const dialogRef = this.dialog.open(SelectLanguageComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open share prescription confirmation modal
+  * @return {Observable<any>} - Dialog result
+  */
   openSharePrescriptionConfirmModal(): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open prescription share success modal
+  * @return {Observable<any>} - Dialog result
+  */
   openSharePrescriptionSuccessModal(): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionSuccessComponent, { panelClass: 'modal-md' });
     return dialogRef.afterClosed();
   }
 
-  openSharePrescriptionErrorModal(data: { msg:string, confirmBtnText: string }): Observable<any> {
+  /**
+  * Open share prescription error modal
+  * @param {{ msg: string, confirmBtnText: string }} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
+  openSharePrescriptionErrorModal(data: { msg: string, confirmBtnText: string }): Observable<any> {
     const dialogRef = this.dialog.open(SharePrescriptionErrorComponent, { panelClass: 'modal-md', data });
     return dialogRef.afterClosed();
   }
 
-  openVisitSummaryModal(data: { uuid:string }): Observable<any> {
-    const dialogRef = this.dialog.open(ViewVisitSummaryComponent, { panelClass: 'modal-lg', data,  });
+  /**
+  * Open view visit summary modal
+  * @param {{ uuid: string }} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
+  openVisitSummaryModal(data: { uuid: string }): Observable<any> {
+    const dialogRef = this.dialog.open(ViewVisitSummaryComponent, { panelClass: 'modal-lg', data, });
     return dialogRef.afterClosed();
   }
 
-  openVisitPrescriptionModal(data: { uuid:string }): Observable<any> {
+  /**
+  * Open view visit prescription modal
+  * @param {{ uuid: string }} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
+  openVisitPrescriptionModal(data: { uuid: string }): Observable<any> {
     const dialogRef = this.dialog.open(ViewVisitPrescriptionComponent, { panelClass: 'modal-lg', data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open chat box modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<ChatBoxComponent>} - Dialog reference
+  */
   openChatBoxModal(data: any): MatDialogRef<ChatBoxComponent> {
-    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false } );
+    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false });
     return dialogRef;
   }
 
+  /**
+  * Open video call modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<VideoCallComponent>} - Dialog reference
+  */
   openVideoCallModal(data: any): MatDialogRef<VideoCallComponent> {
-    const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false } );
+    const dialogRef = this.dialog.open(VideoCallComponent, { panelClass: "vc-modal-lg", data, hasBackdrop: false });
     return dialogRef;
   }
 
+  /**
+  * Open video call overlay modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<VcallOverlayComponent>} - Dialog reference
+  */
   openVideoCallOverlayModal(data: any): MatDialogRef<VcallOverlayComponent> {
     const dialogRef = this.dialog.open(VcallOverlayComponent, { panelClass: "modal-sm", data, id: "vcOverlayModal", disableClose: true, hasBackdrop: true });
     return dialogRef;
   }
 
+  /**
+  * Open searched patients modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openSearchedPatientModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(SearchedPatientsComponent, { panelClass: "modal-lg", data } );
+    const dialogRef = this.dialog.open(SearchedPatientsComponent, { panelClass: "modal-lg", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open appointment details day view modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openAppointmentDetailDayViewModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(AppointmentDetailComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(AppointmentDetailComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open appointment details month view modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openAppointmentDetailMonthViewModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: ["modal-md","dayView-con"], data } );
+    const dialogRef = this.dialog.open(AppointmentDetailMonthComponent, { panelClass: ["modal-md", "dayView-con"], data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open cancel appointment confirmation modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openConfirmCancelAppointmentModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(CancelAppointmentConfirmComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(CancelAppointmentConfirmComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open reschedule appointment modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openRescheduleAppointmentModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(RescheduleAppointmentComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(RescheduleAppointmentComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open reschedule appointment confirmation modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openRescheduleAppointmentConfirmModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(RescheduleAppointmentConfirmComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(RescheduleAppointmentConfirmComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open images preview modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openImagesPreviewModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(ImagesPreviewComponent, { panelClass: ["modal-lg", "transparent"], data } );
+    const dialogRef = this.dialog.open(ImagesPreviewComponent, { panelClass: ["modal-lg", "transparent"], data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open mark day as dayoff confirmation modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openConfirmDayOffModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(ConfirmDayOffComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(ConfirmDayOffComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open mark day hours as hoursOff confirmation modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openConfirmHoursOffModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(ConfirmHoursOffComponent, { panelClass: "modal-md", data } );
+    const dialogRef = this.dialog.open(ConfirmHoursOffComponent, { panelClass: "modal-md", data });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open confirm OpenMRS Id modal
+  * @param {any} data - Dialog data
+  * @return {Observable<any>} - Dialog result
+  */
   openConfirmOpenMrsIdModal(data: any): Observable<any> {
-    const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true } );
+    const dialogRef = this.dialog.open(ConfirmOpenmrsIdComponent, { panelClass: "modal-md", data, disableClose: true });
     return dialogRef.afterClosed();
   }
 
+  /**
+  * Open raise ticket modal
+  * @return {MatDialogRef<RaiseTicketComponent>} - Dialog reference
+  */
   openRaiseTicketModal(): MatDialogRef<RaiseTicketComponent> {
-    const dialogRef = this.dialog.open(RaiseTicketComponent, { panelClass: "modal-md" } );
+    const dialogRef = this.dialog.open(RaiseTicketComponent, { panelClass: "modal-md" });
     return dialogRef;
   }
 
+  /**
+  * Open crop image modal
+  * @param {any} data - Dialog data
+  * @return {MatDialogRef<ImageCropComponent>} - Dialog reference
+  */
   openImageCropModal(data: any): MatDialogRef<ImageCropComponent> {
-    const dialogRef = this.dialog.open(ImageCropComponent, { panelClass: 'modal-md', data,  });
+    const dialogRef = this.dialog.open(ImageCropComponent, { panelClass: 'modal-md', data, });
     return dialogRef;
   }
 
+  /**
+  * Convert blob to base64
+  * @param {Blob} blob - Blob  file
+  * @return {Promise} - Promise containing base64
+  */
   blobToBase64(blob) {
     return new Promise((resolve, _) => {
       const reader = new FileReader();

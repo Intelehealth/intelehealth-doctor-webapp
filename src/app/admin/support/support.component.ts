@@ -8,6 +8,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { environment } from 'src/environments/environment';
 import { notifications, doctorDetails, languages } from 'src/config/constant'
 import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model/model';
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -15,12 +16,15 @@ import { ApiResponseModel, ConversationModel, MessageModel } from 'src/app/model
 })
 export class SupportComponent implements OnInit, OnDestroy {
   conversations: ConversationModel[] = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
+  selectedConversation: ConversationModel;
   selectedConversation: ConversationModel;
 
   message = "";
   fromUuid = null;
+  messageList: MessageModel[];
   messageList: MessageModel[];
   openMenu: boolean = false;
   isOver = false;
@@ -45,13 +49,16 @@ export class SupportComponent implements OnInit, OnDestroy {
       if (data.from == this.selectedConversation?.userUuid) {
         this.readMessages(data.id);
         this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
       } else {
+        const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         const doc = this.conversations.findIndex((d: ConversationModel) => d.userUuid == data.from);
         if (doc == -1) {
           this.getDoctorsList(this.userId);
         } else {
           this.conversations[doc].createdAt = data.createdAt;
           this.conversations[doc].unread++;
+          this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
           this.conversations.sort((a: ConversationModel, b: ConversationModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1)
         }
       }
@@ -64,7 +71,12 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get filtered conversations based on doctor name or user uuid.
+  * @return {void}
+  */
   get filteredConversations() {
+    return this.conversations.filter((conversation: ConversationModel) => {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.doctorName
@@ -77,8 +89,14 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get doctors list/ conversations.
+  * @param {string} userUuid - User uuid of the logged-in doctor
+  * @return {void}
+  */
   getDoctorsList(userUuid: string) {
     this.supportService.getDoctorsList(userUuid).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         if (res.success) {
           this.conversations = res.data;
@@ -87,6 +105,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Select conversation.
+  * @param {ConversationModel} conversation - Conversation to select
+  * @return {void}
+  */
   conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.getMessages();
@@ -94,10 +117,10 @@ export class SupportComponent implements OnInit, OnDestroy {
     this.selectedConversation.unread = 0;
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Get all messages for the selected conversation.
+  * @return {void}
+  */
   getMessages() {
     this.supportService.getSupportMessages(this.userId, this.selectedConversation?.userUuid)
       .subscribe({
@@ -109,6 +132,12 @@ export class SupportComponent implements OnInit, OnDestroy {
       });
   }
 
+
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId: number) {
     this.supportService.readMessageById(this.userId, messageId).subscribe({
       next: (res) => {
@@ -117,6 +146,10 @@ export class SupportComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       this.selectedConversation.message = this.message;
@@ -150,7 +183,11 @@ export class SupportComponent implements OnInit, OnDestroy {
     }
   }
 
-  get userId() {
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  get userId(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 

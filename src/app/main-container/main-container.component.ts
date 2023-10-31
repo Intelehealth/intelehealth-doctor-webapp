@@ -22,7 +22,7 @@ import { RaiseTicketComponent } from '../modal-components/raise-ticket/raise-tic
 import { ProfileService } from '../services/profile.service';
 import { getCacheData } from '../utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
-import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, SerachPatientApiResponseModel } from '../model/model';
+import { ApiResponseModel, BreadcrumbModel, PatientModel, ProviderAttributeModel, ProviderModel, SerachPatientApiResponseModel, UserModel } from '../model/model';
 
 @Component({
   selector: 'app-main-container',
@@ -46,12 +46,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   subscription1: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: BreadcrumbModel[];
+  public breadcrumbs: BreadcrumbModel[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
   dialogRef2: MatDialogRef<RaiseTicketComponent>;
   routeUrl = '';
   adminUnread = 0;
   notificationEnabled = false;
+  interval;
   interval;
   snoozed: any = '';
   profilePic: string;
@@ -120,6 +122,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Request subscription object for push notification and strore it to the server
+  * @return {void}
+  */
   requestSubscription() {
     if (!this._swPush.isEnabled) {
       return;
@@ -158,7 +164,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Get logged-in user notification status
+  * @return {void}
+  */
   getNotificationStatus() {
+    this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: ApiResponseModel) => {
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
@@ -174,6 +185,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Check and request notification permission
+  * @return {void}
+  */
   getSubscription() {
     if(Notification.permission === 'default') {
       Notification.requestPermission().then(() => {
@@ -189,8 +204,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
   }
 
-  getSpecialization(attr: ProviderAttributeModel[] = this.provider.attributes) {
-    let specialization = null;
+  /**
+  * Get logged-in doctor speciality
+  * @param {ProviderAttributeModel[]} attr - Array of provider attributes
+  * @return {string} - Doctor speciality
+  */
+  getSpecialization(attr: ProviderAttributeModel[] = this.provider.attributes): string {
+    let specialization: string = null;
     for (let x = 0; x < attr.length; x++) {
       if (attr[x].attributeType.uuid === 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !attr[x].voided) {
         specialization = attr[x].value;
@@ -204,23 +224,36 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     this.cdref.detectChanges();
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Open select language modal
+  * @return {void}
+  */
   selectLanguage(): void {
+    this.coreService.openSelectLanguageModal().subscribe((res) => {
     this.coreService.openSelectLanguageModal().subscribe((res) => {
     });
   }
 
+  /**
+  * Redirect user to change-password screen
+  * @return {void}
+  */
   changePassword() {
     this.router.navigate(['/dashboard/change-password']);
   }
 
-  getUrl() {
+  /**
+  * Get url for minimize-maximize icon of sidebar w.r.t. side bar status
+  * @return {string} - URL for minimize-maximize icon
+  */
+  getUrl(): string {
     return `assets/icons/dashboard-icons/Vector${this.collapsed ? '2' : ''}.png`;
   }
 
+  /**
+  * Open confirm logout modal
+  * @return {void}
+  */
   logout() {
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Are you sure you want to logout?', cancelBtnText: 'No', confirmBtnText: 'Yes' }).afterClosed().subscribe(res => {
       if (res) {
@@ -229,13 +262,19 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Search patient
+  * @return {void}
+  */
   search() {
     if (this.searchForm.value.keyword === null || this.searchForm.value.keyword.length < 3) {
       this.toastr.warning(this.translateService.instant('Please enter minimum 3 characters to search patient....'), this.translateService.instant('Warning'));
     } else {
       const url = `${this.baseUrl}/patient?q=${this.searchForm.value.keyword}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe((response: SerachPatientApiResponseModel) => {
+      this.http.get(url).subscribe((response: SerachPatientApiResponseModel) => {
         const values = [];
+        response['results'].forEach((value: PatientModel) => {
         response['results'].forEach((value: PatientModel) => {
           if (value) {
             if (value.identifiers.length) {
@@ -243,6 +282,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             }
           }
         });
+        this.coreService.openSearchedPatientModal(values).subscribe((result) => {});
         this.coreService.openSearchedPatientModal(values).subscribe((result) => {});
         this.searchForm.reset();
       },
@@ -257,6 +297,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
   }
 
+  /**
+  * Get the breadcrumbs from the router url
+  * @return {string} - URL for minimize-maximize icon
+  */
   buildBreadCrumb(route: ActivatedRoute, url: string = '', breadcrumbs: BreadcrumbModel[] = []): BreadcrumbModel[] {
     // If no routeConfig is avalailable we are on the root path
     const label = route.routeConfig && route.routeConfig.data ? route.routeConfig.data.breadcrumb : '';
@@ -275,6 +319,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     const nextUrl = path ? `${url}/${path}` : url;
 
     const breadcrumb: BreadcrumbModel = {
+    const breadcrumb: BreadcrumbModel = {
         label: label,
         url: nextUrl,
     };
@@ -288,6 +333,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     return newBreadcrumbs;
   }
 
+  /**
+  * Search the path from routerstate snapshot
+  * @return {ActivatedRouteSnapshot} - Expected child
+  */
   searchData(state: RouterStateSnapshot, path: string): ActivatedRouteSnapshot {
     let expectedChild: ActivatedRouteSnapshot | null;
     let child: ActivatedRouteSnapshot | null;
@@ -302,12 +351,20 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     return expectedChild;
   }
 
+  /**
+  * Toggle sidebar if on mobile
+  * @return {void}
+  */
   toggleSidebar() {
     if (this.isMobile) {
       this.drawer.toggle();
     }
   }
 
+  /**
+  * Open Help Chat modal
+  * @return {void}
+  */
   openHelpMenu() {
     if (this.dialogRef) {
       this.dialogRef.close();
@@ -319,6 +376,10 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Open Raise Ticket modal
+  * @return {void}
+  */
   openRaiseTicketModal() {
     if (this.dialogRef2) {
       this.dialogRef2.close();
@@ -330,7 +391,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Toggle notification status for the logged-in user
+  * @return {void}
+  */
   toggleNotification() {
+    this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: ApiResponseModel) => {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
@@ -341,7 +407,13 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
+  /**
+  * Update the notification snooze period
+  * @param {string} period - Snooze period for which notification to be snoozed
+  * @return {void}
+  */
   snoozeNotification(period: string) {
+    this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: ApiResponseModel) => {
     this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.snoozed = res.data?.snooze_till;
@@ -349,9 +421,21 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
-  // get snoozeTimeout() {
-  //   return this.notificationService.snoozeTimeout;
-  // }
+  /**
+  * Get user from localstorage
+  * @return {UserModel} - User
+  */
+  get user(): UserModel {
+    return getCacheData(true, doctorDetails.USER);
+  }
+
+  /**
+  * Get provider from localstorage
+  * @return {ProviderModel} - Provider
+  */
+  get provider(): ProviderModel {
+    return getCacheData(true, doctorDetails.PROVIDER);
+  }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
@@ -366,13 +450,5 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     if (this.dialogRef2) {
       this.dialogRef2.close();
     }
-  }
-
-  get user() {
-    return getCacheData(true, doctorDetails.USER);
-  }
-
-  get provider() {
-    return getCacheData(true, doctorDetails.PROVIDER);
   }
 }

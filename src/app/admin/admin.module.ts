@@ -24,6 +24,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
+import { SharedModule } from '../shared.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -82,7 +83,8 @@ const routes: Routes = [
         deps: [HttpClient]
       }
     }),
-    MomentModule
+    MomentModule,
+    SharedModule
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: MatPaginationIntlService },

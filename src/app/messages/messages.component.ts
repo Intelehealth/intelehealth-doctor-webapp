@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from '../utils/utility-functions';
 import { notifications, doctorDetails, languages } from 'src/config/constant';
 import { ApiResponseModel, ConversationModel, MessageModel, PatientVisitsModel } from '../model/model';
+import { ApiResponseModel, ConversationModel, MessageModel, PatientVisitsModel } from '../model/model';
 
 @Component({
   selector: 'app-messages',
@@ -18,8 +19,10 @@ import { ApiResponseModel, ConversationModel, MessageModel, PatientVisitsModel }
 export class MessagesComponent implements OnInit, OnDestroy {
 
   conversations: ConversationModel[] = [];
+  conversations: ConversationModel[] = [];
   searchValue: string;
   baseURL = environment.baseURL;
+  selectedConversation: ConversationModel;
   selectedConversation: ConversationModel;
 
   message = '';
@@ -27,9 +30,14 @@ export class MessagesComponent implements OnInit, OnDestroy {
   visits: PatientVisitsModel[] = [];
   messageList: MessageModel[];
   visitId: string;
+  visits: PatientVisitsModel[] = [];
+  messageList: MessageModel[];
+  visitId: string;
   openMenu = false;
   isOver = false;
   isAttachment = false;
+  defaultImage: string = 'assets/images/img-icon.jpeg';
+  pdfDefaultImage: string = 'assets/images/pdf-icon.png';
   defaultImage: string = 'assets/images/img-icon.jpeg';
   pdfDefaultImage: string = 'assets/images/pdf-icon.png';
   subscription1: Subscription;
@@ -51,6 +59,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       this.readMessages(data.id);
       this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messageList = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketSvc.onEvent('isread').subscribe((data) => {
@@ -58,7 +67,12 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get filtered conversations based on doctor name or user uuid.
+  * @return {void}
+  */
   get filteredConversations() {
+    return this.conversations.filter((conversation: ConversationModel) => {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
         conversation?.patientName
@@ -71,21 +85,25 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get patients list/ conversations.
+  * @param {string} drUuid - User uuid of the logged-in doctor
+  * @return {void}
+  */
   getPatientsList(drUuid) {
     this.chatSvc.getPatientList(drUuid).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.conversations = res.data;
       },
     });
   }
 
-  // get patientPic() {
-  //   if (!this.conversations.patientPic) {
-  //     return 'assets/svgs/user.svg';
-  //   }
-  //   return this.conversations.patientPic;
-  // }
-
+  /**
+  * Select conversation.
+  * @param {ConversationModel} conversation - Conversation to select
+  * @return {void}
+  */
   conversationSelected(conversation: ConversationModel) {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
@@ -95,38 +113,38 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  submitMessage(event) {
-    const value = event.target.value.trim();
-    this.message = '';
-    if (value.length < 1) { return false; }
-    this.selectedConversation.latestMessage = value;
-    this.selectedConversation.messages.unshift({
-      id: 1,
-      message: value,
-      me: true,
-    });
-  }
-
-  getPatientsVisits(patientId) {
+  /**
+  * Get patients all visits
+  * @param {string} patientId - onerror event
+  * @return {void}
+  */
+  getPatientsVisits(patientId: string) {
     this.chatSvc.getPatientAllVisits(patientId).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.visits = res?.data;
       },
     });
   }
 
-  onVisitChange(visitId) {
+  /**
+  * Callback for visit changes event
+  * @param {string} visitId - Visit uuid
+  * @return {void}
+  */
+  onVisitChange(visitId: string) {
     this.visitId = visitId;
     this.getMessages();
   }
 
+  /**
+  * Get all messages for the selected conversation.
+  * @return {void}
+  */
   getMessages() {
     this.chatSvc.getPatientMessages(this.selectedConversation?.toUser, this.selectedConversation?.patientId, this.selectedConversation?.fromUser, this.visitId)
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
           this.getPatientsVisits(this.selectedConversation?.patientId);
@@ -135,6 +153,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId: number) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
@@ -143,14 +166,18 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  get patientName() {
+  /**
+  * Getter for patient name
+  * @return {string} - Patient name
+  */
+  get patientName(): string {
     return getCacheData(false, 'patientName') || '';
   }
 
-  clickMenu() {
-    this.openMenu = !this.openMenu;
-  }
-
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       this.selectedConversation.latestMessage = this.message;
@@ -186,23 +213,41 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  get fromUser() {
+  /**
+  * Getter for from user uuid
+  * @return {string} - user uuid
+  */
+  get fromUser(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  setImage(src) {
+  /**
+  * Set image for an attachment
+  * @param {string} src - Attachemnet url
+  * @return {void}
+  */
+  setImage(src: string) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
-  isPdf(url) {
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
+  isPdf(url): boolean {
     return url.includes('.pdf');
   }
 
+  /**
+  * Upload attachment
+  * @param {file[]} files - Array of attachemnet files
+  * @return {void}
+  */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
       next: (res: ApiResponseModel) => {
+      next: (res: ApiResponseModel) => {
         this.isAttachment = true;
-
         this.message = res.data;
         this.sendMessage();
       }

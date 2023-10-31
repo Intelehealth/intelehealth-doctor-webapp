@@ -46,10 +46,18 @@ export class GetStartedComponent implements OnInit {
     }
   }
 
+  /**
+  * Redirect to profile screen
+  * @return {void}
+  */
   setupProfile() {
     this.router.navigate(['/dashboard/profile']);
   }
 
+  /**
+  * Redirect to setup calendar screen
+  * @return {void}
+  */
   setupCalendar() {
     this.router.navigate(['/calendar/setup-calendar']);
   }

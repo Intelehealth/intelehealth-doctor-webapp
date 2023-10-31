@@ -57,6 +57,10 @@ export class SessionComponent implements OnInit {
     }
   }
 
+  /**
+  * Callback for language changed event
+  * @return {void}
+  */
   changeLanguage() {
     this.translate.use(this.selectedLanguage);
     setCacheData( languages.SELECTED_LANGUAGE, this.selectedLanguage);

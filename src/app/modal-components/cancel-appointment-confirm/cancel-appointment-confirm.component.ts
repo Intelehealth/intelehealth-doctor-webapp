@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { ApiResponseModel } from 'src/app/model/model';
 import { ApiResponseModel } from 'src/app/model/model';
 import { AppointmentService } from 'src/app/services/appointment.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -11,24 +12,25 @@ import { doctorDetails } from 'src/config/constant';
   selector: 'app-cancel-appointment-confirm',
   templateUrl: './cancel-appointment-confirm.component.html',
 })
-export class CancelAppointmentConfirmComponent implements OnInit {
+export class CancelAppointmentConfirmComponent {
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<CancelAppointmentConfirmComponent>,
     private appointmentService: AppointmentService,
-    private toastr: ToastrService, private translateService: TranslateService) {
+    private toastr: ToastrService, private translateService: TranslateService) { }
 
-  }
-
-  ngOnInit(): void {
-  }
-
+  /**
+  * Cancel appointment
+  * @return {void}
+  */
   cancel() {
     const payload = {
       id: this.data.id,
       visitUuid: this.data.visitUuid,
       hwUUID: this.userId,
     };
+    this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
     this.appointmentService.cancelAppointment(payload).subscribe((res: ApiResponseModel) => {
         if (res) {
           if (res.status) {
@@ -41,10 +43,19 @@ export class CancelAppointmentConfirmComponent implements OnInit {
     });
   }
 
+  /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
   get userId() {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
+  /**
+  * Close modal
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: boolean) {
     this.dialogRef.close(val);
   }

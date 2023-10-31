@@ -24,6 +24,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
 import { DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -60,13 +61,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   user: UserModel;
   provider: ProviderModel;
   doctorName: string;
+  file;
+  user: UserModel;
+  provider: ProviderModel;
+  doctorName: string;
   baseUrl: string = environment.baseURL;
+  profilePicUrl: string|ArrayBuffer = 'assets/svgs/user.svg';
   profilePicUrl: string|ArrayBuffer = 'assets/svgs/user.svg';
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   dialogRef: MatDialogRef<ImageCropComponent>;
 
+  fonts: DataItemModel[] = [
   fonts: DataItemModel[] = [
     {
       id: 1,
@@ -91,6 +98,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   languages: DataItemModel[] = [
+  languages: DataItemModel[] = [
     {
       id: 1,
       name: 'English'
@@ -114,6 +122,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   professions: DataItemModel[] = [
+  professions: DataItemModel[] = [
     {
       id: 1,
       name: 'MBBS'
@@ -132,6 +141,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
+  specializations: DataItemModel[] = [
   specializations: DataItemModel[] = [
     {
       id: 1,
@@ -164,6 +174,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedSignatureTabIndex = 0;
   signatureFile;
   signaturePicUrl: string|ArrayBuffer;
+  signatureFile;
+  signaturePicUrl: string|ArrayBuffer;
   phoneNumberValid = false;
   whatsAppNumberValid = false;
   phoneNumber = '';
@@ -172,11 +184,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   providerAttributeTypes: ProviderAttributeTypeModel[] = [];
   phoneNumberObj;
   whatsAppObj;
+  providerAttributeTypes: ProviderAttributeTypeModel[] = [];
+  phoneNumberObj;
+  whatsAppObj;
   subscription1: Subscription;
   subscription2: Subscription;
   maxTelLegth1 = 10;
   maxTelLegth2 = 10;
   oldPhoneNumber = '';
+  today: string;
   today: string;
   phoneValid = false;
   emailValid = false;
@@ -246,6 +262,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: string) => {
+    this.subscription2 = this.personalInfoForm.get(doctorDetails.WHATS_APP).valueChanges.subscribe((val: string) => {
       if (val) {
         if (val.length > this.maxTelLegth2) {
           this.personalInfoForm.get(doctorDetails.WHATS_APP).setValue(val.substring(0, this.maxTelLegth2));
@@ -260,11 +277,17 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.signaturePad.clear(); // invoke functions from szimek/signature_pad API
   }
 
+  /**
+  * Subscribe to form control value changes observables
+  * @return {void}
+  */
   formControlValueChanges() {
     this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).valueChanges.subscribe(val => {
       if (val) {
         this.fonts.map((f: DataItemModel) => f.text = val);
+        this.fonts.map((f: DataItemModel) => f.text = val);
       } else {
+        this.fonts.map((f: DataItemModel) => f.text = f.name);
         this.fonts.map((f: DataItemModel) => f.text = f.name);
       }
     });
@@ -307,7 +330,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+  * Get provider attribute types
+  * @return {void}
+  */
   getProviderAttributeTypes() {
+    this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
     this.providerService.getProviderAttributeTypes().subscribe((res: ProviderAttributeTypesResponseModel) => {
       if (res.results.length) {
         this.providerAttributeTypes = res.results;
@@ -316,6 +344,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+  * Patch the form values with the provider details
+  * @return {void}
+  */
   patchFormValues() {
     if (this.provider) {
 
@@ -328,6 +360,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       personalFormValues.gender = (this.provider.person?.gender) ? this.provider.person?.gender : null,
       personalFormValues.birthdate = (this.provider.person?.birthdate) ? moment(this.provider.person?.birthdate).format('YYYY-MM-DD') : null,
       personalFormValues.age = (this.provider.person?.age) ? this.provider.person?.age : null;
+      this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
       this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
         switch (attrType.display) {
           case doctorDetails.ADDRESS:
@@ -416,6 +449,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Get attribute value for the given provider attribute uuid and type
+  * @param {string} uuid - Provider attribute uuid
+  * @param {string} display - Provider attribute type name/display
+  * @return {any} - Provider attribute value
+  */
   getAttributeValue(uuid: string, display: string) {
     let attrValue = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
@@ -427,11 +466,20 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     return attrValue;
   }
 
-
+  /**
+  * Callback for step change event
+  * @param {Event} event - Step change event
+  * @return {void}
+  */
   stepChanged(event) {
     this.submitted = false;
   }
 
+  /**
+  * Callback for image upload event
+  * @param {Event} event - File upload event
+  * @return {void}
+  */
   async preview(event) {
     if (event.target.files && event.target.files[0]) {
       this.file = event.target.files[0];
@@ -455,6 +503,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             base64EncodedImage: imageBlob
           };
           this.profileService.updateProfileImage(payload).subscribe((res) => {
+          this.profileService.updateProfileImage(payload).subscribe((res) => {
             this.profilePicUrl = result;
             this.profileService.setProfilePic(result);
             this.toastr.success(this.translateService.instant('Profile picture uploaded successfully!'), this.translateService.instant('Profile Pic Uploaded'));
@@ -463,15 +512,15 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dialogRef = undefined;
         this.fileUploader.nativeElement.value = null;
       });
-
-
     }
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Callback for phone number input error event
+  * @param {boolean} $event - True if valid else false
+  * @param {string} errorFor - Error for which input
+  * @return {void}
+  */
   hasError(event, errorFor: string) {
     switch (errorFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -483,6 +532,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a input for phone number get valid
+  * @param {string} $event - Phone number
+  * @param {string} changedFor - Which input changed
+  * @return {void}
+  */
   getNumber(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -497,6 +552,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a phone number object change event
+  * @param {string} $event - change event
+  * @param {string} objectFor - Which object changed
+  * @return {void}
+  */
   telInputObject(event, objectFor: string) {
     switch (objectFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -508,6 +569,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for a phone number country change event
+  * @param {string} $event - country change event
+  * @param {string} changedFor - For which object country changed
+  * @return {void}
+  */
   onCountryChange(event, changedFor: string) {
     switch (changedFor) {
       case doctorDetails.PHONE_NUMBER:
@@ -525,24 +592,46 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Clear signature pad
+  * @return {void}
+  */
   clearSignature() {
     this.signaturePad.clear();
   }
 
+  /**
+  * Callback for draw complete on signature pad
+  * @return {void}
+  */
   drawComplete() {
     // will be notified of szimek/signature_pad's onEnd event
   }
 
+  /**
+  * Callback for draw started on signature pad
+  * @return {void}
+  */
   drawStart() {
     // will be notified of szimek/signature_pad's onBegin event
   }
 
+  /**
+  * Callback for signature tab changed event
+  * @param {Event} event - Tab changed event
+  * @return {void}
+  */
   signatureTabChanged(event) {
     this.selectedSignatureTabIndex = event.index;
     this.signatureType = event.tab.textLabel;
     this.personalInfoForm.patchValue({ signatureType: event.tab.textLabel });
   }
 
+  /**
+  * Callback for file drop event
+  * @param {Event} event - File drop event
+  * @return {void}
+  */
   onFilesDropped(event) {
     if (event.addedFiles.length) {
       this.signatureFile = event.addedFiles[0];
@@ -571,11 +660,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Reset signature
+  * @return {void}
+  */
   reset() {
     this.signatureFile = undefined;
     this.signaturePicUrl = '';
   }
 
+  /**
+  * Check if step 1 is valid and move to next step
+  * @return {void}
+  */
   goToNextStep() {
     this.submitted = true;
     if (this.personalInfoForm.invalid || !this.phoneNumberValid || !this.whatsAppNumberValid || !this.phoneValid) {
@@ -593,6 +690,10 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
+  /**
+  * Update user profile
+  * @return {void}
+  */
   updateProfile() {
     this.submitted = true;
     if (this.professionalInfoForm.invalid) {
@@ -615,12 +716,18 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submitted = false;
   }
 
+  /**
+  * Update signature
+  * @return {void}
+  */
   updateSignature() {
+    let signature: string|ArrayBuffer;
     let signature: string|ArrayBuffer;
 
     switch (this.signatureType) {
       case 'Draw':
         signature = this.signaturePad.toDataURL('image/jpeg');
+        this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res) => {
         this.providerService.uploadSignature(signature.split(',')[1], this.provider.uuid).subscribe((res) => {
           this.personalInfoForm.patchValue({ signature });
           this.updateProviderAttributes();
@@ -628,6 +735,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
 
       case 'Generate':
+        this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
         this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
           if (res.fname) {
             fetch(res.fname).then(pRes => pRes.blob()).then(blob => {
@@ -646,6 +754,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'Upload':
         signature = this.signaturePicUrl;
         this.providerService.uploadSignature((<string>signature).split(',')[1], this.provider.uuid).subscribe((res) => {
+        this.providerService.uploadSignature((<string>signature).split(',')[1], this.provider.uuid).subscribe((res) => {
           this.personalInfoForm.patchValue({ signature });
           this.updateProviderAttributes();
         });
@@ -656,8 +765,13 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+  * Update logged-in user provider attributes
+  * @return {void}
+  */
   updateProviderAttributes() {
     const requests = [];
+    this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
     this.providerAttributeTypes.forEach((attrType: ProviderAttributeTypeModel) => {
       switch (attrType.display) {
         case doctorDetails.ADDRESS:
@@ -714,12 +828,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
+    this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
       if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
         this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
         this.toastr.warning(this.translateService.instant('Kindly re-login to see updated details'), this.translateService.instant('Re-login'));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
       } else {
+        this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: ProviderResponseModel) => {
         this.authService.getProvider(getCacheData(true, doctorDetails.USER).uuid).subscribe((provider: ProviderResponseModel) => {
           if (provider.results.length) {
             setCacheData(doctorDetails.PROVIDER, JSON.stringify(provider.results[0]));
@@ -740,8 +856,14 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getAttributeUuid(uuid: string, display: string) {
-    let attrUuid = null;
+  /**
+  * Get provider attribute uuid for a given diaplay and provider attrubute type uuid
+  * @param {string} uuid - Provider attribute type uuid
+  * @param {string} display - Display name
+  * @return {string} - Provider attribute uuid
+  */
+  getAttributeUuid(uuid: string, display: string): string {
+    let attrUuid: string = null;
     for (let i = 0; i < this.provider.attributes.length; i++) {
       if (this.provider.attributes[i].attributeType.display === display && this.provider.attributes[i].attributeType.uuid === uuid && this.provider.attributes[i].voided === false) {
         attrUuid = this.provider.attributes[i].uuid;
@@ -751,15 +873,30 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     return attrUuid;
   }
 
+  /**
+  * Get value for a given key from form
+  * @param {string} key - Key name
+  * @return {any} - Value for a given key
+  */
   getAttributeValueFromForm(key: string) {
     const formValue = { ...this.personalInfoForm.value, ...this.professionalInfoForm.value };
     return formValue[key];
   }
 
+  /**
+  * Detect MIME type from the base 64 url
+  * @param {string} b64 - Base64 url
+  * @return {string} - MIME type
+  */
   detectMimeType(b64: string) {
     return this.profileService.detectMimeType(b64);
   }
 
+  /**
+  * Validate phone number/email already exists or not
+  * @param {string} type - Attribute Type email/phone number
+  * @return {void}
+  */
   validateProviderAttribute(type: string) {
     this.checkingPhoneValidity = true;
     this.authService.validateProviderAttribute(type, this.personalInfoForm.value[type], this.provider.uuid).subscribe(res => {

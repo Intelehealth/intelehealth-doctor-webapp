@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { ApiResponseModel } from 'src/app/model/model';
+import { ApiResponseModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-add-license-key',
@@ -18,8 +19,10 @@ export class AddLicenseKeyComponent implements OnInit {
   licenseForm: FormGroup;
   submitted: boolean = false;
   today: string;
+  today: string;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data,
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AddLicenseKeyComponent>,
     private mindmapService: MindmapService,
@@ -41,16 +44,23 @@ export class AddLicenseKeyComponent implements OnInit {
 
   get f() { return this.licenseForm.controls; }
 
+  /**
+  * Close modal
+  * @return {void}
+  */
   close() {
     this.dialogRef.close(false);
   }
 
+  /**
+  * Add new license key
+  * @return {void}
+  */
   addLicenseKey() {
     this.submitted = true;
     if (this.licenseForm.invalid) {
       return;
     }
-
     this.mindmapService.addUpdateLicenseKey(this.licenseForm.value).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.dialogRef.close(res.data);
@@ -59,5 +69,4 @@ export class AddLicenseKeyComponent implements OnInit {
       }
     });
   }
-
 }

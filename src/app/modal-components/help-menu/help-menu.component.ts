@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ApiResponseModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, MessageModel, UserModel } from 'src/app/model/model';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -12,6 +12,7 @@ import { notifications, doctorDetails } from 'src/config/constant';
 })
 export class HelpMenuComponent implements OnInit, OnDestroy {
 
+  messages: MessageModel[] = [];
   messages: MessageModel[] = [];
   message = '';
   subscription1: Subscription;
@@ -25,6 +26,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     this.subscription1 = this.socketService.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       this.readMessagesSupport(data.id);
       this.messages = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messages = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketService.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
@@ -34,6 +36,10 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       const payload = {
@@ -43,6 +49,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
         to: 'System Administrator'
       };
       this.supportService.sendMessage(payload).subscribe((res: ApiResponseModel) => {
+      this.supportService.sendMessage(payload).subscribe((res: ApiResponseModel) => {
         if (res.success) {
           this.message = '';
           this.getMessages();
@@ -51,9 +58,15 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Get all messages to and from admin
+  * @param {boolean} init - Init true/false
+  * @return {void}
+  */
   getMessages(init = false) {
     this.supportService.getSupportMessages(this.user.uuid, 'System Administrator')
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           if (res.success) {
             this.messages = res?.data;
@@ -68,8 +81,14 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessagesSupport(messageId: number) {
     this.supportService.readMessageById(this.user?.uuid, messageId).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         if (res.success) {
           this.getMessages();
@@ -78,6 +97,10 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Get user from localstorage
+  * @return {UserModel} - User
+  */
   get user() {
     return getCacheData(true, doctorDetails.USER);
   }

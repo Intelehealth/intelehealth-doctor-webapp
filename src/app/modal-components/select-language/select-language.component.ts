@@ -10,9 +10,11 @@ import { languages } from 'src/config/constant';
   templateUrl: './select-language.component.html',
 })
 export class SelectLanguageComponent {
+export class SelectLanguageComponent {
 
   languageForm: FormGroup;
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SelectLanguageComponent>, private translate: TranslateService) {
     this.languageForm = new FormGroup({
@@ -20,6 +22,10 @@ export class SelectLanguageComponent {
     });
   }
 
+  /**
+  * Select language
+  * @return {void}
+  */
   select() {
     this.translate.use(this.languageForm.value.language);
     this.translate.setDefaultLang(this.languageForm.value.language);
@@ -28,6 +34,11 @@ export class SelectLanguageComponent {
     window.location.reload();
   }
 
+  /**
+  * Close modal
+  * @param {string|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: string|boolean) {
     this.dialogRef.close(val);
   }

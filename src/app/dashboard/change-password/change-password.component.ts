@@ -50,6 +50,10 @@ export class ChangePasswordComponent implements OnInit {
 
   get f() { return this.resetPasswordForm.controls; }
 
+  /**
+  * Perform the reset password action
+  * @return {void}
+  */
   resetPassword() {
     this.submitted = true;
     if (this.resetPasswordForm.invalid) {
@@ -67,11 +71,16 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res) => {
+    this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res) => {
       this.toastr.success(this.translateService.instant('Password has been changed successfully!'),
       this.translateService.instant('Password Changed!'));
     });
   }
 
+  /**
+  * Generate a random password
+  * @return {string} - Random password string
+  */
   generatePassword() {
     let passwd = '';
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*@$&';
@@ -90,6 +99,11 @@ export class ChangePasswordComponent implements OnInit {
     return passwd;
   }
 
+  /**
+  * Check the password strength level
+  * @param {string} str - Password string
+  * @return {number} - Strength level between 1 to 4
+  */
   checkPasswordStrength(str: string) {
     const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{12,})');
     const mediumPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
@@ -105,24 +119,40 @@ export class ChangePasswordComponent implements OnInit {
     }
   }
 
+  /**
+  * Check if string has lower case characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasLowerCase(str: string) {
     return (/[a-z]/.test(str));
   }
 
+  /**
+  * Check if string has upper case characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasUpperCase(str: string) {
     return (/[A-Z]/.test(str));
   }
 
+  /**
+  * Check if string has numeric characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasNumber(str: string) {
     return (/[0-9]/.test(str));
   }
 
+  /**
+  * Check if string has special symbol characteres or not
+  * @param {string} str - Password string
+  * @return {boolean} - True/False
+  */
   hasSpecialCharacter(str: string) {
     return (/[^A-Za-z0-9]/.test(str));
-  }
-
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
   }
 
 }

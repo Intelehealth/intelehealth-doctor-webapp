@@ -10,7 +10,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
-import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/model/model';
+import { ApiResponseModel, EncounterProviderModel, MessageModel, ProviderModel, UserModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-video-call',
@@ -22,6 +22,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   @ViewChild("remoteVideo", { static: false }) remoteVideoRef: any;
 
   message: string;
+  messageList: MessageModel[] = [];
+  toUser: string;
+  hwName: string;
   messageList: MessageModel[] = [];
   toUser: string;
   hwName: string;
@@ -53,6 +56,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
@@ -64,6 +68,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
+    const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
@@ -94,6 +99,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Getter for visit provider
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   get patientVisitProvider() {
     try {
       return getCacheData(true, 'patientVisitProvider')
@@ -102,6 +112,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Get provider from localstorage
+  * @return {ProviderModel} - Provider
+  */
   get provider() {
     try {
       return getCacheData(true, 'provider')
@@ -110,6 +124,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Start video call
+  * @return {void}
+  */
   async startCall() {
     if (!this.webrtcSvc.token) {
       await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
@@ -130,16 +148,29 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Getter for incoming call details
+  * @return {void}
+  */
   get incomingData() {
     return { ...this.socketSvc.incomingCallData, socketId: this.socketSvc?.socket?.id };
   }
 
+  /**
+  * Callback for HW incoming call connect
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   onHWIncomingCallConnect() {
     this.connecting = false;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
 
+  /**
+  * Get doctor name
+  * @return {string} - Doctor name
+  */
   get doctorName() {
     try {
       return getCacheData(true, 'doctorName') || this.user.display;
@@ -148,6 +179,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Callback for call connect
+  * @param {boolean} val - Dialog result
+  * @return {void}
+  */
   onCallConnect() {
     this.socketSvc.incomingCallData = {
       nurseId: this.nurseId,
@@ -176,31 +212,65 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }, ringingTimeout);
   }
 
+  /**
+  * Handle participant disconnect callback
+  * @return {void}
+  */
   handleParticipantConnect() {
     this.callConnected = true;
     this.callStartedAt = moment();
     this.socketSvc.emitEvent('call-connected', this.incomingData);
   }
 
+  /**
+  * Returns call connected or not
+  * @return {boolean} true/false
+  */
   get callConnected() {
     return this.webrtcSvc.callConnected;
   }
+
+  /**
+  * Setter call connected flag
+  * @param {boolean} flag - Flag true/false
+  * @return {void}
+  */
   set callConnected(flag) {
     this.webrtcSvc.callConnected = flag;
   }
 
+  /**
+  * Getter for local audio icon
+  * @return {string} - Local audio icon url
+  */
   get localAudioIcon() {
     return this._localAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.provider?.uuid) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
   }
 
+  /**
+  * Getter for remote audio icon
+  * @return {string} - Remote audio icon url
+  */
   get remoteAudioIcon() {
     return this._remoteAudioMute ? 'assets/svgs/audio-wave-mute.svg' : this.activeSpeakerIds.includes(this.webrtcSvc.remoteUser?.identity) ? 'assets/svgs/audio-wave.svg' : 'assets/svgs/audio-wave-2.svg'
   }
 
+  /**
+  * Handle active speakers changed callback
+  * @param {Participant[]} speakers - Array of speakers
+  * @return {string[]} - Array of active speaker id's
+  */
   handleActiveSpeakerChange(speakers: Participant[]) {
     this.activeSpeakerIds = speakers.map(s => s?.identity);
   }
 
+  /**
+  * Handle track unsubscribed callback
+  * @param {RemoteTrack} track - Track
+  * @param {RemoteTrackPublication} publication - Publication
+  * @param {RemoteParticipant} participant -Remote participant
+  * @return {void}
+  */
   handleTrackUnsubscribed(
     track: RemoteTrack,
     publication: RemoteTrackPublication,
@@ -210,6 +280,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     track.detach();
   }
 
+  /**
+  * Handle track muted callback
+  * @param {any} event - Track muted Event
+  * @return {void}
+  */
   handleTrackMuted(event: any) {
     if (event instanceof RemoteTrackPublication) {
       if (event.kind === Track.Kind.Audio) {
@@ -221,6 +296,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Handle track unmuted callback
+  * @param {any} event - Track muted Event
+  * @return {void}
+  */
   handleTrackUnmuted(event: any) {
     if (event instanceof RemoteTrackPublication) {
       if (event.kind === Track.Kind.Audio) {
@@ -232,6 +312,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Handle participant disconnected callback
+  * @param {any} event - Track muted Event
+  * @return {void}
+  */
   handleParticipantDisconnected() {
     this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
     this.callConnected = false;
@@ -240,16 +325,29 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     clearTimeout(this.callEndTimeout);
   }
 
+  /**
+  * Get all messages
+  * @param {string} toUser - To user uuid
+  * @param {string} patientId - Patient uuid
+  * @param {string} fromUser - from user uuid
+  * @param {string} visitId - Visit uuid
+  * @return {void}
+  */
   getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
+        next: (res: ApiResponseModel) => {
         next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
   }
 
+  /**
+  * Send a message.
+  * @return {void}
+  */
   sendMessage() {
     if (this.message) {
       const payload = {
@@ -276,6 +374,11 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Update message status to read using message id.
+  * @param {number} messageId - Message id
+  * @return {void}
+  */
   readMessages(messageId: number) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
@@ -284,14 +387,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Getter for from user uuid
+  * @return {string} - user uuid
+  */
   get fromUser() {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
+  /**
+  * Get user from localstorage
+  * @return {UserModel} - User
+  */
   get user() {
     try {
       return getCacheData(true, doctorDetails.USER);
@@ -300,6 +407,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+  * Subscribe to socket events
+  * @return {void}
+  */
   initSocketEvents() {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
@@ -314,6 +425,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.socketSvc.onEvent("isread").subscribe((data) => {
     this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
@@ -339,6 +451,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * End call and disconnect from the room
+  * @return {void}
+  */
   endCallInRoom() {
     setTimeout(() => {
       this.close();
@@ -363,11 +479,19 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.close();
   }
 
+  /**
+  * Close modal
+  * @return {void}
+  */
   close() {
     clearTimeout(this.callEndTimeout);
     this.dialogRef.close(true);
   }
 
+  /**
+  * Toggle audio
+  * @return {void}
+  */
   toggleAudio() {
     this._localAudioMute = this.webrtcSvc.toggleAudio();
 
@@ -375,6 +499,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
+  /**
+  * Toggle video
+  * @return {void}
+  */
   toggleVideo() {
     this._localVideoOff = this.webrtcSvc.toggleVideo();
 
@@ -382,6 +510,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.emitEvent(event, { fromWebapp: true });
   }
 
+  /**
+  * Toggle window
+  * @return {void}
+  */
   toggleWindow() {
     this._minimized = !this._minimized;
     if (this._minimized) {
@@ -396,12 +528,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.socketSvc.incoming = false;
-    clearInterval(this.changeDetForDuration);
-    this.webrtcSvc.disconnect();
-  }
-
+  /**
+  * Getter for call duration
+  * @return {string} - Call duration
+  */
   get callDuration() {
     let duration: any;
     if (this.callStartedAt) {
@@ -410,12 +540,22 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
   }
 
+  /**
+  * Check if attachement is pdf
+  * @return {boolean} - True if pdf else false
+  */
   isPdf(url) {
     return url.includes('.pdf');
   }
 
+  /**
+  * Upload attachment
+  * @param {file[]} files - Array of attachemnet files
+  * @return {void}
+  */
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
+      next: (res: ApiResponseModel) => {
       next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
@@ -425,8 +565,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+  * Set image for an attachment
+  * @param {string} src - Attachemnet url
+  * @return {void}
+  */
   setImage(src) {
     this.cs.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
   }
 
+  ngOnDestroy(): void {
+    this.socketSvc.incoming = false;
+    clearInterval(this.changeDetForDuration);
+    this.webrtcSvc.disconnect();
+  }
 }

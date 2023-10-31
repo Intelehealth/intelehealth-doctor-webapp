@@ -31,7 +31,7 @@
                 <div class="patient-img">
                   <img
                     src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
-                    (error)="onImgError($event)"
+
                     alt=""
                     width="100%"
                     height="100%"
@@ -737,7 +737,7 @@
                             '/personimage/' +
                             element?.doctor?.person_uuid
                         }}"
-                        (error)="onImgError($event)"
+
                         alt=""
                         width="32px"
                         height="32px"

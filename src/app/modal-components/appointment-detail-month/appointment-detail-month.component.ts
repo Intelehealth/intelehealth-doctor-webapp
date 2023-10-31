@@ -2,8 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CalendarEvent } from 'angular-calendar';
+import { CalendarEvent } from 'angular-calendar';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { AppointmentDetailResponseModel } from 'src/app/model/model';
 import { AppointmentDetailResponseModel } from 'src/app/model/model';
 
 @Component({
@@ -16,8 +18,10 @@ export class AppointmentDetailMonthComponent implements OnInit {
   appointmentCount: number = 0;
   followupCount: number = 0;
   timeList: string[] = [];
+  timeList: string[] = [];
   dayOffForm: FormGroup;
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailMonthComponent>,
     private toastr: ToastrService
@@ -33,6 +37,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     this.appointmentCount = this.getCount('Appointment');
     this.followupCount = this.getCount('Follow-up visit');
     this.timeList= this.getHours();
+    this.dayOffForm.get('markAs').valueChanges.subscribe((val: string) => {
     this.dayOffForm.get('markAs').valueChanges.subscribe((val: string) => {
       if (val == 'dayOff') {
         this.dayOffForm.get('from').clearValidators();
@@ -50,6 +55,10 @@ export class AppointmentDetailMonthComponent implements OnInit {
     })
   }
 
+  /**
+  * Mark a day as Dayoff
+  * @return {void}
+  */
   markDayOff() {
     if (this.dayOffForm.invalid) {
       this.toastr.warning("Please select from and to time", "Invalid Time!");
@@ -66,12 +75,23 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
+  /**
+  * Close modal
+  * @param {AppointmentDetailResponseModel|boolean} val - Dialog result
+  * @return {void}
+  */
   close(val: AppointmentDetailResponseModel|boolean) {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Get count of events for a given type
+  * @param {string} type - Type of event
+  * @return {number} - Count of events
+  */
   getCount(type: string) {
     let count = 0;
+    this.data?.events.forEach((e: CalendarEvent) => {
     this.data?.events.forEach((e: CalendarEvent) => {
       if (e.title == type) {
         count++;
@@ -80,6 +100,12 @@ export class AppointmentDetailMonthComponent implements OnInit {
     return count;
   }
 
+  /**
+  * Returns all hours segements for a given date
+  * @param {boolean} returnAll - Return all true/false
+  * @param {string} date - date
+  * @return {string[]} - Hour segements for a given date
+  */
   getHours(returnAll = true, date?: string) {
     const hours = Array.from(
       {
@@ -100,6 +126,11 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
+  /**
+  * Check if given date is today's date or not
+  * @param {string} date - Date
+  * @return {boolean} - Returns true if date if today's date else false
+  */
   isToday(date: string) {
     const start = moment().startOf("day");
     const end = moment().endOf("day");
@@ -109,6 +140,12 @@ export class AppointmentDetailMonthComponent implements OnInit {
     );
   }
 
+  /**
+  * Return the slot timing is valid or not
+  * @param {string} from - from time
+  * @param {string} to - to time
+  * @return {boolean} - Returns true if slot timing is valid else false
+  */
   validateTimeSlot(from: string, to: string) {
     if (moment(from, "h:mm A").format("HH:mm:ss") >= moment(to, "h:mm A").format("HH:mm:ss")) {
       return false;

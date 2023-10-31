@@ -16,6 +16,10 @@ export class PwaService {
 
   constructor(private platform: Platform, private bottomSheet: MatBottomSheet, private router: Router) { }
 
+  /**
+  * Init PWA prompt
+  * @return {void}
+  */
   public initPwaPrompt() {
     if (this.platform.ANDROID || this.platform.isBrowser) {
       window.addEventListener('beforeinstallprompt', (event) => {
@@ -32,6 +36,11 @@ export class PwaService {
     }
   }
 
+  /**
+  * Open PWA promp bottom shit
+  * @param {string} mobileType - Mobile type ios/android
+  * @return {void}
+  */
   private openPromptComponent(mobileType: 'ios' | 'android') {
     timer(3000)
       .pipe(take(1))
