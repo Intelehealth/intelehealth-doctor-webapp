@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { getCacheData } from "../utils/utility-functions";
 import { doctorDetails } from "src/config/constant";
+import { ApiResponseModel, MessageModel } from "../model/model";
 
 @Injectable({
   providedIn: "root",
@@ -38,8 +39,8 @@ export class ChatService {
     return this.http.get(
       `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?visitId=${visitId}&ngsw-bypass=true`
     ).pipe(map(
-      (res: any) => {
-        res.data = res.data.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      (res: ApiResponseModel) => {
+        res.data = res.data.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
         return res;
       }
     ))
@@ -90,7 +91,7 @@ export class ChatService {
           }
         } else {
           const imageCount = messages.reduce((total: number, item: any) => total + ((item.type === 'attachment' && !this.isPdf(item.message)) ? 1 : 0), 0)
-       
+
           if (imageCount >= 5) {
             this.toastr.warning('Image upload capacity exceeded, only 5 per chat allowed.');
             return of(true);

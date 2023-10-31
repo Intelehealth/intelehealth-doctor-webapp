@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from '../utils/utility-functions';
 import { languages } from 'src/config/constant';
+import { DataItemModel, SlideModel } from '../model/model';
 
 @Component({
   selector: 'app-session',
@@ -10,7 +11,7 @@ import { languages } from 'src/config/constant';
 })
 export class SessionComponent implements OnInit {
 
-  slides: any = [
+  slides: SlideModel[] = [
     {
       img_url: "assets/svgs/slide-1.svg",
       title: "Deliver quality health care where there is no doctor",
@@ -34,8 +35,8 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  selectedLanguage: any = 'en';
-  languages: any = [
+  selectedLanguage: string = 'en';
+  languages: DataItemModel[] = [
     {
       id: 1,
       name: 'English',
@@ -47,6 +48,7 @@ export class SessionComponent implements OnInit {
       code: 'ru'
     }
   ];
+
   constructor(public translate: TranslateService) { }
 
   ngOnInit(): void {

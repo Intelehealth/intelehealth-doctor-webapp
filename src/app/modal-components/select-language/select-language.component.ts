@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,18 +9,15 @@ import { languages } from 'src/config/constant';
   selector: 'app-select-language',
   templateUrl: './select-language.component.html',
 })
-export class SelectLanguageComponent implements OnInit {
+export class SelectLanguageComponent {
 
   languageForm: FormGroup;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<SelectLanguageComponent>, private translate: TranslateService) {
     this.languageForm = new FormGroup({
       language: new FormControl(this.translate.currentLang, Validators.required)
     });
-  }
-
-  ngOnInit(): void {
   }
 
   select() {
@@ -31,7 +28,7 @@ export class SelectLanguageComponent implements OnInit {
     window.location.reload();
   }
 
-  close(val: any) {
+  close(val: string|boolean) {
     this.dialogRef.close(val);
   }
 

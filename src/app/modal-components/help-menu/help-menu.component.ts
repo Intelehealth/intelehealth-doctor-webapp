@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ApiResponseModel, MessageModel } from 'src/app/model/model';
 import { SocketService } from 'src/app/services/socket.service';
 import { SupportService } from 'src/app/services/support.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
@@ -11,7 +12,7 @@ import { notifications, doctorDetails } from 'src/config/constant';
 })
 export class HelpMenuComponent implements OnInit, OnDestroy {
 
-  messages: any = [];
+  messages: MessageModel[] = [];
   message = '';
   subscription1: Subscription;
   subscription2: Subscription;
@@ -23,7 +24,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
     this.socketService.initSocketSupport(true);
     this.subscription1 = this.socketService.onEvent(notifications.SUPPORT_MESSAGE).subscribe((data) => {
       this.readMessagesSupport(data.id);
-      this.messages = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+      this.messages = data.allMessages.sort((a: MessageModel, b: MessageModel) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
     });
 
     this.subscription2 = this.socketService.onEvent(notifications.ISREAD_SUPPORT).subscribe((data) => {
@@ -41,7 +42,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
         from: this.user.uuid,
         to: 'System Administrator'
       };
-      this.supportService.sendMessage(payload).subscribe((res: any) => {
+      this.supportService.sendMessage(payload).subscribe((res: ApiResponseModel) => {
         if (res.success) {
           this.message = '';
           this.getMessages();
@@ -53,7 +54,7 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
   getMessages(init = false) {
     this.supportService.getSupportMessages(this.user.uuid, 'System Administrator')
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           if (res.success) {
             this.messages = res?.data;
             if (init && this.messages.length) {
@@ -67,9 +68,9 @@ export class HelpMenuComponent implements OnInit, OnDestroy {
       });
   }
 
-  readMessagesSupport(messageId: any) {
+  readMessagesSupport(messageId: number) {
     this.supportService.readMessageById(this.user?.uuid, messageId).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         if (res.success) {
           this.getMessages();
         }

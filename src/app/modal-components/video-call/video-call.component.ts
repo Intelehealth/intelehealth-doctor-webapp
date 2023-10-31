@@ -10,6 +10,7 @@ import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
+import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-video-call',
@@ -21,9 +22,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   @ViewChild("remoteVideo", { static: false }) remoteVideoRef: any;
 
   message: string;
-  messageList: any = [];
-  toUser: any;
-  hwName: any;
+  messageList: MessageModel[] = [];
+  toUser: string;
+  hwName: string;
   baseUrl: string = environment.baseURL;
   _chatOpened: boolean = false;
   _localAudioMute: boolean = false;
@@ -51,7 +52,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   callEndTimeout = null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
@@ -63,7 +64,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.room = this.data.patientId;
 
-    const patientVisitProvider: any = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
+    const patientVisitProvider: EncounterProviderModel = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER);
     this.toUser = patientVisitProvider?.provider?.uuid;
     this.hwName = patientVisitProvider?.display?.split(":")?.[0];
     this.nurseId = patientVisitProvider && patientVisitProvider.provider ? patientVisitProvider.provider?.uuid : this.nurseId;
@@ -243,7 +244,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
@@ -275,7 +276,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  readMessages(messageId: any) {
+  readMessages(messageId: number) {
     this.chatSvc.readMessageById(messageId).subscribe({
       next: (res) => {
         this.getMessages();
@@ -287,7 +288,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
@@ -313,7 +314,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data: any) => {
+    this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
 
@@ -415,7 +416,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
         this.message = res.data;

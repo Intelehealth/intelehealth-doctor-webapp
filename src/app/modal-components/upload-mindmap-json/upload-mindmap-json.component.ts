@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MindmapService } from 'src/app/services/mindmap.service';
 
@@ -7,19 +7,16 @@ import { MindmapService } from 'src/app/services/mindmap.service';
   templateUrl: './upload-mindmap-json.component.html',
   styleUrls: ['./upload-mindmap-json.component.scss']
 })
-export class UploadMindmapJsonComponent implements OnInit {
+export class UploadMindmapJsonComponent {
 
   file: any;
   filename: string = '';
   jsonData: string = '';
   @ViewChild('hiddenFileInput', { static: false }) hiddenFileInput: ElementRef;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<UploadMindmapJsonComponent>,
   private mindmapService: MindmapService) { }
-
-  ngOnInit(): void {
-  }
 
   close() {
     this.dialogRef.close(false);

@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 import { doctorDetails, visitTypes } from 'src/config/constant';
+import { EncounterModel, ObsModel, ProviderAttributeModel, VisitModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -15,14 +16,14 @@ export class AppointmentDetailComponent implements OnInit {
 
   baseUrl: string = environment.baseURL;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailComponent>,
     private visitService: VisitService,
     private translate:TranslateService) { }
 
   ngOnInit(): void {
     if (this.data?.title == 'Appointment') {
-      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: any)=> {
+      this.visitService.fetchVisitDetails(this.data.id).subscribe((visit: VisitModel)=> {
         this.data.meta.visit_info = visit;
         let cdata = this.getCheifComplaint(visit);
         this.data.meta.cheif_complaint = cdata.complaint;
@@ -42,15 +43,15 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  close(val: any) {
+  close(val: string|boolean) {
     this.dialogRef.close(val);
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  checkIfDateOldThanOneDay(data: any) {
+  checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
     if(hours > 24) {
@@ -69,17 +70,17 @@ export class AppointmentDetailComponent implements OnInit {
     return `${this.translate.instant('Starts in')} ${hours} ${this.translate.instant('hrs')}`;
   }
 
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    let hwPhoneNo: any = '';
-    let prescriptionCreatedAt: any = '';
+  getCheifComplaint(visit: VisitModel) {
+    let recent: string[] = [];
+    let hwPhoneNo: string = '';
+    let prescriptionCreatedAt: string = '';
 
     const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
+    encounters.forEach((encounter: EncounterModel) => {
       const display = encounter.display;
       if (display.match(visitTypes.ADULTINITIAL) !== null) {
         const obs = encounter.obs;
-        obs.forEach((currentObs: any) => {
+        obs.forEach((currentObs: ObsModel) => {
           if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
             const currentComplaint =this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
             for (let i = 1; i < currentComplaint.length; i++) {
@@ -92,7 +93,7 @@ export class AppointmentDetailComponent implements OnInit {
         });
         const providerAttribute = encounter.encounterProviders[0].provider.attributes;
         if (providerAttribute.length) {
-          providerAttribute.forEach((attribute: any) => {
+          providerAttribute.forEach((attribute: ProviderAttributeModel) => {
             if (attribute.display.match(doctorDetails.PHONE_NUMBER) != null) {
               hwPhoneNo = attribute.value;
             }
@@ -106,7 +107,7 @@ export class AppointmentDetailComponent implements OnInit {
     return { complaint: recent, hwPhoneNo, prescriptionCreatedAt };
   }
 
-  checkVisitStatus(encounters: any) {
+  checkVisitStatus(encounters: EncounterModel[]) {
     if (this.checkIfEncounterExists(encounters, visitTypes.PATIENT_EXIT_SURVEY)) {
       return 'Ended';
     } else if (this.checkIfEncounterExists(encounters, visitTypes.VISIT_COMPLETE)) {
@@ -120,11 +121,11 @@ export class AppointmentDetailComponent implements OnInit {
     }
   }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
+  checkIfEncounterExists(encounters: EncounterModel[], visitType: string) {
     return encounters.find(({ display = "" }) => display.includes(visitType));
   }
 
-  checkPrescriptionCreatedAt(data: any) {
+  checkPrescriptionCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {

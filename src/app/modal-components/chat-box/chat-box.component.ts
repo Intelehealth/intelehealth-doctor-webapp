@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -18,9 +19,9 @@ import { environment } from 'src/environments/environment';
 export class ChatBoxComponent implements OnInit, OnDestroy {
 
   message: string;
-  messageList: any = [];
-  toUser: any;
-  hwName: any;
+  messageList: MessageModel[] = [];
+  toUser: string;
+  hwName: string;
   isAttachment = false;
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
@@ -31,7 +32,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   sending = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<ChatBoxComponent>,
     private chatSvc: ChatService,
     private socketSvc: SocketService,
@@ -53,8 +54,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       if (this.socketSvc.updateMessage) {
         this.readMessages(data.id);
       }
-      // this.readMessages(data.id);
-      // this.messageList = data.allMessages.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? 1 : -1);
     });
 
     this.subscription3 = this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
@@ -70,7 +69,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
           const msg = this.messageList[0];
           if (msg && !msg?.isRead && msg?.fromUser !== this.fromUser) {
@@ -84,7 +83,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     this.chatSvc
       .getPatientMessages(toUser, patientId, fromUser, visitId)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           this.messageList = res?.data;
         },
       });
@@ -92,7 +91,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
 
   async sendMessage() {
     if (this.message) {
-      const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
+      const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
         return;
@@ -132,21 +131,21 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     });
   }
 
-  get fromUser() {
+  get fromUser(): string {
     return getCacheData(true, doctorDetails.USER).uuid;
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 
-  isPdf(url) {
+  isPdf(url: string) {
     return url.includes('.pdf');
   }
 
   uploadFile(files) {
     this.chatSvc.uploadAttachment(files, this.messageList).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         this.isAttachment = true;
 
         this.message = res.data;

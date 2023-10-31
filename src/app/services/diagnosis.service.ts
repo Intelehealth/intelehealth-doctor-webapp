@@ -33,7 +33,7 @@ export class DiagnosisService {
     return this.http.get(url);
   }
 
-  getDiagnosisList(term: any) {
+  getDiagnosisList(term: string) {
     const url = `${environment.baseURLCoreApp}/search.action?&term=${term}`;
     return this.http.get(url)
     .pipe(

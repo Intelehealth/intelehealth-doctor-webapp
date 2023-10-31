@@ -1,8 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CalendarEvent } from 'angular-calendar';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { AppointmentDetailResponseModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-appointment-detail-month',
@@ -13,10 +15,10 @@ export class AppointmentDetailMonthComponent implements OnInit {
 
   appointmentCount: number = 0;
   followupCount: number = 0;
-  timeList: any = [];
+  timeList: string[] = [];
   dayOffForm: FormGroup;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<AppointmentDetailMonthComponent>,
     private toastr: ToastrService
   ) {
@@ -31,7 +33,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     this.appointmentCount = this.getCount('Appointment');
     this.followupCount = this.getCount('Follow-up visit');
     this.timeList= this.getHours();
-    this.dayOffForm.get('markAs').valueChanges.subscribe((val: any) => {
+    this.dayOffForm.get('markAs').valueChanges.subscribe((val: string) => {
       if (val == 'dayOff') {
         this.dayOffForm.get('from').clearValidators();
         this.dayOffForm.get('from').updateValueAndValidity();
@@ -64,13 +66,13 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
-  close(val: any) {
+  close(val: AppointmentDetailResponseModel|boolean) {
     this.dialogRef.close(val);
   }
 
   getCount(type: string) {
     let count = 0;
-    this.data?.events.forEach((e: any) => {
+    this.data?.events.forEach((e: CalendarEvent) => {
       if (e.title == type) {
         count++;
       }
@@ -78,7 +80,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     return count;
   }
 
-  getHours(returnAll = true, date?: any) {
+  getHours(returnAll = true, date?: string) {
     const hours = Array.from(
       {
         length: 21,
@@ -98,7 +100,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     }
   }
 
-  isToday(date: any) {
+  isToday(date: string) {
     const start = moment().startOf("day");
     const end = moment().endOf("day");
     return (
@@ -107,7 +109,7 @@ export class AppointmentDetailMonthComponent implements OnInit {
     );
   }
 
-  validateTimeSlot(from: any, to: any) {
+  validateTimeSlot(from: string, to: string) {
     if (moment(from, "h:mm A").format("HH:mm:ss") >= moment(to, "h:mm A").format("HH:mm:ss")) {
       return false;
     }

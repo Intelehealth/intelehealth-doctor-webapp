@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -10,12 +10,12 @@ import { getCacheData } from 'src/app/utils/utility-functions';
   templateUrl: './raise-ticket.component.html',
   styleUrls: ['./raise-ticket.component.scss']
 })
-export class RaiseTicketComponent implements OnInit {
+export class RaiseTicketComponent {
 
   raiseTicketForm: FormGroup;
   submitted: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<RaiseTicketComponent>,
     private supportService: SupportService,
     private toastr: ToastrService
@@ -27,12 +27,9 @@ export class RaiseTicketComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   get f() { return this.raiseTicketForm.controls; }
 
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 

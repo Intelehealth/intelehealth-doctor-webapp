@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { ApiResponseModel } from 'src/app/model/model';
 import { AuthService } from 'src/app/services/auth.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails } from 'src/config/constant';
@@ -58,7 +59,7 @@ export class SetupNewPasswordComponent implements OnInit {
       return;
     }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
-      this.toastr.warning(this.translate.instant("Password and Confirm Password doesn't match."), 
+      this.toastr.warning(this.translate.instant("Password and Confirm Password doesn't match."),
       this.translate.instant("Password doesn't match!"));
       return;
     }
@@ -69,9 +70,9 @@ export class SetupNewPasswordComponent implements OnInit {
       return;
     }
 
-    this.authService.resetPassword(this.userUuid, passwd).subscribe((res: any) => {
+    this.authService.resetPassword(this.userUuid, passwd).subscribe((res: ApiResponseModel) => {
       if (res.success) {
-        this.coreService.openPasswordResetSuccessModal().subscribe((result: any) => {
+        this.coreService.openPasswordResetSuccessModal().subscribe((result) => {
           this.router.navigate(['/session/login']);
         });
       } else {
@@ -130,7 +131,7 @@ export class SetupNewPasswordComponent implements OnInit {
     return (/[^A-Za-z0-9]/.test(str));
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 

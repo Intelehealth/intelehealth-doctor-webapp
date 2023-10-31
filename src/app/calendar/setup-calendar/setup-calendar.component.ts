@@ -11,6 +11,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
+import { ApiResponseModel, DataItemModel, ProviderAttributeModel, ScheduleModel, ScheduleSlotModel, ScheduledMonthModel } from 'src/app/model/model';
 
 export const PICK_FORMATS = {
   parse: {dateInput: {month: 'short', year: 'numeric', day: 'numeric'}},
@@ -44,7 +45,7 @@ class PickDateAdapter extends NativeDateAdapter {
 })
 export class SetupCalendarComponent implements OnInit {
 
-  days: any = [
+  days: DataItemModel[] = [
     {
       id: 1,
       name: 'Monday',
@@ -81,7 +82,7 @@ export class SetupCalendarComponent implements OnInit {
       shortName: 'Sun'
     },
   ];
-  timeList: any = [
+  timeList: DataItemModel[] = [
     { id: 1, name: "9:00" },
     { id: 2, name: "10:00" },
     { id: 3, name: "11:00" },
@@ -95,20 +96,20 @@ export class SetupCalendarComponent implements OnInit {
     { id: 11, name: "7:00" },
     { id: 12, name: "8:00" }
   ];
-  clockTimeAmPM: any = [
+  clockTimeAmPM: DataItemModel[] = [
     { id: 1, name: "AM" },
     { id: 2, name: "PM" }
   ];
   monthNames: string[] = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
-  minDate: any;
-  maxDate: any;
-  scheduledMonths: any = [];
-  selectedMonth: any;
-  selectedMonthSchedule: any;
+  minDate: string;
+  maxDate: string;
+  scheduledMonths: ScheduledMonthModel[] = [];
+  selectedMonth: ScheduledMonthModel;
+  selectedMonthSchedule: ScheduleModel;
   addSlotsForm: FormGroup;
   _addMoreTiming: boolean = false;
-  daysOffSelected: any[] = [];
+  daysOffSelected: string[] = [];
   filteredDays=[];
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
   submitted: boolean = false;
@@ -185,7 +186,7 @@ export class SetupCalendarComponent implements OnInit {
   getScheduledMonths() {
     this.appointmentService.getScheduledMonths(this.userId, new Date().getFullYear().toString())
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           this.scheduledMonths = res.data;
           if (this.scheduledMonths.length === 0) {
             this.scheduledMonths.push({ name: this.monthNames[new Date().getMonth()], year: new Date().getFullYear().toString() });
@@ -193,7 +194,7 @@ export class SetupCalendarComponent implements OnInit {
             this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
           }
           else {
-            this.selectedMonth = this.scheduledMonths.find((o: any) => o.name == this.monthNames[new Date().getMonth()] && o.year == new Date().getFullYear().toString());
+            this.selectedMonth = this.scheduledMonths.find((o: ScheduledMonthModel) => o.name == this.monthNames[new Date().getMonth()] && o.year == new Date().getFullYear().toString());
             if (this.selectedMonth) {
               this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
             } else {
@@ -208,7 +209,7 @@ export class SetupCalendarComponent implements OnInit {
   getSchedule(year = moment(this.minDate).format("YYYY"), month = moment(this.minDate).format("MMMM")) {
     this.appointmentService.getUserAppoitment(this.userId, year, month)
       .subscribe({
-        next: (res: any) => {
+        next: (res: ApiResponseModel) => {
           if (res && res.data) {
             this.selectedMonthSchedule = res.data;
             this.selectedMonthSchedule.added = true;
@@ -232,8 +233,8 @@ export class SetupCalendarComponent implements OnInit {
       });
   }
 
-  private setData(schedule: any) {
-    if (!this.scheduledMonths.some((month: any) => month.name === schedule.month)) {
+  private setData(schedule: ScheduleModel) {
+    if (!this.scheduledMonths.some((month: ScheduledMonthModel) => month.name === schedule.month)) {
       this.scheduledMonths.push({ name: schedule.month, year: schedule.year });
     }
     this.ft.clear();
@@ -241,18 +242,18 @@ export class SetupCalendarComponent implements OnInit {
     this.fs.clear();
     let uniqTiming = [];
     for (let h = 0; h < schedule.slotSchedule.length; h++) {
-      if (uniqTiming.findIndex((o: any) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
+      if (uniqTiming.findIndex((o: ScheduleSlotModel) => o.startTime == schedule.slotSchedule[h].startTime && o.endTime == schedule.slotSchedule[h].endTime) == -1) {
         uniqTiming.push(schedule.slotSchedule[h]);
       }
     }
-    uniqTiming.forEach((ut: any) => {
-      let utslots = schedule.slotSchedule.filter((o: any) => o.startTime == ut.startTime && o.endTime == ut.endTime);
+    uniqTiming.forEach((ut: ScheduleSlotModel) => {
+      let utslots = schedule.slotSchedule.filter((o: ScheduleSlotModel) => o.startTime == ut.startTime && o.endTime == ut.endTime);
       let timingFormGroup = new FormGroup({
         startTime: new FormControl({ value: ut.startTime.split(" ")[0], disabled: true }, Validators.required),
         startMeridiem: new FormControl({ value: ut.startTime.split(" ")[1], disabled: true }, Validators.required),
         endTime: new FormControl({ value: ut.endTime.split(" ")[0], disabled: true }, Validators.required),
         endMeridiem: new FormControl({ value: ut.endTime.split(" ")[1], disabled: true }, Validators.required),
-        days: new FormControl({ value: [...new Set(utslots.map((item: any) => item.day))].map((val: any) => val.slice(0,3)), disabled: true }, Validators.required),
+        days: new FormControl({ value: [...new Set(utslots.map((item: ScheduleSlotModel) => item.day))].map((val: string) => val.slice(0,3)), disabled: true }, Validators.required),
         slots: this.getSlotsArray(utslots)
       });
       this.ft.push(timingFormGroup);
@@ -271,7 +272,7 @@ export class SetupCalendarComponent implements OnInit {
     );
     // Push daysOff's to the form
     if (schedule.daysOff) {
-      schedule.daysOff.forEach((doff: any) => {
+      schedule.daysOff.forEach((doff: string) => {
         this.fd.push(new FormControl(moment(doff, "DD/MM/YYYY").format("YYYY-MM-DD HH:mm:ss"), Validators.required));
       });
     }
@@ -294,9 +295,9 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
-  getSlotsArray(utslots: any) {
+  getSlotsArray(utslots: ScheduleSlotModel[]) {
     let dataArray = new FormArray([]);
-    utslots.forEach((uts: any) => {
+    utslots.forEach((uts: ScheduleSlotModel) => {
       let d: FormGroup;
       d = new FormGroup({
         id: new FormControl(uts.id, Validators.required),
@@ -314,7 +315,7 @@ export class SetupCalendarComponent implements OnInit {
     this._addMoreTiming = !this._addMoreTiming;
   }
 
-  getSlotsFormArray(i: any): FormArray {
+  getSlotsFormArray(i: number): FormArray {
     return this.ft.at(i).get("slots") as FormArray;
   }
 
@@ -336,7 +337,7 @@ export class SetupCalendarComponent implements OnInit {
         let oldSlots = [...this.getSlotsFormArray(i).value];
         this.getSlotsFormArray(i).clear();
         for (let x = 0; x < oldSlots.length; x++) {
-          if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
+          if (newSlots.find((o: ScheduleSlotModel) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
                 id: new FormControl(oldSlots[x].id, Validators.required),
@@ -359,7 +360,7 @@ export class SetupCalendarComponent implements OnInit {
         }
         oldSlots = [...this.getSlotsFormArray(i).value];
         for (let x = 0; x < newSlots.length; x++) {
-          if (!oldSlots.find((o: any) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
+          if (!oldSlots.find((o: ScheduleSlotModel) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
                 id: new FormControl(newSlots[x].id, Validators.required),
@@ -382,7 +383,7 @@ export class SetupCalendarComponent implements OnInit {
         }
 
         if (i == ts.length-1) {
-          this.addSlotsForm.get('slotDays').setValue([...new Set([...this.getSlotsFormArray(i).value].map((o: any) => o.day))].join('||'));
+          this.addSlotsForm.get('slotDays').setValue([...new Set([...this.getSlotsFormArray(i).value].map((o: ScheduleSlotModel) => o.day))].join('||'));
         }
       }
       else {
@@ -398,7 +399,7 @@ export class SetupCalendarComponent implements OnInit {
     delete body['timings'];
     delete body['daysOff'];
     this.appointmentService.updateOrCreateAppointment(body).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         if (res.status) {
           this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
           this.submitted = false;
@@ -424,7 +425,7 @@ export class SetupCalendarComponent implements OnInit {
               let oldSlots = [...this.getSlotsFormArray(i).value];
               this.getSlotsFormArray(i).clear();
               for (let x = 0; x < oldSlots.length; x++) {
-                if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
+                if (newSlots.find((o: ScheduleSlotModel) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
                   this.getSlotsFormArray(i).push(
                     new FormGroup({
                       id: new FormControl(oldSlots[x].id, Validators.required),
@@ -447,7 +448,7 @@ export class SetupCalendarComponent implements OnInit {
               }
               oldSlots = [...this.getSlotsFormArray(i).value];
               for (let x = 0; x < newSlots.length; x++) {
-                if (!oldSlots.find((o: any) => o.date == newSlots[x].date  && o.day == newSlots[x].day)) {
+                if (!oldSlots.find((o: ScheduleSlotModel) => o.date == newSlots[x].date  && o.day == newSlots[x].day)) {
                   this.getSlotsFormArray(i).push(
                     new FormGroup({
                       id: new FormControl(newSlots[x].id, Validators.required),
@@ -485,7 +486,7 @@ export class SetupCalendarComponent implements OnInit {
         delete body['timings'];
         delete body['daysOff'];
         this.appointmentService.updateOrCreateAppointment(body).subscribe({
-          next: (res: any) => {
+          next: (res: ApiResponseModel) => {
             if (res.status) {
               this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
               this.submitted = false;
@@ -496,14 +497,14 @@ export class SetupCalendarComponent implements OnInit {
     });
   }
 
-  validateTimeSlot(slot: any) {
+  validateTimeSlot(slot: ScheduleSlotModel) {
     if (moment(slot.startTime, ["h:mm A"]).format("HH:mm:ss") >= moment(slot.endTime, ["h:mm A"]).format("HH:mm:ss")) {
       return false;
     }
     return true;
   }
 
-  createSlots(days: any, startTime: string, endTime: string) {
+  createSlots(days: string[], startTime: string, endTime: string) {
     let slots = [];
     const start = moment(this.addSlotsForm.value.startDate).format('YYYY-MM-DD');
     const end = moment(this.addSlotsForm.value.endDate).format('YYYY-MM-DD');
@@ -525,17 +526,17 @@ export class SetupCalendarComponent implements OnInit {
     return slots;
   }
 
-  isDayOff = (event: any) => {
+  isDayOff = (event) => {
     const date = moment(
       event.getFullYear() +
       "-" +
       ("00" + (event.getMonth() + 1)).slice(-2) +
       "-" +
       ("00" + event.getDate()).slice(-2)).format('YYYY-MM-DD HH:mm:ss');
-    return this.daysOffSelected.find((x: any) => x == date) ? "dayOffDate" : null;
+    return this.daysOffSelected.find((x: string) => x == date) ? "dayOffDate" : null;
   }
 
-  dayOffSelected(event: any) {
+  dayOffSelected(event: { value: string }) {
     if (event.value) {
       const date = moment(event.value).format('YYYY-MM-DD HH:mm:ss');
       const index = this.daysOffSelected.indexOf(date);
@@ -562,7 +563,7 @@ export class SetupCalendarComponent implements OnInit {
 
     this.coreService.openConfirmationDialog({ confirmationMsg: 'Do you really want to save these days off ?', cancelBtnText: 'Cancel', confirmBtnText: 'Confirm' }).afterClosed().subscribe(res => {
       if (res) {
-        let finalDaysOff = [...new Set([...this.fd.value].concat(this.daysOffSelected))].map((val: any)=> {
+        let finalDaysOff = [...new Set([...this.fd.value].concat(this.daysOffSelected))].map((val: string)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
         });
 
@@ -574,7 +575,7 @@ export class SetupCalendarComponent implements OnInit {
             year: this.selectedMonth.year
           }
           this.appointmentService.updateDaysOff(body).subscribe({
-            next: (res: any) => {
+            next: (res: ApiResponseModel) => {
               if (res.status) {
                 this.daysOffSelected.forEach(doff => {
                   this.fd.push(new FormControl(doff, Validators.required));
@@ -595,7 +596,7 @@ export class SetupCalendarComponent implements OnInit {
           body.startDate = moment(this.minDate, 'YYYY-MM-DD').toISOString();
           body.endDate = moment(this.maxDate, 'YYYY-MM-DD').toISOString();
           this.appointmentService.updateOrCreateAppointment(body).subscribe({
-            next: (res: any) => {
+            next: (res: ApiResponseModel) => {
               if (res.status) {
                 let body2 = {
                   userUuid: this.userId,
@@ -604,7 +605,7 @@ export class SetupCalendarComponent implements OnInit {
                   year: this.selectedMonth.year
                 }
                 this.appointmentService.updateDaysOff(body2).subscribe({
-                  next: (res: any) => {
+                  next: (res: ApiResponseModel) => {
                     if (res.status) {
                       this.daysOffSelected = [];
                       this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
@@ -624,7 +625,7 @@ export class SetupCalendarComponent implements OnInit {
       if (res) {
         let finalDaysOff = [...this.fd.value];
         finalDaysOff.splice(index, 1);
-        finalDaysOff = [...new Set(finalDaysOff)].map((val: any)=> {
+        finalDaysOff = [...new Set(finalDaysOff)].map((val: string)=> {
           return moment(val, "YYYY-MM-DD HH:mm:ss").format('DD/MM/YYYY');
         });
         let body = {
@@ -634,7 +635,7 @@ export class SetupCalendarComponent implements OnInit {
           year: this.selectedMonth.year
         }
         this.appointmentService.updateDaysOff(body).subscribe({
-          next: (res: any) => {
+          next: (res: ApiResponseModel) => {
             if (res.status) {
               this.fd.removeAt(index);
               this.updateSlot();
@@ -669,7 +670,7 @@ export class SetupCalendarComponent implements OnInit {
   }
 
   private getSpeciality() {
-    return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: any) =>
+    return getCacheData(true, doctorDetails.PROVIDER).attributes.find((a: ProviderAttributeModel) =>
       a.display.includes(doctorDetails.SPECIALIZATION)
     )?.value;
   }
@@ -688,7 +689,7 @@ export class SetupCalendarComponent implements OnInit {
         let oldSlots = [...this.getSlotsFormArray(i).value];
         this.getSlotsFormArray(i).clear();
         for (let x = 0; x < oldSlots.length; x++) {
-          if (newSlots.find((o: any) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
+          if (newSlots.find((o: ScheduleSlotModel) => o.date == oldSlots[x].date && o.day == oldSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
                 id: new FormControl(oldSlots[x].id, Validators.required),
@@ -711,7 +712,7 @@ export class SetupCalendarComponent implements OnInit {
         }
         oldSlots = [...this.getSlotsFormArray(i).value];
         for (let x = 0; x < newSlots.length; x++) {
-          if (oldSlots.find((o: any) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
+          if (oldSlots.find((o: ScheduleSlotModel) => o.date == newSlots[x].date && o.day == newSlots[x].day)) {
             this.getSlotsFormArray(i).push(
               new FormGroup({
                 id: new FormControl(newSlots[x].id, Validators.required),
@@ -748,7 +749,7 @@ export class SetupCalendarComponent implements OnInit {
     delete body['timings'];
     delete body['daysOff'];
     this.appointmentService.updateOrCreateAppointment(body).subscribe({
-      next: (res: any) => {
+      next: (res: ApiResponseModel) => {
         if (res.status) {
           this.getSchedule(this.selectedMonth.year, this.selectedMonth.name);
         }

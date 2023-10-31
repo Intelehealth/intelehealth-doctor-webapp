@@ -66,7 +66,7 @@ export class ChangePasswordComponent implements OnInit {
       this.translateService.instant('Password invalid!'));
       return;
     }
-    this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res: any) => {
+    this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res) => {
       this.toastr.success(this.translateService.instant('Password has been changed successfully!'),
       this.translateService.instant('Password Changed!'));
     });
@@ -121,7 +121,7 @@ export class ChangePasswordComponent implements OnInit {
     return (/[^A-Za-z0-9]/.test(str));
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 

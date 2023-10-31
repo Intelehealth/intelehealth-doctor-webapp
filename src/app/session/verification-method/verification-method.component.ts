@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { doctorDetails } from 'src/config/constant';
+import { RequestOtpModel, RequestOtpResponseModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-verification-method',
@@ -20,7 +21,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   phoneIsValid: boolean = false;
   phoneNumber: string;
-  telObject: any;
+  telObject;
   maxTelLegth: number = 10;
   subscription: Subscription;
 
@@ -34,7 +35,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription = this.verificationForm.get('phone').valueChanges.subscribe((val: any) => {
+    this.subscription = this.verificationForm.get('phone').valueChanges.subscribe((val: string) => {
       if (val.length > this.maxTelLegth) {
         this.verificationForm.get('phone').setValue(val.substring(0, this.maxTelLegth));
       }
@@ -74,7 +75,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let payload: any = {
+    let payload: RequestOtpModel = {
       otpFor: "verification",
       username: (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId
     };
@@ -85,7 +86,7 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
       payload.email = this.verificationForm.value.email
     }
 
-    this.authService.requestOtp(payload).subscribe((res: any) => {
+    this.authService.requestOtp(payload).subscribe((res: RequestOtpResponseModel) => {
       if (res.success) {
         this.toastr.success(`${this.translate.instant("OTP sent on")} ${this.active == 'phone' ? this.replaceWithStar(this.phoneNumber)
          : this.replaceWithStar(this.verificationForm.value.email) } ${this.translate.instant("successfully")}!`, `${this.translate.instant("OTP Sent")}`);
@@ -101,20 +102,20 @@ export class VerificationMethodComponent implements OnInit, OnDestroy {
     return str.replace(str.substring(5, (this.active == 'phone') ? n-2 : n-4), "*****");
   }
 
-  hasError($event: any) {
+  hasError($event: boolean) {
     this.phoneIsValid = $event;
   }
 
-  getNumber($event: any) {
+  getNumber($event: string) {
     this.phoneNumber = $event;
     this.phoneIsValid = true;
   }
 
-  telInputObject($event: any) {
+  telInputObject($event) {
     this.telObject = $event;
   }
 
-  onCountryChange($event: any) {
+  onCountryChange($event) {
     this.telObject.setCountry($event.iso2);
     this.verificationForm.patchValue({
       countryCode: $event.dialCode

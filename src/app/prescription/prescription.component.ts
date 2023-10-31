@@ -4,6 +4,7 @@ import { VisitService } from '../services/visit.service';
 import * as moment from 'moment';
 import { getCacheData } from '../utils/utility-functions';
 import { doctorDetails, visitTypes } from 'src/config/constant';
+import { ApiResponseModel, CustomEncounterModel, CustomVisitModel, ProviderAttributeModel } from '../model/model';
 
 @Component({
   selector: 'app-prescription',
@@ -13,8 +14,8 @@ import { doctorDetails, visitTypes } from 'src/config/constant';
 export class PrescriptionComponent implements OnInit {
 
   active: number = 1;
-  completedVisits: any = [];
-  prescriptionSent: any = [];
+  completedVisits: CustomVisitModel[] = [];
+  prescriptionSent: CustomVisitModel[] = [];
   loaded1: boolean = false;
   loaded2: boolean = false;
   specialization: string = '';
@@ -37,7 +38,7 @@ export class PrescriptionComponent implements OnInit {
 
   getCompletedVisits(page: number = 1) {
     if(page == 1) this.completedVisits = [];
-    this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: any) => {
+    this.visitService.getEndedVisits(this.specialization, page).subscribe((cv: ApiResponseModel) => {
       if (cv.success) {
         this.completedVisitsCount = cv.totalCount;
         let records = [];
@@ -68,7 +69,7 @@ export class PrescriptionComponent implements OnInit {
 
   getPrescriptionSentVisits(page: number = 1) {
     if(page == 1) this.prescriptionSent = [];
-    this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: any) => {
+    this.visitService.getCompletedVisits(this.specialization, page).subscribe((ps: ApiResponseModel) => {
       if (ps.success) {
         this.prescriptionSentCount = ps.totalCount;
         let records = [];
@@ -91,10 +92,10 @@ export class PrescriptionComponent implements OnInit {
     this.getPrescriptionSentVisits(page);
   }
 
-  getEncounterCreated2(visit: any, encounterName: string) {
+  getEncounterCreated2(visit: CustomVisitModel, encounterName: string) {
     let created_at = '';
     const encounters = visit.encounters;
-    encounters.forEach((encounter: any) => {
+    encounters.forEach((encounter: CustomEncounterModel) => {
       const display = encounter.type?.name;
       if (display.match(encounterName) !== null) {
         created_at = this.getCreatedAt(encounter.encounter_datetime.replace('Z','+0530'));
@@ -103,7 +104,7 @@ export class PrescriptionComponent implements OnInit {
     return created_at;
   }
 
-  getCreatedAt(data: any) {
+  getCreatedAt(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
@@ -115,8 +116,8 @@ export class PrescriptionComponent implements OnInit {
     return `${hours} hrs ago`;
   }
 
-  getCheifComplaint2(visit: any) {
-    let recent: any = [];
+  getCheifComplaint2(visit: CustomVisitModel) {
+    let recent: string[] = [];
     const encounters = visit.encounters;
     encounters.forEach(encounter => {
       const display = encounter.type?.name;
@@ -138,44 +139,11 @@ export class PrescriptionComponent implements OnInit {
     return recent;
   }
 
-  calculateAge(birthdate: any) {
+  calculateAge(birthdate: string) {
     return moment().diff(birthdate,'years');
   }
 
-  getVisits() {
-    this.visitService.getVisits({ includeInactive: true }).subscribe((res: any) =>{
-      if (res) {
-        res.results.forEach((visit: any) => {
-          let vcenc = this.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
-          let pesenc = this.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY);
-
-          if (visit.stopDateTime) {
-            if (vcenc) visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
-            if (pesenc) visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounterDatetime);
-            if (!pesenc) visit.visit_ended = this.checkIfDateOldThanOneDay(visit.stopDatetime);
-            visit.cheif_complaint = this.getCheifComplaint(visit);
-            this.completedVisits.push(visit);
-          } else {
-            if (vcenc && pesenc) {
-              visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
-              visit.visit_ended = this.checkIfDateOldThanOneDay(pesenc.encounterDatetime);
-              visit.cheif_complaint = this.getCheifComplaint(visit);
-              this.completedVisits.push(visit);
-            } else if (vcenc && !pesenc) {
-              if (vcenc) visit.prescription_sent = this.checkIfDateOldThanOneDay(vcenc.encounterDatetime);
-              visit.cheif_complaint = this.getCheifComplaint(visit);
-              this.prescriptionSent.push(visit);
-            }
-          }
-        });
-        this.loaded1 = true;
-      }
-    }, (error: any) =>{
-      this.loaded1= true;
-    });
-  }
-
-  checkIfDateOldThanOneDay(data: any) {
+  checkIfDateOldThanOneDay(data: string) {
     let hours = moment().diff(moment(data), 'hours');
     let minutes = moment().diff(moment(data), 'minutes');
     if(hours > 24) {
@@ -187,40 +155,13 @@ export class PrescriptionComponent implements OnInit {
     return `${hours} hrs ago`;
   }
 
-  getCheifComplaint(visit: any) {
-    let recent: any = [];
-    const encounters = visit.encounters;
-    encounters.forEach(encounter => {
-      const display = encounter.display;
-      if (display.match(visitTypes.ADULTINITIAL) !== null) {
-        const obs = encounter.obs;
-        obs.forEach(currentObs => {
-          if (currentObs.display.match(visitTypes.CURRENT_COMPLAINT) !== null) {
-            const currentComplaint = this.visitService.getData(currentObs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
-            for (let i = 1; i < currentComplaint.length; i++) {
-              const obs1 = currentComplaint[i].split('<');
-              if (!obs1[0].match(visitTypes.ASSOCIATED_SYMPTOMS)) {
-                recent.push(obs1[0]);
-              }
-            }
-          }
-        });
-      }
-    });
-    return recent;
+  checkIfEncounterExists2(encounters: CustomEncounterModel[], visitType: string) {
+    return encounters.find((enc: CustomEncounterModel) => enc.type.name == visitType);
   }
 
-  checkIfEncounterExists(encounters: any, visitType: string) {
-    return encounters.find(({ display = "" }) => display.includes(visitType));
-  }
-
-  checkIfEncounterExists2(encounters: any, visitType: string) {
-    return encounters.find((enc: any) => enc.type.name == visitType);
-  }
-
-  getSpecialization(attr: any) {
+  getSpecialization(attr: ProviderAttributeModel[]) {
     let specialization = '';
-    attr.forEach((a: any) => {
+    attr.forEach((a: ProviderAttributeModel) => {
       if (a.attributeType.uuid == 'ed1715f5-93e2-404e-b3c9-2a2d9600f062' && !a.voided) {
         specialization = a.value;
       }

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { CustomVisitModel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -13,7 +14,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'visit_ended'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
-  @Input() completedVisits: any = [];
+  @Input() completedVisits: CustomVisitModel[] = [];
   @Input() completedVisitsCount: number = 0;
   @ViewChild('completedPaginator') paginator: MatPaginator;
   offset: number = environment.recordsPerPage;
@@ -28,12 +29,12 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.completedVisits);
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) != -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) != -1;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -45,7 +46,7 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 

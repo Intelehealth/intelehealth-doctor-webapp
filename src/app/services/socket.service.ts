@@ -14,6 +14,7 @@ import { WebrtcService } from "./webrtc.service";
 import { ToastrService } from "ngx-toastr";
 import { doctorDetails } from "src/config/constant";
 import { CoreService } from "./core/core.service";
+import { SocketUserModel } from "../model/model";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class SocketService {
   public socket: any;
   public incoming;
   public incomingCallData = {};
-  public activeUsers = [];
+  public activeUsers: SocketUserModel[] = [];
   appIcon = "/assets/images/intelehealth-logo-reverse.png";
   public callRing = new Audio("assets/phone.mp3");
   ringTimeout = null;

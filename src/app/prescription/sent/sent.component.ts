@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
+import { CustomVisitModel } from 'src/app/model/model';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
@@ -16,7 +17,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
-  @Input() prescriptionsSent: any = [];
+  @Input() prescriptionsSent: CustomVisitModel[] = [];
   @Input() prescriptionsSentCount = 0;
   @ViewChild('sentPaginator') paginator: MatPaginator;
   offset: number = environment.recordsPerPage;
@@ -33,7 +34,7 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.translateService.use(getCacheData(false, languages.SELECTED_LANGUAGE));
     this.dataSource = new MatTableDataSource(this.prescriptionsSent);
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
     this.dataSource.paginator = this.tempPaginator;
   }
 
@@ -48,10 +49,10 @@ export class SentComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.tempPaginator;
-    this.dataSource.filterPredicate = (data: any, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
+    this.dataSource.filterPredicate = (data, filter: string) => data?.patient.identifier.toLowerCase().indexOf(filter) !== -1 || data?.patient_name.given_name.concat(' ' + data?.patient_name.family_name).toLowerCase().indexOf(filter) !== -1;
   }
 
-  onImgError(event: any) {
+  onImgError(event) {
     event.target.src = 'assets/svgs/user.svg';
   }
 

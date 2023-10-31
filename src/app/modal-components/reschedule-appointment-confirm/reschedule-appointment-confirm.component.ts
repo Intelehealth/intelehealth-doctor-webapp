@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -6,15 +6,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './reschedule-appointment-confirm.component.html',
   styleUrls: ['./reschedule-appointment-confirm.component.scss']
 })
-export class RescheduleAppointmentConfirmComponent implements OnInit {
+export class RescheduleAppointmentConfirmComponent {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+  constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<RescheduleAppointmentConfirmComponent>) { }
 
-  ngOnInit(): void {
-  }
-
-  close(val: any) {
+  close(val: boolean) {
     this.dialogRef.close(val);
   }
 
