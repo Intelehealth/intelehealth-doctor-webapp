@@ -40,7 +40,7 @@
             >
               <img
                 src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
-                (error)="onImgError($event)"
+
                 alt=""
               />
             </div>
@@ -136,7 +136,7 @@
           <div class="content">
             <div class="profile-img">
               <img src="{{ baseUrl + '/personimage/' + data?.patientId }}"
-              (error)="onImgError($event)">
+              >
             </div>
             <div class="user-name">{{ this.data.patientName | titlecase }}</div>
             <div class="user-desc">{{ this.data.patientGender | titlecase }}, {{ this.data.patientAge }}</div>
@@ -156,7 +156,7 @@
             <div class="chat-item-info">
               <img
                 src="{{ baseUrl + '/personimage/' + data.patientPersonUuid }}"
-                (error)="onImgError($event)"
+
                 alt=""
               />
               <div class="title">

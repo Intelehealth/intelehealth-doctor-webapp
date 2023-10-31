@@ -53,15 +53,6 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Check how old the date is from now
   * @param {string} data - Date in string format
   * @return {string} - Returns how old the date is from now

@@ -222,15 +222,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Open select language modal
   * @return {void}
   */

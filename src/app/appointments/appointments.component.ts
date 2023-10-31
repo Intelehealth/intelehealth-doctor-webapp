@@ -177,15 +177,6 @@ export class AppointmentsComponent implements OnInit {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Get user uuid from localstorage user
   * @return {string} - User uuid
   */

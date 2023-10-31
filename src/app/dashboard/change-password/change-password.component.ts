@@ -154,13 +154,4 @@ export class ChangePasswordComponent implements OnInit {
     return (/[^A-Za-z0-9]/.test(str));
   }
 
-  /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
 }

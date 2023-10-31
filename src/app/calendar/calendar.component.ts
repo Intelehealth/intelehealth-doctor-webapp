@@ -420,15 +420,6 @@ export class CalendarComponent implements OnInit {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Cancel appointment with confirmation
   * @param {AppointmentModel} appointment - Appointment to be rescheduled
   * @param {boolean} withConfirmation - Need confirmation or not

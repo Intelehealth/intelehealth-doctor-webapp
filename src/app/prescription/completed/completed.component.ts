@@ -47,15 +47,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - Page event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Callback for page change event and Get visit for a selected page index and page size
   * @param {PageEvent} event - onerror event
   * @return {void}

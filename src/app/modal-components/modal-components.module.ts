@@ -88,7 +88,8 @@ import { VcallOverlayComponent } from './vcall-overlay/vcall-overlay.component';
         SharedModule,
         NgSelectModule,
         SignaturePadModule,
-        ImageCropperModule
+        ImageCropperModule,
+        SharedModule
     ],
     exports: [ViewVisitPrescriptionComponent]
 })

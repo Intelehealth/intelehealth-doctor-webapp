@@ -109,15 +109,6 @@ export class SupportComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Get all messages for the selected conversation.
   * @return {void}
   */

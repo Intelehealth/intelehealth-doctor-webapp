@@ -103,15 +103,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Get patients all visits
   * @param {string} patientId - onerror event
   * @return {void}

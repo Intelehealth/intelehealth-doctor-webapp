@@ -167,15 +167,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Check if attachement is pdf
   * @return {boolean} - True if pdf else false
   */

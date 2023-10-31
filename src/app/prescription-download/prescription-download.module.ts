@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PrescriptionDownloadComponent } from './prescription-download.component';
 import { RouterModule, Routes } from '@angular/router';
 import { ModalComponentsModule } from 'src/app/modal-components/modal-components.module';
+import { SharedModule } from '../shared.module';
 
 const routes: Routes = [
   {
@@ -19,7 +20,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
-    ModalComponentsModule
+    ModalComponentsModule,
+    SharedModule
   ],
   schemas: [NO_ERRORS_SCHEMA],
   exports: [PrescriptionDownloadComponent]

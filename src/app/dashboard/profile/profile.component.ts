@@ -494,15 +494,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-  * Handle image not found error
-  * @param {Event} event - onerror event
-  * @return {void}
-  */
-  onImgError(event) {
-    event.target.src = 'assets/svgs/user.svg';
-  }
-
-  /**
   * Callback for phone number input error event
   * @param {boolean} $event - True if valid else false
   * @param {string} errorFor - Error for which input
