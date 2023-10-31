@@ -6,47 +6,60 @@
     <div class="vital-item-row" *ngFor="let item of v">
       <div class="vital-item">
         <b>Temp:</b>&nbsp;
-        <span *ngIf="item.temp">
+        <span *ngIf="item.temp; else tempElse">
           {{ (item.temp * 9) / 5 + 32 | number : "1.1-1" }} F</span
         >
+        <ng-template #tempElse>
+          NA
+        </ng-template>
       </div>
       <div class="vital-item">
-        <b>Height:</b>&nbsp; <span *ngIf="item.height">{{ item.height }}</span>
+        <b>Height:</b>&nbsp; <span>{{ item.height || 'NA' }}</span>
       </div>
       <div class="vital-item">
         <b>Weight:</b>&nbsp;
-        <span *ngIf="item.weight">{{ item.weight }} kg</span>
+        <span *ngIf="item.weight; else weightElse">{{ item.weight }} kg</span>
+        <ng-template #weightElse>NA</ng-template>
       </div>
       <div class="vital-item">
         <b>BMI:</b>&nbsp;
         <span
           [style.color]="item.bmiColorCode"
-          *ngIf="item.weight && item.heightCm"
+          *ngIf="item.weight && item.heightCm; else bmiElse"
         >
-          {{ item?.bmi | number : "1.2-2" }}
+          {{ item?.bmi || "NA" | number : "1.2-2" }}
         </span>
+        <ng-template #bmiElse> NA </ng-template>
       </div>
       <div class="vital-item">
-        <b>SP02:</b>&nbsp; <span *ngIf="item.sp02">{{ item.sp02 }} %</span>
+        <b>SP02:</b>&nbsp; <span *ngIf="item.sp02; else spo2Else">{{ item.sp02 }} %</span>
+        <ng-template #spo2Else>NA</ng-template>
       </div>
     </div>
     <div class="vital-item-row">
       <div class="vital-item">
         <b>BP:</b>&nbsp;
-        <span *ngIf="v[0]?.sbp && v[0]?.dbp">
-          <span [style.color]="getSystolicColor(v[0]?.sbp)">{{
-            v[0]?.sbp
-          }}</span
-          >/
-          <span [style.color]="getDSystolicColor(v[0]?.dbp)">{{
-            v[0]?.dbp
-          }}</span>
+        <span *ngIf="v[0]?.sbp && v[0]?.dbp; else bpElse">
+          <span [style.color]="getSystolicColor(v[0]?.sbp)">
+            {{ v[0]?.sbp || "NA" }}
+          </span>
+          /
+          <span [style.color]="getDSystolicColor(v[0]?.dbp)">
+            {{ v[0]?.dbp || "NA" }}
+          </span>
         </span>
+        <ng-template #bpElse>NA</ng-template>
       </div>
-      <div class="vital-item"><b>HR:</b>&nbsp; {{ v[0]?.pulse }}</div>
-      <div class="vital-item"><b>RR:</b>&nbsp; {{ v[0]?.respiratoryRate }}</div>
-      <div class="vital-item"><b>Hemoglobin:</b>&nbsp; {{ v[0]?.hgb }}</div>
-      <div class="vital-item"><b>Blood Group:</b> {{ v[0]?.group }}</div>
+      <div class="vital-item"><b>HR:</b>&nbsp; {{ v[0]?.pulse || "NA" }}</div>
+      <div class="vital-item">
+        <b>RR:</b>&nbsp; {{ v[0]?.respiratoryRate || "NA" }}
+      </div>
+      <div class="vital-item">
+        <b>Hemoglobin:</b>&nbsp; {{ v[0]?.hgb || "NA" }}
+      </div>
+      <div class="vital-item">
+        <b>Blood Group:</b> {{ v[0]?.group || "NA" }}
+      </div>
     </div>
     <div class="vital-item-row">
       <div class="vital-item">
@@ -56,7 +69,7 @@
         </span>
       </div>
       <div class="vital-item">
-        <b>Sugar Level - Random:</b>&nbsp; {{ v[0]?.sugarLevelRandom || 'NA' }}
+        <b>Sugar Level - Random:</b>&nbsp; {{ v[0]?.sugarLevelRandom || "NA" }}
       </div>
     </div>
   </div>
