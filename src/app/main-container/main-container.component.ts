@@ -46,14 +46,12 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   subscription1: Subscription;
   searchForm: FormGroup;
   public breadcrumbs: BreadcrumbModel[];
-  public breadcrumbs: BreadcrumbModel[];
   @ViewChild('drawer') drawer: MatDrawer;
   dialogRef: MatDialogRef<HelpMenuComponent>;
   dialogRef2: MatDialogRef<RaiseTicketComponent>;
   routeUrl = '';
   adminUnread = 0;
   notificationEnabled = false;
-  interval;
   interval;
   snoozed: any = '';
   profilePic: string;
@@ -170,7 +168,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   */
   getNotificationStatus() {
     this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: ApiResponseModel) => {
-    this.authService.getNotificationStatus(this.user?.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.snoozed = res.data?.snooze_till;
@@ -230,7 +227,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   */
   selectLanguage(): void {
     this.coreService.openSelectLanguageModal().subscribe((res) => {
-    this.coreService.openSelectLanguageModal().subscribe((res) => {
     });
   }
 
@@ -272,9 +268,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     } else {
       const url = `${this.baseUrl}/patient?q=${this.searchForm.value.keyword}&v=custom:(uuid,identifiers:(identifierType:(name),identifier),person)`;
       this.http.get(url).subscribe((response: SerachPatientApiResponseModel) => {
-      this.http.get(url).subscribe((response: SerachPatientApiResponseModel) => {
         const values = [];
-        response['results'].forEach((value: PatientModel) => {
         response['results'].forEach((value: PatientModel) => {
           if (value) {
             if (value.identifiers.length) {
@@ -282,7 +276,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
             }
           }
         });
-        this.coreService.openSearchedPatientModal(values).subscribe((result) => {});
         this.coreService.openSearchedPatientModal(values).subscribe((result) => {});
         this.searchForm.reset();
       },
@@ -318,7 +311,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     // so we rebuild it each time
     const nextUrl = path ? `${url}/${path}` : url;
 
-    const breadcrumb: BreadcrumbModel = {
     const breadcrumb: BreadcrumbModel = {
         label: label,
         url: nextUrl,
@@ -397,7 +389,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   */
   toggleNotification() {
     this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: ApiResponseModel) => {
-    this.authService.toggleNotificationStatus(this.user.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.notificationEnabled = res.data?.notification_status;
         this.snoozed = '';
@@ -413,7 +404,6 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   * @return {void}
   */
   snoozeNotification(period: string) {
-    this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: ApiResponseModel) => {
     this.authService.snoozeNotification(period, this.user?.uuid).subscribe((res: ApiResponseModel) => {
       if (res.success) {
         this.snoozed = res.data?.snooze_till;

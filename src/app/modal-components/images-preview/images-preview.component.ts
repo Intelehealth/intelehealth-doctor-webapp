@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DocImagesModel } from 'src/app/model/model';
-import { DocImagesModel } from 'src/app/model/model';
 
 @Component({
   selector: 'app-images-preview',
@@ -12,11 +11,9 @@ export class ImagesPreviewComponent implements OnInit {
 
   imgUrl: string;
   source: DocImagesModel[] = [];
-  source: DocImagesModel[] = [];
   startIndex: number;
   min: number = -1;
   max: number = -1;
-  constructor(@Inject(MAT_DIALOG_DATA) public data,
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   private dialogRef: MatDialogRef<ImagesPreviewComponent>) { }
 

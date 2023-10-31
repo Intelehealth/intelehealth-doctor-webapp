@@ -71,7 +71,6 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
     this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res) => {
-    this.authService.changePassword(this.resetPasswordForm.value.oldPassword, passwd).subscribe((res) => {
       this.toastr.success(this.translateService.instant('Password has been changed successfully!'),
       this.translateService.instant('Password Changed!'));
     });

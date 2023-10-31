@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomVisitModel } from 'src/app/model/model';
-import { CustomVisitModel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -15,7 +14,6 @@ export class CompletedComponent implements OnInit, AfterViewInit, OnChanges {
   displayedColumns: string[] = ['name', 'age', 'visit_created', 'location', 'cheif_complaint', 'prescription_sent', 'visit_ended'];
   dataSource = new MatTableDataSource<any>();
   baseUrl: string = environment.baseURL;
-  @Input() completedVisits: CustomVisitModel[] = [];
   @Input() completedVisits: CustomVisitModel[] = [];
   @Input() completedVisitsCount: number = 0;
   @ViewChild('completedPaginator') paginator: MatPaginator;
