@@ -112,10 +112,10 @@
                 <div class="input-group">
                     <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()" data-test-id="etSearchPatient">
                     <div class="input-group-append">
-                      <button data-test-id="btnResetPatientSerach" mat-icon-button aria-label="Reset appointment search" *ngIf="searchForm.value.keyword" (click)="resetSearch()">
+                      <span class="input-group-text click p-0" id="basic-addon1" *ngIf="searchForm.value.keyword" (click)="resetSearch()" data-test-id="spanResetSearchPatient">
                         <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
-                      </button>
-                      <span class="input-group-text click" id="basic-addon1" (click)="search()" data-test-id="spanSearchPatient">
+                      </span>
+                      <span class="input-group-text click" id="basic-addon2" (click)="search()" data-test-id="spanSearchPatient">
                         <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                       </span>
                     </div>
