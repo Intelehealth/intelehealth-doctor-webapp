@@ -96,8 +96,8 @@
 
   <div class="admin-sidenav-content">
     <div class="header-main">
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="javascript:void(0)">
+      <nav class="navbar navbar-expand-lg navbar-light" aria-label="Header menu">
+        <a class="navbar-brand">
           <button class="mr-2" mat-icon-button (click)="drawer.toggle()" *ngIf="isMobile" data-test-id="btnToggleDrawer">
             <mat-icon>menu</mat-icon>
           </button>
@@ -112,6 +112,9 @@
                 <div class="input-group">
                     <input type="text" class="form-control" formControlName="keyword" placeholder="{{'Search patient'| translate}}" aria-label="Username" aria-describedby="basic-addon1" (keyup.enter)="search()" data-test-id="etSearchPatient">
                     <div class="input-group-append">
+                      <button data-test-id="btnResetPatientSerach" mat-icon-button aria-label="Reset appointment search" *ngIf="searchForm.value.keyword" (click)="resetSearch()">
+                        <mat-icon class="ml-0" style="line-height: normal;">close</mat-icon>
+                      </button>
                       <span class="input-group-text click" id="basic-addon1" (click)="search()" data-test-id="spanSearchPatient">
                         <img src="assets/svgs/search-icon.svg" alt="" width="20px" height="20px">
                       </span>

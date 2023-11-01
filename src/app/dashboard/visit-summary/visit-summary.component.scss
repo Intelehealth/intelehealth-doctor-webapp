@@ -454,7 +454,7 @@
   }
 
   .error-msg {
-    color: var(----color-red);
+    color: var(--color-red);
   }
 }
 
@@ -736,7 +736,7 @@ th.mat-header-cell:last-child {
 @media (max-width: 768px) {
 
   ::ng-deep .visit-summary-tab-group.mat-tab-group {
-  
+
     .mat-tab-body-wrapper {
       .mat-tab-body {
         .mat-tab-body-content {
@@ -755,7 +755,7 @@ th.mat-header-cell:last-child {
   .patient-info-wrapper{
     margin: 0 !important;
   }
-  
+
   .no-docs {
     padding: 10px 0px !important;
   }
