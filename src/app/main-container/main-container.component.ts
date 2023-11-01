@@ -262,7 +262,7 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   * Search patient
   * @return {void}
   */
-  search() {
+  search(): void {
     if (this.searchForm.value.keyword === null || this.searchForm.value.keyword.length < 3) {
       this.toastr.warning(this.translateService.instant('Please enter minimum 3 characters to search patient....'), this.translateService.instant('Warning'));
     } else {
@@ -425,6 +425,14 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
   */
   get provider(): ProviderModel {
     return getCacheData(true, doctorDetails.PROVIDER);
+  }
+
+  /**
+  * Reset patient search input
+  * @return {void}
+  */
+  resetSearch() {
+    this.searchForm.patchValue({ keyword: ''});
   }
 
   ngOnDestroy(): void {
