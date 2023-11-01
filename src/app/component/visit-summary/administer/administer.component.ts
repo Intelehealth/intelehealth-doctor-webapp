@@ -62,7 +62,7 @@ export class AdministerComponent implements OnInit {
     setTimeout(() =>{
       const data = this.administerMedAid
       this.dataToParent.emit(data);
-    },3000)
+    },3000);
   }
 
   getDispense(visitID:any){
@@ -70,7 +70,7 @@ export class AdministerComponent implements OnInit {
     .subscribe(visitDetail => {
       visitDetail.encounters.filter((e) => {
         if(e.display.includes("ADMINISTER")){
-          let dispenseObs = {}
+          let dispenseObs = {};
           let imageDoc = [];
           for(let i = 0; i < e.obs.length; i++){
             if(e.obs[i].display.includes("ADMINISTER_MEDICATION")){
@@ -79,12 +79,14 @@ export class AdministerComponent implements OnInit {
               dispenseObs['medicationNotesList'] = obsData.medicationNotesList
               dispenseObs['medDocumentsList'] = obsData.documentsList
               dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
+              dispenseObs['creator'] = e.obs[i].creator
             }
             if(e.obs[i].display.includes("ADMINISTER_AID")){
               let obsData = JSON.parse(e.obs[i].value)              
               dispenseObs['aidUuidList'] = obsData.aidUuidList
               dispenseObs['aidNotesList'] = obsData.aidNotesList
               dispenseObs['aidDocumentsList'] = obsData.documentsList
+              dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
               dispenseObs['creator'] = e.obs[i].creator
               dispenseObs['otherAids'] = obsData.otherAids
               dispenseObs['outOfPocket'] = obsData.outOfPocket
@@ -99,7 +101,7 @@ export class AdministerComponent implements OnInit {
               dispenseObs['docImage'] = imageDoc            
             }           
           }
-          this.administerMedAid.push(dispenseObs)
+          this.administerMedAid.push(dispenseObs);
         }
         if(e.display.includes("Visit Note")){
           for(let j = 0; j < e.obs.length; j++){
@@ -109,14 +111,14 @@ export class AdministerComponent implements OnInit {
               this.diagnosisService.getData(e.obs[j]);
               obsMeds['uuid'] = e.obs[j].uuid
               obsMeds['value'] = e.obs[j].value
-              this.medicines.push(obsMeds)
+              this.medicines.push(obsMeds);
             }
             if(e.obs[j].display.includes("Type 1") || e.obs[j].display.includes("Type 2") || e.obs[j].display.includes("Type 3") || e.obs[j].display.includes("Type 4") || e.obs[j].display.includes("Type 5")){
               this.diagnosisService.getData(e.obs[j]);
               obsAids['display'] = e.obs[j].display
               obsAids['uuid'] = e.obs[j].uuid
               obsAids['value'] = e.obs[j].value
-              this.aids.push(obsAids)
+              this.aids.push(obsAids);
             }
           }
         }

@@ -1352,5 +1352,19 @@
     "Questions for university education": "Questions for university education",
     "Information": "Information",
     "Complete Prescription": "Complete Prescription",
-    "Are you sure to complete this visit? Once completed prescription can not be edited.": "Are you sure to complete this visit? Once completed prescription can not be edited."
+    "Are you sure to complete this visit? Once completed prescription can not be edited.": "Are you sure to complete this visit? Once completed prescription can not be edited.",
+    "Dispense":"Dispense",
+    "Administer":"Administer",
+    "Medicines":"Medicines",
+    "Aids":"Aids",
+    "Covered Cost":"Covered Cost",
+    "Other Aids":"Other Aids",
+    "Out Of Pocket":"Out of Pocket",
+    "Vendor Discount":"Vendor Discount",
+    "Total Cost":"Total Cost",
+    "Medicine Note":"Medicine Note",
+    "Aid Note":"Aids Note",
+    "Documents":"Documents",
+    "Dispensed by":"Dispensed By",
+    "Administered by":"Administered by"
   }

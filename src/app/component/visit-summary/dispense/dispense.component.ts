@@ -17,7 +17,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 @Component({
   selector: 'app-dispense',
   templateUrl: './dispense.component.html',
-  styleUrls: ['./dispense.component.css'],
+styleUrls: ['./dispense.component.css'],
   animations: [
     trigger('moveInLeft', [
       transition('void=> *', [style({ transform: 'translateX(300px)' }),
@@ -72,12 +72,14 @@ export class DispenseComponent implements OnInit {
               dispenseObs['medicationNotesList'] = obsData.medicationNotesList
               dispenseObs['medDocumentsList'] = obsData.documentsList
               dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
+              dispenseObs['creator'] = e.obs[i].creator
             }
             if(e.obs[i].display.includes("DISPENSE_AID")){
               let obsData = JSON.parse(e.obs[i].value)              
               dispenseObs['aidUuidList'] = obsData.aidUuidList
               dispenseObs['aidNotesList'] = obsData.aidNotesList
               dispenseObs['aidDocumentsList'] = obsData.documentsList
+              dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
               dispenseObs['creator'] = e.obs[i].creator
               dispenseObs['otherAids'] = obsData.otherAids
               dispenseObs['outOfPocket'] = obsData.outOfPocket
@@ -92,7 +94,7 @@ export class DispenseComponent implements OnInit {
               dispenseObs['docImage'] = imageDoc
             }
           }
-          this.dispenseMedAid.push(dispenseObs)
+          this.dispenseMedAid.push(dispenseObs);
         }
         if(e.display.includes("Visit Note")){
           for(let j = 0; j < e.obs.length; j++){
@@ -112,6 +114,7 @@ export class DispenseComponent implements OnInit {
               this.aids.push(obsAids)
             }
           }
+          this.aids.sort((a, b) => a['display'].localeCompare(b['display']));
         }
       });
     });
