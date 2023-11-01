@@ -155,7 +155,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     'minWidth': 5,
     'canvasWidth': 300,
     'canvasHeight': 100,
-    'backgroundColor': 'var(--color-offWhite)'
+    'backgroundColor': '#FAF9FF'
   };
 
   personalInfoForm: FormGroup;
