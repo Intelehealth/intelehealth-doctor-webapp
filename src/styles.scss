@@ -614,30 +614,30 @@ body.font-lato td {
       align-items: center;
       padding: 24px;
       position: relative;
-  
+
       .close-btn-con {
         position: absolute;
         right: 24px;
         top: 20px;
-  
+
         .modal-close-btn {
           border: none;
           background: transparent;
           outline: none;
         }
       }
-  
+
       .modal-con {
         max-height: 70vh;
         overflow: auto;
-  
+
         h6 {
           font-size: 24px;
           font-weight: bold;
           text-align: center;
           line-height: 150%;
         }
-  
+
         p {
           font-size: 18px;
           color: #7F7B92;
@@ -645,13 +645,13 @@ body.font-lato td {
           line-height: 150%;
         }
       }
-  
+
       .modal-action-btn-con {
         display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
-  
+
         .modal-btn {
           padding: 8px 24px;
           min-width: 119px;
@@ -664,7 +664,7 @@ body.font-lato td {
           color: #2E1E91;
           font-weight: bold;
         }
-  
+
         .modal-btn.blue-btn {
           background: #2E1E91;
           border: 1px solid #2E1E91;
@@ -718,7 +718,7 @@ body.font-lato td {
   .mat-expansion-indicator{
     padding: 1rem !important;
   }
-  
+
   .mat-tab-label{
     padding: 0px 10px !important;
   }
@@ -1017,8 +1017,4 @@ body.font-lato td {
   .ng-option-label {
     font-weight: normal !important;
   }
-}
-
-.cdk-global-overlay-wrapper{
-  background-color: rgba(0, 0, 0, 0.5);
 }
