@@ -30,7 +30,7 @@
               <div class="patient-img-item mb-2">
                 <div class="patient-img">
                   <img
-                    src="{{ baseUrl + '/personimage/' + patient?.person.uuid }}"
+                    src="{{ baseURL + '/personimage/' + patient?.person.uuid }}"
 
                     alt=""
                     width="100%"
@@ -482,7 +482,7 @@
                             </div>
                           </div>
                         </li>
-                        <li *ngIf="eyeImages.length">
+                        <li *ngIf="pe.title.toLowerCase() === 'general exams' && eyeImages.length">
                           <div class="list-item">
                             <label [attr.data-test-id]="'etEyeImgPhysicalExam'">{{'Eye images'|translate}}</label>
                             <div class="list-item-content">
