@@ -217,7 +217,7 @@
   "Enter signature letters":"Введите Письма с подписями",
   "Select Signature":"Выберите подпись",
   "Upload a scanned image of your signature.":"Загрузите отсканированное изображение вашей подписи.",
-  "Image size (5kb to 50kb)":"Размер изображения (от 5 кб до 50 кб)",
+  "Image size (5kb to 50kb)":"Размер изображения (менее 50 КБ)",
   "By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.":
   "Подписывая данный документ электронной подписью, я соглашаюсь с тем, что такая подпись будет иметь такую же силу, как и собственноручная подпись, в той степени, в которой это допускается местным законодательством.",
   "Draw":"Нарисовать",
