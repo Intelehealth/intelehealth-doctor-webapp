@@ -1,15 +1,7 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { EncounterService } from 'src/app/services/encounter.service';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { DiagnosisService } from '../../../services/diagnosis.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { transition, trigger, style, animate, keyframes } from '@angular/animations';
-import medicines from '../prescribed-medication/medicines';
-import { TranslationService } from 'src/app/services/translation.service';
-import * as moment from 'moment';
-import { SessionService } from 'src/app/services/session.service';
 import { environment } from 'src/environments/environment';
 import { VisitService } from 'src/app/services/visit.service';
 import { CoreService } from 'src/app/services/core/core.service';
@@ -17,7 +9,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 @Component({
   selector: 'app-dispense',
   templateUrl: './dispense.component.html',
-styleUrls: ['./dispense.component.css'],
+  styleUrls: ['./dispense.component.css'],
   animations: [
     trigger('moveInLeft', [
       transition('void=> *', [style({ transform: 'translateX(300px)' }),
@@ -34,8 +26,6 @@ styleUrls: ['./dispense.component.css'],
   ]
 })
 export class DispenseComponent implements OnInit {
-
-  @Output() dataToParent: EventEmitter<any> = new EventEmitter<any>();
 
   dispenseMedAid: any = [];
   medicines = [];

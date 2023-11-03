@@ -38,6 +38,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   userSpeciality: any;
   isVisitNoteEncProvider = false;
   isSameSpecialityDoctorViewingVisit = false;
+  isAdminister = false;
+  isDispense = false;
 
   constructor(
     private service: EncounterService,
@@ -107,6 +109,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             visit.display.includes("Vitals")
           ) {
             saveToStorage("patientVisitProvider", visit.encounterProviders[0]);
+          }          
+          if(visit.display.includes("DISPENSE")){
+            this.isDispense = true
+          }
+          if(visit.display.includes("ADMINISTER")){
+            this.isAdminister = true
           }
         });
       });
