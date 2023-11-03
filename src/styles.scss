@@ -134,13 +134,19 @@ body.font-lato td {
 /* Chatbot css*/
 
 .chatbot-backdrop {
-  background: transparent;
+  background: black;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing{
+  opacity: 0.5 !important;
 }
 
 .chatbot-container {
-  width: 300px;
+  width: 300px !important;
   height: 500px;
   margin-bottom: 80px;
+  right: 20px;
+  position: fixed !important;
 
   .mat-dialog-container {
     overflow: visible;
@@ -297,11 +303,12 @@ body.font-lato td {
 
 @media all and (min-width:0px) and (max-width: 568px) {
   .chatbot-container {
-    width: 93% !important;
+    width: 100% !important;
     height: 76% !important;
 
-    max-width: 93% !important;
+    max-width: 100% !important;
     max-height: 76% !important;
+    position: static !important;
   }
 }
 

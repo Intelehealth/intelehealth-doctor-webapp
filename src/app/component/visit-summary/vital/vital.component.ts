@@ -19,6 +19,7 @@ export class VitalComponent implements OnInit {
   ) { }
 
   toFeet(n: any) {
+    if(!n) return n;
     const realFeet = ((n * 0.393700) / 12);
     const feet = Math.floor(realFeet);
     const inches = Math.round((realFeet - feet) * 12);
@@ -90,7 +91,7 @@ export class VitalComponent implements OnInit {
                 );
               }
               if (displayObs.includes("Height")) {
-                this.answer.heightCm = obs.display.slice(13, obs.display.length);
+                this.answer.heightCm = Number(obs.display.slice(13, obs.display.length));
                 this.answer.height = this.toFeet(this.answer.heightCm);
               }
               if (displayObs.match("BLOOD OXYGEN SATURATION") !== null) {

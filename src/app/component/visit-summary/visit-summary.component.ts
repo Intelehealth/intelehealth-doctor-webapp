@@ -387,6 +387,6 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.chatBoxRef.close();
+    if(this.chatBoxRef) this.chatBoxRef.close();
   }
 }
