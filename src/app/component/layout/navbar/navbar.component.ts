@@ -208,7 +208,7 @@ export class NavbarComponent implements OnInit {
           attributes.forEach((element) => {
             if (
               element.attributeType.uuid ===
-                "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
               !element.voided
             ) {
               this.notificationService
