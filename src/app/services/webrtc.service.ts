@@ -12,7 +12,7 @@ import {
   RoomConnectOptions,
   RoomEvent,
   Track,
-  // VideoPresets,
+  VideoPresets43,
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
@@ -88,14 +88,9 @@ export class WebrtcService {
 
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
-      // dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
+      dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: {
-          aspectRatio: 1.7777777777777777,
-          frameRate: 30,
-          height: 640,
-          width: 360
-        },
+        resolution: VideoPresets43.h540,
       },
       audioCaptureDefaults: {
         echoCancellation: true,

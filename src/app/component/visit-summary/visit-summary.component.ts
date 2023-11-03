@@ -47,6 +47,7 @@ export class VisitSummaryComponent implements OnInit {
   roleAccess: any;
   visit: any;
   videoIcon = "assets/svgs/video-w.svg";
+  chatBoxRef: any;
 
   constructor(
     private service: EncounterService,
@@ -120,6 +121,10 @@ export class VisitSummaryComponent implements OnInit {
           this.PatientExitSurveyPresent = true;
         }
       });
+      const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+      if (openChat === 'true') {
+        this.openChatModal();
+      }
     });
   }
 
@@ -132,18 +137,18 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   setSameProvider(visit: any) {
-      let localProvider = localStorage.getItem("provider");
-      if (localProvider !== null) {
-        localProvider = JSON.parse(localProvider) as any;
-        const uuid = localProvider['uuid'];
-        if (visit.encounterProviders.length > 0) {
-          const encounterProvider = visit.encounterProviders[0];
-          const provider = encounterProvider.provider;
-          if (provider) {
-            this.isSameProvider = uuid === provider.uuid
-          }
+    let localProvider = localStorage.getItem("provider");
+    if (localProvider !== null) {
+      localProvider = JSON.parse(localProvider) as any;
+      const uuid = localProvider['uuid'];
+      if (visit.encounterProviders.length > 0) {
+        const encounterProvider = visit.encounterProviders[0];
+        const provider = encounterProvider.provider;
+        if (provider) {
+          this.isSameProvider = uuid === provider.uuid
         }
       }
+    }
   }
 
   onStartVisit() {
@@ -372,12 +377,16 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   openChatModal() {
-    this.cs.openChatBoxModal({
-      patientId: this.visit.patient.uuid,
-      visitId: this.visit.uuid,
+    this.chatBoxRef = this.cs.openChatBoxModal({
+      patientId: this.visit?.patient?.uuid,
+      visitId: this.visit?.uuid,
       patientName: this.visit?.patient?.person?.display,
       patientPersonUuid: this.visit?.patient?.uuid,
       patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
     });
+  }
+
+  ngOnDestroy() {
+    this.chatBoxRef.close();
   }
 }
