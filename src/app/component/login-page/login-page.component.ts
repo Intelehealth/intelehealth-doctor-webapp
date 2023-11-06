@@ -71,7 +71,7 @@ export class LoginPageComponent implements OnInit {
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               saveToStorage("provider", provider.results[0]);
-              this.authService.sendToken(response.sessionId);
+              this.authService.setToken(response.sessionId);
               saveToStorage("user", response.user);
               let isNurse = response.user.roles.find((r: any) => r.name == 'Organizational: Nurse');
               let isDoctor = response.user.roles.find((r: any) => r.name == 'Organizational: Doctor');

@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { CookieService } from 'ngx-cookie';
+import { getCacheData, setCacheData } from "../utils/utility-functions";
 declare var deleteFromStorage: any;
 
 @Injectable({
@@ -25,11 +26,16 @@ export class AuthService {
   }
 
   /**
-   * Returns JSESSIONID token
+   * Returns JSESSIONID token from cookie if not found, fallback to localStorage and set to cookie
    * @returns String
    */
   getToken() {
-    return this.cookieService.get("JSESSIONID");
+    let sessionId = this.cookieService.get("JSESSIONID");
+    if (!sessionId) {
+      sessionId = getCacheData('JSESSIONID')
+      if (sessionId) this.sendToken(sessionId);
+    }
+    return sessionId || '';
   }
 
   /**
@@ -38,6 +44,14 @@ export class AuthService {
    */
   isLoggedIn() {
     return !!this.getToken();
+  }
+
+  /**
+   * Set passed token to localStorage
+   */
+  setToken(token) {
+    setCacheData('JSESSIONID', token);
+    this.sendToken(token);
   }
 
   /**
@@ -54,6 +68,7 @@ export class AuthService {
         deleteFromStorage("nurseName");
         deleteFromStorage("doctorName");
         deleteFromStorage("providerType");
+        deleteFromStorage("JSESSIONID");
         this.cookieService.removeAll();
         this.myRoute.navigate(["/login"]);
       });
