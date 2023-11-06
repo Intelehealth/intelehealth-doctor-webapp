@@ -23,7 +23,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { CoreService } from 'src/app/services/core/core.service';
 import { getCacheData, setCacheData } from 'src/app/utils/utility-functions';
 import { languages, doctorDetails } from 'src/config/constant';
-import { DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { ApiResponseModel, DataItemModel, ProviderAttributeTypeModel, ProviderAttributeTypesResponseModel, ProviderModel, ProviderResponseModel, UserModel } from 'src/app/model/model';
+import { AppointmentService } from 'src/app/services/appointment.service';
 
 export const PICK_FORMATS = {
   parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
@@ -155,7 +156,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     'minWidth': 5,
     'canvasWidth': 300,
     'canvasHeight': 100,
-    'backgroundColor': '#FAF9FF'
+    'backgroundColor': '#FFFFFF'
   };
 
   personalInfoForm: FormGroup;
@@ -181,6 +182,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   phoneValid = false;
   emailValid = false;
   checkingPhoneValidity = false;
+  specialization: string = '';
   @ViewChild('fileUploader') fileUploader: ElementRef;
 
   constructor(
@@ -193,7 +195,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private cookieService: CookieService,
     private rolesService: NgxRolesService,
     private translateService: TranslateService,
-    private coreService: CoreService) {
+    private coreService: CoreService,
+    private appointmentService: AppointmentService) {
 
     this.personalInfoForm = new FormGroup({
       givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
@@ -309,6 +312,22 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         this.personalInfoForm.patchValue({ age: moment().diff(moment(val), 'years', false) });
       }
     });
+
+    this.professionalInfoForm.get(doctorDetails.SPECIALIZATION).valueChanges.subscribe(val => {
+      if (val && val != this.specialization) {
+        this.appointmentService.checkAppointmentPresent(this.user.uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'), this.specialization).subscribe((res: ApiResponseModel) => {
+          if (res.status) {
+            if (res.data) {
+              this.toastr.warning("You have some appointments booked for this specialization, please complete them first.", "Can't change specialization!");
+              this.professionalInfoForm.patchValue({ specialization: this.specialization });
+            }
+          }
+        }, (err => {
+          this.toastr.error("Something went wrong.", "Can't change specialization!");
+          this.professionalInfoForm.patchValue({ specialization: this.specialization });
+        }));
+      }
+    });
   }
 
   /**
@@ -380,6 +399,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             personalFormValues.signatureType = this.signatureType;
             break;
           case doctorDetails.SPECIALIZATION:
+            this.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
             break;
           case doctorDetails.TEXT_OF_SIGN:
@@ -614,7 +634,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.addedFiles.length) {
       this.signatureFile = event.addedFiles[0];
       const filename = this.signatureFile.name;
-      if (!filename.endsWith('.png') || filename.endsWith('.jgp') || filename.endsWith('.jpeg')) {
+      if (!(filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg') || filename.endsWith('.PNG') || filename.endsWith('.JPEG') || filename.endsWith('.JPG'))) {
         this.reset();
         alert('Please upload png, jpg or jpeg file only.');
         return;
@@ -801,8 +821,12 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     this.providerService.requestDataFromMultipleSources(requests).subscribe((responseList) => {
+      this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
+      if (this.specialization != this.professionalInfoForm.get('specialization').value) {
+        this.specialization = this.professionalInfoForm.get('specialization').value;
+        this.appointmentService.updateSlotSpeciality(this.user.uuid, this.specialization).subscribe((resp: ApiResponseModel) => {});
+      }
       if (this.personalInfoForm.get(doctorDetails.PHONE_NUMBER).dirty && this.oldPhoneNumber !== this.getAttributeValueFromForm(doctorDetails.PHONE_NUMBER)) {
-        this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
         this.toastr.warning(this.translateService.instant('Kindly re-login to see updated details'), this.translateService.instant('Re-login'));
         this.cookieService.delete('app.sid', '/');
         this.authService.logOut();
@@ -814,7 +838,6 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             let u = getCacheData(true,doctorDetails.USER);
             u.person.display = provider.results[0].person.display;
             setCacheData(doctorDetails.USER, JSON.stringify(u));
-            this.toastr.success(this.translateService.instant('Profile has been updated successfully'), this.translateService.instant('Profile Updated'));
             const role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
             if (role) {
               this.router.navigate(['/admin']);

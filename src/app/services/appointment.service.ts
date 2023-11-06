@@ -142,4 +142,31 @@ export class AppointmentService {
       payload
     );
   }
+
+  /**
+  * Check appointment present or not
+  * @param {string} userUuid - User uuid
+  * @param {string} fromDate - From date
+  * @param {string} toDate - To date
+  * @param {string} speciality - Speciality
+  * @return {Observable<any>}
+  */
+  checkAppointmentPresent(userUuid, fromDate, toDate, speciality) {
+    return this.http.get(
+      `${this.baseURL}/appointment/checkAppointment/${userUuid}?fromDate=${fromDate}&toDate=${toDate}&speciality=${speciality}`
+    );
+  }
+
+  /**
+  * Update speciality for the calendar slots
+  * @param {string} userUuid - User uuid
+  * @param {string} speciality - Speciality
+  * @return {Observable<any>}
+  */
+  updateSlotSpeciality(userUuid, speciality) {
+    return this.http.put(
+      `${this.baseURL}/appointment/updateSlotSpeciality/${userUuid}?speciality=${speciality}`,
+      null
+    );
+  }
 }

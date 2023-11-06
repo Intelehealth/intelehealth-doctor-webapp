@@ -214,7 +214,7 @@
   "Enter signature letters":"Enter signature letters",
   "Select Signature":"Select Signature",
   "Upload a scanned image of your signature.":"Upload a scanned image of your signature.",
-  "Image size (5kb to 50kb)":"Image size (5kb to 50kb)",
+  "Image size (less than 50kb)":"Image size (less than 50kb)",
   "By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.":
   "By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.",
   "Draw":"Draw",
