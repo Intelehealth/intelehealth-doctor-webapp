@@ -11,6 +11,7 @@ import { SwPush, SwUpdate } from "@angular/service-worker";
 import { PushNotificationsService } from "src/app/services/push-notification.service";
 import { MonitoringService } from "src/app/services/monitoring.service";
 import { SocketService } from "src/app/services/socket.service";
+import { suppress } from "src/app/utils/utility-functions";
 declare var getFromStorage: any, saveToStorage: any;
 
 @Component({
@@ -57,7 +58,7 @@ export class NavbarComponent implements OnInit {
     public notificationService: PushNotificationsService,
     public monitor: MonitoringService,
     public socket: SocketService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const userDetails = getFromStorage("user");
@@ -105,7 +106,7 @@ export class NavbarComponent implements OnInit {
       status,
       name: this.user?.person?.display || this.user?.display,
     };
-    if(isDoctor) this.monitor.createUpdateStatus(payload).subscribe();
+    if (isDoctor) this.monitor.createUpdateStatus(payload).subscribe();
   }
 
   /**
@@ -182,7 +183,11 @@ export class NavbarComponent implements OnInit {
   }
 
   unsubscribeNotification() {
-    this.swPush.unsubscribe();
+    setTimeout(() => {
+      suppress(() => {
+        this.swPush.unsubscribe();
+      });
+    }, 0);
     localStorage.removeItem("subscribed");
     this.notificationService
       .unsubscribeNotification({
@@ -237,6 +242,6 @@ export class NavbarComponent implements OnInit {
           });
         }
       })
-      .catch((err) => {});
+      .catch((err) => { });
   }
 }
