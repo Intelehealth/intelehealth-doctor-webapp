@@ -153,3 +153,19 @@
   background-color: white;
   cursor: pointer;
 }
+
+.char-count {
+  z-index: 1;
+  bottom: -6px;
+  font-size: 10px;
+  left: 5px;
+  color: grey;
+
+  &.red {
+    color: red;
+  }
+}
+
+.bg-grey {
+  background: grey !important;
+}
