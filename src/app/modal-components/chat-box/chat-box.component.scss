@@ -30,6 +30,7 @@
         color: var(--color-darkestBlue);
         font-weight: bold;
       }
+
       span {
         font-size: 12px;
         line-height: 163%;
@@ -150,4 +151,20 @@
   object-fit: contain;
   background-color: var(--color-white);
   cursor: pointer;
+}
+
+.char-count {
+  z-index: 1;
+  bottom: -10px;
+  font-size: 10px;
+  left: 5px;
+  color: grey;
+
+  &.red {
+    color: red;
+  }
+}
+
+.bg-grey {
+  background: grey !important;
 }
