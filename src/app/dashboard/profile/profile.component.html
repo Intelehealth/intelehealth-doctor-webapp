@@ -203,6 +203,7 @@
                             <input type="text" class="form-control" placeholder="{{'Enter signature letters'|translate}}" formControlName="textOfSign" data-test-id="etSignature">
                             <div *ngIf="submitted && f1.textOfSign.errors">
                               <small class="error-msg" *ngIf="f1.textOfSign.errors.required">{{'Enter signature letters'|translate}}</small>
+                              <small class="error-msg" *ngIf="f1.textOfSign.errors.maxlength">{{'Maximum limit 20 characters'|translate}}</small>
                             </div>
                           </div>
                           <div class="form-group col-md-6">
@@ -225,7 +226,7 @@
 
                     <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
                       <ng-container *ngIf="!signatureFile; else signaturePreview">
-                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [minFileSize]="5000" [maxFileSize]="50000" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
+                        <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="50000" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
                         <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFile">
                           <img src="assets/svgs/add-btn-blue-square.svg" alt="" width="48px" height="48px">
                           <p class="ml-2">{{'Upload a scanned image of your signature.' | translate}}<br> {{'Image size (less than 50kb)' | translate}}</p>

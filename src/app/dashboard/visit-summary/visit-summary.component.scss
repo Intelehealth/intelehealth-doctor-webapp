@@ -5,7 +5,8 @@
   font-family: DM Sans;
   background: #E6FFF3;
   border-radius: 12px;
-  padding: 16px 24px;
+  padding: 24px;
+  flex-wrap: wrap;
 
   h6 {
     font-size: 16px;
@@ -19,7 +20,6 @@
     line-height: 150%;
     color: var(--color-green);
     display: flex;
-    margin-bottom: 0px;
   }
 
   .start-call-btn {
@@ -84,6 +84,7 @@
         color: var(--color-darkestBlue);
         font-size: 16px;
         line-height: 150%;
+        word-break: break-all;
       }
     }
 

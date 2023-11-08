@@ -281,7 +281,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       if (val) {
         this.signatureType = val;
         if (val === 'Generate') {
-          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).setValidators([Validators.required]);
+          this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).setValidators([Validators.required, Validators.maxLength(20)]);
           this.personalInfoForm.get(doctorDetails.TEXT_OF_SIGN).updateValueAndValidity();
           this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).setValidators([Validators.required]);
           this.personalInfoForm.get(doctorDetails.FONT_OF_SIGN).updateValueAndValidity();
@@ -732,8 +732,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
       case 'Generate':
         this.providerService.creatSignature(this.provider.uuid, this.getAttributeValueFromForm(doctorDetails.TEXT_OF_SIGN), this.getAttributeValueFromForm(doctorDetails.FONT_OF_SIGN)).subscribe((res) => {
-          if (res.fname) {
-            fetch(res.fname).then(pRes => pRes.blob()).then(blob => {
+          if (res.success) {
+            fetch(res.data.url).then(pRes => pRes.blob()).then(blob => {
               const reader = new FileReader();
               reader.onload = () => {
                 signature = reader.result.toString();
