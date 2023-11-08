@@ -65,7 +65,13 @@
         </li>
       </ng-container>
     </ul>
-    <div class="chat-input-con">
+    <div class="chat-input-con mb-2 position-relative">
+      <div
+        [class.red]="msgCharCount > MESSAGE_LIMIT"
+        class="char-count grey position-absolute"
+      >
+        {{ msgCharCount }}/1000
+      </div>
       <div class="input-group mr-2">
         <input
           type="text"
@@ -86,7 +92,13 @@
           </button>
         </div> -->
       </div>
-      <button type="button" class="send-btn" (click)="sendMessage()">
+      <button
+        [disabled]="msgCharCount > MESSAGE_LIMIT"
+        [class.bg-grey]="msgCharCount > MESSAGE_LIMIT"
+        type="button"
+        class="send-btn"
+        (click)="sendMessage()"
+      >
         <img src="assets/svgs/send-icon-white.svg" alt="" />
       </button>
     </div>

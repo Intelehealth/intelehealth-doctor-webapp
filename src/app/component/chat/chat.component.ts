@@ -22,6 +22,7 @@ export class ChatComponent implements OnInit {
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
   sending = false;
+  MESSAGE_LIMIT = 1000;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -94,11 +95,10 @@ export class ChatComponent implements OnInit {
     // await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
 
     if (this.message) {
-      // const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
-      // if (!nursePresent) {
-      //   this.toastr.error("Please try again later.", "Health Worker is not Online.");
-      //   return;
-      // }
+      if (this.msgCharCount > this.MESSAGE_LIMIT) {
+        this.toastr.error("Please try again later.", "Message length should not exceed 1000.");
+        return
+      }
 
       const payload = {
         visitId: this.data.visitId,
@@ -159,6 +159,11 @@ export class ChatComponent implements OnInit {
 
   setImage(src) {
     // this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+
+  get msgCharCount() {
+    return this.message?.length || 0
   }
 
 }
