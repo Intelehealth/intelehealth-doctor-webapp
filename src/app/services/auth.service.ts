@@ -103,29 +103,39 @@ export class AuthService {
     //   catchError((err) => throwError(err)),
     //   map(res => res),
     //   mergeMap((item) => {
-        let headers: HttpHeaders = new HttpHeaders();
-        headers = headers.append('Authorization', 'Basic ' + credBase64);
-        return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
-          map((user: any) => {
-            if (user.authenticated) {
-              user.verified = false;
-              localStorage.setItem('currentUser', JSON.stringify(user));
-              localStorage.setItem('user', JSON.stringify(user.user));
-              this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
-              this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
-              this.currentUserSubject.next(user);
-              // if (user.sessionId) {
-              //   this.cookieService.set('JSESSIONID', user.sessionId);
-              // }
-            }
-            return user;
-          }));
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + credBase64);
+    return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
+      map((user: any) => {
+        if (user.authenticated) {
+          user.verified = false;
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(user.user));
+          this.permissionsService.loadPermissions(this.extractPermissions(user.user.privileges));
+          this.rolesService.addRoles(this.extractRolesAndPermissions(user.user.privileges, user.user.roles));
+          this.currentUserSubject.next(user);
+          // if (user.sessionId) {
+          //   this.cookieService.set('JSESSIONID', user.sessionId);
+          // }
+        }
+        return user;
+      }));
     //   })
     // );
   }
 
   getProvider(userId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/provider?user=${userId}&v=custom:(uuid,person:(uuid,display,gender,age,birthdate,preferredName),attributes)`);
+  }
+
+  loginExternal() {
+    this.cookieService.deleteAll();
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + environment.externalPrescriptionCred);
+    return this.http.get(`${this.baseUrl}/session`, { headers }).pipe(
+      map((user: any) => {
+        return user;
+      }));
   }
 
   logOut() {
@@ -259,7 +269,7 @@ export class AuthService {
   }
 
   subscribePushNotification(sub: PushSubscription, user_uuid: string, finger_print: string, providerName: string, speciality: string) {
-    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName  });
+    return this.http.post(`${this.notificationUrl}/subscribe`, { sub, user_uuid, finger_print, speciality, providerName });
   }
 
   getNotificationStatus(user_uuid: string) {

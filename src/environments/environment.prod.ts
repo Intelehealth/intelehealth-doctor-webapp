@@ -9,7 +9,7 @@ export const environment = {
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   captchaSiteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
   siteKey: "6LeNZvklAAAAABQO-10y2egkCxjVOnXxswDSWL8m",
-  externalPrescriptionCred: 'c3lzbnVyc2U6SUhOdXJzZSMx',
+  externalPrescriptionCred: 'ZXh0ZXJuYWxwcmVzdXNlcjpJSFVzZXIjMQ==', //externaluser
   vapidPublicKey: "BM4tUVW1UwkMpfAWh2mwhA-wwdIC2rCF1MFypbFpjn23qYMQXaeAaYi6ydGslRb_Vdr2Ws0MW5RSUH9InEbYNhA",
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,

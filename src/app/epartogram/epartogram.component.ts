@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
 import { VisitService } from 'src/app/services/visit.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-epartogram',
@@ -232,36 +233,46 @@ export class EpartogramComponent implements OnInit {
   birthWeight: any;
   babyStatus: any;
   babyGender: any;
+  loginAttempt: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private visitService: VisitService) { }
+    private visitService: VisitService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    setTimeout(()=> {
-      this.ele = document.getElementsByClassName('table-responsive')[0];
-      if (this.ele) {
-        this.ele.scrollTop = 0;
-        this.ele.scrollLeft = 0;
-        this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+    this.login(id);
+  }
+
+  login(visituuid: string) {
+    this.loginAttempt++;
+    this.authService.loginExternal().subscribe((res: any) => {
+      if (res.authenticated) {
+        setTimeout(()=> {
+          this.ele = document.getElementsByClassName('table-responsive')[0];
+          if (this.ele) {
+            this.ele.scrollTop = 0;
+            this.ele.scrollLeft = 0;
+            this.ele.addEventListener('mousedown', this.mouseDownHandler.bind(this));
+          }
+        }, 1000);
+        this.getVisit(visituuid);
       }
-    }, 1000);
-    this.getVisit(id);
+    }, err => {
+      if (this.loginAttempt < 3) this.login(visituuid);
+    });
   }
 
   getVisit(uuid: string) {
-    this.visitService.fetchVisitDetails2(uuid).subscribe((visit: any) => {
+    this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
         this.visit = visit;
         this.patient = visit?.patient;
-        // console.log(visit);
         this.readPatientAttributes();
         this.readStageData();
       }
-    }, (error: any) => {
-      // this.router.navigate(['/dashboard']);
     });
   }
 
