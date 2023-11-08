@@ -250,7 +250,7 @@
                               </div>
                               <div class="d-flex align-items-center justify-content-center">
                                 <div>
-                                  {{motherDeceased == 'YES' ? 'MOTHER DECEASED' : 'MOTHER ALIVE'}}
+                                  {{motherDeceased == 'YES' ? 'Mother Status: Death' : 'Mother Status: Healthy'}}
                                 </div>
                                 <ng-container *ngIf="motherDeceased == 'YES'">
                                   <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="motherDeceasedReason" matTooltipPosition="right">info_outline</mat-icon>
@@ -1811,8 +1811,8 @@
                         </tr>
                       </ng-container>
                       <tr>
-                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5" class="text-nowrap"><span>Mother Deceased :</span> {{motherDeceased}}</td>
-                        <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
+                        <td [attr.colspan]="motherDeceased == 'YES' ? 1 : 5" class="text-nowrap"><span>Mother Status :</span> {{ motherDeceased == 'YES' ? 'Death' : 'Healthy' }}</td>
+                        <td colspan="4" *ngIf="motherDeceased == 'YES'"><span>Mother Death Reason:</span> {{motherDeceasedReason}}</td>
                       </tr>
                     </ng-container>
                   </tbody>
