@@ -6,6 +6,9 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { CoreService } from "src/app/services/core.service";
+import { getPatientVisitProvider } from "src/app/utils/utility-functions";
+import { SocketService } from "src/app/services/socket.service";
+import { ToastrService } from "ngx-toastr";
 declare var getFromStorage: any,
   saveToStorage: any;
 
@@ -57,7 +60,9 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private diagnosisService: DiagnosisService,
-    private cs: CoreService
+    private cs: CoreService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -307,6 +312,11 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   openVcModal() {
+    const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getPatientVisitProvider()?.provider?.uuid);
+    if (!hw) {
+      this.toastr.error("Please try again later.", "Health Worker is offline.");
+      return;
+    }
     this.cs.openVideoCallModal({
       patientId: this.patientId,
       visitId: this.visitUuid,
@@ -316,12 +326,6 @@ export class VisitSummaryComponent implements OnInit {
       patientOpenMrsId: this.visit.patient?.identifiers?.[0]?.identifier,
       initiator: 'dr'
     });
-    // this.dialog.open(VcComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: this.patientId,
-    //   },
-    // });
   }
 
   private startVisitNote(providerDetails: any, patientUuid: string, visitUuid: string, myDate: Date, attributes: any) {
@@ -387,6 +391,6 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.chatBoxRef) this.chatBoxRef.close();
+    if (this.chatBoxRef) this.chatBoxRef.close();
   }
 }

@@ -36,3 +36,11 @@ export function suppress(fn: Function) {
         fn()
     } catch (error) { }
 }
+
+export function getPatientVisitProvider() {
+    try {
+        return getCacheData('patientVisitProvider', true)
+    } catch (error) {
+        return null
+    }
+}
