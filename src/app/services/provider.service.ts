@@ -10,6 +10,7 @@ export class ProviderService {
 
   domainUrl: string = environment.base;
   baseUrl: string = environment.baseURL;
+  mindmapUrl: string = environment.mindmapURL;
 
   constructor(private http: HttpClient) { }
 
@@ -96,7 +97,7 @@ export class ProviderService {
   * @return {Observable<any>}
   */
   creatSignature(providerId: string, textOfSign: string, fontName: string): Observable<any> {
-    return this.http.post(`${this.domainUrl}/createsign`, { providerId, fontName, textOfSign });
+    return this.http.post(`${this.mindmapUrl}/signature/create`, { providerId, fontName, textOfSign });
   }
 
   /**
@@ -106,6 +107,6 @@ export class ProviderService {
   * @return {Observable<any>}
   */
   uploadSignature(file: string, providerid: string): Observable<any> {
-    return this.http.post(`${this.domainUrl}/uploadsign`, { file, providerid });
+    return this.http.post(`${this.mindmapUrl}/signature/upload`, { file, providerid });
   }
 }
