@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { SessionService } from 'src/app/services/session.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { VisitService } from 'src/app/services/visit.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -69,6 +70,7 @@ export class PrescribedMedicationComponent implements OnInit {
     private translationService: TranslationService,
     private sessionSvc: SessionService,
     private ngxTranslationService: TranslateService,
+    public visitSvc: VisitService,
     private snackbar: MatSnackBar
 ) { }
 

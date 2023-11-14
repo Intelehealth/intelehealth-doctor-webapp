@@ -156,3 +156,7 @@ body.font-lato td {
 .mat-select-panel {
   min-width: 100% !important;
 }
+
+.light-gray{
+  background: #e8e8e8;
+}

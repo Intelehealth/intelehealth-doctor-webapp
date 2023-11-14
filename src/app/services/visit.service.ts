@@ -14,8 +14,14 @@ export class VisitService {
   public waitingVisit: VisitData[] = [];
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
+  public hasAdminister: boolean = false;
+  public hasDispense: boolean = false;
 
   constructor(private http: HttpClient, private helper: HelperService) {}
+
+  get hasAdministerOrDispense(){
+    return this.hasAdminister || this.hasDispense;
+  }
 
   getVisits(params): Observable<any> {
     const query = {
@@ -94,4 +100,5 @@ export class VisitService {
       `${this.baseURL}/location/${uuid}?v=custom:(uuid,display,name,tags,parentLocation)`
     );
   }
+  
 }
