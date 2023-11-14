@@ -151,6 +151,13 @@
 .bg-color {
   background-color: #fff;
   padding: 5px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.m-img {
+  border-radius: 2px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .menu-items-wrapper.collapsed .admin-nav .nav-item .nav-item-link {
@@ -179,7 +186,7 @@
     justify-content: center;
     position: relative;
     overflow: visible;
-    min-height: 121px;
+    
 
     .sidenav-toggle {
       position: absolute;
@@ -281,6 +288,10 @@
 }
 
 @media (max-width: 768px) {
+
+  .bg-color {
+    width: 140px !important;
+  }
   // .header-title {
   //   h6 {
   //     font-size: 18px !important;
