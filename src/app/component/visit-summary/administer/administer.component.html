@@ -14,7 +14,7 @@
                                         <li *ngFor="let uuid of meds.medicationUuidList">
                                             <div *ngFor="let m of medicines">
                                                 <div *ngIf="uuid == m.uuid">
-                                                    <span *ngIf="meds.medicationUuidList" [innerHTML]="m.value.split('\n')[0].replace('\n','<br>').replace(':','')"></span>
+                                                    <span *ngIf="meds.medicationUuidList" [innerHTML]="m.value.replace('\n','<br>').replace(':','')"></span>
                                                 </div>
                                             </div>
                                         </li>
@@ -28,11 +28,11 @@
                                                 <div *ngIf="uuid == a.uuid">
                                                     <div *ngIf="a.display.split('.')[0] === 'Type 1'">
                                                         {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
-                                                        <b>{{ a.value.split('||')[0] + ' (' + a.value.split('||')[1] + ')' }}</b>
+                                                        <b>{{ a.value.split('||')[0] }} {{(a.value.split('||')[1])? ' (' + a.value.split('||')[1] + ')' : ''}}</b>
                                                     </div>
                                                     <div  *ngIf="a.display.split('.')[0] === 'Type 2'">
                                                         {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
-                                                        <b>{{ a.value.split('||')[0] + ' (' + a.value.split('||')[1] + ')' }}</b>
+                                                        <b>{{ a.value.split('||')[0] }} {{(a.value.split('||')[1])? ' (' + a.value.split('||')[1] + ')' : ''}} </b>
                                                     </div>
                                                     <div  *ngIf="a.display.split('.')[0] === 'Type 3'">
                                                         {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
