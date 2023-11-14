@@ -11,13 +11,16 @@
           </div>
         </div>
         <div class="carousel-container flex-fill">
+        
+          <div class="picsum-img-wrapper">
+            <img class="hb1" src="assets/images/login/right_red_heartbeat.png" alt="">
+            <div class="center-logo-div">
+             <img class="main center-logo" src = "assets/images/healthforher_logo.png" alt="Random slide">
+            </div>
+            <img class="hb2" src="assets/images/login/right_green_heartbeat.png" alt="">
+          </div>
           <ngb-carousel [showNavigationArrows]="false" [showNavigationIndicators]="true">
             <ng-template ngbSlide *ngFor="let slide of slides">
-              <div class="picsum-img-wrapper">
-                <img class="hb1" [src]="slide.heartbeat1" alt="">
-                <img class="main" [src]="slide.img_url" alt="Random slide">
-                <img class="hb2" [src]="slide.heartbeat2" alt="">
-              </div>
               <div class="carousel-caption">
                 <h3>{{slide.title|translate}}</h3>
               </div>

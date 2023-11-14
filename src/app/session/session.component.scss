@@ -19,7 +19,9 @@
       max-width: 220px;
       width: 100%;
       height: 100px;
-      background-color: var(--color-white);;
+      background-color: var(--color-white);
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      border-radius: 5px;
 
       .logo-icon {
         position: absolute;
@@ -35,7 +37,9 @@
       max-width: 400px;
       width: 100%;
       height: 100px;
-      background-color: var(--color-white);;
+      background-color: var(--color-white);
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      border-radius: 5px;
 
       .logo-icon {
         position: absolute;
@@ -73,10 +77,10 @@
 
       h3 {
         font-weight: 700;
-        font-size: 28px;
-        line-height: 132%;
+        font-size: 20px;
+        line-height: 100%;
         color: var(--color-white);
-        min-height: 74px;
+        min-height: 34px;
         text-align: center;
         padding: 0px 30px;
       }
@@ -87,14 +91,20 @@
       position: relative;
       text-align: center;
       min-height: 50vh;
+      margin-top: 10px;
+      margin-bottom: 10px;
+
 
       .main {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        height: 100%;
-        max-width: 80%;
+        height: 70%;
+        max-width: 70%;
+        border-radius: 10px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
       }
 
       .hb1 {
@@ -128,6 +138,14 @@
       color: rgba(255, 255, 255, 0.8);
     }
   }
+}
+
+.center-logo {
+  background: var(--color-white) !important;
+}
+
+.center-logo-icon {
+  width: 80% !important;
 }
 
 .main-container {
@@ -201,7 +219,7 @@
       max-width: 220px;
       width: 100%;
       height: 100px;
-      background-color: var(--color-white);;
+      background-color: var(--color-white);
 
       .logo-icon {
         position: absolute;
@@ -213,12 +231,16 @@
       }
     }
 
+   
+
     .artist-icon {
       position: relative;
       max-width: 400px;
       width: 100%;
       height: 100px;
-      background-color: var(--color-white);;
+      background-color: var(--color-white);
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      border-radius: 5px;
 
       .logo-icon {
         position: absolute;
