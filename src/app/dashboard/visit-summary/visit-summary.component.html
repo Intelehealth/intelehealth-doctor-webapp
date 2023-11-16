@@ -72,9 +72,13 @@
                 <h6 data-test-id="etPatient">{{'Working'|translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue("occupation") }}</p>
               </div>
-              <div class="patient-info-item">
+              <div class="patient-info-item mb-3">
                 <h6 data-test-id="etPatient">{{'ABHA'|translate}}</h6>
                 <p data-test-id="etPatient">{{ getPersonAttributeValue("NationalID") }}</p>
+              </div>
+              <div class="patient-info-item">
+                <h6 data-test-id="etPatient">{{'Aadhar Card'|translate}}</h6>
+                <p data-test-id="etPatient">{{ getPersonAttributeValue("Aadhar Card") }}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">
@@ -286,7 +290,7 @@
 
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etHBVitals">{{'HB'|translate}}</label>
+                      <label data-test-id="etHBVitals">{{'Hb (g/dl)'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Hemoglobin Level')"
@@ -303,7 +307,7 @@
 
                   <li>
                     <div class="list-item">
-                      <label data-test-id="etBloodSugarVitals">{{'Blood Sugar'|translate}}</label>
+                      <label data-test-id="etBloodSugarVitals">{{'GRBS'|translate}}</label>
                       <div
                         class="list-item-content"
                         [class.text-muted]="!getObsValue('Blood Sugar Level')"
