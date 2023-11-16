@@ -187,7 +187,7 @@ export class PrescribedMedicationComponent implements OnInit {
           this.meds.forEach(med => {
             if (Array.isArray(this.visitSvc.dispense)) {
               this.visitSvc.dispense.forEach(dispense => {
-                if (Array.isArray(dispense?.medicationUuidList)) {
+                if (Array.isArray(dispense?.medicationUuidList) && !med.disabled) {
                   med.disabled = dispense.medicationUuidList.includes(med.uuid);
                 }
               });
