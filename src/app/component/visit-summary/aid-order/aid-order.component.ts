@@ -9,6 +9,7 @@ import { MatSelect } from '@angular/material/select';
 import * as moment from 'moment';
 import { TranslationService } from 'src/app/services/translation.service';
 import { SessionService } from 'src/app/services/session.service';
+import { VisitService } from 'src/app/services/visit.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -102,7 +103,8 @@ export class AidOrderComponent implements OnInit {
     private route: ActivatedRoute,
     private translationSvc: TranslationService,
     private snackbar: MatSnackBar,
-    private sessionSvc: SessionService
+    private sessionSvc: SessionService,
+    public visitSvc: VisitService
   ) {
     this.aidOrderForm = new FormGroup({
       type1: new FormControl(null),
@@ -135,6 +137,16 @@ export class AidOrderComponent implements OnInit {
     this.patientId = this.route.snapshot.params['patient_id'];
     this.formControlValueChanges();
     this.getAidOrders();
+  }
+
+  get aidUuidList() {
+    let aidUuidList = [];
+    if (Array.isArray(this.visitSvc?.dispense)) {
+      this.visitSvc?.dispense.forEach(dispense => {
+        aidUuidList = aidUuidList.concat(Array.isArray(dispense?.aidUuidList) ? dispense?.aidUuidList : [])
+      });
+    }
+    return aidUuidList;
   }
 
   get val() {

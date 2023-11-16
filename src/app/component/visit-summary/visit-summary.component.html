@@ -114,7 +114,21 @@
             <mat-card *ngIf="(!(userSpeciality == 'Admin' && visitSpecialitySecondary == 'Admin')) && !visitCompletePresent">
               <app-reassign-speciality [isManagerRole]="isManagerRole" [providerSpeciality]="userSpeciality" [visitSpeciality]="visitSpeciality" [visitSpecialitySecondary]="visitSpecialitySecondary"></app-reassign-speciality>
             </mat-card>
-            <br>
+            <br *ngIf="!visitCompletePresent">
+
+            <div  *ngIf="isAdminister">
+                  <mat-card>
+                        <app-administer></app-administer>
+                  </mat-card>
+                  <br>
+            </div>
+            <div  *ngIf="isDispense">
+                  <mat-card>
+                        <app-dispense></app-dispense>
+                  </mat-card>
+                  <br>
+            </div>
+
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">
                         <mat-card>

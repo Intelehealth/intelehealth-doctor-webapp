@@ -1,0 +1,128 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+    <h4><i class='fa fa-hospital'></i> {{'Administer'| translate}}</h4>
+    <hr>
+    <div>
+        <ng-container *ngIf="administerMedAid.length > 0">
+            <div *ngFor="let meds of administerMedAid, index as i">
+                <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
+                    <div class="doctor-value d-flex flex-column">
+                        <table class="table table-responsive borderless">
+                            <tr>
+                                <div *ngIf="meds.medicationUuidList">
+                                    <div><h5>{{'Medicines'|translate}}</h5></div>
+                                    <ul>
+                                        <li *ngFor="let uuid of meds.medicationUuidList">
+                                            <div *ngFor="let m of medicines">
+                                                <div *ngIf="uuid == m.uuid">
+                                                    <span *ngIf="meds.medicationUuidList" [innerHTML]="m.value.replace('\n','<br>').replace(':','')"></span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="meds.aidUuidList">
+                                    <div><h5>{{'Aids'|translate}}</h5></div>
+                                    <ul>
+                                        <li *ngFor="let uuid of meds.aidUuidList">
+                                            <div *ngFor="let a of aids">
+                                                <div *ngIf="uuid == a.uuid">
+                                                    <div *ngIf="a.display.split('.')[0] === 'Type 1'">
+                                                        {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
+                                                        <b>{{ a.value.split('||')[0] }} {{(a.value.split('||')[1])? ' (' + a.value.split('||')[1] + ')' : ''}}</b>
+                                                    </div>
+                                                    <div  *ngIf="a.display.split('.')[0] === 'Type 2'">
+                                                        {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
+                                                        <b>{{ a.value.split('||')[0] }} {{(a.value.split('||')[1])? ' (' + a.value.split('||')[1] + ')' : ''}} </b>
+                                                    </div>
+                                                    <div  *ngIf="a.display.split('.')[0] === 'Type 3'">
+                                                        {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
+                                                        <b>{{ a.value }}</b>
+                                                    </div>
+                                                    <div  *ngIf="a.display.split('.')[0] === 'Type 4'">
+                                                        {{'Type 4. Cover surgical expenses (amount)'|translate}} <br>
+                                                        <b>{{ a.value }}</b>
+                                                    </div>
+                                                    <div  *ngIf="a.display.split('.')[0] === 'Type 5'">
+                                                        {{'Type 5. Cash assistance (amount)'|translate}} <br>
+                                                        <b>{{ a.value }}</b>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div *ngIf="meds.coveredCost" class="list-item">
+                                              <label class="item"><b>{{'Covered Cost'|translate}}</b></label>
+                                              <div class="list-item-content">{{meds.coveredCost}}</div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div *ngIf="meds.otherAids" class="list-item">
+                                              <label class="item"><b>{{'Other Aids'|translate}}</b></label>
+                                              <div class="list-item-content">{{meds.otherAids}}</div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div *ngIf="meds.outOfPocket" class="list-item">
+                                              <label class="item"><b>{{'Out Of Pocket'|translate}}</b></label>
+                                              <div class="list-item-content">{{meds.outOfPocket}}</div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div *ngIf="meds.vendorDiscount" class="list-item">
+                                              <label class="item"><b>{{'Vendor Discount'|translate}}</b></label>
+                                              <div class="list-item-content">{{meds.vendorDiscount}}</div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div *ngIf="meds.totalCost" class="list-item">
+                                              <label class="item"><b>{{'Total Cost'|translate}}</b></label>
+                                              <div class="list-item-content">{{meds.totalCost}}</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="meds.medicationNotesList || meds.aidNotesList">
+                                    <div><h5>{{'Notes'|translate}}</h5></div>
+                                    <ul>
+                                        <li *ngFor="let mednote of meds.medicationNotesList">
+                                            <div *ngIf="meds.medicationNotesList" class="list-item">
+                                                <label class="item"><b>{{'Medicine Note'|translate}}</b></label>
+                                                <div class="list-item-content">{{mednote}}</div>
+                                            </div>
+                                        </li>
+                                        <li *ngFor="let aiddnote of meds.aidNotesList">
+                                            <div *ngIf="meds.aidNotesList" class="list-item">
+                                                <label class="item"><b>{{'Aid Note'|translate}}</b></label>
+                                                <div class="list-item-content">{{aiddnote}}</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="meds.docImage">
+                                    <div><h5>{{'Documents'|translate}}</h5></div>
+                                    <ul>
+                                        <div class="list-item">
+                                            <div class="list-item-content">
+                                                <div class="eye-images-con">
+                                                    <div class="eye-item" *ngFor="let e of meds.docImage; let x = index">
+                                                        <img [src]="e.src" alt="" />
+                                                        <div class="image-cover" (click)="previewEyeImages(x)">
+                                                            <img src="assets/svgs/maximize.svg" alt=""/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ul>
+                                </div>
+                            </tr>
+                        </table>
+                        <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                            <span class="comment-blue">{{('Administered by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

@@ -100,6 +100,9 @@ import { AidAssessmentComponent } from './component/visit-summary/aid-assessment
 import { AidOrderComponent } from './component/visit-summary/aid-order/aid-order.component';
 import { DischargeOrderComponent } from './component/visit-summary/discharge-order/discharge-order.component';
 import { CommentPipe } from "./comment.pipe";
+import { DispenseComponent } from './component/visit-summary/dispense/dispense.component';
+import { AdministerComponent } from './component/visit-summary/administer/administer.component';
+import { ImagesPreviewComponent } from './component/visit-summary/images-preview/images-preview.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -156,7 +159,10 @@ registerLocaleData(localeAr);
     AidAssessmentComponent,
     AidOrderComponent,
     DischargeOrderComponent,
-    CommentPipe
+    CommentPipe,
+    DispenseComponent,
+    AdministerComponent,
+    ImagesPreviewComponent
   ],
 
   imports: [

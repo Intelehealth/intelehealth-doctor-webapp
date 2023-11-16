@@ -12,6 +12,7 @@ import * as moment from 'moment';
 import { SessionService } from 'src/app/services/session.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { VisitService } from 'src/app/services/visit.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -34,7 +35,7 @@ declare var getEncounterUUID: any, getFromStorage: any;
   ]
 })
 export class PrescribedMedicationComponent implements OnInit {
-  @Input() isManagerRole : boolean;
+  @Input() isManagerRole: boolean;
   @Input() visitCompleted: boolean;
   meds: any = [];
   add = false;
@@ -69,8 +70,9 @@ export class PrescribedMedicationComponent implements OnInit {
     private translationService: TranslationService,
     private sessionSvc: SessionService,
     private ngxTranslationService: TranslateService,
+    public visitSvc: VisitService,
     private snackbar: MatSnackBar
-) { }
+  ) { }
 
   searchPrescription = (text$: Observable<string>) =>
     text$.pipe(
@@ -131,7 +133,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptDose.push(this.translationService.getDropdownTranslation('units',ans.display));
+          this.conceptDose.push(this.translationService.getDropdownTranslation('units', ans.display));
         });
       });
     const frequency = '9847b24f-8434-4ade-8978-157184c435d2';
@@ -139,7 +141,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptfrequency.push(this.translationService.getDropdownTranslation('frequency',ans.display));
+          this.conceptfrequency.push(this.translationService.getDropdownTranslation('frequency', ans.display));
         });
       });
     const RouteOfAdministration = '162394AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -147,7 +149,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptAdministration.push(this.translationService.getDropdownTranslation('route',ans.display));
+          this.conceptAdministration.push(this.translationService.getDropdownTranslation('route', ans.display));
         });
       });
     const conceptDurationUnit = '1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -155,7 +157,7 @@ export class PrescribedMedicationComponent implements OnInit {
       .subscribe(res => {
         const result = res.setMembers;
         result.forEach(ans => {
-          this.conceptDurationUnit.push(this.translationService.getDropdownTranslation('durationUnit',ans.display));
+          this.conceptDurationUnit.push(this.translationService.getDropdownTranslation('durationUnit', ans.display));
         });
       });
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
@@ -176,7 +178,28 @@ export class PrescribedMedicationComponent implements OnInit {
             }
           }
         });
+        this.visitSvc.lockMedicineAidOrder.next();
       });
+
+    this.visitSvc.lockMedicineAidOrder.subscribe({
+      next: () => {
+        if (this.visitSvc?.dispense?.length && this.meds?.length) {
+          this.meds.forEach(med => {
+            if (Array.isArray(this.visitSvc.dispense)) {
+              this.visitSvc.dispense.forEach(dispense => {
+                if (Array.isArray(dispense?.medicationUuidList)) {
+                  med.disabled = dispense.medicationUuidList.includes(med.uuid);
+                }
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.visitSvc.lockMedicineAidOrder.unsubscribe();
   }
 
   onSubmit() {
@@ -195,14 +218,14 @@ export class PrescribedMedicationComponent implements OnInit {
           insertValue["en"] = `${insertValue["en"]} (${this.diagnosisService.getTranslationValue('route', value.route)})`;
         }
         if (value.reason) {
-          insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
-          insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
+          insertValue["ar"] = `${insertValue["ar"]} ${value.reason}`;
+          insertValue["en"] = `${insertValue["en"]} ${value.reason}`;
         }
-        insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
-        insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
+        insertValue["ar"] = `${insertValue["ar"]} لاجل ${value.duration} ${value.durationUnit}`;
+        insertValue["en"] = `${insertValue["en"]} for ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
         if (value.additional) {
           insertValue["ar"] = `${insertValue["ar"]} ${value.additional}`;
-          insertValue["en"] =`${insertValue["en"]} ${value.additional}`;
+          insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
         }
       } else {
         insertValue = {
@@ -214,11 +237,11 @@ export class PrescribedMedicationComponent implements OnInit {
           insertValue["ar"] = `${insertValue["ar"]} (${this.diagnosisService.getTranslationValue('route', value.route)})`;
         }
         if (value.reason) {
-          insertValue["en"] =  `${insertValue["en"]} ${value.reason}`;
-          insertValue["ar"] =  `${insertValue["ar"]} ${value.reason}`;
+          insertValue["en"] = `${insertValue["en"]} ${value.reason}`;
+          insertValue["ar"] = `${insertValue["ar"]} ${value.reason}`;
         }
-        insertValue["en"] =  `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
-        insertValue["ar"] =  `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
+        insertValue["en"] = `${insertValue["en"]} for ${value.duration} ${value.durationUnit}`;
+        insertValue["ar"] = `${insertValue["ar"]} لاجل ${value.duration} ${this.diagnosisService.getTranslationValue('units', value.unitType)} ${this.diagnosisService.getTranslationValue('durationUnit', value.durationUnit)}`;
 
         if (value.additional) {
           insertValue["en"] = `${insertValue["en"]} ${value.additional}`;
@@ -252,14 +275,14 @@ export class PrescribedMedicationComponent implements OnInit {
         }
         if (flag == 1) {
           this.ngxTranslationService.get('messages.cantAdd').subscribe((res: string) => {
-            this.snackbar.open(res,null, {duration: 4000,direction: this.txtDirection});
+            this.snackbar.open(res, null, { duration: 4000, direction: this.txtDirection });
           });
           return;
         }
         this.service.postObs(json)
           .subscribe(response => {
             const user = getFromStorage("user");
-            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creatorRegNo:`(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
+            this.meds.push(this.diagnosisService.getData({ uuid: response.uuid, value: json.value, obsDatetime: response.obsDatetime, creatorRegNo: `(${getFromStorage("registrationNumber")})`, creator: { uuid: user.uuid, person: user.person } }));
             this.add = false;
           });
       }
@@ -284,14 +307,14 @@ export class PrescribedMedicationComponent implements OnInit {
         //     this.meds.splice(i, 1);
         //   });
         // } else {
-          const provider = getFromStorage("provider");
-          const deletorRegistrationNumber = getFromStorage("registrationNumber");
-          const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
-          const deletedTimestamp = moment.utc().toISOString();
-          const prevCreator = observation?.creator?.person?.display;
-          this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}` })
+        const provider = getFromStorage("provider");
+        const deletorRegistrationNumber = getFromStorage("registrationNumber");
+        const creatorRegistrationNumber = observation.creatorRegNo.replace('(', "").replace(')', "");
+        const deletedTimestamp = moment.utc().toISOString();
+        const prevCreator = observation?.creator?.person?.display;
+        this.diagnosisService.updateObs(uuid, { comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}` })
           .subscribe(() => {
-            this.meds[i] = {...this.meds[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber?deletorRegistrationNumber:'NA'}|${prevCreator}|${creatorRegistrationNumber?creatorRegistrationNumber:'NA'}|${observation.obsDatetime.replace('+0000','Z')}` };
+            this.meds[i] = { ...this.meds[i], comment: `DELETED|${deletedTimestamp}|${provider?.person?.display}|${deletorRegistrationNumber ? deletorRegistrationNumber : 'NA'}|${prevCreator}|${creatorRegistrationNumber ? creatorRegistrationNumber : 'NA'}|${observation.obsDatetime.replace('+0000', 'Z')}` };
           });
         // }
       }
@@ -307,5 +330,5 @@ export class PrescribedMedicationComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
 }

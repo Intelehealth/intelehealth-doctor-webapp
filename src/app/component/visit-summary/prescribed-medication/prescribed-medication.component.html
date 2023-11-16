@@ -71,7 +71,7 @@
   </div>
   <ng-container *ngIf="meds.length > 0">
       <div *ngFor='let meds of meds, index as i' >
-        <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
+        <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment, 'light-gray': meds.disabled }">
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="meds.comment" [innerHTML]="meds.value.replace('\n','<br>').replace(':','')"></span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
@@ -79,7 +79,7 @@
               <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
             </div>
           </div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted"
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted && !meds.disabled"
               style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>

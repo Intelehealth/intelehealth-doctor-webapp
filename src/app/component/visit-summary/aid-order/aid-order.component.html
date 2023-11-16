@@ -58,7 +58,7 @@
         </div>
         <div class="row" *ngIf="!aidOrderForm?.value.type1Uuid || !aidOrderForm?.value.type2Uuid || !aidOrderForm?.value.type3Uuid || !aidOrderForm?.value.type4Uuid || !aidOrderForm?.value.type5Uuid">
           <div class="col-md-12">
-            <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole" *ngIf="!visitCompleted">
+            <button mat-raised-button color="primary" type="submit" [disabled]="aidOrderForm.invalid || isManagerRole" *ngIf="!visitCompleted && !visitSvc?.hasAdministerOrDispense">
               {{'Save'|translate}}
             </button>
           </div>
@@ -66,7 +66,7 @@
       </form>
     </div>
     <div class="col-md-12 px-0 pt-2">
-      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type1Uuid">
+      <div [@moveInLeft] class="alert alert-primary" [class.light-gray]="aidUuidList.includes(aidOrderForm?.value.type1Uuid)" *ngIf="aidOrderForm?.value.type1Uuid">
         <div class="doctor-value">
           {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
           <b>{{ getType1Values() }} {{ (aidOrderForm?.value.type1Other)? ' (' + aidOrderForm?.value.type1Other + ')' : ''  }}</b>
@@ -76,9 +76,9 @@
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type1Uuid, 'type1Uuid', aidOrderForm?.value.type1CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted && !aidUuidList.includes(aidOrderForm?.value.type1Uuid)">delete</i>
       </div>
-      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type2Uuid">
+      <div [@moveInLeft] class="alert alert-primary" [class.light-gray]="aidUuidList.includes(aidOrderForm?.value.type2Uuid)" *ngIf="aidOrderForm?.value.type2Uuid">
         <div class="doctor-value">
           {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
           <b>{{ getType2Values() }} {{ (aidOrderForm?.value.type2Other)? ' (' + aidOrderForm?.value.type2Other + ')' : ''  }}</b>
@@ -88,9 +88,9 @@
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type2Uuid, 'type2Uuid', aidOrderForm?.value.type2CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted && !aidUuidList.includes(aidOrderForm?.value.type2Uuid)">delete</i>
       </div>
-      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type3Uuid">
+      <div [@moveInLeft] class="alert alert-primary" [class.light-gray]="aidUuidList.includes(aidOrderForm?.value.type3Uuid)" *ngIf="aidOrderForm?.value.type3Uuid">
         <div class="doctor-value">
           {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type3 }}</b>
@@ -100,9 +100,9 @@
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type3Uuid, 'type3Uuid', aidOrderForm?.value.type3CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted && !aidUuidList.includes(aidOrderForm?.value.type3Uuid)">delete</i>
       </div>
-      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type4Uuid">
+      <div [@moveInLeft] class="alert alert-primary" [class.light-gray]="aidUuidList.includes(aidOrderForm?.value.type4Uuid)" *ngIf="aidOrderForm?.value.type4Uuid">
         <div class="doctor-value">
           {{'Type 4. Cover surgical expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type4 }}</b>
@@ -112,9 +112,9 @@
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type4Uuid, 'type4Uuid', aidOrderForm?.value.type4CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted && !aidUuidList.includes(aidOrderForm?.value.type4Uuid)">delete</i>
       </div>
-      <div [@moveInLeft] class="alert alert-primary" *ngIf="aidOrderForm?.value.type5Uuid">
+      <div [@moveInLeft] class="alert alert-primary" [class.light-gray]="aidUuidList.includes(aidOrderForm?.value.type5Uuid)" *ngIf="aidOrderForm?.value.type5Uuid">
         <div class="doctor-value">
           {{'Type 5. Cash assistance (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type5 }}</b>
@@ -124,7 +124,7 @@
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type5Uuid, 'type5Uuid', aidOrderForm?.value.type5CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
-          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted">delete</i>
+          style="color:rgb(235, 30, 30);cursor: pointer;" *ngIf="!visitCompleted && !aidUuidList.includes(aidOrderForm?.value.type5Uuid)">delete</i>
       </div>
 
 

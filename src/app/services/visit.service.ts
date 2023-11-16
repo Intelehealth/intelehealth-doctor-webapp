@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
@@ -14,8 +14,11 @@ export class VisitService {
   public waitingVisit: VisitData[] = [];
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
+  public dispense: any[] = [];
 
-  constructor(private http: HttpClient, private helper: HelperService) {}
+  public lockMedicineAidOrder = new Subject();
+
+  constructor(private http: HttpClient, private helper: HelperService) { }
 
   getVisits(params): Observable<any> {
     const query = {
@@ -49,7 +52,7 @@ export class VisitService {
 
   fetchVisitDetails(
     uuid,
-    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value,creator:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
+    v = "custom:(uuid,display,startDatetime,stopDatetime,encounters:(display,uuid,obs:(display,uuid,value,creator,comment,concept,obsDatetime:(uuid,display)),encounterProviders:(display,provider:(uuid,attributes))),patient:(uuid,identifiers:(identifier),person:(display)),attributes)"
   ): Observable<any> {
     // tslint:disable-next-line:max-line-length
     const url = `${this.baseURL}/visit/${uuid}?v=${v}`;
@@ -94,4 +97,5 @@ export class VisitService {
       `${this.baseURL}/location/${uuid}?v=custom:(uuid,display,name,tags,parentLocation)`
     );
   }
+  
 }
