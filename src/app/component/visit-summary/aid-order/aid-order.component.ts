@@ -140,7 +140,13 @@ export class AidOrderComponent implements OnInit {
   }
 
   get aidUuidList() {
-    return this.visitSvc?.dispense?.[0]?.aidUuidList || [];
+    let aidUuidList = [];
+    if (Array.isArray(this.visitSvc?.dispense)) {
+      this.visitSvc?.dispense.forEach(dispense => {
+        aidUuidList = aidUuidList.concat(Array.isArray(dispense?.aidUuidList) ? dispense?.aidUuidList : [])
+      });
+    }
+    return aidUuidList;
   }
 
   get val() {
