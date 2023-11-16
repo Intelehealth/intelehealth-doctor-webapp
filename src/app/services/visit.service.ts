@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { environment } from "../../environments/environment";
 import { HelperService } from "./helper.service";
 import { VisitData } from "../component/homepage/homepage.component";
@@ -14,14 +14,11 @@ export class VisitService {
   public waitingVisit: VisitData[] = [];
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
-  public hasAdminister: boolean = false;
-  public hasDispense: boolean = false;
+  public dispense: any[] = [];
 
-  constructor(private http: HttpClient, private helper: HelperService) {}
+  public lockMedicineAidOrder = new Subject();
 
-  get hasAdministerOrDispense(){
-    return this.hasAdminister || this.hasDispense;
-  }
+  constructor(private http: HttpClient, private helper: HelperService) { }
 
   getVisits(params): Observable<any> {
     const query = {

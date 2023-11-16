@@ -87,7 +87,6 @@ export class AdministerComponent implements OnInit {
           }
           this.administerMedAid.push(dispenseObs);
         }
-        this.visitService.hasAdminister = !!this.administerMedAid?.length;
         if(e.display.includes("Visit Note")){
           for(let j = 0; j < e.obs.length; j++){
             let obsMeds = {}

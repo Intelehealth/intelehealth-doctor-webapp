@@ -139,6 +139,10 @@ export class AidOrderComponent implements OnInit {
     this.getAidOrders();
   }
 
+  get aidUuidList() {
+    return this.visitSvc?.dispense?.[0]?.aidUuidList || [];
+  }
+
   get val() {
     return this.aidOrderForm.value;
   }

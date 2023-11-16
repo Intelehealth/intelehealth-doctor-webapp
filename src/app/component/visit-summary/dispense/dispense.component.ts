@@ -107,7 +107,8 @@ export class DispenseComponent implements OnInit {
           this.aids.sort((a, b) => a['display'].localeCompare(b['display']));
         }
       });
-      this.visitService.hasDispense = !!this.dispenseMedAid?.length;
+      this.visitService.dispense = this.dispenseMedAid;
+      this.visitService.lockMedicineAidOrder.next();
     });
   }
 
