@@ -350,7 +350,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 referTypeOtherReason = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Refer Type Other')?.value_text; //165189
               }
             } else {
-              completeReason = "Labor Complete";
+              completeReason = "Newborn";
               birthOutcome = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Birth Outcome')?.value_text; //163206
               if (birthOutcome == 'Other' || birthOutcome == 'OTHER') {
                 birthOutcomeOther = visit.encounters[x].obs.find((o: any) => o.concept.concept_name[0].name == 'Birth Outcome Other')?.value_text; //165188_

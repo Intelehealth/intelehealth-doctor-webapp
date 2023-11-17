@@ -26,38 +26,6 @@
                   </td>
                   <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
                 </tr>
-                <!-- <ng-container *ngIf="visitCompleted">
-                  <tr>
-                    <td colspan="41" class="divider"></td>
-                  </tr>
-                  <tr class="page-title-row-2" *ngIf="visitCompleteReason == 'Out Of Time'">
-                    <td colspan="10"><span>Visit Complete Reason:</span> Out Of Time</td>
-                    <td colspan="32"><span>Out of Time Reason:</span> {{outOfTimeReason}}</td>
-                  </tr>
-                  <tr class="page-title-row-2" *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
-                    <td colspan="41"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
-                  </tr>
-                  <tr class="page-title-row-2" *ngIf="visitCompleteReason == 'Other'">
-                    <td colspan="10"><span>Visit Complete Reason:</span> Other</td>
-                    <td colspan="32"><span>Other Reason:</span> {{referTypeOtherReason}}</td>
-                  </tr>
-                  <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
-                    <tr class="page-title-row-2">
-                      <td colspan="41"><span>Visit Complete Reason:</span> Labor Complete</td>
-                    </tr>
-                    <tr class="page-title-row-2">
-                      <td [attr.colspan]="birthOutcome == 'Other' || birthOutcome == 'OTHER' ? 20 : 41"><span>Birth Outcome:</span> {{birthOutcome}}</td>
-                      <td colspan="21" *ngIf="birthOutcome == 'Other'|| birthOutcome == 'OTHER'"><span>Other Birth Outcome:</span> {{birthOutcomeOther}}</td>
-                    </tr>
-                    <tr class="page-title-row-2">
-                      <td [attr.colspan]="motherDeceased == 'YES' ? 20 : 41"><span>Mother Deceased :</span> {{motherDeceased}}</td>
-                      <td colspan="21" *ngIf="motherDeceased == 'YES'"><span>Mother Deceased Reason:</span> {{motherDeceasedReason}}</td>
-                    </tr>
-                  </ng-container>
-                  <tr>
-                    <td colspan="41" class="divider"></td>
-                  </tr>
-                </ng-container> -->
                 <tr>
                   <td colspan="3" class="nb"></td>
                   <td>Time</td>
@@ -214,7 +182,7 @@
                   <td colspan="27" class="divider2"></td>
                   <td colspan="12" class="divider2">
                     <div class="birth-outcome-con">
-                      <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
+                      <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Newborn'">
                         <div style="white-space: pre-wrap;">
                           {{visitCompleteReason}}
                         </div>
@@ -231,7 +199,7 @@
                         </div>
                         <mat-icon class="mt-1" aria-hidden="false" aria-label="help icon" [matTooltip]="referTypeOtherReason" matTooltipPosition="right">info_outline</mat-icon>
                       </ng-container>
-                      <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
+                      <ng-container *ngIf="visitCompleteReason == 'Newborn'">
                         <div class="d-flex flex-column">
                           <div class="d-flex align-items-center justify-content-center">
                             <div>
@@ -326,7 +294,7 @@
                 <tr>
                   <td rowspan="6" class="vrt-header"><span>BABY</span></td>
                   <td colspan="2">Baseline FHR</td>
-                  <td>≤110, ≥160</td>
+                  <td>&#60;110, ≥160</td>
                   <ng-container *ngFor="let item of parameters[4].stage1values; let odd=odd;">
                     <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
                       <div class="value-item vertical" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -582,7 +550,7 @@
                 <tr>
                   <td rowspan="6" class="vrt-header"><span>WOMEN</span></td>
                   <td colspan="2">Pulse</td>
-                  <td>≤60, ≥120</td>
+                  <td>&#60;60, ≥120</td>
                   <ng-container *ngFor="let item of parameters[10].stage1values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -618,7 +586,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Systolic BP</td>
-                  <td>≤80, ≥140</td>
+                  <td>&#60;80, ≥140</td>
                   <ng-container *ngFor="let item of parameters[11].stage1values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -690,7 +658,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Temprature °C</td>
-                  <td>≤35.0, ≥37.5</td>
+                  <td>&#60;35.0, ≥37.5</td>
                   <ng-container *ngFor="let item of parameters[13].stage1values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -726,7 +694,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Urine Protein</td>
-                  <td>P++, A++</td>
+                  <td>P3+, P4+</td>
                   <ng-container *ngFor="let item of parameters[14].stage1values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -762,7 +730,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Urine Acetone</td>
-                  <td>++, +++</td>
+                  <td>A3+, A4+</td>
                   <ng-container *ngFor="let item of parameters[25].stage1values;">
                     <td colspan="2">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -856,7 +824,7 @@
                 </tr>
                 <tr>
                   <td colspan="2">Duration of contractions</td>
-                  <td>≤20, >60</td>
+                  <td>&#60;20, >60</td>
                   <ng-container *ngFor="let item of parameters[16].stage1values; let odd=odd;">
                     <td [ngClass]="{ 'brd': !odd, 'bld': odd }">
                       <div class="value-item" *ngIf="item" [ngClass]="{ 'red': item?.comment == 'R', 'yellow': item?.comment == 'Y'}">
@@ -1623,16 +1591,16 @@
                       <td class="text-nowrap"><span>Visit Complete Reason:</span> Out Of Time</td>
                       <td colspan="4"><span>Out of Time Reason:</span> {{outOfTimeReason}}</td>
                     </tr>
-                    <tr *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Labor Complete'">
+                    <tr *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Newborn'">
                       <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> {{visitCompleteReason}}</td>
                     </tr>
                     <tr *ngIf="visitCompleteReason == 'Other'">
                       <td class="text-nowrap"><span>Visit Complete Reason:</span> Other</td>
                       <td colspan="4"><span>Other Reason:</span> {{referTypeOtherReason}}</td>
                     </tr>
-                    <ng-container *ngIf="visitCompleteReason == 'Labor Complete'">
+                    <ng-container *ngIf="visitCompleteReason == 'Newborn'">
                       <tr>
-                        <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Labor Complete</td>
+                        <td colspan="5" class="text-nowrap"><span>Visit Complete Reason:</span> Newborn</td>
                       </tr>
                       <ng-container *ngIf="motherDeceased != 'YES'||(motherDeceased == 'YES' && birthOutcome)">
                         <tr>
