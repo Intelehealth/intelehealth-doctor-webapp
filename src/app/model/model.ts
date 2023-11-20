@@ -393,6 +393,7 @@ export interface ObsModel {
       uuid?: string
     }
   }
+  comment?:string
 }
 
 export interface ScheduleModel {
@@ -502,7 +503,8 @@ export interface DiagnosisModel {
 }
 
 export interface DocImagesModel {
-  src: string
+  src: string,
+  section: string
 }
 
 export interface SocketUserModel {
