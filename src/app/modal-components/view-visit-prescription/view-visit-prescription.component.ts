@@ -535,7 +535,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['20%', '*', '30%', '30%'],
+            widths: ['20%', '30%', '30%', '20%'],
             body: [
               [
                 {
@@ -607,11 +607,13 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 },
                 {
                   table: {
-                    widths: ['auto', '*'],
+                    widths: ['*'],
                     body: [
-                      [ {text: 'Contact no.', style: 'subheader', colSpan: 2}, ''],
-                      [ {image: 'phone', width: 15, height: 15 }, `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`],
-                      [ {image: 'whatsApp', width: 15, height: 15 }, `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`]
+                      [ 
+                        [ {text: 'Contact no.', style: 'subheader'},
+                          `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`
+                        ]
+                      ],
                     ]
                   },
                   layout: 'noBorders'
