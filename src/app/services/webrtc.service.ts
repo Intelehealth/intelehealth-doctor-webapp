@@ -12,31 +12,28 @@ import {
   RoomConnectOptions,
   RoomEvent,
   Track,
-  VideoPresets,
+  VideoPresets43,
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
 import { getCacheData } from '../utils/utility-functions';
-import { VisitService } from './visit.service';
-import { LivekitTokenModel } from '../model/model';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebrtcService {
-  public room: any | null | Room = null;
+  public room: Room;
   public url: string = environment.webrtcSdkServerUrl;
-  public token: string | null = null;
-  public appToken: string | null = null;
+  public token: any | null = null;
+  public appToken: any | null = null;
   public remoteUser: any | null = null;
   public callConnected: boolean = false;
   private localElement: ElementRef | string | any;
   private remoteElement: ElementRef | string | any;
+  public visitHolderId: null;
 
   constructor(
     private http: HttpClient,
-    private visitSvc: VisitService
   ) {
     /**
      *  trace = 0,
@@ -46,35 +43,24 @@ export class WebrtcService {
      *  error = 4,
      *  silent = 5,
      */
-    if (localStorage.webrtcLogLevel) {
-      try {
-        setLogLevel(JSON.parse(localStorage.webrtcLogLevel));
-      } catch (error) {
-        console.log('error: ', error);
-      }
+    if (this.webrtcLogLevel) {
+      setLogLevel(this.webrtcLogLevel);
     }
   }
 
-  /**
-  * Get token livekit
-  * @param {string} name - Participant (Doctor) name
-  * @param {string} roomId - Room Id
-  * @param {string} nurseName - Participant (Nurse) name
-  * @return {Observable<any>}
-  */
-  getToken(name: string, roomId: string, nurseName: string): Observable<any> {
+  get webrtcLogLevel() {
+    return getCacheData(true, 'webrtcLogLevel');
+  }
+
+  getToken(name: string, roomId: string, nurseName: string) {
     return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
-      .pipe(map((res: LivekitTokenModel) => {
+      .pipe(map((res: any) => {
         this.token = res?.token;
         this.appToken = res?.appToken;
         return res;
       }));
   }
 
-  /**
-  * Create room and connect call
-  * @return {void}
-  */
   async createRoomAndConnectCall({
     handleTrackSubscribed = this.handleTrackSubscribed.bind(this),
     handleTrackUnsubscribed = this.handleTrackUnsubscribed,
@@ -83,17 +69,15 @@ export class WebrtcService {
     handleConnect = this.noop,
     handleLocalTrackUnpublished = this.handleLocalTrackUnpublished,
     handleLocalTrackPublished = this.attachLocalVideo.bind(this),
-    autoEnableCameraOnConnect = true,
     localElement = 'local-video', /** It can be ElementRef or unique id in string for the local video container element */
     remoteElement = 'remote-video' /** It can be ElementRef or unique id in string for the remote video container element */,
     handleTrackMuted = this.noop,
     handleTrackUnmuted = this.noop,
     handleParticipantDisconnected = this.noop,
-    handleParticipantConnect = this.noop
+    handleParticipantConnect = this.noop,
   }) {
     if (!this.token) {
       throw new Error('Token not found!');
-      return;
     }
 
     this.localElement = localElement;
@@ -102,14 +86,9 @@ export class WebrtcService {
 
     this.room = new Room({
       adaptiveStream: true, /* automatically manage subscribed video quality */
-      // dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
+      dynacast: true, /* optimize publishing bandwidth and CPU for published tracks */
       videoCaptureDefaults: {
-        resolution: {
-          aspectRatio: 1.7777777777777777,
-          frameRate: 30,
-          height: 640,
-          width: 360
-        }
+        resolution: VideoPresets43.h540,
       },
       audioCaptureDefaults: {
         echoCancellation: true,
@@ -123,23 +102,24 @@ export class WebrtcService {
       .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
       .on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakerChange)
       .on(RoomEvent.Connected, handleConnect)
+      .on(RoomEvent.Connected, async () => {
+        try {
+          await this.room.localParticipant.enableCameraAndMicrophone()
+        } catch (error) {
+          location.reload();
+        }
+      })
       .on(RoomEvent.Disconnected, handleDisconnect)
       .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished)
       .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished)
       .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
       .on(RoomEvent.ParticipantConnected, handleParticipantConnect)
       .on(RoomEvent.TrackMuted, handleTrackMuted)
-      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted)
-      .on(RoomEvent.SignalConnected, async () => {
-        await this.room.localParticipant.enableCameraAndMicrophone();
-      });
-    // let connectOpts: RoomConnectOptions = this.getRoomConnectionOpts();
-    await this.room.connect(this.url, this.token);
+      .on(RoomEvent.TrackUnmuted, handleTrackUnmuted);
 
-    // if (autoEnableCameraOnConnect) {
-    //   await this.room.localParticipant.enableCameraAndMicrophone();
-    // }
+    await this.room.connect(this.url, this.token);
   }
+
 
   clearAudioVideo() {
     try {
@@ -195,6 +175,12 @@ export class WebrtcService {
   handleLocalTrackUnpublished(track: LocalTrackPublication | any, participant: LocalParticipant) {
     // when local tracks are ended, update UI to remove them from rendering
     if (track?.detach) track?.detach();
+    if (track?.audioTrack?.stop) {
+      track.audioTrack.stop();
+    }
+    if (track?.videoTrack?.stop) {
+      track.videoTrack.stop();
+    }
   }
 
   handleActiveSpeakerChange(speakers: Participant[]) {
@@ -219,16 +205,30 @@ export class WebrtcService {
   }
 
   handleDisconnect() {
-    this.room.disconnect(true);
+    this.disconnect(true);
     this.callConnected = false;
     this.localContainer.innerHTML = '';
     this.remoteContainer.innerHTML = '';
   }
 
   async disconnect(stopTracks = true) {
-    const cam = this.room.localParticipant.getTrack(Track.Source.Camera);
-    const mic = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    /**
+    * Fail safe timeout to resolve issue of using camera after disconnect
+    */
+    setTimeout(() => {
+      this.room.disconnect(stopTracks);
+    }, 0);
     this.room.disconnect(stopTracks);
+    const cam: any = this.room.localParticipant.getTrack(Track.Source.Camera);
+    if (cam) {
+      this.room.localParticipant.unpublishTrack(cam, true);
+    }
+
+    const mic: any = this.room.localParticipant.getTrack(Track.Source.Microphone);
+    if (mic) {
+      this.room.localParticipant.unpublishTrack(mic, true);
+    }
+
   }
 
   get remoteContainer() {

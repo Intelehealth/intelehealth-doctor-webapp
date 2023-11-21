@@ -119,8 +119,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       }
 
       if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
-        this.toastr.error("Please try again later.", "Message length should not exceed 1000.");
-        return
+        this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);
+        return;
       }
 
       const payload = {
