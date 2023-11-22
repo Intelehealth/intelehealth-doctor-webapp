@@ -2,7 +2,7 @@
   "name": "eZazi Doctor App",
   "short_name": "eZazi Doctor App",
   "theme_color": "#2e1e91",
-  "background_color": "#ffffff",
+  "background_color": "#FFE9EF",
   "display": "standalone",
   "scope": "./",
   "start_url": "/intelehealth/",
