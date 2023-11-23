@@ -112,7 +112,7 @@ registerLocaleData(localeEn);
     MatSnackBarModule,
     HttpClientModule,
     MatMenuModule,
-    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+    ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),

@@ -232,6 +232,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      this.startChat();
+      location.href = location.href.replace('?openChat=true', '');
+    }
+  }
+
   /**
   * Subscribe to the form control value changes observables
   * @return {void}
@@ -318,6 +326,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
           }
+          this.checkOpenChatBoxFlag();
         });
       }
     }, (error) => {
