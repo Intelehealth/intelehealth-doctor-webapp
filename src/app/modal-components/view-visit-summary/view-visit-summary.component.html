@@ -1,7 +1,7 @@
 <div class="title-con position-relative" mat-dialog-title>
-  <div>
-    <button class="btn_download_pdf d-none" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
-  </div>
+  <!-- <div>
+    <button class="btn_download_pdf" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
+  </div> -->
   <h6>{{'Visit summary'|translate}}</h6>
   <div class="close-btn-con" *ngIf="!isDownloadPrescription">
     <button class="modal-close-btn desktop-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
