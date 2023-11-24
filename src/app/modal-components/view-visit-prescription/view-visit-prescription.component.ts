@@ -535,7 +535,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['20%', '30%', '30%', '20%'],
+            widths: ['20%', '30%', '25%', '25%'],
             body: [
               [
                 {
@@ -575,7 +575,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 },
                 {
                   table: {
-                    widths: ['*'],
+                    widths: ['100%'],
                     body: [
                       [
                         [
@@ -591,7 +591,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 },
                 {
                   table: {
-                    widths: ['*'],
+                    widths: ['100%'],
                     body: [
                       [
                         [
@@ -607,7 +607,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                 },
                 {
                   table: {
-                    widths: ['*'],
+                    widths: ['100%'],
                     body: [
                       [ 
                         [ {text: 'Contact no.', style: 'subheader'},
