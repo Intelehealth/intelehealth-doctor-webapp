@@ -228,3 +228,7 @@ export const conceptIds = {
   conceptFollow : 'e8caffd6-5d22-41c4-8d6a-bc31a44d0c86',
   conceptDDx : 'bc48889e-b461-4e5e-98d1-31eb9dd6160e'
 }
+
+export const WEBRTC = {
+  CHAT_TEXT_LIMIT: 1000
+}

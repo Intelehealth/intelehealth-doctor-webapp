@@ -6,9 +6,8 @@ import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/m
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
-import { WebrtcService } from 'src/app/services/webrtc.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
-import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
+import { notifications, doctorDetails, visitTypes, WEBRTC } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -30,6 +29,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   subscription2: Subscription;
   subscription3: Subscription;
   sending = false;
+  CHAT_TEXT_LIMIT = WEBRTC.CHAT_TEXT_LIMIT;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
@@ -37,7 +37,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private coreService: CoreService,
-    private webrtcSvc: WebrtcService,
     private toastr: ToastrService
   ) { }
 
@@ -116,6 +115,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
       const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
+        return;
+      }
+
+      if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
+        this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);
         return;
       }
 
@@ -205,6 +209,10 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     this.subscription3?.unsubscribe();
     this.dialogRef.close();
     this.socketSvc.updateMessage = false;
+  }
+
+  get msgCharCount() {
+    return this.message?.length || 0
   }
 
 }

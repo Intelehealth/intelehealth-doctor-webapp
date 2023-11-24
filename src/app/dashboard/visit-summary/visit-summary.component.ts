@@ -87,8 +87,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   advicesList: string[] = [];
   testsList: string[] = [];
 
-  visitEnded: EncounterModel|string;
-  visitCompleted: EncounterModel|boolean;
+  visitEnded: EncounterModel | string;
+  visitCompleted: EncounterModel | boolean;
   visitNotePresent: EncounterModel;
   isVisitNoteProvider = false;
   referSpecialityForm: FormGroup;
@@ -223,13 +223,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = getCacheData(true, doctorDetails.PROVIDER);
     medicines.forEach(med => {
-      this.drugNameList.push({'id': med.id, 'name': this.translateService.instant(med.name)});
+      this.drugNameList.push({ 'id': med.id, 'name': this.translateService.instant(med.name) });
     });
     this.getVisit(id);
     this.formControlValueChanges();
     this.dSearchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(searchTextValue => {
       this.searchDiagnosis(searchTextValue);
     });
+  }
+
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      this.startChat();
+      location.href = location.href.replace('?openChat=true', '');
+    }
   }
 
   /**
@@ -239,7 +247,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   formControlValueChanges() {
     this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
       if (val) {
-        this.referSpecialityForm.get( doctorDetails.SPECIALIZATION).setValue(null);
+        this.referSpecialityForm.get(doctorDetails.SPECIALIZATION).setValue(null);
       }
     });
 
@@ -318,6 +326,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
           }
+          this.checkOpenChatBoxFlag();
         });
       }
     }, (error) => {
@@ -418,7 +427,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
-            const currentComplaint =  this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
+            const currentComplaint = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -790,7 +799,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr',
       drPersonUuid: this.provider?.person.uuid,
-      patientAge:this.patient.person.age,
+      patientAge: this.patient.person.age,
       patientGender: this.patient.person.gender
     });
 
@@ -1470,7 +1479,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
-                  this.appointmentService.completeAppointment({visitUuid: this.visit.uuid}).subscribe();
+                  this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (linkSvcRes: ApiResponseModel) => {
                       const link = linkSvcRes.data.hash;
@@ -1480,7 +1489,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                           attributeType: '1e02db7e-e117-4b16-9a1e-6e583c3994da', /** Visit Attribute Type for Prescription Link */
                           value: `/i/${link}`,
                         }).subscribe();
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
                         if (result === 'view') {
                           // Open visit summary modal here....
                           this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
@@ -1491,7 +1500,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                     },
                     error: (err) => {
                       this.toastr.error(err.message);
-                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
+                      this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
                         if (result === 'view') {
                           // Open visit summary modal here....
                           this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
@@ -1503,7 +1512,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   });
                 });
               } else {
-                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string|boolean) => {
+                this.coreService.openSharePrescriptionSuccessModal().subscribe((result: string | boolean) => {
                   if (result === 'view') {
                     // Open visit summary modal here....
                     this.coreService.openVisitPrescriptionModal({ uuid: this.visit.uuid });
@@ -1629,6 +1638,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
+    if (this.dialogRef1) this.dialogRef1.close();
   }
 
   /**
