@@ -3,7 +3,7 @@
     <button class="btn_download_pdf" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
   </div> -->
   <h6>{{'Visit summary'|translate}}</h6>
-  <div class="close-btn-con" *ngIf="!isDownloadPrescription">
+  <div class="close-btn-con">
     <button class="modal-close-btn desktop-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/CloseX.svg" alt=""></button>
     <button class="modal-close-btn mobile-close-btn" (click)="close(false)" data-test-id="btnClose"><img src="assets/svgs/Close-icon.svg" alt=""></button>
   </div>
