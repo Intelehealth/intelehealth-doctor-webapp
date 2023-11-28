@@ -87,6 +87,12 @@
                   <app-prescribed-medication [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-medication>
             </mat-card>
             <br>
+            <div  *ngIf="isDispense">
+                  <mat-card>
+                        <app-dispense></app-dispense>
+                  </mat-card>
+                  <br>
+            </div>
             <mat-card>
                   <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
@@ -99,6 +105,12 @@
               <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-aid-order>
             </mat-card>
             <br>
+            <div  *ngIf="isAdminister">
+                  <mat-card>
+                        <app-administer></app-administer>
+                  </mat-card>
+                  <br>
+            </div>
             <mat-card>
                   <app-additional-comment [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-additional-comment>
             </mat-card>
@@ -115,19 +127,6 @@
               <app-reassign-speciality [isManagerRole]="isManagerRole" [providerSpeciality]="userSpeciality" [visitSpeciality]="visitSpeciality" [visitSpecialitySecondary]="visitSpecialitySecondary"></app-reassign-speciality>
             </mat-card>
             <br *ngIf="!visitCompletePresent">
-
-            <div  *ngIf="isAdminister">
-                  <mat-card>
-                        <app-administer></app-administer>
-                  </mat-card>
-                  <br>
-            </div>
-            <div  *ngIf="isDispense">
-                  <mat-card>
-                        <app-dispense></app-dispense>
-                  </mat-card>
-                  <br>
-            </div>
 
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">

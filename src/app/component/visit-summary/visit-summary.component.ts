@@ -81,7 +81,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 this.isVisitNoteEncProvider = true;
               }
               for (let x = 0; x < visit.encounterProviders[j].provider.attributes.length; x++) {
-                if (visit.encounterProviders[j].provider.attributes[x].value == this.userSpeciality) {
+                if (visit.encounterProviders[j].provider.attributes[x].value == this.userSpeciality && visit.encounterProviders[j].provider.attributes[x].voided == false) {
                   this.isSameSpecialityDoctorViewingVisit = true;
                   break;
                 }
