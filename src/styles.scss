@@ -380,6 +380,26 @@ body.font-lato td {
   }
 }
 
+
+@media all and (min-width:0px) and (max-width: 568px) {  
+  .chatbot-backdrop {
+    background: transparent;
+    background: black;
+  }
+  
+  .cdk-overlay-backdrop.cdk-overlay-backdrop-showing{
+    opacity: 0.5 !important;
+  }
+  
+  .chatbot-container {
+    &.chatbot-container-mobile {
+      width: 100% !important;  
+      max-width: 100% !important;
+      margin-left: 20px;
+    }
+  }
+}
+
 /* Tooltip CSS */
 
 .info-message-tooltip {

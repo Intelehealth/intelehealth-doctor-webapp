@@ -156,7 +156,7 @@ export class CoreService {
   * @return {MatDialogRef<ChatBoxComponent>} - Dialog reference
   */
   openChatBoxModal(data: any): MatDialogRef<ChatBoxComponent> {
-    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: "chatbot-container", backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: false });
+    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: ["chatbot-container","chatbot-container-mobile"], backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: true } );
     return dialogRef;
   }
 
