@@ -745,25 +745,24 @@ export class AddPlanAssessmentComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any,
   private dialogRef: MatDialogRef<AddPlanAssessmentComponent>) {
     this.addForm = new FormGroup({
-      assessment: new FormControl(null),
-      plan: new FormControl(null),
+      assessment: new FormArray([]),
+      plan: new FormArray([]),
       medicine: new FormControl('N'),
       medicines: new FormArray([]),
     });
   }
 
   get f() { return this.addForm.controls; }
+  get fa() { return this.addForm.get('assessment') as FormArray; }
+  get fp() { return this.addForm.get('plan') as FormArray; }
   get fm() { return this.addForm.get('medicines') as FormArray; }
 
   ngOnInit(): void {
-    // this.drugNameList = this.drugNameList.concat(medicines);
-
     this.fm.clear();
     if (this.data) {
+      // Add medicines
       if (!this.data.medicines.length) {
         this.addForm.patchValue({
-          assessment: this.data.assessment,
-          plan: this.data.plan,
           medicine: 'N'
         });
       } else {
@@ -784,11 +783,13 @@ export class AddPlanAssessmentComponent implements OnInit {
             durationUnit: new FormControl((medicine[6])? medicine[6].includes('::') ? medicine[6].split('::')[1] : null : null, [Validators.required, Validators.maxLength(15)]),
             remark: new FormControl((medicine.length === 8)? medicine[7] : null, [Validators.maxLength(15)]),
             isDeleted: new FormControl(false),
-            index: new FormControl(-1)
+            index: new FormControl(-1),
+            canEdit: new FormControl(this.data.medicines[x].canEdit),
+            obsDatetime: new FormControl(this.data.medicines[x].obsDatetime),
+            creator: new FormControl(this.data.medicines[x].creator)
           });
           itemToAdd.get('medicineObj').valueChanges.subscribe((val: any) => {
             if (val.id) {
-              // const index = this.fm.value.findIndex(m => m.medicineObj.id === val.id && m.medicineObj.name === val.name);
               itemToAdd.patchValue({
                 medicineName: val.name,
                 typeOfMedicine: val.form,
@@ -797,31 +798,48 @@ export class AddPlanAssessmentComponent implements OnInit {
                 routeOfMedicine: val.route
               });
             } else {
-              // const index = this.fm.value.findIndex(m => m.medicineObj.label === val.label);
               itemToAdd.patchValue({
                 medicineName: val.label
               });
             }
           });
           this.fm.push(itemToAdd);
-          // this.fm.push(new FormGroup({
-          //   id: new FormControl(this.data.medicines[x].uuid),
-          //   medicineName: new FormControl((medicine[0])? medicine[0] : null, [Validators.required, Validators.maxLength(100)]),
-          //   strength: new FormControl((medicine[1])? medicine[1] : null, [Validators.required, Validators.maxLength(10)]),
-          //   dosage: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[0] : null : null, [Validators.required, Validators.maxLength(15)]),
-          //   dosageUnit: new FormControl((medicine[2])? medicine[2].includes('::') ? medicine[2].split('::')[1] : medicine[2].split('::')[0] : null, [Validators.required, Validators.maxLength(15)]),
-          //   duration: new FormControl((medicine[3])? medicine[3] : null, [Validators.required, Validators.maxLength(30)]),
-          //   typeOfMedicine: new FormControl((medicine[4])? medicine[4] : null, [Validators.required, Validators.maxLength(25)]),
-          //   routeOfMedicine: new FormControl((medicine[5])? medicine[5] : null, [Validators.required, Validators.maxLength(25)]),
-          //   isDeleted: new FormControl(false),
-          //   index: new FormControl(x)
-          // }));
         }
         this.addForm.patchValue({
-          assessment: this.data.assessment,
-          plan: this.data.plan,
           medicine: 'Y'
         });
+      }
+
+      // Add assessment
+      if (this.data.assessment.length) {
+        for (let x = 0; x < this.data.assessment.length; x++) {
+          let itemToAdd = new FormGroup({
+            id: new FormControl(this.data.assessment[x].uuid),
+            assessmentValue: new FormControl({value: this.data.assessment[x].value, disabled: !this.data.assessment[x].canEdit }, [Validators.required]),
+            isDeleted: new FormControl(false),
+            index: new FormControl(-1),
+            canEdit: new FormControl(this.data.assessment[x].canEdit),
+            obsDatetime: new FormControl(this.data.assessment[x].obsDatetime),
+            creator: new FormControl(this.data.assessment[x].creator)
+          });
+          this.fa.push(itemToAdd);
+        }
+      }
+
+      // Add plan
+      if (this.data.plan.length) {
+        for (let x = 0; x < this.data.plan.length; x++) {
+          let itemToAdd = new FormGroup({
+            id: new FormControl(this.data.plan[x].uuid),
+            planValue: new FormControl({ value: this.data.plan[x].value, disabled: !this.data.plan[x].canEdit }, [Validators.required]),
+            isDeleted: new FormControl(false),
+            index: new FormControl(-1),
+            canEdit: new FormControl(this.data.plan[x].canEdit),
+            obsDatetime: new FormControl(this.data.plan[x].obsDatetime),
+            creator: new FormControl(this.data.plan[x].creator)
+          });
+          this.fp.push(itemToAdd);
+        }
       }
     }
     this.addForm.get('medicine').valueChanges.subscribe(res=> {
@@ -838,18 +856,6 @@ export class AddPlanAssessmentComponent implements OnInit {
   }
 
   addMedicine() {
-    // this.fm.push(new FormGroup({
-    //   id: new FormControl(null),
-    //   medicineName: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
-    //   strength: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
-    //   dosage: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
-    //   dosageUnit: new FormControl(null, [Validators.required, Validators.maxLength(10)]),
-    //   duration: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
-    //   typeOfMedicine: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
-    //   routeOfMedicine: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
-    //   isDeleted: new FormControl(false),
-    //   index: new FormControl(-1)
-    // }));
     let itemToAdd = new FormGroup({
       id: new FormControl(null),
       typeOfMedicine: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
@@ -864,11 +870,13 @@ export class AddPlanAssessmentComponent implements OnInit {
       durationUnit: new FormControl(null, [Validators.required, Validators.maxLength(15)]),
       remark: new FormControl(null, [Validators.maxLength(15)]),
       isDeleted: new FormControl(false),
-      index: new FormControl(-1)
+      index: new FormControl(-1),
+      canEdit: new FormControl(true),
+      obsDatetime: new FormControl(null),
+      creator: new FormControl(null)
     });
     itemToAdd.get('medicineObj').valueChanges.subscribe((val: any) => {
       if (val.id) {
-        // const index = this.fm.value.findIndex(m => m.medicineObj.id === val.id && m.medicineObj.name === val.name);
         itemToAdd.patchValue({
           medicineName: val.name,
           typeOfMedicine: val.form,
@@ -877,7 +885,6 @@ export class AddPlanAssessmentComponent implements OnInit {
           routeOfMedicine: val.route
         });
       } else {
-        // const index = this.fm.value.findIndex(m => m.medicineObj.label === val.label);
         itemToAdd.patchValue({
           medicineName: val.label
         });
@@ -894,12 +901,54 @@ export class AddPlanAssessmentComponent implements OnInit {
     }
   }
 
+  addAssessment() {
+    let itemToAdd = new FormGroup({
+      id: new FormControl(null),
+      assessmentValue: new FormControl(null, [Validators.required]),
+      isDeleted: new FormControl(false),
+      index: new FormControl(-1),
+      canEdit: new FormControl(true),
+      obsDatetime: new FormControl(null),
+      creator: new FormControl(null)
+    });
+    this.fa.push(itemToAdd);
+  }
+
+  removeAssessment(index: number) {
+    if (this.fa.at(index).get('id').value) {
+      this.fa.at(index).patchValue({ isDeleted: true });
+    } else {
+      this.fa.removeAt(index);
+    }
+  }
+
+  addPlan() {
+    let itemToAdd = new FormGroup({
+      id: new FormControl(null),
+      planValue: new FormControl(null, [Validators.required]),
+      isDeleted: new FormControl(false),
+      index: new FormControl(-1),
+      canEdit: new FormControl(true),
+      obsDatetime: new FormControl(null),
+      creator: new FormControl(null)
+    });
+    this.fp.push(itemToAdd);
+  }
+
+  removePlan(index: number) {
+    if (this.fp.at(index).get('id').value) {
+      this.fp.at(index).patchValue({ isDeleted: true });
+    } else {
+      this.fp.removeAt(index);
+    }
+  }
+
   add() {
     this.submitted = true;
     if (this.addForm.invalid) {
       return;
     }
-    this.close(this.addForm.value);
+    this.close(this.addForm.getRawValue());
   }
 
   close(val: any) {

@@ -43,217 +43,217 @@ export class PartogramComponent implements OnInit, OnDestroy {
       id: 0,
       name: 'Companion',
       conceptName: 'Companion',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       id: 1,
       name: 'Pain relief',
       conceptName: 'Pain relief',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       id: 2,
       name: 'Oral Fluid',
       conceptName: 'Oral Fluid',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       id: 3,
       name: 'Posture',
       conceptName: 'Posture',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       id: 4,
       name: 'Baseline FHR',
       conceptName: 'Baseline FHR',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       id: 5,
       name: 'FHR deceleration',
       conceptName: 'FHR Deceleration',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       id: 6,
       name: 'Amniotic fluid',
       conceptName: 'Amniotic fluid',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 7,
       name: 'Fetal position',
       conceptName: 'Fetal position',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 8,
       name: 'Caput',
       conceptName: 'Caput',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 9,
       name: 'Moulding',
       conceptName: 'Moulding',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 10,
       name: 'Pulse',
       conceptName: 'PULSE',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 11,
       name: 'Systolic BP',
       conceptName: 'Systolic BP',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 12,
       name: 'Diastolic BP',
       conceptName: 'Diastolic BP',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 13,
       name: 'Temperature ℃',
       conceptName: 'TEMPERATURE (C)',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 14,
       name: 'Urine protein',
       conceptName: 'Urine protein',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 15,
       name: 'Contractions per 10 min',
       conceptName: 'Contractions per 10 min',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       id: 16,
       name: 'Duration of contractions',
       conceptName: 'Duration of contraction',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       id: 17,
       name: 'Cervix [Plot X]',
       conceptName: 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm',
-      stage1Count: 12,
-      stage2Count: 12,
+      stage1Count: 15,
+      stage2Count: 20,
       alert: true
     },
     {
       id: 18,
       name: 'Descent [Plot O]',
       conceptName: 'Descent 0-5',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       id: 19,
       name: 'Oxytocin (U/L, drops/min)',
       conceptName: 'Oxytocin U/l, Drops per min',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 20,
       name: 'Medicine',
       conceptName: 'Medicine',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 21,
       name: 'IV fluids',
       conceptName: 'IV fluids',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 22,
       name: 'ASSESSMENT',
       conceptName: 'Assessment',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 23,
       name: 'PLAN',
       conceptName: 'Additional Comments',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 24,
       name: 'Encounter Status',
       conceptName: 'Encounter status',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       id: 25,
       name: 'Urine Acetone',
       conceptName: 'Urine acetone',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     }
   ];
-  timeStage1: any[] = Array(12).fill(null);
-  timeStage2: any[] = Array(3).fill(null);
-  initialsStage1: string[] = Array(12).fill(null);
-  initialsStage2: string[] = Array(3).fill(null);
-  encuuid1: string[] = Array(12).fill(null);
-  encuuid2: string[] = Array(3).fill(null);
+  timeStage1: any[] = Array(15).fill(null);
+  timeStage2: any[] = Array(5).fill(null);
+  initialsStage1: string[] = Array(15).fill(null);
+  initialsStage2: string[] = Array(5).fill(null);
+  encuuid1: string[] = Array(15).fill(null);
+  encuuid2: string[] = Array(5).fill(null);
   displayedColumns: string[] = ['timeAndStage', 'medicine', 'assessment', 'plan'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
@@ -479,7 +479,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   readStageData() {
     for (let x = 0; x < this.parameters.length; x++) {
-      if (x == 20) {
+      if (x == 20 || x == 22 || x == 23) {
         this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
         this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
       } else {
@@ -494,11 +494,11 @@ export class PartogramComponent implements OnInit, OnDestroy {
         saveToStorage('patientVisitProvider', encs[x].encounterProviders[0])
         let indices = encs[x].encounterType.display.replace('Stage', '').replace('Hour', '').split('_').map((val) => +val);
         // Get timing and initials
-        if (indices[0] == 1 && indices[1] <= 12) {
+        if (indices[0] == 1 && indices[1] <= 15) {
           this.timeStage1[indices[1] - 1] = encs[x].encounterDatetime;
           this.initialsStage1[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
           this.encuuid1[indices[1] - 1] = encs[x].uuid;
-        } else if (indices[0] == 2 && indices[1] <= 3) {
+        } else if (indices[0] == 2 && indices[1] <= 5) {
           this.timeStage2[indices[1] - 1] = encs[x].encounterDatetime;
           this.initialsStage2[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
           this.encuuid2[indices[1] - 1] = encs[x].uuid;
@@ -513,22 +513,22 @@ export class PartogramComponent implements OnInit, OnDestroy {
               let parameterValue = this.parameters.find((o: any) => o.conceptName == encs[x].obs[y].concept.display);
               let valueIndex = -1;
               if (indices[0] == 1) {
-                (parameterValue.stage1Count == 12) ? valueIndex = indices[1] - 1 : valueIndex = ((2 * (indices[1] - 1)) + (indices[2] - 1));
+                (parameterValue.stage1Count == 15) ? valueIndex = indices[1] - 1 : valueIndex = ((2 * (indices[1] - 1)) + (indices[2] - 1));
               } else {
-                if (parameterValue.stage2Count == 3) {
+                if (parameterValue.stage2Count == 5) {
                   valueIndex = valueIndex = indices[1] - 1;
-                } else if (parameterValue.stage2Count == 6) {
+                } else if (parameterValue.stage2Count == 10) {
                   valueIndex = (indices[2] == 1) ? ((2 * (indices[1] - 1)) + (indices[2] - 1)) : ((2 * (indices[1] - 1)) + (indices[2] - 2));
                 } else {
                   valueIndex = ((4 * (indices[1] - 1)) + (indices[2] - 1));
                 }
               }
-              if (parameterIndex == 20) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex], { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid }];
+              if (parameterIndex == 20 || parameterIndex == 22 || parameterIndex == 23) {
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex], { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator, obsDatetime: encs[x].obs[y].obsDatetime, canEdit: this.userId == encs[x].obs[y].creator?.uuid ? true : false }];
               } else if (parameterIndex == 19 || parameterIndex == 21) {
                 this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = { value: encs[x].obs[y].value.startsWith("{") ? JSON.parse(encs[x].obs[y].value) : encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
               } else {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
+                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator };
               }
             }
           }
@@ -544,26 +544,26 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   getAssessments() {
     this.assessments = [];
-    for (let d = 0; d < 12; d++) {
-      if (this.parameters[20].stage1values[d].length || this.parameters[22].stage1values[d] || this.parameters[23].stage1values[d]) {
+    for (let d = 0; d < 15; d++) {
+      if (this.parameters[20].stage1values[d].length || this.parameters[22].stage1values[d].length || this.parameters[23].stage1values[d].length) {
         this.assessments.push({
           time: this.timeStage1[d],
           stage: 1,
           medicine: this.parameters[20].stage1values[d],
-          assessment: this.parameters[22].stage1values[d]?.value,
-          plan: this.parameters[23].stage1values[d]?.value
+          assessment: this.parameters[22].stage1values[d],
+          plan: this.parameters[23].stage1values[d]
         });
       }
     }
 
-    for (let d = 0; d < 3; d++) {
-      if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d] || this.parameters[23].stage2values[d]) {
+    for (let d = 0; d < 5; d++) {
+      if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d].length || this.parameters[23].stage2values[d].length) {
         this.assessments.push({
           time: this.timeStage2[d],
           stage: 2,
           medicine: this.parameters[20].stage2values[d],
-          assessment: this.parameters[22].stage2values[d]?.value,
-          plan: this.parameters[23].stage2values[d]?.value
+          assessment: this.parameters[22].stage2values[d],
+          plan: this.parameters[23].stage2values[d]
         });
       }
     }
@@ -623,28 +623,31 @@ export class PartogramComponent implements OnInit, OnDestroy {
   addAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal(null).subscribe(res => {
       if (res) {
-        // console.log(res);
-        if (res.assessment) {
-          this.encounterService.postObs({
-            concept: this.conceptAssessment,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: res.assessment,
-            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-          }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[22].stage1values[index] = { value: res.assessment, uuid: result.uuid } : this.parameters[22].stage2values[index] = { value: res.assessment, uuid: result.uuid };
+        if (res.assessment.length) {
+          res.assessment.forEach((a: any) => {
+            this.encounterService.postObs({
+              concept: this.conceptAssessment,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: a.assessmentValue,
+              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+            }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[22].stage1values[index] = [{ value: a.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [{ value: a.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
+            });
           });
         }
 
-        if (res.plan) {
-          this.encounterService.postObs({
-            concept: this.conceptPlan,
-            person: this.visit.patient.uuid,
-            obsDatetime: new Date(),
-            value: res.plan,
-            encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-          }).subscribe((result: any) => {
-            (stage == 1) ? this.parameters[23].stage1values[index] = { value: res.plan, uuid: result.uuid } : this.parameters[23].stage2values[index] = { value: res.plan, uuid: result.uuid };
+        if (res.plan.length) {
+          res.plan.forEach((p: any) => {
+            this.encounterService.postObs({
+              concept: this.conceptPlan,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: p.planValue,
+              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+            }).subscribe((result: any) => {
+              (stage == 1) ? this.parameters[23].stage1values[index] = [{ value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [{ value: p.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
+            });
           });
         }
 
@@ -657,7 +660,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
               value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[20].stage1values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }];
+              (stage == 1) ? this.parameters[20].stage1values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[20].stage2values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
             });
           });
         }
@@ -671,87 +674,98 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   editAssessmentAndPlan(stage: number, index: number) {
     this.coreService.openAddAssessmentAndPlanModal({
-      assessment: (stage == 1) ? this.parameters[22].stage1values[index] ? this.parameters[22].stage1values[index].value : null : this.parameters[22].stage2values[index] ? this.parameters[22].stage2values[index].value : null,
-      plan: (stage == 1) ? this.parameters[23].stage1values[index] ? this.parameters[23].stage1values[index].value : null : this.parameters[23].stage2values[index] ? this.parameters[23].stage2values[index].value : null,
+      assessment: (stage == 1) ? this.parameters[22].stage1values[index] : this.parameters[22].stage2values[index],
+      plan: (stage == 1) ? this.parameters[23].stage1values[index] : this.parameters[23].stage2values[index],
       medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
     }).subscribe(res => {
       if (res) {
         // console.log(res);
-        if (res.assessment) {
-          if ((stage == 1) ? this.parameters[22].stage1values[index]?.uuid : this.parameters[22].stage2values[index]?.uuid) {
-            this.encounterService.updateObs((stage == 1) ? this.parameters[22].stage1values[index].uuid : this.parameters[22].stage2values[index].uuid, { value: res.assessment }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[22].stage1values[index].value = res.assessment : this.parameters[22].stage2values[index].value = res.assessment;
-            });
-          } else {
-            this.encounterService.postObs({
-              concept: this.conceptAssessment,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: res.assessment,
-              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-            }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[22].stage1values[index] = { value: res.assessment, uuid: result.uuid } : this.parameters[22].stage2values[index] = { value: res.assessment, uuid: result.uuid };
-            });
-          }
-        } else {
-          if (stage == 1) {
-            if (this.parameters[22].stage1values[index]?.uuid) {
-              this.encounterService.deleteObs(this.parameters[22].stage1values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage1values[index] = null;
-              });
+
+        if (res.assessment.length) {
+          res.assessment.forEach((a: any) => {
+            if (a.id) {
+              if (a.isDeleted) {
+                if (a.canEdit) {
+                  this.encounterService.deleteObs(a.id).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
+              } else {
+                if (a.canEdit) {
+                  this.encounterService.updateObs(a.id, { value: a.assessmentValue }).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
+              }
+            } else {
+              if (!a.isDeleted) {
+                this.encounterService.postObs({
+                  concept: this.conceptAssessment,
+                  person: this.visit.patient.uuid,
+                  obsDatetime: new Date(),
+                  value: a.assessmentValue,
+                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+                }).subscribe((result: any) => {
+                  a.id = result.uuid;
+                  a.obsDatetime = result.obsDatetime;
+                  a.creator = { uuid: this.userId, person: this.user.person };
+                  (stage == 1) ? this.parameters[22].stage1values[index] = [...this.parameters[22].stage1values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [...this.parameters[22].stage2values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
+                });
+              }
             }
-          } else {
-            if (this.parameters[22].stage2values[index]?.uuid) {
-              this.encounterService.deleteObs(this.parameters[22].stage2values[index].uuid).subscribe((result: any) => {
-                this.parameters[22].stage2values[index] = null;
-              });
-            }
-          }
+          });
         }
 
-        if (res.plan) {
-          if ((stage == 1) ? this.parameters[23].stage1values[index]?.uuid : this.parameters[23].stage2values[index]?.uuid) {
-            this.encounterService.updateObs((stage == 1) ? this.parameters[23].stage1values[index].uuid : this.parameters[23].stage2values[index].uuid, { value: res.plan }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[23].stage1values[index].value = res.plan : this.parameters[23].stage2values[index].value = res.plan;
-            });
-          } else {
-            this.encounterService.postObs({
-              concept: this.conceptPlan,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: res.plan,
-              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-            }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[23].stage1values[index] = { value: res.plan, uuid: result.uuid } : this.parameters[23].stage2values[index] = { value: res.plan, uuid: result.uuid };
-            });
-          }
-        } else {
-          if (stage == 1) {
-            if (this.parameters[23].stage1values[index]?.uuid) {
-              this.encounterService.deleteObs(this.parameters[23].stage1values[index].uuid).subscribe((result: any) => {
-                this.parameters[23].stage1values[index] = null;
-              });
+        if (res.plan.length) {
+          res.plan.forEach((p: any) => {
+            if (p.id) {
+              if (p.isDeleted) {
+                if (p.canEdit) {
+                  this.encounterService.deleteObs(p.id).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
+              } else {
+                if (p.canEdit) {
+                  this.encounterService.updateObs(p.id, { value: p.planValue }).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
+              }
+            } else {
+              if (!p.isDeleted) {
+                this.encounterService.postObs({
+                  concept: this.conceptPlan,
+                  person: this.visit.patient.uuid,
+                  obsDatetime: new Date(),
+                  value: p.planValue,
+                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
+                }).subscribe((result: any) => {
+                  p.id = result.uuid;
+                  p.obsDatetime = result.obsDatetime;
+                  p.creator = { uuid: this.userId, person: this.user.person };
+                  (stage == 1) ? this.parameters[23].stage1values[index] = [...this.parameters[23].stage1values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [...this.parameters[23].stage2values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
+                });
+              }
             }
-          } else {
-            if (this.parameters[23].stage2values[index]?.uuid) {
-              this.encounterService.deleteObs(this.parameters[23].stage2values[index].uuid).subscribe((result: any) => {
-                this.parameters[23].stage2values[index] = null;
-              });
-            }
-          }
+          });
         }
 
         if (res.medicines.length) {
           res.medicines.forEach((m: any) => {
             if (m.id) {
               if (m.isDeleted) {
-                this.encounterService.deleteObs(m.id).subscribe((result: any) => {
-                  // console.log(result);
-                });
+                if (m.canEdit) {
+                  this.encounterService.deleteObs(m.id).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
               } else {
-                this.encounterService.updateObs(m.id, { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}` }).subscribe((result: any) => {
-                  // console.log(result);
-                });
+                if (m.canEdit) {
+                  this.encounterService.updateObs(m.id, { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}` }).subscribe((result: any) => {
+                    // console.log(result);
+                  });
+                }
               }
             } else {
               if (!m.isDeleted) {
@@ -763,7 +777,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
                 }).subscribe((result: any) => {
                   m.id = result.uuid;
-                  (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid }];
+                  m.obsDatetime = result.obsDatetime;
+                  m.creator = { uuid: this.userId, person: this.user.person };
+                  (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: m.canEdit }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: m.canEdit }];
                 });
               }
             }
@@ -771,17 +787,34 @@ export class PartogramComponent implements OnInit, OnDestroy {
         }
 
         setTimeout(() => {
+          console.log(res);
+          let plan = [];
+          let assessment = [];
           let med = [];
+          for (let x = 0; x < res.assessment.length; x++) {
+            if (!res.assessment[x].isDeleted) {
+              assessment.push({ uuid: res.assessment[x].id, value: res.assessment[x].assessmentValue, creator: res.assessment[x].creator, obsDatetime: res.assessment[x].obsDatetime, canEdit: res.assessment[x].canEdit });
+            }
+          }
+          for (let x = 0; x < res.plan.length; x++) {
+            if (!res.plan[x].isDeleted) {
+              plan.push({ uuid: res.plan[x].id, value: res.plan[x].planValue, creator: res.plan[x].creator, obsDatetime: res.plan[x].obsDatetime, canEdit: res.plan[x].canEdit });
+            }
+          }
           for (let x = 0; x < res.medicines.length; x++) {
             if (!res.medicines[x].isDeleted) {
-              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].typeOfMedicine} | ${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage}::${res.medicines[x].dosageUnit}  | ${res.medicines[x].frequency} | ${res.medicines[x].routeOfMedicine} | ${res.medicines[x].duration}::${res.medicines[x].durationUnit}${res.medicines[x].remark ? ' | '+res.medicines[x].remark: ''}` });
+              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].typeOfMedicine} | ${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage}::${res.medicines[x].dosageUnit}  | ${res.medicines[x].frequency} | ${res.medicines[x].routeOfMedicine} | ${res.medicines[x].duration}::${res.medicines[x].durationUnit}${res.medicines[x].remark ? ' | '+res.medicines[x].remark: ''}`, creator: res.medicines[x].creator, obsDatetime: res.medicines[x].obsDatetime, canEdit: res.medicines[x].canEdit });
             }
           }
           // console.log(med);
           if (stage == 1) {
+            this.parameters[22].stage1values[index] = [...assessment];
+            this.parameters[23].stage1values[index] = [...plan];
             this.parameters[20].stage1values[index] = [...med];
           } else {
-            this.parameters[20].stage2values[index] = [...med];
+            this.parameters[22].stage2values[index] = [...assessment];
+            this.parameters[23].stage1values[index] = [...plan];
+            this.parameters[20].stage1values[index] = [...med];
           }
           this.getAssessments();
         }, 5000);
@@ -854,6 +887,10 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   get userId() {
     return getFromStorage('user')?.uuid
+  }
+
+  get user() {
+    return getFromStorage('user')
   }
 
   getPatientIdentifier(identifierType: string) {

@@ -8,18 +8,73 @@
       <div class="row">
         <div class="col-md-12 p-0">
           <form [formGroup]="addForm" (ngSubmit)="add()">
+
             <div class="section-item">
-              <div class="form-group mb-0">
-                <label for="assessment">Assessment</label>
-                <textarea class="form-control" rows="4" formControlName="assessment" placeholder="Enter assessment"></textarea>
+              <div class="form-group row">
+                <label for="gender" class="col-sm-12 col-form-label">Assessment</label>
+              </div>
+                <ng-container formArrayName="assessment">
+                  <ng-container *ngFor="let fca of fa.controls; let i = index; let last = last">
+                    <ng-container [formGroupName]="i">
+                      <ng-container *ngIf="!fca.value.isDeleted">
+                        <div class="form-row mt-2">
+                          <div class="form-group col-md-11">
+                            <textarea class="form-control" rows="2" formControlName="assessmentValue" placeholder="Enter assessment"></textarea>
+                            <div *ngIf="submitted && fa.controls[i].controls.assessmentValue.errors">
+                              <small class="error-msg" *ngIf="fa.controls[i].controls.assessmentValue.errors.required">Enter assessment</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-1" *ngIf="fca.value.canEdit">
+                            <button mat-button type="button" class="delete-btn" (click)="removeAssessment(i)">
+                              <img src="assets/svgs/delete-icon.svg" alt="">
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <button class="confirm-btn mt-2" type="button" (click)="addAssessment()">Add New</button>
+                </div>
               </div>
             </div>
+
             <div class="section-item">
-              <div class="form-group mb-0">
-                <label for="plan">Plan</label>
-                <textarea class="form-control" rows="4" formControlName="plan" placeholder="Enter plan"></textarea>
+              <div class="form-group row">
+                <label for="gender" class="col-sm-12 col-form-label">Plan</label>
+              </div>
+                <ng-container formArrayName="plan">
+                  <ng-container *ngFor="let fcp of fp.controls; let i = index; let last = last">
+                    <ng-container [formGroupName]="i">
+                      <ng-container *ngIf="!fcp.value.isDeleted">
+                        <div class="form-row mt-2">
+                          <div class="form-group col-md-11">
+                            <textarea class="form-control" rows="2" formControlName="planValue" placeholder="Enter plan"></textarea>
+                            <div *ngIf="submitted && fp.controls[i].controls.planValue.errors">
+                              <small class="error-msg" *ngIf="fp.controls[i].controls.planValue.errors.required">Enter plan</small>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-1" *ngIf="fcp.value.canEdit">
+                            <button mat-button type="button" class="delete-btn" (click)="removePlan(i)">
+                              <img src="assets/svgs/delete-icon.svg" alt="">
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <button class="confirm-btn mt-2" type="button" (click)="addPlan()">Add New</button>
+                </div>
               </div>
             </div>
+
+
+
             <div class="section-item">
               <div class="form-group row">
                 <label for="gender" class="col-sm-2 col-form-label">Medication</label>
@@ -63,7 +118,9 @@
                               bindLabel="name"
                               [searchable]="true"
                               [addTag]="true"
-                              placeholder="Enter medicine name">
+                              placeholder="Enter medicine name"
+                              [readonly]="!fcm.value.canEdit"
+                              >
                               <ng-option *ngFor="let m of medicines" [value]="m">
                                 {{m.form}} {{m.name}} {{m.strength}}
                               </ng-option>
@@ -84,7 +141,8 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
-                              placeholder="Select medicine form">
+                              placeholder="Select medicine form"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let t of typeOfMedicineList" [value]="t.name">
                                 {{t.name}}
                               </ng-option>
@@ -104,7 +162,8 @@
                               [clearable]="false"
                               [searchable]="true"
                               [addTag]="addStrengthTag.bind(this)"
-                              placeholder="Enter strength">
+                              placeholder="Enter strength"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let s of strengthList" [value]="s.name">
                                 {{s.name}}
                               </ng-option>
@@ -116,7 +175,7 @@
                           </div>
                           <div class="form-group col-md-2">
                             <label for="dosage">Dosage *</label>
-                            <input type="number" class="form-control" placeholder="Enter dosage" formControlName="dosage">
+                            <input type="number" class="form-control" placeholder="Enter dosage" formControlName="dosage" [readonly]="!fcm.value.canEdit">
                             <div *ngIf="submitted && fm.controls[i].controls.dosage.errors">
                               <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.required">Enter dosage</small>
                               <small class="error-msg" *ngIf="fm.controls[i].controls.dosage.errors.maxlength">Dosage should be less than 10 characters</small>
@@ -131,7 +190,8 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
-                              placeholder="Enter dosage unit">
+                              placeholder="Enter dosage unit"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let d of dosageUnitList" [value]="d.name">
                                 {{d.name}}
                               </ng-option>
@@ -152,7 +212,8 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
-                              placeholder="Select frequency">
+                              placeholder="Select frequency"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let f of frequencyList" [value]="f.name">
                                 {{f.name}}
                               </ng-option>
@@ -171,7 +232,8 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
-                              placeholder="Select route">
+                              placeholder="Select route"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let r of routeList" [value]="r.name">
                                 {{r.name}}
                               </ng-option>
@@ -183,7 +245,7 @@
                           </div>
                           <div class="form-group col-md-2">
                             <label for="duration">Duration *</label>
-                            <input type="number" class="form-control" placeholder="Enter duration" formControlName="duration">
+                            <input type="number" class="form-control" placeholder="Enter duration" formControlName="duration" [readonly]="!fcm.value.canEdit">
                             <div *ngIf="submitted && fm.controls[i].controls.duration.errors">
                               <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.required">Enter duration</small>
                               <small class="error-msg" *ngIf="fm.controls[i].controls.duration.errors.maxlength">Duration should be less than 15 characters</small>
@@ -198,7 +260,8 @@
                               bindValue="name"
                               [clearable]="false"
                               [searchable]="true"
-                              placeholder="Select duration unit">
+                              placeholder="Select duration unit"
+                              [readonly]="!fcm.value.canEdit">
                               <ng-option *ngFor="let du of durationUnitList" [value]="du.name">
                                 {{du.name}}
                               </ng-option>
@@ -210,12 +273,12 @@
                           </div>
                           <div class="form-group col-md-2">
                             <label for="duration">Remark</label>
-                            <input type="text" class="form-control" placeholder="Enter remark" formControlName="remark">
+                            <input type="text" class="form-control" placeholder="Enter remark" formControlName="remark" [readonly]="!fcm.value.canEdit">
                             <div *ngIf="submitted && fm.controls[i].controls.remark.errors">
                               <small class="error-msg" *ngIf="fm.controls[i].controls.remark.errors.maxlength">Remark should be less than 15 characters</small>
                             </div>
                           </div>
-                          <div class="form-group col-md-1">
+                          <div class="form-group col-md-1" *ngIf="fcm.value.canEdit">
                             <label for="deleteBtn">.</label>
                             <button mat-button type="button" class="delete-btn" (click)="removeMedicine(i)">
                               <img src="assets/svgs/delete-icon.svg" alt="">
@@ -298,7 +361,7 @@
                 </ng-container>
                 <div class="form-row">
                   <div class="col-md-12">
-                    <button class="confirm-btn mt-2" type="button" (click)="addMedicine()">Add New Medicine</button>
+                    <button class="confirm-btn mt-2" type="button" (click)="addMedicine()">Add New</button>
                   </div>
                 </div>
               </ng-container>

@@ -8,23 +8,23 @@
             <table class="table table-bordered bg-white">
               <tbody>
                 <tr class="page-title-row">
-                  <td colspan="41"><h1 class="mb-0">WHO LABOUR CARE GUIDE VIEW</h1></td>
+                  <td colspan="55"><h1 class="mb-0">WHO LABOUR CARE GUIDE VIEW</h1></td>
                 </tr>
                 <tr class="page-title-row">
-                  <td colspan="6"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
-                  <td colspan="4"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
-                  <td colspan="10"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
-                  <td colspan="21"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
+                  <td colspan="8"><span>Name:</span> {{pinfo?.name|noValue:'NA'}}</td>
+                  <td colspan="6"><span>Parity:</span> {{pinfo?.Parity|noValue:'NA'}}</td>
+                  <td colspan="15"><span>Labour onset:</span> {{pinfo?.LaborOnset|noValue:'NA'}}</td>
+                  <td colspan="26"><span>Active labour diagnosis:</span>&nbsp;<span>[Date</span> {{pinfo?.ActiveLaborDiagnosed|date:'dd/MM/yyyy'|noValue:'NA'}} <span>]</span></td>
                 </tr>
                 <tr class="page-title-row">
-                  <td colspan="10"><span>
+                  <td colspan="14"><span>
                     Raptured membranes:</span>&nbsp;
                     <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp == 'U'">U</ng-container>
                     <ng-container *ngIf="pinfo?.MembraneRupturedTimestamp != 'U'">
                       <span>[Date</span> {{pinfo?.MembraneRupturedTimestamp|date:'dd/MM/yyyy'|noValue:'NA'}} <span>Time</span> {{pinfo?.MembraneRupturedTimestamp|date:'hh:mm a'|noValue:'NA'}}<span>]</span>
                     </ng-container>
                   </td>
-                  <td colspan="31"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
+                  <td colspan="41"><span>Risk factors:</span> {{pinfo?.Riskfactors|noValue:'NA'}}</td>
                 </tr>
                 <tr>
                   <td colspan="3" class="nb"></td>
@@ -83,24 +83,29 @@
                   <td colspan="2">10</td>
                   <td colspan="2">11</td>
                   <td colspan="2">12</td>
+                  <td colspan="2">13</td>
+                  <td colspan="2">14</td>
+                  <td colspan="2">15</td>
                   <td colspan="4">1</td>
                   <td colspan="4">2</td>
                   <td colspan="4">3</td>
+                  <td colspan="4">4</td>
+                  <td colspan="4">5</td>
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="55" class="divider"></td>
                 </tr>
                 <tr class="alert-row">
                   <td colspan="3" class="nb"></td>
                   <td>ALERT</td>
-                  <td colspan="24" class="nb">
+                  <td colspan="30" class="nb">
                     <div class="d-flex align-items-center">
                       <div class="arrow left"></div>
                       <span>ACTIVE FIRST STAGE</span>
                       <div class="arrow right"></div>
                     </div>
                   </td>
-                  <td colspan="12" class="nb">
+                  <td colspan="20" class="nb">
                     <div class="d-flex align-items-center">
                       <div class="arrow left"></div>
                       <span>SECOND STAGE</span>
@@ -109,7 +114,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="55" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="5" class="vrt-header"><span>SUPPORTIVE CARE</span> </td>
@@ -179,8 +184,8 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr *ngIf="visitCompleted">
-                  <td colspan="27" class="divider2"></td>
-                  <td colspan="12" class="divider2">
+                  <td colspan="33" class="divider2"></td>
+                  <td colspan="20" class="divider2">
                     <div class="birth-outcome-con">
                       <ng-container *ngIf="visitCompleteReason != 'Out Of Time' && visitCompleteReason != 'Other' && visitCompleteReason != 'Newborn'">
                         <div style="white-space: pre-wrap;">
@@ -289,7 +294,7 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="55" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="6" class="vrt-header"><span>BABY</span></td>
@@ -545,7 +550,7 @@
                   <td colspan="2"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="55" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="6" class="vrt-header"><span>WOMEN</span></td>
@@ -765,7 +770,7 @@
                   <td colspan="2"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="55" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="16" class="vrt-header"><span>LABOUR PROGRESS</span></td>
@@ -877,7 +882,7 @@
                   <td class="bld"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="40" class="divider"></td>
+                  <td colspan="46" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="6">Cervix [Plot X]</td>
@@ -945,7 +950,7 @@
                   <td colspan="2"></td>
                   <td colspan="2"></td>
                   <td colspan="2"></td> -->
-                  <td colspan="12" rowspan="5">
+                  <td colspan="20" rowspan="5">
                     In active first stage, plot ‘X’ to <br> record cervical dilatation. Alert<br> triggered when lag time for<br> current cervical dilatation is<br> exceeded with no progress. In<br> second stage, insert ‘P’ to indicate<br> when pushing begins.
                   </td>
                 </tr>
@@ -1042,7 +1047,7 @@
                   <td colspan="2"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="40" class="divider"></td>
+                  <td colspan="46" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="6">Descent [Plot O]</td>
@@ -1262,7 +1267,7 @@
                   <td colspan="2"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="47" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="3" class="vrt-header"><span>MEDICATION</span></td>
@@ -1321,7 +1326,7 @@
                     <td colspan="2">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <br/>
+                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.creator.person.display|titlecase}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/>
                         </ng-container>
                       </div>
                     </td>
@@ -1342,7 +1347,7 @@
                     <td colspan="4">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <br/>
+                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.creator.person.display|titlecase}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br/>
                         </ng-container>
                       </div>
                     </td>
@@ -1402,15 +1407,17 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="47" class="divider"></td>
                 </tr>
                 <tr>
                   <td rowspan="4" class="vrt-header"><span>SHARED DECISION-MAKING</span></td>
                   <td colspan="3">ASSESSMENT</td>
                   <ng-container *ngFor="let item of parameters[22].stage1values;">
                     <td colspan="2">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
+                      <div class="value-item note">
+                        <ng-container *ngFor="let it of item;">
+                          <p *ngIf="it">{{it?.value}} <small><i>({{it?.creator.person.display|titlecase}} {{it?.obsDatetime|date:'hh:mm a'}})</i></small></p>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
@@ -1428,8 +1435,10 @@
                   <td colspan="2"></td> -->
                   <ng-container *ngFor="let item of parameters[22].stage2values;">
                     <td colspan="4">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
+                      <div class="value-item note">
+                        <ng-container *ngFor="let it of item;">
+                          <p *ngIf="it">{{it?.value}} <small><i>({{it?.creator.person.display|titlecase}} {{it?.obsDatetime|date:'hh:mm a'}})</i></small></p>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
@@ -1438,14 +1447,16 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="40" class="divider"></td>
+                  <td colspan="46" class="divider"></td>
                 </tr>
                 <tr>
                   <td colspan="3">PLAN</td>
                   <ng-container *ngFor="let item of parameters[23].stage1values;">
                     <td colspan="2">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
+                      <div class="value-item note">
+                        <ng-container *ngFor="let it of item;">
+                          <p *ngIf="it">{{it?.value}} <small><i>({{it?.creator.person.display|titlecase}} {{it?.obsDatetime|date:'hh:mm a'}})</i></small></p>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
@@ -1463,8 +1474,10 @@
                   <td colspan="2"></td> -->
                   <ng-container *ngFor="let item of parameters[23].stage2values;">
                     <td colspan="4">
-                      <div class="value-item note" *ngIf="item">
-                        {{item?.value}}
+                      <div class="value-item note">
+                        <ng-container *ngFor="let it of item;">
+                          <p *ngIf="it">{{it?.value}} <small><i>({{it?.creator.person.display|titlecase}} {{it?.obsDatetime|date:'hh:mm a'}})</i></small></p>
+                        </ng-container>
                       </div>
                     </td>
                   </ng-container>
@@ -1473,7 +1486,7 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr>
-                  <td colspan="41" class="divider"></td>
+                  <td colspan="47" class="divider"></td>
                 </tr>
                 <tr>
                   <td class="nb"></td>
@@ -1509,7 +1522,7 @@
                   <td colspan="4"></td> -->
                 </tr>
                 <tr class="footer-row">
-                  <td colspan="41" class="nb">
+                  <td colspan="55" class="nb">
                     INSTRUCTIONS: CIRCLE ANY OBSERVATION MEETING THE CRITERIA IN THE ‘ALERT’ COLUMN, ALERT THE SENIOR MIDWIFE OR DOCTOR AND RECORD THE ASSESSMENT AND ACTION TAKEN.IF LABOUR EXTENDS BEYOND 12H, PLEASE CONTINUE ON A NEW LABOUR CARE GUIDE.<br>
                     Abbreviations: Y – <span>Yes</span>, N – <span>No</span>, D – <span>Declined</span>, U – <span>Unknown</span>, SP – <span>Supine</span>, MO – <span>Mobile</span>, E – <span>Early</span>, L – <span>Late</span>, V – <span>Variable</span>, I – <span>Intact</span>, C – <span>Clear</span>, M – <span>Meconium</span>, B – <span>Blood</span>, A – <span>Anterior</span>, P – <span>Posterior</span>, T – <span>Transverse</span>, P+ – <span>Protein</span>, A+ – <span>Acetone</span>
                   </td>
@@ -1542,7 +1555,7 @@
                     <th mat-header-cell *matHeaderCellDef> Medicine </th>
                     <td mat-cell *matCellDef="let element">
                       <ul class="notes-list">
-                        <li *ngFor="let m of element?.medicine;">{{m.value}}</li>
+                        <li *ngFor="let m of element?.medicine;">{{m.value?.replaceAll('::',' ')}} <br><small><i>({{m?.creator.person.display|titlecase}} {{m?.obsDatetime|date:'hh:mm a'}})</i></small></li>
                       </ul>
                     </td>
                   </ng-container>
@@ -1551,14 +1564,18 @@
                   <ng-container matColumnDef="assessment">
                     <th mat-header-cell *matHeaderCellDef> Assessment </th>
                     <td mat-cell *matCellDef="let element">
-                      {{element.assessment}}
+                      <ul class="notes-list">
+                        <li *ngFor="let a of element?.assessment">{{a?.value}} <small><i>({{a.creator.person.display|titlecase}} {{a.obsDatetime|date:'hh:mm a'}})</i></small></li>
+                      </ul>
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="plan">
                     <th mat-header-cell *matHeaderCellDef> Plan </th>
                     <td mat-cell *matCellDef="let element">
-                      {{element.plan}}
+                      <ul class="notes-list">
+                        <li *ngFor="let p of element?.plan">{{p?.value}} <small><i>({{p.creator.person.display|titlecase}} {{p.obsDatetime|date:'hh:mm a'}})</i></small></li>
+                      </ul>
                     </td>
                   </ng-container>
 
