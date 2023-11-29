@@ -354,9 +354,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
             this.signatureType = this.getAttributeValue(attrType.uuid, attrType.display);
             personalFormValues.signatureType = this.signatureType;
             break;
-          case doctorDetails.SPECIALIZATION:
-            professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
-            break;
+          // case doctorDetails.SPECIALIZATION:
+          //   professionalFormValues.specialization = this.getAttributeValue(attrType.uuid, attrType.display);
+          //   break;
           case doctorDetails.TEXT_OF_SIGN:
             personalFormValues.textOfSign = this.getAttributeValue(attrType.uuid, attrType.display);
             break;

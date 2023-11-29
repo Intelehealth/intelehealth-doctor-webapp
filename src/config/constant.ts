@@ -93,7 +93,7 @@ export const specialization = {
   ]
 };
 
-export const defaultSpecialization = 'Obstetrician & Gynecologist';
+export const defaultSpecialization = 'Obstetrician and Gynecologist';
 
 export const refer_specialization = {
   refer_specializations :[
