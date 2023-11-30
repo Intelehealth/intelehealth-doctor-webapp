@@ -436,7 +436,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
           this.referTypeOtherReason = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Refer Type Other')?.value;
         }
       } else {
-        this.visitCompleteReason = "Labor Complete";
+        this.visitCompleteReason = "Newborn";
         this.birthOutcome = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
         if (this.birthOutcome == 'Other'||this.birthOutcome == 'OTHER') {
           this.birthOutcomeOther = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;

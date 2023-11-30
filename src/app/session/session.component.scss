@@ -107,7 +107,16 @@
  }
 }
 
+.mobile-logo{
+  display: none;
+}
+
 @media (max-width: 768px) {
+  .main-container-row {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
   .bg-banner {
     background: none;
 
@@ -118,5 +127,9 @@
 
   .main-container {
     padding: 20px 30px 80px;
+  }
+
+  .mobile-logo{
+    display: block;
   }
 }
