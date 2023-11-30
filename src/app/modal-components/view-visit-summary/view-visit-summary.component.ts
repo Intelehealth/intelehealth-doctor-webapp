@@ -770,7 +770,7 @@ export class ViewVisitSummaryComponent implements OnInit {
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-precription');
+    }).download('e-visit-summery');
   }
 
   toObjectUrl(url: string) {
