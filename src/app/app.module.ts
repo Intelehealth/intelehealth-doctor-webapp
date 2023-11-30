@@ -105,6 +105,10 @@ const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt()
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
+        'https://ezazi.intelehealth.org:3004/api/messages/',
+        'https://ezazi.intelehealth.org:3004/api/support/',
+        'https://ezazi.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://ezazi.intelehealth.org/openmrs/ws/rest/v1/visit/',
         'https://devezazi.intelehealth.org:3004/api/messages/',
         'https://devezazi.intelehealth.org:3004/api/support/',
         'https://devezazi.intelehealth.org:3004/api/auth/validateProviderAttribute',
