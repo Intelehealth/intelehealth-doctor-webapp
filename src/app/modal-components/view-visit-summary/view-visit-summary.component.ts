@@ -7,6 +7,7 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel } from 'src/app/model/model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -38,7 +39,8 @@ export class ViewVisitSummaryComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewVisitSummaryComponent>,
     private visitService: VisitService,
     private diagnosisService: DiagnosisService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -272,16 +274,15 @@ export class ViewVisitSummaryComponent implements OnInit {
   getPhysicalExamination(encounters: EncounterModel[]) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: EncounterModel) => {
-      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
-          if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
+          if (obs.concept.display === 'PHYSICAL EXAMINATION') {
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
-
                 if (splitByBr[0].includes('Abdomen')) {
-                  let obj1: PatientHistoryModel = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -291,7 +292,7 @@ export class ViewVisitSummaryComponent implements OnInit {
                   }
                   this.physicalExaminationData.push(obj1);
                 } else {
-                  let obj1: PatientHistoryModel = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -318,12 +319,12 @@ export class ViewVisitSummaryComponent implements OnInit {
   getMedicalHistory(encounters: EncounterModel[]) {
     this.patientHistoryData = [];
     encounters.forEach((enc: EncounterModel) => {
-      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
-          if (obs.concept.display == visitTypes.MEDICAL_HISTORY) {
+          if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
-            obj1.title = 'Patient history';
+            const obj1: PatientHistoryModel = {};
+            obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
@@ -333,18 +334,17 @@ export class ViewVisitSummaryComponent implements OnInit {
             }
             this.patientHistoryData.push(obj1);
           }
-
-          if (obs.concept.display == visitTypes.FAMILY_HISTORY) {
+          if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
-            obj1.title = 'Family history';
+            const obj1: PatientHistoryModel = {};
+            obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
                 if (familyHistory[i].includes(':')) {
                   const splitByColon = familyHistory[i].split(':');
                   const splitByComma = splitByColon[1].split(',');
-                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                  obj1.data.push({ key: splitByComma[0].trim().replace('•', ''), value: splitByComma[1] ? splitByComma[1].replace('•', '') : " " });
                 } else {
                   obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
                 }
@@ -367,7 +367,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
           this.eyeImages.push(data);
         }
       });
@@ -377,10 +377,11 @@ export class ViewVisitSummaryComponent implements OnInit {
   /**
   * Open eye images preview modal
   * @param {number} index - Index
+  * @param {string} section - Section title
   * @return {void}
   */
-  previewEyeImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => {});
+  previewEyeImages(index: number,section: string) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.getImagesBySection(section) }).subscribe((res) => { });
   }
 
   /**
@@ -393,7 +394,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
           this.additionalDocs.push(data);
         }
       });
@@ -416,6 +417,23 @@ export class ViewVisitSummaryComponent implements OnInit {
   */
   close(val: boolean) {
     this.dialogRef.close(val);
+  }
+
+  /**
+  * Getting Images by section
+  * @param {string} section - Section Title
+  * @returns {arra}
+  */
+  getImagesBySection(section){
+    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink() {
+    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(doctorDetails.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
   }
 
 }

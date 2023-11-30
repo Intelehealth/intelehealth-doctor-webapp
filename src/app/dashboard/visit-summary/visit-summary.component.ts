@@ -566,7 +566,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` , section: obs.comment};
           this.eyeImages.push(data);
         }
       });
@@ -576,10 +576,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   /**
   * Open eye images preview modal
   * @param {number} index - Index
+  * @param {string} section - Section title
   * @return {void}
   */
-  previewEyeImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => { });
+  previewEyeImages(index: number,section: string) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.getImagesBySection(section) }).subscribe((res) => { });
   }
 
   /**
@@ -592,7 +593,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
           this.additionalDocs.push(data);
         }
       });
@@ -1638,6 +1639,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     deleteCacheData(visitTypes.PATIENT_VISIT_PROVIDER);
     if (this.dialogRef1) this.dialogRef1.close();
+  }
+
+  /**
+  * Getting Images by section
+  * @param {string} section - Section Title
+  * @returns {arra}
+  */
+  getImagesBySection(section){
+    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
   }
 
 }
