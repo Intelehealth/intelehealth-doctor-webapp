@@ -772,7 +772,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   colSpan: 4,
                   alignment: 'right',
                   stack: [
-                    { image: `${this.signature?.value}`, width: 100, height: 100, margin: [0, -30, 0, 0] },
+                    { image: `${this.signature?.value}`, width: 200, height: 200, margin: [0, -30, 0, 0] },
                     { text: `Dr. ${this.consultedDoctor?.name}`, margin: [0, -30, 0, 0]},
                     { text: `${this.consultedDoctor?.typeOfProfession}`},
                     { text: `Registration No. ${this.consultedDoctor?.registrationNumber}`},
