@@ -222,7 +222,6 @@
 .signature {
   height: 200px;
   width: 200px;
-  margin-bottom: -50px;
 }
 
 .btn_download_pdf{
@@ -237,4 +236,22 @@
   right: 30px;
   width: 70px !important;
   top: 6px;
+}
+.text-flow{
+  position: relative;
+  bottom: 20px;
+}
+
+.true-condition {
+  width: 200px;
+  height: 150px;
+  position: relative;
+  left: 50px;
+}
+
+.false-condition {
+  width: 200px;
+  height: 150px;
+  position: relative;
+  left: 130px;
 }

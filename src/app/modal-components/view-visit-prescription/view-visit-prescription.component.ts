@@ -59,6 +59,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
 
   selectedLanguage: string = "ru";
   lang = localStorage.getItem("selectedLanguage");
+  image_flow = localStorage.getItem('selectedLanguage') === 'ru' ? false : true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
