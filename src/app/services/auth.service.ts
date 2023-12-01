@@ -61,25 +61,10 @@ export class AuthService {
   }
 
   /**
-   * JSESSIONID token set to cookie if not found, fallback to localStorage and set to cookie
-   * @returns {string}
-   */
-  fallbackSession(): string {
-    let sessionId = this.cookieService.get("JSESSIONID");
-    if (!sessionId) {
-      sessionId = this.currentUserSubject.value?.sessionId
-      if (sessionId) this.cookieService.set("JSESSIONID", sessionId);
-    }
-    return sessionId || '';
-  }
-
-  /**
   * Getter for current user from currentUser behaviour subject
   * @return {any} - Current user value
   */
   public get currentUserValue(): any {
-    const sessionId = this.fallbackSession();
-    if(!sessionId) return null; 
     return this.currentUserSubject.value;
   }
 
