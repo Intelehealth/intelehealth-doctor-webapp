@@ -3,12 +3,12 @@
     <button class="btn_download_pdf" (click)="downloadPrescription()" data-test-id="btnDownload"><mat-icon class="align-middle">download</mat-icon><span>{{ 'Download' | translate}}</span></button>
   </div>
   <h6>
-    {{ isDownloadPrescription ? ('Intelehealth e-'|translate) : "" }} {{'Prescription'|translate}}
+    {{ isDownloadPrescription ? ('Namma Aarogya Kendra e-'|translate) : "" }} {{'Prescription'|translate}}
 
     <img
       *ngIf="isDownloadPrescription"
       class="logo position-absolute"
-      src="assets/images/namma_aarogya_kendra_logo.png"
+      src="assets/images/healthforher_logo.png"
       width="100%"
       alt=""
     />

@@ -37,6 +37,10 @@
 
 .external-prescription .title-con {
     padding: 15px 10px 10px 10px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90px;
 }
 
 .external-prescription .main-content {
@@ -56,8 +60,9 @@
 
 .external-prescription .logo {
     right: 30px;
-    background: var(--color-darkBlue);
+    background: var(--color-white);
     width: 60px !important;
+    margin-top: -16px !important;
 }
 
 .external-prescription .title-con {
