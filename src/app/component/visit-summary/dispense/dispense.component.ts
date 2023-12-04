@@ -82,6 +82,8 @@ export class DispenseComponent implements OnInit {
               this.eyeImages.push(data);
               imageDoc.push(data);
               dispenseObs['docImage'] = imageDoc
+              dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
+              dispenseObs['creator'] = e.obs[i].creator
             }
           }
           this.dispenseMedAid.push(dispenseObs);

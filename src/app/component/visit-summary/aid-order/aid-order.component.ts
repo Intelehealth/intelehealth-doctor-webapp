@@ -97,6 +97,10 @@ export class AidOrderComponent implements OnInit {
   type4: any = [];
   type5: any = [];
 
+  aidObs = [];
+  aidObsList = [];
+  objectKeys = Object.keys;
+
   constructor(
     private diagnosisService: DiagnosisService,
     private encounterService: EncounterService,
@@ -137,6 +141,7 @@ export class AidOrderComponent implements OnInit {
     this.patientId = this.route.snapshot.params['patient_id'];
     this.formControlValueChanges();
     this.getAidOrders();
+    this.getAidObsList();
   }
 
   get aidUuidList() {
@@ -534,4 +539,40 @@ export class AidOrderComponent implements OnInit {
     }
   }
 
+  getAidObsList(){
+    this.visitSvc.fetchVisitDetails(this.visitUuid).subscribe(visitDetail => {
+      visitDetail.encounters.filter((e) => {
+        let dispenseObs = {}
+        if(e.display.includes("DISPENSE")){
+          for(let i = 0; i < e.obs.length; i++){
+            if(e.obs[i].display.includes("DISPENSE_AID")){              
+              let obsData = JSON.parse(e.obs[i].value)
+              dispenseObs['aidUuidList'] = obsData.aidUuidList
+              dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
+              dispenseObs['creator'] = {'dispensed' : e.obs[i].creator.display}
+            }
+          }
+          this.aidObs.push(dispenseObs);          
+        }
+        if(e.display.includes("Visit Note")){
+          for(let j = 0; j < e.obs.length; j++){
+            if(e.obs[j].display.includes("Type 1") || e.obs[j].display.includes("Type 2") || e.obs[j].display.includes("Type 3") || e.obs[j].display.includes("Type 4") || e.obs[j].display.includes("Type 5")){
+              this.diagnosisService.getData(e.obs[j]);
+              for(let x = 0; x < this.aidObs.length; x++){
+                if(this.aidObs[x].aidUuidList){
+                  let aidObs = {}
+                  for(let y = 0; y < this.aidObs[x].aidUuidList.length; y++){
+                    if(this.aidObs[x].aidUuidList[y] === e.obs[j].uuid){
+                        aidObs[e.obs[j].display.split(':')[0]] = [this.aidObs[x].creator, this.aidObs[x].obsDatetime];
+                        this.aidObsList.push(aidObs)
+                    }                    
+                  }
+                }
+              }
+            }
+          }
+        }
+      });      
+    });
+  }
 }

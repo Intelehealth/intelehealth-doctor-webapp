@@ -72,6 +72,9 @@
           <b>{{ getType1Values() }} {{ (aidOrderForm?.value.type1Other)? ' (' + aidOrderForm?.value.type1Other + ')' : ''  }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
             <span class="comment-blue">{{aidOrderForm?.value.type1Obs.creator.person.display|comment}} {{val?.type1Obs?.creatorRegNo}} | {{aidOrderForm?.value.type1Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 1. Medical Equipment loan'">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type1Obs.comment" class="comment">{{aidOrderForm?.value.type1Obs|comment:'Deleted by'}}</span>
           </div>
         </div>
@@ -84,6 +87,9 @@
           <b>{{ getType2Values() }} {{ (aidOrderForm?.value.type2Other)? ' (' + aidOrderForm?.value.type2Other + ')' : ''  }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
             <span class="comment-blue">{{aidOrderForm?.value.type2Obs.creator.person.display|comment}} {{val?.type2Obs?.creatorRegNo}} | {{aidOrderForm?.value.type2Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 2. Free Medical equipment'">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type2Obs.comment" class="comment">{{aidOrderForm?.value.type2Obs|comment:'Deleted by'}}</span>
           </div>
         </div>
@@ -96,6 +102,9 @@
           <b>{{ aidOrderForm?.value.type3 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
             <span class="comment-blue">{{aidOrderForm?.value.type3Obs.creator.person.display|comment}} {{val?.type3Obs?.creatorRegNo}} | {{aidOrderForm?.value.type3Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 3. Cover medication expenses'">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type3Obs.comment" class="comment">{{aidOrderForm?.value.type3Obs|comment:'Deleted by'}}</span>
           </div>
         </div>
@@ -108,6 +117,9 @@
           <b>{{ aidOrderForm?.value.type4 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
             <span class="comment-blue">{{aidOrderForm?.value.type4Obs.creator.person.display|comment}} {{val?.type4Obs?.creatorRegNo}} | {{aidOrderForm?.value.type4Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 4. Cover surgical expenses'">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type4Obs.comment" class="comment">{{aidOrderForm?.value.type4Obs|comment:'Deleted by'}}</span>
           </div>
         </div>
@@ -120,6 +132,9 @@
           <b>{{ aidOrderForm?.value.type5 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
             <span class="comment-blue">{{aidOrderForm?.value.type5Obs.creator.person.display|comment}} {{val?.type5Obs?.creatorRegNo}} | {{aidOrderForm?.value.type5Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 5. Cash assistance'">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type5Obs.comment" class="comment">{{aidOrderForm?.value.type5Obs|comment:'Deleted by'}}</span>
           </div>
         </div>

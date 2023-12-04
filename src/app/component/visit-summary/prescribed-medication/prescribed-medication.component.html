@@ -63,8 +63,7 @@
         <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
           formControlName="additional"></textarea>
         <br>
-        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
-          Meds'|translate}}</button>
+        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Meds'|translate}}</button>
       </div>
     </form>
     <br>
@@ -76,6 +75,18 @@
             <span [class.strike]="meds.comment" [innerHTML]="meds.value.replace('\n','<br>').replace(':','')"></span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
               <span class="comment-blue">{{meds|comment:'addedBy-creator'}} {{meds.creatorRegNo}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                <div *ngFor="let mds of medicineObsList">
+                  <div *ngFor="let med of mds[objectKeys(mds)]">
+                    <div *ngIf="mds[objectKeys(mds)].length > 2? isShow[i] : !isShow[i]">
+                      <span class="comment-blue" *ngIf="objectKeys(mds) == meds.value && objectKeys(med[0]) == 'dispensed'">{{ ('Dispensed by'|translate)+' : '+med[0].dispensed}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                      <span class="comment-blue" *ngIf="objectKeys(mds) == meds.value && objectKeys(med[0]) == 'administered'">{{ ('Administered by'|translate)+' : '+med[0].administered}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="objectKeys(mds) == meds.value && mds[objectKeys(mds)].length > 2">
+                    <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(false)">{{'Show Less'|translate}}</span>
+                    <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show More'|translate}}</span>  
+                  </div>
+                </div>
               <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
             </div>
           </div>
