@@ -597,14 +597,14 @@
 
       <div *ngIf="isDownloadPrescription" class="signature_area">
         <div class="float-right my-4">
-          <div [ngClass]="{'true-condition': image_flow, 'false-condition': !image_flow}">
-            <img class="signature" [src]="signature?.value" />
+          <div class="signature">
+            <img class="sign" [src]="signature?.value" />
           </div>
-          <div class="text-flow">
-            <div class="title-name text-right">{{ consultedDoctor?.name }}</div>
-            <div class="title-qual text-right">{{ consultedDoctor?.qualification }}, {{consultedDoctor?.specialization|translate}}</div>
-            <div class="title-name text-right">{{'Email'|translate}} : {{ consultedDoctor?.emailId }}</div>
-            <div class="sub-title text-right">
+          <div class="text-right text-flow">
+            <div class="title-name">{{ consultedDoctor?.name }}</div>
+            <div class="title-qual">{{ consultedDoctor?.qualification }}, {{consultedDoctor?.specialization|translate}}</div>
+            <div class="title-name">{{'Email'|translate}} : {{ consultedDoctor?.emailId }}</div>
+            <div class="sub-title">
               {{'Registration No'|translate}} : {{ consultedDoctor?.registrationNumber }}
             </div>
           </div>

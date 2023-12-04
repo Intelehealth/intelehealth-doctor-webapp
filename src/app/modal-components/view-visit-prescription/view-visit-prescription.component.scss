@@ -242,16 +242,9 @@
   bottom: 20px;
 }
 
-.true-condition {
-  width: 200px;
-  height: 150px;
-  position: relative;
-  left: 50px;
-}
-
-.false-condition {
-  width: 200px;
-  height: 150px;
-  position: relative;
-  left: 130px;
+.signature{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  height: 110px;
 }
