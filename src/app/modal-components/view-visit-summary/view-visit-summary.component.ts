@@ -7,6 +7,11 @@ import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { DocImagesModel, EncounterModel, ObsModel, PatientHistoryModel, PatientIdentifierModel, PatientModel, PersonAttributeModel, VisitModel } from 'src/app/model/model';
+import { TranslateService } from '@ngx-translate/core';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
+import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -38,11 +43,20 @@ export class ViewVisitSummaryComponent implements OnInit {
     private dialogRef: MatDialogRef<ViewVisitSummaryComponent>,
     private visitService: VisitService,
     private diagnosisService: DiagnosisService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
     this.getVisit(this.data.uuid);
+    pdfMake.fonts = {
+      DmSans: {
+        normal: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Regular.ttf`,
+        bold: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Bold.ttf`,
+        italics: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-Italic.ttf`,
+        bolditalics: `${window.location.origin}${environment.production ? '/intelehealth' : ''}/assets/fonts/DM_Sans/DMSans-BoldItalic.ttf`,
+      }
+    };
   }
 
   /**
@@ -272,16 +286,15 @@ export class ViewVisitSummaryComponent implements OnInit {
   getPhysicalExamination(encounters: EncounterModel[]) {
     this.physicalExaminationData = [];
     encounters.forEach((enc: EncounterModel) => {
-      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
-          if (obs.concept.display == 'PHYSICAL EXAMINATION') {
-            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'),'').split('<b>');
+          if (obs.concept.display === 'PHYSICAL EXAMINATION') {
+            const physicalExam = this.visitService.getData(obs)?.value.replace(new RegExp('<br/>►', 'g'), '').split('<b>');
             for (let i = 0; i < physicalExam.length; i++) {
               if (physicalExam[i]) {
                 const splitByBr = physicalExam[i].split('<br/>');
-
                 if (splitByBr[0].includes('Abdomen')) {
-                  let obj1: PatientHistoryModel = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -291,7 +304,7 @@ export class ViewVisitSummaryComponent implements OnInit {
                   }
                   this.physicalExaminationData.push(obj1);
                 } else {
-                  let obj1: PatientHistoryModel = {};
+                  const obj1: PatientHistoryModel = {};
                   obj1.title = splitByBr[0].replace('</b>', '').replace(':', '').trim();
                   obj1.data = [];
                   for (let k = 1; k < splitByBr.length; k++) {
@@ -318,12 +331,12 @@ export class ViewVisitSummaryComponent implements OnInit {
   getMedicalHistory(encounters: EncounterModel[]) {
     this.patientHistoryData = [];
     encounters.forEach((enc: EncounterModel) => {
-      if (enc.encounterType.display == visitTypes.ADULTINITIAL) {
+      if (enc.encounterType.display === visitTypes.ADULTINITIAL) {
         enc.obs.forEach((obs: ObsModel) => {
-          if (obs.concept.display == visitTypes.MEDICAL_HISTORY) {
+          if (obs.concept.display === visitTypes.MEDICAL_HISTORY) {
             const medicalHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
-            obj1.title = 'Patient history';
+            const obj1: PatientHistoryModel = {};
+            obj1.title = this.translateService.instant('Patient history');
             obj1.data = [];
             for (let i = 0; i < medicalHistory.length; i++) {
               if (medicalHistory[i]) {
@@ -333,18 +346,17 @@ export class ViewVisitSummaryComponent implements OnInit {
             }
             this.patientHistoryData.push(obj1);
           }
-
-          if (obs.concept.display == visitTypes.FAMILY_HISTORY) {
+          if (obs.concept.display === visitTypes.FAMILY_HISTORY) {
             const familyHistory = this.visitService.getData(obs)?.value.split('<br/>');
-            let obj1: PatientHistoryModel = {};
-            obj1.title = 'Family history';
+            const obj1: PatientHistoryModel = {};
+            obj1.title = this.translateService.instant('Family history');
             obj1.data = [];
             for (let i = 0; i < familyHistory.length; i++) {
               if (familyHistory[i]) {
                 if (familyHistory[i].includes(':')) {
                   const splitByColon = familyHistory[i].split(':');
                   const splitByComma = splitByColon[1].split(',');
-                  obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] });
+                  obj1.data.push({ key: splitByComma[0].trim().replace('•', ''), value: splitByComma[1] ? splitByComma[1].replace('•', '') : " " });
                 } else {
                   obj1.data.push({ key: familyHistory[i].replace('•', '').trim(), value: null });
                 }
@@ -367,7 +379,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
           this.eyeImages.push(data);
         }
       });
@@ -377,10 +389,11 @@ export class ViewVisitSummaryComponent implements OnInit {
   /**
   * Open eye images preview modal
   * @param {number} index - Index
+  * @param {string} section - Section title
   * @return {void}
   */
-  previewEyeImages(index: number) {
-    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.eyeImages }).subscribe((res) => {});
+  previewEyeImages(index: number,section: string) {
+    this.coreService.openImagesPreviewModal({ startIndex: index, source: this.getImagesBySection(section) }).subscribe((res) => { });
   }
 
   /**
@@ -393,7 +406,7 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` };
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
           this.additionalDocs.push(data);
         }
       });
@@ -418,4 +431,457 @@ export class ViewVisitSummaryComponent implements OnInit {
     this.dialogRef.close(val);
   }
 
+  /**
+  * Getting Images by section
+  * @param {string} section - Section Title
+  * @returns {arra}
+  */
+  getImagesBySection(section){
+    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  /**
+  * Get whatsapp link
+  * @return {string} - Whatsapp link
+  */
+  getWhatsAppLink() {
+    return this.visitService.getWhatsappLink(this.getPersonAttributeValue(doctorDetails.TELEPHONE_NUMBER), `Hello I'm calling for consultation`);
+  }
+
+  /**
+  * Download visit summary
+  * @return {void}
+  */
+  async downloadVisitSummary() {
+    const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
+    pdfMake.createPdf({
+      pageSize: 'A4',
+      pageOrientation: 'portrait',
+      pageMargins: [ 20, 50, 20, 20 ],
+      watermark: { text: 'INTELEHEALTH', color: 'var(--color-gray)', opacity: 0.1, bold: true, italics: false, angle: 0, fontSize: 50 },
+      header: {
+        columns: [
+          { text: ''},
+          { image: 'logo', width: 90, height: 30, alignment: 'right', margin: [0, 10, 10, 0] }
+        ]
+      },
+      footer: (currentPage, pageCount) => {
+        return {
+          columns: [
+            { text: 'Copyright ©2023 Intelehealth, a 501 (c)(3) & Section 8 non-profit organisation', fontSize: 8, margin: [5, 5, 5, 5] },
+            { text: currentPage.toString() + ' of ' + pageCount, fontSize: 8, margin: [5, 5, 5, 5], alignment: 'right'}
+          ]
+        };
+      },
+      content: [
+        {
+          style: 'tableExample',
+          table: {
+            widths: ['20%', '30%', '25%', '25%'],
+            body: [
+              [
+                {
+                  colSpan: 4,
+                  fillColor: '#E6FFF3',
+                  text: 'Intelehealth e-Prescription',
+                  alignment: 'center',
+                  style: 'header'
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  table: {
+                    widths: ['auto', '*'],
+                    body: [
+                      [
+                        {
+                          image: (userImg && !userImg?.includes('application/json')) ? userImg : 'user',
+                          width: 30,
+                          height: 30,
+                          margin: [0, (userImg && !userImg?.includes('application/json')) ? 15 : 5, 0, 5]
+                        },
+                        [
+                          {
+                            text: `${this.patient?.person.display} (${this.patient?.person.gender})`,
+                            bold: true,
+                            margin: [0, 15, 0, 5],
+                          }
+                        ]
+                      ]
+                    ]
+                  },
+                  layout: "noBorders"
+                },
+                {
+                  table: {
+                    widths: ['100%'],
+                    body: [
+                      [
+                        [
+                          {text: 'Age', style: 'subheader'},
+                          `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
+                          {text: 'Address', style: 'subheader'},
+                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`
+                        ]
+                      ]
+                    ]
+                  },
+                  layout:  {
+                    vLineWidth: function (i, node) {
+                      if (i === 0) {
+                        return 1;
+                      }
+                      return 0;
+                    },
+                    hLineWidth: function (i, node) {
+                      return 0;
+                    },
+                    vLineColor: function (i) {
+                      return "lightgray";
+                    },
+                  }
+                },
+                {
+                  table: {
+                    widths: ['100%'],
+                    body: [
+                      [
+                        [
+                          {text: 'Occupation', style: 'subheader'},
+                          `${this.getPersonAttributeValue('occupation')}`,
+                          {text: 'National ID', style: 'subheader'},
+                          `${this.getPersonAttributeValue('NationalID')}`
+                        ]
+                      ]
+                    ]
+                  },
+                  layout: {
+                    vLineWidth: function (i, node) {
+                      if (i === 0) {
+                        return 1;
+                      }
+                      return 0;
+                    },
+                    hLineWidth: function (i, node) {
+                      return 0;
+                    },
+                    vLineColor: function (i) {
+                      return "lightgray";
+                    },
+                  }
+                },
+                {
+                  table: {
+                    widths: ['100%'],
+                    body: [
+                      [ 
+                        [ {text: 'Contact no.', style: 'subheader'},
+                          `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`
+                        ]
+                      ],
+                    ]
+                  },
+                  layout: {
+                    vLineWidth: function (i, node) {
+                      if (i === 0) {
+                        return 1;
+                      }
+                      return 0;
+                    },
+                    hLineWidth: function (i, node) {
+                      return 0;
+                    },
+                    vLineColor: function (i) {
+                      return "lightgray";
+                    },
+                  }
+                }
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'consultation_details', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Consultation details', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {
+                          colSpan: 2,
+                          ul: [
+                            {text: [{text: 'Visit ID:', bold: true}, ` ${(this.visit?.uuid) ? this.replaceWithStar(this.visit?.uuid).toUpperCase() : "" }`], margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Visit Created:', bold: true}, ` ${moment(this.visit?.startDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Appointment on:', bold: true}, ` No appointment`],  margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Status:', bold: true}, ` ${this.visitStatus}`],  margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Location:', bold: true}, ` ${this.clinicName}`],  margin: [0, 5, 0, 5]},
+                            {text: [{text: 'Provided by:', bold: true}, ` ${this.providerName}`],  margin: [0, 5, 0, 5]}
+                          ]
+                        }
+                        
+                      ],
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                }
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'vitals', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Vitals', style: 'sectionheader', border: [false, false, false, true] }],
+                      [ 
+                        {
+                          colSpan: 2,
+                          ul: [
+                            ...this.getRecords('Vitals')
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'cheifComplaint', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Cheif Complaint', style: 'sectionheader', border: [false, false, false, true] }],
+                      ...this.getRecords('symptoms'),
+                      [{ text: 'Associated symptoms', style: 'subSectionheader', colSpan: 2 }, ''],
+                      [
+                        {
+                          colSpan: 2,
+                          ul: [
+                            ...this.getRecords('associated_symptoms')
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'physicalExamination', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Physical examination', style: 'sectionheader', border: [false, false, false, true] }],
+                      ...this.getRecords('physical_examination'),
+                      [{ text: 'Abdomen', style: 'subSectionheader', colSpan: 2 }, ''],
+                      [
+                        {
+                          colSpan: 2,
+                          ul: [
+                            ...this.getRecords('abdomen_examination')
+                          ]
+                        }
+                      ]
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'medicalHistory', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Medical history', style: 'sectionheader', border: [false, false, false, true] }],
+                      ...this.getRecords('medical_history')
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
+              ]
+            ]
+          },
+          layout: 'noBorders'
+        }
+      ],
+      images: { ...visit_logos, ...main_logo},
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 10]
+        },
+        subheader: {
+          fontSize: 12,
+          bold: false,
+          margin: [0, 5, 0, 5],
+          color: 'var(--color-gray)'
+        },
+        tableExample: {
+          margin: [0, 5, 0, 5],
+          fontSize: 12
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black'
+        },
+        sectionheader: {
+          fontSize: 12,
+          bold: true,
+          margin: [0, 5, 0, 10]
+        },
+        subSectionheader: {
+          fontSize: 12,
+          bold: true,
+          margin: [0, 5, 0, 0]
+        },
+      },
+      
+      defaultStyle: {
+        font: 'DmSans'
+      }
+    }).download('e-visit-summery');
+  }
+
+  toObjectUrl(url: string) {
+    return fetch(url)
+        .then((response) => {
+          return response.blob();
+        })
+        .then(blob => {
+          return new Promise((resolve, _) => {
+              if (!blob) { resolve(''); }
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(blob);
+          });
+        });
+  }
+
+  /**
+  * Get rows for make pdf doc defination for a given type
+  * @param {string} type - row type
+  * @return {any} - Rows
+  */
+  getRecords(type: string) {
+    const records = [];
+    switch (type) {
+      case 'medical_history':
+        if (this.patientHistoryData.length) {
+          this.patientHistoryData.forEach(ph => {
+            records.push([{ text: `${ph.title}`, style: 'subSectionheader', colSpan: 2 }])
+            let ph_data = {
+              colSpan: 2,
+              ul: []
+            };
+            ph.data.forEach(phi=>{
+              ph_data.ul.push({text: [{text: `${phi.key} : `, bold: true}, `${phi.value?phi.value:'None'}`], margin: [0, 5, 0, 5]});
+            })
+            records.push([ph_data])
+          });
+        }
+        break;
+      case 'physical_examination':
+        if (this.physicalExaminationData.length) {
+          this.physicalExaminationData.forEach(pe => {
+            if(pe.title !== 'Abdomen'){
+              records.push([{ text: `${pe.title}`, style: 'subSectionheader', colSpan: 2 }])
+              let pe_data = {
+                colSpan: 2,
+                ul: []
+              };
+              pe.data.forEach(pei=>{
+                pe_data.ul.push({text: [{text: `${pei.key} : `, bold: true}, `${pei.value?pei.value:'None'}`], margin: [0, 5, 0, 5]});
+              })
+              records.push([pe_data])
+            }
+          });
+        }
+        break;
+      case 'abdomen_examination':
+        if (this.checkUpReasonData.length) {
+          this.checkUpReasonData.forEach(pe => {
+            if(pe.title === 'Abdomen'){
+              pe.data.forEach(pei=>{
+                records.push({text: [{text: `${pei.key} : `}, ` `], margin: [0, 5, 0, 5]});
+              })
+            }
+          });
+        }
+        break;
+      case 'symptoms':
+        if (this.checkUpReasonData.length) {
+          this.checkUpReasonData.forEach(ckr => {
+            if(ckr.title !== 'Associated symptoms'){
+              records.push([{ text: `${ckr.title}`, style: 'subSectionheader', colSpan: 2 }])
+              let ckr_data = {
+                colSpan: 2,
+                ul: []
+              };
+              ckr.data.forEach(ckri=>{
+                ckr_data.ul.push({text: [{text: `${ckri.key} : `, bold: true}, `${ckri.value?ckri.value:'None'}`], margin: [0, 5, 0, 5]});
+              })
+              records.push([ckr_data])
+            }
+          });
+        }
+        break;
+      case 'associated_symptoms':
+        if (this.checkUpReasonData.length) {
+          this.checkUpReasonData.forEach(ckr => {
+            if(ckr.title === 'Associated symptoms'){
+              ckr.data.forEach(ckri=>{
+                records.push({text: [{text: `${ckri.key} : `, bold: true}, `${ckri.value?ckri.value:'None'}`], margin: [0, 5, 0, 5]});
+              })
+            }
+          });
+        }
+        break;
+      case 'cheifComplaint':
+        if (this.cheifComplaints.length) {
+          this.cheifComplaints.forEach(cc => {
+            records.push({text: [{text: cc, bold: true}, ``], margin: [0, 5, 0, 5]});
+          });
+        }
+        break;
+      case visitTypes.VITALS:
+        if (this.vitalObs.length) {
+          this.vitalObs.forEach(v => {
+            records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
+          });
+        }
+        break;
+    }
+    return records;
+  }
 }

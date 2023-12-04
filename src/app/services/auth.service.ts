@@ -52,7 +52,7 @@ export class AuthService {
   * Get device fingerprint
   * @return {void}
   */
-  getFingerPrint() {
+  getFingerPrint(): void {
     (async () => {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
@@ -64,7 +64,7 @@ export class AuthService {
   * Getter for current user from currentUser behaviour subject
   * @return {any} - Current user value
   */
-  public get currentUserValue() {
+  public get currentUserValue(): any {
     return this.currentUserSubject.value;
   }
 
