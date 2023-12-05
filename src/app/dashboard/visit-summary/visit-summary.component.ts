@@ -1591,14 +1591,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.pastVisits = [];
     this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: RecentVisitsApiResponseModel) => {
       const visits = res.results;
-      if (true) {
+      if (visits.length > 1) {
         visits.forEach((visit: VisitModel) => {
-          if (true) {
+          if (visit.uuid !== this.visit.uuid) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: VisitModel) => {
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.visitSummaryService.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: EncounterModel) => {
-                if (true) {
+                if (encounter.encounterType.display === visitTypes.VISIT_COMPLETE) {
                   visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                   encounter.obs.forEach((o: ObsModel) => {
                     if (o.concept.display === 'Doctor details') {
