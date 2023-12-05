@@ -235,7 +235,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   checkOpenChatBoxFlag() {
     const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
     if (openChat === 'true') {
-      this.startChat();
+      setTimeout(() => {
+        this.startChat();
+      }, 1000);
       location.href = location.href.replace('?openChat=true', '');
     }
   }
@@ -566,7 +568,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptPhysicalExamination).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value` , section: obs.comment};
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.eyeImages.push(data);
         }
       });
@@ -579,7 +581,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} section - Section title
   * @return {void}
   */
-  previewEyeImages(index: number,section: string) {
+  previewEyeImages(index: number, section: string) {
     this.coreService.openImagesPreviewModal({ startIndex: index, source: this.getImagesBySection(section) }).subscribe((res) => { });
   }
 
@@ -593,7 +595,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(visit.patient.uuid, conceptIds.conceptAdditionlDocument).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section: obs.comment };
           this.additionalDocs.push(data);
         }
       });
@@ -1646,8 +1648,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @param {string} section - Section Title
   * @returns {arra}
   */
-  getImagesBySection(section){
-    return this.eyeImages.filter(o=>o.section?.toLowerCase() === section?.toLowerCase());
+  getImagesBySection(section) {
+    return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
   }
 
 }
