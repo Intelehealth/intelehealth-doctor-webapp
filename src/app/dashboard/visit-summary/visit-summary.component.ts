@@ -427,7 +427,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         enc.obs.forEach((obs: ObsModel) => {
           if (obs.concept.display === visitTypes.CURRENT_COMPLAINT) {
             this.currentComplaint = obs.value;
-            const currentComplaint = this.visitService.getData(obs)?.value.replace(new RegExp('►', 'g'), '').split('<b>');
+            const currentComplaint = this.visitService.getData(obs)?.value.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
                 const obs1 = currentComplaint[i].split('<');
@@ -1591,14 +1591,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.pastVisits = [];
     this.visitService.recentVisits(this.visit.patient.uuid).subscribe((res: RecentVisitsApiResponseModel) => {
       const visits = res.results;
-      if (visits.length > 1) {
+      if (true) {
         visits.forEach((visit: VisitModel) => {
-          if (visit.uuid !== this.visit.uuid) {
+          if (true) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: VisitModel) => {
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.visitSummaryService.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: EncounterModel) => {
-                if (encounter.encounterType.display === visitTypes.VISIT_COMPLETE) {
+                if (true) {
                   visitdetail.prescription_sent = this.checkIfDateOldThanOneDay(encounter.encounterDatetime);
                   encounter.obs.forEach((o: ObsModel) => {
                     if (o.concept.display === 'Doctor details') {
