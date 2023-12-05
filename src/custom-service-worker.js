@@ -29,6 +29,9 @@ importScripts("./ngsw-worker.js");
                   event.notification.close();
                 }
               }
+              if (!clientList.length) {
+                clients.openWindow(data.url);
+              }
             }
           })
       );
