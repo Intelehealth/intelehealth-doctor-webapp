@@ -119,7 +119,10 @@
             </div>
       </div>
 </div>
-<app-chat></app-chat>
+<!-- <app-chat></app-chat> -->
+<div class="chat-button" id="chat-button" (click)="startChat()">
+      <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
+</div>
 <div class="vc-button" (click)="openVcModal()">
   <span>
     <img [src]="videoIcon" />

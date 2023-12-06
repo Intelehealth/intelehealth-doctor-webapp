@@ -15,6 +15,8 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
 
+  public patient: any = null;
+
   constructor(private http: HttpClient, private helper: HelperService) {}
 
   getVisits(params, flag): Observable<any> {

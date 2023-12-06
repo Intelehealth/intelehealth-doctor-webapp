@@ -8,6 +8,9 @@ import { environment } from "../../environments/environment";
 export class SocketService {
   public socket: any;
   public activeUsers = [];
+  public incoming;
+  public incomingCallData = {};
+  public updateMessage: boolean = false;
   appIcon = "assets/images/intelehealth-logo-reverse.png";
   private baseURL = environment.socketURL;
 

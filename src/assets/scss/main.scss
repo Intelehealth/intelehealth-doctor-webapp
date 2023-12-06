@@ -1,0 +1,19 @@
+// main.scss
+@import "variables";
+//@import "global";
+// import more custom files...
+@mixin font($weight, $size) {
+  font-family: var(--font-family);
+  font-style: var(--font-style);
+  font-weight: $weight;
+  // font-size:$size;
+}
+@mixin margintop($margintop) {
+  margin-top: $margintop;
+}
+@mixin marginleft($marginleft) {
+  margin-left: $marginleft;
+}
+@mixin marginright($marginright) {
+  margin-right: $marginright;
+}

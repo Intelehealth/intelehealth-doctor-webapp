@@ -6,11 +6,12 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { VcComponent } from "../vc/vc.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { DatePipe } from '@angular/common';
+import { VideoCallComponent } from "../video-call/video-call.component";
+import { ChatBoxComponent } from "../chat-box/chat-box.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -39,6 +40,11 @@ export class VisitSummaryComponent implements OnInit {
     : "../../../assets/svgs/video-w.svg";
   isManagerRole: boolean = false;
   onSubmit = false;
+  visit: any = null;
+  dialogRef1: MatDialogRef<ChatBoxComponent>;
+  dialogRef2: MatDialogRef<VideoCallComponent>;
+  isCalling: boolean = false;
+
 
   constructor(
     private service: EncounterService,
@@ -97,6 +103,7 @@ export class VisitSummaryComponent implements OnInit {
             this.isVisitEnded = true;
           }
         });
+        this.visit = visitDetails;
       });
   }
 
@@ -227,15 +234,75 @@ export class VisitSummaryComponent implements OnInit {
     const dialogRef = this.dialogService.openConfirmDialog("Confirm the strong 3G internet connection to make this call")
       .afterClosed().subscribe(res => {
         if (res) {
-          this.dialog.open(VcComponent, {
+          const userDetails = getFromStorage('user');
+    
+          this.dialog.open(VideoCallComponent, {
             id: 'video-call',
+            panelClass: 'vc-modal-lg',
             disableClose: true,
             data: {
-              patientUuid: this.patientUuid,
+              patientId: this.patientUuid,
+              visitId: this.visitUuid,
+              connectToDrId: userDetails.uuid,
+              patientName: this.visitService.patient.person.display,
+              patientPersonUuid: this.visitService.patient.person.uuid,
+              patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+              initiator: 'dr',
+              drPersonUuid: this.doctorDetails?.person.uuid,
+              patientAge: this.visitService.patient.person.age,
+              patientGender: this.visitService.patient.person.gender
             },
           });
         }
       });
+  }
+
+  /**
+  * Start chat with HW/patient
+  * @return {void}
+  */
+  startChat() {
+    if (this.dialogRef1) {
+      this.dialogRef1.close();
+      this.isCalling = false;
+      return;
+    }
+    this.isCalling = true;
+    this.dialogRef1 = this.dialog.open(ChatBoxComponent, {
+      panelClass: ["chatbot-container","chatbot-container-mobile"], 
+      backdropClass: "chatbot-backdrop",
+      width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" },
+      data: {
+        patientId: this.visit.patient.uuid,
+        visitId: this.visit.uuid,
+        patientName: this.visitService.patient.person.display,
+        patientPersonUuid: this.visitService.patient.person.uuid,
+        patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
+      }
+    });
+
+    this.dialogRef1.afterClosed().subscribe((res) => {
+      this.dialogRef1 = undefined;
+      this.isCalling = false;
+    });
+  }
+
+
+  /**
+  * Get patient identifier for given identifier type
+  * @param {string} identifierType - Identifier type
+  * @return {void}
+  */
+  getPatientIdentifier(identifierType: string): string {
+    let identifier: string = '';
+    if (this.visitService.patient) {
+      this.visitService.patient.identifiers.forEach((idf: any) => {
+        if (idf.identifierType.display === identifierType) {
+          identifier = idf.identifier;
+        }
+      });
+    }
+    return identifier;
   }
 
   private checkProviderRole() {

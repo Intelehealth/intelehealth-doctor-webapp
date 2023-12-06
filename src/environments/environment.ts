@@ -12,6 +12,8 @@ export const environment = {
   socketURL: "https://as.intelehealth.org:3004",
   version: "NAS-v1.2.9",
   versionCode: "26",
+  webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",
+  webrtcTokenServerUrl: "https://dev.intelehealth.org:3000/"
 };
 
 /*

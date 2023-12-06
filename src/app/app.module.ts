@@ -89,6 +89,8 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { PatientDetailsComponent } from './component/visit-summary/reassign-speciality/patient-details/patient-details.component';
+import { VideoCallComponent } from "./component/video-call/video-call.component";
+import { ChatBoxComponent } from "./component/chat-box/chat-box.component";
 
 
 
@@ -135,7 +137,9 @@ import { PatientDetailsComponent } from './component/visit-summary/reassign-spec
     ConfirmDialogComponent,
     AppointmentViewComponent,
     AppointmentScheduleComponent,
-    PatientDetailsComponent
+    PatientDetailsComponent,
+    VideoCallComponent,
+    ChatBoxComponent
   ],
 
   imports: [
