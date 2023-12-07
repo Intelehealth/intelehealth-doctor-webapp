@@ -10,10 +10,10 @@ import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
 import { VideoCallComponent } from "../../modal-components/video-call/video-call.component";
-import { ChatBoxComponent } from "../chat-box/chat-box.component";
 import { CoreService } from "src/app/services/core.service";
 import { SocketService } from "src/app/services/socket.service";
 import { ToastrService } from "ngx-toastr";
+import { ChatComponent } from "../chat/chat.component";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -43,7 +43,7 @@ export class VisitSummaryComponent implements OnInit {
   isManagerRole: boolean = false;
   onSubmit = false;
   visit: any = null;
-  dialogRef1: MatDialogRef<ChatBoxComponent>;
+  dialogRef1: MatDialogRef<ChatComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
   isCalling: boolean = false;
 
@@ -272,7 +272,7 @@ export class VisitSummaryComponent implements OnInit {
       return;
     }
     this.isCalling = true;
-    this.cs.openChatBoxModal({
+    this.dialogRef1 = this.cs.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
       patientName: this.visitService.patient.person.display,

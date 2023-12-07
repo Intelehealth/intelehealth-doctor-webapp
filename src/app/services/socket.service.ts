@@ -46,7 +46,8 @@ export class SocketService {
 
   initEvents() {
     this.onEvent("allUsers").subscribe((data) => {
-      this.activeUsers = data;
+      console.log("data", data)
+      this.activeUsers = data || [];
     });
 
     this.onEvent("updateMessage").subscribe((data) => {

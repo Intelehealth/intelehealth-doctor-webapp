@@ -93,6 +93,7 @@ import { VideoCallComponent } from "./modal-components/video-call/video-call.com
 import { ChatBoxComponent } from "./component/chat-box/chat-box.component";
 
 import { ToastrModule } from "ngx-toastr";
+import { MomentModule } from "ngx-moment";
 
 @NgModule({
   declarations: [
@@ -171,7 +172,7 @@ import { ToastrModule } from "ngx-toastr";
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
-    ToastrModule,
+    MomentModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },
@@ -203,6 +204,12 @@ import { ToastrModule } from "ngx-toastr";
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
+    }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
     }),
   ],
   providers: [
