@@ -89,10 +89,10 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { AppointmentScheduleComponent } from "./component/appointment-schedule/appointment-schedule.component";
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { PatientDetailsComponent } from './component/visit-summary/reassign-speciality/patient-details/patient-details.component';
-import { VideoCallComponent } from "./component/video-call/video-call.component";
+import { VideoCallComponent } from "./modal-components/video-call/video-call.component";
 import { ChatBoxComponent } from "./component/chat-box/chat-box.component";
 
-
+import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [
@@ -171,6 +171,7 @@ import { ChatBoxComponent } from "./component/chat-box/chat-box.component";
     NgbModule,
     HttpClientModule,
     NgxSpinnerModule,
+    ToastrModule,
     UserIdleModule.forRoot({ idle: 900, timeout: 30, ping: 12 }),
     RouterModule.forRoot([
       { path: 'login', component: LoginPageComponent },

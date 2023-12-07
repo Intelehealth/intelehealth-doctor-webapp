@@ -5,13 +5,15 @@ import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
-import { VcComponent } from "../vc/vc.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
-import { VideoCallComponent } from "../video-call/video-call.component";
+import { VideoCallComponent } from "../../modal-components/video-call/video-call.component";
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
+import { CoreService } from "src/app/services/core.service";
+import { SocketService } from "src/app/services/socket.service";
+import { ToastrService } from "ngx-toastr";
 declare var getFromStorage: any,
   saveToStorage: any,
   getEncounterProviderUUID: any;
@@ -57,6 +59,9 @@ export class VisitSummaryComponent implements OnInit {
     private dialog: MatDialog,
     private dialogService: ConfirmDialogService,
     private diagnosisService: DiagnosisService,
+    private cs: CoreService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -235,23 +240,22 @@ export class VisitSummaryComponent implements OnInit {
       .afterClosed().subscribe(res => {
         if (res) {
           const userDetails = getFromStorage('user');
-    
-          this.dialog.open(VideoCallComponent, {
-            id: 'video-call',
-            panelClass: 'vc-modal-lg',
-            disableClose: true,
-            data: {
-              patientId: this.patientUuid,
-              visitId: this.visitUuid,
-              connectToDrId: userDetails.uuid,
-              patientName: this.visitService.patient.person.display,
-              patientPersonUuid: this.visitService.patient.person.uuid,
-              patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
-              initiator: 'dr',
-              drPersonUuid: this.doctorDetails?.person.uuid,
-              patientAge: this.visitService.patient.person.age,
-              patientGender: this.visitService.patient.person.gender
-            },
+          const hw = this.socketSvc.activeUsers.find(u => u?.uuid === getFromStorage('patientVisitProvider')?.provider?.uuid);
+          if (!hw) {
+            this.toastr.error("Please try again later.", "Health Worker is offline.");
+            return;
+          }
+          this.cs.openVideoCallModal({
+            patientId: this.patientUuid,
+            visitId: this.visitUuid,
+            connectToDrId: userDetails?.uuid,
+            patientName: this.visit?.patient?.person?.display,
+            patientPersonUuid: this.visit?.patient?.uuid,
+            patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
+            initiator: 'dr',
+            drPersonUuid: this.doctorDetails?.person.uuid,
+            patientAge: this.visitService.patient.person.age,
+            patientGender: this.visitService.patient.person.gender
           });
         }
       });
@@ -268,17 +272,12 @@ export class VisitSummaryComponent implements OnInit {
       return;
     }
     this.isCalling = true;
-    this.dialogRef1 = this.dialog.open(ChatBoxComponent, {
-      panelClass: ["chatbot-container","chatbot-container-mobile"], 
-      backdropClass: "chatbot-backdrop",
-      width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" },
-      data: {
-        patientId: this.visit.patient.uuid,
-        visitId: this.visit.uuid,
-        patientName: this.visitService.patient.person.display,
-        patientPersonUuid: this.visitService.patient.person.uuid,
-        patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
-      }
+    this.cs.openChatBoxModal({
+      patientId: this.visit.patient.uuid,
+      visitId: this.visit.uuid,
+      patientName: this.visitService.patient.person.display,
+      patientPersonUuid: this.visitService.patient.person.uuid,
+      patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
     });
 
     this.dialogRef1.afterClosed().subscribe((res) => {

@@ -44,7 +44,7 @@
       </mat-card>
       <br>
       <mat-card *ngIf="!visitNotePresent">
-        <app-reassign-speciality [isManagerRole]="isManagerRole"></app-reassign-speciality>
+            <app-reassign-speciality [isManagerRole]="isManagerRole"></app-reassign-speciality>
       </mat-card>
       <br>
       <mat-card>
@@ -64,7 +64,8 @@
 
 
       <div class="text-center" *ngIf="!show">
-            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary" [disabled]="isManagerRole || isVisitEnded">Start Visit
+            <button (click)="onStartVisit()" id="start-visit" mat-raised-button color="primary"
+                  [disabled]="isManagerRole || isVisitEnded">Start Visit
                   Note</button>
       </div>
 
@@ -96,13 +97,11 @@
             </mat-card>
             <br>
             <mat-card>
-                  <app-follow-up
-                   (isDataPresent)="getIsDataPresent($event)"
-                   [isManagerRole]="isManagerRole"
-                   [isVisitCompleted]="visitCompletePresent" ></app-follow-up>
+                  <app-follow-up (isDataPresent)="getIsDataPresent($event)" [isManagerRole]="isManagerRole"
+                        [isVisitCompleted]="visitCompletePresent"></app-follow-up>
             </mat-card>
             <br>
-        
+
             <br>
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">
@@ -115,7 +114,8 @@
 
             <div class="text-center">
                   <button (click)="sign()" id="sign-button" mat-raised-button color="primary"
-                        [disabled]="visitCompletePresent || isVisitSummaryChanged || isManagerRole || onSubmit || isVisitEnded">Sign and Submit</button>
+                        [disabled]="visitCompletePresent || isVisitSummaryChanged || isManagerRole || onSubmit || isVisitEnded">Sign
+                        and Submit</button>
             </div>
       </div>
 </div>
@@ -124,7 +124,5 @@
       <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
 </div>
 <div class="vc-button" (click)="openVcModal()">
-  <span>
-    <img [src]="videoIcon" />
-  </span>
+<span><img [src]="videoIcon" /></span>
 </div>

@@ -3,14 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
-// import { CoreService } from 'src/app/services/core/core.service';
-// import { getCacheData } from 'src/app/utils/utility-functions';
 import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Track } from 'livekit-client';
 import { WebrtcService } from 'src/app/services/webrtc.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { doctorDetails, visitTypes } from 'src/config/constant';
-// import { notifications, doctorDetails, visitTypes } from 'src/config/constant';
-// import { ApiResponseModel, EncounterProviderModel, MessageModel, ProviderModel, UserModel } from 'src/app/model/model';
+import { ToastrService } from 'ngx-toastr';
 declare const getFromStorage: Function;
 
 @Component({
@@ -55,22 +51,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private socketSvc: SocketService,
     private webrtcSvc: WebrtcService,
-    private snackbar: MatSnackBar
+    private toastr: ToastrService
   ) { }
-
-  toast({
-    message,
-    duration = 5000,
-    horizontalPosition = "center",
-    verticalPosition = "bottom",
-  }) {
-    const opts: any = {
-      duration,
-      horizontalPosition,
-      verticalPosition,
-    };
-    this.snackbar.open(message, null, opts);
-  }
 
   async ngOnInit() {
     this.room = this.data.patientId;
@@ -84,7 +66,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) this.initiator = this.data.initiator;
     this.socketSvc.initSocket();
     this.initSocketEvents();
-    
+   
     /**
      * Don't remove this, required change detection for duration
      */
@@ -135,7 +117,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async startCall() {
     if (!this.webrtcSvc.token) {
       await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
-        this.toast({message: 'Failed to generate a video call token.'});
+        this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
       });
     }
     if (!this.webrtcSvc.token) return;
@@ -209,18 +191,18 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   onCallConnect() {
-    // this.socketSvc.incomingCallData = {
-    //   nurseId: this.nurseId,
-    //   doctorName: this.doctorName,
-    //   roomId: this.room,
-    //   visitId: this.data?.visitId,
-    //   doctorId: this.data?.connectToDrId,
-    //   appToken: this.webrtcSvc.appToken,
-    //   socketId: this.socketSvc?.socket?.id,
-    //   initiator: this.initiator
-    // };
+    this.socketSvc.incomingCallData = {
+      nurseId: this.nurseId,
+      doctorName: this.doctorName,
+      roomId: this.room,
+      visitId: this.data?.visitId,
+      doctorId: this.data?.connectToDrId,
+      appToken: this.webrtcSvc.appToken,
+      socketId: this.socketSvc?.socket?.id,
+      initiator: this.initiator
+    };
 
-    // this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
+    this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
@@ -231,7 +213,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       if (!this.callConnected) {
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
-        this.toast({message: "Health worker not available to pick the call, please try again later."});
+        this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
       }
     }, ringingTimeout);
   }
@@ -342,7 +324,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   handleParticipantDisconnected() {
-    this.toast({ message: "Call ended from Health Worker's end."});
+    this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
     this.callConnected = false;
     // this.socketSvc.incomingCallData = null;
     this.endCallInRoom();
@@ -357,18 +339,19 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
         this.endCallInRoom();
-        this.toast({ message: "Call rejected by Health Worker"});
+        this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
       }
     });
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
       if (data === 'app') {
-        this.toast({ message: "Call ended from Health Worker end."});
+        this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
       }
+      // this.stop();
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data) => {
-    //   this.getMessages();
+    this.socketSvc.onEvent("isread").subscribe((data: any) => {
+      // this.getMessages();
     });
 
     this.socketSvc.onEvent("videoOn").subscribe((data: any) => {

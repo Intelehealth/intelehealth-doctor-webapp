@@ -4,12 +4,12 @@
 
 export const environment = {
   production: false,
-  baseURL: "https://as.intelehealth.org/openmrs/ws/rest/v1",
-  baseURLCoreApp: "https://as.intelehealth.org/openmrs/coreapps/diagnoses",
-  baseURLLegacy: "https://as.intelehealth.org/openmrs",
-  mindmapURL: "https://as.intelehealth.org:3004/api",
-  notificationURL: "https://as.intelehealth.org:3004/notification",
-  socketURL: "https://as.intelehealth.org:3004",
+  baseURL: "https://testing.intelehealth.org/openmrs/ws/rest/v1",
+  baseURLCoreApp: "https://testing.intelehealth.org/openmrs/coreapps/diagnoses",
+  baseURLLegacy: "https://testing.intelehealth.org/openmrs",
+  mindmapURL: "https://testing.intelehealth.org:3004/api",
+  notificationURL: "https://testing.intelehealth.org:3004/notification",
+  socketURL: "https://testing.intelehealth.org:3004",
   version: "NAS-v1.2.9",
   versionCode: "26",
   webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",

@@ -16,7 +16,8 @@ import {
   setLogLevel
 } from 'livekit-client';
 import { map } from 'rxjs/operators';
-declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
+import { VisitService } from './visit.service';
+declare var getFromStorage: any;
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,7 @@ export class WebrtcService {
 
   constructor(
     private http: HttpClient,
+    private visitSvc: VisitService
   ) {
     /**
      *  trace = 0,
@@ -282,5 +284,16 @@ export class WebrtcService {
    */
   noop() {
     console.log('Not Implemented.')
+  }
+
+  updateVisitHolderId(uuid: string) {
+    return new Promise((res, rej) => {
+      this.visitSvc.fetchVisitDetails(uuid).subscribe((visit: any) => {
+        this.visitHolderId = visit.attributes.find(va => va?.attributeType?.display === 'Visit Holder')?.value;
+        res(this.visitHolderId);
+      }, (error: any) => {
+        res(false);
+      });
+    });
   }
 }

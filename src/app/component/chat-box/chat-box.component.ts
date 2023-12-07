@@ -49,6 +49,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     this.subscription1 = this.socketSvc.onEvent(notifications.UPDATE_MESSAGE).subscribe((data) => {
       if (this.socketSvc.updateMessage) {
         this.readMessages(data.id);
+        this.playNotify();
       }
     });
 
@@ -212,4 +213,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     return this.message?.length || 0
   }
 
+  playNotify() {
+    new Audio("assets/notification.mp3").play();
+  }
 }

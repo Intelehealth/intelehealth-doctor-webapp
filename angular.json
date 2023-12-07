@@ -48,6 +48,7 @@
             ],
             "styles": [
               "src/styles.scss", 
+              "src/assets/scss/toastr.css",
               "node_modules/intro.js/introjs.css",
               "src/assets/scss/main.scss"
               ],

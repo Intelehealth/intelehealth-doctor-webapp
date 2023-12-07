@@ -3,6 +3,8 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
+import { doctorDetails } from "src/config/constant";
+declare var getFromStorage: any, saveToStorage: any;
 
 @Injectable()
 export class SocketService {
@@ -26,13 +28,30 @@ export class SocketService {
       this.socket.disconnect();
     }
     if (!this.socket || forceInit) {
+      if (!sessionStorage.webrtcDebug) {
+        localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+      }
+
       this.socket = io(environment.socketURL, {
         query: localStorage.socketQuery,
       });
-      this.onEvent("allUsers").subscribe((data) => {
-        this.activeUsers = data;
+
+      this.onEvent("log").subscribe((array) => {
+        if (localStorage.log === "1") console.log.apply(console, array);
       });
+
+      this.initEvents();
     }
+  }
+
+  initEvents() {
+    this.onEvent("allUsers").subscribe((data) => {
+      this.activeUsers = data;
+    });
+
+    this.onEvent("updateMessage").subscribe((data) => {
+      this.emitEvent('ack_msg_received', { messageId: data.id });
+    });
   }
 
   public emitEvent(action, data) {
@@ -61,5 +80,21 @@ export class SocketService {
         });
       }
     }
+  }
+
+  get user() {
+    try {
+      return getFromStorage(doctorDetails.USER);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  get userUuid() {
+    return this.user.uuid;
+  }
+
+  get userName() {
+  return this.user.display;
   }
 }
