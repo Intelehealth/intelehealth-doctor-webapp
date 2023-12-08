@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, Subject, of } from "rxjs";
+import { map } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { ToastService } from "./toast.service";
 
@@ -27,9 +28,14 @@ export class ChatService {
     let chatUrl = `${this.baseURL}/messages/${fromUser}/${toUser}/${patientId}?ngsw-bypass=true`
   
     if(visitId) {
-      chatUrl += `visitId=${visitId}`
+      chatUrl += `&visitId=${visitId}`
     }
-    return this.http.get(chatUrl);
+    return this.http.get(chatUrl).pipe(map(
+      (res: any) => {
+        res.data = res.data.sort((a: any, b: any) => new Date(b.createdAt) < new Date(a.createdAt) ? -1 : 1);
+        return res;
+      }
+    ));
   }
 
   get user() {

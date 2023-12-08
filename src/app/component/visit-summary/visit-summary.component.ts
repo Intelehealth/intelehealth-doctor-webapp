@@ -5,7 +5,7 @@ import { EncounterService } from "src/app/services/encounter.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { DiagnosisService } from 'src/app/services/diagnosis.service';
@@ -46,7 +46,7 @@ export class VisitSummaryComponent implements OnInit {
   dialogRef1: MatDialogRef<ChatComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
   isCalling: boolean = false;
-
+  isSameProvider: boolean = false;
 
   constructor(
     private service: EncounterService,
@@ -56,7 +56,6 @@ export class VisitSummaryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private pushNotificationService: PushNotificationsService,
-    private dialog: MatDialog,
     private dialogService: ConfirmDialogService,
     private diagnosisService: DiagnosisService,
     private cs: CoreService,
@@ -81,6 +80,7 @@ export class VisitSummaryComponent implements OnInit {
       .subscribe((visitDetails) => {
         visitDetails.encounters.forEach((visit) => {
           if (visit.display.match("Visit Note") !== null) {
+            this.setSameProvider(visit)
             saveToStorage("visitNoteProvider", visit);
             this.visitNotePresent = true;
             this.show = true;
@@ -109,6 +109,7 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
         this.visit = visitDetails;
+        this.checkOpenChatBoxFlag();
       });
   }
 
@@ -245,17 +246,18 @@ export class VisitSummaryComponent implements OnInit {
             this.toastr.error("Please try again later.", "Health Worker is offline.");
             return;
           }
+          console.log(this.visit, "VISIT")
           this.cs.openVideoCallModal({
             patientId: this.patientUuid,
             visitId: this.visitUuid,
             connectToDrId: userDetails?.uuid,
             patientName: this.visit?.patient?.person?.display,
-            patientPersonUuid: this.visit?.patient?.uuid,
+            patientPersonUuid: this.visit?.patient?.person?.uuid,
             patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
             initiator: 'dr',
             drPersonUuid: this.doctorDetails?.person.uuid,
-            patientAge: this.visitService.patient.person.age,
-            patientGender: this.visitService.patient.person.gender
+            patientAge: this.visit?.patient?.person?.age,
+            patientGender: this.visit?.patient?.person?.gender
           });
         }
       });
@@ -270,13 +272,13 @@ export class VisitSummaryComponent implements OnInit {
       this.dialogRef1.close();
       this.isCalling = false;
       return;
-    }
+    }      
     this.isCalling = true;
     this.dialogRef1 = this.cs.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
-      patientName: this.visitService.patient.person.display,
-      patientPersonUuid: this.visitService.patient.person.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.person?.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID')
     });
 
@@ -388,5 +390,28 @@ export class VisitSummaryComponent implements OnInit {
           this.isVisitSummaryChanged = true;
         }
       });
+  }
+
+  setSameProvider(visit: any) {
+    let localProvider = getFromStorage("provider");
+    if (localProvider !== null && localProvider.uuid && visit?.encounterProviders?.length > 0) {
+        const encounterProvider = visit.encounterProviders[0];
+        const provider = encounterProvider.provider;
+        if (provider) {
+          this.isSameProvider = localProvider.uuid === provider.uuid
+        }
+    }
+  }
+
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      this.startChat();
+      location.href = location.href.replace('?openChat=true', '');
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.dialogRef1) this.dialogRef1.close();
   }
 }

@@ -46,7 +46,6 @@ export class SocketService {
 
   initEvents() {
     this.onEvent("allUsers").subscribe((data) => {
-      console.log("data", data)
       this.activeUsers = data || [];
     });
 

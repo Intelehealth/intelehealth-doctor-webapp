@@ -120,6 +120,7 @@
           <div class="content">
             <div class="profile-img">
               <img src="{{ baseUrl + '/personimage/' + data?.patientId }}"
+              (error)="onImgError($event)"
               >
             </div>
             <div class="user-name">{{ this.data.patientName | titlecase }}</div>

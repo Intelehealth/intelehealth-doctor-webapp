@@ -7,6 +7,7 @@ import { Participant, RemoteParticipant, RemoteTrack, RemoteTrackPublication, Tr
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
 import { ToastrService } from 'ngx-toastr';
+import { ChatService } from 'src/app/services/chat.service';
 declare const getFromStorage: Function;
 
 @Component({
@@ -18,6 +19,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   @ViewChild("localVideo", { static: false }) localVideoRef: any;
   @ViewChild("remoteVideo", { static: false }) remoteVideoRef: any;
 
+  message: string;
+  messageList: any = [];
   toUser: string;
   hwName: string;
   baseUrl: string = environment.baseURL;
@@ -51,7 +54,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<VideoCallComponent>,
     private socketSvc: SocketService,
     private webrtcSvc: WebrtcService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private chatSvc: ChatService,
   ) { }
 
   async ngOnInit() {
@@ -66,6 +70,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     if (this.data.initiator) this.initiator = this.data.initiator;
     this.socketSvc.initSocket();
     this.initSocketEvents();
+    if (this.data.patientId && this.data.visitId) {
+      this.getMessages();
+    }
    
     /**
      * Don't remove this, required change detection for duration
@@ -181,7 +188,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     try {
       return getFromStorage('doctorName') || this.user.display;
     } catch (error) {
-      return getFromStorage('doctorName') || this.user.display;
+      return localStorage.doctorName || this.user.display;
     }
   }
 
@@ -351,7 +358,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
 
     this.socketSvc.onEvent("isread").subscribe((data: any) => {
-      // this.getMessages();
+      this.getMessages();
     });
 
     this.socketSvc.onEvent("videoOn").subscribe((data: any) => {
@@ -464,8 +471,23 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
   }
 
+
+  getMessages(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId) {
+    this.chatSvc
+      .getPatientMessages(toUser, patientId, fromUser, visitId)
+      .subscribe({
+        next: (res: any) => {
+          this.messageList = res?.data;
+        },
+      });
+  }
+
+  onImgError(event: any) {
+    event.target.src = 'assets/svgs/user.svg';
+  }
+
   ngOnDestroy(): void {
-    // this.socketSvc.incoming = false;
+    this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
     this.webrtcSvc.disconnect();
   }
