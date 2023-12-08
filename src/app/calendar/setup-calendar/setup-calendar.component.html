@@ -26,7 +26,7 @@
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
-          <li class="add-more-list-item">
+          <li class="add-more-list-item" *ngIf="isVisibleAddMonthBtn">
             <a href="javascript:void(0)" (click)="addMonth()" data-test-id="linkAddMonths">
               <img class="mr-2" src="assets/svgs/add-more-plus-icon-green.svg" alt="">
               {{'Add more months'|translate}}

@@ -948,7 +948,7 @@
                       alt=""
                       width="44px"
                     />
-                    <h6 class="mb-0 ml-2">{{'Patient interaction'|translate}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Patient interaction'|translate}}*&nbsp;</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel1.expanded ? "remove" : "add" }}</mat-icon>
@@ -1095,7 +1095,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/diagnosis.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Diagnosis'|translate}}*&nbsp;</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel2.expanded ? "remove" : "add" }}</mat-icon>
@@ -1951,7 +1951,7 @@
                 <mat-panel-title>
                   <div class="intel-accordion-title">
                     <img src="assets/svgs/follow-up.svg" alt="" width="44px" />
-                    <h6 class="mb-0 ml-2">{{'Follow-up'| translate}}{{ollowUpForm?.value}}</h6>
+                    <h6 class="mb-0 ml-2">{{'Follow-up'| translate}}{{ollowUpForm?.value}}*&nbsp;</h6>
                   </div>
                 </mat-panel-title>
                 <mat-icon>{{ panel8.expanded ? "remove" : "add" }}</mat-icon>
@@ -2133,6 +2133,7 @@
         type="button"
         class="blue-btn mr-2 mb-2"
         (click)="sharePrescription()"
+        [disabled]="!isSharePrescribtionEnabled()"
         *ngIf="visitNotePresent && !visitEnded && isVisitNoteProvider"
         data-test-id="btnSharePrescription"
       >

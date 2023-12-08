@@ -264,7 +264,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
-      console.log('visit...', visit)
       if (visit) {
         this.visit = visit;
         if (this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.FLAGGED)) {
@@ -368,7 +367,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   getObsValue(obsName: string) {
     let val = null;
-    console.log(this.vitalObs)
     this.vitalObs.forEach((obs: any) => {
       if (obs.concept.display === obsName) {
         val = obs.value;
@@ -747,6 +745,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         }
       });
   };
+
+  isSharePrescribtionEnabled() {
+    return ( 
+      this.patientInteractionForm.value.present 
+      &&   this.existingDiagnosis.length > 0
+      &&  this.followUpForm.value.present
+    )
+  }
 
   deletePatientInteraction() {
     this.visitService.deleteAttribute(this.visit.uuid, this.patientInteractionForm.value.uuid).subscribe((res: any) => {

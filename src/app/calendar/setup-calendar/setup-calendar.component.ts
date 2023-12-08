@@ -110,6 +110,7 @@ export class SetupCalendarComponent implements OnInit {
   _addMoreTiming: boolean = false;
   daysOffSelected: any[] = [];
   filteredDays=[];
+  isVisibleAddMonthBtn: boolean = true
   @ViewChild('picker3', { static: true }) _picker: MatDatepicker<Date>;
   submitted: boolean = false;
 
@@ -145,6 +146,21 @@ export class SetupCalendarComponent implements OnInit {
   ngOnInit(): void {
     this.pageTitleService.setTitle({ title: '', imgUrl: 'assets/svgs/menu-calendar-circle.svg' });
     this.getScheduledMonths();
+  }
+
+  setAddMonthBtn() {
+    if (this.scheduledMonths.length !== this.monthNames.length) {
+      let today = new Date();
+      for (let x = 0; x < this.monthNames.length; x++) {
+        let flag = 0;
+        for (let y = 0; y < this.scheduledMonths.length; y++) {
+          if (this.monthNames[x] == this.scheduledMonths[y].name) {
+            this.isVisibleAddMonthBtn = false;
+            break;
+          }
+        }
+      }
+    }
   }
 
   addMonth() {
@@ -201,6 +217,7 @@ export class SetupCalendarComponent implements OnInit {
               this.selectedMonth = { name: this.scheduledMonths[0].name, year: this.scheduledMonths[0].year };
             }
           }
+          this.setAddMonthBtn();
         }
       });
   }
