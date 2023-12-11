@@ -536,7 +536,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         {
           style: 'tableExample',
           table: {
-            widths: ['20%', '30%', '25%', '25%'],
+            widths: ['25%', '30%', '22%', '23%'],
             body: [
               [
                 {
@@ -979,7 +979,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-precription');
+    }).download('e-prescription');
   }
 
   /**
