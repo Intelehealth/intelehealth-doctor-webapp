@@ -477,13 +477,13 @@ export class ViewVisitSummaryComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: ['20%', '30%', '25%', '25%'],
+            widths: ['25%', '30%', '22%', '23%'],
             body: [
               [
                 {
                   colSpan: 4,
                   fillColor: '#E6FFF3',
-                  text: 'Intelehealth e-Prescription',
+                  text: 'Intelehealth e-Visit Summary',
                   alignment: 'center',
                   style: 'header'
                 },
@@ -770,7 +770,7 @@ export class ViewVisitSummaryComponent implements OnInit {
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-visit-summery');
+    }).download('e-visit-summary');
   }
 
   toObjectUrl(url: string) {
