@@ -366,14 +366,24 @@ export class DashboardComponent implements OnInit {
   checkIfDateOldThanOneDay(data: string) {
     let hours = moment(data).diff(moment(), 'hours');
     let minutes = moment(data).diff(moment(), 'minutes');
+    minutes = minutes - (hours * 60);
+    let resString = "";
     if (hours > 24) {
-      return moment(data).format('DD MMM, YYYY hh:mm A');
+      resString = moment(data).format('DD MMM, YYYY hh:mm A');
     };
-    if (hours < 1) {
-      if (minutes < 0) return `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      return `${minutes} minutes`;
+    if (hours > 1) {
+      resString += hours + " Hours";
+    } else if(hours === 1) {
+      resString += hours + " Hour";
     }
-    return `${hours} hrs`;
+    if (minutes < 0) {
+      resString = `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+    } else if (minutes === 1){
+      resString += " " + minutes + " Minute"
+    } else {
+      resString += " " + minutes + " Minutes"
+    }
+    return resString.trim();
   }
 
   /**
