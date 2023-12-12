@@ -12,10 +12,9 @@ export const environment = {
   socketURL: "https://testing.intelehealth.org:3004",
   version: "NAS-v1.2.9",
   versionCode: "26",
-  webrtcSdkServerUrl: "wss://dev.intelehealth.org:9090",
-  webrtcTokenServerUrl: "https://dev.intelehealth.org:3000/"
+  webrtcSdkServerUrl: "wss://testing.intelehealth.org:9090",
+  webrtcTokenServerUrl: "https://testing.intelehealth.org:3000/"
 };
-
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
