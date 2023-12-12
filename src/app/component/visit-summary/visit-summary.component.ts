@@ -246,7 +246,6 @@ export class VisitSummaryComponent implements OnInit {
             this.toastr.error("Please try again later.", "Health Worker is offline.");
             return;
           }
-          console.log(this.visit, "VISIT")
           this.cs.openVideoCallModal({
             patientId: this.patientUuid,
             visitId: this.visitUuid,

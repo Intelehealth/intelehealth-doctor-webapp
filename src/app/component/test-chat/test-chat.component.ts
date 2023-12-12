@@ -13,9 +13,10 @@ export class TestChatComponent implements OnInit {
   @ViewChild("chatInput") chatInput: ElementRef;
   @ViewChild("chatBox") chatBox: ElementRef;
   data = {
-    to: "a4ac4fee-538f-11e6-9cfe-86f436325720",
-    from: "28cea4ab-3188-434a-82f0-055133090a38",
-    patientId: "a286e0de-eba0-4ad5-b698-900657d8ac75",
+    to: "9eb2dd7c-93f5-4578-8031-de1fcef1ac68",
+    visitId: "95777c29-96cb-4988-bd4f-0cf45eed286b",
+    from: "d7adbb20-86bf-4ea6-a080-e3bda47f200c",
+    patientId: "fb7a23d2-0286-4481-8e60-4f79f736468f",
   };
   classFlag = false;
   chats = [];
@@ -83,7 +84,7 @@ export class TestChatComponent implements OnInit {
           this.data.to,
           this.data.patientId,
           this.chatElem.value,
-          this.data.from
+          { ...this.data, fromUser: this.data.from }
         )
         .subscribe((res) => {
           this.updateMessages();
@@ -122,7 +123,7 @@ export class TestChatComponent implements OnInit {
   }
 
   playNotify() {
-    new Audio("../../../../intelehealth/assets/notification.mp3").play();
+    new Audio("../../../../assets/notification.mp3").play();
   }
 }
 
