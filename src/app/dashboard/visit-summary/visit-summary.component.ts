@@ -363,6 +363,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.setDiagnosis();
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
     this.provider = JSON.parse(localStorage.getItem("provider"));
@@ -974,27 +975,46 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   onKeyUp(event: any) {
     this.dSearchSubject.next(event.term);
-    // this.dSearchSubject.next(event.target.value);
+  }
+
+  onlyUnique(value:any, index: any, array: any) {
+    return array.indexOf(value) === index;
+  }
+
+  setDiagnosis() {
+      const  diagnosisList = localStorage.getItem("diagnosisList");
+      if(diagnosisList === null) {
+        this.diagnosisService.getComplelteDiagnosisList().subscribe((response:any) => {
+          if (response.length) {
+            localStorage.setItem("diagnosisList", JSON.stringify(response.filter(this.onlyUnique)))
+          } else {
+            localStorage.setItem("diagnosisList", JSON.stringify([]))
+          }
+        }, (error) => {
+          localStorage.setItem("diagnosisList", JSON.stringify([]))
+        });
+      }
+  }
+
+  getDiagnosisData(val: any) {
+    let  diagnosisList = localStorage.getItem("diagnosisList") as any;
+    if(diagnosisList !== null) {
+      diagnosisList = JSON.parse(diagnosisList)
+    } else {
+      diagnosisList = [];
+    }
+    const filterData = diagnosisList.filter((d: any) => d.toLowerCase().includes(val.toLowerCase()));
+    if(filterData.length > 0) {
+      this.diagnosisSubject.next(filterData);
+    } else {
+      this.diagnosisSubject.next([]);
+    }
   }
 
   searchDiagnosis(val: any) {
     if (val) {
       if (val.length >= 3) {
-        this.diagnosisService.getDiagnosisList(val).subscribe(response => {
-          if (response && response.length) {
-            let data = [];
-            response.forEach(element => {
-              if (element) {
-                data.push({ name: element });
-              }
-            });
-            this.diagnosisSubject.next(data);
-          } else {
-            this.diagnosisSubject.next([]);
-          }
-        }, (error) => {
-          this.diagnosisSubject.next([]);
-        });
+         this.getDiagnosisData(val)
       }
     }
   }

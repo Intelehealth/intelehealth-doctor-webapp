@@ -137,6 +137,7 @@ export class AuthService {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('user');
       localStorage.removeItem('provider');
+      localStorage.removeItem('diagnosisList')
       localStorage.removeItem('doctorName');
       localStorage.removeItem('xsddsdass');
       // console.log(this.cookieService.getAll());

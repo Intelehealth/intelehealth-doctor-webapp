@@ -60,6 +60,22 @@ export class DiagnosisService {
     );
   }
 
+  getComplelteDiagnosisList() {
+    const url = `${environment.base}/getdiagnoses`;
+    return this.http.get(url)
+    .pipe(
+      map((response: []) => {
+        this.diagnosisArray = [];
+        response.forEach((element: any) => {
+          if(element.conceptNameType === 'FULLY_SPECIFIED') {
+            this.diagnosisArray.push(element.name);
+          }
+        });
+        return this.diagnosisArray;
+      })
+    );
+  }
+
   isSameDoctor() {
     const providerDetails = getFromStorage("provider");
     const providerUuid = providerDetails.uuid;
