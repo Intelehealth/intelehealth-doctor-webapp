@@ -7,7 +7,7 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
-  captchaSiteKey: "6Lc42cElAAAAAFY3F1T0NIgU-kp7OD2uNzkAtC3L",
+  captchaSiteKey: "6LcMay0pAAAAACBcaZxxcyNejWE6zkHLFgItIWMk",
   firebase: {
     /* apiKey: "AIzaSyC5cRqdDtLWwJpz7WY1Ekpx7rbawbG1CA8",
     authDomain: "intelehealth-3-0.firebaseapp.com",
@@ -26,9 +26,9 @@ export const environment = {
   },
   webrtcSdkServerUrl: `${window.location.protocol}//${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
-  siteKey: "6Lc42cElAAAAAFY3F1T0NIgU-kp7OD2uNzkAtC3L",
+  siteKey: "6LcMay0pAAAAACBcaZxxcyNejWE6zkHLFgItIWMk",
   externalPrescriptionCred: 'c3lzbnVyc2U6TnVyc2UxMjM==',
-  vapidPublicKey: "BANxSWzoJW3mjQn49eDQRKjtnXCt6F98Df9XrxfDsT71KYKE8LpcW67-OIt1v4lAlm4GWZwjS1OvQBjyJ6r8Z7A",
+  vapidPublicKey: "BDRzpe-Fwrd8qLXxvRfeqDvPAJztOkdwddiZA0AlAQ1Gm5Tq4w23-9WiqUwsSYq4BQy9qz0tcctEVt9pWxXQvCc",
   authGatwayURL: `${window.location.protocol}//${window.location.hostname}:3030/v2/`,
   showCaptcha: true,
   recordsPerPage: 1000
