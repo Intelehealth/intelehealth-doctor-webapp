@@ -32,192 +32,192 @@ export class EpartogramComponent implements OnInit {
     {
       name: 'Companion',
       conceptName: 'Companion',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       name: 'Pain relief',
       conceptName: 'Pain relief',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       name: 'Oral Fluid',
       conceptName: 'Oral Fluid',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       name: 'Posture',
       conceptName: 'Posture',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: true
     },
     {
       name: 'Baseline FHR',
       conceptName: 'Baseline FHR',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       name: 'FHR deceleration',
       conceptName: 'FHR Deceleration',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       name: 'Amniotic fluid',
       conceptName: 'Amniotic fluid',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Fetal position',
       conceptName: 'Fetal position',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Caput',
       conceptName: 'Caput',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Moulding',
       conceptName: 'Moulding',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Pulse',
       conceptName: 'PULSE',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Systolic BP',
       conceptName: 'Systolic BP',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Diastolic BP',
       conceptName: 'Diastolic BP',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Temperature ℃',
       conceptName: 'TEMPERATURE (C)',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Urine',
       conceptName: 'Urine protein',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Contractions per 10 min',
       conceptName: 'Contractions per 10 min',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       name: 'Duration of contractions',
       conceptName: 'Duration of contraction',
-      stage1Count: 24,
-      stage2Count: 12,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: true
     },
     {
       name: 'Cervix [Plot X]',
       conceptName: 'Cervix 0 cm, 1 cm, 2 cm, 3 cm, 4 cm, 5 cm',
-      stage1Count: 12,
-      stage2Count: 12,
+      stage1Count: 15,
+      stage2Count: 20,
       alert: true
     },
     {
       name: 'Descent [Plot O]',
       conceptName: 'Descent 0-5',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     },
     {
       name: 'Oxytocin (U/L, drops/min)',
       conceptName: 'Oxytocin U/l, Drops per min',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'Medicine',
       conceptName: 'Medicine',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'IV fluids',
       conceptName: 'IV fluids',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'ASSESSMENT',
       conceptName: 'Assessment',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'PLAN',
       conceptName: 'Additional Comments',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'Encounter Status',
       conceptName: 'Encounter status',
-      stage1Count: 12,
-      stage2Count: 3,
+      stage1Count: 15,
+      stage2Count: 5,
       alert: false
     },
     {
       name: 'Urine Acetone',
       conceptName: 'Urine acetone',
-      stage1Count: 12,
-      stage2Count: 6,
+      stage1Count: 15,
+      stage2Count: 10,
       alert: true
     }
   ];
-  timeStage1: any[] = Array(12).fill(null);
-  timeStage2: any[] = Array(3).fill(null);
-  initialsStage1: string[] = Array(12).fill(null);
-  initialsStage2: string[] = Array(3).fill(null);
-  encuuid1: string[] = Array(12).fill(null);
-  encuuid2: string[] = Array(3).fill(null);
+  timeStage1: any[] = Array(15).fill(null);
+  timeStage2: any[] = Array(5).fill(null);
+  initialsStage1: string[] = Array(15).fill(null);
+  initialsStage2: string[] = Array(5).fill(null);
+  encuuid1: string[] = Array(15).fill(null);
+  encuuid2: string[] = Array(5).fill(null);
   displayedColumns: string[] = ['timeAndStage', 'medicine', 'assessment', 'plan'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
@@ -375,11 +375,11 @@ export class EpartogramComponent implements OnInit {
         if (!localStorage.patientVisitProvider) localStorage.setItem('patientVisitProvider', JSON.stringify(encs[x].encounterProviders[0]));
         let indices = encs[x].encounterType.display.replace('Stage','').replace('Hour','').split('_').map((val)=> +val);
         // Get timing and initials
-        if (indices[0] == 1 && indices[1] <= 12) {
+        if (indices[0] == 1 && indices[1] <= 15) {
           this.timeStage1[indices[1]-1] = encs[x].encounterDatetime;
           this.initialsStage1[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
           this.encuuid1[indices[1]-1] = encs[x].uuid;
-        } else if (indices[0] == 2 && indices[1] <= 3) {
+        } else if (indices[0] == 2 && indices[1] <= 5) {
           this.timeStage2[indices[1]-1] = encs[x].encounterDatetime;
           this.initialsStage2[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
           this.encuuid2[indices[1]-1] = encs[x].uuid;
@@ -394,11 +394,11 @@ export class EpartogramComponent implements OnInit {
               let parameterValue = this.parameters.find((o: any) => o.conceptName == encs[x].obs[y].concept.display);
               let valueIndex = -1;
               if (indices[0] == 1) {
-                (parameterValue.stage1Count == 12)? valueIndex = indices[1]-1 : valueIndex = ((2*(indices[1]-1))+(indices[2]-1));
+                (parameterValue.stage1Count == 15)? valueIndex = indices[1]-1 : valueIndex = ((2*(indices[1]-1))+(indices[2]-1));
               } else {
-                if (parameterValue.stage2Count == 3) {
+                if (parameterValue.stage2Count == 5) {
                   valueIndex = valueIndex = indices[1]-1;
-                } else if(parameterValue.stage2Count == 6) {
+                } else if(parameterValue.stage2Count == 10) {
                   valueIndex = (indices[2] == 1) ? ((2*(indices[1]-1))+(indices[2]-1)) : ((2*(indices[1]-1))+(indices[2]-2));
                 } else {
                   valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
@@ -425,7 +425,7 @@ export class EpartogramComponent implements OnInit {
 
   getAssessments() {
     this.assessments = [];
-    for (let d = 0; d < 12; d++) {
+    for (let d = 0; d < 15; d++) {
       if (this.parameters[20].stage1values[d].length||this.parameters[22].stage1values[d].length||this.parameters[23].stage1values[d].length) {
         this.assessments.push({
           time: this.timeStage1[d],
@@ -437,7 +437,7 @@ export class EpartogramComponent implements OnInit {
       }
     }
 
-    for (let d = 0; d < 3; d++) {
+    for (let d = 0; d < 5; d++) {
       if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d].length || this.parameters[23].stage2values[d].length) {
         this.assessments.push({
           time: this.timeStage2[d],
