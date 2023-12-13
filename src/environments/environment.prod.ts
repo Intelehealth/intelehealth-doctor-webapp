@@ -6,6 +6,8 @@ export const environment = {
   mindmapURL: `${window.location.protocol}//${window.location.hostname}:3004/api`,
   notificationURL: `${window.location.protocol}//${window.location.hostname}:3004/notification`,
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
+  webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
+  webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
   version: "NAS-v1.2.9",
-  versionCode: "26",
+  versionCode: "26"
 };

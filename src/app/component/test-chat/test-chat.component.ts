@@ -13,9 +13,9 @@ export class TestChatComponent implements OnInit {
   @ViewChild("chatInput") chatInput: ElementRef;
   @ViewChild("chatBox") chatBox: ElementRef;
   data = {
-    to: "9eb2dd7c-93f5-4578-8031-de1fcef1ac68",
+    to: "d7adbb20-86bf-4ea6-a080-e3bda47f200c",
     visitId: "95777c29-96cb-4988-bd4f-0cf45eed286b",
-    from: "d7adbb20-86bf-4ea6-a080-e3bda47f200c",
+    from: "9eb2dd7c-93f5-4578-8031-de1fcef1ac68",
     patientId: "fb7a23d2-0286-4481-8e60-4f79f736468f",
   };
   classFlag = false;
@@ -123,7 +123,7 @@ export class TestChatComponent implements OnInit {
   }
 
   playNotify() {
-    new Audio("../../../../assets/notification.mp3").play();
+    new Audio("../../../../intelehealth/assets/notification.mp3").play();
   }
 }
 

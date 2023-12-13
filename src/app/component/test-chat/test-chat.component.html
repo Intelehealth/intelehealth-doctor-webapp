@@ -52,7 +52,7 @@
     <div
       class="user-message-container"
       [class.user]="chat.fromUser == data.from"
-      *ngFor="let chat of chats"
+      *ngFor="let chat of chats; index as i; let first = first"
     >
       <div
         class="user-message"

@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
 import { doctorDetails } from "src/config/constant";
-declare var getFromStorage: any, saveToStorage: any;
+declare var getFromStorage: any;
 
 @Injectable()
 export class SocketService {
@@ -15,8 +15,18 @@ export class SocketService {
   public updateMessage: boolean = false;
   appIcon = "assets/images/intelehealth-logo-reverse.png";
   private baseURL = environment.socketURL;
+  private adminUnreadSubject: BehaviorSubject<any>;
+  public adminUnread: Observable<any>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.adminUnreadSubject = new BehaviorSubject<any>(0);
+    this.adminUnread = this.adminUnreadSubject.asObservable();
+  }
+
+  addCount(count: number) {
+    this.adminUnreadSubject.next(count);
+  }
+
 
   message(roomId, clientId, message): Observable<any> {
     const url = `${this.baseURL}/message/${roomId}/${clientId}`;
