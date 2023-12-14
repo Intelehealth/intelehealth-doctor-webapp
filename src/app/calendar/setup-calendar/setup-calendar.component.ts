@@ -152,7 +152,7 @@ export class SetupCalendarComponent implements OnInit {
     const lastScheduleMonth = lastScheduleElement.name;
     return lastScheduleMonth !== 'December';
   }
-
+  
   addMonth() {
     if (this.scheduledMonths.length !== this.monthNames.length) {
       let today = new Date();
