@@ -112,7 +112,7 @@ registerLocaleData(localeEn);
     MatSnackBarModule,
     HttpClientModule,
     MatMenuModule,
-    ServiceWorkerModule.register("/intelehealth/ngsw-worker.js", {
+    ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
       enabled: environment.production,
       registrationStrategy: "registerImmediately",
     }),
@@ -121,9 +121,9 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://dev.intelehealth.org:3004/api/messages/',
-        'https://dev.intelehealth.org:3004/api/support/',
-        'https://dev.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://naktraining.intelehealth.org:3004/api/messages/',
+        'https://naktraining.intelehealth.org:3004/api/support/',
+        'https://naktraining.intelehealth.org:3004/api/auth/validateProviderAttribute',
       ]
     }),
     NgxPermissionsModule.forRoot({

@@ -395,12 +395,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.socketSvc.incoming = false;
-    clearInterval(this.changeDetForDuration);
-    this.webrtcSvc.disconnect();
-  }
-
   get callDuration() {
     let duration: any;
     if (this.callStartedAt) {
@@ -426,6 +420,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   setImage(src) {
     this.cs.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.socketSvc.incoming = false;
+    clearInterval(this.changeDetForDuration);
+    this.webrtcSvc.disconnect();
   }
 
 }

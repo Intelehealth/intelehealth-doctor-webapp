@@ -2,7 +2,11 @@ import { visitTypes } from "src/config/constant";
 
 export function getCacheData(parse: boolean, key: string) {
   if (parse) {
-    return JSON.parse(localStorage.getItem(key));
+    try {
+      return JSON.parse(localStorage.getItem(key));
+    } catch (error) {
+      return null
+    }
   } else {
     return localStorage.getItem(key);
   }

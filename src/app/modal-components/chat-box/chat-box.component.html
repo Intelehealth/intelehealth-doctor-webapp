@@ -66,7 +66,13 @@
         </li>
       </ng-container>
     </ul>
-    <div class="chat-input-con">
+    <div class="chat-input-con mb-2 position-relative">
+      <div
+        [class.red]="msgCharCount > CHAT_TEXT_LIMIT"
+        class="char-count grey position-absolute"
+      >
+        {{ msgCharCount }}/1000
+      </div>
       <div class="input-group mr-2">
         <input
           type="text"
@@ -74,6 +80,8 @@
           placeholder="Type here"
           [(ngModel)]="message"
           (keyup.enter)="sendMessage()"
+          [disabled]="msgCharCount > CHAT_TEXT_LIMIT"
+          [class.bg-grey]="msgCharCount > CHAT_TEXT_LIMIT"
           data-test-id="etChatMessageChatBox"
         />
       </div>

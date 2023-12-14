@@ -124,10 +124,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
   currentComplaint: any;
-  ddx: any;
-  ddxPresent: any = false;
 
   additionalNotes = '';
+  isCalling: boolean = false;
 
   mainSearch = (text$: Observable<string>, list: any[]) =>
     text$.pipe(
@@ -135,7 +134,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       map(term => term.length < 1 ? [] : list.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
-  
+
   search = (text$: Observable<string>) => this.mainSearch(text$, this.advicesList);
   search2 = (text$: Observable<string>) => this.mainSearch(text$, this.testsList);
   search3 = (text$: Observable<string>) => this.mainSearch(text$, this.drugNameList.map((val) => val.name));
@@ -233,6 +232,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      setTimeout(() => {
+        this.startChat();
+      }, 1000);
+      location.href = location.href.replace('?openChat=true', '');
+    }
+  }
+
   formControlValueChanges() {
     this.referSpecialityForm.get('refer').valueChanges.subscribe((val: boolean) => {
       if (val) {
@@ -282,10 +291,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.visitCompleted = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.VISIT_COMPLETE);
             // check if visit note provider and logged in provider are same
             this.visitEnded = this.visitSummaryService.checkIfEncounterExists(visit.encounters, visitTypes.PATIENT_EXIT_SURVEY) || visit.stopDatetime;
-            // check if visit note exists for this visit
-            this.ddxPresent = this.visitSummaryService.checkIfEncounterExists(visit.encounters, 'Differential Diagnosis');
-            // check if visit note provider and logged in provider are same
             this.getPastVisitHistory();
+            // check if visit note provider and logged in provider are same
             if (this.visitNotePresent) {
               this.visitNotePresent.encounterProviders.forEach((p: any) => {
                 if (p.provider.uuid === this.provider.uuid) {
@@ -313,6 +320,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
           }
+          this.checkOpenChatBoxFlag();
         });
       }
     }, (error: any) => {
@@ -649,8 +657,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   startChat() {
     if (this.dialogRef1) {
       this.dialogRef1.close();
+      this.isCalling = false;
       return;
     }
+    this.isCalling = true;
     this.dialogRef1 = this.coreService.openChatBoxModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -661,14 +671,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
     this.dialogRef1.afterClosed().subscribe((res: any) => {
       this.dialogRef1 = undefined;
+      this.isCalling = false;
     });
   }
 
   startCall() {
     if (this.dialogRef2) {
       this.dialogRef2.close();
+      this.isCalling = false;
       return;
     }
+    this.isCalling = true;
     this.dialogRef2 = this.coreService.openVideoCallModal({
       patientId: this.visit.patient.uuid,
       visitId: this.visit.uuid,
@@ -677,11 +690,14 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientPersonUuid: this.patient.person.uuid,
       patientOpenMrsId: this.getPatientIdentifier('OpenMRS ID'),
       initiator: 'dr',
-      drPersonUuid: this.provider?.person.uuid
+      drPersonUuid: this.provider?.person.uuid,
+      patientAge: this.patient.person.age,
+      patientGender: this.patient.person.gender
     });
 
     this.dialogRef2.afterClosed().subscribe((res: any) => {
       this.dialogRef2 = undefined;
+      this.isCalling = false;
     });
   }
 
@@ -747,8 +763,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   };
 
   isSharePrescribtionEnabled() {
-    return ( 
-      this.patientInteractionForm.value.present 
+    return (
+      this.patientInteractionForm.value.present
       &&   this.existingDiagnosis.length > 0
       &&  this.followUpForm.value.present
     )
