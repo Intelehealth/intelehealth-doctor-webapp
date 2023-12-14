@@ -248,28 +248,28 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.advicesList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
+      map(term => term.length < 1 ? [] : this.advicesList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   search2 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
+      map(term => term.length < 1 ? [] : this.testsList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare).slice(0, 10))
     )
 
   search3 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare))
+      map(term => term.length < 1 ? [] : this.drugNameList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare))
     )
 
   search4 = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      map(term => term.length < 1 ? [] : this.strengthDataList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare))
+      map(term => term.length < 1 ? [] : this.strengthDataList.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' }).compare))
     )
 
   search5 = (text$: Observable<string>) =>
@@ -300,7 +300,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private socket: SocketService,
     private translateService: TranslateService,
     private dateAdapter: DateAdapter<any>
-    ) {
+  ) {
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -434,6 +434,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      setTimeout(() => {
+        this.startChat();
+      }, 1000);
+      location.href = location.href.replace('?openChat=true', '');
+    }
+  }
+
   getVisit(uuid: string) {
     this.visitService.fetchVisitDetails(uuid).subscribe((visit: any) => {
       if (visit) {
@@ -477,6 +487,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.getMedicalHistory(visit.encounters);
             this.getVisitAdditionalDocs(visit);
           }
+          this.checkOpenChatBoxFlag();
         });
       }
     }, (error: any) => {
@@ -546,7 +557,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       if (enc.encounterType.display == 'ADULTINITIAL') {
         enc.obs.forEach((obs: any) => {
           if (obs.concept.display == 'CURRENT COMPLAINT') {
-            const updatedDate =  this.dateFinder(obs.value);
+            const updatedDate = this.dateFinder(obs.value);
             const currentComplaint = updatedDate.split('<b>');
             for (let i = 0; i < currentComplaint.length; i++) {
               if (currentComplaint[i] && currentComplaint[i].length > 1) {
@@ -586,15 +597,15 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     });
   }
 
-  dateFinder(data: string){
+  dateFinder(data: string) {
     const regex = /(\d{2}\/[A-Za-z]{3}\/\d{4})/g; // Regular expression for the format DD/MMM/YYYY
     const matches = data.match(regex);
-    if(matches){
+    if (matches) {
       moment.locale(localStorage.getItem('selectedLanguage'));
       const replacement = moment(matches[0]).format('DD/MMMM/YYYY'); // Replace with the desired replacement value
       const modifiedString = data.replace(regex, replacement);
       return modifiedString
-    }else{
+    } else {
       return data
     }
   }
@@ -669,7 +680,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
               if (familyHistory[i]) {
                 const splitByColon = familyHistory[i].split(':');
                 const splitByComma = splitByColon[1].split('.');
-                for(let x = 0; x < splitByComma.length; x++){
+                for (let x = 0; x < splitByComma.length; x++) {
                   if (splitByComma[x]) {
                     obj1.data.push({ key: splitByComma[x].split(',')[0].trim(), value: splitByComma[x].split(',')[1] + "." });
                   }
@@ -1543,7 +1554,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         visits.forEach((visit: any) => {
           if (visit.uuid !== this.visit.uuid) {
             this.visitService.fetchVisitDetails(visit.uuid).subscribe((visitdetail: any) => {
-              console.log(visitdetail,"visits data");
+              console.log(visitdetail, "visits data");
               visitdetail.created_on = visitdetail.startDatetime;
               visitdetail.cheif_complaint = this.getCheifComplaint(visitdetail);
               visitdetail.encounters.forEach((encounter: any) => {
@@ -1561,7 +1572,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 }
               });
               this.pastVisits.push(visitdetail);
-              console.log(this.pastVisits,"Past visits data");
+              console.log(this.pastVisits, "Past visits data");
               this.dataSource = new MatTableDataSource(this.pastVisits);
             });
           }
