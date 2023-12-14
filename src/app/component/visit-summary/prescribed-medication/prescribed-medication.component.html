@@ -83,8 +83,8 @@
                     </div>
                   </div>
                   <div *ngIf="objectKeys(mds) == meds.value && mds[objectKeys(mds)].length > 2">
-                    <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(false)">{{'Show Less'|translate}}</span>
-                    <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show More'|translate}}</span>  
+                    <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(false)">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show Details'|translate}}</span>  
                   </div>
                 </div>
               <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>

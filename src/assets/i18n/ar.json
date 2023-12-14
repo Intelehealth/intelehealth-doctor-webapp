@@ -1264,7 +1264,7 @@
   "Enter amount": "أدخل المبلغ",
   "أدخل المبلغ": "Enter amount",
   "Type 4. Cover surgical expenses (amount)": "تغطية تكاليف عمليات جراحية (قيمة)",
-  "Type 5. Cash assistance (amount)": "مساعد مادية مباشرة (قيمة)",
+  "Type 5. Cash assistance (amount)": "مساعد مادية مساعد (قيمة)",
   "Nebulizer": "جهاز ارذاذ",
   "Oxygen container": "اسطوانة الأكسجين",
   "Cane": "عكازات",
@@ -1415,6 +1415,7 @@
   "Documents":"وثائق داعمة",
   "Dispensed by":"اسم صارف الدواء/الدعم",
   "Administered by":"اسم معطي الدواء/الدعم",
-  "Show More":"أظهر المزيد",
-  "Show Less":"إظهار أقل"
+  "Show Details":"إظهار التفاصيل",
+  "Hide Details":"إخفاء التفاصيل",
+  "No Past Visit":"لا توجد زيارة سابقة"
 }
