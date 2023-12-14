@@ -17,7 +17,9 @@
       "es2018",
       "dom"
     ],
-    "types": ["webrtc"],
     "skipLibCheck": true
+  },
+  "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true
   }
 }
