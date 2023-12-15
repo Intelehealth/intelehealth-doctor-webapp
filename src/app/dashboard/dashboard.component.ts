@@ -252,6 +252,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getAppointments() {
+    this.appointments = [];
     this.appointmentService.getUserSlots(JSON.parse(localStorage.user).uuid, moment().startOf('year').format('DD/MM/YYYY'), moment().endOf('year').format('DD/MM/YYYY'))
       .subscribe((res: any) => {
         let appointmentsdata = res.data;
