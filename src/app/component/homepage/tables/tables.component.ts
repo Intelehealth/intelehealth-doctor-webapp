@@ -18,7 +18,6 @@ export class TablesComponent implements OnInit {
     "gender",
     "age",
     "location",
-    "status",
     "provider",
     'complaints',
     "lastSeen"
