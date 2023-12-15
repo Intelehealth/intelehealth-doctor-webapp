@@ -49,7 +49,7 @@ export class MainComponent implements OnInit {
       this.sessionService.loginSession(session).subscribe(response => {
         if (response.authenticated === true) {
           // this.router.navigate(['/home']);
-          this.authService.sendToken(response.sessionId);
+          this.authService.setToken(response.sessionId);
           saveToStorage('user', response.user);
         }
       });

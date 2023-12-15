@@ -16,16 +16,41 @@ export class AuthService {
   ) {}
   public fingerPrint;
 
+  /**
+   * Set passed JSESSIONID token
+   * @param token String
+   */
   sendToken(token) {
     this.cookieService.set("JSESSIONID", token);
   }
 
+  /**
+   * Returns JSESSIONID token from cookie if not found, fallback to localStorage and set to cookie
+   * @returns String
+   */
   getToken() {
-    return this.cookieService.check("JSESSIONID");
+    let sessionId = this.cookieService.get("JSESSIONID");
+    if (!sessionId) {
+      sessionId = localStorage.JSESSIONID
+      if (sessionId) this.sendToken(sessionId);
+    }
+    return sessionId || '';
   }
 
+  /**
+   * Returns true if token exists
+   * @returns Boolean
+   */
   isLoggedIn() {
-    return this.getToken() !== false;
+    return !!this.getToken();
+  }
+
+  /**
+   * Set passed token to localStorage
+   */
+  setToken(token) {
+    localStorage.JSESSIONID = token;
+    this.sendToken(token);
   }
 
   logout() {
@@ -35,6 +60,7 @@ export class AuthService {
         deleteFromStorage("provider");
         deleteFromStorage("visitNoteProvider");
         deleteFromStorage("session");
+        deleteFromStorage("JSESSIONID");
         this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
