@@ -103,7 +103,8 @@ export class ChatComponent implements OnInit {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
         hwName: this.hwName,
-        type: this.isAttachment ? 'attachment' : 'text'
+        type: this.isAttachment ? 'attachment' : 'text',
+        openMrsId: this.data.patientOpenMrsId
       };
       this.sending = true;
       this.chatSvc

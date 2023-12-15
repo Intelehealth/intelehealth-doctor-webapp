@@ -90,7 +90,6 @@ import { AppointmentScheduleComponent } from "./component/appointment-schedule/a
 import { AppointmentViewComponent } from "./component/appointment-view/appointment-view.component";
 import { PatientDetailsComponent } from './component/visit-summary/reassign-speciality/patient-details/patient-details.component';
 import { VideoCallComponent } from "./modal-components/video-call/video-call.component";
-import { ChatBoxComponent } from "./component/chat-box/chat-box.component";
 
 import { ToastrModule } from "ngx-toastr";
 import { MomentModule } from "ngx-moment";
@@ -139,8 +138,7 @@ import { MomentModule } from "ngx-moment";
     AppointmentViewComponent,
     AppointmentScheduleComponent,
     PatientDetailsComponent,
-    VideoCallComponent,
-    ChatBoxComponent
+    VideoCallComponent
   ],
 
   imports: [

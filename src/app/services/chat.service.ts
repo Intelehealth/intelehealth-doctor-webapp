@@ -20,6 +20,7 @@ export class ChatService {
       toUser,
       patientId,
       message,
+      ...additionalPayload
     };
     return this.http.post(`${this.baseURL}/messages/sendMessage?ngsw-bypass=true`, payload);
   }
