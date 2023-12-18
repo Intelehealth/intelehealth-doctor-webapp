@@ -1609,13 +1609,13 @@
                         <td colspan="4">
                           <div class="add-plan-wrapper" *ngIf="item && !(parameters[20].stage2values[i].length||parameters[22].stage2values[i].length||parameters[23].stage2values[i].length)">
                             <span>Add <br> Plan / Assessment</span>
-                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="addAssessmentAndPlan(2, i)">
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(15+i+1)" (click)="addAssessmentAndPlan(2, i)">
                               <img src="assets/svgs/add-btn.svg" alt="" width="100%">
                             </button>
                           </div>
                           <div class="add-plan-wrapper" *ngIf="item && (parameters[20].stage2values[i].length||parameters[22].stage2values[i].length||parameters[23].stage2values[i].length)">
                             <span>Plan / Assessment <br> Added</span>
-                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(12+i+1)" (click)="editAssessmentAndPlan(2, i)">
+                            <button type="button" [disabled]="visitCompleted||checkIfFutureEncounterExists(15+i+1)" (click)="editAssessmentAndPlan(2, i)">
                               <img src="assets/svgs/edit-btn.svg" alt="" width="100%">
                             </button>
                           </div>
