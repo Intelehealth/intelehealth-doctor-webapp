@@ -639,6 +639,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
         alert('Please upload png, jpg or jpeg file only.');
         return;
       }
+      if (this.signatureFile.size < 5120) {
+        this.reset();
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
+        return;
+      }
       const fileReader = new FileReader();
       fileReader.onload = () => {
         this.signaturePicUrl = fileReader.result;
