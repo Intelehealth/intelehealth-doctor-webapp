@@ -199,9 +199,9 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private appointmentService: AppointmentService) {
 
     this.personalInfoForm = new FormGroup({
-      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
-      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]*$/)]),
+      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
+      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
+      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),
@@ -218,7 +218,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.professionalInfoForm = new FormGroup({
       typeOfProfession: new FormControl(null, [Validators.required]),
-      registrationNumber: new FormControl(null, [Validators.required]),
+      registrationNumber: new FormControl(null, [Validators.required, Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9-]*$/)]),
       specialization: new FormControl(null, [Validators.required]),
       consultationLanguage: new FormControl(null, [Validators.required]),
       workExperience: new FormControl(null, [Validators.required]),
