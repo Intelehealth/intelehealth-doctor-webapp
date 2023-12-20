@@ -33,7 +33,7 @@
               <div class="form-row">
                 <div class="form-group col-md-4">
                   <label for="givenName">{{'First name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="givenName" placeholder="{{'Enter first name' | translate}}" data-test-id="etGivenName">
                   <div *ngIf="submitted && f1.givenName.errors">
                     <small class="error-msg" *ngIf="f1.givenName.errors.required">{{'Enter first name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.givenName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="middleName">{{'Middle name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="middleName" placeholder="{{'Enter middle name' | translate}}" data-test-id="etMiddleName">
                   <div *ngIf="submitted && f1.middleName.errors">
                     <small class="error-msg" *ngIf="f1.middleName.errors.required">{{'Enter middle name' | translate}}</small>
                     <small class="error-msg" *ngIf="f1.middleName.errors.pattern">{{'Enter alphabates only' | translate}}</small>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label for="familyName">{{'Last name' | translate}} *</label>
-                  <input type="text" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
+                  <input type="text" maxlength="20" class="form-control" formControlName="familyName" placeholder="{{'Enter last name'| translate}}" data-test-id="etFamilyName">
                   <div *ngIf="submitted && f1.familyName.errors">
                     <small class="error-msg" *ngIf="f1.familyName.errors.required">{{'Enter last name'| translate}}</small>
                     <small class="error-msg" *ngIf="f1.familyName.errors.pattern">{{'Enter alphabates only'| translate}}</small>
@@ -280,9 +280,10 @@
                 </div>
                 <div class="form-group col-md-6">
                   <label for="registrationNumber">{{'Registration Number'|translate}} *</label>
-                  <input type="text" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistedNum">
+                  <input type="text" maxlength="20" class="form-control" formControlName="registrationNumber" placeholder="{{'Enter registration number'|translate}}" data-test-id="etRegistedNum">
                   <div *ngIf="submitted && f2.registrationNumber.errors">
                     <small class="error-msg" *ngIf="f2.registrationNumber.errors.required">{{'Enter registration number'|translate}}</small>
+                    <small class="error-msg" *ngIf="f2.registrationNumber.errors.pattern">{{'Enter valid registration number'|translate}}</small>
                   </div>
                 </div>
               </div>
