@@ -1086,4 +1086,19 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.eventsSubscription?.unsubscribe();
   }
+
+  /**
+  * Get observation value for a given observation name
+  * @param {string} obsName - Observation name
+  * @return {any} - Obs value
+  */
+  getObsValue(obsName: string) {
+    let val = null;
+    this.vitalObs.forEach((obs: ObsModel) => {
+      if (obs.concept.display == obsName) {
+        val = obs.value;
+      }
+    });
+    return val;
+  }
 }
