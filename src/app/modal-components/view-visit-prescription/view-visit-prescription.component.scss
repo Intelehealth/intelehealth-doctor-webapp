@@ -171,6 +171,33 @@
   white-space: nowrap;
 }
 
+.cheif-complaint-wrapper {
+  padding: 24px 0px 0px;
+
+  h6 {
+    font-size: 18px;
+    line-height: 150%;
+    color: var(--color-darkestBlue);
+    font-weight: bold;
+  }
+
+  .complaint-chips {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+
+    .chip-item {
+      padding: 4px 8px;
+      background: var(--color-lightRed);
+      border-radius: 4px;
+      color: var(--color-white);
+      margin: 5px 5px 5px 0px;
+      font-size: 16px;
+      line-height: 150%;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .patient-info-section {
     border-bottom: 1px solid rgba(178, 175, 190, 0.2);
