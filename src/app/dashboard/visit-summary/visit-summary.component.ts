@@ -977,6 +977,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     if (this.diagnosisForm.invalid || !this.isVisitNoteProvider) {
       return;
     }
+    if (this.existingDiagnosis.find(o=>o.diagnosisName.toLocaleLowerCase()===this.diagnosisForm.value.diagnosisName.toLocaleLowerCase())) {
+      this.toastr.warning(this.translateService.instant('Diagnosis Already Exist'), this.translateService.instant('Duplicate Diagnosis'));
+      return;
+    }
     this.encounterService.postObs({
       concept: conceptIds.conceptDiagnosis,
       person: this.visit.patient.uuid,
