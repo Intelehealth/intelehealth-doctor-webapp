@@ -25,6 +25,7 @@ export class MyAccountComponent implements OnInit {
   userDetails: any;
   locations = [];
   doctorLocation: string = '';
+  drLocationName = [];
 
   constructor(
     private sessionService: SessionService,
@@ -66,9 +67,11 @@ export class MyAccountComponent implements OnInit {
 
   getLocation() {
     if (this.providerDetails?.location) {
-      this.visitService.getLocation(this.providerDetails?.location?.value).subscribe((res: any) => {
-        this.doctorLocation = res.display;
-      });
+      for(let locs = 0; locs < this.providerDetails?.location?.value.split(',').length; locs++){
+        this.visitService.getLocation(this.providerDetails?.location?.value.split(',')[locs]).subscribe((res: any) => {
+          this.drLocationName.push(res.display);
+        });
+      }
     }
   }
 

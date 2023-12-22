@@ -29,19 +29,19 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'State' | translate }}" formControlName="state">
+      <mat-select placeholder="{{ 'State' | translate }}" formControlName="state" multiple>
         <mat-option *ngFor="let s of states" [value]="s.uuid">{{ (s.display) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'District' | translate }}" formControlName="district">
+      <mat-select placeholder="{{ 'District' | translate }}" formControlName="district" multiple>
         <mat-option *ngFor="let d of tempDistricts" [value]="d.uuid">{{ (d.display) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'Location' | translate }}" formControlName="village">
+      <mat-select placeholder="{{ 'Location' | translate }}" formControlName="village" multiple>
         <mat-option *ngFor="let v of tempVillages" [value]="v.uuid">{{ (v.display) | translate }}
         </mat-option>
       </mat-select>

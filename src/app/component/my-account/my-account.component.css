@@ -118,3 +118,9 @@ mat-spinner {
   padding-top: 20px;
 }
 
+.location{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
