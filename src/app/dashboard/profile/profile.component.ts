@@ -641,7 +641,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       if (this.signatureFile.size < 5120) {
         this.reset();
-        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 48kb)'), this.translateService.instant('Invalid File!'));
         return;
       }
       const fileReader = new FileReader();
@@ -655,7 +655,7 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (event.rejectedFiles.length) {
       if (event.rejectedFiles[0].reason === 'size') {
-        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 50kb)'), this.translateService.instant('Invalid File!'));
+        this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having size (5kb to 48kb)'), this.translateService.instant('Invalid File!'));
       }
       if (event.rejectedFiles[0].reason === 'type') {
         this.toastr.error(this.translateService.instant('Upload a scanned image of your signature. having type png, jpg, jpeg only.'), this.translateService.instant('Invalid File!'));
