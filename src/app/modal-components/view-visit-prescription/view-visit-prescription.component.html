@@ -268,36 +268,6 @@
                     {{c}}
                   </div>
                 </div>
-                <div class="check-up-reason-con">
-                  <ng-container *ngFor="let ckr of checkUpReasonData;">
-                    <ng-container *ngIf="ckr.title != 'Associated symptoms'">
-                      <h6 class="my-3">{{ckr.title}}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let ckri of ckr.data">
-                          <div class="list-item">
-                            <label>{{ckri.key}}</label>
-                            <div class="list-item-content" [class.text-muted]="!ckri.value">
-                              {{(ckri.value)?ckri.value:'None'}}
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </ng-container>
-                    <ng-container *ngIf="ckr.title == 'Associated symptoms'">
-                      <h6 class="my-3">{{ckr.title}}</h6>
-                      <ul class="items-list pt-0">
-                        <li *ngFor="let ckri of ckr.data">
-                          <div class="list-item-col">
-                            <label>{{ckri.key}}</label>
-                            <div class="list-item-content" [class.text-muted]="!ckri.value">
-                              {{(ckri.value)?ckri.value:'None'|translate}}
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </ng-container>
-                  </ng-container>
-                </div>
               </div>
             </div>
           </div>
