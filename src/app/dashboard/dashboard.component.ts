@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < av.data.length; i++) {
           let visit = av.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.awaitingVisits.push(visit);
         }
@@ -183,7 +183,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < pv.data.length; i++) {
           let visit = pv.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = this.getEncounterCreated(visit, visitTypes.FLAGGED);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.FLAGGED);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.priorityVisits.push(visit);
         }
@@ -239,7 +239,7 @@ export class DashboardComponent implements OnInit {
         for (let i = 0; i < iv.data.length; i++) {
           let visit = iv.data[i];
           visit.cheif_complaint = this.getCheifComplaint(visit);
-          visit.visit_created = this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
+          visit.visit_created = visit?.date_created ? this.getCreatedAt(visit.date_created.replace('Z','+0530')) : this.getEncounterCreated(visit, visitTypes.ADULTINITIAL);
           visit.prescription_started = this.getEncounterCreated(visit, visitTypes.VISIT_NOTE);
           visit.person.age = this.calculateAge(visit.person.birthdate);
           this.inProgressVisits.push(visit);
