@@ -1367,6 +1367,7 @@
     "Documents":"Documents",
     "Dispensed by":"Dispensed By",
     "Administered by":"Administered by",
-    "Show More":"Show More",
-    "Show Less":"Show Less"
+    "Show Details":"Show Details",
+    "Hide Details":"Hide Details",
+    "No Past Visit":"No Past Visit"
   }

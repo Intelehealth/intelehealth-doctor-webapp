@@ -60,8 +60,8 @@
             </tr>
             <tr *ngIf="userDetails.roles[0].display != 'Organizational: Nurse'">
               <th> {{ 'Location' | translate }} :</th>
-              <td *ngIf="providerDetails.location">
-                {{ (doctorLocation) | translate }}
+              <td *ngIf="providerDetails.location" class="location">
+                {{ (this.drLocationName.join(', ')) | translate }}
               </td>
             </tr>
             <tr>
