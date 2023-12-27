@@ -393,7 +393,6 @@ export class PrescribedMedicationComponent implements OnInit {
         this.medicineObsList.push(disAdminObs);
       }
     }
-    console.log(this.medicineObsList,"final OBSSSS");
   }
 
   toggleShow(index: number): void {

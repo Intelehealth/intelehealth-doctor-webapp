@@ -15,6 +15,8 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
   public dispense: any[] = [];
+  public isVisitSummaryShow: boolean = false;
+  public chatVisitId: any;
 
   public lockMedicineAidOrder = new Subject();
 

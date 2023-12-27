@@ -146,7 +146,7 @@
       </div>
 </div>
 <app-chat></app-chat>
-<div class="vc-button" (click)="openVcModal()">
+<div class="vc-button" *ngIf="show" (click)="openVcModal()">
   <span>
     <img [src]="videoIcon" />
   </span>

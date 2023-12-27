@@ -11,6 +11,7 @@ import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
+import { CoreService } from "src/app/services/core.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -40,6 +41,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isSameSpecialityDoctorViewingVisit = false;
   isAdminister = false;
   isDispense = false;
+  visit: any;
+  chatBoxRef: any;
 
   constructor(
     private service: EncounterService,
@@ -51,7 +54,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
     private translationService: TranslationService,
-    private dialogService: ConfirmDialogService
+    private dialogService: ConfirmDialogService,
+    private cs: CoreService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -68,6 +72,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
+        this.visit = visitDetails;
         this.visitSpeciality = visitDetails.attributes.find(a => a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
         this.visitSpecialitySecondary = visitDetails.attributes.find(a => a.attributeType.uuid == "8100ec1a-063b-47d5-9781-224d835fc688")?.value;
         const providerDetails = getFromStorage("provider");
@@ -306,13 +311,26 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     );
   };
 
+  get user() {
+    return getFromStorage("user");
+  }
+
   openVcModal() {
-    this.dialog.open(VcComponent, {
-      disableClose: true,
-      data: {
-        patientUuid: this.patientUuid,
-      },
+    this.cs.openVideoCallModal({
+      patientId: this.patientUuid,
+      visitId: this.visitUuid,
+      connectToDrId: this.user?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit.patient?.identifiers?.[0]?.identifier,
+      initiator: 'dr'
     });
+    // this.dialog.open(VcComponent, {
+    //   disableClose: true,
+    //   data: {
+    //     patientUuid: this.patientId,
+    //   },
+    // });
   }
 
   private checkProviderRole() {

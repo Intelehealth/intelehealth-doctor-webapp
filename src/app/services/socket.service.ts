@@ -1,21 +1,47 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { DialogPosition, MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { BehaviorSubject, Observable } from "rxjs";
 import * as io from "socket.io-client";
 import { environment } from "../../environments/environment";
+import { VisitService } from "./visit.service";
+import { WebrtcService } from "./webrtc.service";
+import { CoreService } from "./core/core.service";
+import { ToastrService } from "ngx-toastr";
 
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class SocketService {
   public socket: any;
+  public incoming;
+  public incomingCallData = {};
   public activeUsers = [];
-  appIcon =
-    false && environment.production
-      ? "/intelehealth/assets/images/intelehealth-logo-reverse.png"
-      : "/assets/images/intelehealth-logo-reverse.png";
+  appIcon = "assets/images/intelehealth-logo-reverse.png";
+  public callRing = new Audio("assets/phone.mp3");
+  ringTimeout = null;
+  closeOverlayTimeout = null;
+  updateMessage = false;
 
   private baseURL = environment.socketURL;
+  private adminUnreadSubject: BehaviorSubject<any>;
+  public adminUnread: Observable<any>;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private visitSvc: VisitService,
+    private webrtcSvc: WebrtcService,
+    // private cs: CoreService,
+    private toastr: ToastrService
+  ) {
+    this.adminUnreadSubject = new BehaviorSubject<any>(0);
+    this.adminUnread = this.adminUnreadSubject.asObservable();
+  }
+
+  addCount(count: number) {
+    this.adminUnreadSubject.next(count);
+  }
 
   message(roomId, clientId, message): Observable<any> {
     const url = `${this.baseURL}/message/${roomId}/${clientId}`;
@@ -27,13 +53,46 @@ export class SocketService {
       this.socket.disconnect();
     }
     if (!this.socket || forceInit) {
+      if (!sessionStorage.webrtcDebug) {
+        localStorage.socketQuery = `userId=${this.userUuid}&name=${this.userName}`;
+      }
       this.socket = io(environment.socketURL, {
         query: localStorage.socketQuery,
       });
-      this.onEvent("allUsers").subscribe((data) => {
-        this.activeUsers = data;
+      this.onEvent("log").subscribe((array) => {
+        if (localStorage.log === "1") console.log.apply(console, array);
       });
+      this.initEvents();
     }
+  }
+
+  initEvents() {
+    this.onEvent("allUsers").subscribe((data) => {
+      this.activeUsers = data;
+    });
+
+    this.onEvent("cancel_hw").subscribe((data) => {
+      this.toastr.error(`Call Cancelled.`, "Health Worker cancelled the call.");
+      this.closeVcOverlay();
+    });
+
+    this.onEvent("incoming_call").subscribe((data = {}) => {
+      if (!location.hash.includes("test/chat")) {
+        localStorage.patientId = data.patientId;
+        if (localStorage.patientId) {
+          this.openVcOverlay(data);
+        }
+      }
+    });
+
+    this.onEvent("updateMessage").subscribe((data) => {
+      // this.showNotification({
+      //   title: "New chat message",
+      //   body: data.message,
+      //   timestamp: new Date(data.createdAt).getTime(),
+      // });
+      this.emitEvent('ack_msg_received', { messageId: data.id });
+    });
   }
 
   public emitEvent(action, data) {
@@ -58,5 +117,104 @@ export class SocketService {
         });
       }
     }
+  }
+
+  public openVcOverlay(data: any) {
+    // this.callRing = new Audio("assets/phone.mp3");
+    // this.cs.openVideoCallOverlayModal(data);
+    // this.callRing.play();
+
+    // this.ringTimeout = setInterval(() => {
+    //   this.callRing.pause();
+    //   this.callRing = new Audio("assets/phone.mp3");
+    //   this.callRing.play();
+    // }, 10000);
+
+    // this.closeOverlayTimeout = setTimeout(() => {
+    //   if (!this.webrtcSvc.callConnected) {
+    //     this.closeVcOverlay();
+    //   }
+    // }, 59000);
+  }
+
+  public closeVcOverlay() {
+    const dailog = this.dialog.getDialogById("vcOverlayModal");
+    clearInterval(this.ringTimeout);
+    clearInterval(this.closeOverlayTimeout);
+    if (dailog) {
+      dailog.close();
+    }
+    this.callRing.pause();
+  }
+
+  public openNewVCModal(
+    initiator = "dr",
+    visitId = this.visitSvc.chatVisitId || ""
+  ) {
+    this.visitSvc.isVisitSummaryShow = true;
+    const bodyElement = document.body;
+    bodyElement.classList.add("body-hide-overflow");
+    window.scroll(0, 0);
+    const position: DialogPosition = {
+      top: "90px",
+      right: "0px",
+    };
+    const config: MatDialogConfig = {
+      width: "calc(100% - 300px)",
+      height: "82vh",
+      maxHeight: "90vh",
+      autoFocus: false,
+      hasBackdrop: false,
+      position,
+      data: {
+        patientUuid: localStorage.patientUuid,
+        connectToDrId: localStorage.connectToDrId,
+        visitId,
+        initiator,
+      },
+    };
+    // this.dialog.open(CallStateComponent, config);
+    // this.dialog.open(CallStateComponent, {
+    //   disableClose: true,
+    //   data: {
+    //     patientUuid: localStorage.patientUuid,
+    //     initiator,
+    //     connectToDrId: localStorage.connectToDrId,
+    //   },
+    // });
+  }
+
+  get user() {
+    try {
+      return JSON.parse(localStorage.user);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  get userUuid() {
+    return this.user.uuid;
+  }
+
+  get userName() {
+    return this.user.display;
+  }
+
+  close() {
+    try {
+      this.socket.close();
+    } catch (error) { }
+  }
+
+  public initSocketSupport(forceInit = false) {
+    if (forceInit && this.socket?.id && this.socket?.disconnect) {
+      this.socket.disconnect();
+    }
+    if (!this.socket || forceInit) {
+      this.socket = io(environment.socketURL, {
+        query: `userId=${this.userUuid}&name=${this.userName}`
+      });
+    }
+    this.initEvents();
   }
 }
