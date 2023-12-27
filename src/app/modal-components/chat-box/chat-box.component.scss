@@ -85,8 +85,8 @@
       }
 
       .chat-status {
-        font-size: 12px;
-        line-height: 18px;
+        font-size: 10px;
+        line-height: 16px;
         color: #7F7B92;
         display: flex;
         align-items: center;
@@ -151,4 +151,18 @@
   object-fit: contain;
   background-color: white;
   cursor: pointer;
+}
+
+.char-count {
+  z-index: 1;
+  bottom: -10px;
+  font-size: 10px;
+  left: 5px;
+  color: grey;
+  &.red {
+    color: red;
+  }
+}
+.bg-grey {
+  background: grey !important;
 }

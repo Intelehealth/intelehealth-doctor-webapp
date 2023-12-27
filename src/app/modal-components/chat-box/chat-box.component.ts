@@ -1,18 +1,20 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { environment } from 'src/environments/environment';
+import { WEBRTC } from 'src/config/constant';
 
 @Component({
   selector: 'app-chat-box',
   templateUrl: './chat-box.component.html',
   styleUrls: ['./chat-box.component.scss']
 })
-export class ChatBoxComponent implements OnInit {
+export class ChatBoxComponent implements OnInit, OnDestroy {
 
   message: string;
   messageList: any = [];
@@ -21,7 +23,11 @@ export class ChatBoxComponent implements OnInit {
   baseUrl: string = environment.baseURL;
   defaultImage = 'assets/images/img-icon.jpeg';
   pdfDefaultImage = 'assets/images/pdf-icon.png';
+  subscription1: Subscription;
+  subscription2: Subscription;
+  subscription3: Subscription;
   sending = false;
+  CHAT_TEXT_LIMIT = WEBRTC.CHAT_TEXT_LIMIT;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -42,16 +48,16 @@ export class ChatBoxComponent implements OnInit {
     }
     // this.socketSvc.initSocket(true);
     this.socketSvc.updateMessage = true;
-    this.socketSvc.onEvent("updateMessage").subscribe((data) => {
+    this.subscription1 = this.socketSvc.onEvent("updateMessage").subscribe((data) => {
       if (this.socketSvc.updateMessage) {
         this.readMessages(data.id);
       }
     });
-    this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
+    this.subscription3 = this.socketSvc.onEvent("msg_delivered").subscribe((data) => {
       this.getMessages();
     });
 
-    this.socketSvc.onEvent("isread").subscribe((data) => {
+    this.subscription2 = this.socketSvc.onEvent("isread").subscribe((data) => {
       this.getMessages();
     });
   }
@@ -59,12 +65,6 @@ export class ChatBoxComponent implements OnInit {
   get toUser() {
     const patientVisitProvider = JSON.parse(localStorage.getItem("patientVisitProvider"));
     return this.webrtcSvc.visitHolderId || patientVisitProvider?.provider?.uuid;
-  }
-
-  ngOnDestroy() {
-    console.log('chat destroyed');
-    this.dialogRef.close();
-    this.socketSvc.updateMessage = false;
   }
 
   getMessagesAndCheckRead(toUser = this.toUser, patientId = this.data.patientId, fromUser = this.fromUser, visitId = this.data.visitId, isFirstTime = false) {
@@ -98,6 +98,11 @@ export class ChatBoxComponent implements OnInit {
       const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
       if (!nursePresent) {
         this.toastr.error("Please try again later.", "Health Worker is not Online.");
+        return;
+      }
+
+      if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
+        this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);
         return;
       }
 
@@ -160,6 +165,18 @@ export class ChatBoxComponent implements OnInit {
 
   setImage(src) {
     this.coreService.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+  get msgCharCount() {
+    return this.message?.length || 0
+  }
+
+  ngOnDestroy() {
+    this.subscription1?.unsubscribe();
+    this.subscription2?.unsubscribe();
+    this.subscription3?.unsubscribe();
+    this.dialogRef.close();
+    this.socketSvc.updateMessage = false;
   }
 
 }

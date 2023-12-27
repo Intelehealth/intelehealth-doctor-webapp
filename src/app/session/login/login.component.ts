@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SwPush } from '@angular/service-worker';
 import { NgxRolesService } from 'ngx-permissions';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/services/auth.service';
-import { PushNotificationsService } from 'src/app/services/push-notification.service';
-import { SocketService } from 'src/app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -27,9 +24,6 @@ export class LoginComponent implements OnInit {
     public authService: AuthService,
     private toastr: ToastrService,
     private router: Router,
-    private socketSvc: SocketService,
-    private pushNotSvc: PushNotificationsService,
-    public _swPush: SwPush,
     private rolesService: NgxRolesService) {
 
     this.loginForm = new FormGroup({
@@ -43,15 +37,6 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   ngOnInit(): void {
-    // this.checkSession();
-    try {
-      this._swPush.unsubscribe();
-      this.pushNotSvc.unsubscribeNotification({
-        user_uuid: this.user.uuid,
-        finger_print: this.authService.fingerPrint,
-      }).subscribe();
-      this.socketSvc.close();
-    } catch (error) { }
   }
 
   get user() {
@@ -74,18 +59,6 @@ export class LoginComponent implements OnInit {
           if (provider.results.length) {
             localStorage.setItem('provider', JSON.stringify(provider.results[0]));
             localStorage.setItem("doctorName", provider.results[0].person.display);
-            // if (res.user.username == 'doctor1' || res.user.username == 'admin' || res.user.systemId == 'admin') {
-            //   this.loginSuccess();
-            // }
-            // else if (this.rememberMe) {
-            //   this.loginSuccess();
-            // } else if (provider.results[0].attributes.length) {
-            //   this.router.navigate(['/session/verification']);
-            // } else {
-            //   this.loginSuccess();
-            // }
-
-            // OR
             this.loginSuccess();
           } else {
             this.toastr.error("Couldn't find provider.", "Login Failed!");
@@ -100,15 +73,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  handleReset() { }
-
-  handleExpire() { }
-
-  handleLoad() { }
-
-  handleSuccess(event: any) {
-  }
-
   loginSuccess() {
     this.authService.updateVerificationStatus();
     this.toastr.success("You have sucessfully logged in.", "Login Successful");
@@ -118,19 +82,13 @@ export class LoginComponent implements OnInit {
     } else {
       this.router.navigate(['/dashboard']);
     }
-    // let role = this.rolesService.getRole('ORGANIZATIONAL: SYSTEM ADMINISTRATOR');
-    // if (role) {
-    //   this.router.navigate(['/admin']);
-    // } else {
-    //   this.router.navigate(['/dashboard']);
-    // }
   }
 
   checkSession() {
     this.authService.checkSession().subscribe({
       next: (res: any) => {
         this.rememberMe = res.rememberme;
-        this.authService.rememberMe = this.rememberMe ? true : false;
+        this.authService.rememberMe = !!this.rememberMe;
       }
     });
   }

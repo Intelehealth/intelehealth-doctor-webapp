@@ -24,7 +24,7 @@
           class="chat-status"
           [class.right]="item?.fromUser === chatSvc?.user?.uuid"
         >
-          <span class="mr-1">{{ item.createdAt | amDateFormat : "LT" }}</span>
+          <span class="mr-1">{{ item.createdAt | amDateFormat : "DD-MM-YYYY LT" }}</span>
           <ng-container *ngIf="first && item?.fromUser === chatSvc?.user?.uuid">
             <ng-container *ngIf="sending; else sent">
               <img src="assets/svgs/sending.svg" alt="" />
@@ -55,6 +55,7 @@
           <ng-container *ngIf="item.type === 'attachment'; else message">
             <img
               class="attachment"
+              alt=""
               [src]="isPdf(item.message) ? pdfDefaultImage : defaultImage"
               (click)="setImage(item.message)"
             />
@@ -65,7 +66,13 @@
         </li>
       </ng-container>
     </ul>
-    <div class="chat-input-con">
+    <div class="chat-input-con mb-2 position-relative">
+      <div
+        [class.red]="msgCharCount > CHAT_TEXT_LIMIT"
+        class="char-count grey position-absolute"
+      >
+        {{ msgCharCount }}/1000
+      </div>
       <div class="input-group mr-2">
         <input
           type="text"
@@ -86,7 +93,7 @@
           </button>
         </div> -->
       </div>
-      <button type="button" class="send-btn" (click)="sendMessage()">
+      <button type="button" class="send-btn" (click)="sendMessage()" [disabled]="msgCharCount > CHAT_TEXT_LIMIT" [class.bg-grey]="msgCharCount > CHAT_TEXT_LIMIT">
         <img src="assets/svgs/send-icon-white.svg" alt="" />
       </button>
     </div>

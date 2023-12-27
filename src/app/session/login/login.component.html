@@ -39,10 +39,6 @@
           <label for="capcha">Before logging in, please confirm you are not a robot</label>
           <ngx-recaptcha2 #captchaElem
             [siteKey]="siteKey"
-            (reset)="handleReset()"
-            (expire)="handleExpire()"
-            (load)="handleLoad()"
-            (success)="handleSuccess($event)"
             [useGlobalDomain]="false"
             formControlName="recaptcha">
           </ngx-recaptcha2>

@@ -570,6 +570,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
     this.dataSource = new MatTableDataSource(this.assessments);
     this.dataSource.paginator = this.assessmentPaginator;
+    this.checkOpenChatBoxFlag();
   }
 
   mouseDownHandler(e: any) {
@@ -903,6 +904,16 @@ export class PartogramComponent implements OnInit, OnDestroy {
       });
     }
     return identifier;
+  }
+
+  checkOpenChatBoxFlag() {
+    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+    if (openChat === 'true') {
+      setTimeout(() => {
+        this.startChat();
+      }, 1000);
+      location.href = location.href.replace('?openChat=true', '');
+    }
   }
 
 }

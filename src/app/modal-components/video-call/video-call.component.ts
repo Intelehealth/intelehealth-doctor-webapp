@@ -110,7 +110,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   async startCall() {
-    this.toastr.show('Starting secure video call...', null, { timeOut: 1000 });
     if (!this.webrtcSvc.token) {
       const hwVisitHolderId = this.webrtcSvc.visitHolderId || this.nurseId;
       console.log('this.webrtcSvc.visitHolderId: ', this.webrtcSvc.visitHolderId);
@@ -119,7 +118,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       });
     }
     if (!this.webrtcSvc.token) return;
-    this.toastr.show('Received video call token.', null, { timeOut: 1000 });
     this.webrtcSvc.createRoomAndConnectCall({
       localElement: this.localVideoRef,
       remoteElement: this.remoteVideoRef,
@@ -164,7 +162,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     const ringingTimeout = 60 * 1000;
     this.callEndTimeout = setTimeout(() => {
       if (!this.callConnected) {
-        console.log('call_time_up: ', this.nurseId);
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
         this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
@@ -200,7 +197,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   handleTrackUnsubscribed(
     track: RemoteTrack,
     publication: RemoteTrackPublication,
-    participant: RemoteParticipant,
+    participant: RemoteParticipant
   ) {
     // remove tracks from all attached elements
     track.detach();
@@ -296,74 +293,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  async startUserMedia(config?: any) {
-    let mediaConfig = {
-      video: {
-        mandatory: {
-          minWidth: 276,
-          minHeight: 160,
-          maxWidth: 276,
-          maxHeight: 160,
-        }
-      },
-      audio: true,
-    };
-
-    if (config) {
-      mediaConfig = config;
-    }
-
-    const n = <any>navigator;
-    await new Promise((res, rej) => {
-      n.getUserMedia =
-        n.getUserMedia ||
-        n.webkitGetUserMedia ||
-        n.mozGetUserMedia ||
-        n.msGetUserMedia;
-      n.getUserMedia(
-        mediaConfig,
-        (stream: MediaStream) => {
-          this.localStream = stream;
-          const localStream = new MediaStream();
-          localStream.addTrack(stream.getVideoTracks()[0]);
-          this.localVideoRef.nativeElement.srcObject = localStream;
-          res(1);
-        },
-        (err: any) => {
-          rej(err);
-          this.isStreamAvailable = false;
-
-        }
-      );
-    });
-  }
-
-  async connect() {
-    if (this.initiator === "dr") {
-      this.toastr.info("Calling....", null, { timeOut: 2000 });
-      this.call();
-    } else {
-      this.socketSvc.emitEvent("create_or_join_hw", {
-        room: this.room,
-        connectToDrId: this.connectToDrId,
-      });
-    }
-  }
-
-  call() {
-    this.socketSvc.emitEvent("call", {
-      nurseId: this.nurseId,
-      doctorName: this.doctorName,
-      roomId: this.room,
-      visitId: this.data?.visitId,
-      doctorId: this.data?.connectToDrId
-    });
-
-    setTimeout(() => {
-      this.socketSvc.emitEvent("create or join", this.room);
-    }, 500);
-  }
-
   initSocketEvents() {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
@@ -376,7 +305,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       if (data === 'app') {
         this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
       }
-      this.stop();
     });
 
     this.socketSvc.onEvent("isread").subscribe((data: any) => {
@@ -404,102 +332,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     });
   }
 
-  handleSignalingData(data: any) {
-    switch (data.type) {
-      case "offer":
-        this.createPeerConnection();
-        this.pc.setRemoteDescription(new RTCSessionDescription(data));
-        this.sendAnswer();
-        break;
-      case "answer":
-        this.callStartedAt = moment();
-        this.pc.setRemoteDescription(new RTCSessionDescription(data));
-        break;
-      case "candidate":
-        this.callStartedAt = moment();
-        this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-        break;
-    }
-  }
-
-  createPeerConnection() {
-    try {
-      this.pc = new RTCPeerConnection({
-        iceServers: [
-          {
-            urls: ["turn:demo.intelehealth.org:3478"],
-            username: "ihuser",
-            credential: "keepitsecrect",
-          },
-          {
-            urls: ["turn:testing.intelehealth.org:3478"],
-            username: "ihuser",
-            credential: "keepitsecrect",
-          },
-          { urls: ["stun:stun.l.google.com:19302"] },
-          { urls: ["stun:stun1.l.google.com:19302"] },
-        ],
-      });
-      this.pc.onicecandidate = this.onIceCandidate.bind(this);
-      this.pc.onaddstream = this.onAddStream.bind(this);
-      this.pc.addEventListener('icecandidateerror', (event) => { console.log(event) });
-      this.pc.addStream(this.localStream);
-
-    } catch (e) {
-
-      alert("Cannot create RTCPeerConnection object.");
-      return;
-    }
-  }
-
-  onIceCandidate(event: any) {
-    if (event.candidate) {
-
-      this.sendMessage2({
-        type: "candidate",
-        candidate: event.candidate,
-      });
-    }
-  }
-
-  onAddStream(event: any) {
-    this.remoteVideoRef.nativeElement.srcObject = event.stream;
-    this.isRemote = true;
-  }
-
-  sendOffer() {
-
-    this.pc.createOffer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
-    });
-  }
-
-  stop() {
-    this.isStarted = false;
-    this.localStream && this.localStream.getTracks().forEach(function (track) {
-      track.stop();
-    });
-    if (this.pc) {
-      this.pc.close();
-      this.pc = null;
-    }
-    this.close();
-  }
-
-  sendAnswer() {
-    this.pc.createAnswer().then(this.setAndSendLocalDescription.bind(this), (error: any) => {
-      console.log(error);
-    });
-  }
-
-  setAndSendLocalDescription(sessionDescription) {
-    this.pc.setLocalDescription(sessionDescription);
-
-    this.sendMessage2(sessionDescription);
-  }
-
   endCallInRoom() {
     setTimeout(() => {
+      this.close();
       this.webrtcSvc.room.disconnect(true);
     }, 0);
     this.webrtcSvc.token = '';
@@ -558,18 +393,15 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.socketSvc.incoming = false;
-    clearInterval(this.changeDetForDuration);
-    this.webrtcSvc.disconnect();
-  }
-
   get callDuration() {
     let duration: any;
     if (this.callStartedAt) {
       duration = moment.duration(moment().diff(this.callStartedAt))
+      const minutes = duration.minutes() < 10 ? '0' + duration.minutes(): duration.minutes();
+      const seconds = duration.seconds() < 10 ? '0' + duration.seconds(): duration.seconds();
+      return `${minutes}:${seconds}`;
     }
-    return duration ? `${duration.minutes()}:${duration.seconds()}` : '';
+    return '';
   }
 
   isPdf(url) {
@@ -589,6 +421,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
 
   setImage(src) {
     this.cs.openImagesPreviewModal({ startIndex: 0, source: [{ src }] }).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.socketSvc.incoming = false;
+    clearInterval(this.changeDetForDuration);
+    this.webrtcSvc.disconnect();
   }
 
 }
