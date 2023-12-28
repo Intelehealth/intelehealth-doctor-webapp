@@ -153,20 +153,14 @@ export class SetupCalendarComponent implements OnInit {
   * @return {void}
   */
   addMonth() {
-    if (this.scheduledMonths.length !== this.monthNames.length) {
-      let today = new Date();
-      for (let x = 0; x < this.monthNames.length; x++) {
-        let flag = 0;
-        for (let y = 0; y < this.scheduledMonths.length; y++) {
-          if (this.monthNames[x] == this.scheduledMonths[y].name) {
-            flag = 1;
-            break;
-          }
-        }
-        if (flag == 0 && today.getMonth() <= x) {
-          this.scheduledMonths.push({ name: this.monthNames[x], year: new Date().getFullYear().toString() });
-          break;
-        }
+    let year = new Date().getFullYear();
+    let month = new Date().getMonth();
+    let lastMonthObj = this.scheduledMonths.length ? this.scheduledMonths[this.scheduledMonths.length - 1] : {name: this.monthNames[month], year: year.toString()};
+    let intMonth = this.monthNames.indexOf(lastMonthObj.name);
+    if(intMonth >= 0){
+      let newMonth = new Date(+lastMonthObj.year, intMonth+1, 1);
+      if([year,(year+1)].indexOf(newMonth.getFullYear()) != -1){
+        this.scheduledMonths.push({ name: this.monthNames[newMonth.getMonth()], year: newMonth.getFullYear().toString() });
       }
     }
   }

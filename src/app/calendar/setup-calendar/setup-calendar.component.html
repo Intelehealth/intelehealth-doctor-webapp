@@ -22,7 +22,7 @@
         <ul class="month-list">
           <ng-container *ngFor="let m of scheduledMonths; let i=index;">
             <li class="list-item" [class.selected]="selectedMonth && selectedMonth.name == m.name" (click)="selectMonth(m.name, m.year)">
-              <span data-test-id="spSelectMonth">{{(m.name)| translate}}</span>
+              <span data-test-id="spSelectMonth">{{(m.name)| translate}} {{(m.year)| translate}}</span>
               <mat-icon>keyboard_arrow_right</mat-icon>
             </li>
           </ng-container>
