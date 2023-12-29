@@ -76,3 +76,5 @@ FIREBASE_MESSAGING_SENDER_ID=XXXXX
 FIREBASE_APP_ID=XXXXX
 SHOW_CAPTCHA=true/false
 ```
+
+[Disclaimer:] (https://github.com/Intelehealth/Intelehealth-Doctor-WebApp/blob/master/HEALTHCARE%20DISCLAIMER.md)
