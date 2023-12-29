@@ -95,11 +95,11 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     await this.webrtcSvc.updateVisitHolderId(this.data.visitId);
 
     if (this.message) {
-      const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
-      if (!nursePresent) {
-        this.toastr.error("Please try again later.", "Health Worker is not Online.");
-        return;
-      }
+      // const nursePresent: any = this.socketSvc.activeUsers.find(u => u?.uuid === this.webrtcSvc.visitHolderId);
+      // if (!nursePresent) {
+      //   this.toastr.error("Please try again later.", "Health Worker is not Online.");
+      //   return;
+      // }
 
       if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
         this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);

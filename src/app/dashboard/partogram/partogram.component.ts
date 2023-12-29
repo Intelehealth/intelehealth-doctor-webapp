@@ -633,7 +633,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
               value: a.assessmentValue,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[22].stage1values[index] = [{ value: a.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [{ value: a.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
+              (stage == 1) ? this.parameters[22].stage1values[index] = [...this.parameters[22].stage1values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [...this.parameters[22].stage2values[index], { value: a.assessmentValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
             });
           });
         }
@@ -647,7 +647,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
               value: p.planValue,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[23].stage1values[index] = [{ value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [{ value: p.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
+              (stage == 1) ? this.parameters[23].stage1values[index] = [ ...this.parameters[23].stage1values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [...this.parameters[23].stage2values[index], { value: p.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
             });
           });
         }
@@ -661,7 +661,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
               value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
               encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
             }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[20].stage1values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[20].stage2values[index] = [{ value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
+              (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
             });
           });
         }
