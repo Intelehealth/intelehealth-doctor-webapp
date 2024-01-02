@@ -226,8 +226,13 @@ body.font-lato td {
 
 /* Chatbot css*/
 
+
 .chatbot-backdrop {
-  background: transparent;
+  background: black;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  opacity: 0.5 !important;
 }
 
 .chatbot-container .mat-dialog-container {
@@ -381,19 +386,10 @@ body.font-lato td {
 }
 
 
-@media all and (min-width:0px) and (max-width: 568px) {  
-  .chatbot-backdrop {
-    background: transparent;
-    background: black;
-  }
-  
-  .cdk-overlay-backdrop.cdk-overlay-backdrop-showing{
-    opacity: 0.5 !important;
-  }
-  
+@media all and (min-width:0px) and (max-width: 568px) {
   .chatbot-container {
     &.chatbot-container-mobile {
-      width: 100% !important;  
+      width: 100% !important;
       max-width: 100% !important;
       margin-left: 20px;
     }
@@ -729,17 +725,19 @@ body.font-lato td {
     min-width: auto;
     max-width: 96% !important;
   }
+
   .intel-accordion-con {
     .mat-expansion-panel {
       padding: 10px !important;
       margin-bottom: 10px !important;
     }
   }
-  .mat-expansion-indicator{
+
+  .mat-expansion-indicator {
     padding: 1rem !important;
   }
 
-  .mat-tab-label{
+  .mat-tab-label {
     padding: 0px 10px !important;
   }
 }
