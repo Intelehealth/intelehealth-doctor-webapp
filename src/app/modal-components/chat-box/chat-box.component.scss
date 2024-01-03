@@ -75,6 +75,7 @@
         margin: 4px 0px;
         overflow: auto;
         flex-shrink: 0;
+        word-wrap: break-word;
       }
 
       .chat-message.right {
