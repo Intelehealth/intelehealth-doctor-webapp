@@ -11,6 +11,7 @@ import { ApiResponseModel, EncounterProviderModel, MessageModel } from 'src/app/
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { doctorDetails, visitTypes } from 'src/config/constant';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-video-call',
@@ -58,7 +59,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     private socketSvc: SocketService,
     private cs: CoreService,
     private toastr: ToastrService,
-    private webrtcSvc: WebrtcService
+    private webrtcSvc: WebrtcService,
+    private translateService: TranslateService
   ) { }
 
   async ngOnInit() {
@@ -126,7 +128,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   async startCall() {
     if (!this.webrtcSvc.token) {
       await this.webrtcSvc.getToken(this.provider?.uuid, this.room, this.nurseId).toPromise().catch(err => {
-        this.toastr.show('Failed to generate a video call token.', null, { timeOut: 1000 });
+        this.toastr.show(this.translateService.instant(`messages.${'Failed to generate a video call token.'}`), null, { timeOut: 1000 });
       });
     }
     if (!this.webrtcSvc.token) return;
@@ -202,7 +204,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       if (!this.callConnected) {
         this.socketSvc.emitEvent('call_time_up', this.nurseId);
         this.endCallInRoom();
-        this.toastr.info("Health worker not available to pick the call, please try again later.", null, { timeOut: 3000 });
+        this.toastr.info(this.translateService.instant(`messages.${"Health worker not available to pick the call, please try again later."}`), null, { timeOut: 3000 });
       }
     }, ringingTimeout);
   }
@@ -313,7 +315,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   handleParticipantDisconnected() {
-    this.toastr.info("Call ended from Health Worker's end.", null, { timeOut: 2000 });
+    this.toastr.info(this.translateService.instant(`messages.${"Call ended from Health Worker's end."}`), null, { timeOut: 2000 });
     this.callConnected = false;
     this.socketSvc.incomingCallData = null;
     this.endCallInRoom();
@@ -409,13 +411,13 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.onEvent("hw_call_reject").subscribe((data) => {
       if (data === 'app') {
         this.endCallInRoom();
-        this.toastr.info("Call rejected by Health Worker", null, { timeOut: 2000 });
+        this.toastr.info(this.translateService.instant(`messages.${"Call rejected by Health Worker"}`), null, { timeOut: 2000 });
       }
     });
 
     this.socketSvc.onEvent("bye").subscribe((data: any) => {
       if (data === 'app') {
-        this.toastr.info("Call ended from Health Worker end.", null, { timeOut: 2000 });
+        this.toastr.info(this.translateService.instant(`messages.${"Call ended from Health Worker end."}`), null, { timeOut: 2000 });
       }
     });
 

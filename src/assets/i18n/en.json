@@ -352,6 +352,9 @@
   "Select Language":"Select Language",
   "Read":"Read",
   "Sent":"Sent",
+  "Sending":"Sending",
+  "Delivered":"Delivered",
+  "Call is connecting":"Call is connecting",
   "Follow-ups":"Follow-ups",
   "details":"details",
   "View details":"View details",
@@ -559,7 +562,6 @@
     "Mindmap Delete Failed":"Mindmap Delete Failed------",
     "Mindmap deleted successfully!":"Mindmap deleted successfully!",
     "Close": "Close",
-
     "Unable to send prescription since your profile is not complete.":"Unable to send prescription since your profile is not complete.",
     "Go to profile":"Go to profile",
     "Try again":"Try again",
@@ -567,7 +569,17 @@
     "Unable to send prescription since this visit already in progress with another doctor.":"Unable to send prescription since this visit already in progress with another doctor.",
     "Go to dashboard":"Go to dashboard",
     "Please upload png, jpg or jpeg file only.":"Please upload png, jpg or jpeg file only.",
-    "Ended":"Ended"
+    "Ended":"Ended",
+    "Please try again later.":"Please try again later.",
+    "Health Worker is not Online.":"Health Worker is not Online.",
+    "Reduce to ":"Reduce to ", 
+    " characters or less.":" characters or less.",
+    "Length should not exceed ":"Length should not exceed ",
+    " characters.":" characters.",
+    "Failed to generate a video call token.":"Failed to generate a video call token.",
+    "Health worker not available to pick the call, please try again later.":"Health worker not available to pick the call, please try again later.",
+    "Call ended from Health Worker's end.":"Call ended from Health Worker's end.",
+    "Call rejected by Health Worker":"Call rejected by Health Worker"
   },
   "I18N": {
     "MAT_PAGINATOR": {

@@ -287,6 +287,9 @@
   "Select Language":"Выберите язык",
   "Read":"Прочитать",
   "Sent":"Отправлено",
+  "Sending":"Отправка",
+  "Delivered":"Доставлено",
+  "Call is connecting":"Соединение",
   "Follow-ups":"Последующие наблюдения",
   "details":"подробности",
   "View details":"Просмотр деталей",
@@ -581,7 +584,17 @@
     "Unable to send prescription due to poor network connection. Please try again or come back later":"Невозможно отправить рецепт из-за плохого соединения с сетью. Пожалуйста, попробуйте еще раз или зайдите позже",
     "Unable to send prescription since this visit already in progress with another doctor.":"Невозможно отправить рецепт, так как этот визит уже находится в процессе у другого врача.",
     "Go to dashboard":"Перейти к профилю",
-    "Please upload png, jpg or jpeg file only.":"Пожалуйста, загружайте только файлы png, jpg или jpeg."
+    "Please upload png, jpg or jpeg file only.":"Пожалуйста, загружайте только файлы png, jpg или jpeg.",
+    "Please try again later.":"Пожалуйста, повторите попытку позже.",
+    "Health Worker is not Online.":"Врач не в сети.",
+    "Reduce to ":"Уменьшите до ", 
+    " characters or less.":" символов или меньше.",
+    "Length should not exceed ":"Не должно превышать ",
+    " characters.":" символов.",
+    "Failed to generate a video call token.":"Не удалось сгенерировать маркер видеовызова.",
+    "Health worker not available to pick the call, please try again later.":"Врач недоступен для ответа на звонок, пожалуйста, повторите попытку позже.",
+    "Call ended from Health Worker's end.":"Вызов завершен со стороны врача.",
+    "Call rejected by Health Worker":"Вызов отклонен врачом"
   },
   "I18N": {
     "MAT_PAGINATOR": {

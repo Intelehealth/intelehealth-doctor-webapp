@@ -9,6 +9,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { getCacheData } from 'src/app/utils/utility-functions';
 import { notifications, doctorDetails, visitTypes, WEBRTC } from 'src/config/constant';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat-box',
@@ -37,7 +38,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     private chatSvc: ChatService,
     private socketSvc: SocketService,
     private coreService: CoreService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -114,12 +116,12 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     if (this.message) {
       const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
       if (!nursePresent) {
-        this.toastr.error("Please try again later.", "Health Worker is not Online.");
+        this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Health Worker is not Online."}`));
         return;
       }
 
       if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
-        this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);
+        this.toastr.error(this.translateService.instant(`messages.${'Reduce to '}`) + `${this.CHAT_TEXT_LIMIT}` + this.translateService.instant(`messages.${' characters or less.'}`), this.translateService.instant(`messages.${'Length should not exceed '}`) + `${this.CHAT_TEXT_LIMIT}` + this.translateService.instant(`messages.${' characters.'}`));
         return;
       }
 
