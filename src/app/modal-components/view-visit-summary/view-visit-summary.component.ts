@@ -377,9 +377,10 @@ export class ViewVisitSummaryComponent implements OnInit {
   getEyeImages(visit: VisitModel) {
     this.eyeImages = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptPhysicalExamination).subscribe((response) => {
-      response.results.forEach((obs: ObsModel) => {
+      response.results.forEach(async (obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
+          const imageBase64 = await this.toObjectUrl(`${this.baseURL}/obs/${obs.uuid}/value`);
+          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment, base64: imageBase64.toString()};
           this.eyeImages.push(data);
         }
       });
@@ -454,7 +455,7 @@ export class ViewVisitSummaryComponent implements OnInit {
   */
   async downloadVisitSummary() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
-    pdfMake.createPdf({
+    const pdfObj = {
       pageSize: 'A4',
       pageOrientation: 'portrait',
       pageMargins: [ 20, 50, 20, 20 ],
@@ -770,7 +771,8 @@ export class ViewVisitSummaryComponent implements OnInit {
       defaultStyle: {
         font: 'DmSans'
       }
-    }).download('e-visit-summary');
+    };
+    pdfMake.createPdf(pdfObj).download('e-visit-summary');
   }
 
   toObjectUrl(url: string) {
@@ -806,8 +808,22 @@ export class ViewVisitSummaryComponent implements OnInit {
             };
             ph.data.forEach(phi=>{
               ph_data.ul.push({text: [{text: `${phi.key} : `, bold: true}, `${phi.value?phi.value:'None'}`], margin: [0, 5, 0, 5]});
-            })
-            records.push([ph_data])
+            });
+            if(this.getImagesBySection(ph.title).length){
+              let colsImages = [];
+              ph_data.ul.push({text: [{text: `Pictures : `, bold: true}, ''], margin: [0, 5, 0, 5]});
+              records.push([ph_data]);
+              this.getImagesBySection(ph.title).forEach((img,i)=>{
+                colsImages.push({image:img.base64,width:30, height:30});
+              });
+              records.push([{
+                colSpan: 2,
+                columns: colsImages,
+                columnGap:10
+              }]);
+            } else {
+              records.push([ph_data]);
+            }
           });
         }
         break;
@@ -815,22 +831,36 @@ export class ViewVisitSummaryComponent implements OnInit {
         if (this.physicalExaminationData.length) {
           this.physicalExaminationData.forEach(pe => {
             if(pe.title !== 'Abdomen'){
-              records.push([{ text: `${pe.title}`, style: 'subSectionheader', colSpan: 2 }])
+              records.push([{ text: `${pe.title}`, style: 'subSectionheader', colSpan: 2 }]);
               let pe_data = {
                 colSpan: 2,
                 ul: []
               };
               pe.data.forEach(pei=>{
                 pe_data.ul.push({text: [{text: `${pei.key} : `, bold: true}, `${pei.value?pei.value:'None'}`], margin: [0, 5, 0, 5]});
-              })
-              records.push([pe_data])
+              });
+              if(this.getImagesBySection(pe.title).length){
+                let colsImages = [];
+                pe_data.ul.push({text: [{text: `Pictures : `, bold: true}, ''], margin: [0, 5, 0, 5]});
+                records.push([pe_data]);
+                this.getImagesBySection(pe.title).forEach((img,i)=>{
+                  colsImages.push({image:img.base64,width:30, height:30});
+                });
+                records.push([{
+                  colSpan: 2,
+                  columns: colsImages,
+                  columnGap:10
+                }]);
+              } else {
+                records.push([pe_data]);
+              }
             }
           });
         }
         break;
       case 'abdomen_examination':
-        if (this.checkUpReasonData.length) {
-          this.checkUpReasonData.forEach(pe => {
+        if (this.physicalExaminationData.length) {
+          this.physicalExaminationData.forEach(pe => {
             if(pe.title === 'Abdomen'){
               pe.data.forEach(pei=>{
                 records.push({text: [{text: `${pei.key} : `}, ` `], margin: [0, 5, 0, 5]});
