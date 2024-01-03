@@ -229,7 +229,7 @@
                         <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="49152" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
                         <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFile">
                           <img src="assets/svgs/add-btn-blue-square.svg" alt="" width="48px" height="48px">
-                          <p class="ml-2">{{'Upload a scanned image of your signature.' | translate}}<br> {{'having size (5kb to 48kb)' | translate}}</p>
+                          <p class="ml-2">{{'Upload a scanned image of your signature. (PNG | JPG | JPEG)' | translate}}<br> {{'having size (5kb to 48kb)' | translate}}</p>
                         </div>
                       </ng-container>
                       <ng-template #signaturePreview>

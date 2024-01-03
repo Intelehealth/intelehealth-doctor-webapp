@@ -505,7 +505,8 @@ export interface DiagnosisModel {
 
 export interface DocImagesModel {
   src: string,
-  section: string
+  section: string,
+  base64?: string
 }
 
 export interface SocketUserModel {
