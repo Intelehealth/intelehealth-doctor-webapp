@@ -865,6 +865,18 @@ export class ViewVisitSummaryComponent implements OnInit {
               pe.data.forEach(pei=>{
                 records.push({text: [{text: `${pei.key} : `}, ` `], margin: [0, 5, 0, 5]});
               })
+              if(this.getImagesBySection(pe.title).length){
+                let colsImages = [];
+                records.push({text: [{text: `Pictures : `}, ` `], margin: [0, 5, 0, 5]});
+                this.getImagesBySection(pe.title).forEach((img,i)=>{
+                  colsImages.push({image:img.base64,width:30, height:30});
+                });
+                records.push([{
+                  colSpan: 2,
+                  columns: colsImages,
+                  columnGap:10
+                }]);
+              }
             }
           });
         }
