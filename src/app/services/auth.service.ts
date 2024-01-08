@@ -47,31 +47,6 @@ export class AuthService {
   }
   public fingerPrint;
 
-  sendToken(token) {
-    this.cookieService.set("JSESSIONID", token);
-  }
-
-  getToken() {
-    return this.cookieService.check("JSESSIONID");
-  }
-
-  isLoggedIn() {
-    return this.getToken() !== false;
-  }
-
-  logout() {
-    this.sessionService.session().subscribe((res) => {
-      this.sessionService.deleteSession(res.sessionId).subscribe((response) => {
-        deleteCacheData(doctorDetails.USER);
-        deleteCacheData(doctorDetails.PROVIDER);
-        deleteCacheData(visitTypes.VISIT_NOTE_PROVIDER);
-        deleteCacheData('session');
-        this.cookieService.deleteAll();
-        this.myRoute.navigate(["/login"]);
-      });
-    });
-  }
-
   getFingerPrint() {
     (async () => {
       const fp = await FingerprintJS.load();

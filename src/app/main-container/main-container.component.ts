@@ -348,9 +348,17 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     });
   }
 
-  // get snoozeTimeout() {
-  //   return this.notificationService.snoozeTimeout;
-  // }
+  get user() {
+    return getCacheData(true, doctorDetails.USER);
+  }
+
+  get provider() {
+    return getCacheData(true, doctorDetails.PROVIDER);
+  }
+
+  resetSearch() {
+    this.searchForm.patchValue({ keyword: ''});
+  }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
@@ -367,11 +375,4 @@ export class MainContainerComponent implements OnInit, AfterContentChecked, OnDe
     }
   }
 
-  get user() {
-    return getCacheData(true, doctorDetails.USER);
-  }
-
-  get provider() {
-    return getCacheData(true, doctorDetails.PROVIDER);
-  }
 }

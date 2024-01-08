@@ -162,20 +162,6 @@ export class SocketService {
       top: "90px",
       right: "0px",
     };
-    const config: MatDialogConfig = {
-      width: "calc(100% - 300px)",
-      height: "82vh",
-      maxHeight: "90vh",
-      autoFocus: false,
-      hasBackdrop: false,
-      position,
-      data: {
-        patientUuid: getCacheData(false, 'patientUuid'),
-        connectToDrId: getCacheData(false, 'connectToDrId'),
-        visitId,
-        initiator,
-      },
-    };
   }
 
   get user() {

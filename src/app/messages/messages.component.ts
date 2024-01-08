@@ -81,13 +81,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  get patientPic() {
-    if (!this.conversations.patientPic) {
-      return 'assets/svgs/user.svg';
-    }
-    return this.conversations.patientPic;
-  }
-
   conversationSelected(conversation: any) {
     this.selectedConversation = conversation;
     this.visitId = this.selectedConversation?.visitId;
@@ -99,18 +92,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   onImgError(event: any) {
     event.target.src = 'assets/svgs/user.svg';
-  }
-
-  submitMessage(event) {
-    const value = event.target.value.trim();
-    this.message = '';
-    if (value.length < 1) { return false; }
-    this.selectedConversation.latestMessage = value;
-    this.selectedConversation.messages.unshift({
-      id: 1,
-      message: value,
-      me: true,
-    });
   }
 
   getPatientsVisits(patientId) {
@@ -147,10 +128,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   get patientName() {
     return getCacheData(false, 'patientName') || '';
-  }
-
-  clickMenu() {
-    this.openMenu = !this.openMenu;
   }
 
   sendMessage() {
