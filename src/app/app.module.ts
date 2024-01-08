@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -99,6 +99,88 @@ import { CookieModule } from "ngx-cookie";
 import { ToastrModule } from "ngx-toastr";
 import { VideoCallComponent } from './modal-components/video-call/video-call.component';
 import { MomentModule } from "ngx-moment";
+import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
+
+
+const ROUTES: any[] = [
+  { path: "login", component: LoginPageComponent },
+  {
+    path: "",
+    component: MainComponent,
+    children: [
+      {
+        path: "home",
+        component: HomepageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "findPatient",
+        component: FindPatientComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "myAccount",
+        component: MyAccountComponent,
+        canActivate: [AuthGuard],
+      },
+      { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
+      {
+        path: "modals",
+        component: ModalsComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "signature",
+        component: SignatureComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "editDetails",
+        component: EditDetailsComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "endVisits",
+        component: EndedVisitsComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "changePassword",
+        component: ChangePasswordComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "monitoring",
+        component: MonitoringComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "send-sms",
+        component: SendSmsComponent,
+        canActivate: [AuthGuard, AdminGuard],
+      },
+      {
+        path: "visitSummary/:patient_id/:visit_id",
+        component: VisitSummaryComponent,
+        canActivate: [AuthGuard],
+      },
+      { path: "appointment/schedule", component: AppointmentComponent },
+      { path: "appointment/view", component: CalendarComponent },
+      {
+        path: "appointment",
+        redirectTo: "appointment/view",
+        pathMatch: "full",
+      },
+      { path: "test/chat", component: TestChatComponent },
+      {
+        path: "vc/call",
+        component: VcComponent,
+      },
+      { path: "", redirectTo: "home", pathMatch: "full" },
+    ],
+  },
+  { path: "**", component: Page404Component },
+];
 
 @NgModule({
   declarations: [
@@ -187,88 +269,7 @@ import { MomentModule } from "ngx-moment";
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    RouterModule.forRoot(
-      [
-        { path: "login", component: LoginPageComponent },
-        {
-          path: "",
-          component: MainComponent,
-          children: [
-            {
-              path: "home",
-              component: HomepageComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "findPatient",
-              component: FindPatientComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "myAccount",
-              component: MyAccountComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "ayu", component: AyuComponent, canActivate: [AuthGuard] },
-            {
-              path: "modals",
-              component: ModalsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "signature",
-              component: SignatureComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "editDetails",
-              component: EditDetailsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "endVisits",
-              component: EndedVisitsComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "changePassword",
-              component: ChangePasswordComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "monitoring",
-              component: MonitoringComponent,
-              canActivate: [AuthGuard],
-            },
-            {
-              path: "send-sms",
-              component: SendSmsComponent,
-              canActivate: [AuthGuard, AdminGuard],
-            },
-            {
-              path: "visitSummary/:patient_id/:visit_id",
-              component: VisitSummaryComponent,
-              canActivate: [AuthGuard],
-            },
-            { path: "appointment/schedule", component: AppointmentComponent },
-            { path: "appointment/view", component: CalendarComponent },
-            {
-              path: "appointment",
-              redirectTo: "appointment/view",
-              pathMatch: "full",
-            },
-            { path: "test/chat", component: TestChatComponent },
-            {
-              path: "vc/call",
-              component: VcComponent,
-            },
-            { path: "", redirectTo: "home", pathMatch: "full" },
-          ],
-        },
-        { path: "**", component: Page404Component },
-      ],
-      { scrollPositionRestoration: "enabled" }
-    ),
+    RouterModule.forRoot(ROUTES, { scrollPositionRestoration: "enabled" }),
     // tslint:disable-next-line: max-line-length
     ServiceWorkerModule.register("/intelehealth/custom-service-worker.js", {
       enabled: environment.production,
@@ -293,6 +294,11 @@ import { MomentModule } from "ngx-moment";
     { provide: MatDialogRef, useValue: {} },
     SocketService,
     ChatService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })
