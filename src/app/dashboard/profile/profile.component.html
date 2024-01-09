@@ -224,7 +224,7 @@
                       </div>
                     </mat-tab>
 
-                    <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
+                    <!-- <mat-tab label="{{'Upload'|translate}}" data-test-id="mtUpload">
                       <ng-container *ngIf="!signatureFile; else signaturePreview">
                         <ngx-dropzone #drop [expandable]="true" [disableClick]="false" [multiple]="false" accept="image/png,image/jpg,image/jpeg" [maxFileSize]="49152" (change)="onFilesDropped($event)" data-test-id="dropzoneSignature"></ngx-dropzone>
                         <div class="dropzone d-flex justify-content-center align-items-center" (click)="drop.showFileSelector()" data-test-id="dropzoneFile">
@@ -240,7 +240,7 @@
                           </button>
                         </div>
                       </ng-template>
-                    </mat-tab>
+                    </mat-tab> -->
                   </mat-tab-group>
                   <p>
                     {{'By signing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.' | translate}}

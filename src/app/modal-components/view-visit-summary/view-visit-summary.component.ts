@@ -12,6 +12,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 import { visit as visit_logos, logo as main_logo} from "../../utils/base64"
+import { promise } from 'protractor';
 
 @Component({
   selector: 'app-view-visit-summary',
@@ -405,9 +406,11 @@ export class ViewVisitSummaryComponent implements OnInit {
   getVisitAdditionalDocs(visit: VisitModel) {
     this.additionalDocs = [];
     this.diagnosisService.getObs(visit.patient.uuid, this.conceptAdditionlDocument).subscribe((response) => {
-      response.results.forEach((obs: ObsModel) => {
+      response.results.forEach(async (obs: ObsModel) => {
         if (obs.encounter !== null && obs.encounter.visit.uuid === visit.uuid) {
-          const data = { src: `${this.baseURL}/obs/${obs.uuid}/value`, section:obs.comment};
+          const src = `${this.baseURL}/obs/${obs.uuid}/value`;
+          const base64 = await this.toObjectUrl(src);
+          const data = { src: src, section:obs.comment, base64: base64.toString()};
           this.additionalDocs.push(data);
         }
       });
@@ -728,6 +731,25 @@ export class ViewVisitSummaryComponent implements OnInit {
                 '',
                 '',
                 ''
+              ],
+              [
+                {
+                  colSpan: 4,
+                  table: {
+                    widths: [30, '*'],
+                    headerRows: 1,
+                    body: [
+                      [ {image: 'medicalHistory', width: 25, height: 25, border: [false, false, false, true] }, {text: 'Additional documents', style: 'sectionheader', border: [false, false, false, true] }],
+                      ...this.getRecords('additionalDocs')
+                    ]
+                  },
+                  layout: {
+                    defaultBorder: false
+                  }
+                },
+                '',
+                '',
+                ''
               ]
             ]
           },
@@ -809,21 +831,7 @@ export class ViewVisitSummaryComponent implements OnInit {
             ph.data.forEach(phi=>{
               ph_data.ul.push({text: [{text: `${phi.key} : `, bold: true}, `${phi.value?phi.value:'None'}`], margin: [0, 5, 0, 5]});
             });
-            if(this.getImagesBySection(ph.title).length){
-              let colsImages = [];
-              ph_data.ul.push({text: [{text: `Pictures : `, bold: true}, ''], margin: [0, 5, 0, 5]});
-              records.push([ph_data]);
-              this.getImagesBySection(ph.title).forEach((img,i)=>{
-                colsImages.push({image:img.base64,width:30, height:30});
-              });
-              records.push([{
-                colSpan: 2,
-                columns: colsImages,
-                columnGap:10
-              }]);
-            } else {
-              records.push([ph_data]);
-            }
+            records.push([ph_data]);
           });
         }
         break;
@@ -863,11 +871,11 @@ export class ViewVisitSummaryComponent implements OnInit {
           this.physicalExaminationData.forEach(pe => {
             if(pe.title === 'Abdomen'){
               pe.data.forEach(pei=>{
-                records.push({text: [{text: `${pei.key} : `}, ` `], margin: [0, 5, 0, 5]});
+                records.push({text: [{text: `${pei.key}`, bold: true}, ` `], margin: [0, 5, 0, 5]});
               })
               if(this.getImagesBySection(pe.title).length){
                 let colsImages = [];
-                records.push({text: [{text: `Pictures : `}, ` `], margin: [0, 5, 0, 5]});
+                records.push({text: [{text: `Pictures : `, bold: true}, ` `], margin: [0, 5, 0, 5]});
                 this.getImagesBySection(pe.title).forEach((img,i)=>{
                   colsImages.push({image:img.base64,width:30, height:30});
                 });
@@ -921,6 +929,22 @@ export class ViewVisitSummaryComponent implements OnInit {
           this.vitalObs.forEach(v => {
             records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
           });
+        }
+        break;
+      
+      case 'additionalDocs':
+        console.log(this.additionalDocs)
+        if (this.additionalDocs.length) {
+          let colsImages = [];
+          this.additionalDocs.forEach(img => {
+            colsImages.push({image:img.base64,width:30, height:30});
+          });
+          records.push([{
+            colSpan: 2,
+            columns: colsImages,
+            columnGap:10,
+            margin: [0, 5, 0, 5]
+          }]);
         }
         break;
     }
