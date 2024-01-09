@@ -93,6 +93,12 @@
                   </mat-card>
                   <br>
             </div>
+            <div  *ngIf="isAdminister">
+                  <mat-card>
+                        <app-administer></app-administer>
+                  </mat-card>
+                  <br>
+            </div>
             <mat-card>
                   <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
@@ -105,12 +111,6 @@
               <app-aid-order [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-aid-order>
             </mat-card>
             <br>
-            <div  *ngIf="isAdminister">
-                  <mat-card>
-                        <app-administer></app-administer>
-                  </mat-card>
-                  <br>
-            </div>
             <mat-card>
                   <app-additional-comment [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-additional-comment>
             </mat-card>
@@ -145,9 +145,9 @@
             </div>
       </div>
 </div>
-<app-chat></app-chat>
+<div class="chat-button" *ngIf="show" id="chat-button" (click)="openChatModal()">
+      <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
+</div>
 <div class="vc-button" *ngIf="show" (click)="openVcModal()">
-  <span>
-    <img [src]="videoIcon" />
-  </span>
+      <span><img [src]="videoIcon" /></span>
 </div>

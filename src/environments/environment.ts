@@ -13,7 +13,8 @@ export const environment = {
   webrtcSdkServerUrl: "wss://training.sila.care:9090",
   webrtcTokenServerUrl: 'https://training.sila.care:3000/',
   version:"SYR-v1.1.2",
-  versionCode:"9"
+  versionCode:"9",
+  publicKey: "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54",
 };
 
 /*

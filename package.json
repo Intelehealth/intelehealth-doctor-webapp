@@ -37,6 +37,7 @@
     "livekit-client": "^1.11.0",
     "moment": "^2.24.0",
     "ngx-cookie-service": "^2.1.0",
+    "ngx-moment": "^6.0.2",
     "ngx-spinner": "^10.0.1",
     "ngx-toastr": "^14.3.0",
     "rxjs": "~6.6.2",

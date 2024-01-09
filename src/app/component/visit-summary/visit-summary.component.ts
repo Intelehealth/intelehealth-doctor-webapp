@@ -11,7 +11,7 @@ import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
-import { CoreService } from "src/app/services/core.service";
+import { CoreService } from "src/app/services/core/core.service";
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -122,6 +122,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
             this.isAdminister = true
           }
         });
+        const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+        if (openChat === 'true') {
+          this.openChatModal();
+        }  
       });
     this.translationService.getSelectedLanguage();
     if (browserRefresh) {
@@ -347,6 +351,16 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
 
   saveData() {
     this.translationService.getTranslation('Data saved successfully');
+  }
+
+  openChatModal() {
+    this.chatBoxRef = this.cs.openChatBoxModal({
+      patientId: this.visit?.patient?.uuid,
+      visitId: this.visit?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
+    });
   }
 
   ngOnDestroy(): void {
