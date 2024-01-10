@@ -235,6 +235,10 @@ body.font-lato td {
   opacity: 0.5 !important;
 }
 
+.chatbot-container {
+  margin-bottom: 80px;
+}
+
 .chatbot-container .mat-dialog-container {
   overflow: visible;
   position: relative;
@@ -389,9 +393,11 @@ body.font-lato td {
 @media all and (min-width:0px) and (max-width: 568px) {
   .chatbot-container {
     &.chatbot-container-mobile {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin-left: 20px;
+      width: 100%!important;
+      height: 76%!important;
+      max-width: 100%!important;
+      max-height: 76%!important;
+      position: static!important;
     }
   }
 }

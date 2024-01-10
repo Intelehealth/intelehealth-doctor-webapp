@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { ApiResponseModel, MessageModel, SocketUserModel } from 'src/app/model/model';
+import { ApiResponseModel, MessageModel } from 'src/app/model/model';
 import { ChatService } from 'src/app/services/chat.service';
 import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -111,13 +111,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
   * @return {void}
   */
   async sendMessage() {
-    if (this.message) {
-      const nursePresent: SocketUserModel = this.socketSvc.activeUsers.find(u => u?.uuid === this.toUser);
-      if (!nursePresent) {
-        this.toastr.error("Please try again later.", "Health Worker is not Online.");
-        return;
-      }
-
+    if (this.message && this.message?.length > 0) {
+      
       if (this.msgCharCount > this.CHAT_TEXT_LIMIT) {
         this.toastr.error(`Reduce to ${this.CHAT_TEXT_LIMIT} characters or less.`, `Length should not exceed ${this.CHAT_TEXT_LIMIT} characters.`);
         return;
@@ -146,6 +141,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
           }
         });
       this.message = "";
+    } else {
+      this.toastr.error("", "Please write your message.");
     }
   }
 

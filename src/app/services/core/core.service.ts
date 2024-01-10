@@ -1,3 +1,4 @@
+import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { tr } from 'date-fns/locale';
@@ -156,7 +157,7 @@ export class CoreService {
   * @return {MatDialogRef<ChatBoxComponent>} - Dialog reference
   */
   openChatBoxModal(data: any): MatDialogRef<ChatBoxComponent> {
-    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: ["chatbot-container","chatbot-container-mobile"], backdropClass: "chatbot-backdrop", width: "100%", maxHeight: "500px", maxWidth: "300px", position: { bottom: "80px", right: "20px" }, hasBackdrop: true } );
+    const dialogRef = this.dialog.open(ChatBoxComponent, { data, panelClass: ["chatbot-container","chatbot-container-mobile"], backdropClass: "chatbot-backdrop", width: "100%", hasBackdrop: true, disableClose:true, scrollStrategy: new NoopScrollStrategy() } );
     return dialogRef;
   }
 
