@@ -40,7 +40,7 @@
   }
 
   .chat-con-body {
-    margin: 0px 5px 5px;
+    // margin: 0px 5px 5px;
     background: var(--color-offWhite);
     padding: 10px 10px 0px;
     border-radius: 0px 0px 10px 10px;
@@ -56,11 +56,12 @@
       display: flex;
       flex-direction: column-reverse;
       min-height: 340px;
-      max-height: 340px;
+      // max-height: 340px;
       overflow: auto;
       -ms-overflow-style: none;
       /* for Internet Explorer, Edge */
       scrollbar-width: none;
+      height: 67vh;
 
       .chat-message {
         border: 1px solid rgba(178, 175, 190, 0.2);
