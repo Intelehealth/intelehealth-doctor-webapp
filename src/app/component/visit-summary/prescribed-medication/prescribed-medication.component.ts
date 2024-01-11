@@ -50,9 +50,9 @@ export class PrescribedMedicationComponent implements OnInit {
   medicineObs = [];
   medicineObsList = [];
   medicinesList = [];
-  isShow = [];
   objectKeys = Object.keys;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
+  isShow: boolean[] = Array(this.medicineObsList.length).fill(false);
 
 
   medForm = new FormGroup({
@@ -396,7 +396,6 @@ export class PrescribedMedicationComponent implements OnInit {
   }
 
   toggleShow(index: number): void {
-    this.isShow = Array(this.medicineObsList.length).fill(false);
     this.isShow[index] = !this.isShow[index];
   }
 }

@@ -97,6 +97,18 @@ export class AidOrderComponent implements OnInit {
   type4: any = [];
   type5: any = [];
 
+  isShow1: boolean = false
+  isShow2: boolean = false
+  isShow3: boolean = false
+  isShow4: boolean = false
+  isShow5: boolean = false
+
+  isShowComment1: boolean = false
+  isShowComment2: boolean = false
+  isShowComment3: boolean = false
+  isShowComment4: boolean = false
+  isShowComment5: boolean = false
+
   aidObs = [];
   aidObsList = [];
   objectKeys = Object.keys;
@@ -574,5 +586,49 @@ export class AidOrderComponent implements OnInit {
         }
       });      
     });
+  }
+
+  toggleShow(type:string): void {
+    switch (type) {
+      case 'type1':
+        this.isShow1 = !this.isShow1
+        break;
+      case 'type2':
+        this.isShow2 = !this.isShow2
+        break;
+      case 'type3':
+        this.isShow3 = !this.isShow3
+        break;
+      case 'type4':
+        this.isShow4 = !this.isShow4
+        break;
+      case 'type5':
+        this.isShow5 = !this.isShow5
+        break;
+      default:
+        break;
+    }
+  }
+
+  toggleShowComment(type:string): void {
+    switch (type) {
+      case 'type1':
+        this.isShowComment1 = !this.isShowComment1
+        break;
+      case 'type2':
+        this.isShowComment2 = !this.isShowComment2
+        break;
+      case 'type3':
+        this.isShowComment3 = !this.isShowComment3
+        break;
+      case 'type4':
+        this.isShowComment4 = !this.isShowComment4
+        break;
+      case 'type5':
+        this.isShowComment5 = !this.isShowComment5
+        break;
+      default:
+        break;
+    }
   }
 }
