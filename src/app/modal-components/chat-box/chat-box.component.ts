@@ -142,7 +142,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         });
       this.message = "";
     } else {
-      this.toastr.error("", "Please write your message.");
+      const isActive = this.toastr.findDuplicate("Please write your message.", "", true, false);
+      if(!isActive) this.toastr.error("", "Please write your message.");
     }
   }
 
