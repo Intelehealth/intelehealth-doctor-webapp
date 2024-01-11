@@ -14,6 +14,10 @@ export function deleteCacheData(key: string) {
     localStorage.removeItem(key);
 }
 
+export function clearAllCache() {
+    localStorage.clear();
+}
+
 export function isJsonString(str) {
     try {
         const json = JSON.parse(str);
