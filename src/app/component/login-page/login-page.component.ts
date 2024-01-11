@@ -38,6 +38,7 @@ export class LoginPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    clearAllCache(); /** Trying to resolve intermittent login issue due to cache */
     this.service.clearVisits();
     const isLoggedIn: boolean = this.authService.isLoggedIn();
     if (isLoggedIn) {
@@ -74,10 +75,10 @@ export class LoginPageComponent implements OnInit {
               setCacheData('token', resp?.token);
             })
           });
+          this.authService.setToken(response.sessionId);
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               saveToStorage("provider", provider.results[0]);
-              this.authService.setToken(response.sessionId);
               saveToStorage("user", response.user);
               let isNurse = response.user.roles.find((r: any) => r.name == 'Organizational: Nurse');
               let isDoctor = response.user.roles.find((r: any) => r.name == 'Organizational: Doctor');
@@ -114,7 +115,6 @@ export class LoginPageComponent implements OnInit {
           );
 
         } else {
-          clearAllCache(); /** Trying to resolve intermittent login issue due to cache */
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
           });
