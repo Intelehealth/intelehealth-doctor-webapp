@@ -102,6 +102,7 @@ export class HomepageComponent implements OnInit {
             this.specialization = "General Physician";
           }
         });
+        this.getDrSlots();
         //  this.getVisits();
         this.getVisitCounts(this.specialization);
         this.getPriorityVisits();
@@ -112,7 +113,6 @@ export class HomepageComponent implements OnInit {
     } else {
       this.authService.logout();
     }
-    this.getDrSlots();
   }
 
   ngOnDestroy() {
