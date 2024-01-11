@@ -100,6 +100,7 @@ import { ToastrModule } from "ngx-toastr";
 import { VideoCallComponent } from './modal-components/video-call/video-call.component';
 import { MomentModule } from "ngx-moment";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
+import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 
 
 const ROUTES: any[] = [
@@ -294,6 +295,11 @@ const ROUTES: any[] = [
     { provide: MatDialogRef, useValue: {} },
     SocketService,
     ChatService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,

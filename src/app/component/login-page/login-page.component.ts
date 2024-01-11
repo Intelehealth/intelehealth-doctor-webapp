@@ -6,7 +6,8 @@ import { AuthService } from "src/app/services/auth.service";
 import { SessionService } from "src/app/services/session.service";
 import { VisitService } from "src/app/services/visit.service";
 import { environment } from "src/environments/environment";
-declare var saveToStorage: any,  getFromStorage: any;
+import { clearAllCache, setCacheData } from "src/app/utils/utility-functions";
+declare var saveToStorage: any, getFromStorage: any;
 @Component({
   selector: "app-login-page",
   templateUrl: "./login-page.component.html",
@@ -27,14 +28,14 @@ export class LoginPageComponent implements OnInit {
   });
 
   fieldTextType: boolean;
-  version = environment.version + "(" + environment.versionCode+")";
+  version = environment.version + "(" + environment.versionCode + ")";
   constructor(
     private sessionService: SessionService,
     private router: Router,
     private snackbar: MatSnackBar,
     private authService: AuthService,
     private service: VisitService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.service.clearVisits();
@@ -68,6 +69,11 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
+          this.authService.getAuthToken(value.username, value.password).subscribe({
+            next: ((resp: any) => {
+              setCacheData('token', resp?.token);
+            })
+          });
           this.sessionService.provider(response.user.uuid).subscribe(
             (provider) => {
               saveToStorage("provider", provider.results[0]);
@@ -108,6 +114,7 @@ export class LoginPageComponent implements OnInit {
           );
 
         } else {
+          clearAllCache(); /** Trying to resolve intermittent login issue due to cache */
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
           });
