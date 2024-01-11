@@ -87,6 +87,18 @@
                   <app-prescribed-medication [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-medication>
             </mat-card>
             <br>
+            <div  *ngIf="isDispense">
+                  <mat-card>
+                        <app-dispense></app-dispense>
+                  </mat-card>
+                  <br>
+            </div>
+            <div  *ngIf="isAdminister">
+                  <mat-card>
+                        <app-administer></app-administer>
+                  </mat-card>
+                  <br>
+            </div>
             <mat-card>
                   <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
@@ -116,19 +128,6 @@
             </mat-card>
             <br *ngIf="!visitCompletePresent">
 
-            <div  *ngIf="isAdminister">
-                  <mat-card>
-                        <app-administer></app-administer>
-                  </mat-card>
-                  <br>
-            </div>
-            <div  *ngIf="isDispense">
-                  <mat-card>
-                        <app-dispense></app-dispense>
-                  </mat-card>
-                  <br>
-            </div>
-
             <ng-container *ngIf="visitCompletePresent">
                   <div class="d-flex justify-content-center">
                         <mat-card>
@@ -146,9 +145,9 @@
             </div>
       </div>
 </div>
-<app-chat></app-chat>
-<div class="vc-button" (click)="openVcModal()">
-  <span>
-    <img [src]="videoIcon" />
-  </span>
+<div class="chat-button" *ngIf="show" id="chat-button" (click)="openChatModal()">
+      <span><i class="fa fa-comment" aria-hidden="true"></i> </span>
+</div>
+<div class="vc-button" *ngIf="show" (click)="openVcModal()">
+      <span><img [src]="videoIcon" /></span>
 </div>

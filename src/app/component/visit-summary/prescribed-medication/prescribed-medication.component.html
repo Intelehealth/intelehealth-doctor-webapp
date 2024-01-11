@@ -63,8 +63,7 @@
         <textarea class="form-control" placeholder="{{'Additional instruction not covered above'|translate}}"
           formControlName="additional"></textarea>
         <br>
-        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
-          Meds'|translate}}</button>
+        <button type="reset" (click)="onSubmit()" mat-raised-button color="primary" [disabled]='!medForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Meds'|translate}}</button>
       </div>
     </form>
     <br>
@@ -75,12 +74,19 @@
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="meds.comment" [innerHTML]="meds.value.replace('\n','<br>').replace(':','')"></span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-              <span class="comment-blue">{{meds|comment:'addedBy-creator'}} {{meds.creatorRegNo}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-              <span *ngIf="meds.comment" class="comment">{{meds.comment|comment}}</span>
+              <span class="comment-blue" *ngIf="isShow[i]">{{meds|comment:'addedBy-creator'}} {{meds.creatorRegNo}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+              <div *ngFor="let mds of medicineObsList">
+                <div *ngFor="let med of mds[objectKeys(mds)]">
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == meds.value && objectKeys(med[0]) == 'dispensed' && isShow[i]">{{ ('Dispensed by'|translate)+' : '+med[0].dispensed}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == meds.value && objectKeys(med[0]) == 'administered' && isShow[i]">{{ ('Administered by'|translate)+' : '+med[0].administered}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                </div>
+              </div>
+              <div><span *ngIf="meds.comment && isShow[i]" class="comment">{{meds.comment|comment}}</span></div>
             </div>
+            <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show Details'|translate}}</span>
           </div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted && !meds.disabled"
-              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!meds.comment && !visitCompleted && !meds.disabled" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
     </div>
   </ng-container>

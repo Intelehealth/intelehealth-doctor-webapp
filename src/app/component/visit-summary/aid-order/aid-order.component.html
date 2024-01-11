@@ -71,8 +71,13 @@
           {{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}} <br>
           <b>{{ getType1Values() }} {{ (aidOrderForm?.value.type1Other)? ' (' + aidOrderForm?.value.type1Other + ')' : ''  }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-            <span class="comment-blue">{{aidOrderForm?.value.type1Obs.creator.person.display|comment}} {{val?.type1Obs?.creatorRegNo}} | {{aidOrderForm?.value.type1Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span class="comment-blue" *ngIf="isShow1">{{aidOrderForm?.value.type1Obs.creator.person.display|comment}} {{val?.type1Obs?.creatorRegNo}} | {{aidOrderForm?.value.type1Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 1. Medical Equipment loan' && isShow1">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type1Obs.comment" class="comment">{{aidOrderForm?.value.type1Obs|comment:'Deleted by'}}</span>
+            <span *ngIf="isShow1" class="isShow" (click)="toggleShow('type1')">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow1" class="isShow" (click)="toggleShow('type1')">{{'Show Details'|translate}}</span>
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type1Uuid, 'type1Uuid', aidOrderForm?.value.type1CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
@@ -83,8 +88,13 @@
           {{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}} <br>
           <b>{{ getType2Values() }} {{ (aidOrderForm?.value.type2Other)? ' (' + aidOrderForm?.value.type2Other + ')' : ''  }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-            <span class="comment-blue">{{aidOrderForm?.value.type2Obs.creator.person.display|comment}} {{val?.type2Obs?.creatorRegNo}} | {{aidOrderForm?.value.type2Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span class="comment-blue" *ngIf="isShow2">{{aidOrderForm?.value.type2Obs.creator.person.display|comment}} {{val?.type2Obs?.creatorRegNo}} | {{aidOrderForm?.value.type2Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 2. Free Medical equipment' && isShow2">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type2Obs.comment" class="comment">{{aidOrderForm?.value.type2Obs|comment:'Deleted by'}}</span>
+            <span *ngIf="isShow2" class="isShow" (click)="toggleShow('type2')">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow2" class="isShow" (click)="toggleShow('type2')">{{'Show Details'|translate}}</span>
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type2Uuid, 'type2Uuid', aidOrderForm?.value.type2CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
@@ -95,8 +105,13 @@
           {{'Type 3. Cover medication expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type3 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-            <span class="comment-blue">{{aidOrderForm?.value.type3Obs.creator.person.display|comment}} {{val?.type3Obs?.creatorRegNo}} | {{aidOrderForm?.value.type3Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span class="comment-blue" *ngIf="isShow3">{{aidOrderForm?.value.type3Obs.creator.person.display|comment}} {{val?.type3Obs?.creatorRegNo}} | {{aidOrderForm?.value.type3Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 3. Cover medication expenses' && isShow3">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type3Obs.comment" class="comment">{{aidOrderForm?.value.type3Obs|comment:'Deleted by'}}</span>
+            <span *ngIf="isShow3" class="isShow" (click)="toggleShow('type3')">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow3" class="isShow" (click)="toggleShow('type3')">{{'Show Details'|translate}}</span>
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type3Uuid, 'type3Uuid', aidOrderForm?.value.type3CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
@@ -107,8 +122,13 @@
           {{'Type 4. Cover surgical expenses (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type4 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-            <span class="comment-blue">{{aidOrderForm?.value.type4Obs.creator.person.display|comment}} {{val?.type4Obs?.creatorRegNo}} | {{aidOrderForm?.value.type4Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span class="comment-blue" *ngIf="isShow4">{{aidOrderForm?.value.type4Obs.creator.person.display|comment}} {{val?.type4Obs?.creatorRegNo}} | {{aidOrderForm?.value.type4Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 4. Cover surgical expenses' && isShow4">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type4Obs.comment" class="comment">{{aidOrderForm?.value.type4Obs|comment:'Deleted by'}}</span>
+            <span *ngIf="isShow4" class="isShow" (click)="toggleShow('type4')">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow4" class="isShow" (click)="toggleShow('type4')">{{'Show Details'|translate}}</span>
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type4Uuid, 'type4Uuid', aidOrderForm?.value.type4CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
@@ -119,8 +139,13 @@
           {{'Type 5. Cash assistance (amount)'|translate}} <br>
           <b>{{ aidOrderForm?.value.type5 }}</b>
           <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-            <span class="comment-blue">{{aidOrderForm?.value.type5Obs.creator.person.display|comment}} {{val?.type5Obs?.creatorRegNo}} | {{aidOrderForm?.value.type5Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <span class="comment-blue" *ngIf="isShow5">{{aidOrderForm?.value.type5Obs.creator.person.display|comment}} {{val?.type5Obs?.creatorRegNo}} | {{aidOrderForm?.value.type5Obs.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+            <div *ngFor="let med of aidObsList">
+              <span class="comment-blue" *ngIf="objectKeys(med) == 'Type 5. Cash assistance' && isShow5">{{('Dispensed by'|translate)+' : '+med[objectKeys(med)][0].dispensed}} | {{med[objectKeys(med)][1]|date:'dd-MM-y ,hh:mm a'}}</span>
+            </div>
             <span *ngIf="aidOrderForm?.value.type5Obs.comment" class="comment">{{aidOrderForm?.value.type5Obs|comment:'Deleted by'}}</span>
+            <span *ngIf="isShow5" class="isShow" (click)="toggleShow('type5')">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow5" class="isShow" (click)="toggleShow('type5')">{{'Show Details'|translate}}</span>
           </div>
         </div>
         <i (click)="deleteObs(aidOrderForm?.value.type5Uuid, 'type5Uuid', aidOrderForm?.value.type5CreatorUuid)" class="material-icons float-right" [class.disabled]="isManagerRole"
@@ -135,8 +160,12 @@
                   <span>{{'Type 1. Medical Equipment loan (nebulizer, oxygen container, cane, wheel chair, hospital bed, others)'|translate}}</span>
                   <span class="strike">{{ getType1Values2(t1.type1Val) }} {{ (t1.type1OtherVal)? ' (' + t1.type1OtherVal + ')' : '' }}</span>
                   <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                    <span class="comment-blue">{{t1|comment:'addedBy-creator'}} {{t1.comment|comment:'addedBy-regNo'}} | {{t1.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-                    <span *ngIf="t1.comment" class="comment">{{t1|comment:'Deleted by'}}</span>
+                    <span *ngIf="isShowComment1" class="comment-blue">{{t1|comment:'addedBy-creator'}} {{t1.comment|comment:'addedBy-regNo'}} | {{t1.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                    <div>
+                      <span *ngIf="t1.comment && isShowComment1" class="comment">{{t1|comment:'Deleted by'}}</span>
+                    </div>
+                    <span *ngIf="isShowComment1" class="isShow" (click)="toggleShowComment('type1')">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShowComment1" class="isShow" (click)="toggleShowComment('type1')">{{'Show Details'|translate}}</span>
                   </div>
                 </div>
             </div>
@@ -149,8 +178,12 @@
                   <span>{{'Type 2. Free Medical equipment (Stents, baloons, others)'|translate}}</span>
                   <span class="strike">{{ getType2Values2(t2.type2Val) }} {{ (t2.type2OtherVal)? ' (' + t2.type2OtherVal + ')' : '' }}</span>
                   <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                    <span class="comment-blue">{{t2|comment:'addedBy-creator'}} {{t2.comment|comment:'addedBy-regNo'}} | {{t2.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-                    <span *ngIf="t2.comment" class="comment">{{t2|comment:'Deleted by'}}</span>
+                    <span *ngIf="isShowComment2" class="comment-blue">{{t2|comment:'addedBy-creator'}} {{t2.comment|comment:'addedBy-regNo'}} | {{t2.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                    <div>
+                      <span *ngIf="t2.comment && isShowComment2" class="comment">{{t2|comment:'Deleted by'}}</span>
+                    </div>
+                    <span *ngIf="isShowComment2" class="isShow" (click)="toggleShowComment('type2')">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShowComment2" class="isShow" (click)="toggleShowComment('type2')">{{'Show Details'|translate}}</span>
                   </div>
                 </div>
             </div>
@@ -163,8 +196,12 @@
                   <span>{{'Type 3. Cover medication expenses (amount)'|translate}}</span>
                   <span class="strike">{{ t3.type3Val }}</span>
                   <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                    <span class="comment-blue">{{t3|comment:'addedBy-creator'}} {{t3.comment|comment:'addedBy-regNo'}} | {{t3.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-                    <span *ngIf="t3.comment" class="comment">{{t3|comment:'Deleted by'}}</span>
+                    <span *ngIf="isShowComment3" class="comment-blue">{{t3|comment:'addedBy-creator'}} {{t3.comment|comment:'addedBy-regNo'}} | {{t3.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                    <div>
+                      <span *ngIf="t3.comment && isShowComment3" class="comment">{{t3|comment:'Deleted by'}}</span>
+                    </div>
+                    <span *ngIf="isShowComment3" class="isShow" (click)="toggleShowComment('type3')">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShowComment3" class="isShow" (click)="toggleShowComment('type3')">{{'Show Details'|translate}}</span>
                   </div>
                 </div>
             </div>
@@ -177,8 +214,12 @@
                   <span>{{'Type 4. Cover surgical expenses (amount)'|translate}}</span>
                   <span class="strike">{{ t4.type4Val }}</span>
                   <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                    <span class="comment-blue">{{t4|comment:'addedBy-creator'}} {{t4.comment|comment:'addedBy-regNo'}} | {{t4.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-                    <span *ngIf="t4.comment" class="comment">{{t4|comment:'Deleted by'}}</span>
+                    <span *ngIf="isShowComment4" class="comment-blue">{{t4|comment:'addedBy-creator'}} {{t4.comment|comment:'addedBy-regNo'}} | {{t4.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                    <div>
+                      <span *ngIf="t4.comment && isShowComment4" class="comment">{{t4|comment:'Deleted by'}}</span>
+                    </div>
+                    <span *ngIf="isShowComment4" class="isShow" (click)="toggleShowComment('type4')">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShowComment4" class="isShow" (click)="toggleShowComment('type4')">{{'Show Details'|translate}}</span>
                   </div>
                 </div>
             </div>
@@ -191,8 +232,12 @@
                   <span>{{'Type 5. Cash assistance (amount)'|translate}}</span>
                   <span class="strike">{{ t5.type5Val }}</span>
                   <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-                    <span class="comment-blue">{{t5|comment:'addedBy-creator'}} {{t5.comment|comment:'addedBy-regNo'}} | {{t5.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-                    <span *ngIf="t5.comment" class="comment">{{t5|comment:'Deleted by'}}</span>
+                    <span *ngIf="isShowComment5" class="comment-blue">{{t5|comment:'addedBy-creator'}} {{t5.comment|comment:'addedBy-regNo'}} | {{t5.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+                    <div>
+                      <span *ngIf="t5.comment && isShowComment5" class="comment">{{t5|comment:'Deleted by'}}</span>
+                    </div>
+                    <span *ngIf="isShowComment5" class="isShow" (click)="toggleShowComment('type5')">{{'Hide Details'|translate}}</span>
+                    <span *ngIf="!isShowComment5" class="isShow" (click)="toggleShowComment('type5')">{{'Show Details'|translate}}</span>
                   </div>
                 </div>
             </div>

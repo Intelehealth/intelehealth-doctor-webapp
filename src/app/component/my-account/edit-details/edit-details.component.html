@@ -5,49 +5,49 @@
 <div mat-dialog-content>
   <form [formGroup]="editForm">
     <mat-form-field class="example-full-width">
-      <mat-select placeholder="{{ 'Gender' |translate }}" formControlName="gender">
+      <mat-select placeholder="{{ 'Gender' |translate }}" formControlName="gender" required>
         <mat-option value="M">{{ 'Male' |translate }}</mat-option>
         <mat-option value="F">{{ 'Female' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <input matInput placeholder="{{ 'Phone No' | translate }}" formControlName="phoneNumber" />
+      <input matInput placeholder="{{ 'Phone No' | translate }}" formControlName="phoneNumber" type="number" required maxlength="10"/>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <input matInput placeholder="{{ 'WhatsApp No' | translate }}" formControlName="whatsapp" />
+      <input matInput placeholder="{{ 'WhatsApp No' | translate }}" formControlName="whatsapp" type="number"/>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <input matInput placeholder="{{ 'Email Id' |translate}}" type="email" formControlName="emailId" />
+      <input matInput placeholder="{{ 'Email Id' |translate}}" type="email" formControlName="emailId" required/>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <input matInput placeholder="{{ 'Qualification' | translate }}" formControlName="qualification" />
+      <input matInput placeholder="{{ 'Qualification' | translate }}" formControlName="qualification" required/>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'Specialization' | translate }}" formControlName="specialization">
+      <mat-select placeholder="{{ 'Specialization' | translate }}" formControlName="specialization" required>
         <mat-option *ngFor="let specialization of specializations" [value]="specialization">{{ (specialization) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'State' | translate }}" formControlName="state">
+      <mat-select placeholder="{{ 'State' | translate }}" formControlName="state" multiple required>
         <mat-option *ngFor="let s of states" [value]="s.uuid">{{ (s.display) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'District' | translate }}" formControlName="district">
+      <mat-select placeholder="{{ 'District' | translate }}" formControlName="district" multiple required>
         <mat-option *ngFor="let d of tempDistricts" [value]="d.uuid">{{ (d.display) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>
-      <mat-select placeholder="{{ 'Location' | translate }}" formControlName="village">
+      <mat-select placeholder="{{ 'Location' | translate }}" formControlName="village" multiple required>
         <mat-option *ngFor="let v of tempVillages" [value]="v.uuid">{{ (v.display) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <input matInput placeholder="{{ 'Registration No' | translate }}" formControlName="registrationNumber" />
+      <input matInput placeholder="{{ 'Registration No' | translate }}" formControlName="registrationNumber" required/>
     </mat-form-field>
 
     <div [ngClass]="getLang() === 'ar' ? 'right1' : 'left1'" *ngIf='userDetails.roles[0].display != "Organizational: Nurse"'>

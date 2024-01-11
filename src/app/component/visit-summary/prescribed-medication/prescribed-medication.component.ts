@@ -47,7 +47,12 @@ export class PrescribedMedicationComponent implements OnInit {
   conceptfrequency = [];
   conceptAdministration = [];
   conceptDurationUnit = [];
+  medicineObs = [];
+  medicineObsList = [];
+  medicinesList = [];
+  objectKeys = Object.keys;
   conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
+  isShow: boolean[] = Array(this.medicineObsList.length).fill(false);
 
 
   medForm = new FormGroup({
@@ -163,23 +168,53 @@ export class PrescribedMedicationComponent implements OnInit {
     this.visitUuid = this.route.snapshot.paramMap.get('visit_id');
     this.patientId = this.route.snapshot.params['patient_id'];
     // this.meds = this.medicines
-    this.diagnosisService.getObs(this.patientId, this.conceptMed)
-      .subscribe(response => {
-        response.results.forEach(async obs => {
-          if (obs.encounter.visit.uuid === this.visitUuid) {
-            if (obs.comment) {
-              const comment = obs.comment.split('|');
-              obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
-              obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
-              this.meds.push(this.diagnosisService.getData(obs));
-            } else {
-              obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
-              this.meds.push(this.diagnosisService.getData(obs));
+    this.diagnosisService.getObs(this.patientId, this.conceptMed).subscribe(response => {
+      response.results.forEach(async obs => {
+        if (obs.encounter.visit.uuid === this.visitUuid) {
+          if (obs.comment) {
+            const comment = obs.comment.split('|');
+            obs.creatorRegNo = comment[5] != 'NA' ? `(${comment[5]})` : "(-)";
+            obs.deletorRegNo = comment[3] != 'NA' ? `(${comment[3]})` : "(-)";
+            this.meds.push(this.diagnosisService.getData(obs));
+          } else {
+            obs.creatorRegNo = await this.sessionSvc.getRegNo(obs.creator.uuid);
+            this.meds.push(this.diagnosisService.getData(obs));
+          }
+        }
+      });
+      this.visitSvc.lockMedicineAidOrder.next();
+    });
+
+    this.visitSvc.fetchVisitDetails(this.visitUuid).subscribe(visitDetail => {
+      visitDetail.encounters.filter((e) => {
+        let medObs = {}
+        if(e.display.includes("DISPENSE")){
+          for(let i = 0; i < e.obs.length; i++){
+            if(e.obs[i].display.includes("DISPENSE_MEDICATION")){              
+              let obsData = JSON.parse(e.obs[i].value)
+              medObs['medicationUuidList'] = obsData.medicationUuidList
+              medObs['obsDatetime'] = e.obs[i].obsDatetime
+              medObs['creator'] = {'dispensed' : e.obs[i].creator.display}
             }
           }
-        });
-        this.visitSvc.lockMedicineAidOrder.next();
-      });
+          this.medicineObs.push(medObs);
+        }
+        if(e.display.includes("ADMINISTER")){
+          for(let i = 0; i < e.obs.length; i++){
+            if(e.obs[i].display.includes("ADMINISTER_MEDICATION")){              
+              let obsData = JSON.parse(e.obs[i].value)
+              medObs['medicationUuidList'] = obsData.medicationUuidList
+              medObs['obsDatetime'] = e.obs[i].obsDatetime
+              medObs['creator'] = {'administered' : e.obs[i].creator.display}
+            }
+          }
+          this.medicineObs.push(medObs);
+        }
+        if(e.display.includes("Visit Note")){
+          this.getMedicineList(e.obs,this.medicineObs);
+        }
+      });      
+    });
 
     this.visitSvc.lockMedicineAidOrder.subscribe({
       next: () => {
@@ -330,5 +365,37 @@ export class PrescribedMedicationComponent implements OnInit {
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
+  }
+
+  getMedicineList(obs:any, arr:any){
+    for(let j = 0; j < obs.length; j++){
+      let disAdminObs = {};
+      let obsArr = [];
+      if(obs[j].display.includes("JSV MEDICATIONS")){
+        this.diagnosisService.getData(obs[j]);
+        for(let x = 0; x < arr.length; x++){
+          if(arr[x].medicationUuidList){
+            let obsMeds = {};
+            for(let y = 0; y < arr[x].medicationUuidList.length; y++){
+              if(arr[x].medicationUuidList[y] === obs[j].uuid){ 
+                obsMeds[obs[j].value] = [arr[x].creator, arr[x].obsDatetime];
+                this.medicinesList.push(obsMeds);
+              }                    
+            }
+          }
+        }
+        for(let i = 0; i < this.medicinesList.length; i++){
+          if(this.objectKeys(this.medicinesList[i]).includes(obs[j].value)){            
+            obsArr.push(this.medicinesList[i][obs[j].value]);
+          }
+        }
+        disAdminObs[obs[j].value] = obsArr
+        this.medicineObsList.push(disAdminObs);
+      }
+    }
+  }
+
+  toggleShow(index: number): void {
+    this.isShow[index] = !this.isShow[index];
   }
 }

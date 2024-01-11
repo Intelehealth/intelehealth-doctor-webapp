@@ -267,7 +267,7 @@
     "delete":"delete",
     "kg":"kg",
     "cm":"cm",
-    "F":"F",
+    "F":"Female",
     "Not provided":"Not provided",
     "messages": {
       "welcome": "Welcome",
@@ -1366,5 +1366,8 @@
     "Aid Note":"Aids Note",
     "Documents":"Documents",
     "Dispensed by":"Dispensed By",
-    "Administered by":"Administered by"
+    "Administered by":"Administered by",
+    "Show Details":"Show Details",
+    "Hide Details":"Hide Details",
+    "No Past Visit":"No Past Visit"
   }
