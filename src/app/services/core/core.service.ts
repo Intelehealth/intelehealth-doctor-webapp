@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';
 import { VcallOverlayComponent } from 'src/app/component/vc/vcall-overlay/vcall-overlay.component';
+import { AddAssessmentComponent } from 'src/app/modal-components/add-assessment/add-assessment.component';
 import { AddLicenseKeyComponent } from 'src/app/modal-components/add-license-key/add-license-key.component';
 import { AddPlanAssessmentComponent } from 'src/app/modal-components/add-plan-assessment/add-plan-assessment.component';
 import { ChatBoxComponent } from 'src/app/modal-components/chat-box/chat-box.component';
@@ -11,10 +12,15 @@ import { HelpMenuComponent } from 'src/app/modal-components/help-menu/help-menu.
 import { ImagesPreviewComponent } from 'src/app/modal-components/images-preview/images-preview.component';
 import { NoInternetComponent } from 'src/app/modal-components/no-internet/no-internet.component';
 import { PasswordResetSuccessComponent } from 'src/app/modal-components/password-reset-success/password-reset-success.component';
+import { PrescribeIvFluidComponent } from 'src/app/modal-components/prescribe-iv-fluid/prescribe-iv-fluid.component';
+import { PrescribeMedicationComponent } from 'src/app/modal-components/prescribe-medication/prescribe-medication.component';
+import { PrescribeOxytocinComponent } from 'src/app/modal-components/prescribe-oxytocin/prescribe-oxytocin.component';
+import { PrescribePlanComponent } from 'src/app/modal-components/prescribe-plan/prescribe-plan.component';
 import { SearchedPatientsComponent } from 'src/app/modal-components/searched-patients/searched-patients.component';
 import { SelectLanguageComponent } from 'src/app/modal-components/select-language/select-language.component';
 import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mindmap-json/upload-mindmap-json.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
+import { ViewPlanComponent } from 'src/app/modal-components/view-plan/view-plan.component';
 
 @Injectable({
   providedIn: 'root'
@@ -90,6 +96,36 @@ export class CoreService {
 
   openAddAssessmentAndPlanModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(AddPlanAssessmentComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openPrescribePlanModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(PrescribePlanComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openPrescribeMedicationModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(PrescribeMedicationComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openPrescribeOxytocinModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(PrescribeOxytocinComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openPrescribeIVFluidModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(PrescribeIvFluidComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openAddAssessmentModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(AddAssessmentComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openViewDetailPlanModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ViewPlanComponent, { panelClass: "modal-lg", data });
     return dialogRef.afterClosed();
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatAccordion } from '@angular/material/expansion';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -186,15 +187,15 @@ export class EpartogramComponent implements OnInit {
     {
       name: 'ASSESSMENT',
       conceptName: 'Assessment',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
       name: 'PLAN',
       conceptName: 'Additional Comments',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
@@ -210,14 +211,42 @@ export class EpartogramComponent implements OnInit {
       stage1Count: 15,
       stage2Count: 10,
       alert: true
+    },
+    {
+      id: 26,
+      name: 'Medicine Prescribed',
+      conceptName: 'Medicine Prescribed',
+      stage1Count: 30,
+      stage2Count: 20,
+      alert: false
+    },
+    {
+      id: 27,
+      name: 'Oxytocin (U/L, drops/min) Prescribed',
+      conceptName: 'Oxytocin U/l, Drops per min, Prescribed',
+      stage1Count: 15,
+      stage2Count: 5,
+      alert: false
+    },
+    {
+      id: 28,
+      name: 'IV fluids Prescribed',
+      conceptName: 'IV fluids Prescribed',
+      stage1Count: 15,
+      stage2Count: 5,
+      alert: false
     }
   ];
   timeStage1: any[] = Array(15).fill(null);
   timeStage2: any[] = Array(5).fill(null);
+  timeFullStage1: any[] = Array(30).fill(null);
+  timeFullStage2: any[] = Array(20).fill(null);
   initialsStage1: string[] = Array(15).fill(null);
   initialsStage2: string[] = Array(5).fill(null);
   encuuid1: string[] = Array(15).fill(null);
   encuuid2: string[] = Array(5).fill(null);
+  encuuid1Full: any[] = Array(30).fill(null);
+  encuuid2Full: any[] = Array(20).fill(null);
   displayedColumns: string[] = ['timeAndStage', 'medicine', 'assessment', 'plan'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
@@ -234,16 +263,34 @@ export class EpartogramComponent implements OnInit {
   babyStatus: any;
   babyGender: any;
   loginAttempt: number = 0;
+  stage: number = 0;
+  assessmentHistory: any[] = [];
+  planHistory: any[] = [];
+  medicationPrescribedHistory: any[] = [];
+  oxytocinPrescribedHistory: any[] = [];
+  ivPrescribedHistory: any[] = [];
+  showAll = false;
+  @ViewChild(MatAccordion) accordion: MatAccordion;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private visitService: VisitService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private coreService: CoreService) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.login(id);
+    for (let x = 0; x < this.parameters.length; x++) {
+      if (x == 20 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
+      } else {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      }
+    }
   }
 
   login(visituuid: string) {
@@ -337,120 +384,92 @@ export class EpartogramComponent implements OnInit {
       setTimeout(() => {
         document.querySelector('#vcd').scrollIntoView();
       }, 500);
-
-      // visitCompleteEnc.obs.forEach((obs: any) => {
-      //   if (obs.display.includes('Birth Outcome')) {
-      //     this.birthOutcome = obs.value;
-      //   }
-      //   if (obs.display.includes('Refer to other Hospital')) {
-      //     this.birthOutcome = 'RTOH';
-      //   }
-      //   if (obs.display.includes('Self discharge against Medical Advice')) {
-      //     this.birthOutcome = 'DAMA';
-      //   }
-      //   this.birthtime = moment(visitCompleteEnc.encounterDatetime).format("HH:mm A");
-      // });
     }
-
-    // console.log(this.pinfo);
-    // console.log(this.nurseMobNo);
-    // console.log(this.birthOutcome);
-    // console.log(this.birthtime);
   }
 
   readStageData() {
-    for (let x = 0; x < this.parameters.length; x++) {
-      if (x == 20 || x == 22 || x == 23) {
-        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
-        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
-      } else {
-        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
-        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
-      }
-    }
+    const encs = this.visit.encounters.sort((a: any, b: any) => new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime());
+    for (const enc of encs) {
+      if (enc.display.includes('Stage')) {
+        const indices = enc.encounterType.display.replace('Stage', '').replace('Hour', '').split('_').map((val: any) => +val);
+        const stageNo = indices[0];
+        const stageHourNo = indices[1];
+        const stageHourSecNo = indices[2];
 
-    const encs = this.visit.encounters;
-    for (let x = 0; x < encs.length; x++) {
-      if (encs[x].display.includes('Stage')) {
-        if (!localStorage.patientVisitProvider) localStorage.setItem('patientVisitProvider', JSON.stringify(encs[x].encounterProviders[0]));
-        let indices = encs[x].encounterType.display.replace('Stage','').replace('Hour','').split('_').map((val)=> +val);
         // Get timing and initials
-        if (indices[0] == 1 && indices[1] <= 15) {
-          this.timeStage1[indices[1]-1] = encs[x].encounterDatetime;
-          this.initialsStage1[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid1[indices[1]-1] = encs[x].uuid;
-        } else if (indices[0] == 2 && indices[1] <= 5) {
-          this.timeStage2[indices[1]-1] = encs[x].encounterDatetime;
-          this.initialsStage2[indices[1]-1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid2[indices[1]-1] = encs[x].uuid;
+        if (stageNo == 1 && stageHourNo <= 15) {
+
+          if (stageNo > this.stage) this.stage = stageNo;
+          if (!this.timeStage1[stageHourNo - 1]) this.timeStage1[stageHourNo - 1] = enc.encounterDatetime;
+          this.timeFullStage1[((2 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = enc.encounterDatetime;
+          this.initialsStage1[stageHourNo - 1] = this.getInitials(enc.encounterProviders[0].provider.person.display);
+          if (!this.encuuid1[stageHourNo - 1]) this.encuuid1[stageHourNo - 1] = enc.uuid;
+          this.encuuid1Full[((2 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = { enc_time: enc.encounterDatetime, enc_uuid: enc.uuid, stageNo, stageHourNo, stageHourSecNo };
+
+        } else if (stageNo == 2 && stageHourNo <= 5) {
+
+          if (stageNo > this.stage) this.stage = stageNo;
+          if (!this.timeStage2[stageHourNo - 1]) this.timeStage2[stageHourNo - 1] = enc.encounterDatetime;
+          this.timeFullStage2[((4 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = enc.encounterDatetime;
+          this.initialsStage2[stageHourNo - 1] = this.getInitials(enc.encounterProviders[0].provider.person.display);
+          if (!this.encuuid2[stageHourNo - 1]) this.encuuid2[stageHourNo - 1] = enc.uuid;
+          this.encuuid2Full[((4 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = { enc_time: enc.encounterDatetime, enc_uuid: enc.uuid, stageNo, stageHourNo, stageHourSecNo };
         } else {
           continue;
         }
+
         // Read observations
-        if (encs[x].obs.length) {
-          for (let y = 0; y < encs[x].obs.length; y++) {
-            let parameterIndex = this.parameters.findIndex((o: any) => o.conceptName == encs[x].obs[y].concept.display);
+        if (enc.obs.length) {
+          for (const ob of enc.obs) {
+            const parameterIndex = this.parameters.findIndex((o: any) => o.conceptName == ob.concept.display);
             if (parameterIndex != -1) {
-              let parameterValue = this.parameters.find((o: any) => o.conceptName == encs[x].obs[y].concept.display);
+              const parameterValue = this.parameters.find((o: any) => o.conceptName == ob.concept.display);
               let valueIndex = -1;
-              if (indices[0] == 1) {
-                (parameterValue.stage1Count == 15)? valueIndex = indices[1]-1 : valueIndex = ((2*(indices[1]-1))+(indices[2]-1));
+              if (stageNo == 1) {
+                (parameterValue.stage1Count == 15) ? (valueIndex = stageHourNo - 1) : (valueIndex = ((2 * (stageHourNo - 1)) + (stageHourSecNo - 1)));
               } else {
-                if (parameterValue.stage2Count == 5) {
-                  valueIndex = valueIndex = indices[1]-1;
-                } else if(parameterValue.stage2Count == 10) {
-                  valueIndex = (indices[2] == 1) ? ((2*(indices[1]-1))+(indices[2]-1)) : ((2*(indices[1]-1))+(indices[2]-2));
-                } else {
-                  valueIndex = ((4*(indices[1]-1))+(indices[2]-1));
+                switch (parameterValue.stage2Count) {
+                  case 5:
+                    valueIndex = stageHourNo - 1;
+                    break;
+                  case 10:
+                    valueIndex = (stageHourSecNo == 1) ? ((2 * (stageHourNo - 1)) + (stageHourSecNo - 1)) : ((2 * (stageHourNo - 1)) + (stageHourSecNo - 2));
+                    break;
+                  default:
+                    valueIndex = ((4 * (stageHourNo - 1)) + (stageHourSecNo - 1));
+                    break;
                 }
               }
-              if (parameterIndex == 20 || parameterIndex == 22 || parameterIndex == 23) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex], { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator, obsDatetime: encs[x].obs[y].obsDatetime, canEdit: false }];
-              } else if (parameterIndex == 19 || parameterIndex == 21) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = { value: encs[x].obs[y].value.startsWith("{") ? JSON.parse(encs[x].obs[y].value) : encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
-              } else {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator };
+
+              switch (parameterIndex) {
+                case 20:
+                case 22:
+                case 23:
+                case 26:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, initial: this.getInitials(ob.creator?.person.display) }];
+                  break;
+                case 27:
+                case 28:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, initial: this.getInitials(ob.creator?.person.display) }];
+                  break;
+                case 19:
+                case 21:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid };
+                  break;
+                default:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = (parameterValue.alert) ? { value: ob.value, comment: ob.comment, uuid: ob.uuid, creator: ob.creator } : { value: ob.value, uuid: ob.uuid, creator: ob.creator };
+                  break;
               }
             }
           }
         }
       }
     }
-    // console.log(this.parameters);
-    // console.log(this.timeStage1, this.timeStage2);
-    // console.log(this.initialsStage1, this.initialsStage2);
-
-    this.getAssessments();
-  }
-
-  getAssessments() {
-    this.assessments = [];
-    for (let d = 0; d < 15; d++) {
-      if (this.parameters[20].stage1values[d].length||this.parameters[22].stage1values[d].length||this.parameters[23].stage1values[d].length) {
-        this.assessments.push({
-          time: this.timeStage1[d],
-          stage: 1,
-          medicine: this.parameters[20].stage1values[d],
-          assessment: this.parameters[22].stage1values[d],
-          plan: this.parameters[23].stage1values[d]
-        });
-      }
-    }
-
-    for (let d = 0; d < 5; d++) {
-      if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d].length || this.parameters[23].stage2values[d].length) {
-        this.assessments.push({
-          time: this.timeStage2[d],
-          stage: 2,
-          medicine: this.parameters[20].stage2values[d],
-          assessment: this.parameters[22].stage2values[d],
-          plan: this.parameters[23].stage2values[d]
-        });
-      }
-    }
-
-    this.dataSource = new MatTableDataSource(this.assessments);
-    this.dataSource.paginator = this.assessmentPaginator;
+    this.getPastData(22);
+    this.getPastData(23);
+    this.getPastData(26);
+    this.getPastData(27);
+    this.getPastData(28);
   }
 
   mouseDownHandler(e: any) {
@@ -525,4 +544,54 @@ export class EpartogramComponent implements OnInit {
     return identifier;
   }
 
+  getEncounterPlanData(stageNo: number, encounterNo: number) {
+    let planData = [];
+    let medicationData = [];
+    let oxytocinData = [];
+    let ivData = [];
+    if (stageNo == 1) {
+      planData = this.parameters[23].stage1values[2 * encounterNo].concat(this.parameters[23].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      medicationData = this.parameters[26].stage1values[2 * encounterNo].concat(this.parameters[26].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      oxytocinData = this.parameters[27].stage1values[2 * encounterNo].concat(this.parameters[27].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      ivData = this.parameters[28].stage1values[2 * encounterNo].concat(this.parameters[28].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    } else {
+      planData = this.parameters[23].stage2values[4 * encounterNo].concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      medicationData = this.parameters[26].stage2values[4 * encounterNo].concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      oxytocinData = this.parameters[27].stage2values[4 * encounterNo].concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      ivData = this.parameters[28].stage2values[4 * encounterNo].concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    }
+    return { stage: stageNo, hour: encounterNo + 1, planData: [...planData], medicationData: [...medicationData], oxytocinData: [...oxytocinData], ivData: [...ivData] };
+  }
+
+  viewPlan(stageNo: number, encounterNo: number) {
+    this.coreService.openViewDetailPlanModal(this.getEncounterPlanData(stageNo, encounterNo)).subscribe(res => {});
+  }
+
+  getPastData(index: number) {
+    const historyData = this.parameters[index].stage1values.reduce((acc, item) => {
+      return acc.concat(item);
+    }, []).concat(this.parameters[index].stage2values.reduce((acc, item) => {
+      return acc.concat(item);
+    }, [])).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+
+    switch (index) {
+      case 22:
+        this.assessmentHistory = [...historyData];
+        break;
+      case 23:
+        this.planHistory = [...historyData];
+        break;
+      case 26:
+        this.medicationPrescribedHistory = [...historyData];
+        break;
+      case 27:
+        this.oxytocinPrescribedHistory = [...historyData];
+        break;
+      case 28:
+        this.ivPrescribedHistory = [...historyData];
+        break;
+      default:
+        break;
+    }
+  }
 }

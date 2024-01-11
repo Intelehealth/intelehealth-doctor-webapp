@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatAccordion } from '@angular/material/expansion';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -219,16 +220,16 @@ export class PartogramComponent implements OnInit, OnDestroy {
       id: 22,
       name: 'ASSESSMENT',
       conceptName: 'Assessment',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
       id: 23,
       name: 'PLAN',
       conceptName: 'Additional Comments',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
@@ -246,20 +247,51 @@ export class PartogramComponent implements OnInit, OnDestroy {
       stage1Count: 15,
       stage2Count: 10,
       alert: true
+    },
+    {
+      id: 26,
+      name: 'Medicine Prescribed',
+      conceptName: 'Medicine Prescribed',
+      stage1Count: 30,
+      stage2Count: 20,
+      alert: false
+    },
+    {
+      id: 27,
+      name: 'Oxytocin (U/L, drops/min) Prescribed',
+      conceptName: 'Oxytocin U/l, Drops per min, Prescribed',
+      stage1Count: 15,
+      stage2Count: 5,
+      alert: false
+    },
+    {
+      id: 28,
+      name: 'IV fluids Prescribed',
+      conceptName: 'IV fluids Prescribed',
+      stage1Count: 15,
+      stage2Count: 5,
+      alert: false
     }
   ];
   timeStage1: any[] = Array(15).fill(null);
   timeStage2: any[] = Array(5).fill(null);
+  timeFullStage1: any[] = Array(30).fill(null);
+  timeFullStage2: any[] = Array(20).fill(null);
   initialsStage1: string[] = Array(15).fill(null);
   initialsStage2: string[] = Array(5).fill(null);
   encuuid1: string[] = Array(15).fill(null);
   encuuid2: string[] = Array(5).fill(null);
+  encuuid1Full: any[] = Array(30).fill(null);
+  encuuid2Full: any[] = Array(20).fill(null);
   displayedColumns: string[] = ['timeAndStage', 'medicine', 'assessment', 'plan'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild('assessmentPaginator') assessmentPaginator: MatPaginator;
   conceptPlan = '162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
   conceptAssessment = '67a050c1-35e5-451c-a4ab-fff9d57b0db1';
   conceptMedicine = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
+  conceptMedicinePrescribed = 'ce75ed49-0eac-44f0-ac91-bcf9c5d1d700';
+  conceptOxytocinPrescribed = '6eef8ae6-e6b3-46f1-a58c-393bd6d0e8c8';
+  conceptIvFluidsPrescribed = '0c21f925-d225-48ce-9e98-bb1cc5638e04';
   dialogRef1: MatDialogRef<ChatBoxComponent>;
   dialogRef2: MatDialogRef<VideoCallComponent>;
 
@@ -285,6 +317,14 @@ export class PartogramComponent implements OnInit, OnDestroy {
   birthWeight: any;
   babyStatus: any;
   babyGender: any;
+  stage: number = 0;
+  assessmentHistory: any[] = [];
+  planHistory: any[] = [];
+  medicationPrescribedHistory: any[] = [];
+  oxytocinPrescribedHistory: any[] = [];
+  ivPrescribedHistory: any[] = [];
+  showAll = false;
+  @ViewChild(MatAccordion) accordion: MatAccordion;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -330,6 +370,15 @@ export class PartogramComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    for (let x = 0; x < this.parameters.length; x++) {
+      if (x == 20 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
+      } else {
+        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
+        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
+      }
+    }
     this.apiSubscription = this.panZoomConfig.api.subscribe((api: PanZoomAPI) => this.panZoomAPI = api);
     this.pageTitleService.setTitle({ title: '', imgUrl: '' });
     const id = this.route.snapshot.paramMap.get('id');
@@ -379,18 +428,14 @@ export class PartogramComponent implements OnInit, OnDestroy {
             attributeType: '2e4b62a5-aa71-43e2-abc9-f4a777697b19',
             value: visitSeenBy?.value.concat(`,${this.userId.split('-')[0]}`)
           }
-          this.visitService.updateAttribute(this.visit.uuid, visitSeenBy?.uuid, json).subscribe(r => {
-            // console.log(r);
-          });
+          this.visitService.updateAttribute(this.visit.uuid, visitSeenBy?.uuid, json).subscribe(r => { });
         }
       } else {
         const json = {
           attributeType: '2e4b62a5-aa71-43e2-abc9-f4a777697b19',
           value: this.userId.split('-')[0]
         }
-        this.visitService.postAttribute(this.visit.uuid, json).subscribe(r => {
-          // console.log(r);
-        });
+        this.visitService.postAttribute(this.visit.uuid, json).subscribe(r => { });
       }
     }
   }
@@ -438,7 +483,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       } else {
         this.visitCompleteReason = "Newborn";
         this.birthOutcome = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome')?.value;
-        if (this.birthOutcome == 'Other'||this.birthOutcome == 'OTHER') {
+        if (this.birthOutcome == 'Other' || this.birthOutcome == 'OTHER') {
           this.birthOutcomeOther = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'Birth Outcome Other')?.value;
         }
         this.motherDeceased = visitCompleteEnc.obs.find((o: any) => o.concept.display == 'MOTHER DECEASED NEW')?.value;
@@ -456,121 +501,107 @@ export class PartogramComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         document.querySelector('#vcd').scrollIntoView();
       }, 500);
-
-      // visitCompleteEnc.obs.forEach((obs: any) => {
-      //   if (obs.display.includes('Birth Outcome')) {
-      //     this.birthOutcome = obs.value;
-      //   }
-      //   if (obs.display.includes('Refer to other Hospital')) {
-      //     this.birthOutcome = 'RTOH';
-      //   }
-      //   if (obs.display.includes('Self discharge against Medical Advice')) {
-      //     this.birthOutcome = 'DAMA';
-      //   }
-      //   this.birthtime = moment(visitCompleteEnc.encounterDatetime).format("HH:mm A");
-      // });
     }
-
-    // console.log(this.pinfo);
-    // console.log(this.nurseMobNo);
-    // console.log(this.birthOutcome);
-    // console.log(this.birthtime);
   }
 
   readStageData() {
-    for (let x = 0; x < this.parameters.length; x++) {
-      if (x == 20 || x == 22 || x == 23) {
-        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
-        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
-      } else {
-        this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill(null);
-        this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill(null);
-      }
-    }
+    const encs = this.visit.encounters.sort((a: any, b: any) => new Date(a.encounterDatetime).getTime() - new Date(b.encounterDatetime).getTime());
+    for (const enc of encs) {
+      if (enc.display.includes('Stage')) {
+        saveToStorage('patientVisitProvider', enc.encounterProviders[0])
+        const indices = enc.encounterType.display.replace('Stage', '').replace('Hour', '').split('_').map((val: any) => +val);
+        const stageNo = indices[0];
+        const stageHourNo = indices[1];
+        const stageHourSecNo = indices[2];
 
-    const encs = this.visit.encounters;
-    for (let x = 0; x < encs.length; x++) {
-      if (encs[x].display.includes('Stage')) {
-        saveToStorage('patientVisitProvider', encs[x].encounterProviders[0])
-        let indices = encs[x].encounterType.display.replace('Stage', '').replace('Hour', '').split('_').map((val) => +val);
         // Get timing and initials
-        if (indices[0] == 1 && indices[1] <= 15) {
-          this.timeStage1[indices[1] - 1] = encs[x].encounterDatetime;
-          this.initialsStage1[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid1[indices[1] - 1] = encs[x].uuid;
-        } else if (indices[0] == 2 && indices[1] <= 5) {
-          this.timeStage2[indices[1] - 1] = encs[x].encounterDatetime;
-          this.initialsStage2[indices[1] - 1] = this.getInitials(encs[x].encounterProviders[0].provider.person.display);
-          this.encuuid2[indices[1] - 1] = encs[x].uuid;
+        if (stageNo == 1 && stageHourNo <= 15) {
+
+          if (stageNo > this.stage) this.stage = stageNo;
+          if (!this.timeStage1[stageHourNo - 1]) this.timeStage1[stageHourNo - 1] = enc.encounterDatetime;
+          this.timeFullStage1[((2 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = enc.encounterDatetime;
+          this.initialsStage1[stageHourNo - 1] = this.getInitials(enc.encounterProviders[0].provider.person.display);
+          if (!this.encuuid1[stageHourNo - 1]) this.encuuid1[stageHourNo - 1] = enc.uuid;
+          this.encuuid1Full[((2 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = { enc_time: enc.encounterDatetime, enc_uuid: enc.uuid, stageNo, stageHourNo, stageHourSecNo };
+
+        } else if (stageNo == 2 && stageHourNo <= 5) {
+
+          if (stageNo > this.stage) this.stage = stageNo;
+          if (!this.timeStage2[stageHourNo - 1]) this.timeStage2[stageHourNo - 1] = enc.encounterDatetime;
+          this.timeFullStage2[((4 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = enc.encounterDatetime;
+          this.initialsStage2[stageHourNo - 1] = this.getInitials(enc.encounterProviders[0].provider.person.display);
+          if (!this.encuuid2[stageHourNo - 1]) this.encuuid2[stageHourNo - 1] = enc.uuid;
+          this.encuuid2Full[((4 * (stageHourNo - 1)) + (stageHourSecNo - 1))] = { enc_time: enc.encounterDatetime, enc_uuid: enc.uuid, stageNo, stageHourNo, stageHourSecNo };
         } else {
           continue;
         }
+
         // Read observations
-        if (encs[x].obs.length) {
-          for (let y = 0; y < encs[x].obs.length; y++) {
-            let parameterIndex = this.parameters.findIndex((o: any) => o.conceptName == encs[x].obs[y].concept.display);
+        if (enc.obs.length) {
+          for (const ob of enc.obs) {
+            const parameterIndex = this.parameters.findIndex((o: any) => o.conceptName == ob.concept.display);
             if (parameterIndex != -1) {
-              let parameterValue = this.parameters.find((o: any) => o.conceptName == encs[x].obs[y].concept.display);
+              const parameterValue = this.parameters.find((o: any) => o.conceptName == ob.concept.display);
               let valueIndex = -1;
-              if (indices[0] == 1) {
-                (parameterValue.stage1Count == 15) ? valueIndex = indices[1] - 1 : valueIndex = ((2 * (indices[1] - 1)) + (indices[2] - 1));
+              if (stageNo == 1) {
+                (parameterValue.stage1Count == 15) ? (valueIndex = stageHourNo - 1) : (valueIndex = ((2 * (stageHourNo - 1)) + (stageHourSecNo - 1)));
               } else {
-                if (parameterValue.stage2Count == 5) {
-                  valueIndex = valueIndex = indices[1] - 1;
-                } else if (parameterValue.stage2Count == 10) {
-                  valueIndex = (indices[2] == 1) ? ((2 * (indices[1] - 1)) + (indices[2] - 1)) : ((2 * (indices[1] - 1)) + (indices[2] - 2));
-                } else {
-                  valueIndex = ((4 * (indices[1] - 1)) + (indices[2] - 1));
+                switch (parameterValue.stage2Count) {
+                  case 5:
+                    valueIndex = stageHourNo - 1;
+                    break;
+                  case 10:
+                    valueIndex = (stageHourSecNo == 1) ? ((2 * (stageHourNo - 1)) + (stageHourSecNo - 1)) : ((2 * (stageHourNo - 1)) + (stageHourSecNo - 2));
+                    break;
+                  default:
+                    valueIndex = ((4 * (stageHourNo - 1)) + (stageHourSecNo - 1));
+                    break;
                 }
               }
-              if (parameterIndex == 20 || parameterIndex == 22 || parameterIndex == 23) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex], { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator, obsDatetime: encs[x].obs[y].obsDatetime, canEdit: this.userId == encs[x].obs[y].creator?.uuid ? true : false }];
-              } else if (parameterIndex == 19 || parameterIndex == 21) {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = { value: encs[x].obs[y].value.startsWith("{") ? JSON.parse(encs[x].obs[y].value) : encs[x].obs[y].value, uuid: encs[x].obs[y].uuid };
-              } else {
-                this.parameters[parameterIndex][`stage${indices[0]}values`][valueIndex] = (parameterValue.alert) ? { value: encs[x].obs[y].value, comment: encs[x].obs[y].comment, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator } : { value: encs[x].obs[y].value, uuid: encs[x].obs[y].uuid, creator: encs[x].obs[y].creator };
+
+              switch (parameterIndex) {
+                case 20:
+                case 22:
+                case 23:
+                case 26:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, canEdit: this.canEdit(ob.creator?.uuid), initial: this.getInitials(ob.creator?.person.display) }];
+                  break;
+                case 27:
+                case 28:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, canEdit: this.canEdit(ob.creator?.uuid), initial: this.getInitials(ob.creator?.person.display) }];
+                  break;
+                case 19:
+                case 21:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid };
+                  break;
+                default:
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = (parameterValue.alert) ? { value: ob.value, comment: ob.comment, uuid: ob.uuid, creator: ob.creator } : { value: ob.value, uuid: ob.uuid, creator: ob.creator };
+                  break;
               }
             }
           }
         }
       }
     }
-    // console.log(this.parameters);
-    // console.log(this.timeStage1, this.timeStage2);
-    // console.log(this.initialsStage1, this.initialsStage2);
-
-    this.getAssessments();
+    this.getPastData(22);
+    this.getPastData(23);
+    this.getPastData(26);
+    this.getPastData(27);
+    this.getPastData(28);
   }
 
-  getAssessments() {
-    this.assessments = [];
-    for (let d = 0; d < 15; d++) {
-      if (this.parameters[20].stage1values[d].length || this.parameters[22].stage1values[d].length || this.parameters[23].stage1values[d].length) {
-        this.assessments.push({
-          time: this.timeStage1[d],
-          stage: 1,
-          medicine: this.parameters[20].stage1values[d],
-          assessment: this.parameters[22].stage1values[d],
-          plan: this.parameters[23].stage1values[d]
-        });
-      }
-    }
+  canEdit(uuid: string): boolean {
+    return this.userId == uuid;
+  }
 
-    for (let d = 0; d < 5; d++) {
-      if (this.parameters[20].stage2values[d].length || this.parameters[22].stage2values[d].length || this.parameters[23].stage2values[d].length) {
-        this.assessments.push({
-          time: this.timeStage2[d],
-          stage: 2,
-          medicine: this.parameters[20].stage2values[d],
-          assessment: this.parameters[22].stage2values[d],
-          plan: this.parameters[23].stage2values[d]
-        });
-      }
+  getLatestEncounterUuid() {
+    if (this.stage == 1) {
+      const index = this.encuuid1Full.indexOf(null)
+      return (index == -1 ? this.encuuid1Full[29] : this.encuuid1Full[index - 1]);
+    } else {
+      const index = this.encuuid2Full.indexOf(null)
+      return (index == -1 ? this.encuuid2[19] : this.encuuid2Full[index - 1]);
     }
-
-    this.dataSource = new MatTableDataSource(this.assessments);
-    this.dataSource.paginator = this.assessmentPaginator;
-    this.checkOpenChatBoxFlag();
   }
 
   mouseDownHandler(e: any) {
@@ -619,208 +650,6 @@ export class PartogramComponent implements OnInit, OnDestroy {
     const fullName = name.split(' ');
     const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
     return initials.toUpperCase();
-  }
-
-  addAssessmentAndPlan(stage: number, index: number) {
-    this.coreService.openAddAssessmentAndPlanModal(null).subscribe(res => {
-      if (res) {
-        if (res.assessment.length) {
-          res.assessment.forEach((a: any) => {
-            this.encounterService.postObs({
-              concept: this.conceptAssessment,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: a.assessmentValue,
-              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-            }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[22].stage1values[index] = [...this.parameters[22].stage1values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [...this.parameters[22].stage2values[index], { value: a.assessmentValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
-            });
-          });
-        }
-
-        if (res.plan.length) {
-          res.plan.forEach((p: any) => {
-            this.encounterService.postObs({
-              concept: this.conceptPlan,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: p.planValue,
-              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-            }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[23].stage1values[index] = [ ...this.parameters[23].stage1values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [...this.parameters[23].stage2values[index], { value: p.planValue, uuid: result.uuid, creator: result.creator, obsDatetime: result.obsDatetime }];
-            });
-          });
-        }
-
-        if (res.medicines.length) {
-          res.medicines.forEach((m: any) => {
-            this.encounterService.postObs({
-              concept: this.conceptMedicine,
-              person: this.visit.patient.uuid,
-              obsDatetime: new Date(),
-              value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
-              encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-            }).subscribe((result: any) => {
-              (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
-            });
-          });
-        }
-
-        setTimeout(() => {
-          this.getAssessments();
-        }, 5000);
-      }
-    });
-  }
-
-  editAssessmentAndPlan(stage: number, index: number) {
-    this.coreService.openAddAssessmentAndPlanModal({
-      assessment: (stage == 1) ? this.parameters[22].stage1values[index] : this.parameters[22].stage2values[index],
-      plan: (stage == 1) ? this.parameters[23].stage1values[index] : this.parameters[23].stage2values[index],
-      medicines: (stage == 1) ? this.parameters[20].stage1values[index] : this.parameters[20].stage2values[index]
-    }).subscribe(res => {
-      if (res) {
-        // console.log(res);
-
-        if (res.assessment.length) {
-          res.assessment.forEach((a: any) => {
-            if (a.id) {
-              if (a.isDeleted) {
-                if (a.canEdit) {
-                  this.encounterService.deleteObs(a.id).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              } else {
-                if (a.canEdit) {
-                  this.encounterService.updateObs(a.id, { value: a.assessmentValue }).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              }
-            } else {
-              if (!a.isDeleted) {
-                this.encounterService.postObs({
-                  concept: this.conceptAssessment,
-                  person: this.visit.patient.uuid,
-                  obsDatetime: new Date(),
-                  value: a.assessmentValue,
-                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-                }).subscribe((result: any) => {
-                  a.id = result.uuid;
-                  a.obsDatetime = result.obsDatetime;
-                  a.creator = { uuid: this.userId, person: this.user.person };
-                  (stage == 1) ? this.parameters[22].stage1values[index] = [...this.parameters[22].stage1values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[22].stage2values[index] = [...this.parameters[22].stage2values[index], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
-                });
-              }
-            }
-          });
-        }
-
-        if (res.plan.length) {
-          res.plan.forEach((p: any) => {
-            if (p.id) {
-              if (p.isDeleted) {
-                if (p.canEdit) {
-                  this.encounterService.deleteObs(p.id).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              } else {
-                if (p.canEdit) {
-                  this.encounterService.updateObs(p.id, { value: p.planValue }).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              }
-            } else {
-              if (!p.isDeleted) {
-                this.encounterService.postObs({
-                  concept: this.conceptPlan,
-                  person: this.visit.patient.uuid,
-                  obsDatetime: new Date(),
-                  value: p.planValue,
-                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-                }).subscribe((result: any) => {
-                  p.id = result.uuid;
-                  p.obsDatetime = result.obsDatetime;
-                  p.creator = { uuid: this.userId, person: this.user.person };
-                  (stage == 1) ? this.parameters[23].stage1values[index] = [...this.parameters[23].stage1values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }] : this.parameters[23].stage2values[index] = [...this.parameters[23].stage2values[index], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime }];
-                });
-              }
-            }
-          });
-        }
-
-        if (res.medicines.length) {
-          res.medicines.forEach((m: any) => {
-            if (m.id) {
-              if (m.isDeleted) {
-                if (m.canEdit) {
-                  this.encounterService.deleteObs(m.id).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              } else {
-                if (m.canEdit) {
-                  this.encounterService.updateObs(m.id, { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}` }).subscribe((result: any) => {
-                    // console.log(result);
-                  });
-                }
-              }
-            } else {
-              if (!m.isDeleted) {
-                this.encounterService.postObs({
-                  concept: this.conceptMedicine,
-                  person: this.visit.patient.uuid,
-                  obsDatetime: new Date(),
-                  value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
-                  encounter: (stage == 1) ? this.encuuid1[index] : this.encuuid2[index],
-                }).subscribe((result: any) => {
-                  m.id = result.uuid;
-                  m.obsDatetime = result.obsDatetime;
-                  m.creator = { uuid: this.userId, person: this.user.person };
-                  (stage == 1) ? this.parameters[20].stage1values[index] = [...this.parameters[20].stage1values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: m.canEdit }] : this.parameters[20].stage2values[index] = [...this.parameters[20].stage2values[index], { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: m.canEdit }];
-                });
-              }
-            }
-          });
-        }
-
-        setTimeout(() => {
-          console.log(res);
-          let plan = [];
-          let assessment = [];
-          let med = [];
-          for (let x = 0; x < res.assessment.length; x++) {
-            if (!res.assessment[x].isDeleted) {
-              assessment.push({ uuid: res.assessment[x].id, value: res.assessment[x].assessmentValue, creator: res.assessment[x].creator, obsDatetime: res.assessment[x].obsDatetime, canEdit: res.assessment[x].canEdit });
-            }
-          }
-          for (let x = 0; x < res.plan.length; x++) {
-            if (!res.plan[x].isDeleted) {
-              plan.push({ uuid: res.plan[x].id, value: res.plan[x].planValue, creator: res.plan[x].creator, obsDatetime: res.plan[x].obsDatetime, canEdit: res.plan[x].canEdit });
-            }
-          }
-          for (let x = 0; x < res.medicines.length; x++) {
-            if (!res.medicines[x].isDeleted) {
-              med.push({ uuid: res.medicines[x].id, value: `${res.medicines[x].typeOfMedicine} | ${res.medicines[x].medicineName} | ${res.medicines[x].strength} | ${res.medicines[x].dosage}::${res.medicines[x].dosageUnit}  | ${res.medicines[x].frequency} | ${res.medicines[x].routeOfMedicine} | ${res.medicines[x].duration}::${res.medicines[x].durationUnit}${res.medicines[x].remark ? ' | '+res.medicines[x].remark: ''}`, creator: res.medicines[x].creator, obsDatetime: res.medicines[x].obsDatetime, canEdit: res.medicines[x].canEdit });
-            }
-          }
-          // console.log(med);
-          if (stage == 1) {
-            this.parameters[22].stage1values[index] = [...assessment];
-            this.parameters[23].stage1values[index] = [...plan];
-            this.parameters[20].stage1values[index] = [...med];
-          } else {
-            this.parameters[22].stage2values[index] = [...assessment];
-            this.parameters[23].stage1values[index] = [...plan];
-            this.parameters[20].stage1values[index] = [...med];
-          }
-          this.getAssessments();
-        }, 5000);
-      }
-    });
   }
 
   async startCall() {
@@ -914,6 +743,251 @@ export class PartogramComponent implements OnInit, OnDestroy {
       }, 1000);
       location.href = location.href.replace('?openChat=true', '');
     }
+  }
+
+  getEncounterPlanData(stageNo: number, encounterNo: number) {
+    let planData = [];
+    let medicationData = [];
+    let oxytocinData = [];
+    let ivData = [];
+    if (stageNo == 1) {
+      planData = this.parameters[23].stage1values[2 * encounterNo].concat(this.parameters[23].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      medicationData = this.parameters[26].stage1values[2 * encounterNo].concat(this.parameters[26].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      oxytocinData = this.parameters[27].stage1values[2 * encounterNo].concat(this.parameters[27].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      ivData = this.parameters[28].stage1values[2 * encounterNo].concat(this.parameters[28].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    } else {
+      planData = this.parameters[23].stage2values[4 * encounterNo].concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      medicationData = this.parameters[26].stage2values[4 * encounterNo].concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[26].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      oxytocinData = this.parameters[27].stage2values[4 * encounterNo].concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[27].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+      ivData = this.parameters[28].stage2values[4 * encounterNo].concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[28].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    }
+    return { stage: stageNo, hour: encounterNo + 1, planData: [...planData], medicationData: [...medicationData], oxytocinData: [...oxytocinData], ivData: [...ivData] };
+  }
+
+  viewPlan(stageNo: number, encounterNo: number) {
+    this.coreService.openViewDetailPlanModal(this.getEncounterPlanData(stageNo, encounterNo)).subscribe(res => {});
+  }
+
+  getPastData(index: number) {
+    const currentEnc = this.getLatestEncounterUuid();
+    let currentEncData = [];
+    if (currentEnc?.stageNo == 1) {
+      currentEncData = this.parameters[index].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    } else {
+      currentEncData = this.parameters[index].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    }
+    const historyData = this.parameters[index].stage1values.reduce((acc, item) => {
+      return acc.concat(item);
+    }, []).concat(this.parameters[index].stage2values.reduce((acc, item) => {
+      return acc.concat(item);
+    }, [])).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+
+    switch (index) {
+      case 22:
+        this.assessmentHistory = [...historyData];
+        break;
+      case 23:
+        this.planHistory = [...historyData];
+        break;
+      case 26:
+        this.medicationPrescribedHistory = [...historyData];
+        break;
+      case 27:
+        this.oxytocinPrescribedHistory = [...historyData];
+        break;
+      case 28:
+        this.ivPrescribedHistory = [...historyData];
+        break;
+      default:
+        break;
+    }
+
+    return { historyData: [...historyData], currentEncData: [...currentEncData] };
+  }
+
+  prescribeMedication() {
+    this.coreService.openPrescribeMedicationModal(this.getPastData(26)).subscribe(res => {
+      if (res?.medicines?.length) {
+        const currentEnc = this.getLatestEncounterUuid();
+        res.medicines.forEach((m: any) => {
+          if (m.id) {
+            if (m.isDeleted) {
+              this.encounterService.deleteObs(m.id).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == m.id) : this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == m.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1) : this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1);
+              });
+            } else {
+              this.encounterService.updateObs(m.id, { value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}` }).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == m.id) : this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == m.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value =  result.value : this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value = result.value;
+              });
+            }
+          } else if (!m.isDeleted) {
+            this.encounterService.postObs({
+              concept: this.conceptMedicinePrescribed,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: `${m.typeOfMedicine} | ${m.medicineName} | ${m.strength} | ${m.dosage}::${m.dosageUnit} | ${m.frequency} | ${m.routeOfMedicine} | ${m.duration}::${m.durationUnit}${m.remark ? ' | ' + m.remark : ''}`,
+              encounter: currentEnc?.enc_uuid,
+            }).subscribe((result: any) => {
+              (currentEnc?.stageNo == 1) ? this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[26].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: result.value, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }] : this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[26].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: result.value, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }];
+            });
+          }
+        });
+
+        setTimeout(() => {
+          this.getPastData(26);
+        }, 5000);
+      }
+    });
+  }
+
+  prescribePlan() {
+    this.coreService.openPrescribePlanModal(this.getPastData(23)).subscribe(res => {
+      if (res?.plan?.length) {
+        const currentEnc = this.getLatestEncounterUuid();
+        res.plan.forEach((p: any) => {
+          if (p.id) {
+            if (p.isDeleted) {
+              this.encounterService.deleteObs(p.id).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == p.id) : this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == p.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1) : this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1);
+              });
+            } else {
+              this.encounterService.updateObs(p.id, { value: p.planValue }).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == p.id) : this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == p.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value =  result.value : this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value = result.value;
+              });
+            }
+          } else if (!p.isDeleted) {
+            this.encounterService.postObs({
+              concept: this.conceptPlan,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: p.planValue,
+              encounter: currentEnc?.enc_uuid,
+            }).subscribe((result: any) => {
+              (currentEnc?.stageNo == 1) ? this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[23].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }] : this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[23].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: p.planValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }];
+            });
+          }
+        });
+
+        setTimeout(() => {
+          this.getPastData(23);
+        }, 5000);
+      }
+    });
+  }
+
+  prescribeOxytocin() {
+    this.coreService.openPrescribeOxytocinModal(this.getPastData(27)).subscribe(res => {
+      if (res?.oxytocin?.length) {
+        const currentEnc = this.getLatestEncounterUuid();
+        res.oxytocin.forEach((oxy: any) => {
+          if (oxy.id) {
+            if (oxy.isDeleted) {
+              this.encounterService.deleteObs(oxy.id).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == oxy.id) : this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == oxy.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1) : this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1);
+              });
+            } else {
+              this.encounterService.updateObs(oxy.id, { value: JSON.stringify({ strength: oxy.strength, infusionRate: oxy.infusionRate, infusionStatus: oxy.infusionStatus }) }).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == oxy.id) : this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == oxy.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value =  JSON.parse(result.value) : this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value = JSON.parse(result.value);
+              });
+            }
+          } else if (!oxy.isDeleted) {
+            this.encounterService.postObs({
+              concept: this.conceptOxytocinPrescribed,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: JSON.stringify({ strength: oxy.strength, infusionRate: oxy.infusionRate, infusionStatus: oxy.infusionStatus }),
+              encounter: currentEnc?.enc_uuid,
+            }).subscribe((result: any) => {
+              (currentEnc?.stageNo == 1) ? this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[27].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: JSON.parse(result.value), uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }] : this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[27].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: JSON.parse(result.value), uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }];
+            });
+          }
+        });
+
+        setTimeout(() => {
+          this.getPastData(27);
+        }, 5000);
+      }
+    });
+  }
+
+  prescribeIvFluid() {
+    this.coreService.openPrescribeIVFluidModal(this.getPastData(28)).subscribe(res => {
+      if (res?.iv?.length) {
+        const currentEnc = this.getLatestEncounterUuid();
+        res.iv.forEach((i: any) => {
+          if (i.id) {
+            if (i.isDeleted) {
+              this.encounterService.deleteObs(i.id).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == i.id) : this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == i.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1) : this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1);
+              });
+            } else {
+              this.encounterService.updateObs(i.id, { value: JSON.stringify({ type: i.type, otherType: i.otherType, infusionRate: i.infusionRate, infusionStatus: i.infusionStatus }) }).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == i.id) : this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == i.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value =  JSON.parse(result.value) : this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value = JSON.parse(result.value);
+              });
+            }
+          } else if (!i.isDeleted) {
+            this.encounterService.postObs({
+              concept: this.conceptIvFluidsPrescribed,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: JSON.stringify({ type: i.type, otherType: i.otherType, infusionRate: i.infusionRate, infusionStatus: i.infusionStatus }),
+              encounter: currentEnc?.enc_uuid,
+            }).subscribe((result: any) => {
+              (currentEnc?.stageNo == 1) ? this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[28].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: JSON.parse(result.value), uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }] : this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[28].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: JSON.parse(result.value), uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }];
+            });
+          }
+        });
+
+        setTimeout(() => {
+          this.getPastData(28);
+        }, 5000);
+      }
+    });
+  }
+
+  addAssessment() {
+    this.coreService.openAddAssessmentModal(this.getPastData(22)).subscribe(res => {
+      if (res?.assessment?.length) {
+        const currentEnc = this.getLatestEncounterUuid();
+        res.assessment.forEach((a: any) => {
+          if (a.id) {
+            if (a.isDeleted) {
+              this.encounterService.deleteObs(a.id).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == a.id) : this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == a.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1) : this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].splice(index, 1);
+              });
+            } else {
+              this.encounterService.updateObs(a.id, { value: a.assessmentValue }).subscribe((result: any) => {
+                const index =  (currentEnc?.stageNo == 1) ? this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == a.id) : this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))].findIndex(o => o.uuid == a.id);
+                (currentEnc?.stageNo == 1) ? this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value =  result.value : this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))][index].value = result.value;
+              });
+            }
+          } else if (!a.isDeleted) {
+            this.encounterService.postObs({
+              concept: this.conceptAssessment,
+              person: this.visit.patient.uuid,
+              obsDatetime: new Date(),
+              value: a.assessmentValue,
+              encounter: currentEnc?.enc_uuid,
+            }).subscribe((result: any) => {
+              (currentEnc?.stageNo == 1) ? this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[22].stage1values[((2 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }] : this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))] = [...this.parameters[22].stage2values[((4 * (currentEnc?.stageHourNo - 1)) + (currentEnc?.stageHourSecNo - 1))], { value: a.assessmentValue, uuid: result.uuid, creator: { uuid: this.userId, person: this.user.person }, obsDatetime: result.obsDatetime, canEdit: true, initial: this.getInitials(this.user.person.display) }];
+            });
+          }
+        });
+
+        setTimeout(() => {
+          this.getPastData(22);
+        }, 5000);
+      }
+    });
   }
 
 }
