@@ -56,13 +56,12 @@
       display: flex;
       flex-direction: column-reverse;
       min-height: 340px;
-      // max-height: 340px;
+      max-height: 340px;
       overflow: auto;
       -ms-overflow-style: none;
       /* for Internet Explorer, Edge */
       scrollbar-width: none;
-      height: 67vh;
-
+     
       .chat-message {
         border: 1px solid rgba(178, 175, 190, 0.2);
         border-radius: 1px 8px 8px 8px;
@@ -169,4 +168,16 @@
 
 .bg-grey {
   background: grey !important;
+}
+
+
+@media all and (min-width:0px) and (max-width: 568px) {
+  .chat-main-con {  
+    .chat-con-body {
+      .chat-messages-list {
+        height: 67vh;
+        max-height: 67vh;
+      }
+    }
+  }
 }
