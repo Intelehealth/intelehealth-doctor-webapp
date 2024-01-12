@@ -122,7 +122,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
         hwName: this.hwName,
-        type: this.isAttachment ? 'attachment' : 'text'
+        type: this.isAttachment ? 'attachment' : 'text',
+        openMrsId: this.data.patientOpenMrsId
       };
       this.sending = true;
       this.chatSvc
