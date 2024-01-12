@@ -121,9 +121,9 @@ registerLocaleData(localeEn);
     NgxUiLoaderHttpModule.forRoot({
       showForeground: true,
       exclude: [
-        'https://naktraining.intelehealth.org:3004/api/messages/',
-        'https://naktraining.intelehealth.org:3004/api/support/',
-        'https://naktraining.intelehealth.org:3004/api/auth/validateProviderAttribute',
+        'https://nak.intelehealth.org:3004/api/messages/',
+        'https://nak.intelehealth.org:3004/api/support/',
+        'https://nak.intelehealth.org:3004/api/auth/validateProviderAttribute',
       ]
     }),
     NgxPermissionsModule.forRoot({
