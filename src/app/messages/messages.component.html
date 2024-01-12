@@ -68,6 +68,11 @@
                         </div>
                       </div>
                     </li>
+                    <li *ngIf="searchValue && filteredConversations.length == 0">
+                      <div class="text-center p-3">
+                          <p>{{ 'No Record Found' }}</p>
+                      </div>
+                    </li>
                   </ul>
                 </div>
               </div>
