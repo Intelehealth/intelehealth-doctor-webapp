@@ -58,7 +58,12 @@
                                 ? (conversation.patientName | titlecase)
                                 : "Unknown" |translate
                             }}
-                          </h6>
+                            {{
+                              conversation.openMrsId
+                                ? '('+(conversation.openMrsId | uppercase)+')'
+                                : ""
+                            }}
+                          </h6> 
                           <p>{{ conversation.message }}</p>
                         </div>
                       </div>
@@ -81,6 +86,11 @@
                           selectedConversation.patientName
                             ? (selectedConversation.patientName | titlecase)
                             :  "Unknown" |translate
+                        }}
+                        {{
+                          selectedConversation.openMrsId
+                            ? '('+(selectedConversation.openMrsId | uppercase)+')'
+                            : ""
                         }}
                       </h6>
                       <span>

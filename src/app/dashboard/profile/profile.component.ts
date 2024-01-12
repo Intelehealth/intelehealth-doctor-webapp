@@ -197,11 +197,11 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     private translateService: TranslateService,
     private coreService: CoreService,
     private appointmentService: AppointmentService) {
-
+  
     this.personalInfoForm = new FormGroup({
-      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
-      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
-      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z ]*$/)]),
+      givenName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      middleName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
+      familyName: new FormControl('', [Validators.required, Validators.pattern(/^[^~!#$^&*(){}[\]|@<>"\\\/\-+_=;':,.?`%0-9]*$/)]),
       gender: new FormControl('M', [Validators.required]),
       birthdate: new FormControl('', [Validators.required]),
       age: new FormControl('', [Validators.required, Validators.min(18), Validators.pattern(/^[0-9]*$/)]),

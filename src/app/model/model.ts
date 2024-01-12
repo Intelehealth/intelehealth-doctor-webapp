@@ -177,7 +177,8 @@ export interface ConversationModel {
   latestMessage?: string,
   messages?: MessageModel[],
   hwName?: string,
-  patientPic?: string
+  patientPic?: string,
+  openMrsId?: string
 }
 
 export interface MessageModel {
