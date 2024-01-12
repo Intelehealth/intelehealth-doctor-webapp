@@ -66,15 +66,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   get filteredConversations() {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
-        conversation?.patientName
-          .toLowerCase()
-          .includes(this.searchValue.toLowerCase()) ||
-        conversation?.message
-          .toLowerCase()
-          .includes(this.searchValue.toLowerCase()) ||
-        conversation?.openMrsId
-          .toLowerCase()
-          .includes(this.searchValue.toLowerCase())
+        conversation?.patientName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+        conversation?.message.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+        conversation?.openMrsId?.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     });
   }
