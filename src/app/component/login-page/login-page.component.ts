@@ -70,50 +70,49 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
+          this.authService.setToken(response.sessionId);
           this.authService.getAuthToken(value.username, value.password).subscribe({
             next: ((resp: any) => {
               setCacheData('token', resp?.token);
+              this.sessionService.provider(response.user.uuid).subscribe(
+                (provider) => {
+                  saveToStorage("provider", provider.results[0]);
+                  saveToStorage("user", response.user);
+                  let isNurse = response.user.roles.find((r: any) => r.name == 'Organizational: Nurse');
+                  let isDoctor = response.user.roles.find((r: any) => r.name == 'Organizational: Doctor');
+                  if (isNurse) {
+                    if (isDoctor) {
+                      if (provider.results[0].attributes.length === 0) {
+                        this.router.navigate(["/myAccount"]);
+                      } else {
+                        this.router.navigate(["/home"]);
+                      }
+                      saveToStorage("providerType", 'Both');
+                      saveToStorage("doctorName", provider.results[0].person.display);
+                    } else {
+                      this.router.navigate(["/myAccount"]);
+                      saveToStorage("providerType", 'Nurse');
+                      saveToStorage("nurseName", provider.results[0].person.display);
+                    }
+                  } else {
+                    if (provider.results[0].attributes.length === 0) {
+                      this.router.navigate(["/myAccount"]);
+                    } else {
+                      this.router.navigate(["/home"]);
+                    }
+                    saveToStorage("providerType", 'Doctor');
+                    saveToStorage("doctorName", provider.results[0].person.display);
+                  }
+                  this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
+                    duration: 4000,
+                  });
+                },
+                (error) => {
+                  this.router.navigate(["home"]);
+                }
+              );
             })
           });
-          this.authService.setToken(response.sessionId);
-          this.sessionService.provider(response.user.uuid).subscribe(
-            (provider) => {
-              saveToStorage("provider", provider.results[0]);
-              saveToStorage("user", response.user);
-              let isNurse = response.user.roles.find((r: any) => r.name == 'Organizational: Nurse');
-              let isDoctor = response.user.roles.find((r: any) => r.name == 'Organizational: Doctor');
-              if (isNurse) {
-                if (isDoctor) {
-                  if (provider.results[0].attributes.length === 0) {
-                    this.router.navigate(["/myAccount"]);
-                  } else {
-                    this.router.navigate(["/home"]);
-                  }
-                  saveToStorage("providerType", 'Both');
-                  saveToStorage("doctorName", provider.results[0].person.display);
-                } else {
-                  this.router.navigate(["/myAccount"]);
-                  saveToStorage("providerType", 'Nurse');
-                  saveToStorage("nurseName", provider.results[0].person.display);
-                }
-              } else {
-                if (provider.results[0].attributes.length === 0) {
-                  this.router.navigate(["/myAccount"]);
-                } else {
-                  this.router.navigate(["/home"]);
-                }
-                saveToStorage("providerType", 'Doctor');
-                saveToStorage("doctorName", provider.results[0].person.display);
-              }
-              this.snackbar.open(`Welcome ${provider.results[0].person.display}`, null, {
-                duration: 4000,
-              });
-            },
-            (error) => {
-              this.router.navigate(["home"]);
-            }
-          );
-
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,
