@@ -95,12 +95,12 @@ import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speci
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
 import { SendSmsComponent } from './component/send-sms/send-sms.component';
-import { CookieModule } from "ngx-cookie";
 import { ToastrModule } from "ngx-toastr";
 import { VideoCallComponent } from './modal-components/video-call/video-call.component';
 import { MomentModule } from "ngx-moment";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
+import { CookieService } from "ngx-cookie-service";
 
 
 const ROUTES: any[] = [
@@ -265,7 +265,6 @@ const ROUTES: any[] = [
     MatTabsModule,
     MatChipsModule,
     NgxMaterialTimepickerModule,
-    CookieModule.withOptions(),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
@@ -285,6 +284,7 @@ const ROUTES: any[] = [
     MomentModule
   ],
   providers: [
+    CookieService,
     AuthGuard,
     DatePipe,
     MatDatepickerModule,

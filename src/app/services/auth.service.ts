@@ -2,7 +2,7 @@ import { SessionService } from "./session.service";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { CookieService } from 'ngx-cookie';
+import { CookieService } from "ngx-cookie-service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -34,7 +34,7 @@ export class AuthService {
    * @param token String
    */
   sendToken(token) {
-    this.cookieService.put("JSESSIONID", token);
+    this.cookieService.set("JSESSIONID", token);
   }
 
   /**
@@ -89,7 +89,7 @@ export class AuthService {
         deleteFromStorage("doctorName");
         deleteFromStorage("providerType");
         deleteFromStorage("JSESSIONID");
-        this.cookieService.removeAll();
+        this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
     });

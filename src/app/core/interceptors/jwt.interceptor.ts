@@ -12,7 +12,7 @@ export class JwtInterceptor implements HttpInterceptor {
      * add authorization header with jwt token if available
      */
     const token = this.authService.authToken;
-    if (token) {
+    if (token && !request.url?.includes?.('/openmrs/ws/rest/')) {
       request = request.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });

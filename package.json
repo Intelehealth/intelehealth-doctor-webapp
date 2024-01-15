@@ -37,7 +37,7 @@
     "moment": "^2.24.0",
     "ngx-moment": "^6.0.2",
     "ng-multiselect-dropdown": "^0.3.6",
-    "ngx-cookie": "^6.0.1",
+    "ngx-cookie-service": "^17.0.1",
     "ngx-material-timepicker": "^5.5.3",
     "ngx-spinner": "^10.0.1",
     "ngx-toastr": "^14.3.0",
