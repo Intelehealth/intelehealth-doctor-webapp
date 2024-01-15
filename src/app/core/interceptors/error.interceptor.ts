@@ -17,11 +17,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         this.authService.logout();
       }
 
-      if ([404].indexOf(err?.status)) {
-        this.toastr.error('Not found', '404 Not Found');
-        return throwError(error);
-      }
-
       if (request?.method == 'DELETE' && request?.url?.includes?.('session')) {
         return throwError(error);
       }
