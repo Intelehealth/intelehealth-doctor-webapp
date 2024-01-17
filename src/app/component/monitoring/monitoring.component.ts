@@ -30,7 +30,8 @@ export class MonitoringComponent implements OnInit {
   ];
   hwColumns: any = [
     { label: "Name of HW", key: "name" },
-    { label: "Village", key: "village" },
+    { label: "Primary Village", key: "village" },
+    { label: "Secondary Village", key: "secondaryVillage" },
     { label: "Sanch", key: "sanch" },
     { label: "Last Sync", key: "lastSyncTimestamp" },
     { label: "Consultation Device", key: "device" },
@@ -78,7 +79,7 @@ export class MonitoringComponent implements OnInit {
       this.data.sort((a, b) => new Date(b.lastSyncTimestamp).getTime() - new Date(a.lastSyncTimestamp).getTime());
       const arry = this.data.filter(
         (obj, index) =>
-        this.data.findIndex((item) => item.name === obj.name) === index
+          this.data.findIndex((item) => item.name === obj.name) === index
       )
       this.dataSource = new MatTableDataSource(arry);
       this.dataSource.paginator = page == 1 ? this.paginator0 : this.paginator1;
@@ -124,7 +125,6 @@ export class MonitoringComponent implements OnInit {
   }
 
   tabChange(changeEvent: MatTabChangeEvent) {
-    // console.log("Tab position: " + changeEvent.tab.position);
     this.filterData();
   }
 
@@ -154,7 +154,7 @@ export class MonitoringComponent implements OnInit {
     } else if (["lastSyncTimestamp", "lastLogin"].includes(key)) {
       return moment(obj[key]).format("MMM DD YYYY hh:mm A");
     } else {
-      return obj[key] === null ? 'NA': obj[key];
+      return obj[key] === null ? 'NA' : obj[key];
     }
   }
 
@@ -176,17 +176,10 @@ export class MonitoringComponent implements OnInit {
   hwExport() {
     const headers = this.hwColumns.map(col => col.label);
     const csvExporter = new ExportToCsv({
-      // fieldSeparator: ',',
-      // quoteStrings: '"',
-      // decimalSeparator: '.',
       showLabels: true,
-      // showTitle: true,
-      // title: `hw-${Date.now()}`,
       filename: `hw-${Date.now()}`,
       useTextFile: false,
-      // useBom: true,
-      // useKeysAsHeaders: true,
-      headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+      headers
     });
     let _data: any = this.allData.filter(d => d.userType === "Health Worker")
     _data = _data.map(item => {
@@ -195,7 +188,7 @@ export class MonitoringComponent implements OnInit {
     _data.sort((a, b) => new Date(b.lastSyncTimestamp).getTime() - new Date(a.lastSyncTimestamp).getTime());
     const arry = _data.filter(
       (obj, index) =>
-      _data.findIndex((item) => item.name === obj.name) === index
+        _data.findIndex((item) => item.name === obj.name) === index
     )
     const data = arry.map(({ userType, ...rest }) => rest);
     csvExporter.generateCsv(data);
@@ -204,16 +197,10 @@ export class MonitoringComponent implements OnInit {
   drExport() {
     const headers = this.drColumns.map(col => col.label);
     const csvExporter = new ExportToCsv({
-      // fieldSeparator: ',',
-      // quoteStrings: '"',
-      // decimalSeparator: '.',
       showLabels: true,
-      // showTitle: true,
       filename: `doctor-${Date.now()}`,
       useTextFile: false,
-      // useBom: true,
-      // useKeysAsHeaders: true,
-      headers// ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+      headers
     });
     let _data: any = this.allData.filter(d => d.userType === "Doctor")
     _data = _data.map(item => this.setTableData(item));
