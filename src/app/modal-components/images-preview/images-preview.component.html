@@ -1,14 +1,14 @@
 <div class="modal-nav">
-  <button mat-icon-button (click)="close(false)" data-test-id="btnClose">
-    <img src="assets/svgs/arrow-right-white.svg" alt="" />
+  <button mat-icon-button (click)="close(false)" class="modal-nav-btn" data-test-id="btnClose">
+    <img src="assets/svgs/icons8-close.svg" alt="" />
   </button>
-  <button mat-icon-button (click)="imgLink.click()" data-test-id="btnDownload">
+  <button mat-icon-button (click)="imgLink.click()" class="modal-nav-btn" data-test-id="btnDownload">
     <img src="assets/svgs/download-white.svg" alt="" />
   </button>
 </div>
 <mat-dialog-content>
-  <div class="preview-con d-flex align-items-center justify-content-center">
-    <div class="nav-icon">
+  <div class="preview-con d-flex flex-column align-items-center justify-content-center">
+    <div class=".nav-icon d-flex">
       <a
         href="javascript:void(0)"
         (click)="previous()"
@@ -16,6 +16,14 @@
         data-test-id="linkPrevious"
       >
         <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%" />
+      </a>
+      <a
+        href="javascript:void(0)"
+        (click)="next()"
+        [hidden]="startIndex == max"
+        data-test-id="linkNext"
+      >
+        <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
       </a>
     </div>
     <ng-container *ngIf="isPDF(imgUrl); else image">
@@ -36,16 +44,6 @@
         />
       </div>
     </ng-template>
-    <div class="nav-icon">
-      <a
-        href="javascript:void(0)"
-        (click)="next()"
-        [hidden]="startIndex == max"
-        data-test-id="linkNext"
-      >
-        <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
-      </a>
-    </div>
   </div>
   <a [href]="imgUrl" download="image.png" #imgLink data-test-id="linkImage"></a>
 </mat-dialog-content>
