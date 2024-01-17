@@ -58,9 +58,19 @@
                                 ? (conversation.patientName | titlecase)
                                 : "Unknown" |translate
                             }}
-                          </h6>
+                            {{
+                              conversation.openMrsId
+                                ? '('+(conversation.openMrsId | uppercase)+')'
+                                : ""
+                            }}
+                          </h6> 
                           <p>{{ conversation.message }}</p>
                         </div>
+                      </div>
+                    </li>
+                    <li *ngIf="searchValue && filteredConversations.length == 0">
+                      <div class="text-center p-3">
+                          <p>{{ 'No Record Found' }}</p>
                       </div>
                     </li>
                   </ul>
@@ -81,6 +91,11 @@
                           selectedConversation.patientName
                             ? (selectedConversation.patientName | titlecase)
                             :  "Unknown" |translate
+                        }}
+                        {{
+                          selectedConversation.openMrsId
+                            ? '('+(selectedConversation.openMrsId | uppercase)+')'
+                            : ""
                         }}
                       </h6>
                       <span>

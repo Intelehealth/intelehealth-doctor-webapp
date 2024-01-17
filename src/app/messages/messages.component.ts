@@ -66,12 +66,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   get filteredConversations() {
     return this.conversations.filter((conversation: ConversationModel) => {
       return (
-        conversation?.patientName
-          .toLowerCase()
-          .includes(this.searchValue.toLowerCase()) ||
-        conversation?.message
-          .toLowerCase()
-          .includes(this.searchValue.toLowerCase())
+        conversation?.patientName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+        conversation?.message.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+        conversation?.openMrsId?.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     });
   }
@@ -174,6 +171,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         visitId: this.selectedConversation?.visitId,
         patientName: this.selectedConversation.patientName,
         hwName: this.selectedConversation?.hwName,
+        openMrsId: this.selectedConversation?.openMrsId,
         type: this.isAttachment ? 'attachment' : 'text'
       };
 

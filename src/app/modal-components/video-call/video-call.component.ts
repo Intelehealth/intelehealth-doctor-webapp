@@ -348,7 +348,8 @@ export class VideoCallComponent implements OnInit, OnDestroy {
         visitId: this.data.visitId,
         patientName: this.data.patientName,
         hwName: this.hwName,
-        type: this.isAttachment ? 'attachment' : 'text'
+        type: this.isAttachment ? 'attachment' : 'text',
+        openMrsId: this.data.patientOpenMrsId
       };
       this.chatSvc
         .sendMessage(this.toUser, this.data.patientId, this.message, payload)
