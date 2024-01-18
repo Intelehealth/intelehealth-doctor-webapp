@@ -5,28 +5,27 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   background: var(--color-darkestBlue)86;
   padding: 10px;
+  gap: 33%;
 }
 
 .modal-nav-btn{
-  background-color: rgb(0,0,0,0.4);
+  background-color: rgb(0,0,0,0.6);
 }
 
 .preview-con {
   .nav-icon {
-    a {
-      text-decoration: none;
-    }
+    width: 100px;
+    text-align: center;
   }
   .img-con {
-    height: 65vmin;
+    height: 75vmin;
   }
 
   .pdf-con{
-    height: 65vmin;
+    height: 75vmin;
     width: 100%;
   }
-
 }
