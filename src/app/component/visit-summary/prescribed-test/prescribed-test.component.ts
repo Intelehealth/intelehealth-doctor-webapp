@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SessionService } from 'src/app/services/session.service';
 import { TranslateService } from '@ngx-translate/core';
+import { VisitService } from 'src/app/services/visit.service';
 declare var getEncounterUUID: any, getFromStorage: any;
 
 @Component({
@@ -33,37 +34,46 @@ declare var getEncounterUUID: any, getFromStorage: any;
  ]
 })
 export class PrescribedTestComponent implements OnInit {
-@Input() isManagerRole : boolean;
-@Input() visitCompleted: boolean;
+  @Input() isManagerRole : boolean;
+  @Input() visitCompleted: boolean;
 
-tests: any = [];
-test =  [];
-conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
-encounterUuid: string;
-patientId: string;
-visitUuid: string;
-errorText: string;
+  tests: any = [];
+  test =  [];
+  conceptTest = '23601d71-50e6-483f-968d-aeef3031346d';
+  encounterUuid: string;
+  patientId: string;
+  visitUuid: string;
+  errorText: string;
+  medicineObs = [];
+  medicineObsList = [];
+  medicinesList = [];
+  objectKeys = Object.keys;
+  conceptMed = 'c38c0c50-2fd2-4ae3-b7ba-7dd25adca4ca';
+  isShow: boolean[] = Array(this.medicineObsList.length).fill(false);
 
-testForm = new FormGroup({
-  test: new FormControl('', [Validators.required])
-});
+  testForm = new FormGroup({
+    test: new FormControl('', [Validators.required])
+  });
 
-  constructor(private service: EncounterService,
-              private diagnosisService: DiagnosisService,
-              private translationService: TranslationService,
-              private route: ActivatedRoute,
-              private snackbar: MatSnackBar,
-              private sessionSvc:SessionService,
-              private ngxTranslationService: TranslateService) { }
+  constructor(
+    private service: EncounterService,
+    private diagnosisService: DiagnosisService,
+    private translationService: TranslationService,
+    private route: ActivatedRoute,
+    private snackbar: MatSnackBar,
+    private sessionSvc:SessionService,
+    private ngxTranslationService: TranslateService,
+    public visitSvc: VisitService
+  ) { }
 
 
-      search = (text$: Observable<string>) =>
-      text$.pipe(
+  search = (text$: Observable<string>) =>
+    text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
         : this.test.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).sort(new Intl.Collator(localStorage.getItem("selectedLanguage"), { caseFirst: 'upper' } ).compare).slice(0, 10))
-      )
+    )
 
   ngOnInit() {
     const testUuid = '98c5881f-b214-4597-83d4-509666e9a7c9';
@@ -91,7 +101,59 @@ testForm = new FormGroup({
           }
         }
       });
+      this.visitSvc.lockPrescribedTest.next();
     });
+
+    this.visitSvc.fetchVisitDetails(this.visitUuid).subscribe(visitDetail => {
+      visitDetail.encounters.filter((e) => {
+        let medObs = {}
+        if(e.display.includes("ENCOUNTER_TEST_COLLECT")){
+          for(let i = 0; i < e.obs.length; i++){
+            if(e.obs[i].display.includes("OBS_TEST_COLLECT")){              
+              let obsData = JSON.parse(e.obs[i].value)
+              medObs['medicationUuidList'] = obsData.medicationUuidList
+              medObs['obsDatetime'] = e.obs[i].obsDatetime
+              medObs['creator'] = {'collected' : e.obs[i].creator.display}
+            }
+          }
+          this.medicineObs.push(medObs);
+        }
+        if(e.display.includes("ENCOUNTER_TEST_RECEIVE")){
+          for(let i = 0; i < e.obs.length; i++){
+            if(e.obs[i].display.includes("OBS_TEST_RECEIVE")){              
+              let obsData = JSON.parse(e.obs[i].value)
+              medObs['medicationUuidList'] = obsData.medicationUuidList
+              medObs['obsDatetime'] = e.obs[i].obsDatetime
+              medObs['creator'] = {'resulted' : e.obs[i].creator.display}
+            }
+          }
+          this.medicineObs.push(medObs);
+        }
+        if(e.display.includes("Visit Note")){
+          this.getMedicineList(e.obs,this.medicineObs);
+        }
+      });      
+    });
+
+    this.visitSvc.lockPrescribedTest.subscribe({
+      next: () => {
+        if(this.visitSvc?.prescribedTest && this.tests?.length){
+          this.tests.forEach( tst => {
+            if(Array.isArray(this.visitSvc.prescribedTest)){
+              this.visitSvc.prescribedTest.forEach(tstData => {
+                if (Array.isArray(tstData?.medicationUuidList) && !tst.disabled) {
+                  tst.disabled = tstData?.medicationUuidList.includes(tst.uuid);
+                }
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.visitSvc.lockPrescribedTest.unsubscribe();
   }
 
   submit() {
@@ -173,6 +235,39 @@ testForm = new FormGroup({
 
   getLang() {
     return localStorage.getItem("selectedLanguage");
-   }
+  }
+
+  getMedicineList(obs:any, arr:any){
+    for(let j = 0; j < obs.length; j++){
+      let disAdminObs = {};
+      let obsArr = [];
+      if(obs[j].display.includes("REQUESTED TESTS")){
+        this.diagnosisService.getData(obs[j]);
+        for(let x = 0; x < arr.length; x++){
+          if(arr[x].medicationUuidList){
+            let obsMeds = {};
+            for(let y = 0; y < arr[x].medicationUuidList.length; y++){
+              if(arr[x].medicationUuidList[y] === obs[j].uuid){ 
+                obsMeds[obs[j].value] = [arr[x].creator, arr[x].obsDatetime];
+                this.medicinesList.push(obsMeds);
+              }                    
+            }
+          }
+        }
+        for(let i = 0; i < this.medicinesList.length; i++){
+          if(this.objectKeys(this.medicinesList[i]).includes(obs[j].value)){            
+            obsArr.push(this.medicinesList[i][obs[j].value]);
+          }
+        }
+        disAdminObs[obs[j].value] = obsArr
+        this.medicineObsList.push(disAdminObs);
+      }
+    }
+  }
+
+  toggleShow(index: number): void {
+    this.isShow[index] = !this.isShow[index];
+  }
+
 }
 

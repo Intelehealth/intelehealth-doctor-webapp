@@ -328,7 +328,15 @@
     "You can't create/update past and schedule": "لا يمكنك إنشاء / تحديث الماضي والجدول الزمني",
     "Aid order saved successfully": "تم حفظ أمر صرف المساعدة بنجاح",
     "Data saved successfully": "تم حفظ البيانات بنجاح",
-    "cantAdd": "لا يمكن الإضافة ، هذا الإدخال موجود بالفعل!"
+    "cantAdd": "لا يمكن الإضافة ، هذا الإدخال موجود بالفعل!",
+    "Please try again later.":"الرجاء المحاولة لاحقاُ",
+    "Message length should not exceed 1000.":"لا يجوز ان يتجاوز طول الرسالة الالف حرف",
+    "Failed to generate a video call token.":"فشل في إنشاء رمز مكالمة فيديو.",
+    "Health worker not available to pick the call, please try again later.":"العامل الصحي غير متاح لاجراء المكالمة ، يرجى المحاولة مرة أخرى لاحقًا.",
+    "Call ended from Health Worker's end.":"انتهت المكالمة من جهة العامل الصحي.",
+    "Calling":"قيد الاتصال",
+    "Call rejected by Health Worker":"تم رفض المكالمة من قبل العامل الصحي",
+    "Call ended from Health Worker end.":"تم انهاء المكالمة من قبل العامل الصحي"
   },
   "No slots avalable for the day, try changing dates.": "لا توجد مواعيد متاحة لهذا اليوم ، حاول تغيير التواريخ",
   "helpMsg1": "مرحبا بكم في بوابة الطبيب. في أقل من دقيقة واحدة ، سوف نوضح لك كيفية تقديم التشخيص والأدوية والاختبارات والمشورة للمريض.",
@@ -1417,5 +1425,13 @@
   "Administered by":"اسم معطي الدواء/الدعم",
   "Show Details":"إظهار التفاصيل",
   "Hide Details":"إخفاء التفاصيل",
-  "No Past Visit":"لا يوجد زيارات سابقة"
+  "No Past Visit":"لا يوجد زيارات سابقة",
+  "Type here":"أكتب هنا ...",
+  "Sent":"مرسل",
+  "Delivered":"تم التوصيل",
+  "Read":"مقروء",
+  "Sending":"قيد الارسال",
+  "Call is connecting":" المكالمة قيد الاتصال",
+  "Calling":"قيد الاتصال",
+  "Patient":"المريض"
 }

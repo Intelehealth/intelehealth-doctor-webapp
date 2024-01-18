@@ -103,6 +103,18 @@
                   <app-prescribed-test [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-prescribed-test>
             </mat-card>
             <br>
+            <div  *ngIf="isCollectedBy">
+                  <mat-card>
+                        <app-collected-by></app-collected-by>
+                  </mat-card>
+                  <br>
+            </div>
+            <div  *ngIf="isReceiveBy">
+                  <mat-card>
+                        <app-resulted-by></app-resulted-by>
+                  </mat-card>
+                  <br>
+            </div>
             <mat-card>
                   <app-advice [visitCompleted]="visitCompletePresent" [isManagerRole]="isManagerRole"></app-advice>
             </mat-card>

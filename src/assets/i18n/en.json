@@ -319,7 +319,15 @@
       "You can't create/update past and schedule":"You can't create/update past and schedule",
       "Aid order saved successfully": "Aid order saved successfully",
       "Data saved successfully": "Data saved successfully",
-      "cantAdd": "Can't add, this entry already exists!"
+      "cantAdd": "Can't add, this entry already exists!",
+      "Failed to generate a video call token.":"Failed to generate a video call token.",
+      "Health worker not available to pick the call, please try again later.":"Health worker not available to pick the call, please try again later.",
+      "Call ended from Health Worker's end.":"Call ended from Health Worker's end.",
+      "Calling":"Calling",
+      "Call rejected by Health Worker":"Call rejected by Health Worker",
+      "Call ended from Health Worker end.":"Call ended from Health Worker end.",
+      "Please try again later.":"Please try again later.",
+      "Message length should not exceed 1000.":"Message length should not exceed 1000."
     },
     "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
     "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",
@@ -1369,5 +1377,13 @@
     "Administered by":"Administered by",
     "Show Details":"Show Details",
     "Hide Details":"Hide Details",
-    "No Past Visit":"No Past Visit"
+    "No Past Visit":"No Past Visit",
+    "Type here":"Type here",
+    "Sent":"Sent",
+    "Delivered":"Delivered",
+    "Read":"Read",
+    "Sending":"Sending",
+    "Call is connecting":"Call is connecting",
+    "Calling":"Calling",
+    "Patient":"Patient"
   }

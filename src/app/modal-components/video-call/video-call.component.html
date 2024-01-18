@@ -10,7 +10,7 @@
       <img src="assets/svgs/patient.svg" alt="" />
       <div class="d-flex flex-column justify-content-center">
         <h6 class="mb-0">{{ this.data.patientName | titlecase }}</h6>
-        <span>{{ "Patient" }}</span>
+        <span>{{ "Patient"|translate }}</span>
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@
             [class.d-none]="!connecting"
             class="main-container connecting"
           >
-            <div class="text-center text">Call is connecting...</div>
+            <div class="text-center text">{{ 'Call is connecting'|translate }}...</div>
           </div>
           <div
             [class.d-none]="
@@ -127,7 +127,7 @@
             [class.d-none]="callConnected"
             class="call-container"
           >
-            <div class="calling-txt text-center w-100">Calling...</div>
+            <div class="calling-txt text-center w-100">{{ 'Calling'|translate }}...</div>
             <div class="img-cont">
               <img
                 class="calling-img mt-5"
@@ -181,11 +181,11 @@
                     >
                       <ng-container *ngIf="item.isRead">
                         <img src="assets/svgs/read-status.svg" alt="" />
-                        <span class="ml-1">{{ "Read" }}</span>
+                        <span class="ml-1">{{ "Read"|translate }}</span>
                       </ng-container>
                       <ng-container *ngIf="!item.isRead">
                         <img src="assets/svgs/sent-status.svg" alt="" />
-                        <span class="ml-1">{{ "Sent" }}</span>
+                        <span class="ml-1">{{ "Sent"|translate }}</span>
                       </ng-container>
                     </ng-container>
                   </li>
@@ -215,7 +215,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Type here"
+                    placeholder="{{ 'Type here'|translate }}"
                     [(ngModel)]="message"
                     (keyup.enter)="sendMessage()"
                   />

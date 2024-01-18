@@ -41,6 +41,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isSameSpecialityDoctorViewingVisit = false;
   isAdminister = false;
   isDispense = false;
+  isCollectedBy = false;
+  isReceiveBy = false;
   visit: any;
   chatBoxRef: any;
 
@@ -120,6 +122,12 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           }
           if(visit.display.includes("ADMINISTER")){
             this.isAdminister = true
+          }
+          if(visit.display.includes("ENCOUNTER_TEST_COLLECT")){
+            this.isCollectedBy = true
+          }
+          if(visit.display.includes("ENCOUNTER_TEST_RECEIVE")){
+            this.isReceiveBy = true
           }
         });
         const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
