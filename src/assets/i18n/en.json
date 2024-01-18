@@ -1385,5 +1385,8 @@
     "Sending":"Sending",
     "Call is connecting":"Call is connecting",
     "Calling":"Calling",
-    "Patient":"Patient"
+    "Patient":"Patient",
+    "Collected by":"Collected by",
+    "Resulted by":"Resulted by",
+    "Medical Tests":"Medical Tests"
   }

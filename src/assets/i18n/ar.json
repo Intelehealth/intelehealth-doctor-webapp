@@ -1433,5 +1433,8 @@
   "Sending":"قيد الارسال",
   "Call is connecting":" المكالمة قيد الاتصال",
   "Calling":"قيد الاتصال",
-  "Patient":"المريض"
+  "Patient":"المريض",
+  "Collected by":"جمع العينة",
+  "Resulted by":"تحميل النتائج",
+  "Medical Tests":" الفحوصات الطبية"
 }
