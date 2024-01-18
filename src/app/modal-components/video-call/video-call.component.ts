@@ -168,7 +168,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   */
   get doctorName() {
     try {
-      return getCacheData(true, 'doctorName') || this.user.display;
+      return getCacheData(false, 'doctorName') || this.user.display;
     } catch (error) {
       return getCacheData(false, 'doctorName') || this.user.display;
     }
@@ -571,5 +571,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.socketSvc.incoming = false;
     clearInterval(this.changeDetForDuration);
     this.webrtcSvc.disconnect();
+    this.webrtcSvc.token = '';
   }
 }
