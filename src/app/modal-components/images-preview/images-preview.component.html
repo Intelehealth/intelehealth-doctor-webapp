@@ -1,30 +1,22 @@
 <div class="modal-nav">
-  <button mat-icon-button (click)="close(false)" class="modal-nav-btn" data-test-id="btnClose">
-    <img src="assets/svgs/icons8-close.svg" alt="" />
-  </button>
   <button mat-icon-button (click)="imgLink.click()" class="modal-nav-btn" data-test-id="btnDownload">
     <img src="assets/svgs/download-white.svg" alt="" />
   </button>
+  <button mat-icon-button (click)="close(false)" class="modal-nav-btn" data-test-id="btnClose">
+    <img src="assets/svgs/icons8-close.svg" alt="" />
+  </button>
 </div>
 <mat-dialog-content>
-  <div class="preview-con d-flex flex-column align-items-center justify-content-center">
-    <div class=".nav-icon d-flex">
-      <a
-        href="javascript:void(0)"
-        (click)="previous()"
-        [hidden]="startIndex == min"
-        data-test-id="linkPrevious"
+  <div class="preview-con d-flex align-items-center justify-content-center">
+    <div class="nav-icon">
+      <button mat-icon-button 
+      (click)="previous()"
+      [hidden]="startIndex == min"
+      data-test-id="linkPrevious"
+      class="modal-nav-btn"
       >
-        <img src="assets/svgs/left-arrow-image.svg" alt="" width="100%" />
-      </a>
-      <a
-        href="javascript:void(0)"
-        (click)="next()"
-        [hidden]="startIndex == max"
-        data-test-id="linkNext"
-      >
-        <img src="assets/svgs/right-arrow-image.svg" alt="" width="100%" />
-      </a>
+        <img src="assets/svgs/back-white.png" alt="" />
+      </button>
     </div>
     <ng-container *ngIf="isPDF(imgUrl); else image">
       <div class="pdf-con">
@@ -44,6 +36,16 @@
         />
       </div>
     </ng-template>
+    <div class="nav-icon">
+      <button mat-icon-button 
+      (click)="next()"
+      [hidden]="startIndex == max"
+      data-test-id="linkNext"
+      class="modal-nav-btn"
+      >
+        <img src="assets/svgs/forward-white.png" alt="" />
+      </button>
+    </div>
   </div>
   <a [href]="imgUrl" download="image.png" #imgLink data-test-id="linkImage"></a>
 </mat-dialog-content>
