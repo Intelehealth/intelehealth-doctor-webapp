@@ -106,7 +106,7 @@ export class ProviderService {
   * @param {string} providerId - Provider uuid
   * @return {Observable<any>}
   */
-  uploadSignature(file: string, providerid: string): Observable<any> {
-    return this.http.post(`${this.mindmapUrl}/signature/upload`, { file, providerid });
+  uploadSignature(file: string, providerId: string): Observable<any> {
+    return this.http.post(`${this.mindmapUrl}/signature/upload`, { file, providerId });
   }
 }
