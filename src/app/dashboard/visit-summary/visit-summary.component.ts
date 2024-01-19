@@ -921,9 +921,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       visit: this.visit.uuid,
       encounterDatetime: new Date(Date.now() - 30000),
     };
+    this.visitNotePresent =  true;
     this.encounterService.postEncounter(json).subscribe((response) => {
       if (response) {
         this.getVisit(this.visit.uuid);
+        this.visitNotePresent = true;
+      } else {
+        this.visitNotePresent = false;
       }
     });
   }
