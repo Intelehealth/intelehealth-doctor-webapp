@@ -565,8 +565,22 @@ export class EpartogramComponent implements OnInit {
     return { stage: stageNo, hour: encounterNo + 1, planData: [...planData], medicationData: [...medicationData], oxytocinData: [...oxytocinData], ivData: [...ivData] };
   }
 
+  getEncounterAssessmentData(stageNo: number, encounterNo: number) {
+    let assessmentData = [];
+    if (stageNo == 1) {
+      assessmentData = this.parameters[22].stage1values[2 * encounterNo].concat(this.parameters[22].stage1values[((2 * (encounterNo)) + 1)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    } else {
+      assessmentData = this.parameters[22].stage2values[4 * encounterNo].concat(this.parameters[22].stage2values[((4 * (encounterNo)) + 1)]).concat(this.parameters[22].stage2values[((4 * (encounterNo)) + 2)]).concat(this.parameters[23].stage2values[((4 * (encounterNo)) + 3)]).sort((a, b) => new Date(b.obsDatetime).getTime() - new Date(a.obsDatetime).getTime());
+    }
+    return { stage: stageNo, hour: encounterNo + 1, assessmentData: [...assessmentData] };
+  }
+
   viewPlan(stageNo: number, encounterNo: number) {
     this.coreService.openViewDetailPlanModal(this.getEncounterPlanData(stageNo, encounterNo)).subscribe(res => {});
+  }
+
+  viewAssessment(stageNo: number, encounterNo: number) {
+    this.coreService.openViewDetailAssessmentModal(this.getEncounterAssessmentData(stageNo, encounterNo)).subscribe(res => {});
   }
 
   getPastData(index: number) {

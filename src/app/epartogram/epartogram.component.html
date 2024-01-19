@@ -901,7 +901,7 @@
                   <td colspan="3">ASSESSMENT</td>
                   <ng-container *ngFor="let item of encuuid1;let i=index;">
                     <td colspan="2">
-                      <div class="value-item note">
+                      <div class="value-item note" *ngIf="item && (parameters[22]?.stage1values[(2 * (i))].length || parameters[22]?.stage1values[((2 * (i)) + (2 - 1))].length)">
                         <ng-container *ngFor="let it of parameters[22]?.stage1values[(2 * (i))]|emptyArray;">
                           <p *ngIf="it">{{it?.value}}</p>
                         </ng-container>
@@ -909,13 +909,16 @@
                           *ngFor="let it of parameters[22]?.stage1values[((2 * (i)) + (2 - 1))]|emptyArray;">
                           <p *ngIf="it">{{it?.value}}</p>
                         </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(1, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
                       </div>
                     </td>
                   </ng-container>
 
                   <ng-container *ngFor="let item of encuuid2;let i=index;">
                     <td colspan="4">
-                      <div class="value-item note">
+                      <div class="value-item note" *ngIf="item  && ( parameters[22]?.stage2values[((4 * (i)))].length || parameters[22]?.stage2values[((4 * (i)) + 1)].length || parameters[22]?.stage2values[((4 * (i)) + 2)].length || parameters[22]?.stage2values[((4 * (i)) + 3)].length)">
                         <ng-container *ngFor="let it of parameters[22]?.stage2values[((4 * (i)))]|emptyArray;">
                           <p *ngIf="it">{{it?.value}}</p>
                         </ng-container>
@@ -928,6 +931,9 @@
                         <ng-container *ngFor="let it of parameters[22]?.stage2values[((4 * (i)) + 3)]|emptyArray;">
                           <p *ngIf="it">{{it?.value}}</p>
                         </ng-container>
+                        <button mat-icon-button aria-label="Open in new tab" (click)="viewAssessment(2, i)">
+                          <mat-icon>open_in_new</mat-icon>
+                        </button>
                       </div>
                     </td>
                   </ng-container>

@@ -34,6 +34,7 @@ import { PrescribeOxytocinComponent } from './prescribe-oxytocin/prescribe-oxyto
 import { PrescribePlanComponent } from './prescribe-plan/prescribe-plan.component';
 import { AddAssessmentComponent } from './add-assessment/add-assessment.component';
 import { ViewPlanComponent } from './view-plan/view-plan.component';
+import { ViewAsssessmentComponent } from './view-asssessment/view-asssessment.component';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,8 @@ import { ViewPlanComponent } from './view-plan/view-plan.component';
         PrescribeOxytocinComponent,
         PrescribePlanComponent,
         AddAssessmentComponent,
-        ViewPlanComponent
+        ViewPlanComponent,
+        ViewAsssessmentComponent
     ],
     imports: [
         CommonModule,

@@ -20,6 +20,7 @@ import { SearchedPatientsComponent } from 'src/app/modal-components/searched-pat
 import { SelectLanguageComponent } from 'src/app/modal-components/select-language/select-language.component';
 import { UploadMindmapJsonComponent } from 'src/app/modal-components/upload-mindmap-json/upload-mindmap-json.component';
 import { VideoCallComponent } from 'src/app/modal-components/video-call/video-call.component';
+import { ViewAsssessmentComponent } from 'src/app/modal-components/view-asssessment/view-asssessment.component';
 import { ViewPlanComponent } from 'src/app/modal-components/view-plan/view-plan.component';
 
 @Injectable({
@@ -126,6 +127,11 @@ export class CoreService {
 
   openViewDetailPlanModal(data: any): Observable<any> {
     const dialogRef = this.dialog.open(ViewPlanComponent, { panelClass: "modal-lg", data });
+    return dialogRef.afterClosed();
+  }
+
+  openViewDetailAssessmentModal(data: any): Observable<any> {
+    const dialogRef = this.dialog.open(ViewAsssessmentComponent, { panelClass: "modal-lg", data });
     return dialogRef.afterClosed();
   }
 }
