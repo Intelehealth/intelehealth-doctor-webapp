@@ -188,7 +188,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
       id: 18,
       name: 'Descent [Plot O]',
       conceptName: 'Descent 0-5',
-      stage1Count: 30,
+      stage1Count: 15,
       stage2Count: 20,
       alert: true
     },
@@ -196,8 +196,8 @@ export class PartogramComponent implements OnInit, OnDestroy {
       id: 19,
       name: 'Oxytocin (U/L, drops/min)',
       conceptName: 'Oxytocin U/l, Drops per min',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
@@ -212,8 +212,8 @@ export class PartogramComponent implements OnInit, OnDestroy {
       id: 21,
       name: 'IV fluids',
       conceptName: 'IV fluids',
-      stage1Count: 15,
-      stage2Count: 5,
+      stage1Count: 30,
+      stage2Count: 20,
       alert: false
     },
     {
@@ -371,7 +371,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     for (let x = 0; x < this.parameters.length; x++) {
-      if (x == 19 || x == 20 || x == 21 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
+      if (x == 20 || x == 22 || x == 23 || x == 26 || x == 27 || x == 28) {
         this.parameters[x]['stage1values'] = Array(this.parameters[x].stage1Count).fill([]);
         this.parameters[x]['stage2values'] = Array(this.parameters[x].stage2Count).fill([]);
       } else {
@@ -573,8 +573,8 @@ export class PartogramComponent implements OnInit, OnDestroy {
                   break;
                 case 19:
                 case 21:
-                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, canEdit: this.canEdit(ob.creator?.uuid), initial: this.getInitials(ob.creator?.person.display) }];
-                  // this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid };
+                  // this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = [...this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex], { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid, creator: ob.creator, obsDatetime: ob.obsDatetime, canEdit: this.canEdit(ob.creator?.uuid), initial: this.getInitials(ob.creator?.person.display) }];
+                  this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = { value: ob.value.startsWith("{") ? JSON.parse(ob.value) : ob.value, uuid: ob.uuid };
                   break;
                 default:
                   this.parameters[parameterIndex][`stage${stageNo}values`][valueIndex] = (parameterValue.alert) ? { value: ob.value, comment: ob.comment, uuid: ob.uuid, creator: ob.creator } : { value: ob.value, uuid: ob.uuid, creator: ob.creator };

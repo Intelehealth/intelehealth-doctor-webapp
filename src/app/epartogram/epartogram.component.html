@@ -627,7 +627,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '5'">
                         O
                       </div>
@@ -645,7 +645,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '4'">
                         O
                       </div>
@@ -663,7 +663,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '3'">
                         O
                       </div>
@@ -681,7 +681,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '2'">
                         O
                       </div>
@@ -699,7 +699,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '1'">
                         O
                       </div>
@@ -717,7 +717,7 @@
                     </td>
                   </ng-container>
                   <ng-container *ngFor="let item of parameters[18].stage2values;">
-                    <td colspan="2">
+                    <td colspan="1">
                       <div class="value-item" *ngIf="item?.value == '0'">
                         O
                       </div>
@@ -731,6 +731,38 @@
                   <td rowspan="3" class="vrt-header"><span>MEDICATION ADMINISTRATION</span></td>
                   <td colspan="3">Oxytocin (U/L, drops/min)</td>
                   <ng-container *ngFor="let item of parameters[19].stage1values;">
+                    <td colspan="1">
+                      <ng-container *ngIf="item">
+                        <div class="value-item note">
+                          <ng-container *ngIf="item?.value?.strength">
+                            <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                          </ng-container>
+                          <ng-container class="value-item" *ngIf="!item?.value?.strength">
+                            {{item?.value}}
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngFor="let item of parameters[19].stage2values;">
+                    <td colspan="1">
+                      <ng-container *ngIf="item">
+                        <div class="value-item note">
+                          <ng-container *ngIf="item?.value?.strength">
+                            <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
+                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                          </ng-container>
+                          <ng-container class="value-item" *ngIf="!item?.value?.strength">
+                            {{item?.value}}
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </td>
+                  </ng-container>
+                  <!-- <ng-container *ngFor="let item of parameters[19].stage1values;">
                     <td colspan="2">
                       <ng-container *ngIf="item">
                         <div class="value-item note">
@@ -740,9 +772,9 @@
                               <span>Infusion Rate : </span>{{oxy?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{oxy?.value?.infusionStatus}}<br/>
                             </ng-container>
-                            <!-- <ng-container class="value-item" *ngIf="!oxy?.value?.strength">
+                            <ng-container class="value-item" *ngIf="!oxy?.value?.strength">
                               {{oxy?.value}}<br/>
-                            </ng-container> -->
+                            </ng-container>
                           </ng-container>
                         </div>
                       </ng-container>
@@ -758,14 +790,14 @@
                               <span>Infusion Rate : </span>{{oxy?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{oxy?.value?.infusionStatus}}<br/>
                             </ng-container>
-                            <!-- <ng-container class="value-item" *ngIf="!oxy?.value?.strength">
+                            <ng-container class="value-item" *ngIf="!oxy?.value?.strength">
                               {{oxy?.value}}<br/>
-                            </ng-container> -->
+                            </ng-container>
                           </ng-container>
                         </div>
                       </ng-container>
                     </td>
-                  </ng-container>
+                  </ng-container> -->
                 </tr>
                 <tr>
                   <td colspan="3">Medicine</td>
@@ -773,7 +805,7 @@
                     <td colspan="2">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.creator.person.display|titlecase}}
+                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
                               {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br />
                         </ng-container>
                       </div>
@@ -783,7 +815,7 @@
                     <td colspan="4">
                       <div class="value-item note" *ngIf="item">
                         <ng-container *ngFor="let m of item">
-                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.creator.person.display|titlecase}}
+                          {{m?.value?.replace('::',' ')}} <small><i>({{m?.initial}}
                               {{m?.obsDatetime|date:'hh:mm a'}})</i></small><br />
                         </ng-container>
                       </div>
@@ -793,6 +825,38 @@
                 <tr>
                   <td colspan="3">IV fluids</td>
                   <ng-container *ngFor="let item of parameters[21].stage1values;">
+                    <td colspan="1">
+                      <ng-container *ngIf="item">
+                        <div class="value-item note">
+                          <ng-container *ngIf="item?.value?.type">
+                            <span>Strength : </span>{{item?.value?.type}}<br/>
+                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                          </ng-container>
+                          <ng-container class="value-item" *ngIf="!item?.value?.type">
+                            {{item?.value}}
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngFor="let item of parameters[21].stage2values;">
+                    <td colspan="1">
+                      <ng-container *ngIf="item">
+                        <div class="value-item note">
+                          <ng-container *ngIf="item?.value?.type">
+                            <span>Strength : </span>{{item?.value?.type}}<br/>
+                            <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
+                            <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                          </ng-container>
+                          <ng-container class="value-item" *ngIf="!item?.value?.type">
+                            {{item?.value}}
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </td>
+                  </ng-container>
+                  <!-- <ng-container *ngFor="let item of parameters[21].stage1values;">
                     <td colspan="2">
                       <ng-container *ngIf="item">
                         <div class="value-item note">
@@ -802,9 +866,9 @@
                               <span>Infusion Rate : </span>{{iv?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{iv?.value?.infusionStatus}}<br/>
                             </ng-container>
-                            <!-- <ng-container class="value-item" *ngIf="!iv?.value?.type">
+                            <ng-container class="value-item" *ngIf="!iv?.value?.type">
                               {{iv?.value}}<br/>
-                            </ng-container> -->
+                            </ng-container>
                           </ng-container>
                         </div>
                       </ng-container>
@@ -820,14 +884,14 @@
                               <span>Infusion Rate : </span>{{iv?.value?.infusionRate}} drops/minute<br/>
                               <span>Infusion Status : </span>{{iv?.value?.infusionStatus}}<br/>
                             </ng-container>
-                            <!-- <ng-container class="value-item" *ngIf="!iv?.value?.type">
+                            <ng-container class="value-item" *ngIf="!iv?.value?.type">
                               {{iv?.value}}<br/>
-                            </ng-container> -->
+                            </ng-container>
                           </ng-container>
                         </div>
                       </ng-container>
                     </td>
-                  </ng-container>
+                  </ng-container> -->
                 </tr>
                 <tr>
                   <td colspan="47" class="divider"></td>
