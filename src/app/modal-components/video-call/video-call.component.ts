@@ -73,7 +73,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.initiator) this.initiator = this.data.initiator;
-    this.socketSvc.initSocket();
+    this.socketSvc.initSocket(true);
     this.initSocketEvents();
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();
@@ -194,6 +194,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     };
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
+    console.log('this.socketSvc.incomingCallData: ', this.socketSvc);
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
