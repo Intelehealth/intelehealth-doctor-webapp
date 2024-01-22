@@ -370,18 +370,19 @@ export class DashboardComponent implements OnInit {
     let resString = "";
     if (hours > 24) {
       resString = moment(data).format('DD MMM, YYYY hh:mm A');
-    };
-    if (hours > 1) {
-      resString += hours + " Hours";
-    } else if(hours === 1) {
-      resString += hours + " Hour";
-    }
-    if (minutes < 0) {
-      resString = `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-    } else if (minutes === 1){
-      resString += " " + minutes + " Minute"
     } else {
-      resString += " " + minutes + " Minutes"
+      if (hours > 1) {
+        resString += hours + " Hours";
+      } else if(hours === 1) {
+        resString += hours + " Hour";
+      }
+      if (minutes < 0) {
+        resString = `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
+      } else if (minutes === 1){
+        resString += " " + minutes + " Minute"
+      } else {
+        resString += " " + minutes + " Minutes"
+      }
     }
     return resString.trim();
   }

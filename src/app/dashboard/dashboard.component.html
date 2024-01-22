@@ -162,7 +162,7 @@
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'prPatient'+j">
                   <div class="d-flex align-items-center">
                     <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -245,7 +245,7 @@
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awPatient'+j">
                   <div class="d-flex align-items-center">
                     <img [src]="baseUrl + '/personimage/' + element.person.uuid" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
@@ -328,7 +328,7 @@
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipPatient'+j">
                   <div class="d-flex align-items-center">
                     <img src="{{ baseUrl + '/personimage/' + element.person.uuid }}" alt="" width="32px" height="32px" style="border-radius: 50%;">
-                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
+                    <span class="font-bold ml-2">{{element.patient_name.given_name}} {{element.patient_name?.middle_name ? element.patient_name?.middle_name+" " : ""}}{{element.patient_name.family_name}} ({{(element.person.gender) | translate}})</span>
                   </div>
                 </td>
               </ng-container>
