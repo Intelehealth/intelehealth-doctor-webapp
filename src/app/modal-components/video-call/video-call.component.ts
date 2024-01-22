@@ -194,7 +194,6 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     };
 
     this.socketSvc.emitEvent("call", this.socketSvc.incomingCallData);
-    console.log('this.socketSvc.incomingCallData: ', this.socketSvc);
 
     /**
      *  60 seconds ringing timeout after which it will show toastr
