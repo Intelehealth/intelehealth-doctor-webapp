@@ -98,7 +98,7 @@
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apLocation'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.visit?.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
                 <td mat-cell *matCellDef="let element; let j=index;" [attr.data-test-id]="'apComplaint'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> {{element?.cheif_complaint}} </td>
@@ -179,7 +179,7 @@
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'prComplaint'+j"> {{element.cheif_complaint}} </td>
@@ -262,7 +262,7 @@
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint' | translate}} </th>
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'awComplaint'+j"> {{element.cheif_complaint}} </td>
@@ -345,7 +345,7 @@
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipLocation'+j"> {{element.location.name}} </td>
               </ng-container>
 
-              <!-- Cheif Complaint Column -->
+              <!-- Chief complaint Column -->
               <ng-container matColumnDef="cheif_complaint">
                 <th mat-header-cell *matHeaderCellDef> {{'Chief Complaint'|translate}} </th>
                 <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'ipComplaint'+j"> {{element.cheif_complaint}} </td>

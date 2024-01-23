@@ -61,6 +61,7 @@
               <div class="patient-info-item">
                 <h6 data-test-id="etPatient">{{'Address'|translate}}</h6>
                 <p data-test-id="etPatient">{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+                <p data-test-id="etPatient">{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
               </div>
             </div>
             <div class="col-md-3 patient-info-section p-3">
@@ -776,7 +777,7 @@
                   </td>
                 </ng-container>
 
-                <!-- Cheif Complaint Column -->
+                <!-- Chief complaint Column -->
                 <ng-container matColumnDef="cheif_complaint">
                   <th mat-header-cell *matHeaderCellDef>{{'Chief Complaint'|translate}}</th>
                   <td mat-cell *matCellDef="let element">
@@ -927,7 +928,7 @@
                           </a>
                         </div>
                         <span class="text-muted"
-                          >{{'Click here to connent with the patient'|translate}}</span
+                          >{{'Click here to connect with the patient'|translate}}</span
                         >
                       </div>
                       <ng-template #noContactDetails>

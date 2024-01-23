@@ -44,7 +44,7 @@
           </div>
           <div class="patient-info-item">
             <h6>{{"Address"|translate}}</h6>
-            <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+            <!-- <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p> -->
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
@@ -216,7 +216,7 @@
             </div>
             <div class="data-section-content">
               <div class="cheif-complaint-wrapper">
-                <h6>{{'Cheif Complaint'|translate}}</h6>
+                <h6>{{'Chief complaint'|translate}}</h6>
                 <div class="complaint-chips">
                   <div class="chip-item" *ngFor="let c of cheifComplaints;">
                     {{c}}
