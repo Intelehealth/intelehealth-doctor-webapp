@@ -23,7 +23,7 @@
           </div>
           <div class="col">
             <input type="text" class="form-control" [ngbTypeahead]="searchDose"
-              placeholder="{{'Units (eg: Tab/Syrup/etc.)'|translate}}" formControlName="unitType">
+              placeholder="{{'Unit ( pill,  capsule, etc...)'|translate}}" formControlName="unitType">
           </div>
           <div class="col">
             <input type="text" class="form-control" [ngbTypeahead]="searchFrequency"
@@ -31,7 +31,7 @@
           </div>
           <div class="col">
             <input type="text" class="form-control" [ngbTypeahead]="searchAdministration"
-              placeholder="{{'Route(optional)'|translate}}" formControlName="route">
+              placeholder="{{'Route'|translate}}" formControlName="route">
           </div>
         </div>
         <br>
@@ -46,8 +46,9 @@
           </div>
           <div class="col">
             <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">{{'Time unit'|translate}}</span>
               <input type="text" class="form-control" [ngbTypeahead]="durationUnit"
-                placeholder="{{'Units (eg: Days/Weeks/etc.)'|translate}}" formControlName="durationUnit">
+                placeholder="{{'Days/Weeks/etc.'|translate}}" formControlName="durationUnit">
               <!-- <span class="input-group-text" id="basic-addon1">{{'total'|translate}}</span> -->
             </div>
           </div>
