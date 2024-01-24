@@ -69,7 +69,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.connectToDrId = this.data.connectToDrId;
 
     if (this.data.initiator) this.initiator = this.data.initiator;
-    this.socketSvc.initSocket();
+    this.socketSvc.initSocket(true);
     this.initSocketEvents();
     if (this.data.patientId && this.data.visitId) {
       this.getMessages();

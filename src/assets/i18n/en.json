@@ -328,7 +328,8 @@
       "Call rejected by Health Worker":"Call rejected by Health Worker",
       "Call ended from Health Worker end.":"Call ended from Health Worker end.",
       "Please try again later.":"Please try again later.",
-      "Message length should not exceed 1000.":"Message length should not exceed 1000."
+      "Message length should not exceed 1000.":"Message length should not exceed 1000.",
+      "Health Worker is offline.":"Health Worker is offline."
     },
     "No slots avalable for the day, try changing dates.":"No slots avalable for the day, try changing dates.",
     "helpMsg1": "Welcome to the Doctor portal. In less than 1 min, we will show you how to give diagnosis, medicines,test and advice to a patient.",

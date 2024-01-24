@@ -12,6 +12,9 @@ import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
 import { CoreService } from "src/app/services/core/core.service";
+import { SocketService } from "src/app/services/socket.service";
+import { ToastrService } from "ngx-toastr";
+import { TranslateService } from '@ngx-translate/core';
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -57,7 +60,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private translationService: TranslationService,
     private dialogService: ConfirmDialogService,
-    private cs: CoreService
+    private cs: CoreService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -328,6 +334,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   openVcModal() {
+    const hw = this.socketSvc.activeUsers.find(u => u?.uuid === this.getPatientVisitProvider()?.provider?.uuid);
+    if (!hw) {
+      this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Health Worker is offline."}`));
+      return;
+    }
     this.cs.openVideoCallModal({
       patientId: this.patientUuid,
       visitId: this.visitUuid,
@@ -337,12 +348,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       patientOpenMrsId: this.visit.patient?.identifiers?.[0]?.identifier,
       initiator: 'dr'
     });
-    // this.dialog.open(VcComponent, {
-    //   disableClose: true,
-    //   data: {
-    //     patientUuid: this.patientId,
-    //   },
-    // });
   }
 
   private checkProviderRole() {
@@ -374,4 +379,20 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     deleteFromStorage("visitNoteProvider");
   }
+
+  getCacheData(key: string, parse: boolean = false){
+    if (parse) {
+      return JSON.parse(localStorage.getItem(key));
+    } else {
+        return localStorage.getItem(key);
+    }
+  }
+
+  getPatientVisitProvider() {
+    try {
+        return this.getCacheData('patientVisitProvider', true)
+    } catch (error) {
+        return null
+    }
+ }
 }

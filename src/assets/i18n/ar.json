@@ -340,7 +340,8 @@
     "Call ended from Health Worker's end.":"انتهت المكالمة من جهة العامل الصحي.",
     "Calling":"قيد الاتصال",
     "Call rejected by Health Worker":"تم رفض المكالمة من قبل العامل الصحي",
-    "Call ended from Health Worker end.":"تم انهاء المكالمة من قبل العامل الصحي"
+    "Call ended from Health Worker end.":"تم انهاء المكالمة من قبل العامل الصحي",
+    "Health Worker is offline.":"Health Worker is offline."
   },
   "No slots avalable for the day, try changing dates.": "لا توجد مواعيد متاحة لهذا اليوم ، حاول تغيير التواريخ",
   "helpMsg1": "مرحبا بكم في بوابة الطبيب. في أقل من دقيقة واحدة ، سوف نوضح لك كيفية تقديم التشخيص والأدوية والاختبارات والمشورة للمريض.",

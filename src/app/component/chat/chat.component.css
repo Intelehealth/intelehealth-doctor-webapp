@@ -157,9 +157,10 @@
   font-size: 10px;
   left: 5px;
   color: grey;
-}
-.char-count &.red {
-  color: red;
+
+  &.red {
+    color: red;
+  }
 }
 
 .bg-grey {
