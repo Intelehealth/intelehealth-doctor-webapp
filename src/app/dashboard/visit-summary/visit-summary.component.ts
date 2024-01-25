@@ -292,7 +292,6 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
         this.checkVisitStatus(visit.encounters);
         this.visitService.patientInfo(visit.patient.uuid).subscribe((patient: PatientModel) => {
           if (patient) {
-            console.log(patient)
             this.patient = patient;
             this.clinicName = visit.location.display;
             // check if visit note exists for this visit

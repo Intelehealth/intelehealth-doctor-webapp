@@ -106,6 +106,7 @@ export class WebrtcService {
         try {
           await this.room.localParticipant.enableCameraAndMicrophone()
         } catch (error) {
+          console.log("error", error)
           location.reload();
         }
       })
