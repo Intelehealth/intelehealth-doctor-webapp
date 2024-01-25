@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData } from '../utils/utility-functions';
+import { getCacheData, checkIfDateOldThanOneDay} from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 
@@ -62,7 +62,7 @@ export class AppointmentsComponent implements OnInit {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
           }

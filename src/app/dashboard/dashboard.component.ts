@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { CoreService } from '../services/core/core.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { getCacheData } from '../utils/utility-functions';
+import { getCacheData, checkIfDateOldThanOneDay } from '../utils/utility-functions';
 import { doctorDetails, languages, visitTypes } from 'src/config/constant';
 import { ApiResponseModel, AppointmentModel, CustomEncounterModel, CustomObsModel, CustomVisitModel, ProviderAttributeModel, RescheduleAppointmentModalResponseModel } from '../model/model';
 
@@ -292,7 +292,7 @@ export class DashboardComponent implements OnInit {
           if (appointment.status == 'booked' && (appointment.visitStatus == 'Awaiting Consult'||appointment.visitStatus == 'Visit In Progress')) {
             if (appointment.visit) {
               appointment.cheif_complaint = this.getCheifComplaint(appointment.visit);
-              appointment.starts_in = this.checkIfDateOldThanOneDay(appointment.slotJsDate);
+              appointment.starts_in = checkIfDateOldThanOneDay(appointment.slotJsDate);
               this.appointments.push(appointment);
             }
           }
@@ -356,35 +356,6 @@ export class DashboardComponent implements OnInit {
   */
   calculateAge(birthdate: string) {
     return moment().diff(birthdate, 'years');
-  }
-
-  /**
-  * Check how old the date is from now
-  * @param {string} data - Date in string format
-  * @return {string} - Returns how old the date is from now
-  */
-  checkIfDateOldThanOneDay(data: string) {
-    let hours = moment(data).diff(moment(), 'hours');
-    let minutes = moment(data).diff(moment(), 'minutes');
-    minutes = minutes - (hours * 60);
-    let resString = "";
-    if (hours > 24) {
-      resString = moment(data).format('DD MMM, YYYY hh:mm A');
-    } else {
-      if (hours > 1) {
-        resString += hours + " Hours";
-      } else if(hours === 1) {
-        resString += hours + " Hour";
-      }
-      if (minutes < 0) {
-        resString = `Due : ${moment(data).format('DD MMM, YYYY hh:mm A')}`;
-      } else if (minutes === 1){
-        resString += " " + minutes + " Minute"
-      } else {
-        resString += " " + minutes + " Minutes"
-      }
-    }
-    return resString.trim();
   }
 
   /**

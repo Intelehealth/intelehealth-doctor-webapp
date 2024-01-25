@@ -46,7 +46,7 @@
               <!-- Starts In Column -->
               <ng-container matColumnDef="starts_in">
                 <th mat-header-cell *matHeaderCellDef> {{'Starts in' | translate}} </th>
-                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'apStart'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('hours')||element.starts_in.includes('minutes') }">{{element.starts_in}}</span></td>
+                <td mat-cell *matCellDef="let element;let j=index;" [attr.data-test-id]="'apStart'+j" [routerLink]="['/dashboard/visit-summary', element?.visitUuid]"> <span [ngClass]="{ 'alert-danger': element.starts_in.includes('Due'), 'alert-success': element.starts_in.includes('Hour')||element.starts_in.includes('Minute') }">{{element.starts_in}}</span></td>
               </ng-container>
 
               <!-- Location Column -->
