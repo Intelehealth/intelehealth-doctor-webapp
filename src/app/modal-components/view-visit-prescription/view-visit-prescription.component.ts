@@ -1054,9 +1054,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
       case visitTypes.VITALS:
         if (this.vitalObs.length) {
+          if(this.vitalObs.find((V) => V.concept?.display !== 'Height (cm)')) {
+            records.push({text: [{text: `Height (cm) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
+          }
+          if(this.vitalObs.find((V) => V.concept?.display !== 'Weight (kg)')) {
+            records.push({text: [{text: `Weight (kg) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
+          }
           this.vitalObs.forEach(v => {
             records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
           });
+        } else {
+          records.push({text: [{text: `Height (cm) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
+          records.push({text: [{text: `Weight (kg) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
         }
         break;
     }
