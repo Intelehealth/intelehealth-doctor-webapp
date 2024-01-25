@@ -1460,6 +1460,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   sharePrescription() {
+    if(this.existingDiagnosis.length === 0){
+      this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
+      return false;
+    }
     this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
       if (res) {
         if (this.isVisitNoteProvider) {
@@ -1655,5 +1659,4 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   getImagesBySection(section) {
     return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
   }
-
 }

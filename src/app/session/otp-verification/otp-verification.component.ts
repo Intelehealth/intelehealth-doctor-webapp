@@ -145,15 +145,17 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
   verifyForgetUsername() {
     let payload: VerifyOtpModel = {};
     payload.verifyFor = "username";
+    let msgSentOn = "email";
     if (this.via == 'phone') {
-      payload.phoneNumber = this.cred.split('||')[1]
+      payload.phoneNumber = this.cred.split('||')[1];
+      msgSentOn = "mobile number"
     } else {
       payload.email = this.cred
     }
     payload.otp = this.otpVerificationForm.value.otp;
     this.authService.verifyOtp(payload).subscribe((res: VerifyOtpResponseModel) => {
       if (res.success) {
-        this.translationService.getTranslation("Username has been successfully sent on your email and mobile number", "Username Sent",true);
+        this.translationService.getTranslation("Username has been successfully sent on your "+ msgSentOn, "Username Sent",true);
         this.router.navigate(['/session/login']);
       } else {
         this.translationService.getTranslation(res.message, "Error",false);
