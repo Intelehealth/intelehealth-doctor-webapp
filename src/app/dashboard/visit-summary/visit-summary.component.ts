@@ -1464,6 +1464,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       this.toastr.warning(this.translateService.instant('Diagnosis not added'), this.translateService.instant('Diagnosis Required'));
       return false;
     }
+    if((this.followUpForm.value.wantFollowUp == 'Yes' || this.followUpForm.value.wantFollowUp == 'Да') && !this.followUpForm?.value?.present){
+      this.toastr.warning(this.translateService.instant('Follow up Required'), this.translateService.instant('Follow up Required'));
+      return false;
+    }
     this.coreService.openSharePrescriptionConfirmModal().subscribe((res: boolean) => {
       if (res) {
         if (this.isVisitNoteProvider) {
