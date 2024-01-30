@@ -31,7 +31,7 @@ export class VitalComponent implements OnInit {
     if (n >= 90 && n < 120) {
       code = '#008000';
     } else if (n >= 120 && n <= 139) {
-      code = '#FFFF00';
+      code = '#d9d900';
     }
     return code;
   }
@@ -41,7 +41,7 @@ export class VitalComponent implements OnInit {
     if (n < 80) {
       code = '#008000';
     } else if (n >= 80 && n <= 99) {
-      code = '#FFFF00';
+      code = '#d9d900';
     }
     return code;
   }
@@ -53,7 +53,7 @@ export class VitalComponent implements OnInit {
     } else if (n >= 18.50 && n <= 22.99) {
       code = '#008000';
     } else if (n >= 23 && n <= 24.99) {
-      code = '#FFFF00';
+      code = '#d9d900';
     } else if (n >= 25 && n <= 29.99) {
       code = '#F85E5EE6';
     } else if (n >= 30) {
