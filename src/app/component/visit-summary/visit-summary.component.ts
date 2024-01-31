@@ -334,11 +334,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   openVcModal() {
-    const hw = this.socketSvc.activeUsers.find(u => u?.uuid === this.getPatientVisitProvider()?.provider?.uuid);
-    if (!hw) {
-      this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Health Worker is offline."}`));
-      return;
-    }
+    // const hw = this.socketSvc.activeUsers.find(u => u?.uuid === this.getPatientVisitProvider()?.provider?.uuid);
+    // if (!hw) {
+    //   this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Health Worker is offline."}`));
+    //   return;
+    // }
     this.cs.openVideoCallModal({
       patientId: this.patientUuid,
       visitId: this.visitUuid,
