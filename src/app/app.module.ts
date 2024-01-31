@@ -103,6 +103,11 @@ import { CommentPipe } from "./comment.pipe";
 import { DispenseComponent } from './component/visit-summary/dispense/dispense.component';
 import { AdministerComponent } from './component/visit-summary/administer/administer.component';
 import { ImagesPreviewComponent } from './component/visit-summary/images-preview/images-preview.component';
+import { VideoCallComponent } from './modal-components/video-call/video-call.component';
+import { ToastrModule } from "ngx-toastr";
+import { MomentModule } from "ngx-moment";
+import { CollectedByComponent } from './component/visit-summary/collected-by/collected-by.component';
+import { ResultedByComponent } from './component/visit-summary/resulted-by/resulted-by.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -162,7 +167,10 @@ registerLocaleData(localeAr);
     CommentPipe,
     DispenseComponent,
     AdministerComponent,
-    ImagesPreviewComponent
+    ImagesPreviewComponent,
+    VideoCallComponent,
+    CollectedByComponent,
+    ResultedByComponent
   ],
 
   imports: [
@@ -228,6 +236,13 @@ registerLocaleData(localeAr);
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      closeButton: true,
+      tapToDismiss: false
+    }),
+    MomentModule
   ],
   providers: [
     CookieService,

@@ -48,10 +48,12 @@ export class PastVisitsComponent implements OnInit {
                 });
               }
             });
-        if (visitDetails.stopDatetime === null || visitDetails.stopDatetime === undefined) {
-          this.recentVisit.visitStatus = 'Active';
+        // if (visitDetails.stopDatetime === null || visitDetails.stopDatetime === undefined) {
+        //   this.recentVisit.visitStatus = 'Active';
+        // }
+        if (visitDetails.stopDatetime || visitDetails.stopDatetime) {
+          this.recent.push(this.recentVisit);
         }
-        this.recent.push(this.recentVisit);
         });
       });
     });

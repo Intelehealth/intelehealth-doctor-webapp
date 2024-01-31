@@ -21,3 +21,11 @@
   font-weight: bold;
   white-space: nowrap;
 }
+
+.isShow {
+  width: 70px;
+  font-size: 12px;
+  color: rgb(0 192 255);
+  text-decoration: underline;
+  cursor: pointer;
+}

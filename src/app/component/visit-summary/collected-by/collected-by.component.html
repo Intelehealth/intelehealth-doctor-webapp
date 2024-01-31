@@ -1,0 +1,80 @@
+<div [ngClass]="getLang() === 'ar' ? 'class1' : 'class2'">
+  <h4><i class='fa fa-hospital'></i> {{'Collected by'| translate}}</h4>
+  <hr>
+  <div>
+    <ng-container *ngIf="dispenseMedAid.length > 0">
+      <div class="modal-body row">
+        <div class="col-md-12 p-0">
+          <mat-accordion>
+            <ng-container *ngFor="let meds of dispenseMedAid, index as i">
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <b>{{('Collected by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y , hh:mm a'}}</b>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !meds.comment, 'alert-danger': meds.comment }">
+                  <div class="doctor-value d-flex flex-column">
+                    <table class="table table-responsive borderless">
+                      <tr>
+                        <div *ngIf="meds.medicationUuidList">
+                          <div><h5>{{'Medical Tests'|translate}}</h5></div>
+                          <ul>
+                            <li *ngFor="let uuid of meds.medicationUuidList">
+                              <div *ngFor="let m of medicines">
+                                <div *ngIf="uuid == m.uuid">
+                                  <span *ngIf="meds.medicationUuidList" [innerHTML]="m.value.replace('\n','<br>').replace(':','')"></span>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div *ngIf="meds.medicationNotesList || meds.aidNotesList">
+                          <div><h5>{{'Notes'|translate}}</h5></div>
+                          <ul>
+                            <li *ngFor="let mednote of meds.medicationNotesList">
+                              <div *ngIf="meds.medicationNotesList" class="list-item">
+                                <label class="item"><b>{{'Medicine Note'|translate}}</b></label>
+                                <div class="list-item-content">{{mednote}}</div>
+                              </div>
+                            </li>
+                            <li *ngFor="let aiddnote of meds.aidNotesList">
+                              <div *ngIf="meds.aidNotesList" class="list-item">
+                                <label class="item"><b>{{'Aid Note'|translate}}</b></label>
+                                <div class="list-item-content">{{aiddnote}}</div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div *ngIf="meds.docImage">
+                          <div><h5>{{'Documents'|translate}}</h5></div>
+                          <ul>
+                            <div class="list-item">
+                              <div class="list-item-content">
+                                <div class="eye-images-con">
+                                  <div class="eye-item" *ngFor="let e of meds.docImage; let x = index">
+                                    <img [src]="e.src" alt="" />
+                                    <div class="image-cover" (click)="previewEyeImages(x)">
+                                      <img src="assets/svgs/maximize.svg" alt=""/>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ul>
+                        </div>
+                      </tr>
+                    </table>
+                    <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
+                      <span class="comment-blue">{{('Collected by'|translate)+' : '+meds.creator.person.display}} | {{meds.obsDatetime|date:'dd-MM-y ,hh:mm a'}}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </ng-container>
+          </mat-accordion>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

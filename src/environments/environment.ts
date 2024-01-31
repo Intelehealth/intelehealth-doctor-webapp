@@ -10,8 +10,11 @@ export const environment = {
   mindmapURL: "https://training.sila.care:3004/api",
   notificationURL: "https://training.sila.care:3004/notification",
   socketURL: "https://training.sila.care:3004",
+  webrtcSdkServerUrl: "wss://training.sila.care:9090",
+  webrtcTokenServerUrl: 'https://training.sila.care:3000/',
   version:"SYR-v1.1.2",
-  versionCode:"9"
+  versionCode:"9",
+  publicKey: "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54",
 };
 
 /*

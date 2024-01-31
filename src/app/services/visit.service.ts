@@ -15,8 +15,12 @@ export class VisitService {
   public progressVisit: VisitData[] = [];
   public completedVisit: VisitData[] = [];
   public dispense: any[] = [];
+  public prescribedTest: any[] = [];
+  public isVisitSummaryShow: boolean = false;
+  public chatVisitId: any;
 
   public lockMedicineAidOrder = new Subject();
+  public lockPrescribedTest = new Subject();
 
   constructor(private http: HttpClient, private helper: HelperService) { }
 

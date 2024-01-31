@@ -11,6 +11,10 @@ import { environment } from "src/environments/environment";
 import { TranslationService } from "src/app/services/translation.service";
 import { browserRefresh } from 'src/app/app.component';
 import { ConfirmDialogService } from "./reassign-speciality/confirm-dialog/confirm-dialog.service";
+import { CoreService } from "src/app/services/core/core.service";
+import { SocketService } from "src/app/services/socket.service";
+import { ToastrService } from "ngx-toastr";
+import { TranslateService } from '@ngx-translate/core';
 declare var getFromStorage: any, deleteFromStorage: any, saveToStorage: any, getEncounterProviderUUID: any;
 
 @Component({
@@ -40,6 +44,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   isSameSpecialityDoctorViewingVisit = false;
   isAdminister = false;
   isDispense = false;
+  isCollectedBy = false;
+  isReceiveBy = false;
+  visit: any;
+  chatBoxRef: any;
 
   constructor(
     private service: EncounterService,
@@ -51,7 +59,11 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private pushNotificationService: PushNotificationsService,
     private dialog: MatDialog,
     private translationService: TranslationService,
-    private dialogService: ConfirmDialogService
+    private dialogService: ConfirmDialogService,
+    private cs: CoreService,
+    private socketSvc: SocketService,
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -68,6 +80,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.visitService
       .fetchVisitDetails(this.visitUuid)
       .subscribe((visitDetails) => {
+        this.visit = visitDetails;
         this.visitSpeciality = visitDetails.attributes.find(a => a.attributeType.uuid == "3f296939-c6d3-4d2e-b8ca-d7f4bfd42c2d").value;
         this.visitSpecialitySecondary = visitDetails.attributes.find(a => a.attributeType.uuid == "8100ec1a-063b-47d5-9781-224d835fc688")?.value;
         const providerDetails = getFromStorage("provider");
@@ -81,7 +94,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                 this.isVisitNoteEncProvider = true;
               }
               for (let x = 0; x < visit.encounterProviders[j].provider.attributes.length; x++) {
-                if (visit.encounterProviders[j].provider.attributes[x].value == this.userSpeciality) {
+                if (visit.encounterProviders[j].provider.attributes[x].value == this.userSpeciality && visit.encounterProviders[j].provider.attributes[x].voided == false) {
                   this.isSameSpecialityDoctorViewingVisit = true;
                   break;
                 }
@@ -116,7 +129,17 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
           if(visit.display.includes("ADMINISTER")){
             this.isAdminister = true
           }
+          if(visit.display.includes("ENCOUNTER_TEST_COLLECT")){
+            this.isCollectedBy = true
+          }
+          if(visit.display.includes("ENCOUNTER_TEST_RECEIVE")){
+            this.isReceiveBy = true
+          }
         });
+        const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
+        if (openChat === 'true') {
+          this.openChatModal();
+        }  
       });
     this.translationService.getSelectedLanguage();
     if (browserRefresh) {
@@ -306,12 +329,24 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     );
   };
 
+  get user() {
+    return getFromStorage("user");
+  }
+
   openVcModal() {
-    this.dialog.open(VcComponent, {
-      disableClose: true,
-      data: {
-        patientUuid: this.patientUuid,
-      },
+    // const hw = this.socketSvc.activeUsers.find(u => u?.uuid === this.getPatientVisitProvider()?.provider?.uuid);
+    // if (!hw) {
+    //   this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Health Worker is offline."}`));
+    //   return;
+    // }
+    this.cs.openVideoCallModal({
+      patientId: this.patientUuid,
+      visitId: this.visitUuid,
+      connectToDrId: this.user?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit.patient?.identifiers?.[0]?.identifier,
+      initiator: 'dr'
     });
   }
 
@@ -331,7 +366,33 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     this.translationService.getTranslation('Data saved successfully');
   }
 
+  openChatModal() {
+    this.chatBoxRef = this.cs.openChatBoxModal({
+      patientId: this.visit?.patient?.uuid,
+      visitId: this.visit?.uuid,
+      patientName: this.visit?.patient?.person?.display,
+      patientPersonUuid: this.visit?.patient?.uuid,
+      patientOpenMrsId: this.visit?.patient?.identifiers?.[0]?.identifier,
+    });
+  }
+
   ngOnDestroy(): void {
     deleteFromStorage("visitNoteProvider");
   }
+
+  getCacheData(key: string, parse: boolean = false){
+    if (parse) {
+      return JSON.parse(localStorage.getItem(key));
+    } else {
+        return localStorage.getItem(key);
+    }
+  }
+
+  getPatientVisitProvider() {
+    try {
+        return this.getCacheData('patientVisitProvider', true)
+    } catch (error) {
+        return null
+    }
+ }
 }

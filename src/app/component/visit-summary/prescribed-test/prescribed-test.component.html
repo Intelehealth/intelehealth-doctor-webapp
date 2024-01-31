@@ -7,23 +7,29 @@
         <input matInput placeholder="{{'Test'|translate}}" [ngbTypeahead]="search" formControlName='test'>
       </mat-form-field>
       <!-- <input type="text" [ngbTypeahead]="search" formControlName='test'/> -->
-      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add
-        Test'|translate}}</button>
+      <button type="reset" (click)="submit()" mat-raised-button color="primary" [disabled]='!testForm.valid || isManagerRole' *ngIf="!visitCompleted">{{'Add Test'|translate}}</button>
     </form>
     <br>
   </div>
   <ng-container *ngIf="tests.length > 0">
       <div *ngFor='let test of tests, index as i' >
-        <div  [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !test.comment, 'alert-danger': test.comment }">
+        <div  [@moveInLeft] class="alert" [ngClass]="{ 'alert-primary': !test.comment, 'alert-danger': test.comment, 'light-gray': test.disabled }">
           <div class="doctor-value d-flex flex-column">
             <span [class.strike]="test.comment">{{test.value}}</span>
             <div class="mt-2 d-flex flex-column border-top border-primary pt-2">
-              <span class="comment-blue">{{test|comment:'addedBy-creator'}} {{test.creatorRegNo}} | {{test.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
-              <span *ngIf="test.comment" class="comment">{{test.comment|comment}}</span>
+              <span class="comment-blue" *ngIf="isShow[i]">{{test|comment:'addedBy-creator'}} {{test.creatorRegNo}} | {{test.obsDatetime|date:'dd-MM-y , hh:mm a'}}</span>
+              <div *ngFor="let mds of medicineObsList">
+                <div *ngFor="let med of mds[objectKeys(mds)]">
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'collected' && isShow[i]">{{ ('Collected By'|translate)+' : '+med[0].collected}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                  <span class="comment-blue" *ngIf="objectKeys(mds) == test.value && objectKeys(med[0]) == 'resulted' && isShow[i]">{{ ('Resulted By'|translate)+' : '+med[0].resulted}}  | {{med[1]|date:'dd-MM-y ,hh:mm a'}}</span>
+                </div>
+              </div>
+              <div><span *ngIf="test.comment && isShow[i]" class="comment">{{test.comment|comment}}</span></div>
             </div>
+            <span *ngIf="isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Hide Details'|translate}}</span>
+            <span *ngIf="!isShow[i]" class="isShow" (click)="toggleShow(i)">{{'Show Details'|translate}}</span>
           </div>
-          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!test.comment && !visitCompleted"
-              style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
+          <i (click)="delete(i)" class="material-icons float-right" [class.disabled]="isManagerRole" *ngIf="!test.comment && !visitCompleted && !test.disabled" style="color:rgb(235, 30, 30);cursor: pointer;">delete</i>
       </div>
       </div>
   </ng-container>

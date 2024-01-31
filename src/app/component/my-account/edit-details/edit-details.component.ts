@@ -19,7 +19,6 @@ export class EditDetailsComponent implements OnInit {
   baseURL = environment.baseURL;
   baseURLProvider = `${this.baseURL}/provider/${this.data.uuid}/attribute`;
   specializations = [
-    "Physician",
     "Doctor (General Consult)",
     "Cardiology",
     "Pulmonary",
@@ -36,6 +35,9 @@ export class EditDetailsComponent implements OnInit {
   tempDistricts = [];
   villages = [];
   tempVillages = [];
+  state = [];
+  district = [];
+  village = [];
 
   editForm = new FormGroup({
     gender: new FormControl(this.data.person ? this.data.person.gender : null),
@@ -83,7 +85,6 @@ export class EditDetailsComponent implements OnInit {
 
   getLocations(startIndex: number = 0) {
     this.visitService.getLocations(startIndex).subscribe((res: any) => {
-      // let locs = res?.results.filter((l: any) => l.tags.filter((t: any) => t.display == 'Login Location' ).length);
       this.locations = [...this.locations, ...res?.results];
       if (res.links) {
         let flag = 0;
@@ -100,7 +101,17 @@ export class EditDetailsComponent implements OnInit {
           this.villages = this.locations.filter((l: any) => l.tags.filter((t: any) => t.display == 'Village' ).length);
           this.editForm.get('state').valueChanges.subscribe((s: any) => {
             if(s) {
-              this.tempDistricts = this.districts.filter((l: any)=> l.parentLocation?.uuid == s || l.uuid == s);
+              let arr = [];
+              for(let dist = 0; dist < s.length; dist++){
+                this.districts.filter((l: any)=>{
+                  if(l.parentLocation?.uuid == s[dist] || l.uuid == s[dist]){
+                    if(!arr.includes(l)){
+                      arr.push(l);
+                    }
+                  }
+                });
+              }
+              this.tempDistricts = arr;
               this.editForm.patchValue({ district: null, village: null });
             } else {
               this.tempDistricts = [];
@@ -109,7 +120,18 @@ export class EditDetailsComponent implements OnInit {
 
           this.editForm.get('district').valueChanges.subscribe((d: any) => {
             if(d) {
-              this.tempVillages = this.villages.filter((l: any)=> l.parentLocation?.uuid == d || l.uuid == d);
+              this.tempVillages = this.villages.filter((l: any)=> l.parentLocation?.uuid == d[0] || l.uuid == d[0]);
+              let arr = [];
+              for(let vill = 0; vill < d.length; vill++){
+                this.villages.filter((l: any)=>{
+                  if(l.parentLocation?.uuid == d[vill] || l.uuid == d[vill]){
+                    if(!arr.includes(l)){
+                      arr.push(l);
+                    }
+                  }
+                });
+              }
+              this.tempVillages = arr;
               this.editForm.patchValue({ village: null });
             } else {
               this.tempVillages = [];
@@ -117,13 +139,18 @@ export class EditDetailsComponent implements OnInit {
           });
 
           if (this.data.location) {
-            let village = this.villages.find(v => v.uuid == this.data.location?.value);
-            let district = this.districts.find(d => d.uuid == village.parentLocation.uuid || d.uuid == village.uuid);
-            let state = this.states.find(s => s.uuid == district.parentLocation?.uuid || s.uuid == district.uuid);
+            for(let id = 0; id < this.data.location.value.split(',').length; id++){
+              let village = this.villages.find(v => v.uuid == this.data.location?.value.split(',')[id]);
+              let district = this.districts.find(d => d.uuid == village.parentLocation?.uuid || d.uuid == village.uuid);
+              let state = this.states.find(s => s.uuid == district.parentLocation?.uuid || s.uuid == district.uuid);
+              this.state.push(state.uuid);
+              this.district.push(district.uuid);
+              this.village.push(village.uuid);
+            }
             this.editForm.patchValue({
-              state: state.uuid,
-              district: district.uuid,
-              village: village.uuid,
+              state: this.state,
+              district: this.district,
+              village: this.village,
             });
           }
         }
@@ -164,7 +191,7 @@ export class EditDetailsComponent implements OnInit {
   updateDetails() {
     const value = this.editForm.value;
     if (value.gender !== null && value.gender !== this.data.person.gender) {
-      const URL = `${this.baseURL}/openmrs/ws/rest/v1/person/${this.data.person.uuid}`;
+      const URL = `${this.baseURL}/person/${this.data.person.uuid}`;
       const json = {
         gender: value.gender,
       };
@@ -243,13 +270,14 @@ export class EditDetailsComponent implements OnInit {
         : this.baseURLProvider;
       const json = {
         attributeType: "07f56d25-88b4-4e2d-9c42-987023527752",
-        value: value.village,
+        value: `${value.village}`,
       };
       this.http.post(URL, json).subscribe((response) => { });
     }
-    this.onClose();
-    // setTimeout(() => window.location.reload(), 2000);
-    this.authService.logout();
+    this.onClose();   
+    setTimeout(() => this.router.navigate(["home"]));
+    setTimeout(() => window.location.reload(),500);
+    // this.authService.logout();
   }
 
   getLang() {

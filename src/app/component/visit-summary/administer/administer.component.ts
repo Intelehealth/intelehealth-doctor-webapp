@@ -82,7 +82,9 @@ export class AdministerComponent implements OnInit {
               const data = { src: `${this.baseURL}/obs/${e.obs[i].uuid}/value` }
               this.eyeImages.push(data);
               imageDoc.push(data);
-              dispenseObs['docImage'] = imageDoc            
+              dispenseObs['docImage'] = imageDoc
+              dispenseObs['obsDatetime'] = e.obs[i].obsDatetime
+              dispenseObs['creator'] = e.obs[i].creator
             }           
           }
           this.administerMedAid.push(dispenseObs);
