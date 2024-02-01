@@ -1082,34 +1082,24 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
       case visitTypes.VITALS:
         let weightValue, heightValue, bmi, bp, pulse, temperature, spO2, respRate;
-        this.vitalObs.forEach(v => {
-          heightValue = this.vitalObs.find((V) => V.concept?.display === 'Height (cm)')?.value ?
-          this.vitalObs.find((V) => V.concept?.display === 'Height (cm)')?.value : `No information`;
-          weightValue = this.vitalObs.find((V) => V.concept?.display === 'Weight (kg)')?.value ?
-          this.vitalObs.find((V) => V.concept?.display === 'Weight (kg)')?.value : `No information`;
-          bmi =  (this.vitalObs.find((V) => V.concept?.display === 'Height (cm)')?.value && 
-          this.vitalObs.find((V) => V.concept?.display === 'Weight (kg)')?.value) ? Number(weightValue / ((heightValue / 100) * (heightValue / 100))).toFixed(2)
-            :`No information`;
-          bp = this.vitalObs.find((V) => V.concept?.display === 'SYSTOLIC BLOOD PRESSURE')?.value ?
-          (this.vitalObs.find((V) => V.concept?.display === 'SYSTOLIC BLOOD PRESSURE')?.value) + '/'+
-           (this.vitalObs.find((V) => V.concept?.display === 'DIASTOLIC BLOOD PRESSURE')?.value): `No information`;
-          pulse = this.vitalObs.find((V) => V.concept?.display === 'Pulse')?.value ?
-          this.vitalObs.find((V) => V.concept?.display === 'Pulse')?.value : `No information`;
-          temperature = this.vitalObs.find((V) => V.concept?.display === 'TEMPERATURE (C)')?.value ?
-          Number((this.vitalObs.find((V) => V.concept?.display === 'TEMPERATURE (C)')?.value)* 9 / 5 + 32).toFixed(2) : `No information`;
-          spO2 = this.vitalObs.find((V) => V.concept?.display === 'BLOOD OXYGEN SATURATION')?.value ?
-          this.vitalObs.find((V) => V.concept?.display === 'BLOOD OXYGEN SATURATION')?.value : `No information`;
-          respRate = this.vitalObs.find((V) => V.concept?.display === 'Respiratory rate')?.value ?
-          this.vitalObs.find((V) => V.concept?.display === 'Respiratory rate')?.value : `No information`;
-        });
-        records.push({text: [{text: `Height (cm) : `, bold: true}, `${heightValue}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `Weight (kg) : `, bold: true}, `${weightValue}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `BMI : `, bold: true}, `${bmi}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `BP : `, bold: true}, `${bp}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `Pulse : `, bold: true}, `${pulse}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `Temperature (F) : `, bold: true}, `${temperature}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `SpO2 : `, bold: true}, `${spO2}`], margin: [0, 5, 0, 5]});
-        records.push({text: [{text: `Respiratory Rate : `, bold: true}, `${respRate}`], margin: [0, 5, 0, 5]});
+        heightValue = this.getObsValue('Height (cm)') ? this.getObsValue('Height (cm)') : `No information`;
+        weightValue = this.getObsValue('Weight (kg)') ? this.getObsValue('Weight (kg)') : 'No information';
+        bmi = (this.getObsValue('Height (cm)') && this.getObsValue('Weight (kg)')) ? Number(weightValue / ((heightValue / 100) * (heightValue / 100))).toFixed(2)
+          : `No information`;
+        bp = this.getObsValue('SYSTOLIC BLOOD PRESSURE') ? this.getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + this.getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information';
+        pulse = this.getObsValue('Pulse') ? this.getObsValue('Pulse') : 'No information';
+        temperature = this.getObsValue('TEMPERATURE (C)') ?
+          Number(this.getObsValue('TEMPERATURE (C)') * 9 / 5 + 32).toFixed(2) : `No information`;
+        spO2 = this.getObsValue('BLOOD OXYGEN SATURATION') ? this.getObsValue('BLOOD OXYGEN SATURATION') : 'No information';
+        respRate = this.getObsValue('Respiratory rate') ? this.getObsValue('Respiratory rate') : 'No information';
+        records.push({ text: [{ text: `Height (cm) : `, bold: true }, `${heightValue}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Weight (kg) : `, bold: true }, `${weightValue}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `BMI : `, bold: true }, `${bmi}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `BP : `, bold: true }, `${bp}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Pulse : `, bold: true }, `${pulse}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Temperature (F) : `, bold: true }, `${temperature}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `SpO2 : `, bold: true }, `${spO2}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Respiratory Rate : `, bold: true }, `${respRate}`], margin: [0, 5, 0, 5]});
         break;
     }
     return records;
