@@ -35,7 +35,7 @@
             </div>
             <div class="ml-3">
               <h6>
-                {{ patient?.person.display }} ({{ (patient?.person.gender)| translate }})
+                {{ patient?.person.display }}
               </h6>
               <p>{{ getPatientIdentifier("OpenMRS ID") }}</p>
             </div>
@@ -43,32 +43,41 @@
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
-            <h6>{{'Age'|translate}}</h6>
+            <h6>{{'Gender'|translate}}</h6>
             <p>
-              {{
-                patient?.person.birthdate
-                ? getAge(patient?.person.birthdate)
-                : patient?.person.age
-              }}
+              {{  (patient?.person.gender) === 'M' ? ('Male'| translate ) : (patient?.person.gender) === 'F' ? ('Female'| translate) : 
+              ('Other'| translate)}}
             </p>
           </div>
           <div class="patient-info-item">
-            <h6>{{"Address"|translate}}</h6>
-            <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
-            <p>{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ? ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
+            <h6>{{'Age'|translate}}</h6>
+            <p>
+              {{
+              patient?.person.birthdate
+              ? getAge(patient?.person.birthdate)
+              : patient?.person.age
+              }}
+            </p>
           </div>
         </div>
         <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item mb-3">
+            <h6>{{"Address"|translate}}</h6>
+            <p>{{ patient?.person.preferredAddress.cityVillage.replace(':',' : ') }}</p>
+            <p>{{ patient?.person?.preferredAddress?.address1 ?? ''}} {{ patient?.person?.preferredAddress?.address2 ?
+              ', ' + patient?.person?.preferredAddress?.address2 : ''}}</p>
+          </div>
+          <div class="patient-info-item">
             <h6>{{'Occupation'|translate}}</h6>
             <p>{{ getPersonAttributeValue("occupation") }}</p>
           </div>
-          <div class="patient-info-item">
+         
+        </div>
+        <div class="col-md-3 patient-info-section p-3">
+          <div class="patient-info-item mb-3">
             <h6>{{'National ID'|translate}}</h6>
             <p>{{ getPersonAttributeValue("NationalID") }}</p>
           </div>
-        </div>
-        <div class="col-md-3 patient-info-section p-3">
           <div class="patient-info-item">
             <h6>{{'Contact no.'|translate}}</h6>
             <p>
@@ -97,11 +106,11 @@
                 </li>
                 <li>
                   <div class="list-item">
-                    <label>{{'Prescription Issued'|translate}}</label>
+                    <label>{{'Date of Consultation'|translate}}</label>
                     <div class="list-item-content">
                       {{
-                        completedEncounter?.encounterDatetime
-                          | date : "dd MMM, yyyy"
+                      completedEncounter?.encounterDatetime
+                      | date : "dd MMM, yyyy"
                       }}
                     </div>
                   </div>
@@ -361,7 +370,7 @@
           </div>
         </div>
 
-        <div class="col-md-12 px-3 mb-3">
+        <div *ngIf="medicines.length" class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/medication.svg" alt="" />
@@ -399,12 +408,10 @@
                   </tbody>
                 </table>
               </div>
-              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
-              <ul class="items-list">
+              <h6 *ngIf="additionalInstructions.length" class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
+              <ul *ngIf="additionalInstructions.length; else noInstuctions" class="items-list">
                 <li *ngFor="let ai of additionalInstructions">
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
+                  <div class="d-flex justify-content-between align-items-center">
                     <span>{{ ai.value }}</span>
                   </div>
                 </li>
@@ -420,11 +427,9 @@
               <h6>{{'Note'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul class="items-list">
+              <ul *ngIf="notes?.length; else noNotes" class="items-list">
                 <li *ngFor="let n of notes">
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
+                  <div class="d-flex justify-content-between align-items-center">
                     <span>{{ n.value }}</span>
                   </div>
                 </li>
@@ -520,46 +525,39 @@
               <h6>{{'Follow-up'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul class="items-list">
-                <li>
-                  <div class="list-item">
-                    <label class="border-0">{{'Follow-up suggested'|translate}}</label>
-                    <div class="list-item-content">
-                      {{ followUp ? followUp.wantFollowUp : ('No'|translate) }}
-                    </div>
-                  </div>
-                </li>
-                <ng-container *ngIf="followUp">
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Follow-up Date'|translate}}</label>
-                      <div class="list-item-content">
-                        {{ followUp.followUpDate | date : "mediumDate" }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Follow-up Time'|translate}}</label>
-                      <div class="list-item-content">
-                        {{ followUp.followUpTime }}
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="list-item">
-                      <label>{{'Reason for follow-up'|translate}}</label>
-                      <div class="list-item-content">
-                        {{ followUp.followUpReason }}
-                      </div>
-                    </div>
-                  </li>
-                </ng-container>
-              </ul>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">{{'Follow-up suggested'|translate}}</th>
+                      <th scope="col">{{'Follow-up Date'|translate}}</th>
+                      <th scope="col">{{'Follow-up Time'|translate}}</th>
+                      <th scope="col">{{'Reason for follow-up'|translate}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="followUp; else noFollowUp">
+                      <tr>
+                        <td> {{ followUp ? followUp.wantFollowUp : ('No'|translate) }}</td>
+                        <td> {{ followUp.followUpDate | date : "mediumDate" }}</td>
+                        <td> {{ followUp.followUpTime }}</td>
+                        <td> {{ followUp.followUpReason }}</td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noFollowUp>
+                      <tr>
+                        <td colspan="5" class="text-center">
+                          {{'No followup added' | translate}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+            </div>
+            </div>
         </div>
-      </div>
 
       <div *ngIf="isDownloadPrescription" class="signature w-100">
         <div class="float-right my-4">
