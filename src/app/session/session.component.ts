@@ -3,6 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { getCacheData, setCacheData } from '../utils/utility-functions';
 import { languages } from 'src/config/constant';
 import { DataItemModel, SlideModel } from '../model/model';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-session',
@@ -49,7 +51,8 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  constructor(public translate: TranslateService) { }
+  constructor(public translate: TranslateService, private router: Router, private location: Location) { 
+  }
 
   ngOnInit(): void {
     if(getCacheData(false, languages.SELECTED_LANGUAGE)) {
