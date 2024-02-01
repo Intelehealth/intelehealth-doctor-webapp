@@ -51,7 +51,7 @@ export class SessionComponent implements OnInit {
     }
   ];
 
-  constructor(public translate: TranslateService, private router: Router, private location: Location) { 
+  constructor(public translate: TranslateService, public router: Router, public location: Location) { 
   }
 
   ngOnInit(): void {
