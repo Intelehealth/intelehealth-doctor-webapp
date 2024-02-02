@@ -513,6 +513,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
   */
   async downloadPrescription() {
     const userImg: any = await this.toObjectUrl(`${this.baseUrl}/personimage/${this.patient?.person.uuid}`);
+
     pdfMake.createPdf({
       pageSize: 'A4',
       pageOrientation: 'portrait',
@@ -564,9 +565,9 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                         },
                         [
                           {
-                            text: `${this.patient?.person.display} (${this.patient?.person.gender})`,
+                            text: `${this.patient?.person.display}`,
                             bold: true,
-                            margin: [0, 15, 0, 5],
+                            margin: [10, 10, 0, 5],
                           }
                         ]
                       ]
@@ -580,10 +581,10 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
-                          {text: 'Age', style: 'subheader'},
+                          {text: 'Gender', style: 'subheader'},
+                          `${ (this.patient?.person.gender) === 'M' ? 'Male' : (this.patient?.person.gender) === 'F' ? 'Female' : 'Other'}`,
+                          {text: 'Age', style: 'subheader', margin:[0, 5, 0, 0]},
                           `${this.patient?.person.birthdate ? this.getAge(this.patient?.person.birthdate) : this.patient?.person.age}`,
-                          {text: 'Address', style: 'subheader'},
-                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`
                         ]
                       ]
                     ]
@@ -609,10 +610,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     body: [
                       [
                         [
+                          {text: 'Address', style: 'subheader'},
+                          `${this.patient?.person.preferredAddress.cityVillage.replace(':', ' : ')}`,
+
                           {text: 'Occupation', style: 'subheader'},
                           `${this.getPersonAttributeValue('occupation')}`,
-                          {text: 'National ID', style: 'subheader'},
-                          `${this.getPersonAttributeValue('NationalID')}`
                         ]
                       ]
                     ]
@@ -637,7 +639,11 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                     widths: ['100%'],
                     body: [
                       [ 
-                        [ {text: 'Contact no.', style: 'subheader'},
+                        [ 
+                          {text: 'National ID', style: 'subheader'},
+                          `${this.getPersonAttributeValue('NationalID')}`,
+
+                          {text: 'Contact no.', style: 'subheader'},
                           `${this.getPersonAttributeValue('Telephone Number') ? this.getPersonAttributeValue('Telephone Number') : 'NA'}`
                           , {text: ' ', style: 'subheader'}, {text: ' '}
                         ]
@@ -725,7 +731,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                           colSpan: 2,
                           ul: [
                             {text: [{text: 'Patient ID:', bold: true}, ` ${this.patient?.identifiers?.[0]?.identifier}`], margin: [0, 5, 0, 5]},
-                            {text: [{text: 'Prescription Issued:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
+                            {text: [{text: 'Date of Consultation:', bold: true}, ` ${moment(this.completedEncounter?.encounterDatetime).format('DD MMM yyyy')}`],  margin: [0, 5, 0, 5]}
                           ]
                         }
                       ]
@@ -870,7 +876,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
                   table: {
                     widths: [30, '*'],
                     headerRows: 1,
-                    body: [
+                    body:  [
                       [ {image: 'referral', width: 25, height: 25, border: [false, false, false, true]  }, {text: 'Referral Out', style: 'sectionheader', border: [false, false, false, true] }],
                       [
                         {
@@ -996,7 +1002,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             records.push([d.diagnosisName, d.diagnosisType, d.diagnosisStatus]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 3, alignment: 'center' }]);
+          records.push([{ text: 'No diagnosis added', colSpan: 3, alignment: 'center' }]);
         }
         break;
       case 'medication':
@@ -1005,7 +1011,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             records.push([m.drug, m.strength, m.days, m.timing, m.remark]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 5, alignment: 'center' }]);
+          records.push([{ text: 'No medicines added', colSpan: 5, alignment: 'center' }]);
         }
         break;
       case 'additionalInstruction':
@@ -1013,6 +1019,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           this.additionalInstructions.forEach(ai => {
             records.push({ text: ai.value, margin: [0, 5, 0, 5] });
           });
+        } else {
+          records.push([{ text: 'No additional instructions added'}]);
         }
         break;
       case 'advice':
@@ -1020,6 +1028,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           this.advices.forEach(a => {
             records.push({ text: a.value, margin: [0, 5, 0, 5] });
           });
+        } else {
+          records.push([{ text: 'No advices added'}]);
         }
         break;
       case 'test':
@@ -1027,6 +1037,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
           this.tests.forEach(t => {
             records.push({ text: t.value, margin: [0, 5, 0, 5] });
           });
+        } else {
+          records.push([{ text: 'No tests added'}]);
         }
         break;
       case 'referral':
@@ -1035,14 +1047,14 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
             records.push([r.speciality, r.facility, r.priority, r.reason]);
           });
         } else {
-          records.push([{ text: 'NIL', colSpan: 4, alignment: 'center' }]);
+          records.push([{ text: 'No referrals added', colSpan: 4, alignment: 'center' }]);
         }
         break;
       case 'followUp':
           if (this.followUp) {
             records.push([this.followUp.wantFollowUp, moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
           } else {
-            records.push(['No', '-', '-', '-']);
+            records.push([{text: 'No followup added', colSpan: 4, alignment: 'center'}]);
           }
           break;
       case 'cheifComplaint':
@@ -1053,20 +1065,25 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         }
         break;
       case visitTypes.VITALS:
-        if (this.vitalObs.length) {
-          if(this.vitalObs.find((V) => V.concept?.display !== 'Height (cm)')) {
-            records.push({text: [{text: `Height (cm) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
-          }
-          if(this.vitalObs.find((V) => V.concept?.display !== 'Weight (kg)')) {
-            records.push({text: [{text: `Weight (kg) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
-          }
-          this.vitalObs.forEach(v => {
-            records.push({text: [{text: `${v.concept.display} : `, bold: true}, `${v.value}`], margin: [0, 5, 0, 5]});
-          });
-        } else {
-          records.push({text: [{text: `Height (cm) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
-          records.push({text: [{text: `Weight (kg) : `, bold: true}, `No information`], margin: [0, 5, 0, 5]});
-        }
+        let weightValue, heightValue, bmi, bp, pulse, temperature, spO2, respRate;
+        heightValue = this.getObsValue('Height (cm)') ? this.getObsValue('Height (cm)') : `No information`;
+        weightValue = this.getObsValue('Weight (kg)') ? this.getObsValue('Weight (kg)') : 'No information';
+        bmi = (this.getObsValue('Height (cm)') && this.getObsValue('Weight (kg)')) ? Number(weightValue / ((heightValue / 100) * (heightValue / 100))).toFixed(2)
+          : `No information`;
+        bp = this.getObsValue('SYSTOLIC BLOOD PRESSURE') ? this.getObsValue('SYSTOLIC BLOOD PRESSURE') + ' / ' + this.getObsValue('DIASTOLIC BLOOD PRESSURE') : 'No information';
+        pulse = this.getObsValue('Pulse') ? this.getObsValue('Pulse') : 'No information';
+        temperature = this.getObsValue('TEMPERATURE (C)') ?
+          Number(this.getObsValue('TEMPERATURE (C)') * 9 / 5 + 32).toFixed(2) : `No information`;
+        spO2 = this.getObsValue('BLOOD OXYGEN SATURATION') ? this.getObsValue('BLOOD OXYGEN SATURATION') : 'No information';
+        respRate = this.getObsValue('Respiratory rate') ? this.getObsValue('Respiratory rate') : 'No information';
+        records.push({ text: [{ text: `Height (cm) : `, bold: true }, `${heightValue}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Weight (kg) : `, bold: true }, `${weightValue}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `BMI : `, bold: true }, `${bmi}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `BP : `, bold: true }, `${bp}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Pulse : `, bold: true }, `${pulse}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Temperature (F) : `, bold: true }, `${temperature}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `SpO2 : `, bold: true }, `${spO2}`], margin: [0, 5, 0, 5] });
+        records.push({ text: [{ text: `Respiratory Rate : `, bold: true }, `${respRate}`], margin: [0, 5, 0, 5]});
         break;
     }
     return records;
