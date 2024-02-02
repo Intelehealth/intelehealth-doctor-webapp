@@ -766,7 +766,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     return (
       this.patientInteractionForm.value.present
       &&   this.existingDiagnosis.length > 0
-      &&  this.followUpForm.value.present
+      &&  this.medicines.length > 0
     )
   }
 
