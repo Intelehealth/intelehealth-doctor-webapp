@@ -101,6 +101,8 @@ import { MomentModule } from "ngx-moment";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 import { CookieService } from "ngx-cookie-service";
+import { ProjectComponent } from './component/video-library/project/project.component';
+import { VideosComponent } from './component/video-library/videos/videos.component';
 
 
 const ROUTES: any[] = [
@@ -153,6 +155,11 @@ const ROUTES: any[] = [
       {
         path: "monitoring",
         component: MonitoringComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "videoLibrary",
+        component: ProjectComponent,
         canActivate: [AuthGuard],
       },
       {
@@ -230,7 +237,9 @@ const ROUTES: any[] = [
     ChatComponent,
     TestChatComponent,
     SendSmsComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    ProjectComponent,
+    VideosComponent
   ],
 
   imports: [
