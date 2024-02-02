@@ -370,7 +370,7 @@
           </div>
         </div>
 
-        <div *ngIf="medicines.length" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/medication.svg" alt="" />
@@ -408,7 +408,7 @@
                   </tbody>
                 </table>
               </div>
-              <h6 *ngIf="additionalInstructions.length" class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
+              <h6 class="list-header mt-3 mb-2">{{'Additional instructions'|translate}}*</h6>
               <ul *ngIf="additionalInstructions.length; else noInstuctions" class="items-list">
                 <li *ngFor="let ai of additionalInstructions">
                   <div class="d-flex justify-content-between align-items-center">
@@ -416,6 +416,13 @@
                   </div>
                 </li>
               </ul>
+              <ng-template #noInstuctions>
+                <tr>
+                  <td colspan="5" class="text-center">
+                   {{'No additional instructions added' | translate}}
+                  </td>
+                </tr>
+              </ng-template>
             </div>
           </div>
         </div>
@@ -438,14 +445,14 @@
           </div>
         </div>
 
-        <div *ngIf="advices?.length" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/advice.svg" alt="" />
               <h6>{{'Advice'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul class="items-list">
+              <ul *ngIf="advices?.length; else noAdvices" class="items-list">
                 <li *ngFor="let a of advices">
                   <div
                     class="d-flex justify-content-between align-items-center"
@@ -454,18 +461,25 @@
                   </div>
                 </li>
               </ul>
+              <ng-template #noAdvices>
+                <tr>
+                  <td colspan="5" class="text-center">
+                   {{'No advices added' | translate}}
+                  </td>
+                </tr>
+              </ng-template>
             </div>
           </div>
         </div>
 
-        <div *ngIf="tests?.length" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/test.svg" alt="" />
               <h6>{{'Test'|translate}}</h6>
             </div>
             <div class="data-section-content">
-              <ul class="items-list">
+              <ul *ngIf="tests?.length; else noTests" class="items-list">
                 <li *ngFor="let t of tests">
                   <div
                     class="d-flex justify-content-between align-items-center"
@@ -474,10 +488,17 @@
                   </div>
                 </li>
               </ul>
+              <ng-template #noTests>
+                <tr>
+                  <td colspan="5" class="text-center">
+                   {{'No tests added' | translate}}
+                  </td>
+                </tr>
+              </ng-template>
             </div>
           </div>
         </div>
-        <div *ngIf="referrals?.length" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/referral.svg" alt="" />
@@ -518,7 +539,7 @@
           </div>
         </div>
 
-        <div *ngIf="followUp" class="col-md-12 px-3 mb-3">
+        <div class="col-md-12 px-3 mb-3">
           <div class="data-section">
             <div class="data-section-title">
               <img src="assets/svgs/follow-up.svg" alt="" />
