@@ -13,6 +13,7 @@ export const environment = {
   socketURL: "https://afitraining.ekalarogya.org:3004",
   webrtcSdkServerUrl: "wss://afitraining.ekalarogya.org:9090",
   webrtcTokenServerUrl: 'https://afitraining.ekalarogya.org:3000/',
+  authSvcUrl: 'https://afitraining.ekalarogya.org:3030/',
   version: "AEAT-v1.9.0",
   versionCode: "48",
   vapidKey: "BHkKl1nW4sC_os9IRMGhrSZ4JJp0RHl2_PxTdV_rElOjnHe-dq1hx2zw_bTgrkc4ulFD-VD4x6P63qN1Giroe7U" /** afitrianing */

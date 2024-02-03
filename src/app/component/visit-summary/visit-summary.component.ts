@@ -165,12 +165,14 @@ export class VisitSummaryComponent implements OnInit {
       const providerDetails = getFromStorage("provider");
       const attributes = providerDetails.attributes;
       if (userDetails && providerDetails) {
+        this.visitNotePresent = true;
         this.setSpiner = true;
         this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
           this.isSameProvider = true;
           let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
           if (visitNote) {
             this.diagnosisService.isSameDoctor();
+            this.visitNotePresent = true;
             this.setSpiner = false;
           } else {
             this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
@@ -350,6 +352,7 @@ export class VisitSummaryComponent implements OnInit {
             saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
           });
         this.show = true;
+        this.visitNotePresent = true;
         this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
         attributes.forEach((element) => {
           if (element.attributeType.uuid ===
@@ -372,6 +375,7 @@ export class VisitSummaryComponent implements OnInit {
           this.showReminder(visitUuid);
         }, 900000);
       } else {
+        this.visitNotePresent = false;
         this.snackbar.open(`Visit Note Not Created`, null, {
           duration: 4000,
         });

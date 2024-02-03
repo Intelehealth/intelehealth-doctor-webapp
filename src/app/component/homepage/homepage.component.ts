@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AppointmentService } from "src/app/services/appointment.service";
 import * as moment from "moment";
 import { HelperService } from "src/app/services/helper.service";
+import { getCacheData } from "src/app/utils/utility-functions";
 declare var getFromStorage: any, saveToStorage: any, deleteFromStorage: any;
 
 export interface VisitData {
@@ -79,40 +80,37 @@ export class HomepageComponent implements OnInit {
     }
     const userDetails = getFromStorage("user");
     if (userDetails) {
-      this.sessionService.provider(userDetails.uuid).subscribe((provider) => {
-        saveToStorage("provider", provider.results[0]);
-        const attributes = provider.results[0].attributes;
-        attributes.forEach((attribute) => {
-          if (
-            attribute.attributeType.uuid === this.specializationProviderType &&
-            !attribute.voided
-          ) {
-            this.specialization = attribute.value;
-          }
-          if (
-            attribute.attributeType.uuid ===
-            this.sessionService.visitStateProviderType
-          ) {
-            this.visitState = attribute.value;
-          }
-        });
-        const roles = userDetails['roles'];
-        roles.forEach(role => {
-          if (role.name === "Reporting Module") {
-            this.specialization = "General Physician";
-          }
-        });
-        //  this.getVisits();
-        this.getVisitCounts(this.specialization);
-        this.getPriorityVisits();
-        this.getAwaitingVisits();
-        // this.getInProgressVisits();
-        // this.getCompletedVisits();
+      const provider = getCacheData('provider', true);
+      provider?.attributes.forEach((attribute) => {
+        if (
+          attribute.attributeType.uuid === this.specializationProviderType &&
+          !attribute.voided
+        ) {
+          this.specialization = attribute.value;
+        }
+        if (
+          attribute.attributeType.uuid ===
+          this.sessionService.visitStateProviderType
+        ) {
+          this.visitState = attribute.value;
+        }
       });
+      const roles = userDetails['roles'];
+      roles.forEach(role => {
+        if (role.name === "Reporting Module") {
+          this.specialization = "General Physician";
+        }
+      });
+      this.getDrSlots();
+      //  this.getVisits();
+      this.getVisitCounts(this.specialization);
+      this.getPriorityVisits();
+      this.getAwaitingVisits();
+      // this.getInProgressVisits();
+      // this.getCompletedVisits();
     } else {
       this.authService.logout();
     }
-    this.getDrSlots();
   }
 
   ngOnDestroy() {
