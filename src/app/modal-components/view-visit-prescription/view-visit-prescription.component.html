@@ -559,10 +559,10 @@
                   <tbody>
                     <ng-container *ngIf="followUp; else noFollowUp">
                       <tr>
-                        <td> {{ followUp ? followUp.wantFollowUp : ('No'|translate) }}</td>
-                        <td> {{ followUp.followUpDate | date : "mediumDate" }}</td>
-                        <td> {{ followUp.followUpTime }}</td>
-                        <td> {{ followUp.followUpReason }}</td>
+                        <td> {{ followUp.wantFollowUp }}</td>
+                        <td> {{ followUp.followUpDate ? (followUp.followUpDate|date : "mediumDate") : '-' }}</td>
+                        <td> {{ followUp.followUpTime ? followUp.followUpTime : '-' }}</td>
+                        <td> {{ followUp.followUpReason ?  followUp.followUpReason : '-' }}</td>
                       </tr>
                     </ng-container>
                     <ng-template #noFollowUp>
