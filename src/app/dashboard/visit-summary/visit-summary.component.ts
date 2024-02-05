@@ -128,6 +128,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   additionalNotes = '';
   isCalling: boolean = false;
 
+  openChatFlag: boolean = false;
+
   mainSearch = (text$: Observable<string>, list: string[]) =>
     text$.pipe(
       debounceTime(200),
@@ -156,6 +158,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private translationService: TranslationService,
     private visitSummaryService: VisitSummaryHelperService) {
+    
+    this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
+
     this.referSpecialityForm = new FormGroup({
       refer: new FormControl(false, [Validators.required]),
       specialization: new FormControl(null, [Validators.required])
@@ -233,12 +238,10 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   }
 
   checkOpenChatBoxFlag() {
-    const openChat: string = this.route.snapshot.queryParamMap.get('openChat');
-    if (openChat === 'true') {
+    if (this.openChatFlag) {
       setTimeout(() => {
         this.startChat();
       }, 1000);
-      location.href = location.href.replace('?openChat=true', '');
     }
   }
 

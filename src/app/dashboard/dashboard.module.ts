@@ -30,6 +30,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatPaginationIntlService } from '../services/mat-pagination.service';
 import { SharedModule } from '../shared.module';
+import { OpenChatComponent } from './open-chat/open-chat.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -43,7 +44,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     GetStartedComponent,
     VisitSummaryComponent,
     ChangePasswordComponent,
-    HwProfileComponent
+    HwProfileComponent,
+    OpenChatComponent
   ],
   imports: [
     CommonModule,
