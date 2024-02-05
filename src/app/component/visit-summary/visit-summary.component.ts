@@ -120,12 +120,14 @@ export class VisitSummaryComponent implements OnInit {
     const userDetails = getFromStorage("user");
     const providerDetails = getFromStorage("provider");
     const attributes = providerDetails.attributes;
+    this.visitNotePresent = true;
     if (userDetails && providerDetails) {
       this.setSpiner = true;
       this.visitService.fetchVisitDetails(visitUuid).subscribe((visitDetails) => {
         let visitNote = visitDetails.encounters.find((visit) => (visit.display.match("Visit Note") !== null));
         if (visitNote) {
           this.setSpiner = false;
+          this.visitNotePresent = true;
           this.snackbar.open("Another doctor is viewing this case", null, {
             duration: 4000,
           });
@@ -363,6 +365,7 @@ export class VisitSummaryComponent implements OnInit {
           }
         });
       } else {
+        this.visitNotePresent = false;
         this.snackbar.open(`Visit Note Not Created`, null, {
           duration: 4000,
         });
