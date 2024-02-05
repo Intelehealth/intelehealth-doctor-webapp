@@ -1916,6 +1916,7 @@
                           <input
                             type="radio"
                             value="{{'No' | translate}}"
+                            (change)="saveFollowUp()"
                             formControlName="wantFollowUp"
                             data-test-id="radioFollowUpNo"
                           />

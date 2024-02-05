@@ -294,7 +294,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         response.results.forEach((obs: ObsModel) => {
           const obs_values = obs.value.split(':');
           if (obs.encounter && obs.encounter.visit.uuid === this.visit.uuid) {
-            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim() });
+            this.referrals.push({ uuid: obs.uuid, speciality: obs_values[0].trim(), facility: obs_values[1].trim(), priority: obs_values[2].trim(), reason: obs_values[3].trim()? obs_values[3].trim():'-' });
           }
         });
       });
@@ -308,12 +308,18 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
     this.diagnosisService.getObs(this.visit.patient.uuid, this.conceptFollow).subscribe((response: ObsApiResponseModel) => {
       response.results.forEach((obs: ObsModel) => {
         if (obs.encounter.visit.uuid === this.visit.uuid) {
-          const followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
-          const followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
-          const followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
-          this.followUp = {
+          let followUpDate, followUpTime, followUpReason,wantFollowUp;
+          if(obs.value.includes('Time:')) {
+             followUpDate = (obs.value.includes('Time:')) ? moment(obs.value.split(', Time: ')[0]).format('YYYY-MM-DD') : moment(obs.value.split(', Remark: ')[0]).format('YYYY-MM-DD');
+             followUpTime = (obs.value.includes('Time:')) ? obs.value.split(', Time: ')[1].split(', Remark: ')[0] : null;
+             followUpReason = (obs.value.split(', Remark: ')[1]) ? obs.value.split(', Remark: ')[1] : null;
+             wantFollowUp ='Yes';
+          } else {
+             wantFollowUp ='No';
+          }
+       this.followUp = {
             present: true,
-            wantFollowUp: 'Yes',
+            wantFollowUp,
             followUpDate,
             followUpTime,
             followUpReason
@@ -1044,7 +1050,7 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
       case 'referral':
         if (this.referrals.length) {
           this.referrals.forEach(r => {
-            records.push([r.speciality, r.facility, r.priority, r.reason]);
+            records.push([r.speciality, r.facility, r.priority, r.reason? r.reason : '-' ]);
           });
         } else {
           records.push([{ text: 'No referrals added', colSpan: 4, alignment: 'center' }]);
@@ -1052,7 +1058,8 @@ export class ViewVisitPrescriptionComponent implements OnInit, OnDestroy {
         break;
       case 'followUp':
           if (this.followUp) {
-            records.push([this.followUp.wantFollowUp, moment(this.followUp.followUpDate).format('DD MMM YYYY'), this.followUp.followUpTime, this.followUp.followUpReason]);
+            records.push([this.followUp.wantFollowUp, this.followUp.followUpDate ? moment(this.followUp.followUpDate).format('DD MMM YYYY'): '-',
+             this.followUp.followUpTime ? this.followUp.followUpTime : '-', this.followUp.followUpReason ? this.followUp.followUpReason : '-']);
           } else {
             records.push([{text: 'No followup added', colSpan: 4, alignment: 'center'}]);
           }
