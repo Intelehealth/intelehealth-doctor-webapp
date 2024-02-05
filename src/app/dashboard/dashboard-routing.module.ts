@@ -8,6 +8,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { VisitSummaryComponent } from './visit-summary/visit-summary.component';
 import { HwProfileComponent } from './hw-profile/hw-profile.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
+import { OpenChatComponent } from './open-chat/open-chat.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,13 @@ const routes: Routes = [
       breadcrumb: 'Visit Summary'
     },
     component: VisitSummaryComponent
+  },
+  {
+    path: 'open-chat/:id',
+    data: {
+      breadcrumb: 'Open Chat'
+    },
+    component: OpenChatComponent
   },
   {
     path: 'change-password',
