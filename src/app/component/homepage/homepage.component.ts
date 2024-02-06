@@ -233,12 +233,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
     } else if (this.checkVisit(encounters, "Visit Note") &&
       active.stopDatetime == null) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.progressVisit.push(values);
+      let found = this.service.progressVisit.find(c => c.id === values.id);
+      if (!found) {
+        this.service.progressVisit.push(values);
+      }
     } else if (this.checkVisit(encounters, "Flagged") &&
       active.stopDatetime == null) {
       if (!this.checkVisit(encounters, "Flagged").voided) {
         const values = this.assignValueToProperty(active, encounter);
-        this.service.flagVisit.push(values);
+        let found = this.service.flagVisit.find(c => c.id === values.id);
+        if (!found) {
+          this.service.flagVisit.push(values);
+        }
       }
     } else if (
       this.checkVisit(encounters, "ADULTINITIAL") ||
@@ -246,7 +252,10 @@ export class HomepageComponent implements OnInit, OnDestroy {
       active.stopDatetime == null
     ) {
       const values = this.assignValueToProperty(active, encounter);
-      this.service.waitingVisit.push(values);
+      let found = this.service.waitingVisit.find(c => c.id === values.id);
+      if (!found) {
+        this.service.waitingVisit.push(values);
+      }
     }
   }
 
@@ -336,8 +345,11 @@ export class HomepageComponent implements OnInit, OnDestroy {
         console.log("response.results",response.data)
         response.data.forEach((visit) => {
         let v = this.assignValueToVisit(visit);  
-        this.followUpVisit.push(v);
-        this.followUpVisitNo += 1;
+        let found = this.followUpVisit.find(c => c.id === v.id);
+        if (!found) {
+          this.followUpVisit.push(v);
+          this.followUpVisitNo += 1;
+        }
         });
         this.setSpiner1 = false;
       });
