@@ -693,7 +693,8 @@
                               <ng-container *ngIf="item?.value?.strength">
                                 <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
                                 <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
                               </ng-container>
                               <ng-container class="value-item" *ngIf="!item?.value?.strength">
                                 {{item?.value}}
@@ -709,7 +710,8 @@
                               <ng-container *ngIf="item?.value?.strength">
                                 <span>Strength : </span>{{item?.value?.strength}} U/L<br/>
                                 <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
                               </ng-container>
                               <ng-container class="value-item" *ngIf="!item?.value?.strength">
                                 {{item?.value}}
@@ -782,7 +784,8 @@
                               <ng-container *ngIf="item?.value?.type">
                                 <span>Strength : </span>{{item?.value?.type}}<br/>
                                 <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
                               </ng-container>
                               <ng-container class="value-item" *ngIf="!item?.value?.type">
                                 {{item?.value}}
@@ -798,7 +801,8 @@
                               <ng-container *ngIf="item?.value?.type">
                                 <span>Strength : </span>{{item?.value?.type}}<br/>
                                 <span>Infusion Rate : </span>{{item?.value?.infusionRate}} drops/minute<br/>
-                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}
+                                <span>Infusion Status : </span>{{item?.value?.infusionStatus}}<br/>
+                                <small><i>({{item?.initial}} {{item?.obsDatetime|date:'hh:mm a'}})</i></small>
                               </ng-container>
                               <ng-container class="value-item" *ngIf="!item?.value?.type">
                                 {{item?.value}}
