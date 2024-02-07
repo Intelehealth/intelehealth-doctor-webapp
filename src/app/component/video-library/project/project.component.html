@@ -3,12 +3,18 @@
     <div>
       <div>
         <span class="float-right">
-          <button mat-raised-button color="primary">Add Project</button>
+          <button (click)="addProject()" mat-raised-button color="primary">
+            Add Project
+          </button>
         </span>
       </div>
       <br />
-      <mat-form-field class="search-text">
-        <input matInput placeholder="Search" />
+      <mat-form-field class="col-12 search-text">
+        <input
+          matInput
+          placeholder="Search"
+          (keyup)="applyFilter($event.target.value)"
+        />
       </mat-form-field>
 
       <div class="mat-elevation-z8">
@@ -32,6 +38,14 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
             <td mat-cell *matCellDef="let row">{{ row.name }}</td>
           </ng-container>
+          <ng-container matColumnDef="packageId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Package ID
+            </th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.packageId }}
+            </td>
+          </ng-container>
 
           <!-- Last Updated Column -->
           <ng-container matColumnDef="lastUpdate">
@@ -47,10 +61,33 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
             <td mat-cell *matCellDef="let row; let i = index">
               <i
+                (click)="updateProject(row.id)"
                 class="material-icons"
-                style="color: rgb(235, 30, 30); cursor: pointer"
+                style="color: #343a40; cursor: pointer; margin-left: -10px"
+                >edit</i
+              >
+              <i
+                (click)="delete(row.id)"
+                class="material-icons"
+                style="
+                  color: rgb(235, 30, 30);
+                  cursor: pointer;
+                  margin-right: 3px;
+                "
                 >delete</i
               >
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="manage-video">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+            <td mat-cell *matCellDef="let row; let i = index">
+              <button
+                [routerLink]="['/manage-videos', row.packageId]"
+                mat-raised-button
+                color="primary"
+              >
+                Manage Videos
+              </button>
             </td>
           </ng-container>
 

@@ -27,6 +27,52 @@
       </mat-form-field>
     </div>
   </div>
+  <div
+    *ngIf="['Add Project', 'Update Project'].includes(data.title)"
+    class="row"
+  >
+    <mat-form-field class="col-12">
+      <input matInput placeholder="Name" [(ngModel)]="data.Name" />
+    </mat-form-field>
+    <mat-form-field class="col-12">
+      <input matInput placeholder="Package ID" [(ngModel)]="data.ProjectId" />
+    </mat-form-field>
+  </div>
+  <div
+    class="row d-contents"
+    *ngIf="data.title === 'Add Video' || data.title === 'Update Video'"
+  >
+    <mat-form-field class="col-12">
+      <input matInput placeholder="Name" [(ngModel)]="data.Title" />
+    </mat-form-field>
+    <mat-form-field class="col-12">
+      <div class="d-flex">
+        <input matInput placeholder="VideoId" [(ngModel)]="data.videoId" />
+        <button
+          class="text-align:right"
+          mat-raised-button
+          style="width: 90px"
+          (click)="previewVideo()"
+          color="primary"
+          *ngIf="data.title === 'Add Video'"
+          [disabled]="!data.videoId"
+        >
+          Preview
+        </button>
+      </div>
+    </mat-form-field>
+    <div>
+      <iframe
+        class="col-12"
+        *ngIf="PreviewVideo && data.videoId"
+        [src]="data.videoURL"
+        width="250"
+        height="150"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
   <div *ngIf="data.title === 'Edit Expiry Date'">
     <mat-form-field>
       <input
@@ -53,7 +99,13 @@
         </button>
       </div>
     </div>
-    <div *ngIf="data.title === 'Delete Mindmap'">
+    <div
+      *ngIf="
+        data.title === 'Delete Mindmap' ||
+        data.title === 'Delete Project' ||
+        data.title === 'Delete Video'
+      "
+    >
       <div>Are you sure you want to delete?</div>
     </div>
   </div>
@@ -62,18 +114,62 @@
     <button
       mat-raised-button
       color="primary"
-      *ngIf="data.title != 'Delete Mindmap'"
-      [disabled]="!file"
-      [hidden]="
-        data.title === 'Add License key' || data.title === 'Edit Expiry Date'
-      "
+      *ngIf="data.title === 'Update Project'"
+      [disabled]="!data.Name || !data.ProjectId"
+      [mat-dialog-close]="data"
+    >
+      Update Project
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="data.title === 'Update Video'"
+      [disabled]="!data.videoId || !data.Title"
+      [mat-dialog-close]="data"
+    >
+      Update Video
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="data.title === 'Add Project'"
+      [disabled]="!data.Name || !data.ProjectId"
       [mat-dialog-close]="data"
     >
       Add
     </button>
     <button
       mat-raised-button
-      color="primary" 
+      color="primary"
+      *ngIf="data.title === 'Add Video'"
+      [disabled]="!data.Title || !data.videoId"
+      [mat-dialog-close]="data"
+    >
+      Add
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="data.title != 'Delete Mindmap'"
+      [disabled]="!file"
+      [hidden]="
+        data.title === 'Add License key' ||
+        data.title === 'Edit Expiry Date' ||
+        data.title === 'Add Project' ||
+        data.title === 'Delete Project' ||
+        data.title === 'Add Video' ||
+        data.title === 'Delete Video' ||
+        data.title === 'Update Project' ||
+        data.title === 'Update Video'
+      "
+      [mat-dialog-close]="data"
+    >
+      Add
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
       [disabled]="!data.key || !data.expiryDate"
       *ngIf="data.title != 'Delete Mindmap' && data.title === 'Add License key'"
       [mat-dialog-close]="data"
@@ -93,7 +189,11 @@
     <button
       mat-raised-button
       color="primary"
-      *ngIf="data.title === 'Delete Mindmap'"
+      *ngIf="
+        data.title === 'Delete Mindmap' ||
+        data.title === 'Delete Project' ||
+        data.title === 'Delete Video'
+      "
       [mat-dialog-close]="true"
     >
       Delete
