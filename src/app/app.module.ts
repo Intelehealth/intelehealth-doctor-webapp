@@ -63,7 +63,9 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   fgsType: SPINNER.ballSpinClockwise, // foreground spinner type
   pbDirection: PB_DIRECTION.leftToRight, // progress bar direction
   pbThickness: 3, // progress bar thickness
-  text: "Please Wait..."
+  text: "Please Wait...",
+  minTime: 400,
+  delay: 100
 };
 
 const initializer = (pwaService: PwaService) => () => pwaService.initPwaPrompt();

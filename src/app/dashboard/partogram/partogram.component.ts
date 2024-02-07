@@ -325,6 +325,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
   ivPrescribedHistory: any[] = [];
   showAll = false;
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  openChatFlag: boolean = false;
 
   constructor(
     private pageTitleService: PageTitleService,
@@ -337,7 +338,9 @@ export class PartogramComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private webrtcSvc: WebrtcService,
     private ngxUiLoaderService: NgxUiLoaderService
-  ) { }
+  ) {
+    this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
+  }
 
   ngOnDestroy(): void {
     this.apiSubscription.unsubscribe();
@@ -405,6 +408,7 @@ export class PartogramComponent implements OnInit, OnDestroy {
         this.readStageData();
         this.readVisitHolder();
         this.updateSeen();
+        this.checkOpenChatBoxFlag();
       }
     }, (error: any) => {
       this.ngxUiLoaderService.stop();
@@ -743,7 +747,6 @@ export class PartogramComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.startChat();
       }, 1000);
-      location.href = location.href.replace('?openChat=true', '');
     }
   }
 
