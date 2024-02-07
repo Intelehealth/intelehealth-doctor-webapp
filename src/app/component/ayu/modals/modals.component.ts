@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 
 @Component({
   selector: "app-modals",
@@ -12,7 +13,8 @@ export class ModalsComponent implements OnInit {
   minDate = new Date();
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
-    private dialogRef: MatDialogRef<ModalsComponent>
+    private dialogRef: MatDialogRef<ModalsComponent>,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {}
@@ -20,10 +22,24 @@ export class ModalsComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
-
+  PreviewVideo: any = false;
   fileHandler(event) {
     this.file = event.target.files[0];
     this.saveUpload();
+  }
+
+  previewVideo() {
+    this.data.videoURL = this.getSafeUrl(this.data.videoId);
+    this.PreviewVideo = false;
+    setTimeout(() => {
+      this.PreviewVideo = true;
+    }, 500);
+  }
+
+  getSafeUrl(videoId: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.youtube.com/embed/${videoId}`
+    );
   }
 
   uploadMindmap() {

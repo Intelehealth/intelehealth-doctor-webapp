@@ -50,7 +50,7 @@ import { AuthGuard } from "./auth.guard";
 import { DatePipe } from "@angular/common";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgMultiSelectDropDownModule } from "ng-multiselect-dropdown";
 
 // Material Design Imports
 import { AdminGuard } from "./admin.guard";
@@ -58,7 +58,11 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatChipsModule } from "@angular/material/chips";
 import { SocketService } from "./services/socket.service";
 import { NgxMaterialTimepickerModule } from "ngx-material-timepicker";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -94,14 +98,15 @@ import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
 import { ConfirmDialogComponent } from "./component/visit-summary/reassign-speciality/confirm-dialog/confirm-dialog.component";
 import { ReassignSpecialityComponent } from "./component/visit-summary/reassign-speciality/reassign-speciality.component";
 import { TestChatComponent } from "./component/test-chat/test-chat.component";
-import { SendSmsComponent } from './component/send-sms/send-sms.component';
+import { SendSmsComponent } from "./component/send-sms/send-sms.component";
 import { ToastrModule } from "ngx-toastr";
-import { VideoCallComponent } from './modal-components/video-call/video-call.component';
+import { VideoCallComponent } from "./modal-components/video-call/video-call.component";
 import { MomentModule } from "ngx-moment";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
 import { CookieService } from "ngx-cookie-service";
-
+import { ProjectComponent } from "./component/video-library/project/project.component";
+import { VideosComponent } from "./component/video-library/videos/videos.component";
 
 const ROUTES: any[] = [
   { path: "login", component: LoginPageComponent },
@@ -153,6 +158,16 @@ const ROUTES: any[] = [
       {
         path: "monitoring",
         component: MonitoringComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "videoLibrary",
+        component: ProjectComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: "manage-videos/:packageId",
+        component: VideosComponent,
         canActivate: [AuthGuard],
       },
       {
@@ -230,7 +245,9 @@ const ROUTES: any[] = [
     ChatComponent,
     TestChatComponent,
     SendSmsComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    ProjectComponent,
+    VideosComponent
   ],
 
   imports: [
