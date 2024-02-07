@@ -23,7 +23,6 @@ export class VideosComponent implements OnInit {
     "video",
     "VideoId",
     "Title",
-    "CreatedBy",
     "lastUpdate",
     "action",
   ];
