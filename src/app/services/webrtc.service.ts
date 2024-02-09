@@ -55,7 +55,7 @@ export class WebrtcService {
   }
 
   getToken(name: string, roomId: string, nurseName: string) {
-    return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
+    return this.http.get(`${environment.webrtcTokenServerUrl}api/getToken?ngsw-bypass=true&name=${name}&roomId=${roomId}&nurseName=${nurseName}`)
       .pipe(map((res: any) => {
         this.token = res?.token;
         this.appToken = res?.appToken;
