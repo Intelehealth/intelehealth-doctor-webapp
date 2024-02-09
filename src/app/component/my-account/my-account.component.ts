@@ -144,6 +144,7 @@ export class MyAccountComponent implements OnInit {
       width: "400px",
       data: this.providerDetails,
     });
+    (document.scrollingElement as any).style.top = ''; /** AEAT-823 */
   }
   getStateFromVisit(provider) {
     const attribute = provider.find(
