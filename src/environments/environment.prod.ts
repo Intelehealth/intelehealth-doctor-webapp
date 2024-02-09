@@ -8,6 +8,7 @@ export const environment = {
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
+  authSvcUrl: `${window.location.protocol}//${window.location.hostname}:3030/`,
   version: "NAS-v1.2.9",
   versionCode: "26"
 };

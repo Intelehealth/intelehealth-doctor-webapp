@@ -9,6 +9,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ChangePasswordComponent } from "../change-password/change-password.component";
 import { VisitService } from "src/app/services/visit.service";
 import { environment } from "src/environments/environment";
+import { clearAllCache, setCacheData } from "src/app/utils/utility-functions";
 declare var saveToStorage: any;
 @Component({
   selector: "app-login-page",
@@ -32,9 +33,10 @@ export class LoginPageComponent implements OnInit {
     private pushNotificationsService: PushNotificationsService,
     private service: VisitService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit() {
+    clearAllCache()
     localStorage.setItem("selectedLanguage", "en");
     this.service.clearVisits();
   }
@@ -52,40 +54,46 @@ export class LoginPageComponent implements OnInit {
       saveToStorage("session", base64);
       this.sessionService.loginSession(base64).subscribe((response) => {
         if (response.authenticated === true) {
-          this.sessionService.provider(response.user.uuid).subscribe(
-            (provider) => {
-              this.authService.setToken(response.user.sessionId);
-              saveToStorage("user", response.user);
+          this.authService.setToken(response.user.sessionId);
+          this.authService.getAuthToken(value.username, value.password).subscribe({
+            next: ((resp: any) => {
+              setCacheData('token', resp?.token);
+              this.sessionService.provider(response.user.uuid).subscribe(
+                (provider) => {
 
-              this.pushNotificationsService
-                .getUserSettings(response.user.uuid)
-                .subscribe((response) => {
-                  if (response["data"].isChange == 0) {
-                    this.dialog.open(ChangePasswordComponent, {
-                      width: "500px",
-                      data: { isChange: false },
+                  saveToStorage("user", response.user);
+
+                  this.pushNotificationsService
+                    .getUserSettings(response.user.uuid)
+                    .subscribe((response) => {
+                      if (response["data"].isChange == 0) {
+                        this.dialog.open(ChangePasswordComponent, {
+                          width: "500px",
+                          data: { isChange: false },
+                        });
+                      }
                     });
-                  }
-                });
 
-              if (provider.results[0].attributes.length === 0) {
-                this.router.navigate(["/myAccount"]);
-              } else {
-                this.router.navigate(["/home"]);
-              }
-              this.snackbar.open(
-                `Welcome ${provider.results[0].person.display}`,
-                null,
-                {
-                  duration: 4000,
+                  if (provider.results[0].attributes.length === 0) {
+                    this.router.navigate(["/myAccount"]);
+                  } else {
+                    this.router.navigate(["/home"]);
+                  }
+                  this.snackbar.open(
+                    `Welcome ${provider.results[0].person.display}`,
+                    null,
+                    {
+                      duration: 4000,
+                    }
+                  );
+                  saveToStorage("doctorName", provider.results[0].person.display);
+                },
+                (error) => {
+                  this.router.navigate(["home"]);
                 }
               );
-              saveToStorage("doctorName", provider.results[0].person.display);
-            },
-            (error) => {
-              this.router.navigate(["home"]);
-            }
-          );
+            })
+          });
         } else {
           this.snackbar.open("Username & Password doesn't match", null, {
             duration: 4000,

@@ -13,7 +13,8 @@ export const environment = {
   version: "NAS-v1.2.9",
   versionCode: "26",
   webrtcSdkServerUrl: "wss://testing.intelehealth.org:9090",
-  webrtcTokenServerUrl: "https://testing.intelehealth.org:3000/"
+  webrtcTokenServerUrl: "https://testing.intelehealth.org:3000/",
+  authSvcUrl: 'http://testing.intelehealth.org:3030/',
 };
 /*
  * For easier debugging in development mode, you can import the following file

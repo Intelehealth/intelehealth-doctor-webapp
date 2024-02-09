@@ -42,7 +42,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -93,6 +93,8 @@ import { VideoCallComponent } from "./modal-components/video-call/video-call.com
 
 import { ToastrModule } from "ngx-toastr";
 import { MomentModule } from "ngx-moment";
+import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
+import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 
 @NgModule({
   declarations: [
@@ -217,6 +219,16 @@ import { MomentModule } from "ngx-moment";
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },
