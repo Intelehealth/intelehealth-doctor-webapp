@@ -111,7 +111,7 @@ export class PrescribeIvFluidComponent implements OnInit {
       id: new FormControl(null),
       type: new FormControl(null, [Validators.required]),
       otherType: new FormControl(null, [Validators.maxLength(15)]),
-      infusionRate: new FormControl(null, [Validators.required, Validators.maxLength(3)]),
+      infusionRate: new FormControl(null, [Validators.required, Validators.min(5), Validators.max(60), Validators.maxLength(3)]),
       infusionStatus: new FormControl(null, [Validators.required]),
       isDeleted: new FormControl(false),
       index: new FormControl(-1),

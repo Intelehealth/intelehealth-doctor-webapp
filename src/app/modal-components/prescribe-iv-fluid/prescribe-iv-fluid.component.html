@@ -47,6 +47,7 @@
                           <div *ngIf="submitted && fiv.controls[i].controls.infusionRate.errors">
                             <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.required">Enter infusion rate</small>
                             <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.maxlength">Infusion rate should be less than 3 characters</small>
+                            <small class="error-msg" *ngIf="fiv.controls[i].controls.infusionRate.errors.min || fiv.controls[i].controls.infusionRate.errors.max">Infusion rate should be between 5 to 60</small>
                           </div>
                         </div>
                         <div class="form-group col-md-2">
