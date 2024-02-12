@@ -14,7 +14,10 @@ export class JwtInterceptor implements HttpInterceptor {
     const token = this.authService.authToken;
     if (token && !request.url?.includes?.('/openmrs/ws/rest/')) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${token}` }
+        setHeaders: { 
+          ...request.headers,
+          Authorization: `Bearer ${token}` 
+        }
       });
     }
     return next.handle(request);
