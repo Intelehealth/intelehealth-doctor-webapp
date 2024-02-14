@@ -51,6 +51,8 @@ export class VisitSummaryComponent implements OnInit {
   visit: any;
   videoIcon = "assets/svgs/video-w.svg";
   chatBoxRef: any;
+  disabledVisitNoteBtn: boolean = false;
+  disabledSignBtn: boolean = false;
 
   constructor(
     private service: EncounterService,
@@ -175,7 +177,9 @@ export class VisitSummaryComponent implements OnInit {
             this.visitNotePresent = true;
             this.setSpiner = false;
           } else {
-            this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
+            if(!this.disabledVisitNoteBtn){
+              this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
+            }
             this.setSpiner = false;
           }
         });
@@ -186,7 +190,9 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   sign() {
-    this.signandsubmit();
+    if(!this.disabledSignBtn){
+      this.signandsubmit();
+    }
   }
 
   get user() {
@@ -205,48 +211,54 @@ export class VisitSummaryComponent implements OnInit {
       const providerUuid = providerDetails.uuid;
       if (this.diagnosisService.isSameDoctor()) {
         this.setSpiner = true;
-        this.service.signRequest(providerUuid).subscribe((res) => {
-          if (res.results.length) {
-            res.results.forEach((element) => {
-              if (element.attributeType.display === "textOfSign") {
-                this.text = element.value;
-              }
-              if (element.attributeType.display === "fontOfSign") {
-                this.font = element.value;
-              }
-            });
-            const json = {
-              patient: patientUuid,
-              encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
-              encounterProviders: [
-                {
-                  provider: providerUuid,
-                  encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
-                },
-              ],
-              visit: visitUuid,
-              encounterDatetime: myDate,
-              obs: [
-                {
-                  concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e",
-                  value: JSON.stringify(this.doctorValue),
-                },
-              ],
-            };
-            this.service.postEncounter(json).subscribe((post) => {
-              this.visitCompletePresent = true;
+        this.disabledSignBtn = true;
+        this.service.signRequest(providerUuid).subscribe({
+          next: (res) => {
+            if (res.results.length) {
+              res.results.forEach((element) => {
+                if (element.attributeType.display === "textOfSign") {
+                  this.text = element.value;
+                }
+                if (element.attributeType.display === "fontOfSign") {
+                  this.font = element.value;
+                }
+              });
+              const json = {
+                patient: patientUuid,
+                encounterType: "bd1fbfaa-f5fb-4ebd-b75c-564506fc309e",
+                encounterProviders: [
+                  {
+                    provider: providerUuid,
+                    encounterRole: "73bbb069-9781-4afc-a9d1-54b6b2270e03",
+                  },
+                ],
+                visit: visitUuid,
+                encounterDatetime: myDate,
+                obs: [
+                  {
+                    concept: "7a9cb7bc-9ab9-4ff0-ae82-7a1bd2cca93e",
+                    value: JSON.stringify(this.doctorValue),
+                  },
+                ],
+              };
+              this.service.postEncounter(json).subscribe((post) => {
+                this.visitCompletePresent = true;
+                this.setSpiner = false;
+                this.snackbar.open("Visit Complete", null, { duration: 4000 });
+              });
+            } else {
               this.setSpiner = false;
-              this.snackbar.open("Visit Complete", null, { duration: 4000 });
-            });
-          } else {
-            this.setSpiner = false;
-            if (
-              window.confirm(
-                'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
-              )
-            ) {
-              this.router.navigateByUrl("/myAccount");
+              if (
+                window.confirm(
+                  'Your signature is not setup! If you click "Ok" you would be redirected. Cancel will load this website '
+                )
+              ) {
+                this.router.navigateByUrl("/myAccount");
+              }
             }
+          },
+          error: () => {
+            this.disabledSignBtn = false;
           }
         });
       }
@@ -344,43 +356,49 @@ export class VisitSummaryComponent implements OnInit {
       visit: visitUuid,
       encounterDatetime: myDate,
     };
-    this.service.postEncounter(json).subscribe((response) => {
-      if (response) {
-        this.visitService
-          .fetchVisitDetails(visitUuid)
-          .subscribe((visitDetails) => {
-            saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
+    this.disabledVisitNoteBtn = true;
+    this.service.postEncounter(json).subscribe({
+      next: (response) => {
+        if (response) {
+          this.visitService
+            .fetchVisitDetails(visitUuid)
+            .subscribe((visitDetails) => {
+              saveToStorage("visitNoteProvider", visitDetails.encounters[0]);
+            });
+          this.show = true;
+          this.visitNotePresent = true;
+          this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
+          attributes.forEach((element) => {
+            if (element.attributeType.uuid ===
+              "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
+              !element.voided) {
+              const payload = {
+                speciality: element.value,
+                patient: {
+                  name: response.patient.display,
+                  provider: response.encounterProviders[0].display,
+                },
+                skipFlag: true,
+              };
+              // if(!this.pushNotificationService.snoozeTimeout){
+              //   this.pushNotificationService.postNotification(payload).subscribe();
+              // }
+            }
           });
-        this.show = true;
-        this.visitNotePresent = true;
-        this.snackbar.open(`Visit Note Created`, null, { duration: 4000 });
-        attributes.forEach((element) => {
-          if (element.attributeType.uuid ===
-            "ed1715f5-93e2-404e-b3c9-2a2d9600f062" &&
-            !element.voided) {
-            const payload = {
-              speciality: element.value,
-              patient: {
-                name: response.patient.display,
-                provider: response.encounterProviders[0].display,
-              },
-              skipFlag: true,
-            };
-            // if(!this.pushNotificationService.snoozeTimeout){
-            //   this.pushNotificationService.postNotification(payload).subscribe();
-            // }
-          }
-        });
-        setTimeout(() => {
-          this.showReminder(visitUuid);
-        }, 900000);
-      } else {
-        this.visitNotePresent = false;
-        this.snackbar.open(`Visit Note Not Created`, null, {
-          duration: 4000,
-        });
+          setTimeout(() => {
+            this.showReminder(visitUuid);
+          }, 900000);
+        } else {
+          this.visitNotePresent = false;
+          this.snackbar.open(`Visit Note Not Created`, null, {
+            duration: 4000,
+          });
+        }
+        this.diagnosisService.isVisitSummaryChanged = false;
+      },
+      error: () => {
+        this.disabledVisitNoteBtn = false;
       }
-      this.diagnosisService.isVisitSummaryChanged = false;
     });
   }
 
