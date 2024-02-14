@@ -106,6 +106,8 @@ import { ImagesPreviewComponent } from './component/visit-summary/images-preview
 import { VideoCallComponent } from './modal-components/video-call/video-call.component';
 import { ToastrModule } from "ngx-toastr";
 import { MomentModule } from "ngx-moment";
+import { CollectedByComponent } from './component/visit-summary/collected-by/collected-by.component';
+import { ResultedByComponent } from './component/visit-summary/resulted-by/resulted-by.component';
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -166,7 +168,9 @@ registerLocaleData(localeAr);
     DispenseComponent,
     AdministerComponent,
     ImagesPreviewComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    CollectedByComponent,
+    ResultedByComponent
   ],
 
   imports: [

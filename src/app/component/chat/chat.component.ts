@@ -6,6 +6,7 @@ import { CoreService } from 'src/app/services/core/core.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { WebrtcService } from 'src/app/services/webrtc.service';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat',
@@ -31,7 +32,8 @@ export class ChatComponent implements OnInit {
     private socketSvc: SocketService,
     private coreService: CoreService,
     private webrtcSvc: WebrtcService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translateService: TranslateService
   ) { }
 
   async ngOnInit() {
@@ -96,7 +98,7 @@ export class ChatComponent implements OnInit {
 
     if (this.message) {
       if (this.msgCharCount > this.MESSAGE_LIMIT) {
-        this.toastr.error("Please try again later.", "Message length should not exceed 1000.");
+        this.toastr.error(this.translateService.instant(`messages.${"Please try again later."}`), this.translateService.instant(`messages.${"Message length should not exceed 1000."}`));
         return
       }
 
