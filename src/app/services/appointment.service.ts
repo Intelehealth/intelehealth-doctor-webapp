@@ -169,4 +169,18 @@ export class AppointmentService {
       null
     );
   }
+
+  /**
+  * Validate followup visit dayoff
+  * @param {string} userUuid - User uuid
+  * @param {string} year - Year
+  * @param {string} month - Month
+  * @param {string} date - date
+  * @return {Observable<any>}
+  */
+  validateDayOff(userUuid, year, month, date) {
+    return this.http.get(
+      `${this.baseURL}/appointment/validateDayOff/${userUuid}?year=${year}&month=${month}&date=${date}`
+    ).toPromise().catch(err => {console.log(err)});
+  }
 }

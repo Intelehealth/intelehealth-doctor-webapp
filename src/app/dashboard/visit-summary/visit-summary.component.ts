@@ -1437,7 +1437,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * Save followup
   * @returns {void}
   */
-  saveFollowUp() {
+  async saveFollowUp() {
     let body =  {
         concept: conceptIds.conceptFollow,
         person: this.visit.patient.uuid,
@@ -1453,6 +1453,9 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
       }
       body.value = (this.followUpForm.value.followUpReason) ?
        `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}, Remark: ${this.followUpForm.value.followUpReason}` : `${moment(this.followUpForm.value.followUpDate).format('YYYY-MM-DD')}, Time: ${this.followUpForm.value.followUpTime}`;
+       const momentDate = moment(this.followUpForm.value.followUpDate);
+       const response = await this.appointmentService.validateDayOff(this.userId, momentDate.format('YYYY'), momentDate.format('MMMM'), momentDate.format('DD/MM/YYYY'));
+       if(!response) return;
     }
     this.encounterService.postObs(body).subscribe((res: ObsModel) => {
       if (res) {
@@ -1678,5 +1681,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getImagesBySection(section) {
     return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+   /**
+  * Get user uuid from localstorage user
+  * @return {string} - User uuid
+  */
+  private get userId() {
+    return getCacheData(true, doctorDetails.USER).uuid;
   }
 }
