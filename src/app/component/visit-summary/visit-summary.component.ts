@@ -6,9 +6,10 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "src/app/services/auth.service";
 import { DiagnosisService } from "src/app/services/diagnosis.service";
 import { CoreService } from "src/app/services/core.service";
-import { getPatientVisitProvider } from "src/app/utils/utility-functions";
+import { getCacheData, getPatientVisitProvider } from "src/app/utils/utility-functions";
 import { SocketService } from "src/app/services/socket.service";
 import { ToastrService } from "ngx-toastr";
+import { PushNotificationsService } from "src/app/services/push-notification.service";
 declare var getFromStorage: any,
   saveToStorage: any;
 
@@ -64,7 +65,8 @@ export class VisitSummaryComponent implements OnInit {
     private diagnosisService: DiagnosisService,
     private cs: CoreService,
     private socketSvc: SocketService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private notificationSvc: PushNotificationsService
   ) {
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -177,7 +179,7 @@ export class VisitSummaryComponent implements OnInit {
             this.visitNotePresent = true;
             this.setSpiner = false;
           } else {
-            if(!this.disabledVisitNoteBtn){
+            if (!this.disabledVisitNoteBtn) {
               this.startVisitNote(providerDetails, patientUuid, visitUuid, myDate, attributes);
             }
             this.setSpiner = false;
@@ -190,9 +192,21 @@ export class VisitSummaryComponent implements OnInit {
   }
 
   sign() {
-    if(!this.disabledSignBtn){
+    if (!this.disabledSignBtn) {
       this.signandsubmit();
     }
+  }
+
+
+  notifyHwForAvailablePrescription() {
+    const hwUuid = getCacheData('patientVisitProvider', true)?.provider?.uuid;
+
+    const payload = {
+      title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
+      body: "Click notification to see!"
+    }
+
+    this.notificationSvc.notifyApp(hwUuid, payload).subscribe();
   }
 
   get user() {
@@ -245,6 +259,7 @@ export class VisitSummaryComponent implements OnInit {
                 this.visitCompletePresent = true;
                 this.setSpiner = false;
                 this.snackbar.open("Visit Complete", null, { duration: 4000 });
+                this.notifyHwForAvailablePrescription();
               });
             } else {
               this.setSpiner = false;
