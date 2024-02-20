@@ -47,7 +47,7 @@ import { CurrentVisitComponent } from "./component/visit-summary/current-visit/c
 import { ModalsComponent } from "./component/ayu/modals/modals.component";
 
 // Package Import
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -108,6 +108,8 @@ import { ToastrModule } from "ngx-toastr";
 import { MomentModule } from "ngx-moment";
 import { CollectedByComponent } from './component/visit-summary/collected-by/collected-by.component';
 import { ResultedByComponent } from './component/visit-summary/resulted-by/resulted-by.component';
+import { JwtInterceptor } from "./core/interceptors/jwt.interceptor";
+import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
 
 export function TranslationLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -251,6 +253,8 @@ registerLocaleData(localeAr);
     MatDatepickerModule,
     MatNativeDateModule,
     SocketService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_DIALOG_DATA, useValue: {} },

@@ -8,6 +8,7 @@ export const environment = {
   socketURL: `${window.location.protocol}//${window.location.hostname}:3004`,
   webrtcSdkServerUrl: `wss://${window.location.hostname}:9090`,
   webrtcTokenServerUrl: `${window.location.protocol}//${window.location.hostname}:3000/`,
+  authSvcUrl: `${window.location.protocol}//${window.location.hostname}:3030/`,
   version:"SYR-v1.1.2",
   versionCode:"9",
   publicKey: "BJJvSw6ltFPN5GDxIOwbRtJUBBJp2CxftaRNGbntvE0kvzpe05D9zKr-SknKvNBihXDoyd09KuHrWwC3lFlTe54",
