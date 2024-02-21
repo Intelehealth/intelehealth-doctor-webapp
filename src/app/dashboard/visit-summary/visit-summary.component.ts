@@ -952,23 +952,21 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   searchDiagnosis(val: string) {
     if (val) {
-      if (val.length >= 3) {
-        this.diagnosisService.getDiagnosisList(val).subscribe(response => {
-          if (response && response.length) {
-            const data = [];
-            response.forEach(element => {
-              if (element) {
-                data.push({ name: element });
-              }
-            });
-            this.diagnosisSubject.next(data);
-          } else {
-            this.diagnosisSubject.next([]);
-          }
-        }, (error) => {
+      this.diagnosisService.getDiagnosisList(val).subscribe(response => {
+        if (response && response.length) {
+          const data = [];
+          response.forEach(element => {
+            if (element) {
+              data.push({ name: element });
+            }
+          });
+          this.diagnosisSubject.next(data);
+        } else {
           this.diagnosisSubject.next([]);
-        });
-      }
+        }
+      }, (error) => {
+        this.diagnosisSubject.next([]);
+      });
     }
   }
 
