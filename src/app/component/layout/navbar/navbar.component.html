@@ -101,6 +101,13 @@
               >Monitoring</a
             >
             <a
+              *ngIf="systemAccess"
+              class="dropdown-item"
+              data-target="#navbarSupportedContent-4" data-toggle="collapse"
+              routerLink="/videoLibrary"
+              >Video Library</a
+            >
+            <a
             *ngIf="systemAccess"
             class="dropdown-item"
             routerLink="/send-sms"
