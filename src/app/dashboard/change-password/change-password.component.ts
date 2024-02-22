@@ -59,6 +59,11 @@ export class ChangePasswordComponent implements OnInit {
     if (this.resetPasswordForm.invalid) {
       return;
     }
+    if (this.resetPasswordForm.value.oldPassword === this.resetPasswordForm.value.password) {
+      this.toastr.warning(this.translateService.instant('Old Password and New Password cannot be same'),
+      this.translateService.instant('Password invalid!'));
+      return;
+    }
     if (this.resetPasswordForm.value.password !== this.resetPasswordForm.value.confirmPassword) {
       this.toastr.warning(this.translateService.instant('Password and Confirm Password doesn\'t match.'),
       this.translateService.instant('Password doesn\'t match!'));

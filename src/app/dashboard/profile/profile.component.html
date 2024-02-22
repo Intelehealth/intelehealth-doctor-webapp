@@ -186,7 +186,7 @@
                       <div class="container">
                         <div class="form-row">
                           <div class="form-group col-md-12">
-                            <label for="drawSignature">{{'Draw signature'| translate}} * <span class="link"><a (click)="clearSignature()">{{'clear sign'| translate}}</a></span></label>
+                            <label for="drawSignature">{{'Draw signature'| translate}} * <span class="link"><a class="btn p-0" (click)="clearSignature()">{{'clear sign'| translate}}</a></span></label>
                           </div>
                           <div class="col-md-12" id="signature-container">
                             <signature-pad data-test-id="signaturePad" [options]="signaturePadOptions" (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()"></signature-pad>
