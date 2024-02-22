@@ -476,6 +476,12 @@
   animation: calling 2s ease-in-out .35s infinite;
 }
 
+.vc-modal-lg {
+  .mat-dialog-container {
+    max-width: 400px;
+    margin: auto;
+  }
+}
 
 
 @keyframes calling {
@@ -508,6 +514,13 @@
     &.minimized {
       width: 45vmin !important;
       height: 35vmin !important;
+    }
+  }
+
+  .vc-modal-lg {
+    .mat-dialog-container {
+      max-width: 100%;
+      margin: auto;
     }
   }
 }
