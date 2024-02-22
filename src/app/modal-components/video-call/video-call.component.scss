@@ -35,11 +35,14 @@
 
   .remote-con {
     position: relative;
-    width: 100%;
+    width: 50vmin;
     height: 80vh;
     background: var(--color-lightGray);
     border-radius: 4px 4px 12px 12px;
     overflow: hidden;
+    &.video-on {
+      width: 100%;
+    }
 
     video {
       height: 100%;
@@ -479,6 +482,7 @@
     margin: auto;
   }
 }
+
 
 @keyframes calling {
   0% {

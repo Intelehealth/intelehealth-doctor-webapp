@@ -32,7 +32,7 @@
           "
           class="main-container"
         >
-          <div class="remote-con" [class.minimized]="_minimized">
+          <div class="remote-con" [class.minimized]="_minimized" [class.video-on]="!_remoteVideoOff">
             <div #remoteVideo class="remote-container"></div>
             <div
               [ngClass]="{ 'd-none': !_remoteVideoOff }"
