@@ -193,6 +193,7 @@ export class HomepageComponent implements OnInit {
     value.gender = visit.person.gender;
     value.age = this.getAge(visit.person.birthdate);
     value.location = visit?.location?.name;
+    value.sanch = visit?.sanch;
     const encounter = this.getMaxEncounter(visit);
     value.status = encounter?.type?.name;
     value.provider = encounter?.encounter_provider?.provider?.person?.person_name?.given_name + " " +
