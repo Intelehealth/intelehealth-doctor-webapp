@@ -82,4 +82,14 @@ export class MindmapService {
     const url = `${this.baseURL}/mindmap/toggleStatus`;
     return this.http.post(url, data);
   }
+
+    /**
+  * Notify App side
+  * @param {any} hwUuid - Healthworker Id
+  * @param {any} payload - Notifaication message
+  * @return {Observable<any>}
+  */
+  notifyApp(hwUuid: any, payload: any) : Observable<any>{
+    return this.http.post(`${environment.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
+  }
 }

@@ -10,6 +10,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CoreService } from 'src/app/services/core/core.service';
 import { EncounterService } from 'src/app/services/encounter.service';
+import { MindmapService } from 'src/app/services/mindmap.service';
 import { MatAccordion } from '@angular/material/expansion';
 import medicines from '../../core/data/medicines';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -157,7 +158,8 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
     private linkSvc: LinkService,
     private translateService: TranslateService,
     private translationService: TranslationService,
-    private visitSummaryService: VisitSummaryHelperService) {
+    private visitSummaryService: VisitSummaryHelperService,
+    private mindmapService: MindmapService) {
     
     this.openChatFlag = this.router.getCurrentNavigation()?.extras?.state?.openChat;
 
@@ -1512,6 +1514,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   ]
                 }).subscribe((post) => {
                   this.visitCompleted = true;
+                  this.notifyHwForAvailablePrescription();
                   this.appointmentService.completeAppointment({ visitUuid: this.visit.uuid }).subscribe();
                   this.linkSvc.shortUrl(`/i/${this.visit.uuid}`).subscribe({
                     next: (linkSvcRes: ApiResponseModel) => {
@@ -1681,5 +1684,19 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   */
   getImagesBySection(section) {
     return this.eyeImages.filter(o => o.section?.toLowerCase() === section?.toLowerCase());
+  }
+
+  /**
+  * Send notification to health worker for available prescription
+  * @returns {void}
+  */
+  notifyHwForAvailablePrescription(): void {
+    const hwUuid = getCacheData(true, visitTypes.PATIENT_VISIT_PROVIDER)?.provider?.uuid;
+
+    const payload = {
+      title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
+      body: "Click notification to see!"
+    }
+    this.mindmapService.notifyApp(hwUuid, payload).subscribe();
   }
 }
