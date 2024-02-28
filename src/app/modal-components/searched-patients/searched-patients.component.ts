@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 import { RecentVisitsApiResponseModel } from 'src/app/model/model';
 import { VisitService } from 'src/app/services/visit.service';
 
@@ -15,7 +17,9 @@ export class SearchedPatientsComponent {
     @Inject(MAT_DIALOG_DATA) public data,
     private dialogRef: MatDialogRef<SearchedPatientsComponent>,
     private router: Router,
-    private visitService: VisitService
+    private visitService: VisitService,
+    private toastr: ToastrService,
+    private translateService: TranslateService,
   ) { }
 
   /**
@@ -34,8 +38,12 @@ export class SearchedPatientsComponent {
   */
   view(uuid: string) {
     this.visitService.recentVisits(uuid).subscribe((response: RecentVisitsApiResponseModel) => {
-      this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
-      this.close(true);
+      if(response.results){
+        this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
+        this.close(true);
+      } else {
+        this.toastr.error(this.translateService.instant('Visit Not Found for this patient'), this.translateService.instant('Visit Not Found!'));
+      }
     });
   }
 }
