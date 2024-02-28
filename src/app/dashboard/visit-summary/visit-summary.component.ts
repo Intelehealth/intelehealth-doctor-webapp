@@ -553,7 +553,7 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
                   splitByDot.forEach(element => {
                     if(element.trim()){
                       const splitByComma = element.split(',');
-                      obj1.data.push({ key: splitByComma[0].trim(), value: splitByComma[1] ? splitByComma[1].trim() : " " });
+                      obj1.data.push({ key: splitByComma.shift().trim(), value: splitByComma.length ? splitByComma.toString().trim() : " " });
                     }
                   });
                 } else {
@@ -958,13 +958,13 @@ export class VisitSummaryComponent implements OnInit, OnDestroy {
   * @returns {void}
   */
   searchDiagnosis(val: string) {
-    if (val) {
+    if (val && val.length >= 3) {
       this.diagnosisService.getDiagnosisList(val).subscribe(response => {
-        if (response && response.length) {
+        if (response.results && response.results.length) {
           const data = [];
-          response.forEach(element => {
+          response.results.forEach(element => {
             if (element) {
-              data.push({ name: element });
+              data.push({ name: element.display });
             }
           });
           this.diagnosisSubject.next(data);

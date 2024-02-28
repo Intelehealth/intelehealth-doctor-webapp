@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { getCacheData, getEncounterProviderUUID } from '../utils/utility-functions';
-import { doctorDetails } from 'src/config/constant';
+import { doctorDetails, conceptIds } from 'src/config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -55,21 +55,8 @@ export class DiagnosisService {
   * @return {Observable<any>}
   */
   getDiagnosisList(term: string): Observable<any> {
-    const url = `${environment.baseURLCoreApp}/search.action?&term=${term}`;
-    return this.http.get(url)
-      .pipe(
-        map((response: []) => {
-          this.diagnosisArray = [];
-          response.forEach((element: any) => {
-            element.concept.conceptMappings.forEach(name => {
-              if (name.conceptReferenceTerm.conceptSource.name === 'ICD-10-WHO') {
-                this.diagnosisArray.push(element.concept.preferredName);
-              }
-            });
-          });
-          return this.diagnosisArray;
-        })
-      );
+    const url = `${environment.baseURL}/concept?class=${conceptIds.conceptDiagnosisClass}&source=ICD10&q=${term}`;
+    return this.http.get(url);
   }
 
   /**
