@@ -38,7 +38,7 @@ export class SearchedPatientsComponent {
   */
   view(uuid: string) {
     this.visitService.recentVisits(uuid).subscribe((response: RecentVisitsApiResponseModel) => {
-      if(response.results){
+      if(response.results?.length > 0){
         this.router.navigate(['/dashboard/visit-summary', response.results[0].uuid]);
         this.close(true);
       } else {
