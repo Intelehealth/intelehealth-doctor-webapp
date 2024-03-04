@@ -35,6 +35,7 @@ export class ChatService {
       toUser,
       patientId,
       message,
+      appType: 'webapp'
     };
     return this.http.post(`${this.baseURL}/messages/sendMessage?ngsw-bypass=true`, payload);
   }
