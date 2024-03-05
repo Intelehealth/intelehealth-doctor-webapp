@@ -7,7 +7,7 @@
   </div>
 </div>
 <mat-dialog-content>
-  <ul class="chat-item-list">
+  <ul class="chat-item-list" style="overflow-x: hidden !important;">
     <ng-container *ngFor="let m of messages; let first = first">
       <li class="chat-item read-status" [class.text-left]="m?.from === 'System Administrator'">
         <span class="mr-1">{{m.createdAt | amDateFormat : "LT"}}</span>
