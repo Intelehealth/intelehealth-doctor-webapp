@@ -203,7 +203,11 @@ export class VisitSummaryComponent implements OnInit {
 
     const payload = {
       title: `Prescription available for ${this.visit?.patient?.person?.display || 'Patient'}`,
-      body: "Click notification to see!"
+      body: "Click notification to see!",
+      data: {
+        visitUuid: this.visitUuid,
+        patientId: this.patientId
+      }
     }
 
     this.notificationSvc.notifyApp(hwUuid, payload).subscribe();
