@@ -2,8 +2,10 @@ import { SessionService } from "./session.service";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import { CookieService } from 'ngx-cookie';
+import { CookieService } from "ngx-cookie-service";
 import { getCacheData, setCacheData } from "../utils/utility-functions";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment";
 declare var deleteFromStorage: any;
 
 @Injectable({
@@ -13,16 +15,34 @@ export class AuthService {
   constructor(
     private myRoute: Router,
     private sessionService: SessionService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private http: HttpClient
   ) { }
   public fingerPrint;
+
+
+  getAuthToken(username, password, rememberme = false /** remember me support for PWA to get longer expiry token by default is false */) {
+    return this.http.post(`${environment.authSvcUrl}auth/login`, {
+      username,
+      password,
+      rememberme
+    });
+  }
 
   /**
    * Set passed JSESSIONID token
    * @param token String
    */
   sendToken(token) {
-    this.cookieService.put("JSESSIONID", token);
+    this.cookieService.set("JSESSIONID", token);
+  }
+
+  /**
+   * Getter for auth JWT token from localstorage
+   * @return {string} - JWT auth token
+   */
+  get authToken() {
+    return getCacheData('token') || '';
   }
 
   /**
@@ -69,7 +89,7 @@ export class AuthService {
         deleteFromStorage("doctorName");
         deleteFromStorage("providerType");
         deleteFromStorage("JSESSIONID");
-        this.cookieService.removeAll();
+        this.cookieService.deleteAll();
         this.myRoute.navigate(["/login"]);
       });
     });

@@ -14,6 +14,10 @@ export function deleteCacheData(key: string) {
     localStorage.removeItem(key);
 }
 
+export function clearAllCache() {
+    localStorage.clear();
+}
+
 export function isJsonString(str) {
     try {
         const json = JSON.parse(str);
@@ -35,4 +39,12 @@ export function suppress(fn: Function) {
     try {
         fn()
     } catch (error) { }
+}
+
+export function getPatientVisitProvider() {
+    try {
+        return getCacheData('patientVisitProvider', true)
+    } catch (error) {
+        return null
+    }
 }

@@ -38,7 +38,7 @@
     <ng-container matColumnDef="gender">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Gender</th>
       <td mat-cell *matCellDef="let row">
-        {{ row?.gender === "M" ? "Male" : "Female" }}
+        {{ row?.gender }}
       </td>
     </ng-container>
 
@@ -58,8 +58,8 @@
 
     <!-- Location column -->
     <ng-container matColumnDef="location">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
-      <td mat-cell *matCellDef="let row">{{ row?.location }}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Sanch</th>
+      <td mat-cell *matCellDef="let row">{{ row?.sanch }}</td>
     </ng-container>
 
     <!-- Status column -->

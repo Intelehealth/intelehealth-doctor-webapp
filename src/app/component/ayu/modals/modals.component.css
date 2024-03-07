@@ -5,3 +5,7 @@ textarea {
 button:focus {
   outline: none;
 }
+
+.d-contents {
+  display: contents;
+}

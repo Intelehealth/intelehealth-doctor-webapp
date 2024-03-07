@@ -9,7 +9,7 @@ export class PushNotificationsService {
   private baseURL = environment.notificationURL;
   public snoozeTimeout = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   postSubscription(
     sub: PushSubscription,
@@ -58,5 +58,9 @@ export class PushNotificationsService {
 
   changePassword(json) {
     return this.http.post(`${this.baseURL}/changePassword`, json);
+  }
+
+  notifyApp(hwUuid, payload) {
+    return this.http.post(`${environment.mindmapURL}/mindmap/notify-app/${hwUuid}`, payload)
   }
 }
