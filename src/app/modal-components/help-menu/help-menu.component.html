@@ -26,7 +26,7 @@
   </ul>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <input type="text" placeholder="{{'Type here'|translate}}" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessage">
+  <input type="text" placeholder="{{'Type here'|translate}}" maxlength="255" class="mr-2" [(ngModel)]="message" (keyup.enter)="sendMessage()" data-test-id="etChatMessage">
   <button class="send-btn" (click)="sendMessage()" data-test-id="btnSendMessage">
     <mat-icon aria-hidden="false" aria-label="send icon">{{'send'|translate}}</mat-icon>
   </button>
