@@ -109,7 +109,9 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     payload.verifyFor = "verification";
     payload.username = (getCacheData(true, doctorDetails.USER)).username ? (getCacheData(true, doctorDetails.USER)).username : (getCacheData(true, doctorDetails.USER)).systemId;
     if (this.via == 'phone') {
-      payload.phoneNumber = this.cred.split('||')[1]
+      let phoneNumber = this.cred.split('||');
+      payload.countryCode = phoneNumber[0];
+      payload.phoneNumber = phoneNumber[1];
     } else {
       payload.email = this.cred
     }
@@ -147,7 +149,9 @@ export class OtpVerificationComponent implements OnInit, OnDestroy {
     payload.verifyFor = "username";
     let msgSentOn = "email";
     if (this.via == 'phone') {
-      payload.phoneNumber = this.cred.split('||')[1];
+      let phoneNumber = this.cred.split('||');
+      payload.countryCode = phoneNumber[0];
+      payload.phoneNumber = phoneNumber[1];
       msgSentOn = "mobile number"
     } else {
       payload.email = this.cred
